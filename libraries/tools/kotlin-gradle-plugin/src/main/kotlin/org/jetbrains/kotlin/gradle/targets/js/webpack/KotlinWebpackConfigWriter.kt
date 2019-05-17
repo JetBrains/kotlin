@@ -15,7 +15,7 @@ import java.io.Serializable
 import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
-class KotlinWebpackConfigWriter(
+data class KotlinWebpackConfigWriter(
     val mode: Mode = Mode.DEVELOPMENT,
     val entry: File? = null,
     val outputPath: File? = null,
@@ -26,7 +26,9 @@ class KotlinWebpackConfigWriter(
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
     val sourceMapsRuntime: Boolean = false,
-    val export: Boolean = true
+    val export: Boolean = true,
+    val progressReporter: Boolean = false,
+    val progressReporterPathFilter: String? = null
 ) {
     enum class Mode(val code: String) {
         DEVELOPMENT("development"),
@@ -88,6 +90,7 @@ class KotlinWebpackConfigWriter(
             appendReport()
             appendFromConfigDir()
             appendEvaluatedFileReport()
+            appendProgressReporter()
 
             if (export) {
                 //language=JavaScript 1.8
@@ -203,6 +206,29 @@ class KotlinWebpackConfigWriter(
                     filename: '${entry.name}'
                 };
                 
+            """.trimIndent()
+        )
+    }
+
+    private fun Appendable.appendProgressReporter() {
+        if (!progressReporter) return
+
+        appendln(
+            """
+                // Report progress to console
+                (function(config) {
+                    const webpack = require('webpack');
+                    const handler = (percentage, message, ...args) => {
+                        const p = percentage*100;
+                        let msg = Math.trunc(p/100) + Math.trunc(p%100) + '% ' + message + ' ' + args.join(' ');
+                        ${if (progressReporterPathFilter == null) "" else """
+                            msg = msg.replace(new RegExp(${jsQuotedString(progressReporterPathFilter ?: "")}, 'g'), '');
+                        """.trimIndent()}
+                        console.log(msg);
+                    };
+            
+                    config.plugins.push(new webpack.ProgressPlugin(handler))
+                })(config);
             """.trimIndent()
         )
     }
