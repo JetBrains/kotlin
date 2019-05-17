@@ -78,7 +78,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
       if (step instanceof ProjectTypeStep) {
         assertTrue(((ProjectTypeStep)step).setSelectedTemplate("Gradle", null));
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
-        assertEquals(5, steps.size());
+        assertEquals(4, steps.size());
         final ProjectBuilder projectBuilder = myWizard.getProjectBuilder();
         assertInstanceOf(projectBuilder, GradleModuleBuilder.class);
         ((GradleModuleBuilder)projectBuilder).setName(projectName);
@@ -119,7 +119,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     Module childModule = createModuleFromTemplate("Gradle", null, project, step -> {
       if (step instanceof ProjectTypeStep) {
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
-        assertEquals(5, steps.size());
+        assertEquals(4, steps.size());
       }
       else if (step instanceof GradleModuleWizardStep) {
         SelectExternalProjectDialog projectDialog = new SelectExternalProjectDialog(GradleConstants.SYSTEM_ID, project, null);
