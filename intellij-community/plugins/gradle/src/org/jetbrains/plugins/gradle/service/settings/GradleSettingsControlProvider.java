@@ -55,16 +55,14 @@ public abstract class GradleSettingsControlProvider {
 
       @Override
       public GradleSystemSettingsControlBuilder getSystemSettingsControlBuilder(@NotNull GradleSettings initialSettings) {
-        return new IdeaGradleSystemSettingsControlBuilder(initialSettings);
+        return new IdeaGradleSystemSettingsControlBuilder(initialSettings).
+          // always use external storage for project files
+          dropStoreExternallyCheckBox();
       }
 
       @Override
       public GradleProjectSettingsControlBuilder getProjectSettingsControlBuilder(@NotNull GradleProjectSettings initialSettings) {
         return new IdeaGradleProjectSettingsControlBuilder(initialSettings)
-          // always use qualified module names
-          .dropModulesGroupingOptionPanel()
-          // always use external storage for project files
-          .dropStoreExternallyCheckBox()
           // hide java-specific option
           .dropResolveModulePerSourceSetCheckBox()
           .dropDelegateBuildCombobox()

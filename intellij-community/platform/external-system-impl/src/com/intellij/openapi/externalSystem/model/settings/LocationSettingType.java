@@ -2,12 +2,12 @@ package com.intellij.openapi.externalSystem.model.settings;
 
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 /**
  * Enumerates possible types of external project location setting.
@@ -17,7 +17,7 @@ import java.util.Arrays;
 public enum LocationSettingType {
 
   /** User hasn't defined location but the IDE discovered it automatically. */
-  DEDUCED("setting.type.location.deduced", "TextField.inactiveForeground", "nimbusDisabledText"),
+  DEDUCED("setting.type.location.deduced", "TextField.inactiveForeground"),
 
   /** User hasn't defined location and the IDE was unable to discover it automatically. */
   UNKNOWN("setting.type.location.unknown"),
@@ -35,19 +35,10 @@ public enum LocationSettingType {
   }
 
   LocationSettingType(@NotNull @PropertyKey(resourceBundle = ExternalSystemBundle.PATH_TO_BUNDLE) String descriptionKey,
-                      @NotNull String ... colorKeys)
+                      @NotNull String key)
   {
     myDescriptionKey = descriptionKey;
-    Color c = null;
-    for (String key : colorKeys) {
-      c = UIManager.getColor(key);
-      if (c != null) {
-        break;
-      }
-    }
-    
-    assert c != null : "Can't find color for keys " + Arrays.toString(colorKeys);
-    myColor = c;
+    myColor = JBColor.namedColor(key, UIManager.getColor(key));
   }
 
   /**

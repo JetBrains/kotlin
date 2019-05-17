@@ -78,9 +78,6 @@
                          instance="org.jetbrains.plugins.gradle.service.settings.GradleConfigurable"
                          key="gradle.name" bundle="i18n.GradleBundle">
     </projectConfigurable>
-    <projectConfigurable parentId="reference.settingsdialog.project.gradle"
-                         instance="org.jetbrains.plugins.gradle.settings.GradleRunnerConfigurable"
-                         id="reference.settings.project.gradle.running" key="gradle.runner" bundle="i18n.GradleBundle"/>
     <editorTabTitleProvider implementation="org.jetbrains.plugins.gradle.util.GradleEditorTabTitleProvider"/>
     <configurationType implementation="org.jetbrains.plugins.gradle.service.execution.GradleExternalTaskConfigurationType"/>
 
@@ -98,10 +95,10 @@
 
     <applicationService serviceImplementation="org.jetbrains.plugins.gradle.service.GradleInstallationManager"/>
 
-    <projectService serviceImplementation="org.jetbrains.plugins.gradle.service.settings.GradleSettingsService"/>
     <applicationService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSystemSettings"/>
-    <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.DefaultGradleProjectSettings"/>
+    <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSettingsMigration$LegacyDefaultGradleProjectSettings"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSettings"/>
+    <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSettingsMigration"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleLocalSettings"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.service.project.GradleNotification"/>
     <projectService serviceImplementation="org.jetbrains.plugins.gradle.service.task.ExecuteGradleTaskHistoryService"/>
@@ -124,6 +121,9 @@
     <statistics.counterUsagesCollector groupId="build.gradle.actions" version="1"/>
     <externalSystem.runConfigurationImporter
         implementation="org.jetbrains.plugins.gradle.service.execution.GradleRunConfigurationImporter"/>
+
+    <registryKey key="gradle.settings.showModulePerSourceSetSetting" defaultValue="false"
+                 description="Enables 'Generate module per source set' setting for troubleshooting"/>
   </extensions>
 
   <actions>

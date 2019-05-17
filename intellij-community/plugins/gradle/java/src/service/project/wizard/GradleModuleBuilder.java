@@ -104,7 +104,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   private boolean myUseKotlinDSL;
 
   public GradleModuleBuilder() {
-    super(GradleConstants.SYSTEM_ID, new GradleProjectSettings().withQualifiedModuleNames());
+    super(GradleConstants.SYSTEM_ID, new GradleProjectSettings());
   }
 
   @NotNull

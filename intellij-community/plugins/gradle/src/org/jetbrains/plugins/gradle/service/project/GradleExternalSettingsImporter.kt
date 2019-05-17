@@ -14,7 +14,6 @@ import com.intellij.openapi.externalSystem.service.project.settings.BeforeRunTas
 import com.intellij.openapi.externalSystem.service.project.settings.ConfigurationHandler
 import com.intellij.openapi.project.Project
 import com.intellij.util.ObjectUtils.consumeIfCast
-import com.intellij.util.ThreeState
 import org.jetbrains.plugins.gradle.execution.GradleBeforeRunTaskProvider
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.settings.TestRunner.*
@@ -98,10 +97,10 @@ class ActionDelegateConfigImporter: ConfigurationHandler {
     val projectSettings = GradleSettings.getInstance(project).getLinkedProjectSettings(projectPath) ?: return
 
     consumeIfCast(config["delegateBuildRunToGradle"], java.lang.Boolean::class.java) {
-      projectSettings.delegatedBuild = ThreeState.fromBoolean(it.booleanValue())
+      projectSettings.delegatedBuild = it.booleanValue()
     }
     consumeIfCast(config["testRunner"], String::class.java) {
-      projectSettings.testRunner = TEST_RUNNER_MAP[it] ?: return@consumeIfCast
+      projectSettings.testRunner = (TEST_RUNNER_MAP[it] ?: return@consumeIfCast)
     }
   }
 

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.gradle.execution.GradleRunnerUtil;
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.TestRunner;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.gradle.util.TasksToRun;
@@ -239,12 +239,12 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
   }
 
   private static TestRunner getTestRunner(@NotNull Project project, @NotNull String projectPath) {
-    return GradleSettingsService.getInstance(project).getTestRunner(projectPath);
+    return GradleProjectSettings.getTestRunner(project, projectPath);
   }
 
   private static TestRunner getTestRunner(@NotNull PsiElement sourceElement) {
     Module module = ModuleUtilCore.findModuleForPsiElement(sourceElement);
     if (module == null) return PLATFORM;
-    return GradleSettingsService.getTestRunner(module);
+    return GradleProjectSettings.getTestRunner(module);
   }
 }

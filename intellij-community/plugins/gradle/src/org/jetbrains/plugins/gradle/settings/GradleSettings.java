@@ -12,14 +12,11 @@ import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListen
 import com.intellij.openapi.project.ExternalStorageConfigurationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.util.ThreeState;
 import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.config.DelegatingGradleSettingsListenerAdapter;
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -65,6 +62,23 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   @Override
   public void loadState(@NotNull MyState state) {
     super.loadState(state);
+
+    GradleSettingsMigration migration = getProject().getComponent(GradleSettingsMigration.class);
+
+    // When we are opening pre 2019.2 project, we need to import project defaults from the workspace
+    // The migration flag is saved to a separate component to preserve backward and forward compatibility.
+    if (migration.getMigrationVersion() < 1) {
+      migration.setMigrationVersion(1);
+
+      GradleSettingsMigration.LegacyDefaultGradleProjectSettings.MyState legacyProjectDefaults
+        = getProject().getComponent(GradleSettingsMigration.LegacyDefaultGradleProjectSettings.class).getState();
+      if (legacyProjectDefaults != null) {
+        for (GradleProjectSettings each : getLinkedProjectsSettings()) {
+          if (each.getDirectDelegatedBuild() == null) each.setDelegatedBuild(legacyProjectDefaults.delegatedBuild);
+          if (each.getDirectTestRunner() == null) each.setTestRunner(legacyProjectDefaults.testRunner);
+        }
+      }
+    }
   }
 
   /**
@@ -107,6 +121,14 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
     mySystemSettings.setOfflineWork(isOfflineWork);
   }
 
+  public boolean getStoreProjectFilesExternally() {
+    return ExternalStorageConfigurationManager.getInstance(getProject()).isEnabled();
+  }
+
+  public void setStoreProjectFilesExternally(boolean value) {
+    ExternalProjectsManagerImpl.getInstance(getProject()).setStoreExternally(value);
+  }
+
   @Override
   protected void checkSettings(@NotNull GradleProjectSettings old, @NotNull GradleProjectSettings current) {
     if (!Comparing.equal(old.getGradleHome(), current.getGradleHome())) {
@@ -118,31 +140,14 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
     if (old.isResolveModulePerSourceSet() != current.isResolveModulePerSourceSet()) {
       ExternalProjectsManager.getInstance(getProject()).getExternalProjectsWatcher().markDirty(current.getExternalProjectPath());
     }
-    ThreeState storeProjectFilesExternally = current.getStoreProjectFilesExternally();
-    if (old.getStoreProjectFilesExternally() != storeProjectFilesExternally) {
-      ExternalProjectsManagerImpl.getInstance(getProject()).setStoreExternally(storeProjectFilesExternally != ThreeState.NO);
-    }
     if (!Comparing.equal(old.getDelegatedBuild(), current.getDelegatedBuild())) {
-      boolean delegatedBuild = GradleSettingsService.getInstance(getProject()).isDelegatedBuildEnabled(current.getExternalProjectPath());
+      boolean delegatedBuild = GradleProjectSettings.isDelegatedBuildEnabled(getProject(), current.getExternalProjectPath());
       getPublisher().onBuildDelegationChange(delegatedBuild, current.getExternalProjectPath());
     }
     if (!Comparing.equal(old.getTestRunner(), current.getTestRunner())) {
-      TestRunner testRunner = GradleSettingsService.getInstance(getProject()).getTestRunner(current.getExternalProjectPath());
+      TestRunner testRunner = GradleProjectSettings.getTestRunner(getProject(), current.getExternalProjectPath());
       getPublisher().onTestRunnerChange(testRunner, current.getExternalProjectPath());
     }
-  }
-
-  @NotNull
-  @Override
-  public Collection<GradleProjectSettings> getLinkedProjectsSettings() {
-    Collection<GradleProjectSettings> settings = super.getLinkedProjectsSettings();
-    boolean isStoredExternally = ExternalStorageConfigurationManager.getInstance(getProject()).isEnabled();
-    // GradleProjectSettings has transient field isStoredExternally - used when no project yet,
-    // but when project created, isStoredExternally stored in the ExternalProjectsManagerImpl and we need to transfer it
-    for (GradleProjectSettings setting : settings) {
-      setting.setStoreProjectFilesExternally(ThreeState.fromBoolean(isStoredExternally));
-    }
-    return settings;
   }
 
   public static class MyState implements State<GradleProjectSettings> {

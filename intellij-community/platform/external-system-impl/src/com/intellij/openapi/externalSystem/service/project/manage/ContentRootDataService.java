@@ -9,16 +9,16 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
-import com.intellij.openapi.externalSystem.model.*;
+import com.intellij.openapi.externalSystem.model.DataNode;
+import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
+import com.intellij.openapi.externalSystem.model.Key;
+import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.ContentRootData;
 import com.intellij.openapi.externalSystem.model.project.ContentRootData.SourceRoot;
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
-import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
-import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
@@ -140,19 +140,6 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
       contentEntriesMap.put(contentEntry.getUrl(), contentEntry);
     }
 
-    boolean createEmptyContentRootDirectories = forceDirectoriesCreation;
-    if (!forceDirectoriesCreation && !data.isEmpty()) {
-      ProjectSystemId projectSystemId = data.iterator().next().getData().getOwner();
-      AbstractExternalSystemSettings externalSystemSettings =
-        ExternalSystemApiUtil.getSettings(module.getProject(), projectSystemId);
-
-      String path = ExternalSystemModulePropertyManager.getInstance(module).getRootProjectPath();
-      if (path != null) {
-        ExternalProjectSettings projectSettings = externalSystemSettings.getLinkedProjectSettings(path);
-        createEmptyContentRootDirectories = projectSettings != null && projectSettings.isCreateEmptyContentRootDirectories();
-      }
-    }
-
     sourceFolderManager.removeSourceFolders(module);
 
     final Set<ContentEntry> importedContentEntries = ContainerUtil.newIdentityTroveSet();
@@ -173,7 +160,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
         if (type != null) {
           for (SourceRoot path : contentRoot.getPaths(externalSrcType)) {
             createSourceRootIfAbsent(
-              sourceFolderManager, contentEntry, path, module, type, externalSrcType.isGenerated(), createEmptyContentRootDirectories);
+              sourceFolderManager, contentEntry, path, module, type, externalSrcType.isGenerated(), forceDirectoriesCreation);
           }
         }
       }

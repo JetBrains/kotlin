@@ -9,7 +9,7 @@ import com.intellij.openapi.externalSystem.statistics.ExternalSystemUsagesCollec
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Version
 import org.gradle.util.GradleVersion
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 
 class GradleSettingsCollector : ProjectUsagesCollector() {
@@ -31,15 +31,13 @@ class GradleSettingsCollector : ProjectUsagesCollector() {
     usages.add(getBooleanUsage("hasCustomServiceDirectoryPath", !gradleSettings.serviceDirectoryPath.isNullOrBlank()))
     usages.add(getBooleanUsage("hasCustomGradleVmOptions", !gradleSettings.gradleVmOptions.isNullOrBlank()))
     usages.add(getBooleanUsage("showSelectiveImportDialogOnInitialImport", gradleSettings.showSelectiveImportDialogOnInitialImport()))
+    usages.add(getBooleanUsage("storeProjectFilesExternally", gradleSettings.storeProjectFilesExternally))
 
-    val settingsService = GradleSettingsService.getInstance(project)
     // project settings
     for (setting in gradleSettings.linkedProjectsSettings) {
       val projectPath = setting.externalProjectPath
-      usages.add(getBooleanUsage("isCreateEmptyContentRootDirectories", setting.isCreateEmptyContentRootDirectories))
       usages.add(getBooleanUsage("isUseQualifiedModuleNames", setting.isUseQualifiedModuleNames))
       usages.add(getBooleanUsage("createModulePerSourceSet", setting.isResolveModulePerSourceSet))
-      usages.add(getEnumUsage("storeProjectFilesExternally", setting.storeProjectFilesExternally))
       usages.add(getEnumUsage("distributionType", setting.distributionType))
 
       usages.add(getYesNoUsage("isCompositeBuilds", setting.compositeBuild != null))
@@ -55,8 +53,10 @@ class GradleSettingsCollector : ProjectUsagesCollector() {
         usages.add(UsageDescriptor("gradleVersion." + anonymizeGradleVersion(gradleVersion), 1))
       }
 
-      usages.add(getBooleanUsage("delegateBuildRun", settingsService.isDelegatedBuildEnabled(projectPath)))
-      usages.add(getEnumUsage("preferredTestRunner", settingsService.getTestRunner(projectPath)))
+      usages.add(getBooleanUsage("delegateBuildRun",
+                                 GradleProjectSettings.isDelegatedBuildEnabled(project, projectPath)))
+      usages.add(getEnumUsage("preferredTestRunner",
+                              GradleProjectSettings.getTestRunner(project, projectPath)))
     }
     return usages
   }

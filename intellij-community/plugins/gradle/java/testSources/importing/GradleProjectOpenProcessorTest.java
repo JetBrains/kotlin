@@ -25,13 +25,13 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.testFramework.EdtTestUtilKt;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.ThreeState;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.jetbrains.plugins.gradle.settings.TestRunner;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -187,14 +187,13 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
       assertTrue("The module has not been linked",
                  ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, getModule(fooProject, "foo")));
       assertTrue(ExternalStorageConfigurationManager.getInstance(fooProject).isEnabled());
+      assertTrue(GradleSettings.getInstance(fooProject).getStoreProjectFilesExternally());
       GradleProjectSettings fooSettings = GradleSettings.getInstance(fooProject).getLinkedProjectSettings(foo.getPath());
       assertTrue(fooSettings.isResolveModulePerSourceSet());
       assertFalse(fooSettings.isResolveExternalAnnotations());
-      assertEquals(ThreeState.YES, fooSettings.getStoreProjectFilesExternally());
-      assertEquals(ThreeState.UNSURE, fooSettings.getDelegatedBuild());
-      assertNull(fooSettings.getTestRunner());
+      assertTrue(fooSettings.getDelegatedBuild());
+      assertEquals(TestRunner.GRADLE, fooSettings.getTestRunner());
       assertFalse(fooSettings.isUseAutoImport());
-      assertFalse(fooSettings.isCreateEmptyContentRootDirectories());
       assertTrue(fooSettings.isUseQualifiedModuleNames());
     }
     finally {

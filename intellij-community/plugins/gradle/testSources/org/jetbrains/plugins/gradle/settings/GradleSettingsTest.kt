@@ -7,10 +7,9 @@ import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
-import com.intellij.util.ThreeState.*
 import com.intellij.util.ThrowableRunnable
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService
-import org.jetbrains.plugins.gradle.settings.TestRunner.*
+import org.jetbrains.plugins.gradle.service.settings.IdeaGradleSystemSettingsControlBuilder
+import org.jetbrains.plugins.gradle.settings.TestRunner.GRADLE
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -19,8 +18,6 @@ class GradleSettingsTest : UsefulTestCase() {
 
   private lateinit var myTestFixture: IdeaProjectTestFixture
   private lateinit var myProject: Project
-  private lateinit var settingsService: GradleSettingsService
-  private lateinit var defaultSettings: DefaultGradleProjectSettings
   private lateinit var gradleProjectSettings: GradleProjectSettings
 
   @Before
@@ -30,9 +27,6 @@ class GradleSettingsTest : UsefulTestCase() {
     myTestFixture.setUp()
     myProject = myTestFixture.project
 
-    defaultSettings = DefaultGradleProjectSettings.getInstance(myProject)
-    defaultSettings.loadState(DefaultGradleProjectSettings.MyState())
-    settingsService = GradleSettingsService.getInstance(myProject)
     gradleProjectSettings = GradleProjectSettings().apply { externalProjectPath = myProject.guessProjectDir()!!.path }
     GradleSettings.getInstance(myProject).linkProject(gradleProjectSettings)
   }
@@ -48,36 +42,48 @@ class GradleSettingsTest : UsefulTestCase() {
   @Test
   fun `test delegation settings default configuration`() {
     // check test runner defaults
-    assertNull(gradleProjectSettings.testRunner)
-    assertEquals(PLATFORM, defaultSettings.testRunner)
-    assertEquals(PLATFORM, settingsService.getTestRunner(gradleProjectSettings.externalProjectPath))
+    assertEquals(GRADLE, gradleProjectSettings.testRunner)
+    assertEquals(GRADLE, GradleProjectSettings.getTestRunner(myProject,
+                                                             gradleProjectSettings.externalProjectPath))
 
     // check build/run defaults
-    assertEquals(UNSURE, gradleProjectSettings.delegatedBuild)
-    assertFalse(defaultSettings.isDelegatedBuild)
-    assertFalse(settingsService.isDelegatedBuildEnabled(gradleProjectSettings.externalProjectPath))
+    assertTrue(gradleProjectSettings.delegatedBuild)
+    assertTrue(GradleProjectSettings.isDelegatedBuildEnabled(myProject,
+                                                             gradleProjectSettings.externalProjectPath))
   }
 
   @Test
-  fun `test delegation settings per linked project`() {
-    // check test runner configuration change
-    gradleProjectSettings.testRunner = CHOOSE_PER_TEST
-    assertEquals(PLATFORM, defaultSettings.testRunner)
-    assertEquals(CHOOSE_PER_TEST, settingsService.getTestRunner(gradleProjectSettings.externalProjectPath))
+  fun `test VMOptions writing to gradle properties`() {
+    // non existing org.gradle.jvmargs
+    assertMigratedVMOption("", "", "org.gradle.jvmargs=\n")
+    assertMigratedVMOption("", "-x", "org.gradle.jvmargs=-x\n")
+    assertMigratedVMOption("foo=1", "-x", "foo=1\norg.gradle.jvmargs=-x\n")
+    assertMigratedVMOption("foo=1\n", "-x", "foo=1\norg.gradle.jvmargs=-x\n")
 
-    //// check project default change
-    defaultSettings.testRunner = GRADLE
-    assertEquals(CHOOSE_PER_TEST, gradleProjectSettings.testRunner)
-    assertEquals(CHOOSE_PER_TEST, settingsService.getTestRunner(gradleProjectSettings.externalProjectPath))
+    // matched existing org.gradle.jvmargs
+    assertMigratedVMOption("org.gradle.jvmargs=\n", "-x", "org.gradle.jvmargs=-x\n")
+    assertMigratedVMOption("org.gradle.jvmargs=original\n", "-x", "org.gradle.jvmargs=-x\n")
+    assertMigratedVMOption("org.gradle.jvmargs:original\n", "-x", "org.gradle.jvmargs:-x\n")
+    assertMigratedVMOption(" \"org.gradle.jvmargs\" : original\n", "-x", " \"org.gradle.jvmargs\" :-x\n")
+    assertMigratedVMOption("#comment\norg.gradle.jvmargs:original\n", "-x", "#comment\norg.gradle.jvmargs:-x\n")
+    assertMigratedVMOption("foo=1\norg.gradle.jvmargs:original\nbar=1", "-x", "foo=1\norg.gradle.jvmargs:-x\nbar=1")
 
-    // check build/run configuration change
-    gradleProjectSettings.delegatedBuild = YES
-    assertFalse(defaultSettings.isDelegatedBuild)
-    assertTrue(settingsService.isDelegatedBuildEnabled(gradleProjectSettings.externalProjectPath))
+    // escaping
+    assertMigratedVMOption("org.gradle.jvmargs=\n", "foo\\bar#baz", "org.gradle.jvmargs=foo\\\\bar\\#baz\n")
+    // multiline
+    assertMigratedVMOption("foo=1\norg.gradle.jvmargs=original\nbar=2",
+                           "-x\n -y", "foo=1\norg.gradle.jvmargs=-x\\n -y\nbar=2")
+    assertMigratedVMOption("foo=1\norg.gradle.jvmargs=original\\\nsecond line\\\nthird line\nbar=2",
+                           "-x", "foo=1\norg.gradle.jvmargs=-x\nbar=2")
 
-    //// check project default change
-    defaultSettings.isDelegatedBuild = true
-    gradleProjectSettings.delegatedBuild = NO
-    assertFalse(settingsService.isDelegatedBuildEnabled(gradleProjectSettings.externalProjectPath))
+    // unmatched existing org.gradle.jvmargs
+    assertMigratedVMOption(" \" org.gradle.jvmargs \"=original\n", "-x",
+                           " \" org.gradle.jvmargs \"=original\norg.gradle.jvmargs=-x\n")
+    assertMigratedVMOption("#org.gradle.jvmargs=original\n", "-x",
+                           "#org.gradle.jvmargs=original\norg.gradle.jvmargs=-x\n")
+  }
+
+  private fun assertMigratedVMOption(original: String, vmOptions: String, expected: String) {
+    assertEquals(expected, IdeaGradleSystemSettingsControlBuilder.updateVMOptions(original, vmOptions))
   }
 }

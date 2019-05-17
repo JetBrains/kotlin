@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerManager;
-import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.config.GradleResourceCompilerConfigurationGenerator;
 import org.junit.Before;
@@ -19,7 +18,7 @@ public abstract class GradleJpsCompilingTestCase extends GradleCompilingTestCase
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    getCurrentExternalProjectSettings().setDelegatedBuild(ThreeState.NO);
+    getCurrentExternalProjectSettings().setDelegatedBuild(false);
   }
 
   @Override

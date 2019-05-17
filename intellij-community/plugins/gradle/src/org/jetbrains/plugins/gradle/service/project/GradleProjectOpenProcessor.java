@@ -44,7 +44,6 @@ import com.intellij.projectImport.ProjectOpenProcessor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import icons.GradleIcons;
 import org.jetbrains.annotations.NotNull;
@@ -179,9 +178,8 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
   @NotNull
   private static GradleProjectSettings createDefaultProjectSettings() {
     GradleProjectSettings settings = new GradleProjectSettings();
+    settings.setupNewProjectDefault();
     settings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
-    settings.setStoreProjectFilesExternally(ThreeState.YES);
-    settings.setUseQualifiedModuleNames(true);
     return settings;
   }
 
