@@ -42,11 +42,11 @@ ext {
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
             ext.experimentalEnabled)
 
-    kotlinCommonStdlibModule="org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion}:sources"
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-    kotlinTestCommonModule="org.jetbrains.kotlin:kotlin-test-common:${kotlinVersion}:sources"
-    kotlinTestAnnotationsCommonModule="org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinVersion}:sources"
+    kotlinCommonStdlibModule="org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinStdlibVersion}:sources"
+    kotlinTestCommonModule="org.jetbrains.kotlin:kotlin-test-common:${kotlinStdlibVersion}:sources"
+    kotlinTestAnnotationsCommonModule="org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinStdlibVersion}:sources"
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
     kotlinNativeSharedModule="org.jetbrains.kotlin:kotlin-native-shared:$sharedVersion"
@@ -68,6 +68,9 @@ allprojects {
     repositories {
         maven {
             url 'https://cache-redirector.jetbrains.com/maven-central'
+        }
+        maven {
+            url kotlinStdlibRepo
         }
         maven {
             url kotlinCompilerRepo
