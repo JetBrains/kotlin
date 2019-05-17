@@ -274,6 +274,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectAnnotation/");
     }
 
+    @TestMetadata("expectAnnotation2")
+    public void testExpectAnnotation2() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectAnnotation2/");
+    }
+
     @TestMetadata("expectClass")
     public void testExpectClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectClass/");
@@ -309,6 +314,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectClassWithAliases/");
     }
 
+    @TestMetadata("expectClassWithConstructorWithParametersWithoutValVar")
+    public void testExpectClassWithConstructorWithParametersWithoutValVar() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectClassWithConstructorWithParametersWithoutValVar/");
+    }
+
     @TestMetadata("expectClassWithInitializer")
     public void testExpectClassWithInitializer() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectClassWithInitializer/");
@@ -317,6 +327,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("expectClassWithPlatformNested")
     public void testExpectClassWithPlatformNested() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectClassWithPlatformNested/");
+    }
+
+    @TestMetadata("expectClassWithSecondaryConstructor")
+    public void testExpectClassWithSecondaryConstructor() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectClassWithSecondaryConstructor/");
+    }
+
+    @TestMetadata("expectClassWithSecondaryConstructor2")
+    public void testExpectClassWithSecondaryConstructor2() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectClassWithSecondaryConstructor2/");
     }
 
     @TestMetadata("expectClassWithSupertype")
@@ -397,6 +417,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("expectInlineClass")
     public void testExpectInlineClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectInlineClass/");
+    }
+
+    @TestMetadata("expectInlineClass2")
+    public void testExpectInlineClass2() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectInlineClass2/");
+    }
+
+    @TestMetadata("expectInnerEnum")
+    public void testExpectInnerEnum() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectInnerEnum/");
     }
 
     @TestMetadata("expectNestedClass")

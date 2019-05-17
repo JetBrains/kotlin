@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
     declaration: D,
@@ -81,7 +82,9 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                 }
                 val reformatted = CodeStyleManager.getInstance(project).reformat(generatedDeclaration)
                 val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
-                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
+                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(
+                    (shortened as? KtNamedDeclaration)?.nameIdentifier?.startOffset ?: shortened.startOffset
+                )
             }
         }
     }

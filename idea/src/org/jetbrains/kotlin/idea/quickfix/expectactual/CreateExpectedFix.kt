@@ -6,20 +6,32 @@
 package org.jetbrains.kotlin.idea.quickfix.expectactual
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.ide.util.MemberChooser
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.implementedModules
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.core.overrideImplement.makeActual
+import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.hasInlineModifier
+import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -87,9 +99,103 @@ class CreateExpectedClassFix(
     klass: KtClassOrObject,
     outerExpectedClass: KtClassOrObject?,
     commonModule: Module
-) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, { project, element ->
+) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, element ->
+    val originalCollection = element.collectDeclarations(false).filter(KtDeclaration::canAddActualModifier).toList()
+    val collection = originalCollection.filterNot(KtDeclaration::isAlwaysActual)
+    val selectedElements = when {
+        ApplicationManager.getApplication().isUnitTestMode -> collection.filter { it.isEffectivelyActual(false) }
+        collection.any(KtDeclaration::hasActualModifier) && collection.any { !it.hasActualModifier() } -> {
+            val prefix = klass.fqName?.asString()?.plus(".") ?: ""
+            chooseMembers(project, collection, prefix) ?: return@block null
+        }
+        else -> null
+    }
+
+    project.executeWriteCommand("Repair actual members") {
+        repairActualModifiers(originalCollection, selectedElements)
+    }
+
     generateClassOrObject(project, true, element, listOfNotNull(outerExpectedClass))
 })
+
+private fun KtDeclaration.canAddActualModifier() = when (this) {
+    is KtEnumEntry -> false
+    is KtParameter -> this.hasValOrVar()
+    else -> true
+}
+
+/***
+ * @return null if close without OK
+ */
+private fun chooseMembers(project: Project, collection: Collection<KtDeclaration>, prefixToRemove: String): List<KtDeclaration>? {
+    val classMembers = collection.map { Member(prefixToRemove, it, it.resolveToDescriptorIfAny()!!) }
+    return MemberChooser(
+        classMembers.toTypedArray(),
+        true,
+        true,
+        project
+    ).run {
+        title = "Choose actual members"
+        setCopyJavadocVisible(false)
+        selectElements(classMembers.filter { (it.element as KtDeclaration).hasActualModifier() }.toTypedArray())
+        show()
+        if (!isOK) null else selectedElements?.map { it.element as KtDeclaration }.orEmpty()
+    }
+}
+
+private class Member(val prefix: String, element: KtElement, descriptor: DeclarationDescriptor) :
+    DescriptorMemberChooserObject(element, descriptor) {
+    override fun getText(): String {
+        val text = super.getText()
+        return if (descriptor is ClassDescriptor) text.removePrefix(prefix)
+        else text
+    }
+}
+
+private fun KtClassOrObject.collectDeclarations(withSelf: Boolean = true): Sequence<KtDeclaration> {
+    val thisSequence = if (withSelf) sequenceOf(this) else emptySequence()
+    val primaryConstructorSequence = primaryConstructorParameters.asSequence() + primaryConstructor.let {
+        if (it != null) sequenceOf(it) else emptySequence()
+    }
+    return thisSequence + primaryConstructorSequence + declarations.asSequence().flatMap {
+        if (it is KtClassOrObject) it.collectDeclarations() else sequenceOf(it)
+    }
+}
+
+private fun repairActualModifiers(
+    originalElements: Collection<KtDeclaration>,
+    // If null, all class declarations are actual
+    selectedElements: Collection<KtDeclaration>?
+) {
+    if (selectedElements == null)
+        for (original in originalElements) {
+            original.recursivelyMakeActual()
+        }
+    else
+        for (original in originalElements) {
+            if (original.isAlwaysActual() || original in selectedElements)
+                original.recursivelyMakeActual()
+            else
+                original.makeNotActual()
+        }
+}
+
+private tailrec fun KtDeclaration.recursivelyMakeActual() {
+    makeActual()
+    containingClassOrObject?.takeUnless(KtDeclaration::hasActualModifier)?.recursivelyMakeActual()
+}
+
+private fun KtDeclaration.isAlwaysActual(): Boolean {
+    val primaryConstructor = when (this) {
+        is KtPrimaryConstructor -> this
+        is KtParameter -> (parent as? KtParameterList)?.parent as? KtPrimaryConstructor
+        else -> null
+    } ?: return false
+
+    return primaryConstructor.containingClass()?.let {
+        it.isAnnotation() || it.hasInlineModifier()
+    } ?: false
+}
 
 class CreateExpectedPropertyFix(
     property: KtNamedDeclaration,

@@ -1,0 +1,4 @@
+// DISABLE-ERRORS
+expect class <caret>My(a: Int) {
+    val text: String
+}

@@ -387,7 +387,11 @@ fun generateUnsupportedOrSuperCall(
     }
 }
 
-fun KtNamedDeclaration.makeNotActual() {
+fun KtModifierListOwner.makeNotActual() {
     removeModifier(KtTokens.ACTUAL_KEYWORD)
     removeModifier(KtTokens.IMPL_KEYWORD)
+}
+
+fun KtModifierListOwner.makeActual() {
+    addModifier(KtTokens.ACTUAL_KEYWORD)
 }

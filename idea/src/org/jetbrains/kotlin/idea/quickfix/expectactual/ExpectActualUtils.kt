@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.hasDeclarationOf
+import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -172,7 +173,7 @@ internal fun KtPsiFactory.generateClassOrObject(
     }
     declLoop@ for (originalDeclaration in originalClass.declarations.filter { !it.exists() }) {
         val descriptor = originalDeclaration.toDescriptor() ?: continue
-        if (generateExpectClass && !originalDeclaration.isEffectivelyActual()) continue
+        if (generateExpectClass && !originalDeclaration.isEffectivelyActual(false)) continue
         val generatedDeclaration: KtDeclaration = when (originalDeclaration) {
             is KtClassOrObject -> {
                 generateClassOrObject(project, generateExpectClass, originalDeclaration, outerClasses + generatedClass)
@@ -192,7 +193,7 @@ internal fun KtPsiFactory.generateClassOrObject(
         }
         generatedClass.addDeclaration(generatedDeclaration)
     }
-    if (!originalClass.isAnnotation()) {
+    if (!originalClass.isAnnotation() && !originalClass.hasInlineModifier()) {
         for (originalProperty in originalClass.primaryConstructorParameters) {
             if (!originalProperty.hasValOrVar() || !originalProperty.hasActualModifier()) continue
             val descriptor = originalProperty.toDescriptor() as? PropertyDescriptor ?: continue
@@ -203,7 +204,12 @@ internal fun KtPsiFactory.generateClassOrObject(
         }
     }
     val originalPrimaryConstructor = originalClass.primaryConstructor
-    if (generatedClass is KtClass && originalPrimaryConstructor != null && !originalPrimaryConstructor.exists()) {
+    if (
+        generatedClass is KtClass
+        && originalPrimaryConstructor != null
+        && (!generateExpectClass || originalClass.hasInlineModifier() || originalPrimaryConstructor.hasActualModifier())
+        && !originalPrimaryConstructor.exists()
+    ) {
         val descriptor = originalPrimaryConstructor.toDescriptor()
         if (descriptor is FunctionDescriptor) {
             val expectedPrimaryConstructor = generateFunction(
