@@ -25,11 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-// TODO: synchronize with JVM BE
-// TODO: rename the file.
 class Closure(val capturedValues: List<IrValueSymbol> = emptyList())
 
 class ClosureAnnotator(declaration: IrDeclaration) {
