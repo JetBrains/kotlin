@@ -51,4 +51,14 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         nodejs.body()
     }
+
+    fun useCommonJs() {
+        compilations.all {
+            it.compileKotlinTask.kotlinOptions {
+                moduleKind = "commonjs"
+                sourceMap = true
+                sourceMapEmbedSources = null
+            }
+        }
+    }
 }
