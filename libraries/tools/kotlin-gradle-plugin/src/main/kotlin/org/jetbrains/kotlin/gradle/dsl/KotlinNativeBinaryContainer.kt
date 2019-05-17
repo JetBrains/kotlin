@@ -32,6 +32,9 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     private val defaultCompilation: KotlinNativeCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
+    private val defaultTestCompilation: KotlinNativeCompilation
+        get() = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
+
     private val nameToBinary = mutableMapOf<String, NativeBinary>()
     internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = project.container(PrefixGroup::class.java)
 
@@ -69,8 +72,16 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     override fun getByName(name: String): NativeBinary = nameToBinary.getValue(name)
     override fun findByName(name: String): NativeBinary? = nameToBinary[name]
 
-    override fun getExecutable(namePrefix: String, buildType: NativeBuildType): Executable =
-        getBinary(namePrefix, buildType, NativeOutputKind.EXECUTABLE)
+    private fun checkDeprecatedTestAccess(namePrefix: String, buildType: NativeBuildType, warning: String) {
+        if (namePrefix == DEFAULT_TEST_NAME_PREFIX && buildType == DEFAULT_TEST_BUILD_TYPE) {
+            project.logger.warn(warning)
+        }
+    }
+
+    override fun getExecutable(namePrefix: String, buildType: NativeBuildType): Executable {
+        checkDeprecatedTestAccess(namePrefix, buildType, GET_TEST_DEPRECATION_WARNING)
+        return getBinary(namePrefix, buildType, NativeOutputKind.EXECUTABLE)
+    }
 
     override fun getStaticLib(namePrefix: String, buildType: NativeBuildType): StaticLibrary =
         getBinary(namePrefix, buildType, NativeOutputKind.STATIC)
@@ -81,9 +92,13 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     override fun getFramework(namePrefix: String, buildType: NativeBuildType): Framework =
         getBinary(namePrefix, buildType, NativeOutputKind.FRAMEWORK)
 
+    override fun getTest(namePrefix: String, buildType: NativeBuildType): Test =
+        getBinary(namePrefix, buildType, NativeOutputKind.TEST)
 
-    override fun findExecutable(namePrefix: String, buildType: NativeBuildType): Executable? =
-        findBinary(namePrefix, buildType, NativeOutputKind.EXECUTABLE)
+    override fun findExecutable(namePrefix: String, buildType: NativeBuildType): Executable? {
+        checkDeprecatedTestAccess(namePrefix, buildType, FIND_TEST_DEPRECATED_WARNING)
+        return findBinary(namePrefix, buildType, NativeOutputKind.EXECUTABLE)
+    }
 
     override fun findStaticLib(namePrefix: String, buildType: NativeBuildType): StaticLibrary? =
         findBinary(namePrefix, buildType, NativeOutputKind.STATIC)
@@ -93,6 +108,9 @@ open class KotlinNativeBinaryContainer @Inject constructor(
 
     override fun findFramework(namePrefix: String, buildType: NativeBuildType): Framework? =
         findBinary(namePrefix, buildType, NativeOutputKind.FRAMEWORK)
+
+    override fun findTest(namePrefix: String, buildType: NativeBuildType): Test? =
+        findBinary(namePrefix, buildType, NativeOutputKind.TEST)
     // endregion.
 
     // region Factories
@@ -119,7 +137,8 @@ open class KotlinNativeBinaryContainer @Inject constructor(
                 "Cannot create ${outputKind.description}: $name. Binaries of this kind are not available for target ${target.name}"
             }
 
-            val binary = create(name, baseName, buildType, defaultCompilation)
+            val compilation = if (outputKind == NativeOutputKind.TEST) defaultTestCompilation else defaultCompilation
+            val binary = create(name, baseName, buildType, compilation)
             add(binary)
             prefixGroup.binaries.add(binary)
             nameToBinary[binary.name] = binary
@@ -131,28 +150,31 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         }
     }
 
-    internal fun defaultTestExecutable(
-        configure: Executable.() -> Unit
-    ) = createBinaries(
-        DEFAULT_TEST_NAME_PREFIX,
-        "test",
-        NativeOutputKind.EXECUTABLE,
-        listOf(DEFAULT_TEST_BUILD_TYPE),
-        { name, baseName, buildType, compilation ->
-            Executable(name, baseName, buildType, compilation, true)
-        },
-        configure
-    )
-
-    internal fun getDefaultTestExecutable(): Executable =
-        getExecutable(DEFAULT_TEST_NAME_PREFIX, DEFAULT_TEST_BUILD_TYPE)
-
     companion object {
         internal val DEFAULT_TEST_BUILD_TYPE = NativeBuildType.DEBUG
         internal val DEFAULT_TEST_NAME_PREFIX = "test"
 
         internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
             lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
+
+        // TODO: Remove in 1.3.50.
+        private val GET_TEST_DEPRECATION_WARNING = """
+            |
+            |Probably you are accessing the default test binary using the 'binaries.getExecutable("$DEFAULT_TEST_NAME_PREFIX", ${DEFAULT_TEST_BUILD_TYPE.name})' method.
+            |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
+            |
+            |    binaries.getTest(DEBUG)
+            |
+            """.trimMargin()
+
+        private val FIND_TEST_DEPRECATED_WARNING = """
+            |
+            |Probably you are accessing the default test binary using the 'binaries.findExecutable("$DEFAULT_TEST_NAME_PREFIX", ${DEFAULT_TEST_BUILD_TYPE.name})' method.
+            |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
+            |
+            |    binaries.findTest(DEBUG)
+            |
+            """.trimMargin()
     }
     // endregion.
 

@@ -12,10 +12,8 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.tasks.AbstractExecTask
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -83,19 +81,19 @@ sealed class NativeBinary(
     override fun getName(): String = name
 }
 
+abstract class AbstractExecutable(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : NativeBinary(name, baseName, buildType, compilation)
+
 class Executable constructor(
     name: String,
     baseName: String,
     buildType: NativeBuildType,
-    compilation: KotlinNativeCompilation,
-    internal val isDefaultTestExecutable: Boolean
-) : NativeBinary(name, baseName, buildType, compilation) {
-
-    constructor(
-        name: String,
-        baseName: String,
-        buildType: NativeBuildType,
-        compilation: KotlinNativeCompilation) : this(name, baseName, buildType, compilation, false)
+    compilation: KotlinNativeCompilation
+) : AbstractExecutable(name, baseName, buildType, compilation) {
 
     override val outputKind: NativeOutputKind
         get() = NativeOutputKind.EXECUTABLE
@@ -114,20 +112,14 @@ class Executable constructor(
     }
 
     /**
-     * A name of task running this executable.
+     * A name of a task running this executable.
      * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
      */
     val runTaskName: String?
-        get() {
-            if (target.konanTarget !in listOf(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
-                return null
-            }
-
-            return if (isDefaultTestExecutable) {
-                lowerCamelCaseName(compilation.target.targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
-            } else {
-                lowerCamelCaseName("run", name, compilation.target.targetName)
-            }
+        get() = if (target.konanTarget in listOf(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
+            lowerCamelCaseName("run", name, compilation.target.targetName)
+        } else {
+            null
         }
 
     /**
@@ -136,6 +128,17 @@ class Executable constructor(
      */
     val runTask: AbstractExecTask<*>?
         get() = runTaskName?.let { project.tasks.getByName(it) as AbstractExecTask<*> }
+}
+
+class Test(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractExecutable(name, baseName, buildType, compilation) {
+
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.TEST
 }
 
 class StaticLibrary(

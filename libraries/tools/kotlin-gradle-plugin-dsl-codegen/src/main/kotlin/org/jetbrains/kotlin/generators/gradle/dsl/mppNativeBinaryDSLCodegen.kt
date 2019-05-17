@@ -17,17 +17,25 @@ internal data class BinaryType(
     val nativeOutputKind: TypeName,
     val factoryMethod: String,
     val getMethod: String,
-    val findMethod: String
+    val findMethod: String,
+    val defaultBaseName: String
 )
 
-private fun binaryType(description: String, className: String, outputKind: String, baseMethodName: String) =
+private fun binaryType(
+    description: String,
+    className: String,
+    outputKind: String,
+    baseMethodName: String,
+    defaultBaseName: String = "project.name"
+) =
     BinaryType(
         description,
         typeName("$MPP_PACKAGE.$className"),
         typeName("${nativeOutputKindClass.fqName}.$outputKind"),
         baseMethodName,
         "get${baseMethodName.capitalize()}",
-        "find${baseMethodName.capitalize()}"
+        "find${baseMethodName.capitalize()}",
+        defaultBaseName
     )
 
 private val nativeBuildTypeClass = typeName("$MPP_PACKAGE.NativeBuildType")
@@ -41,6 +49,7 @@ private fun generateFactoryMethods(binaryType: BinaryType): String {
     val nativeBuildType = nativeBuildTypeClass.renderShort()
     val methodName = binaryType.factoryMethod
     val binaryDescription = binaryType.description
+    val defaultBaseName = binaryType.defaultBaseName
 
     return """
         /** Creates $binaryDescription with the given [namePrefix] for each build type and configures it. */
@@ -56,7 +65,7 @@ private fun generateFactoryMethods(binaryType: BinaryType): String {
         fun $methodName(
             buildTypes: Collection<$nativeBuildType> = $nativeBuildType.DEFAULT_BUILD_TYPES,
             configure: $className.() -> Unit = {}
-        ) = createBinaries("", project.name, $outputKindClass.$outputKind, buildTypes, ::$className, configure)
+        ) = createBinaries("", $defaultBaseName, $outputKindClass.$outputKind, buildTypes, ::$className, configure)
 
         /** Creates $binaryDescription with the given [namePrefix] for each build type and configures it. */
         @JvmOverloads
@@ -115,7 +124,14 @@ fun generateAbstractKotlinNativeBinaryContainer() {
         binaryType("an executable","Executable", "EXECUTABLE", "executable"),
         binaryType("a static library","StaticLibrary", "STATIC", "staticLib"),
         binaryType("a shared library","SharedLibrary", "DYNAMIC", "sharedLib"),
-        binaryType("an Objective-C framework","Framework", "FRAMEWORK", "framework")
+        binaryType("an Objective-C framework","Framework", "FRAMEWORK", "framework"),
+        binaryType(
+            "a test executable",
+            "Test",
+            "TEST",
+            "test",
+            defaultBaseName = "\"test\""
+        )
     )
 
     val className = typeName("org.jetbrains.kotlin.gradle.dsl.AbstractKotlinNativeBinaryContainer")

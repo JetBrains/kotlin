@@ -942,7 +942,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             "fooReleaseExecutable" to "foo",
             "barReleaseExecutable" to "bar",
             "bazReleaseExecutable" to "my-baz",
-            "testDebugExecutable" to "test",
             "test2ReleaseExecutable" to "test2",
             "releaseStatic" to "native_binary",
             "releaseShared" to "native_binary"
@@ -1136,18 +1135,72 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testNativeTests() = with(Project("new-mpp-native-tests", gradleVersion)) {
         val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test")
         val hostTestTask = "${nativeHostTargetName}Test"
+
+        val suffix = if (isWindows) "exe" else "kexe"
+
+        val defaultOutputFile = "build/bin/$nativeHostTargetName/debugTest/test.$suffix"
+        val anotherOutputFile = "build/bin/$nativeHostTargetName/anotherDebugTest/another.$suffix"
+
         build("tasks") {
             assertSuccessful()
-            println(output)
             testTasks.forEach {
                 // We need to create tasks for all hosts
                 assertTrue(output.contains("$it - "), "There is no test task '$it' in the task list.")
             }
         }
+
+        // Check that tests are not built during the ":assemble" execution
+        build("assemble") {
+            assertSuccessful()
+            assertNoSuchFile(defaultOutputFile)
+            assertNoSuchFile(anotherOutputFile)
+        }
+
         build("check") {
             assertSuccessful()
             assertTasksExecuted(":$hostTestTask")
+            assertFileExists(defaultOutputFile)
             assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", hostTestTask)
+        }
+
+        build("linkAnotherDebugTest${nativeHostTargetName}") {
+            assertSuccessful()
+            assertFileExists(anotherOutputFile)
+        }
+
+        // Check that test binaries can be accessed in a buildscript.
+        build("checkNewGetters") {
+            assertSuccessful()
+            listOf("test.$suffix", "another.$suffix").forEach {
+                assertContains("Get test: $it")
+                assertContains("Find test: $it")
+            }
+        }
+
+        // Check that accessing a test as an executable fails or returns null and shows the corresponding warning.
+        build("checkOldGet") {
+            assertFailed()
+            assertContains(
+                """
+                    |Probably you are accessing the default test binary using the 'binaries.getExecutable("test", DEBUG)' method.
+                    |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
+                    |
+                    |    binaries.getTest(DEBUG)
+                """.trimMargin()
+            )
+        }
+
+        build("checkOldFind") {
+            assertSuccessful()
+            assertContains(
+                """
+                    |Probably you are accessing the default test binary using the 'binaries.findExecutable("test", DEBUG)' method.
+                    |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
+                    |
+                    |    binaries.findTest(DEBUG)
+                """.trimMargin()
+            )
+            assertContains("Find test: null")
         }
     }
 

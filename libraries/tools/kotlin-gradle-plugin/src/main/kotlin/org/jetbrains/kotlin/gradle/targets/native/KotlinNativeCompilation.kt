@@ -42,8 +42,6 @@ class KotlinNativeCompilation(
     // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
     internal val commonSources: MutableSet<SourceDirectorySet> = mutableSetOf()
 
-    var isTestCompilation = false
-
     var friendCompilationName: String? = null
 
     internal val friendCompilation: KotlinNativeCompilation?
