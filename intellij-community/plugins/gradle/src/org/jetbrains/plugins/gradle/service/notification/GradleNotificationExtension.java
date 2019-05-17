@@ -15,8 +15,6 @@
  */
 package org.jetbrains.plugins.gradle.service.notification;
 
-import com.intellij.build.issue.BuildIssue;
-import com.intellij.build.issue.BuildIssueQuickFix;
 import com.intellij.execution.rmi.RemoteUtil;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.externalSystem.model.LocationAwareExternalSystemException;
@@ -27,7 +25,6 @@ import com.intellij.openapi.externalSystem.service.notification.callback.OpenExt
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.issue.BuildIssueException;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.ObjectStreamException;
@@ -53,9 +50,6 @@ public class GradleNotificationExtension implements ExternalSystemNotificationEx
     if (unwrapped.getCause() instanceof ObjectStreamException) {
       // gradle tooling internal serialization issues
       return true;
-    }
-    if (unwrapped instanceof BuildIssueException) {
-      return false;
     }
     if (unwrapped instanceof ExternalSystemException) {
       Throwable cause = unwrapped.getCause();
@@ -84,13 +78,6 @@ public class GradleNotificationExtension implements ExternalSystemNotificationEx
   protected void updateNotification(@NotNull final NotificationData notificationData,
                                     @NotNull final Project project,
                                     @NotNull ExternalSystemException e) {
-    if(e instanceof BuildIssueException) {
-      BuildIssue buildIssue = ((BuildIssueException)e).getBuildIssue();
-      for (BuildIssueQuickFix quickFix : buildIssue.getQuickFixes()) {
-        notificationData.setListener(quickFix.getId(), (notification, event) -> quickFix.runQuickFix(project));
-      }
-      return;
-    }
     for (String fix : e.getQuickFixes()) {
       if (OpenGradleSettingsCallback.ID.equals(fix)) {
         notificationData.setListener(OpenGradleSettingsCallback.ID, new OpenGradleSettingsCallback(project));
