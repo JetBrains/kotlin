@@ -21,7 +21,6 @@ class KotlinNativeCompilationFactory(
         KotlinNativeCompilation(target, name).apply {
             if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 friendCompilationName = KotlinCompilation.MAIN_COMPILATION_NAME
-                isTestCompilation = true
             }
         }
 }

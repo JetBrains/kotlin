@@ -53,6 +53,7 @@ kotlin {
 
                 executable("test2", [RELEASE]) {
                     compilation = compilations["test"]
+                    freeCompilerArgs.add("-tr")
                 }
 
                 sharedLib([RELEASE])

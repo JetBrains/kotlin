@@ -32,6 +32,11 @@ enum class NativeOutputKind(
         "executable",
         description = "an executable"
     ),
+    TEST(
+        CompilerOutputKind.PROGRAM,
+        "test",
+        description = "a test executable"
+    ),
     DYNAMIC(
         CompilerOutputKind.DYNAMIC,
         "shared",

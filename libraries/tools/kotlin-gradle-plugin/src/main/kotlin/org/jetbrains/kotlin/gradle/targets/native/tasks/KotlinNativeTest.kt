@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
+import groovy.lang.Closure
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
@@ -19,31 +21,63 @@ import java.io.File
 
 open class KotlinNativeTest : KotlinTest() {
     @Suppress("LeakingThis")
-    @Internal
-    val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
+    private val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
 
+    @InputFile
+    @SkipWhenEmpty
+    val executableProperty: Property<File> = project.objects.property(File::class.java)
+
+    @Input
+    var args: List<String> = emptyList()
+
+    // Already taken into account in the executableProperty.
+    @get:Internal
     var executable: File
-        @InputFile
-        @SkipWhenEmpty
-        get() = File(processOptions.executable)
+        get() = executableProperty.get()
         set(value) {
-            processOptions.executable = value.absolutePath
+            executableProperty.set(value)
         }
 
+    @get:Input
     var workingDir: String
-        @Input get() = processOptions.workingDir.canonicalPath
+        get() = processOptions.workingDir.canonicalPath
         set(value) {
             processOptions.workingDir = File(value)
         }
 
-    @Suppress("unused")
-    fun processOptions(options: ProcessForkOptions.() -> Unit) {
-        options(processOptions)
+    @get:Input
+    var environment: Map<String, Any>
+        get() = processOptions.environment
+        set(value) {
+            processOptions.environment = value
+        }
+
+    private fun <T> Property<T>.set(providerLambda: () -> T) = set(project.provider { providerLambda() })
+
+    fun executable(file: File) {
+        executableProperty.set(file)
+    }
+
+    fun executable(path: String) {
+        executableProperty.set { project.file(path) }
+    }
+
+    fun executable(provider: () -> File) {
+        executableProperty.set(provider)
+    }
+
+    fun executable(provider: Closure<File>) {
+        executableProperty.set(project.provider(provider))
+    }
+
+    fun environment(name: String, value: Any) {
+        processOptions.environment(name, value)
     }
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
         processOptions.copyTo(extendedForkOptions)
+        extendedForkOptions.executable = executable.absolutePath
 
         val clientSettings = TCServiceMessagesClientSettings(
             name,
@@ -53,7 +87,7 @@ open class KotlinNativeTest : KotlinTest() {
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm
         )
 
-        val cliArgs = CliArgs("TEAMCITY", includePatterns, excludePatterns)
+        val cliArgs = CliArgs("TEAMCITY", includePatterns, excludePatterns, args)
 
         return TCServiceMessagesTestExecutionSpec(
             extendedForkOptions,
@@ -66,7 +100,8 @@ open class KotlinNativeTest : KotlinTest() {
     private class CliArgs(
         val testLogger: String? = null,
         val testGradleFilter: Set<String> = setOf(),
-        val testNegativeGradleFilter: Set<String> = setOf()
+        val testNegativeGradleFilter: Set<String> = setOf(),
+        val userArgs: List<String> = emptyList()
     ) {
         fun toList() = mutableListOf<String>().also {
             if (testLogger != null) {
@@ -80,6 +115,8 @@ open class KotlinNativeTest : KotlinTest() {
             if (testNegativeGradleFilter.isNotEmpty()) {
                 it.add("--ktest_negative_gradle_filter=${testNegativeGradleFilter.joinToString(",")}")
             }
+
+            it.addAll(userArgs)
         }
     }
 }

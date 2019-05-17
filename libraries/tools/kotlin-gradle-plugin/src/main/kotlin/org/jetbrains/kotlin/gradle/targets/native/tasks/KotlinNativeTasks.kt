@@ -126,9 +126,6 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
         throw UnsupportedOperationException("Setting classpath directly is unsupported.")
     }
 
-    val processTests
-        @Input get() = compilation.isTestCompilation
-
     val target: String
         @Input get() = compilation.target.konanTarget.name
 
@@ -273,7 +270,6 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
         addKey("-opt", optimized)
         addKey("-g", debuggable)
         addKey("-ea", debuggable)
-        addKey("-tr", processTests)
 
         addArg("-target", target)
         addArg("-p", outputKind.name.toLowerCase())
@@ -366,6 +362,10 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
     val linkerOpts: List<String>
         get() = binary.linkerOpts
 
+    @get:Input
+    val processTests: Boolean
+        get() = binary is Test
+
     @get:InputFiles
     val exportLibraries: FileCollection
         get() = binary.let {
@@ -392,6 +392,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
         val superArgs = super.buildArgs(defaultsOnly)
         return mutableListOf<String>().apply {
             addAll(superArgs)
+            addKey("-tr", processTests)
             addArgIfNotNull("-entry", entryPoint)
             when (embedBitcode) {
                 Framework.BitcodeEmbeddingMode.MARKER -> add("-Xembed-bitcode-marker")

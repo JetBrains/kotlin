@@ -24,5 +24,56 @@ kotlin {
         fromPreset(presets.macosX64, 'macos64')
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
+
+        configure([macos64, linux64, mingw64]) {
+            compilations.create("anotherTest")
+            binaries {
+                test("another", [DEBUG]) {
+                    compilation = compilations.anotherTest
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        anotherTest
+        macos64AnotherTest.dependsOn(anotherTest)
+        linux64AnotherTest.dependsOn(anotherTest)
+        mingw64AnotherTest.dependsOn(anotherTest)
+    }
+}
+
+// Check that getting a test binary in an old way fails showing the corresponding warning
+task checkOldGet {
+    doLast {
+        kotlin.targets {
+            configure([macos64, linux64, mingw64]) {
+                println("Get test: ${binaries.getExecutable("test", DEBUG)}")
+            }
+        }
+    }
+}
+
+// Check that finding a test binary in an old way returns null showing the corresponding warning.
+task checkOldFind {
+    doLast {
+        kotlin.targets {
+            configure([macos64, linux64, mingw64]) {
+                println("Find test: ${binaries.findExecutable("test", DEBUG)}")
+            }
+        }
+    }
+}
+
+task checkNewGetters {
+    doLast {
+        kotlin.targets {
+            configure([macos64, linux64, mingw64]) {
+                println("Get test: ${binaries.getTest(DEBUG).outputFile.name}")
+                println("Find test: ${binaries.findTest(DEBUG).outputFile.name}")
+                println("Get test: ${binaries.getTest("another", DEBUG).outputFile.name}")
+                println("Find test: ${binaries.findTest("another", DEBUG).outputFile.name}")
+            }
+        }
     }
 }

@@ -142,6 +142,32 @@ abstract class AbstractKotlinNativeBinaryContainer : DomainObjectSet<NativeBinar
     /** Returns an Objective-C framework with the empty name prefix and the given build type. Returns null if there is no such binary. */
     fun findFramework(buildType: String): Framework? = findFramework("", buildType)
 
+    /** Returns a test executable with the given [namePrefix] and the given build type. Throws an exception if there is no such binary.*/
+    abstract fun getTest(namePrefix: String, buildType: NativeBuildType): Test
+
+    /** Returns a test executable with the given [namePrefix] and the given build type. Throws an exception if there is no such binary.*/
+    fun getTest(namePrefix: String, buildType: String): Test =
+        getTest(namePrefix, NativeBuildType.valueOf(buildType.toUpperCase()))
+
+    /** Returns a test executable with the empty name prefix and the given build type. Throws an exception if there is no such binary.*/
+    fun getTest(buildType: NativeBuildType): Test = getTest("", buildType)
+
+    /** Returns a test executable with the empty name prefix and the given build type. Throws an exception if there is no such binary.*/
+    fun getTest(buildType: String): Test =  getTest("", buildType)
+
+    /** Returns a test executable with the given [namePrefix] and the given build type. Returns null if there is no such binary. */
+    abstract fun findTest(namePrefix: String, buildType: NativeBuildType): Test?
+
+    /** Returns a test executable with the given [namePrefix] and the given build type. Returns null if there is no such binary. */
+    fun findTest(namePrefix: String, buildType: String): Test? =
+        findTest(namePrefix, NativeBuildType.valueOf(buildType.toUpperCase()))
+
+    /** Returns a test executable with the empty name prefix and the given build type. Returns null if there is no such binary. */
+    fun findTest(buildType: NativeBuildType): Test? = findTest("", buildType)
+
+    /** Returns a test executable with the empty name prefix and the given build type. Returns null if there is no such binary. */
+    fun findTest(buildType: String): Test? = findTest("", buildType)
+
     /** Creates an executable with the given [namePrefix] for each build type and configures it. */
     @JvmOverloads
     fun executable(
@@ -261,5 +287,35 @@ abstract class AbstractKotlinNativeBinaryContainer : DomainObjectSet<NativeBinar
         buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
         configureClosure: Closure<*>
     ) = framework(buildTypes) { ConfigureUtil.configure(configureClosure, this) }
+
+    /** Creates a test executable with the given [namePrefix] for each build type and configures it. */
+    @JvmOverloads
+    fun test(
+        namePrefix: String,
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configure: Test.() -> Unit = {}
+    ) = createBinaries(namePrefix, namePrefix, NativeOutputKind.TEST, buildTypes, ::Test, configure)
+
+    /** Creates a test executable with the empty name prefix for each build type and configures it. */
+    @JvmOverloads
+    fun test(
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configure: Test.() -> Unit = {}
+    ) = createBinaries("", "test", NativeOutputKind.TEST, buildTypes, ::Test, configure)
+
+    /** Creates a test executable with the given [namePrefix] for each build type and configures it. */
+    @JvmOverloads
+    fun test(
+        namePrefix: String,
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configureClosure: Closure<*>
+    ) = test(namePrefix, buildTypes) { ConfigureUtil.configure(configureClosure, this) }
+
+    /** Creates a test executable with the default name prefix for each build type and configures it. */
+    @JvmOverloads
+    fun test(
+        buildTypes: Collection<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES,
+        configureClosure: Closure<*>
+    ) = test(buildTypes) { ConfigureUtil.configure(configureClosure, this) }
 
 }
