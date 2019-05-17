@@ -3,46 +3,40 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress(
-    "JSAnnotator",
-    "NodeJsCodingAssistanceForCoreModules",
-    "BadExpressionStatementJS",
-    "JSUnresolvedFunction"
-)
-
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import org.gradle.process.ExecResult
+import org.gradle.process.ExecSpec
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
 import java.io.File
 
-internal class KotlinWebpackRunner(
+internal data class KotlinWebpackRunner(
     val npmProject: NpmProject,
     val configFile: File,
     val execHandleFactory: ExecHandleFactory,
     val bin: String,
     val configWriter: KotlinWebpackConfigWriter
 ) {
-    fun execute(): ExecResult {
-        val exec = start()
-        val result = exec.waitForFinish()
-        check(result.exitValue == 0) {
-            "Webpack exited with non zero exit code (${result.exitValue})"
-        }
-        return result
+    fun execute() = npmProject.project.execWithProgress("webpack") {
+        configureExec(it)
     }
 
     fun start(): ExecHandle {
+        val execFactory = execHandleFactory.newExec()
+        configureExec(execFactory)
+        val exec = execFactory.build()
+        exec.start()
+        return exec
+    }
+
+    private fun configureExec(execFactory: ExecSpec) {
         check(configWriter.entry?.isFile == true) {
             "${this}: Entry file not existed \"${configWriter.entry}\""
         }
 
         configWriter.save(configFile)
-
-        val execFactory = execHandleFactory.newExec()
 
         val args = mutableListOf<String>("--config", configFile.absolutePath)
         if (configWriter.showProgress) {
@@ -50,8 +44,5 @@ internal class KotlinWebpackRunner(
         }
 
         npmProject.useTool(execFactory, ".bin/$bin", *args.toTypedArray())
-        val exec = execFactory.build()
-        exec.start()
-        return exec
     }
 }
