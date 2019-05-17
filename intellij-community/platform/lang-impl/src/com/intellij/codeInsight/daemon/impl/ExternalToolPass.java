@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
@@ -48,12 +46,12 @@ public class ExternalToolPass extends ProgressableTextEditorHighlightingPass {
   private final List<MyData> myAnnotationData = new ArrayList<>();
 
   private static class MyData {
-    private final ExternalAnnotator annotator;
-    private final PsiFile psiRoot;
-    private final Object collectedInfo;
-    private volatile Object annotationResult;
+    final ExternalAnnotator annotator;
+    final PsiFile psiRoot;
+    final Object collectedInfo;
+    volatile Object annotationResult;
 
-    private MyData(ExternalAnnotator annotator, PsiFile psiRoot, Object collectedInfo) {
+    MyData(ExternalAnnotator annotator, PsiFile psiRoot, Object collectedInfo) {
       this.annotator = annotator;
       this.psiRoot = psiRoot;
       this.collectedInfo = collectedInfo;
