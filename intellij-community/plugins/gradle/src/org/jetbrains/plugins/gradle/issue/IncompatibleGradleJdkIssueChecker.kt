@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.issue
 
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.util.PlatformUtils.getPlatformPrefix
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
@@ -48,12 +49,13 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
     val gradleVersionString = if (gradleVersionUsed != null) gradleVersionUsed.version else "version"
     if (isToolingClientIssue) {
       issueDescription.append(
-        "\n\nThe project uses Gradle $gradleVersionString which is incompatible with IDE running under Java 10 or newer.")
+        "\n\nThe project uses Gradle $gradleVersionString which is incompatible with " +
+        "${ApplicationNamesInfo.getInstance().productName} running on Java 10 or newer.")
     }
     else {
       issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer.")
     }
-    issueDescription.append("\nYou can:\n")
+    issueDescription.append("\nPossible solution:\n")
     val wrapperPropertiesFile = GradleUtil.findDefaultWrapperPropertiesFile(issueData.projectPath)
     if (wrapperPropertiesFile == null || isToolingClientIssue || gradleVersionUsed != null && gradleVersionUsed.baseVersion < gradleMinimumVersionRequired) {
       val gradleVersionFix = GradleVersionQuickFix(issueData.projectPath, gradleMinimumVersionRequired, true)
