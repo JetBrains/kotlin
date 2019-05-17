@@ -28,7 +28,7 @@ kotlinDslPluginOptions {
 }
 
 rootProject.apply {
-    from(rootProject.file("../versions.gradle.kts"))
+    from(rootProject.file("../gradle/cidrPluginProperties.gradle.kts"))
 }
 
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true

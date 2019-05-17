@@ -41,8 +41,7 @@ plugins {
 }
 
 rootProject.apply {
-    // include 'versions.gradle.kts' relative to 'kotlin-ultimate' project root
-    from(project.file("versions.gradle.kts"))
+    from(project.file("gradle/cidrPluginProperties.gradle.kts")) // this one must go the first
 }
 
 tasks["clean"].doLast { delete("dist") }
