@@ -54,7 +54,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var saveEvaluatedConfigFile: Boolean = true
 
     open val outputPath: File
-        @OutputDirectory get() = project.buildDir.resolve("lib")
+        @OutputDirectory get() = project.buildDir.resolve("libs")
 
     open val configDirectory: File?
         @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
@@ -98,7 +98,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         }
 
     private fun createRunner() = KotlinWebpackRunner(
-        compilation!!.npmProject,
+        compilation.npmProject,
         configFile,
         execHandleFactory,
         bin,
@@ -121,13 +121,20 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         val runner = createRunner()
 
         if (project.gradle.startParameter.isContinuous) {
+            val continuousRunner = runner
+
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
             val deploymentHandle = deploymentRegistry.get("webpack", Handle::class.java)
             if (deploymentHandle == null) {
-                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner)
+                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, continuousRunner)
             }
         } else {
-            runner.execute()
+            runner.copy(
+                configWriter = runner.configWriter.copy(
+                    progressReporter = true,
+                    progressReporterPathFilter = project.nodeJs.root.rootPackageDir.absolutePath
+                )
+            ).execute()
         }
     }
 

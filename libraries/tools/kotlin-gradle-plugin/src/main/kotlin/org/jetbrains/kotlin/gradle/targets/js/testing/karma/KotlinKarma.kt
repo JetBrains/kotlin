@@ -114,7 +114,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             KotlinWebpackConfigWriter(
                 configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
                 sourceMaps = true,
-                export = false
+                export = false,
+                progressReporter = true,
+                progressReporterPathFilter = project.nodeJs.root.rootPackageDir.absolutePath
             ).appendTo(it)
 
             it.appendln("   return config;")

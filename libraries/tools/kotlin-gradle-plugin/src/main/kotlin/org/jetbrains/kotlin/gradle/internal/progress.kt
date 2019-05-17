@@ -10,17 +10,17 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.logging.events.ProgressStartEvent
 import org.gradle.internal.logging.progress.ProgressLogger
 
-fun Project.operation(
+fun <T> Project.operation(
     description: String,
     initialStatus: String? = null,
-    body: ProgressLogger.() -> Unit
-) {
+    body: ProgressLogger.() -> T
+): T {
     val services = (project as ProjectInternal).services
     val progressFactory = services.get(org.gradle.internal.logging.progress.ProgressLoggerFactory::class.java)
     val operation = progressFactory.newOperation(ProgressStartEvent.BUILD_OP_CATEGORY)
     operation.start(description, initialStatus)
     try {
-        operation.body()
+        return operation.body()
     } finally {
         operation.completed()
     }
