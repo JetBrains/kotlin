@@ -79,6 +79,7 @@ private fun KtExpression.isValidCandidateExpression(): Boolean {
     if (this is KtOperationReferenceExpression || this is KtForExpression || this is KtProperty || this is KtNameReferenceExpression) return true
     val parent = parent
     if (parent is KtCallExpression && parent.calleeExpression == this) return true
+    if (this is KtCallExpression && this.calleeExpression is KtCallExpression) return true
     return false
 }
 
