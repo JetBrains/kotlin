@@ -27,9 +27,8 @@ public class RestoreViewAction extends DumbAwareToggleAction {
   private final RunnerContentUi myUi;
   private final Content myContent;
 
-  private boolean myAlert;
-
-  public RestoreViewAction(final Content content, CellTransform.Restore restore) {
+  public RestoreViewAction(@NotNull RunnerContentUi ui, @NotNull Content content) {
+    myUi = ui;
     myContent = content;
   }
 

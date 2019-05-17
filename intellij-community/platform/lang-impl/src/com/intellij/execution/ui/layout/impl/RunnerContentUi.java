@@ -11,7 +11,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.CloseAction;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.AbstractPainter;
 import com.intellij.openapi.ui.OnePixelDivider;
@@ -98,7 +98,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
   private ActionGroup myTopActions = new DefaultActionGroup();
 
-  private final DefaultActionGroup myMinimizedViewActions = new DefaultActionGroup();
+  private final DefaultActionGroup myViewActions = new DefaultActionGroup();
 
   private final Map<GridImpl, Wrapper> myMinimizedButtonsPlaceholder = new HashMap<>();
   private final Map<GridImpl, Wrapper> myCommonActionsPlaceholder = new HashMap<>();
@@ -299,6 +299,8 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
         dockManager.register(this);
       }
     }
+    myViewActions.addAction(ActionManager.getInstance().getAction("Runner.RestoreLayout")).setAsSecondary(true);
+    myViewActions.addAction(new Separator()).setAsSecondary(true);
   }
 
   private void rebuildTabPopup() {
@@ -656,22 +658,43 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
         event.getContent().addPropertyChangeListener(RunnerContentUi.this);
         fireContentOpened(event.getContent());
+
+        AnAction[] actions = myViewActions.getChildren(null);
+        for (AnAction action : actions) {
+          if (action instanceof RestoreViewAction && ((RestoreViewAction)action).getContent() == event.getContent()) return;
+        }
+        myViewActions.addAction(new RestoreViewAction(RunnerContentUi.this, event.getContent())).setAsSecondary(true);
       }
 
       @Override
       public void contentRemoved(@NotNull final ContentManagerEvent event) {
-        event.getContent().removePropertyChangeListener(RunnerContentUi.this);
+        final Content content = event.getContent();
+        content.removePropertyChangeListener(RunnerContentUi.this);
 
-        GridImpl grid = (GridImpl)findGridFor(event.getContent());
+        GridImpl grid = (GridImpl)findGridFor(content);
         if (grid != null) {
-          grid.remove(event.getContent());
+          grid.remove(content);
           if (grid.isEmpty()) {
             grid.processRemoveFromUi();
           }
           removeGridIfNeeded(grid);
         }
         updateTabsUI(false);
-        fireContentClosed(event.getContent());
+        fireContentClosed(content);
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            if (Disposer.isDisposed(content)) {
+              AnAction[] actions = myViewActions.getChildren(null);
+              for (AnAction action : actions) {
+                if (action instanceof RestoreViewAction && ((RestoreViewAction)action).getContent() == content) {
+                  myViewActions.remove(action);
+                  break;
+                }
+              }
+            }
+          }
+        });
       }
 
       @Override
@@ -872,7 +895,8 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
   private boolean rebuildMinimizedActions() {
     for (Map.Entry<GridImpl, Wrapper> entry : myMinimizedButtonsPlaceholder.entrySet()) {
       Wrapper eachPlaceholder = entry.getValue();
-      ActionToolbar tb = myActionManager.createActionToolbar(ActionPlaces.DEBUGGER_TOOLBAR, myMinimizedViewActions, true);
+      ActionToolbar tb = myActionManager.createActionToolbar(ActionPlaces.DEBUGGER_TOOLBAR, myViewActions, true);
+      tb.setTargetComponent(myComponent);
       tb.getComponent().setBorder(null);
       tb.setReservePlaceAutoPopupIcon(false);
       JComponent minimized = tb.getComponent();
@@ -882,7 +906,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     myTabs.getComponent().revalidate();
     myTabs.getComponent().repaint();
 
-    return myMinimizedViewActions.getChildrenCount() > 0;
+    return myViewActions.getChildrenCount() > 0;
   }
 
   private void updateTabsUI(final boolean validateNow) {
@@ -1147,7 +1171,8 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     for (RunnerContentUi child : children) {
       Collections.addAll(contents, child.myManager.getContents());
     }
-    for (AnAction action : myMinimizedViewActions.getChildren(null)) {
+    for (AnAction action : myViewActions.getChildren(null)) {
+      if (!(action instanceof RestoreViewAction)) continue;
       final Content content = ((RestoreViewAction)action).getContent();
       contents.add(content);
     }
@@ -1164,7 +1189,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
         child.myManager.removeAllContents(false);
       }
       myManager.removeAllContents(false);
-      myMinimizedViewActions.removeAll();
+      //myViewActions.removeAll();
     }
     finally {
       setStateIsBeingRestored(false, this);
@@ -1254,10 +1279,12 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
   }
 
   public void restoreContent(final String key) {
-    for (AnAction action : myMinimizedViewActions.getChildren(null)) {
+    for (AnAction action : myViewActions.getChildren(null)) {
+      if (!(action instanceof RestoreViewAction)) continue;
+
       Content content = ((RestoreViewAction)action).getContent();
       if (key.equals(content.getUserData(ViewImpl.ID))) {
-        action.actionPerformed(ActionUtil.createEmptyEvent());
+        restore(content);
         return;
       }
     }
@@ -1506,28 +1533,22 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
   @Override
   public void minimize(final Content content, final CellTransform.Restore restore) {
-    final Ref<AnAction> restoreAction = new Ref<>();
     myManager.removeContent(content, false);
-    restoreAction.set(new RestoreViewAction(content, () -> {
-      myMinimizedViewActions.remove(restoreAction.get());
-      final GridImpl grid = getGridFor(content, false);
-      if (grid == null) {
-        getStateFor(content).assignTab(myLayoutSettings.getOrCreateTab(-1));
-      } else {
-        //noinspection ConstantConditions
-        ((GridCellImpl)findCellFor(content)).restore(content);
-      }
-      getStateFor(content).setMinimizedInGrid(false);
-      myManager.addContent(content);
-      saveUiState();
-      select(content, true);
-      updateTabsUI(false);
-      return ActionCallback.DONE;
-    }));
-
-    myMinimizedViewActions.add(restoreAction.get());
-
     saveUiState();
+    updateTabsUI(false);
+  }
+  public void restore(Content content) {
+    final GridImpl grid = getGridFor(content, false);
+    if (grid == null) {
+      getStateFor(content).assignTab(myLayoutSettings.getOrCreateTab(-1));
+    } else {
+      //noinspection ConstantConditions
+      ((GridCellImpl)findCellFor(content)).restore(content);
+    }
+    getStateFor(content).setMinimizedInGrid(false);
+    myManager.addContent(content);
+    saveUiState();
+    select(content, true);
     updateTabsUI(false);
   }
 
