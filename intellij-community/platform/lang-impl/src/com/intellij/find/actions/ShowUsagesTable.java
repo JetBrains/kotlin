@@ -155,7 +155,7 @@ class ShowUsagesTable extends JBTable implements DataProvider {
 
       if (outsideScopeUsagesSelected.get()) {
         options.searchScope = GlobalSearchScope.projectScope(handler.getProject());
-        action.showElementUsages(editor, popupPosition, handler, maxUsages, options);
+        action.showElementUsages(editor, popupPosition, handler, maxUsages, options, action.myWidth);
         return;
       }
 
