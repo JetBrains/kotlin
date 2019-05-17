@@ -16,50 +16,41 @@
 
 package com.intellij.execution.ui.layout.actions;
 
-import com.intellij.execution.ui.layout.CellTransform;
-import com.intellij.icons.AllIcons;
-import com.intellij.idea.ActionsBundle;
+import com.intellij.execution.ui.layout.impl.RunnerContentUi;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.ui.LayeredIcon;
+import com.intellij.openapi.project.DumbAwareToggleAction;
 import com.intellij.ui.content.Content;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+public class RestoreViewAction extends DumbAwareToggleAction {
 
-public class RestoreViewAction extends DumbAwareAction {
-
+  private final RunnerContentUi myUi;
   private final Content myContent;
-  private final CellTransform.Restore myRestoreAction;
 
   private boolean myAlert;
 
   public RestoreViewAction(final Content content, CellTransform.Restore restore) {
     myContent = content;
-    myRestoreAction = restore;
-    myContent.addPropertyChangeListener(l -> {
-      if (Content.PROP_ALERT.equals(l.getPropertyName())) {
-        myAlert = true;
-      }
-    });
+  }
+
+  @Override
+  public boolean isSelected(@NotNull AnActionEvent e) {
+    return myContent.isValid() && myContent.getManager().getIndexOfContent(myContent) != -1;
+  }
+
+  @Override
+  public void setSelected(@NotNull AnActionEvent e, boolean state) {
+    if (state) {
+      myUi.restore(myContent);
+    } else {
+      myUi.minimize(myContent, null);
+    }
   }
 
   @Override
   public void update(@NotNull final AnActionEvent e) {
-    Presentation p = e.getPresentation();
-    p.setText(ActionsBundle.message("action.Runner.RestoreView.text", myContent.getDisplayName()));
-    p.setDescription(ActionsBundle.message("action.Runner.RestoreView.description"));
-    Icon icon = myContent.getIcon();
-    if (myAlert) {
-      icon = new LayeredIcon(icon, AllIcons.Nodes.TabAlert);
-    }
-    p.setIcon(icon == null ? AllIcons.Debugger.RestoreLayout : icon);
-  }
-
-  @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
-    myRestoreAction.restoreInGrid();
+    super.update(e);
+    e.getPresentation().setText(myContent.getDisplayName());
   }
 
   public Content getContent() {
