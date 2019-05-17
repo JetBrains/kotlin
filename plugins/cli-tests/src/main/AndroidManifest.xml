@@ -15,7 +15,6 @@
   limitations under the License.
   -->
 <manifest package="androidx.compose.runtime" xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-sdk android:targetSdkVersion="${target-sdk-version}"/>
 
     <application/>
 
