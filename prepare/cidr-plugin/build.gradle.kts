@@ -8,7 +8,7 @@ val originalPluginJar: Configuration by configurations.creating
 
 dependencies {
     originalPluginJar(ideaPluginJarDep())
-    embedded(project(ultimatePath(":ide:cidr-native"))) { isTransitive = false }
+    embedded(project(":kotlin-ultimate:ide:cidr-native")) { isTransitive = false }
 }
 
 val prepareKotlinPluginXml: Task by prepareKotlinPluginXml(originalPluginJar)

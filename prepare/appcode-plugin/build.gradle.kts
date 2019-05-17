@@ -17,12 +17,12 @@ val appcodeCustomPluginRepoUrl: URL by rootProject.extra
 val cidrPlugin: Configuration by configurations.creating
 
 dependencies {
-    cidrPlugin(project(ultimatePath(":prepare:cidr-plugin")))
-    embedded(project(ultimatePath(":ide:appcode-native"))) { isTransitive = false }
+    cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
+    embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
 }
 
 val preparePluginXml: Task by preparePluginXml(
-        ultimatePath(":ide:appcode-native"),
+        ":kotlin-ultimate:ide:appcode-native",
         appcodeVersion,
         appcodeVersionStrict,
         appcodePluginVersionFull
@@ -33,7 +33,7 @@ val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
 val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
 
 val appcodePlugin: Task by packageCidrPlugin(
-        ultimatePath(":ide:appcode-native"),
+        ":kotlin-ultimate:ide:appcode-native",
         appcodePluginDir,
         pluginJar,
         platformDepsJar,

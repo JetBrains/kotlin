@@ -19,7 +19,7 @@ if (includeKotlinUltimate) {
 }
 
 dependencies {
-    compile(project(ultimatePath(":ide:cidr-native")))
+    compile(project(":kotlin-ultimate:ide:cidr-native"))
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
 
     if (includeKotlinUltimate) {
