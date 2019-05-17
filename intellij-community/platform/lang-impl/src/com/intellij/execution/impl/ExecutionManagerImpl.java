@@ -31,6 +31,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.SmartList;
@@ -290,8 +291,12 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
             (RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask)task;
           RunnerAndConfigurationSettings settings = runBeforeRun.getSettings();
           if (settings != null) {
-            Executor executor = environment.getExecutor();
-            if (!RunManagerImpl.canRunConfiguration(settings, executor)) {
+            Executor executor = Registry.is("lock.run.executor.for.before.run.tasks", false)
+                                ? DefaultRunExecutor.getRunExecutorInstance()
+                                : environment.getExecutor();
+            //As side-effect here we setup  runners list ( required for com.intellij.execution.impl.RunManagerImpl.canRunConfiguration() )
+            ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(executor, settings);
+            if (builder == null || !RunManagerImpl.canRunConfiguration(settings, executor)) {
                 executor = DefaultRunExecutor.getRunExecutorInstance();
                 if (!RunManagerImpl.canRunConfiguration(settings, executor)) {
                   // We should stop here as before run task cannot be executed at all (possibly it's invalid)

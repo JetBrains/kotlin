@@ -164,12 +164,8 @@ extends BeforeRunTaskProvider<RunConfigurationBeforeRunProvider.RunConfigurableB
   public static boolean doExecuteTask(@NotNull final ExecutionEnvironment env,
                                       @NotNull final RunnerAndConfigurationSettings settings,
                                       @Nullable final ExecutionTarget target) {
-    // Here we fallback to default executor when the main one is not applicable for the task (for example 'debug')
-    final Executor executor = RunManagerImpl.canRunConfiguration(settings, env.getExecutor())
-                              ? env.getExecutor()
-                              : DefaultRunExecutor.getRunExecutorInstance();
-    final String executorId = executor.getId();
-    ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(executor, settings);
+    final String executorId = env.getExecutor().getId();
+    ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(env.getExecutor(), settings);
     if (builder == null) {
       return false;
     }
