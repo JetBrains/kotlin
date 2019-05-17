@@ -166,38 +166,18 @@ class ClosureAnnotator(declaration: IrDeclaration) {
             super.visitVariable(declaration)
         }
 
-        override fun visitCatch(aCatch: IrCatch) {
-            closuresStack.peek()?.declareVariable(aCatch.catchParameter)
-            super.visitCatch(aCatch)
-        }
-
-        override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-            expression.acceptChildrenVoid(this)
-            processMemberAccess(expression.symbol.owner)
-        }
-
-        override fun visitCall(expression: IrCall) {
-            expression.acceptChildrenVoid(this)
-            processMemberAccess(expression.symbol.owner)
-        }
-
-        override fun visitConstructorCall(expression: IrConstructorCall) {
-            expression.acceptChildrenVoid(this)
-            processMemberAccess(expression.symbol.owner)
-        }
-
-        override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
-            expression.acceptChildrenVoid(this)
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+            super.visitFunctionAccess(expression)
             processMemberAccess(expression.symbol.owner)
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference) {
-            expression.acceptChildrenVoid(this)
+            super.visitFunctionReference(expression)
             processMemberAccess(expression.symbol.owner)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference) {
-            expression.acceptChildrenVoid(this)
+            super.visitPropertyReference(expression)
             expression.getter?.let { processMemberAccess(it.owner) }
             expression.setter?.let { processMemberAccess(it.owner) }
         }
