@@ -39,7 +39,7 @@ internal class GradleNodeModuleBuilder(
         }
     }
 
-    fun rebuild(): File? {
+    fun rebuild(): PackageJson? {
         if (files.isEmpty()) return null
 
         val packageJson = srcPackageJsonFile?.reader()?.use {
@@ -100,7 +100,7 @@ fun makeNodeModule(
     container: File,
     packageJson: PackageJson,
     files: (File) -> Unit
-): File {
+): PackageJson {
     val dir = container.resolve(packageJson.name)
 
     if (dir.exists()) dir.deleteRecursively()
@@ -119,5 +119,5 @@ fun makeNodeModule(
         gson.toJson(packageJson, it)
     }
 
-    return dir
+    return packageJson
 }

@@ -28,14 +28,14 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
     val npmResolveTask: NpmResolveTask
         get() = project.tasks.getByName(NpmResolveTask.NAME) as NpmResolveTask
 
-    val nodeModulesGradleCacheDir: File
-        get() = project.buildDir.resolve("node_modules_gradle")
-
     val rootPackageDir: File
         get() = project.buildDir.resolve("js")
 
     val projectPackagesDir: File
         get() = rootPackageDir.resolve("packages")
+
+    val nodeModulesGradleCacheDir: File
+        get() = rootPackageDir.resolve("packages_imported")
 
     internal val environment: NodeJsEnv
         get() {

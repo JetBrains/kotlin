@@ -125,8 +125,15 @@ object Yarn : NpmApi {
     ) {
         val rootPackageJson = PackageJson(rootProject.name, rootProject.version.toString())
         rootPackageJson.private = true
-        rootPackageJson.workspaces = npmProjects
-            .map { it.npmProject.dir.relativeTo(nodeJsWorldDir).path }
+
+        val npmProjectWorkspaces = npmProjects.map { it.npmProject.dir.relativeTo(nodeJsWorldDir).path }
+        val importedProjectWorkspaces = npmProjects.flatMapTo(mutableSetOf()) {
+            it.gradleDependencies.externalModules.map { importedProject ->
+                importedProject.path.relativeTo(nodeJsWorldDir).path
+            }
+        }
+
+        rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
 
         rootProject.nodeJs.packageJsonHandlers.forEach {
             it(rootPackageJson)
