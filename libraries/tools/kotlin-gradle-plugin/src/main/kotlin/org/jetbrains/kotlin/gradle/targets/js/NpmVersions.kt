@@ -28,22 +28,22 @@ class NpmVersions {
     val karmaTeamcityReporter = NpmPackageVersion("karma-teamcity-reporter", "1.1.0")
 
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "2.2.0")
-    val karmaPhantomJsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "*")
-    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "*")
-    val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "*")
-    val karmaIeLauncher = NpmPackageVersion("karma-ie-launcher", "*")
-    val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "*")
+    val karmaPhantomJsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
+    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "1.1.0")
+    val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "1.0.0")
+    val karmaIeLauncher = NpmPackageVersion("karma-ie-launcher", "1.0.0")
+    val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "1.0.0")
 
     val karmaMocha = NpmPackageVersion("karma-mocha", "1.3.0")
-    val karmaWebpack = NpmPackageVersion("karma-webpack", "*")
-    val karmaCoverage = NpmPackageVersion("karma-coverage", "*")
+    val karmaWebpack = NpmPackageVersion("karma-webpack", "3.0.5")
+    val karmaCoverage = NpmPackageVersion("karma-coverage", "1.1.2")
 
-    val karmaSourceMapLoader = NpmPackageVersion("karma-sourcemap-loader", "*")
+    val karmaSourceMapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.3.7")
     val karmaSourceMapSupport = NpmPackageVersion("karma-source-map-support", "1.4.0")
 
     val kotlinNodeJsTestRunner = KotlinGradleNpmPackage("test-nodejs-runner")
 
-    val istanbulInstrumenterLoader = NpmPackageVersion("istanbul-instrumenter-loader", "*")
+    val istanbulInstrumenterLoader = NpmPackageVersion("istanbul-instrumenter-loader", "3.0.1")
 }
 
 interface RequiredKotlinJsDependency {
