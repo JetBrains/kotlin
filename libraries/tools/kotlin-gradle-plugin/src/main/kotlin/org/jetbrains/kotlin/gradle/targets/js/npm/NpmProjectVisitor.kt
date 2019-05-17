@@ -99,7 +99,7 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
             project.version.toString()
         )
         val npmDependencies = mutableSetOf<NpmDependency>()
-        val gradleDeps = NpmProjectGradleDeps()
+        val gradleDeps = NpmGradleDependencies()
 
         compilation.allKotlinSourceSets.forEach { sourceSet ->
             sourceSet.relatedConfigurationNames.forEach { configurationName ->
@@ -125,8 +125,7 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
         }
 
         gradleDeps.externalModules.forEach {
-            val relativePath = it.path.relativeTo(npmProject.dir)
-            packageJson.dependencies[it.name] = "file:$relativePath"
+            packageJson.dependencies[it.name] = it.version
         }
 
         gradleDeps.internalModules.forEach { target ->
@@ -140,7 +139,7 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
             it(packageJson)
         }
 
-        val npmPackage = NpmProjectPackage(project, npmProject, npmDependencies, packageJson)
+        val npmPackage = NpmProjectPackage(project, npmProject, npmDependencies, gradleDeps, packageJson)
         npmPackage.packageJson.saveTo(npmProject.packageJsonFile)
 
         resolver.packageManager.resolveProject(npmPackage)
@@ -151,9 +150,9 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
     private fun visitConfiguration(
         configuration: Configuration,
         npmDependencies: MutableSet<NpmDependency>,
-        gradleDeps: NpmProjectGradleDeps
+        gradleDependencies: NpmGradleDependencies
     ) {
-        resolver.gradleNodeModules.collectDependenciesFromConfiguration(configuration, gradleDeps)
+        resolver.gradleNodeModules.collectDependenciesFromConfiguration(configuration, gradleDependencies)
 
         configuration.allDependencies.forEach { dependency ->
             when (dependency) {

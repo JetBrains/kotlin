@@ -14,5 +14,6 @@ class NpmProjectPackage(
     val project: Project,
     val npmProject: NpmProject,
     val npmDependencies: Collection<NpmDependency>,
+    val gradleDependencies: NpmGradleDependencies,
     val packageJson: PackageJson
 )

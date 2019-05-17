@@ -10,7 +10,12 @@ import org.gradle.api.Project
 /**
  * Gradle dependencies for [NpmProject].
  */
-class NpmProjectGradleDeps {
+class NpmGradleDependencies {
     val internalModules = mutableSetOf<Project>()
     val externalModules = mutableSetOf<GradleNodeModule>()
+
+    fun addAll(other: NpmGradleDependencies) {
+        internalModules.addAll(other.internalModules)
+        externalModules.addAll(other.externalModules)
+    }
 }
