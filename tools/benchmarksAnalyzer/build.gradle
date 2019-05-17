@@ -102,7 +102,7 @@ kotlin {
 
         fromPreset(presets.mingwX64, 'windows') {
             binaries.all {
-                linkerOpts = ["-L${getMingwPath()}/lib"]
+                linkerOpts = ["-L${getMingwPath()}/lib".toString()]
             }
             compilations.main.cinterops {
                 libcurl {

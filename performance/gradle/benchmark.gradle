@@ -19,6 +19,13 @@ private def determinePreset() {
     preset
 }
 
+def getMingwPath() {
+    def directory = System.getenv("MINGW64_DIR")
+    if (directory == null)
+        directory = "c:/msys64/mingw64"
+    return directory
+}
+
 def hostPreset = determinePreset()
 
 kotlin {
@@ -62,7 +69,7 @@ kotlin {
         binaries {
             executable('benchmark', [RELEASE]) {
                 if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-                    linkerOpts("-L${getMingwPath()}/lib")
+                    linkerOpts = ["-L${getMingwPath()}/lib".toString()]
                 }
             }
         }
