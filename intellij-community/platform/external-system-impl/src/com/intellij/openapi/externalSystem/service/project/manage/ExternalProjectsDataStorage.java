@@ -3,6 +3,7 @@ package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.concurrency.ConcurrentCollectionFactory;
 import com.intellij.configurationStore.SettingsSavingComponentJavaAdapter;
+import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.openapi.application.PathManagerEx;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -205,7 +206,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     merged.setLastSuccessfulImportTimestamp(lastSuccessfulImportTimestamp);
     myExternalRootProjects.put(key, merged);
 
-    changed.set(true);
+    markAsChangedAndScheduleSave();
   }
 
   synchronized void restoreInclusionSettings(@Nullable DataNode<ProjectData> projectDataNode) {
@@ -260,7 +261,13 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     }
 
     myState.map.put(projectDataNode.getData().getLinkedExternalProjectPath(), projectState);
-    changed.set(true);
+    markAsChangedAndScheduleSave();
+  }
+
+  private void markAsChangedAndScheduleSave() {
+    if (changed.compareAndSet(false, true)) {
+      SaveAndSyncHandler.getInstance().scheduleSave(SaveAndSyncHandler.SaveTask.projectIncludingAllSettings(myProject), false);
+    }
   }
 
   @Nullable
@@ -271,7 +278,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   synchronized void remove(@NotNull ProjectSystemId projectSystemId, @NotNull String externalProjectPath) {
     final InternalExternalProjectInfo removed = myExternalRootProjects.remove(Pair.create(projectSystemId, new File(externalProjectPath)));
     if (removed != null) {
-      changed.set(true);
+      markAsChangedAndScheduleSave();
     }
   }
 
@@ -299,7 +306,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
           myExternalRootProjects.put(key, externalProjectInfo);
           ExternalProjectsManager.getInstance(myProject).getExternalProjectsWatcher().markDirty(externalProjectPath);
 
-          changed.set(true);
+          markAsChangedAndScheduleSave();
         }
 
         // restore linked project sub-modules
