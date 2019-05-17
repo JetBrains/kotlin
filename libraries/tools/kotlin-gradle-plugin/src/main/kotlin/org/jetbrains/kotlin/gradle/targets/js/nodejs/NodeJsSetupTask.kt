@@ -11,8 +11,8 @@ import java.io.File
 import java.net.URI
 
 open class NodeJsSetupTask : DefaultTask() {
-    private val settings = NodeJsRootExtension[project]
-    private val env by lazy { settings.buildEnv() }
+    private val settings = project.nodeJs.root
+    private val env by lazy { settings.environment }
 
     init {
         group = NodeJsRootExtension.NODE_JS
@@ -55,7 +55,7 @@ open class NodeJsSetupTask : DefaultTask() {
             }
         }
 
-        val dep = this.project.dependencies.create(env.ivyDependency)
+        val dep = this.project.dependencies.create(ivyDependency)
         val conf = this.project.configurations.detachedConfiguration(dep)
         conf.isTransitive = false
         val result = conf.resolve().single()

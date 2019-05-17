@@ -21,7 +21,7 @@ import java.text.ParseException
 data class TCServiceMessagesClientSettings(
     val rootNodeName: String,
     val testNameSuffix: String? = null,
-    val prepandSuiteName: Boolean = false,
+    val prependSuiteName: Boolean = false,
     val treatFailedTestOutputAsStacktrace: Boolean = false,
     val stackTraceParser: (String) -> ParsedStackTrace? = { null },
     val ignoreOutOfRootNodes: Boolean = false
@@ -96,7 +96,7 @@ internal open class TCServiceMessagesClient(
         parent.requireReportingNode()
 
         val finalTestName = testName.let {
-            if (settings.prepandSuiteName) "${parent.fullNameWithoutRoot}.$it"
+            if (settings.prependSuiteName) "${parent.fullNameWithoutRoot}.$it"
             else it
         }
 
