@@ -13,13 +13,19 @@ import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     abstract val platforms: List<TargetPlatform>
 
     abstract val defaultPlatform: TargetPlatform
+
+    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
+        level = DeprecationLevel.ERROR
+    )
+    abstract fun getDefaultPlatform(): IdePlatform<*, *>
 
     abstract fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform?
 

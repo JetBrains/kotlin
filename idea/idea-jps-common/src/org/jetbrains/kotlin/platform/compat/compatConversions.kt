@@ -8,8 +8,14 @@
 package org.jetbrains.kotlin.platform.compat
 
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.KonanPlatform
@@ -26,3 +32,10 @@ fun NewPlatform.toOldPlatform(): OldPlatform = when (val single = singleOrNull()
     else -> error("Unknown platform $single")
 }
 
+fun IdePlatform<*, *>.toNewPlatform(): NewPlatform = when (this) {
+    is CommonIdePlatformKind.Platform -> CommonPlatforms.defaultCommonPlatform
+    is JvmIdePlatformKind.Platform -> JvmPlatforms.jvmPlatformByTargetVersion(this.version)
+    is JsIdePlatformKind.Platform -> JsPlatforms.defaultJsPlatform
+    is NativeIdePlatformKind.Platform -> KonanPlatforms.defaultKonanPlatform
+    else -> error("Unknown platform $this")
+}

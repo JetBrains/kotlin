@@ -39,12 +39,11 @@ import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.platform.*
+import org.jetbrains.kotlin.platform.compat.toNewPlatform
+import org.jetbrains.kotlin.platform.compat.toOldPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import kotlin.reflect.KProperty1
 
@@ -171,6 +170,21 @@ fun KotlinFacet.configureFacet(
 
     module.externalCompilerVersion = compilerVersion
 }
+
+@Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
+@Deprecated(
+    message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
+    level = DeprecationLevel.ERROR
+)
+fun KotlinFacet.configureFacet(
+    compilerVersion: String?,
+    coroutineSupport: LanguageFeature.State,
+    platform: IdePlatform<*, *>,
+    modelsProvider: IdeModifiableModelsProvider
+) {
+    configureFacet(compilerVersion, coroutineSupport, platform.toNewPlatform(), modelsProvider)
+}
+
 
 fun KotlinFacet.noVersionAutoAdvance() {
     configuration.settings.compilerArguments?.let {
