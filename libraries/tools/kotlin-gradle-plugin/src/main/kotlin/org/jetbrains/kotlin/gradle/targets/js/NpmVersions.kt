@@ -38,6 +38,7 @@ class NpmVersions {
     val karmaWebpack = NpmPackageVersion("karma-webpack", "*")
     val karmaCoverage = NpmPackageVersion("karma-coverage", "*")
 
+    val karmaSourceMapLoader = NpmPackageVersion("karma-sourcemap-loader", "*")
     val karmaSourceMapSupport = NpmPackageVersion("karma-source-map-support", "1.4.0")
 
     val kotlinNodeJsTestRunner = KotlinGradleNpmPackage("test-nodejs-runner")

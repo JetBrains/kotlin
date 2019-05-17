@@ -34,7 +34,6 @@ class KotlinNodeJs(target: KotlinJsTarget) :
             val compileKotlinTask = compilation.compileKotlinTask
             runTask.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
 
-            val npmProject = compilation.npmProject
             runTask.args(compileKotlinTask.outputFile)
         }
 

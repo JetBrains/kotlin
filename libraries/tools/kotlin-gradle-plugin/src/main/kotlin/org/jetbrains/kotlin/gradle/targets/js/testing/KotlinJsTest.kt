@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import groovy.lang.Closure
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.process.internal.DefaultProcessForkOptions
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import java.io.File
 
 open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     @Internal
@@ -36,6 +38,9 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
 
     @Internal
     override lateinit var compilation: KotlinJsCompilation
+
+    val entry: File
+        @InputFile get() = compilation.compileKotlinTask.outputFile
 
     val compilationId: String
         @Input get() = compilation.let {
