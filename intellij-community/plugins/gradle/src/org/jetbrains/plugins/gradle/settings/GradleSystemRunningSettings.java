@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.ScheduledForRemoval(inVersion = "2019.2")
 public class GradleSystemRunningSettings {
   private static final Logger LOG = Logger.getInstance("#" + GradleSystemRunningSettings.class.getPackage().getName());
+  private static boolean alreadyLogged = false;
 
   @NotNull
   @Deprecated
@@ -31,7 +32,10 @@ public class GradleSystemRunningSettings {
   @NotNull
   @Deprecated
   public static GradleSystemRunningSettings getInstance() {
-    LOG.error("This class is deprecated please migrate to GradleProjectSettings");
+    if (!alreadyLogged) {
+      LOG.error("This class is deprecated please migrate to GradleProjectSettings");
+      alreadyLogged = true;
+    }
     return new GradleSystemRunningSettings();
   }
 
