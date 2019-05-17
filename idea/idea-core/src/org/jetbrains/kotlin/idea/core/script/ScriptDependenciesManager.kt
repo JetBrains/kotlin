@@ -73,16 +73,32 @@ class ScriptDependenciesManager internal constructor(
             } catch (e: Throwable) {
                 return null
             }
-
-            return getAllProjectSdks().find { javaHome != null && File(it.homePath).canonicalPath == javaHome }
         }
 
-        fun getScriptDefaultSdk(project: Project): Sdk? =
-            ProjectRootManager.getInstance(project).projectSdk ?: getAllProjectSdks().firstOrNull()
+        fun getScriptDefaultSdk(project: Project): Sdk? {
+            val projectSdk = getProjectSdk(project)
+            if (projectSdk != null) return projectSdk
+
+            val anyJavaSdk = getAllProjectSdks().find { it.canBeUsedForScript() }
+            if (anyJavaSdk != null) {
+                return anyJavaSdk
+            }
+
+            log.warn(
+                "Default Script SDK is null: " +
+                        "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
+                        "all sdks = ${getAllProjectSdks().joinToString("\n")}"
+            )
+            return null
+        }
+
+        fun getProjectSdk(project: Project) = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }
 
         fun toVfsRoots(roots: Iterable<File>): List<VirtualFile> {
             return roots.mapNotNull { it.classpathEntryToVfs() }
         }
+
+        private fun Sdk.canBeUsedForScript() = sdkType is JavaSdkType
 
         private fun File.classpathEntryToVfs(): VirtualFile? {
             val res = when {
