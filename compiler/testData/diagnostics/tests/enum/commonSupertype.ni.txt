@@ -1,6 +1,6 @@
 package
 
-public val x: kotlin.Enum<out kotlin.Enum<out kotlin.Enum<out kotlin.Enum<out kotlin.Enum<out kotlin.Enum<*>>>>>>
+public val x: kotlin.Enum<*>
 
 public final enum class A : kotlin.Enum<A> {
     enum entry A
