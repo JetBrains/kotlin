@@ -608,12 +608,10 @@ public class FindInProjectUtil {
   @NotNull
   static SearchScope getScopeFromModel(@NotNull Project project, @NotNull FindModel findModel) {
     SearchScope customScope = findModel.isCustomScope() ? findModel.getCustomScope() : null;
-    //FIXME this will not work with "Current File", "Selected Files" scope in scratches IDEA-176926
-    boolean restrictCustomScope = customScope instanceof GlobalSearchScope && !((GlobalSearchScope)customScope).isSearchOutsideRootModel();
     VirtualFile directory = getDirectory(findModel);
     Module module = findModel.getModuleName() == null ? null : ModuleManager.getInstance(project).findModuleByName(findModel.getModuleName());
-    return customScope != null && restrictCustomScope ? customScope.intersectWith(GlobalSearchScope.allScope(project)) :
-           customScope != null ? customScope :
+    // do not alter custom scope in any way, learn from history
+    return customScope != null ? customScope :
            // we don't have to check for myProjectFileIndex.isExcluded(file) here like FindInProjectTask.collectFilesInScope() does
            // because all found usages are guaranteed to be not in excluded dir
            directory != null ? forDirectory(project, findModel.isWithSubdirectories(), directory) :
