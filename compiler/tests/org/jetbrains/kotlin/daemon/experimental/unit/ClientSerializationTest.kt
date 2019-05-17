@@ -72,7 +72,7 @@ class ClientSerializationTest : KotlinIntegrationTestBase() {
         log.info("test passed")
     }
 
-    fun testDefaultClient() = abstractSerializationTest(
+    fun ignore_testDefaultClient() = abstractSerializationTest(
         { DefaultClient<ServerBase>(testServer.serverPort) },
         { client, client2 -> assert(client.serverPort == client2.serverPort) },
         { client, client2 ->
@@ -81,11 +81,11 @@ class ClientSerializationTest : KotlinIntegrationTestBase() {
         }
     )
 
-    fun testCompilerServicesFacadeBaseClientSide() = abstractSerializationTest(
+    fun ignore_testCompilerServicesFacadeBaseClientSide() = abstractSerializationTest(
         { CompilerServicesFacadeBaseClientSideImpl(testServer.serverPort) },
         { client, client2 -> assert(client.serverPort == client2.serverPort) }
     )
 
-    fun testRMIWrapper() = abstractSerializationTest({ CompilerServicesFacadeBaseClientSideImpl(testServer.serverPort).toRMI() })
+    fun ignore_testRMIWrapper() = abstractSerializationTest({ CompilerServicesFacadeBaseClientSideImpl(testServer.serverPort).toRMI() })
 
 }

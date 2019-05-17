@@ -319,7 +319,7 @@ class TestMessageCollector : MessageCollector {
     }
 }
 
-fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
+fun ignore_testMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
     assert(messages.any { it.message.contains(msg) && (desiredSeverity == null || it.severity == desiredSeverity) }) {
         "Expecting message \"$msg\" with severity ${desiredSeverity?.toString() ?: "Any"}, actual:\n" +
                 messages.joinToString("\n") { it.severity.toString() + ": " + it.message }
