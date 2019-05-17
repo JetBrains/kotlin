@@ -254,7 +254,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       DefaultGradleExtensions extensions = new DefaultGradleExtensions(gradleExtensions);
       ExternalProject externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject.class);
       if (externalProject != null) {
-        extensions.getTasks().addAll(externalProject.getTasks().values());
+        extensions.addTasks(externalProject.getTasks().values());
       }
       ideModule.createChild(GradleExtensionsDataService.KEY, extensions);
     }

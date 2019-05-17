@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,45 +15,45 @@ import java.util.List;
 public class DefaultGradleExtensions implements GradleExtensions {
   private static final long serialVersionUID = 1L;
 
-  private final List<GradleExtension> extensions;
-  private final List<GradleConvention> conventions;
-  private final List<GradleProperty> gradleProperties;
-  private final List<ExternalTask> tasks;
-  private final List<GradleConfiguration> configurations;
+  private final List<DefaultGradleExtension> extensions;
+  private final List<DefaultGradleConvention> conventions;
+  private final List<DefaultGradleProperty> gradleProperties;
+  private final ArrayList<DefaultExternalTask> tasks;
+  private final List<DefaultGradleConfiguration> configurations;
   private String parentProjectPath;
 
   public DefaultGradleExtensions() {
-    extensions = new ArrayList<GradleExtension>();
-    conventions = new ArrayList<GradleConvention>();
-    gradleProperties = new ArrayList<GradleProperty>();
-    tasks = new ArrayList<ExternalTask>();
-    configurations = new ArrayList<GradleConfiguration>();
+    extensions = new ArrayList<DefaultGradleExtension>();
+    conventions = new ArrayList<DefaultGradleConvention>();
+    gradleProperties = new ArrayList<DefaultGradleProperty>();
+    tasks = new ArrayList<DefaultExternalTask>();
+    configurations = new ArrayList<DefaultGradleConfiguration>();
   }
 
   public DefaultGradleExtensions(@NotNull GradleExtensions extensions) {
     parentProjectPath = extensions.getParentProjectPath();
 
-    this.extensions = new ArrayList<GradleExtension>(extensions.getExtensions().size());
+    this.extensions = new ArrayList<DefaultGradleExtension>(extensions.getExtensions().size());
     for (GradleExtension extension : extensions.getExtensions()) {
       this.extensions.add(new DefaultGradleExtension(extension));
     }
 
-    conventions = new ArrayList<GradleConvention>(extensions.getConventions().size());
+    conventions = new ArrayList<DefaultGradleConvention>(extensions.getConventions().size());
     for (GradleConvention convention : extensions.getConventions()) {
       conventions.add(new DefaultGradleConvention(convention));
     }
 
-    gradleProperties = new ArrayList<GradleProperty>(extensions.getGradleProperties().size());
+    gradleProperties = new ArrayList<DefaultGradleProperty>(extensions.getGradleProperties().size());
     for (GradleProperty property : extensions.getGradleProperties()) {
       gradleProperties.add(new DefaultGradleProperty(property));
     }
 
-    tasks = new ArrayList<ExternalTask>(extensions.getTasks().size());
+    tasks = new ArrayList<DefaultExternalTask>(extensions.getTasks().size());
     for (ExternalTask entry : extensions.getTasks()) {
       tasks.add(new DefaultExternalTask(entry));
     }
 
-    configurations = new ArrayList<GradleConfiguration>(extensions.getConfigurations().size());
+    configurations = new ArrayList<DefaultGradleConfiguration>(extensions.getConfigurations().size());
     for (GradleConfiguration entry : extensions.getConfigurations()) {
       configurations.add(new DefaultGradleConfiguration(entry));
     }
@@ -70,31 +71,43 @@ public class DefaultGradleExtensions implements GradleExtensions {
 
   @NotNull
   @Override
-  public List<GradleExtension> getExtensions() {
-    return extensions == null ? Collections.<GradleExtension>emptyList() : extensions;
+  public List<DefaultGradleExtension> getExtensions() {
+    return extensions == null ? Collections.<DefaultGradleExtension>emptyList() : extensions;
   }
 
   @Override
   @NotNull
-  public List<GradleConvention> getConventions() {
-    return conventions == null ? Collections.<GradleConvention>emptyList() : conventions;
+  public List<DefaultGradleConvention> getConventions() {
+    return conventions == null ? Collections.<DefaultGradleConvention>emptyList() : conventions;
   }
 
   @NotNull
   @Override
-  public List<GradleProperty> getGradleProperties() {
-    return gradleProperties == null ? Collections.<GradleProperty>emptyList() : gradleProperties;
+  public List<DefaultGradleProperty> getGradleProperties() {
+    return gradleProperties == null ? Collections.<DefaultGradleProperty>emptyList() : gradleProperties;
   }
 
   @NotNull
   @Override
-  public List<ExternalTask> getTasks() {
-    return tasks == null ? Collections.<ExternalTask>emptyList() : tasks;
+  public List<DefaultExternalTask> getTasks() {
+    return tasks;
+  }
+
+  public void addTasks(@NotNull Collection<? extends ExternalTask> values) {
+    tasks.ensureCapacity(tasks.size() + values.size());
+    for (ExternalTask value : values) {
+      if (value instanceof DefaultExternalTask) {
+        tasks.add((DefaultExternalTask)value);
+      }
+      else {
+        tasks.add(new DefaultExternalTask(value));
+      }
+    }
   }
 
   @NotNull
   @Override
-  public List<GradleConfiguration> getConfigurations() {
-    return configurations == null ? Collections.<GradleConfiguration>emptyList() : configurations;
+  public List<DefaultGradleConfiguration> getConfigurations() {
+    return configurations == null ? Collections.<DefaultGradleConfiguration>emptyList() : configurations;
   }
 }

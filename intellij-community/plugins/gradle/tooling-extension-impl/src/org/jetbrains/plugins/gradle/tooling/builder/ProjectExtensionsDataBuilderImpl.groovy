@@ -43,8 +43,7 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
     extensions.extraProperties.properties.each { name, value ->
       if(name == 'extraModelBuilder' || name.contains('.')) return
       String typeFqn = getType(value)
-      result.gradleProperties.add(new DefaultGradleProperty(
-        name, typeFqn, value.toString()))
+      result.gradleProperties.add(new DefaultGradleProperty(name, typeFqn, value.toString()))
     }
 
     for (it in extensions.findAll()) {
