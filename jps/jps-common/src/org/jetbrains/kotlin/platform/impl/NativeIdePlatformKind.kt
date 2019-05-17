@@ -4,11 +4,15 @@
  */
 
 @file:JvmName("NativeIdePlatformUtil")
+@file:Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
+
 package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 
 object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
@@ -27,6 +31,12 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
     override val defaultPlatform: TargetPlatform
         get() = KonanPlatforms.defaultKonanPlatform
 
+    @Deprecated(
+        message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
+        level = DeprecationLevel.ERROR
+    )
+    override fun getDefaultPlatform(): IdePlatform<*, *> = Platform
+
     override val platforms
         get() = listOf(KonanPlatforms.defaultKonanPlatform)
 
@@ -35,6 +45,16 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 
     override val name
         get() = "Native"
+
+    @Deprecated(
+        message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
+        level = DeprecationLevel.ERROR
+    )
+    object Platform : IdePlatform<NativeIdePlatformKind, FakeK2NativeCompilerArguments>() {
+        override val kind get() = NativeIdePlatformKind
+        override val version get() = TargetPlatformVersion.NoVersion
+        override fun createArguments(init: FakeK2NativeCompilerArguments.() -> Unit) = FakeK2NativeCompilerArguments().apply(init)
+    }
 }
 
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
@@ -42,3 +62,10 @@ class FakeK2NativeCompilerArguments : CommonCompilerArguments()
 
 val IdePlatformKind<*>?.isKotlinNative
     get() = this is NativeIdePlatformKind
+
+@Deprecated(
+    message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
+    level = DeprecationLevel.ERROR
+)
+val IdePlatform<*, *>?.isKotlinNative
+    get() = this is NativeIdePlatformKind.Platform
