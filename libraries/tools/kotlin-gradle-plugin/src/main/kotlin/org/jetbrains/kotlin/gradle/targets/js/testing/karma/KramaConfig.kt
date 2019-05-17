@@ -13,6 +13,7 @@ class KarmaConfig {
     val files: MutableList<String> = mutableListOf()
     val frameworks: MutableList<String> = mutableListOf()
     val browsers: MutableList<String> = mutableListOf()
+    val customLaunchers: MutableMap<String, CustomLauncher> = mutableMapOf()
     val reporters: MutableList<String> = mutableListOf()
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf()
     var coverageReporter: CoverageReporter? = null
@@ -33,6 +34,11 @@ class KarmaConfig {
         override fun toString(): String {
             return "CoverageReporter(dir='$dir', reporters=$reporters)"
         }
+    }
+
+    class CustomLauncher(var base: String) {
+        val flags = mutableListOf<String>()
+        var debug: Boolean? = null
     }
 
     override fun toString(): String {
