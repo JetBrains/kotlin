@@ -380,8 +380,8 @@ val jsPhases = namedIrModulePhase(
             moveBodilessDeclarationsToSeparatePlacePhase then
             enumClassLoweringPhase then
             enumUsageLoweringPhase then
-            returnableBlockLoweringPhase then
             suspendFunctionsLoweringPhase then
+            returnableBlockLoweringPhase then
             privateMembersLoweringPhase then
             callableReferenceLoweringPhase then
             defaultArgumentStubGeneratorPhase then

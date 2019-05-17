@@ -216,11 +216,6 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
         val transformer = this
         irBuilder.run {
-            val transformedTry = IrTryImpl(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                type = context.irBuiltIns.unitType
-            )
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)
             val parameter = WrappedVariableDescriptor()
             val catchParameter = IrVariableImpl(
@@ -233,27 +228,42 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
             val syntheticTry = IrTryImpl(
                 startOffset = startOffset,
                 endOffset = endOffset,
-                type = context.irBuiltIns.unitType,
-                tryResult = transformedTry,
-                catches = listOf(
-                    irCatch(catchParameter).apply {
-                        result = irComposite {
-                            +finallyExpression.copy()
-                            +irThrow(irGet(catchParameter))
-                        }
-                    }),
-                finallyExpression = null
-            )
+                type = context.irBuiltIns.unitType
+            ).apply {
+                this.catches += irCatch(catchParameter).apply {
+                    result = irComposite {
+                        +finallyExpression.copy()
+                        +irThrow(irGet(catchParameter))
+                    }
+                }
+
+                this.finallyExpression = null
+            }
+
             using(TryScope(syntheticTry, transformedFinallyExpression, this)) {
+
                 val fallThroughType = aTry.type
                 val fallThroughSymbol = IrReturnableBlockSymbolImpl(WrappedSimpleFunctionDescriptor())
                 val transformedResult = aTry.tryResult.transform(transformer, null)
-                transformedTry.tryResult = irReturn(fallThroughSymbol, transformedResult)
-                for (aCatch in aTry.catches) {
-                    val transformedCatch = aCatch.transform(transformer, null)
-                    transformedCatch.result = irReturn(fallThroughSymbol, transformedCatch.result)
-                    transformedTry.catches.add(transformedCatch)
+                val returnedResult = irReturn(fallThroughSymbol, transformedResult)
+
+                if (aTry.catches.isNotEmpty()) {
+                    val transformedTry = IrTryImpl(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = context.irBuiltIns.unitType
+                    )
+                    transformedTry.tryResult = returnedResult
+                    for (aCatch in aTry.catches) {
+                        val transformedCatch = aCatch.transform(transformer, null)
+                        transformedCatch.result = irReturn(fallThroughSymbol, transformedCatch.result)
+                        transformedTry.catches.add(transformedCatch)
+                    }
+                    syntheticTry.tryResult = transformedTry
+                } else {
+                    syntheticTry.tryResult = returnedResult
                 }
+
                 return irInlineFinally(fallThroughSymbol, fallThroughType, it.expression, it.finallyExpression)
             }
         }

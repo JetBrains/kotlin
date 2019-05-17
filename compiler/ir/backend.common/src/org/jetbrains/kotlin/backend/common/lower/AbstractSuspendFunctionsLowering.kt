@@ -36,7 +36,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected abstract fun nameForCoroutineClass(function: IrFunction): Name
 
     protected abstract fun buildStateMachine(
-        originalBody: IrBody, stateMachineFunction: IrFunction,
+        stateMachineFunction: IrFunction,
         transformingFunction: IrFunction,
         argumentToPropertiesMap: Map<IrValueParameter, IrField>
     )
@@ -617,7 +617,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 }
             }
 
-            buildStateMachine(originalBody, function, irFunction, argumentToPropertiesMap)
+            buildStateMachine(function, irFunction, argumentToPropertiesMap)
             return function
         }
     }
