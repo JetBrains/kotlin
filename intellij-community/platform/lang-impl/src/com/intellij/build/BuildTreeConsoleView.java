@@ -57,10 +57,10 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import javax.swing.plaf.TreeUI;
@@ -661,7 +661,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     return result;
   }
 
-  @TestOnly
+  @ApiStatus.Internal
   JTree getTree() {
     return myTree;
   }
