@@ -12,11 +12,10 @@ dependencies {
     compile(project(":kotlin-scripting-jvm"))
     compile(project(":kotlin-scripting-jvm-host"))
     compile(project(":kotlin-scripting-compiler"))
-    compile(project(":kotlin-scripting-compiler-impl"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep())
-    runtime(projectRuntimeJar(":kotlin-compiler"))
+    runtime(project(":kotlin-compiler"))
     runtime(project(":kotlin-reflect"))
     testCompile(commonDep("junit"))
 }
