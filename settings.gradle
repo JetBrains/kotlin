@@ -172,6 +172,7 @@ include ":kotlin-build-common",
         ":kotlin-scripting-common",
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host",
+        ":kotlin-scripting-jvm-host-test",
         ":kotlin-scripting-jvm-host-embeddable",
         ":kotlin-scripting-intellij",
         ":kotlin-scripting-compiler",
@@ -343,6 +344,7 @@ project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/ko
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':kotlin-scripting-jvm-host-test').projectDir = "$rootDir/libraries/scripting/jvm-host-test" as File
 project(':kotlin-scripting-jvm-host-embeddable').projectDir = "$rootDir/libraries/scripting/jvm-host-embeddable" as File
 project(':kotlin-scripting-jsr223').projectDir = "$rootDir/libraries/scripting/jsr223" as File
 project(':kotlin-scripting-jsr223-embeddable').projectDir = "$rootDir/libraries/scripting/jsr223-embeddable" as File

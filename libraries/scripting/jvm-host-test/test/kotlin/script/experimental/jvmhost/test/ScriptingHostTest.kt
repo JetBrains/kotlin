@@ -30,7 +30,7 @@ import kotlin.script.templates.standard.SimpleScriptTemplate
 class ScriptingHostTest : TestCase() {
 
     companion object {
-        const val TEST_DATA_DIR = "libraries/scripting/jvm-host/testData"
+        const val TEST_DATA_DIR = "libraries/scripting/jvm-host-test/testData"
     }
 
     @Test
