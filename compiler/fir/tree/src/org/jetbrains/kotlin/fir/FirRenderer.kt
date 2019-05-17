@@ -930,4 +930,15 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         uncheckedNotNullCast.expression.accept(this)
         print("!")
     }
+
+    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
+        print("Q|")
+        val classId = resolvedQualifier.classId
+        if (classId != null) {
+            print(classId.asString())
+        } else {
+            print(resolvedQualifier.packageFqName.asString().replace(".", "/"))
+        }
+        print("|")
+    }
 }

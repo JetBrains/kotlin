@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:public [final,static] 
       EXPRESSION_BODY
         GET_CLASS type=kotlin.reflect.KClass<<root>.A>
-          ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
+          GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<<root>.A> 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
@@ -62,14 +62,14 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
   PROPERTY name:test4 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:<root>.A visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Unit visibility:public [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:<root>.A 
+        GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): <root>.A declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Unit declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Unit visibility:public [final,static] ' type=kotlin.Unit origin=null
   PROPERTY name:test5 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test5 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY

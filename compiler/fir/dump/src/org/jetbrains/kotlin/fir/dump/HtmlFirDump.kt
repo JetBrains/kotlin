@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUncheckedNotNullCastImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.withNullability
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
@@ -1167,6 +1165,20 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         keyword("class")
     }
 
+    private fun FlowContent.generate(resolvedQualifier: FirResolvedQualifier) {
+        resolved {
+            val symbolProvider = session.service<FirSymbolProvider>()
+            val classId = resolvedQualifier.classId
+            if (classId != null) {
+                symbolRef(symbolProvider.getClassLikeSymbolByFqName(classId)) {
+                    fqn(classId.relativeClassName)
+                }
+            } else {
+                fqn(resolvedQualifier.packageFqName)
+            }
+        }
+    }
+
     private fun FlowContent.generate(expression: FirExpression) {
         exprType(expression.typeRef) {
             when (expression) {
@@ -1195,6 +1207,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirFunctionCall -> {
                     generate(expression)
                 }
+                is FirResolvedQualifier -> generate(expression)
                 is FirQualifiedAccessExpression -> generate(expression)
                 is FirNamedArgumentExpression -> {
                     simpleName(expression.name)

@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/classReference.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       GET_CLASS type=kotlin.reflect.KClass<<root>.A>
-        ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
+        GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       GET_CLASS type=kotlin.reflect.KClass<<root>.A>
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
       ERROR_CALL 'No getter found for R|kotlin/jvm/java|' type=java.lang.Class<T of <uninitialized parent>>

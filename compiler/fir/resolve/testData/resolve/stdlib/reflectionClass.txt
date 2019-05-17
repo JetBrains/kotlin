@@ -1,5 +1,5 @@
 FILE: reflectionClass.kt
-    public final val javaClass: R|java/lang/Class<kotlin/String>| = <getClass>(R|kotlin/String|).R|kotlin/jvm/java|
+    public final val javaClass: R|java/lang/Class<kotlin/String>| = <getClass>(Q|kotlin/String|).R|kotlin/jvm/java|
         public get(): R|java/lang/Class<kotlin/String>|
-    public final val kotlinClass: R|kotlin/reflect/KClass<kotlin/String>| = <getClass>(R|kotlin/String|)
+    public final val kotlinClass: R|kotlin/reflect/KClass<kotlin/String>| = <getClass>(Q|kotlin/String|)
         public get(): R|kotlin/reflect/KClass<kotlin/String>|

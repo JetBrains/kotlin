@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/objectReference.kt
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
           value: CONST Int type=kotlin.Int value=1
         CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-          $this: ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+          $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
     CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.Nested 
       CONSTRUCTOR visibility:public <> () returnType:<root>.Z.Nested [primary] 
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/objectReference.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
             value: CONST Int type=kotlin.Int value=1
           CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-            $this: ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+            $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
       FUN name:test visibility:public modality:FINAL <> ($this:<root>.Z.Nested) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.Z.Nested 
         BLOCK_BODY
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/objectReference.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
             value: CONST Int type=kotlin.Int value=1
           CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-            $this: ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+            $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/objectReference.kt
                 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
                   value: CONST Int type=kotlin.Int value=1
                 CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-                  $this: ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+                  $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
             FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.Z.aLambda' type=IrErrorType origin=LAMBDA
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:IrErrorType 
         correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val] 
@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/objectReference.kt
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
                     value: CONST Int type=kotlin.Int value=1
                   CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-                    $this: ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+                    $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
               FUN name:test visibility:public modality:FINAL <> ($this:<root>.Z.anObject.<no name provided>) returnType:kotlin.Unit
                 $this: VALUE_PARAMETER name:<this> type:<root>.Z.anObject.<no name provided> 
                 BLOCK_BODY
@@ -125,7 +125,7 @@ FILE fqName:<root> fileName:/objectReference.kt
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
                     value: CONST Int type=kotlin.Int value=1
                   CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-                    $this: ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+                    $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
             CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z.anObject.<no name provided>' type=<root>.Z.anObject.<no name provided> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:kotlin.Any 
         correspondingProperty: PROPERTY name:anObject visibility:public modality:FINAL [val] 
@@ -155,4 +155,4 @@ FILE fqName:<root> fileName:/objectReference.kt
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value=1
       CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-        $this: ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
+        $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z

@@ -279,7 +279,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST1 
         BLOCK_BODY
           CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
-            message: ERROR_CALL 'Unresolved reference: R|/TestEnum4.TEST1|' type=<root>.TestEnum4
+            message: GET_OBJECT 'CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:public superTypes:[<root>.TestEnum4]' type=<root>.TestEnum4
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -326,7 +326,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST2 
         BLOCK_BODY
           CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
-            message: ERROR_CALL 'Unresolved reference: R|/TestEnum4.TEST2|' type=<root>.TestEnum4
+            message: GET_OBJECT 'CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:public superTypes:[<root>.TestEnum4]' type=<root>.TestEnum4
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any 
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum

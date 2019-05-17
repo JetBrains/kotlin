@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       VAR name:<range> type:<root>.FiveTimes [val] 
-        ERROR_CALL 'Unresolved reference: R|/FiveTimes|' type=<root>.FiveTimes
+        GET_OBJECT 'CLASS OBJECT name:FiveTimes modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.FiveTimes
       VAR name:<iterator> type:<root>.IntCell [val] 
         CALL 'public open fun iterator (): <root>.IntCell declared in <root>.IReceiver' type=<root>.IntCell origin=null
           $this: GET_VAR 'val <range>: <root>.FiveTimes [val] declared in <root>.test' type=<root>.FiveTimes origin=null

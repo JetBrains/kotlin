@@ -268,6 +268,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitJump(returnExpression, null)
     }
 
+    open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
+        visitExpression(resolvedQualifier, null)
+    }
+
     open fun visitThrowExpression(throwExpression: FirThrowExpression) {
         visitExpression(throwExpression, null)
     }
@@ -662,6 +666,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: Nothing?) {
         visitResolvedImport(resolvedImport)
+    }
+
+    final override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Nothing?) {
+        visitResolvedQualifier(resolvedQualifier)
     }
 
     final override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?) {

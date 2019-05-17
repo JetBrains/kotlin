@@ -29,10 +29,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             // For ConeClassLikeType they might be a type alias instead of a regular class
             // TODO: support that case and switch back to `firUnsafe` instead of `firSafeNullable`
             val fir = this.lookupTag.toSymbol(useSiteSession)?.firSafeNullable<FirRegularClass>() ?: return null
-            val companionScope = fir.companionObject?.buildUseSiteScope(useSiteSession, scopeSession)
-            val ownScope = wrapSubstitutionScopeIfNeed(useSiteSession, fir.buildUseSiteScope(useSiteSession, scopeSession)!!, scopeSession)
-            if (companionScope != null) FirCompositeScope(mutableListOf(ownScope, companionScope)) else ownScope
-
+            wrapSubstitutionScopeIfNeed(useSiteSession, fir.buildUseSiteScope(useSiteSession, scopeSession)!!, scopeSession)
         }
         is ConeTypeParameterType -> {
             // TODO: support LibraryTypeParameterSymbol or get rid of it

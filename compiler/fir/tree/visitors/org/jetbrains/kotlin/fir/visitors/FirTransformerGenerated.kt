@@ -268,6 +268,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformJump(returnExpression, data)
     }
 
+    open fun transformResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(resolvedQualifier, data)
+    }
+
     open fun transformThrowExpression(throwExpression: FirThrowExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(throwExpression, data)
     }
@@ -662,6 +666,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): CompositeTransformResult<FirElement> {
         return transformResolvedImport(resolvedImport, data)
+    }
+
+    final override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedQualifier(resolvedQualifier, data)
     }
 
     final override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): CompositeTransformResult<FirElement> {

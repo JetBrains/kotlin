@@ -257,6 +257,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
         }
 
+        @TestMetadata("qualifiedExpressions.kt")
+        public void testQualifiedExpressions() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/qualifiedExpressions.kt");
+        }
+
         @TestMetadata("receiverConsistency.kt")
         public void testReceiverConsistency() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/receiverConsistency.kt");

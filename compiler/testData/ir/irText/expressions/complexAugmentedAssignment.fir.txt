@@ -144,21 +144,21 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     BLOCK_BODY
       VAR name:<unary> type:kotlin.Int [val] 
         CALL 'public final fun <get-x1> (): kotlin.Int declared in <root>.X1' type=kotlin.Int origin=null
-          $this: ERROR_CALL 'Unresolved reference: R|/X1|' type=<root>.X1
+          $this: GET_OBJECT 'CLASS OBJECT name:X1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       VAR name:<unary> type:kotlin.Int [val] 
         CALL 'public final fun <get-x2> (): kotlin.Int declared in <root>.X1.X2' type=kotlin.Int origin=null
-          $this: ERROR_CALL 'Unresolved reference: R|/X1.X2|' type=<root>.X1.X2
+          $this: GET_OBJECT 'CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       VAR name:<unary> type:kotlin.Int [val] 
         CALL 'public final fun <get-x3> (): kotlin.Int declared in <root>.X1.X2.X3' type=kotlin.Int origin=null
-          $this: ERROR_CALL 'Unresolved reference: R|/X1.X2.X3|' type=<root>.X1.X2.X3
+          $this: GET_OBJECT 'CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2.X3
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null

@@ -49,32 +49,34 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
     }
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): CompositeTransformResult<FirImport> {
-        val (packageFqName, relativeClassFqName) = resolveToPackageOrClass(fqName) ?: return delegate.compose()
+        val (packageFqName, relativeClassFqName) = resolveToPackageOrClass(symbolProvider, fqName) ?: return delegate.compose()
         return FirResolvedImportImpl(session, delegate, packageFqName, relativeClassFqName).compose()
     }
 
-    private fun resolveToPackageOrClass(fqName: FqName): PackageOrClass? {
-        var currentPackage = fqName
 
-        val pathSegments = fqName.pathSegments()
-        var prefixSize = pathSegments.size
-        while (!currentPackage.isRoot) {
-            if (symbolProvider.getPackage(currentPackage) != null) {
-                break
-            }
-            currentPackage = currentPackage.parent()
-            prefixSize--
+}
+
+fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageOrClass? {
+    var currentPackage = fqName
+
+    val pathSegments = fqName.pathSegments()
+    var prefixSize = pathSegments.size
+    while (!currentPackage.isRoot && prefixSize > 0) {
+        if (symbolProvider.getPackage(currentPackage) != null) {
+            break
         }
-
-        if (currentPackage == fqName) return PackageOrClass(currentPackage, null)
-        val relativeClassFqName =
-            FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
-
-        val classId = ClassId(currentPackage, relativeClassFqName, false)
-        if (symbolProvider.getClassLikeSymbolByFqName(classId) == null) return null
-
-        return PackageOrClass(currentPackage, relativeClassFqName)
+        currentPackage = currentPackage.parent()
+        prefixSize--
     }
 
-    private data class PackageOrClass(val packageFqName: FqName, val relativeClassFqName: FqName?)
+    if (currentPackage == fqName) return PackageOrClass(currentPackage, null)
+    val relativeClassFqName =
+        FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
+
+    val classId = ClassId(currentPackage, relativeClassFqName, false)
+    if (symbolProvider.getClassLikeSymbolByFqName(classId) == null) return null
+
+    return PackageOrClass(currentPackage, relativeClassFqName)
 }
+
+data class PackageOrClass(val packageFqName: FqName, val relativeClassFqName: FqName?)

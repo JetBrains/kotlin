@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.IFoo 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-foo> (): <root>.B declared in <root>.IFoo'
-            ERROR_CALL 'Unresolved reference: R|/B|' type=<root>.B
+            GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.B
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
     VALUE_PARAMETER name:invokeImpl index:1 type:<root>.IInvoke 
     BLOCK_BODY
       CALL 'public final fun with (receiver: T of <uninitialized parent>, block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
-        receiver: ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
+        receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
         block: BLOCK type=IrErrorType origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.A) returnType:kotlin.Nothing 
             VALUE_PARAMETER name:it index:0 type:<root>.A 

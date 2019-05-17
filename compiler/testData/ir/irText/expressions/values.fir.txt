@@ -113,20 +113,19 @@ FILE fqName:<root> fileName:/values.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Any 
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:<root>.Enum
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Any declared in <root>'
-        ERROR_CALL 'Unresolved reference: R|/Enum.A|' type=kotlin.Any
+      RETURN type=kotlin.Nothing from='public final fun test1 (): <root>.Enum declared in <root>'
+        GET_OBJECT 'CLASS ENUM_ENTRY name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Enum
   FUN name:test2 visibility:public modality:FINAL <> () returnType:<root>.A 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.A declared in <root>'
-        ERROR_CALL 'Unresolved reference: R|/A|' type=<root>.A
+        GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Int declared in <root>'
         CALL 'public final fun <get-a> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-  FUN name:test4 visibility:public modality:FINAL <> () returnType:<root>.Z 
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:<root>.Z.Companion
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.Z declared in <root>'
-        ERROR_CALL 'Unresolved reference: R|/Z|' type=<root>.Z
-
+      RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.Z.Companion declared in <root>'
+        GET_OBJECT 'CLASS CLASS name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z.Companion
