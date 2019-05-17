@@ -57,7 +57,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   private static final Logger LOG = Logger.getInstance(ExternalProjectsDataStorage.class);
 
   // exposed for tests
-  public static final int STORAGE_VERSION = 5;
+  public static final int STORAGE_VERSION = 6;
 
   @NotNull
   private final Project myProject;
