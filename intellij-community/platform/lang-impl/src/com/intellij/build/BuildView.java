@@ -185,12 +185,15 @@ public class BuildView extends CompositeView<ExecutionConsole>
     }
   }
 
-  private ExecutionConsole getConsoleView() {
+  @Nullable
+  @ApiStatus.Internal
+  ExecutionConsole getConsoleView() {
     return myExecutionConsole;
   }
 
   @Nullable
-  private BuildTreeConsoleView getEventView() {
+  @ApiStatus.Internal
+  BuildTreeConsoleView getEventView() {
     return getView(BuildTreeConsoleView.class.getName(), BuildTreeConsoleView.class);
   }
 
