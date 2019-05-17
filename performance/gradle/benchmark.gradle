@@ -47,21 +47,24 @@ kotlin {
         }
     }
 
-    targets {
-        fromPreset(presets.jvm, 'jvm') {
-            compilations.all {
-                tasks[compileKotlinTaskName].kotlinOptions {
-                    jvmTarget = '1.8'
-                    suppressWarnings = true
-                    freeCompilerArgs = (project.hasProperty('compilerArgs') ? compilerArgs.split() : [])
-                }
+    jvm() {
+        compilations.all {
+            tasks[compileKotlinTaskName].kotlinOptions {
+                jvmTarget = '1.8'
+                suppressWarnings = true
+                freeCompilerArgs = (project.hasProperty('compilerArgs') ? compilerArgs.split() : [])
             }
         }
+    }
 
-        fromPreset(hostPreset, 'native') {
-            compilations.main.outputKinds('EXECUTABLE')
-            compilations.main.extraOpts = (project.hasProperty('compilerArgs') ? compilerArgs.split() : []) + '-opt'
-            compilations.main.buildTypes = [RELEASE]
+    targetFromPreset(hostPreset, 'native') {
+        compilations.main.extraOpts = (project.hasProperty('compilerArgs') ? compilerArgs.split() : []) + '-opt'
+        binaries {
+            executable('benchmark', [RELEASE]) {
+                if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                    linkerOpts("-L${getMingwPath()}/lib")
+                }
+            }
         }
     }
 }
@@ -70,7 +73,7 @@ MPPTools.addTimeListener(project)
 
 MPPTools.createRunTask(project, 'konanRun', kotlin.targets.native) {
     workingDir = project.provider {
-        kotlin.targets.native.compilations.main.getBinary('EXECUTABLE', buildType).parentFile
+        kotlin.targets.native.binaries.getExecutable("benchmark", buildType).outputDirectory
     }
     depends("build")
     args("-w", "$nativeWarmup", "-r", "$attempts", "-o", "${buildDir.absolutePath}/${nativeBenchResults}", "-p", "${project.ext.applicationName}::")

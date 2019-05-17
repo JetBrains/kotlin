@@ -255,7 +255,6 @@ internal val dependenciesLowerPhase = SameTypeNamedPhaseWrapper(
         name = "LowerLibIR",
         description = "Lower library's IR",
         prerequisite = emptySet(),
-        dumperVerifier = EmptyDumperVerifier(),
         lower = object : CompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
                 val files = mutableListOf<IrFile>()

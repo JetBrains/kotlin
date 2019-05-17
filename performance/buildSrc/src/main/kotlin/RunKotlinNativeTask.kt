@@ -9,12 +9,12 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import javax.inject.Inject
 import java.io.File
 
 open class RunKotlinNativeTask @Inject constructor(
-        private val curTarget: KotlinTarget
+        private val curTarget: KotlinNativeTarget
 ) : DefaultTask() {
 
     var buildType = "RELEASE"
@@ -40,7 +40,7 @@ open class RunKotlinNativeTask @Inject constructor(
 
     override fun configure(configureClosure: Closure<Any>): Task {
         val task = super.configure(configureClosure)
-        this.dependsOn += curTarget.compilations.main.linkTaskName("EXECUTABLE", buildType)
+        this.dependsOn += curTarget.binaries.getExecutable("benchmark", buildType).linkTaskName
         return task
     }
 
@@ -52,7 +52,7 @@ open class RunKotlinNativeTask @Inject constructor(
         val filterArgs = filter.splitCommaSeparatedOption("-f")
         val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
         project.exec {
-            it.executable = curTarget.compilations.main.getBinary("EXECUTABLE", buildType).toString()
+            it.executable = curTarget.binaries.getExecutable("benchmark", buildType).outputFile.getAbsolutePath()
             it.args = curArgs + filterArgs + filterRegexArgs
             it.environment = curEnvironment
             it.workingDir(workingDir)

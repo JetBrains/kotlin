@@ -10,8 +10,8 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskState
 import org.gradle.api.execution.TaskExecutionListener
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
 import java.nio.file.Paths
@@ -76,8 +76,8 @@ fun getNativeProgramExtension(): String = when {
     else -> error("Unknown host")
 }
 
-fun getKotlinNativeExecutable(target: KotlinTarget, buildType: String) =
-        target.compilations.main.getBinary("EXECUTABLE", buildType).toString()
+fun getKotlinNativeExecutable(target: KotlinNativeTarget, buildType: String) =
+        target.binaries.getExecutable("benchmark", buildType).outputFile.getAbsolutePath()
 
 fun getFileSize(filePath: String): Long? {
     val file = File(filePath)
@@ -161,7 +161,7 @@ fun sendUploadRequest(url: String, fileName: String, username: String? = null, p
 fun createRunTask(
         subproject: Project,
         name: String,
-        target: KotlinTarget,
+        target: KotlinNativeTarget,
         configureClosure: Closure<Any>? = null
 ): Task {
     val task = subproject.tasks.create(name, RunKotlinNativeTask::class.java, target)
