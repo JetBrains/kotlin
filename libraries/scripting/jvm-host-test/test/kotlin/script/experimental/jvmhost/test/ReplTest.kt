@@ -21,7 +21,7 @@ import kotlin.script.experimental.jvmhost.impl.KJvmReplCompilerImpl
 class ReplTest : TestCase() {
 
     companion object {
-        const val TEST_DATA_DIR = "libraries/scripting/jvm-host/testData"
+        const val TEST_DATA_DIR = "libraries/scripting/jvm-host-test/testData"
     }
 
     @Test

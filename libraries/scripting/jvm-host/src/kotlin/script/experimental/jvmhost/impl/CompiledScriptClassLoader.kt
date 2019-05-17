@@ -11,7 +11,7 @@ import java.io.InputStream
 import java.net.URL
 import java.util.*
 
-internal class CompiledScriptClassLoader(parent: ClassLoader?, private val entries: Map<String, ByteArray>) : ClassLoader(parent) {
+class CompiledScriptClassLoader(parent: ClassLoader?, private val entries: Map<String, ByteArray>) : ClassLoader(parent) {
 
     override fun findClass(name: String): Class<*>? {
         val classPathName = name.replace('.', '/') + ".class"
