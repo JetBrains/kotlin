@@ -9705,6 +9705,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/possibleCycleOnConstraints.kt");
             }
 
+            @TestMetadata("recursiveTypes.kt")
+            public void testRecursiveTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes.kt");
+            }
+
             @TestMetadata("reportAboutUnresolvedReferenceAsUnresolved.kt")
             public void testReportAboutUnresolvedReferenceAsUnresolved() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/reportAboutUnresolvedReferenceAsUnresolved.kt");
