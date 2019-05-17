@@ -36,7 +36,7 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                     KotlinTypeFactory.flexibleType(
                         lowerBound?.lowerIfFlexible() ?: type.lowerBound,
                         upperBound?.upperIfFlexible() ?: type.upperBound
-                    )
+                    ).inheritEnhancement(type)
                 }
             }
         }
