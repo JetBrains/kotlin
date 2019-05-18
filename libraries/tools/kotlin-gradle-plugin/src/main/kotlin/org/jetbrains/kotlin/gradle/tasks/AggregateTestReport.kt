@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.CollectionCallbackActionDecorator
-import org.gradle.api.internal.file.UnionFileCollection
 import org.gradle.api.internal.tasks.testing.DefaultTestTaskReports
 import org.gradle.api.internal.tasks.testing.junit.result.*
 import org.gradle.api.internal.tasks.testing.report.DefaultTestReport
 import org.gradle.api.tasks.*
-import org.gradle.api.tasks.testing.*
+import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.testing.TestDescriptor
+import org.gradle.api.tasks.testing.TestListener
+import org.gradle.api.tasks.testing.TestResult
 import org.gradle.internal.concurrent.CompositeStoppable.stoppable
 import org.gradle.internal.logging.ConsoleRenderer
 import org.gradle.internal.operations.BuildOperationExecutor
