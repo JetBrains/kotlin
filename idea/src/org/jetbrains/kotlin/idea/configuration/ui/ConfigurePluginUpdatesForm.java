@@ -23,6 +23,7 @@ public class ConfigurePluginUpdatesForm {
     public JButton installButton;
     public JLabel installStatusLabel;
     private JLabel verifierDisabledText;
+    private JPanel pluginVersionPanel;
     private JTextPane currentVersion;
     private JPanel bundledCompilerVersionPanel;
     private JTextPane compilerVersion;
@@ -46,6 +47,9 @@ public class ConfigurePluginUpdatesForm {
         } else {
             bundledCompilerVersionPanel.setVisible(false);
         }
+
+        currentVersion.setBackground(pluginVersionPanel.getBackground());
+        compilerVersion.setBackground(bundledCompilerVersionPanel.getBackground());
     }
 
     public void initChannels(List<String> channels) {

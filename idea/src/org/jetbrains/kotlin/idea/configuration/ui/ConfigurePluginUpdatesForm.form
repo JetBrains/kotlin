@@ -30,7 +30,9 @@
       </grid>
       <grid id="b171" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="97" height="21"/>
+          </grid>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -105,7 +107,7 @@
           </component>
         </children>
       </grid>
-      <grid id="e3af8" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+      <grid id="e3af8" binding="pluginVersionPanel" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="335" height="24"/>
