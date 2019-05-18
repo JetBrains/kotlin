@@ -47,10 +47,13 @@ private fun cleanTaskName(taskName: String): String {
 }
 
 private val Project.cleanAllTestTask: Task
-    get() = tasks.findByName(cleanTaskName(allTestsTask.name))
-        ?: tasks.create("clean", Task::class.java).also {
-            tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME).dependsOn(it)
-        }
+    get() {
+        val taskName = cleanTaskName(allTestsTask.name)
+        return tasks.findByName(taskName)
+            ?: tasks.create(taskName, Task::class.java).also {
+                tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME).dependsOn(it)
+            }
+    }
 
 @Suppress("UnstableApiUsage")
 internal fun registerTestTask(taskHolder: TaskHolder<AbstractTestTask>) {
