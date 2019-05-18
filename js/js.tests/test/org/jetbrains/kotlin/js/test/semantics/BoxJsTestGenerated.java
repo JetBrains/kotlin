@@ -6813,6 +6813,24 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/throwable.kt");
             }
         }
+
+        @TestMetadata("js/js.translator/testData/box/regression/typeChecks")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeChecks extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeChecks() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/regression/typeChecks"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("emptyVarargInConstructorCall.kt")
+            public void testEmptyVarargInConstructorCall() throws Exception {
+                runTest("js/js.translator/testData/box/regression/typeChecks/emptyVarargInConstructorCall.kt");
+            }
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/reified")
