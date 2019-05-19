@@ -290,6 +290,33 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
                 )
             },
 
+            Method("java.lang.String.regionMatches")
+                    convertTo Method("kotlin.text.regionMatches")
+                    withByArgumentsFilter { it.size == 5 }
+                    withArgumentsProvider { arguments ->
+                val detachedArguments = arguments::arguments.detached()
+                JKArgumentListImpl(
+                    detachedArguments.drop(1) + JKNamedArgumentImpl(
+                        detachedArguments.first()::value.detached().also {
+                            it.clearNonCodeElements()
+                        },
+                        JKNameIdentifierImpl("ignoreCase")
+                    )
+                )
+            },
+
+            Method("java.lang.String.concat") convertTo
+                    CustomExpression { expression ->
+                        if (expression !is JKMethodCallExpression) error("Expression should be JKMethodCallExpression")
+                        val firstArgument = expression.parent.cast<JKQualifiedExpression>()::receiver.detached()
+                        val secondArgument = expression.arguments.arguments.first()::value.detached()
+                        kotlinBinaryExpression(
+                            firstArgument,
+                            secondArgument,
+                            KtTokens.PLUS,
+                            context.symbolProvider
+                        )
+                    } withReplaceType ReplaceType.FULL_REPLACE,
 
             Method("java.lang.String.split")
                     convertTo Method("kotlin.text.split")
