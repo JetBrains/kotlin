@@ -89,6 +89,7 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
             private const val KEY = "npmResolverData"
             operator fun get(project: Project) = project.extensions.findByName(KEY) as ProjectData?
             operator fun set(project: Project, value: ProjectData) = project.extensions.add(KEY, value)
+            fun getOrPut(project: Project) = this[project] ?: ProjectData().also { this[project] = it }
         }
     }
 
@@ -119,9 +120,7 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
     }
 
     private fun resolve(project: Project): NpmProjects {
-        val data = ProjectData().also {
-            ProjectData[project] = it
-        }
+        val data = ProjectData.getOrPut(project)
 
         project.subprojects.forEach {
             getOrResolve(it)
