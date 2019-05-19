@@ -11,7 +11,6 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.TaskHolder
-import org.jetbrains.kotlin.gradle.tasks.AggregateTestReport
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 
 private val Project.allTestsTask: TaskHolder<AggregateTestReport>
@@ -29,7 +28,7 @@ internal fun Project.getAggregatedTestTask(name: String, description: String, re
         aggregate.description = description
         aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 
-        aggregate.reports.configureConventions(project, reportName)
+        aggregate.configureReportsConvention(reportName)
 
         aggregate.onlyIf {
             aggregate.testTasks.size > 1
@@ -80,16 +79,7 @@ internal fun registerTestTaskInAggregate(
                 // - disable all reporting in test tasks
                 // - enable [checkFailedTests] on [allTestsTask]
 
-                task.ignoreFailures = true
-
-                @Suppress("UnstableApiUsage")
-                task.reports.html.isEnabled = false
-
-                @Suppress("UnstableApiUsage")
-                task.reports.junitXml.isEnabled = false
-
-                allTests.checkFailedTests = true
-                allTests.ignoreFailures = false
+                allTests.overrideReporting(task)
             }
         }
 
