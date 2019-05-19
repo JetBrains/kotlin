@@ -39,7 +39,7 @@ internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProj
 }
 
 internal val Project.kotlinExtensionOrNull: KotlinProjectExtension?
-    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinProjectExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as? KotlinProjectExtension
 
 internal val Project.kotlinExtension: KotlinProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinProjectExtension
