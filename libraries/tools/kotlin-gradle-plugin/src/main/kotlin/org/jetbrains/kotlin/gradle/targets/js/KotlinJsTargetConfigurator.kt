@@ -24,10 +24,6 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         target.compilations.forEach {
             it.compileKotlinTask.dependsOn(target.project.nodeJs.root.npmResolveTask)
         }
-
-        if (target.disambiguationClassifier != null) {
-            target.project.tasks.maybeCreate(runTaskNameSuffix).dependsOn(target.runTask)
-        }
     }
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
