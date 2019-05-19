@@ -1,56 +1,30 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.tasks
+package org.jetbrains.kotlin.gradle.testing.internal
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.internal.CollectionCallbackActionDecorator
 import org.gradle.api.internal.tasks.testing.DefaultTestTaskReports
 import org.gradle.api.internal.tasks.testing.junit.result.*
 import org.gradle.api.internal.tasks.testing.report.DefaultTestReport
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.AbstractTestTask
-import org.gradle.api.tasks.testing.TestDescriptor
-import org.gradle.api.tasks.testing.TestListener
-import org.gradle.api.tasks.testing.TestResult
 import org.gradle.internal.concurrent.CompositeStoppable.stoppable
 import org.gradle.internal.logging.ConsoleRenderer
 import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.internal.remote.internal.inet.InetAddressFactory
 import org.jetbrains.kotlin.gradle.utils.injected
-import java.io.File
 import java.util.*
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-open class AggregateTestReport : DefaultTask() {
+open class AggregateTestReportGradle5 : AggregateTestReport() {
     @Internal
-    val testTasks = mutableListOf<AbstractTestTask>()
-
-    /**
-     * Returns the set of binary test results to include in the report.
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
-    val testResultDirs: Collection<File>
-        @PathSensitive(PathSensitivity.NONE)
-        @InputFiles
-        @SkipWhenEmpty
-        get() {
-            val dirs = mutableListOf<File>()
-            testTasks.forEach {
-                dirs.add(it.binResultsDir)
-            }
-            return dirs
-        }
-
-    @Input
-    var ignoreFailures: Boolean = false
-
-    @Nested
     val reports: DefaultTestTaskReports
 
     protected open val instantiator: Instantiator
@@ -72,31 +46,14 @@ open class AggregateTestReport : DefaultTask() {
         reports.html.isEnabled = true
     }
 
-    private var hasFailedTests = false
-
-    private val failedTestsListener = object : TestListener {
-        override fun beforeTest(testDescriptor: TestDescriptor) {
-        }
-
-        override fun afterSuite(suite: TestDescriptor, result: TestResult) {
-        }
-
-        override fun beforeSuite(suite: TestDescriptor) {
-        }
-
-        override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
-            if (result.failedTestCount > 0) {
-                hasFailedTests = true
-            }
-        }
+    override fun configureReportsConvention(name: String) {
+        reports.configureConventions(project, name)
     }
 
-    internal var checkFailedTests: Boolean = false
-
-    fun registerTestTask(task: AbstractTestTask) {
-        testTasks.add(task)
-        task.addTestListener(failedTestsListener)
-    }
+    override val htmlReportUrl: String?
+        get() =
+            if (reports.html.isEnabled) ConsoleRenderer().asClickableFileUrl(reports.html.destination.resolve("index.html"))
+            else null
 
     @TaskAction
     fun generateReport() {
@@ -130,20 +87,7 @@ open class AggregateTestReport : DefaultTask() {
             stoppable(resultsProvider).stop()
         }
 
-        if (checkFailedTests && hasFailedTests) {
-            val message = StringBuilder("There were failing tests.")
-
-            if (reports.html.isEnabled) {
-                val reportUrl = ConsoleRenderer().asClickableFileUrl(reports.html.destination.resolve("index.html"))
-                message.append(" See the report at: $reportUrl")
-            }
-
-            if (ignoreFailures) {
-                logger.warn(message.toString())
-            } else {
-                throw GradleException(message.toString())
-            }
-        }
+        checkFailedTests()
     }
 
     private fun createAggregateProvider(): TestResultsProvider {
@@ -156,5 +100,18 @@ open class AggregateTestReport : DefaultTask() {
             stoppable(resultsProviders).stop()
             throw e
         }
+    }
+
+    override fun overrideReporting(task: AbstractTestTask) {
+        task.ignoreFailures = true
+
+        @Suppress("UnstableApiUsage")
+        task.reports.html.isEnabled = false
+
+        @Suppress("UnstableApiUsage")
+        task.reports.junitXml.isEnabled = false
+
+        checkFailedTests = true
+        ignoreFailures = false
     }
 }
