@@ -44,6 +44,12 @@ internal fun <T> primitiveArrayConcat(vararg args: T): T {
     return result.unsafeCast<T>()
 }
 
+internal fun <T> taggedArrayCopy(array: dynamic): T {
+    val res = array.slice()
+    res.`$type$` = array.`$type$`
+    return res.unsafeCast<T>()
+}
+
 @PublishedApi
 internal inline fun withType(type: String, array: dynamic): dynamic {
     array.`$type$` = type

@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -139,11 +138,18 @@ private class VarargTransformer(
         if (segments.size == 1) {
             val segment = segments.first()
             val argument = if (expression.elements.any { it is IrSpreadElement }) {
+                val elementType = arrayInfo.primitiveElementType
+                val copyFunction =
+                    if (elementType.isChar() || elementType.isBoolean() || elementType.isLong())
+                        context.intrinsics.taggedArrayCopy
+                    else
+                        context.intrinsics.jsArraySlice
+
                 IrCallImpl(
                     expression.startOffset,
                     expression.endOffset,
                     arrayInfo.primitiveArrayType,
-                    context.intrinsics.jsArraySlice
+                    copyFunction
                 ).apply {
                     putTypeArgument(0, arrayInfo.primitiveArrayType)
                     putValueArgument(0, segment)

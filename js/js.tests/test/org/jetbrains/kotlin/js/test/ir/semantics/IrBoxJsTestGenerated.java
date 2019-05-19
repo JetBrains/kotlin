@@ -6795,6 +6795,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             public void testEmptyVarargInConstructorCall() throws Exception {
                 runTest("js/js.translator/testData/box/regression/typeChecks/emptyVarargInConstructorCall.kt");
             }
+
+            @TestMetadata("taggedArrayCopy.kt")
+            public void testTaggedArrayCopy() throws Exception {
+                runTest("js/js.translator/testData/box/regression/typeChecks/taggedArrayCopy.kt");
+            }
         }
     }
 

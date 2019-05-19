@@ -245,6 +245,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val arrayConcat = getInternalWithoutPackage("arrayConcat")
 
     val primitiveArrayConcat = getInternalWithoutPackage("primitiveArrayConcat")
+    val taggedArrayCopy = getInternalWithoutPackage("taggedArrayCopy")
 
     val jsArraySlice = defineJsSliceIntrinsic().symbol
 
