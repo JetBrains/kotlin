@@ -6805,6 +6805,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             public void testTaggedArrayCopy() throws Exception {
                 runTest("js/js.translator/testData/box/regression/typeChecks/taggedArrayCopy.kt");
             }
+
+            @TestMetadata("toStringExtension.kt")
+            public void testToStringExtension() throws Exception {
+                runTest("js/js.translator/testData/box/regression/typeChecks/toStringExtension.kt");
+            }
         }
     }
 

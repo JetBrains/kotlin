@@ -64,20 +64,17 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
     }
 
     private fun shouldReplaceToStringWithRuntimeCall(call: IrFunctionAccessExpression): Boolean {
-        // TODO: (KOTLIN-CR-2079)
-        //  - User defined extension functions Any?.toString() call can be lost during lowering.
-        //  - Use direct method call for dynamic types???
-        //  - Define Any?.toString() in runtime library and stop intrinsicifying extensions
-
-        if (call.valueArgumentsCount > 0)
+        val function = call.symbol.owner
+        if (function.valueParameters.size != 0 && function.name.asString() != "toString" )
             return false
 
-        val receiverParameterType = with(call.symbol.owner) {
-            dispatchReceiverParameter ?: extensionReceiverParameter
-        }?.type ?: return false
+        if (function.extensionReceiverParameter != null)
+            return false
+
+        val receiverParameterType = function.dispatchReceiverParameter?.type ?: return false
 
         return receiverParameterType.run {
-            isArray() || isAny() || isNullable() || this is IrDynamicType || isString()
+            isArray() || isAny() || this is IrDynamicType || isString()
         }
     }
 }
