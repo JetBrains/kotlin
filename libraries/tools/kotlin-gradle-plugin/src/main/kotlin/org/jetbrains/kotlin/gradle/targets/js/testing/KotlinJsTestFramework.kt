@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 
 interface KotlinJsTestFramework : RequiresNpmDependencies {
@@ -18,4 +17,7 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>
     ): TCServiceMessagesTestExecutionSpec
+
+    override val nodeModulesRequired: Boolean
+        get() = true
 }

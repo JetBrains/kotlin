@@ -10,4 +10,4 @@ import java.io.File
 /**
  * Fake NodeJS module directory created from Gradle external module
  */
-class GradleNodeModule(val name: String, val version: String, val path: File)
+data class GradleNodeModule(val name: String, val version: String, val path: File)
