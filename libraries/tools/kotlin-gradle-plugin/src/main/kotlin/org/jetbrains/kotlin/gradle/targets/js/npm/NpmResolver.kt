@@ -9,7 +9,9 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver.ResolutionCallResult.*
+import java.nio.file.Files
 
 /**
  * Generates `package.json` file for [NpmProject] with npm or js dependencies and
@@ -92,9 +94,12 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
 
     fun resolve() {
         resolve(rootProject)
-        if (allNpmPackages.isNotEmpty()) {
-            removeOutdatedPackages()
+        removeOutdatedPackages()
+
+        if (allNpmPackages.any { it.npmDependencies.isNotEmpty() }) {
             packageManager.resolveRootProject(rootProject, allNpmPackages)
+        } else if (allNpmPackages.any { it.hasNodeModulesDependentTasks }) {
+            NpmSimpleLinker(rootProject).link(allNpmPackages)
         }
 
         close()

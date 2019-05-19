@@ -95,6 +95,9 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         )
     )
 
+    override val nodeModulesRequired: Boolean
+        @Internal get() = true
+
     override val requiredNpmDependencies: Collection<NpmPackageVersion>
         @Internal get() = mutableListOf<NpmPackageVersion>().also {
             it.add(versions.webpack)
