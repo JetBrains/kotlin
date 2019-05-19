@@ -26,6 +26,10 @@ kotlin.sourceSets {
     }
 }
 
+kotlin.target {
+    nodejs()
+}
+
 kotlin.target.compilations.create("benchmark") {
     defaultSourceSet.dependencies {
         val main by kotlin.target.compilations
