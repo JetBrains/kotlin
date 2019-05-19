@@ -83,8 +83,10 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
     private fun visitTarget(target: KotlinTarget) {
         if (target.platformType == KotlinPlatformType.js) {
             target.compilations.toList().forEach { compilation ->
-                compilation as KotlinJsCompilation
-                visitCompilation(compilation)
+                if (compilation is KotlinJsCompilation) {
+                    // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
+                    visitCompilation(compilation)
+                }
             }
         }
     }
