@@ -45,7 +45,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         }
 
     val entry: File
-        get() = compilation.compileKotlinTask.outputFile
+        @InputFile get() = compilation.compileKotlinTask.outputFile
 
     open val configFile: File
         @OutputFile get() = compilation.npmProject.dir.resolve("webpack.config.js")
@@ -78,25 +78,6 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Optional
     var devServer: KotlinWebpackConfigWriter.DevServer? = null
 
-    override val requiredNpmDependencies: Collection<NpmPackageVersion>
-        get() = mutableListOf<NpmPackageVersion>().also {
-            it.add(versions.webpack)
-            it.add(versions.webpackCli)
-
-            if (report) {
-                it.add(versions.webpackBundleAnalyzer)
-            }
-
-            if (sourceMaps) {
-                it.add(versions.sourceMapLoader)
-                it.add(versions.sourceMapSupport)
-            }
-
-            if (devServer != null) {
-                it.add(versions.webpackDevServer)
-            }
-        }
-
     private fun createRunner() = KotlinWebpackRunner(
         compilation.npmProject,
         configFile,
@@ -113,6 +94,25 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             sourceMapsRuntime = sourceMaps
         )
     )
+
+    override val requiredNpmDependencies: Collection<NpmPackageVersion>
+        @Internal get() = mutableListOf<NpmPackageVersion>().also {
+            it.add(versions.webpack)
+            it.add(versions.webpackCli)
+
+            if (report) {
+                it.add(versions.webpackBundleAnalyzer)
+            }
+
+            if (sourceMaps) {
+                it.add(versions.sourceMapLoader)
+                it.add(versions.sourceMapSupport)
+            }
+
+            if (devServer != null) {
+                it.add(versions.webpackDevServer)
+            }
+        }
 
     @TaskAction
     fun execute() {

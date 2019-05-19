@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import java.io.File
 
 open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
-    @Internal
-    @SkipWhenEmpty
+    @get:Internal
     internal var testFramework: KotlinJsTestFramework? = null
 
     val testFrameworkSettings: String
@@ -52,7 +51,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
         @Internal get() = listOf("./" + compilation.npmProject.main)
 
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = testFramework!!.requiredNpmDependencies
+        @Internal get() = testFramework!!.requiredNpmDependencies
 
     fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(compilation), body)
     fun useNodeJs(fn: Closure<*>) {
