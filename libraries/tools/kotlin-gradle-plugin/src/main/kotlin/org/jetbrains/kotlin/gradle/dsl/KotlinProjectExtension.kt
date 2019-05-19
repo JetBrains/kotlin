@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -86,9 +87,9 @@ open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
 }
 
 open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
-    override lateinit var target: KotlinOnlyTarget<KotlinJsCompilation>
+    override lateinit var target: KotlinJsTarget
 
-    open fun target(body: KotlinOnlyTarget<KotlinJsCompilation>.() -> Unit) = target.run(body)
+    open fun target(body: KotlinJsTarget.() -> Unit) = target.run(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",
