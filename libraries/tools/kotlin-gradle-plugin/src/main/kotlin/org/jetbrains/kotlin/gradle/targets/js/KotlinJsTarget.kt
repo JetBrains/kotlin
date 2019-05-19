@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Compa
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -31,7 +32,14 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
         )
 
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
-    val runTask get() = project.tasks.maybeCreate(runTaskName)
+    val runTask
+        get() = project.tasks.maybeCreate(runTaskName).also {
+            if (runTaskName != runTaskNameSuffix) {
+                project.whenEvaluated {
+                    project.tasks.maybeCreate(runTaskNameSuffix).dependsOn(it)
+                }
+            }
+        }
 
     val browser by lazy {
         KotlinBrowserJs(this).also {
