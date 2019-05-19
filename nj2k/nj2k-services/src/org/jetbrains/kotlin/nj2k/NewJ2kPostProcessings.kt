@@ -14,6 +14,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
@@ -756,6 +757,8 @@ object NewJ2KPostProcessingRegistrar {
             fun check(element: KtProperty): Boolean {
                 if (!element.isVar) return false
                 if (!element.isPrivate()) return false
+                val descriptor = element.resolveToDescriptorIfAny() ?: return false
+                if (descriptor.overriddenDescriptors.any { it.safeAs<VariableDescriptor>()?.isVar == true }) return false
                 return !element.hasWriteUsages()
             }
 
