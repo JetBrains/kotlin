@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.*
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
@@ -72,10 +74,14 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
     val transformer = IrElementToJsExpressionTransformer()
     val size = expression.valueArgumentsCount
 
-    val arguments = (0 until size).mapTo(ArrayList(size)) {
-        val argument = expression.getValueArgument(it)
-        val result = argument?.accept(transformer, context) ?: JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
-        result
+    val arguments = (0 until size).mapTo(ArrayList(size)) { index ->
+        val argument = expression.getValueArgument(index)
+        val result = argument?.accept(transformer, context)
+        if (result == null) {
+            assert(expression is IrFunctionAccessExpression && expression.symbol.owner.isEffectivelyExternal())
+            JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
+        } else
+            result
     }
 
     return if (expression.descriptor.isSuspend) {
