@@ -50,6 +50,9 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     val nodeModulesToLoad: List<String>
         @Internal get() = listOf("./" + compilation.npmProject.main)
 
+    override val nodeModulesRequired: Boolean
+        @Internal get() = testFramework!!.nodeModulesRequired
+
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
