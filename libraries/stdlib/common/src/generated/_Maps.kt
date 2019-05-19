@@ -59,7 +59,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo
  * Returns a list containing the results of applying the given [transform] function
  * to each entry in the original map.
  * 
- * @sample samples.collections.Maps.Transformations.mapMap
+ * @sample samples.collections.Maps.Transformations.mapToList
  */
 public inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
     return mapTo(ArrayList<R>(size), transform)

@@ -303,8 +303,12 @@ class Maps {
         }
 
         @Sample
-        fun mapMap() {
-            val peopleToAge = mapOf("alice" to 20, "bob" to 21)
+        fun mapToList() {
+            val peopleToAge = mapOf("Alice" to 20, "Bob" to 21)
+            assertPrints(
+                peopleToAge.map { (name, age) -> "$name is $age years old" },
+                "[Alice is 20 years old, Bob is 21 years old]"
+            )
             assertPrints(peopleToAge.map { it.value }, "[20, 21]")
         }
 

@@ -98,7 +98,7 @@ object Mapping : TemplateGroupBase() {
         }
 
         specialFor(Maps) {
-            sample("samples.collections.Maps.Transformations.mapMap")
+            sample("samples.collections.Maps.Transformations.mapToList")
         }
 
         specialFor(CharSequences) {
