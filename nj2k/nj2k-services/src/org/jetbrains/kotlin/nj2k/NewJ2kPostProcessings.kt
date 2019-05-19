@@ -499,13 +499,11 @@ object NewJ2KPostProcessingRegistrar {
                 if (needLocalVariablesTypes && element.isLocal) return false
                 if (needFieldTypes && element.isMember) return false
                 val initializer = element.initializer ?: return false
-                val withoutExpectedType = initializer.analyzeInContext(initializer.getResolutionScope())
+                val withoutExpectedType =
+                    initializer.analyzeInContext(initializer.getResolutionScope()).getType(initializer) ?: return false
                 val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
-                return when (withoutExpectedType.getType(initializer)) {
-                    descriptor.returnType -> true
-                    descriptor.returnType?.makeNotNullable() -> !element.isVar
-                    else -> false
-                }
+                return if (element.isVar) withoutExpectedType == descriptor.returnType
+                else withoutExpectedType.makeNotNullable() == descriptor.returnType?.makeNotNullable()
             }
 
             if (!check(element)) {
