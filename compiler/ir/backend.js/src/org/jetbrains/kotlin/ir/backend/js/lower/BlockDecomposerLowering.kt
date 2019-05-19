@@ -596,10 +596,9 @@ class BlockDecomposerTransformer(private val context: JsIrBackendContext) : IrEl
                 receiver is IrDynamicMemberExpression ||
                         (receiver is IrDynamicOperatorExpression && receiver.operator == IrDynamicOperator.ARRAY_ACCESS)
 
-            val operatorDependsOnMemberAccess =
-                operator.isAssignmentOperator || operator == IrDynamicOperator.INVOKE
+            val operatorDependsOnMemberAccess = (operator == IrDynamicOperator.INVOKE)
 
-            return receiverIsMemberAccess && operatorDependsOnMemberAccess
+            return operator.isAssignmentOperator || (receiverIsMemberAccess && operatorDependsOnMemberAccess)
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
