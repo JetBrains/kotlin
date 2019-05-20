@@ -100,8 +100,6 @@ object KotlinTypeFactory {
         val basicDescriptor = constructor.declarationDescriptor
         val descriptor = basicDescriptor?.let { kotlinTypeRefiner.refineDescriptor(it) } ?: return null
 
-        if (descriptor == basicDescriptor) return null
-
         if (descriptor is TypeAliasDescriptor) {
             return ExpandedTypeOrRefinedConstructor(descriptor.computeExpandedType(arguments), null)
         }
