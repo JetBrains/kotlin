@@ -11,8 +11,15 @@ import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-// TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
-class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = AGPVersion.v3_2_0) {
+open class KotlinAndroid33GradleIT : KotlinAndroid32GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_3_2
+}
+
+open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_2_0
+
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
 
@@ -20,6 +27,9 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
     fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
+
+            // KT-30784
+            assertNotContains("API 'variant.getPackageLibrary()' is obsolete and has been replaced")
 
             assertContains("KT-29964 OK") // Output from lib/build.gradle
 
@@ -327,12 +337,15 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
     }
 }
 
-class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = AGPVersion.v3_0_0) {
+class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_0_0
+
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.Until("4.10.2")
 }
 
-abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: AGPVersion) : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion) {
+abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
     @Test
     fun testApplyWithFeaturePlugin() {
         val project = Project("AndroidProject")
@@ -361,7 +374,9 @@ abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: AGPVersion) : 
     }
 }
 
-abstract class AbstractKotlinAndroidGradleTests(val androidGradlePluginVersion: AGPVersion) : BaseGradleIT() {
+abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
+
+    abstract val androidGradlePluginVersion: AGPVersion
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(

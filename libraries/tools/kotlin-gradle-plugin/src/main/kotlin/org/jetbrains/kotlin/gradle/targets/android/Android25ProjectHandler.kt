@@ -12,6 +12,7 @@ import com.android.build.gradle.tasks.MergeResources
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -126,8 +128,19 @@ class Android25ProjectHandler(
         return project.files(Callable { variantData.mergeResources?.computeResourceSetList0() ?: emptyList() })
     }
 
-    override fun getLibraryOutputTask(variant: BaseVariant): AbstractArchiveTask? =
-        (variant as? LibraryVariant)?.packageLibrary
+    // TODO the return type is actually `AbstractArchiveTask | TaskProvider<out AbstractArchiveTask>`;
+    //      change the signature once the Gradle versions that don't support task providers (< 4.8) are dropped
+    override fun getLibraryOutputTask(variant: BaseVariant): Any? {
+        val getPackageLibraryProvider = variant.javaClass.methods
+            .find { it.name == "getPackageLibraryProvider" && it.parameterCount == 0 }
+
+        return if (getPackageLibraryProvider != null && isGradleVersionAtLeast(4, 8)) {
+            @Suppress("UNCHECKED_CAST")
+            getPackageLibraryProvider(variant) as TaskProvider<out AbstractArchiveTask>
+        } else {
+            (variant as? LibraryVariant)?.packageLibrary
+        }
+    }
 
     override fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
         val project = compilation.target.project
