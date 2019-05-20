@@ -35,6 +35,10 @@ class ServiceTreeView extends ServiceView {
 
     myTreeModel = new ServiceViewTreeModel(model);
     myTree = new ServiceViewTree(myTreeModel, this);
+
+    myTreeModel.setFlat(state.flat);
+    myTree.setShowsRootHandles(!state.flat);
+
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
     ui.setServiceToolbar(actionProvider);
     ui.setMasterPanel(myTree, actionProvider);
@@ -57,6 +61,7 @@ class ServiceTreeView extends ServiceView {
     super.saveState(state);
     myUi.saveState(state);
     state.treeState = TreeState.createOn(myTree);
+    state.flat = myTreeModel.isFlat();
   }
 
   @NotNull
@@ -107,6 +112,17 @@ class ServiceTreeView extends ServiceView {
     if (myLastSelection != null) {
       myLastSelection.getViewDescriptor().onNodeUnselected();
     }
+  }
+
+  @Override
+  boolean isFlat() {
+    return myTreeModel.isFlat();
+  }
+
+  @Override
+  void setFlat(boolean flat) {
+    myTreeModel.setFlat(flat);
+    myTree.setShowsRootHandles(!flat);
   }
 
   private void onSelectionChanged() {

@@ -49,6 +49,13 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   abstract void onViewUnselected();
 
+  boolean isFlat() {
+    return false;
+  }
+
+  void setFlat(boolean flat) {
+  }
+
   static ServiceView createView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewState state) {
     ServiceView serviceView = model instanceof ServiceViewModel.SingeServiceModel ?
                               createSingleView(project, model) :

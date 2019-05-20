@@ -24,6 +24,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   private final ServiceViewModel myModel;
   private final ServiceViewModelListener myListener;
   private final Object myRoot = ObjectUtils.sentinel("services root");
+  private volatile boolean myFlat = false;
 
   ServiceViewTreeModel(ServiceViewModel model) {
     myModel = model;
@@ -49,11 +50,21 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
 
   @Override
   public boolean isLeaf(Object object) {
-    return object != myRoot && myModel.getChildren(((ServiceViewItem)object)).isEmpty();
+    return object != myRoot && (myFlat || myModel.getChildren(((ServiceViewItem)object)).isEmpty());
   }
 
   @Override
   public List<?> getChildren(Object parent) {
+    if (myFlat) {
+      if (parent == myRoot) {
+        return JBTreeTraverser.from((Function<ServiceViewItem, List<ServiceViewItem>>)node -> new ArrayList<>(myModel.getChildren(node)))
+          .withRoots(myModel.getRoots())
+          .traverse(TreeTraversal.LEAVES_DFS)
+          .toList();
+      }
+      return Collections.emptyList();
+    }
+
     if (parent == myRoot) {
       return myModel.getRoots();
     }
@@ -63,6 +74,15 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   @Override
   public Object getRoot() {
     return myRoot;
+  }
+
+  boolean isFlat() {
+    return myFlat;
+  }
+
+  void setFlat(boolean flat) {
+    myFlat = flat;
+    treeStructureChanged(new TreePath(myRoot), null, null);
   }
 
   Promise<TreePath> findPath(@NotNull Object service, @NotNull Class<?> contributorClass) {
