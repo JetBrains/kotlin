@@ -100,10 +100,22 @@ class ScriptConfigurationRefinementContext(
     val collectedData: ScriptCollectedData? = null
 )
 
+interface ScriptEvaluationContextDataKeys
+
+/**
+ * The container for script evaluation context data
+ * Used for transferring data to the evaluation refinement callbacks
+ */
+class ScriptEvaluationContextData(properties: Map<PropertiesCollection.Key<*>, Any>) : PropertiesCollection(properties) {
+
+    companion object : ScriptEvaluationContextDataKeys
+}
+
 /**
  * The facade to the script data for evaluation configuration refinement callbacks
  */
 class ScriptEvaluationConfigurationRefinementContext(
     val compiledScript: CompiledScript<*>,
-    val evaluationConfiguration: ScriptEvaluationConfiguration
+    val evaluationConfiguration: ScriptEvaluationConfiguration,
+    val contextData: ScriptEvaluationContextData? = null
 )
