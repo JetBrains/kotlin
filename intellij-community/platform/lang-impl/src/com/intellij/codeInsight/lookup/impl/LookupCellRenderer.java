@@ -169,6 +169,9 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     if (allowedWidth > 0) {
       allowedWidth -= setTypeTextLabel(item, background, grayedForeground, presentation, isSelected ? getMaxWidth() : allowedWidth, isSelected, nonFocusedSelection, normalMetrics);
     }
+    else {
+      myTypeLabel.setBackground(background);
+    }
 
     myTailComponent.clear();
     myTailComponent.setBackground(background);

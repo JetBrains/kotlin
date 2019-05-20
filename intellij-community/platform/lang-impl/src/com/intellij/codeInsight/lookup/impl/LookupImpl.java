@@ -1153,6 +1153,11 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     }
   }
 
+  @Override
+  protected void onPopupCancel() {
+    hide();
+  }
+
   private static Throwable staticDisposeTrace = null;
   private Throwable disposeTrace = null;
 
