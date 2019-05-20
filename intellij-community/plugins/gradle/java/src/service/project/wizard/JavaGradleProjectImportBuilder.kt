@@ -3,10 +3,13 @@ package org.jetbrains.plugins.gradle.service.project.wizard
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.packaging.artifacts.ModifiableArtifactModel
 import com.intellij.projectImport.DeprecatedProjectBuilderForImport
@@ -15,6 +18,7 @@ import com.intellij.projectImport.ProjectImportProvider.getDefaultPath
 import icons.GradleIcons
 import org.jetbrains.plugins.gradle.service.project.open.importProject
 import org.jetbrains.plugins.gradle.util.GradleBundle
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import javax.swing.Icon
 
 
@@ -44,6 +48,16 @@ class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedPr
     return setupCreatedProject(super.createProject(name, path))?.also {
       it.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
     }
+  }
+
+  override fun validate(current: Project?, project: Project): Boolean {
+    val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
+    val projectSettings = systemSettings.getLinkedProjectSettings(fileToImport)
+    if (projectSettings == null) return true
+    val message = ExternalSystemBundle.message("error.project.already.registered")
+    val title = ExternalSystemBundle.message("error.project.import.error.title")
+    Messages.showErrorDialog(message, title)
+    return false
   }
 
   override fun commit(project: Project,
