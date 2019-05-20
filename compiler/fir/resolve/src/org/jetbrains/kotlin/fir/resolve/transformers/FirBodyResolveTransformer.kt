@@ -125,6 +125,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             primaryConstructorParametersScope = null
             val type = regularClass.defaultType()
             scopes.addIfNotNull(type.scope(session, scopeSession))
+            val companionObject = regularClass.companionObject
+            if (companionObject != null) {
+                scopes.addIfNotNull(symbolProvider.getClassUseSiteMemberScope(companionObject.classId, session, scopeSession))
+            }
             val result = withLabelAndReceiverType(regularClass.name, regularClass, type) {
                 super.transformRegularClass(regularClass, data)
             }
