@@ -17,7 +17,7 @@ fun test(a: A<out CharSequence>, z: Out<CharSequence>) {
         <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
     }
     a.bar { <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>Out<CharSequence>()<!> }
-    a.bar { <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>Out<!>() }
+    a.bar { Out() }
     a.bar { <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>z.id()<!> }
 
     a.foo {

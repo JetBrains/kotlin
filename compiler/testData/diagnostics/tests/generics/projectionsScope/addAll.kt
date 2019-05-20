@@ -24,7 +24,7 @@ fun foo(x: MC<out Open>) {
     x.addAll(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>mc<Derived>()<!>)
     x.addAllMC(<!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>mc<Derived>()<!>)
 
-    x.addAll(<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>c<!>())
+    x.addAll(c())
     x.addAll(c<Nothing>())
 
     x.<!OI;MEMBER_PROJECTED_OUT!>addAllInv<!>(<!NI;TYPE_MISMATCH!>mc<Open>()<!>)

@@ -14,9 +14,9 @@ class A<T> {
 
 fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
     a.<!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo1<!>(<!NI;TYPE_MISMATCH!>Out<CharSequence>()<!>)
-    a.foo1<<!UPPER_BOUND_VIOLATED!>Out<CharSequence><!>>(<!NI;TYPE_MISMATCH!><!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>Out<!>()<!>)
+    a.foo1<<!UPPER_BOUND_VIOLATED!>Out<CharSequence><!>>(<!NI;TYPE_MISMATCH!>Out()<!>)
 
-    a.foo1(<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>Out<!>())
+    a.foo1(Out())
     a.foo1(Out<Nothing>())
 
     a.<!OI;TYPE_INFERENCE_INCORPORATION_ERROR!>foo2<!>(<!NI;TYPE_MISMATCH!><!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Inv<!>()<!>)
