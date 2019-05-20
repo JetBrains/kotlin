@@ -17,6 +17,9 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 val cidrPluginTools: MutableMap<String, Any> by rootProject.extra(mutableMapOf())
 
+cidrPluginTools["ideaPluginJarDep"] = ::ideaPluginJarDep
+cidrPluginTools["addIdeaNativeModuleDeps"] = ::addIdeaNativeModuleDeps
+
 cidrPluginTools["packageCidrPlugin"] = ::packageCidrPlugin
 cidrPluginTools["zipCidrPlugin"] = ::zipCidrPlugin
 cidrPluginTools["cidrUpdatePluginsXml"] = ::cidrUpdatePluginsXml
@@ -79,6 +82,83 @@ fun AbstractCopyTask.commentXmlFiles(fileToMarkers: Map<String, List<String>>) {
         check(notDone.size == 0) {
             "Filtering failed for: " +
                     notDone.joinToString(separator = "\n") { (file, marker) -> "file=$file, marker=`$marker`" }
+        }
+    }
+}
+
+// --------------------------------------------------
+// CIDR plugin dependencies:
+// --------------------------------------------------
+
+fun ideaPluginJarDep(project: Project): Any = with(project) {
+    return if (includeKotlinUltimate) {
+        // depend on the artifact to be build
+        dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
+    } else {
+        // reuse JAR artifact from downloaded plugin
+        val ideaPluginForCidrDir: String by rootProject.extra
+        fileTree(ideaPluginForCidrDir) {
+            include("lib/kotlin-plugin.jar")
+        }
+    }
+}
+
+fun addIdeaNativeModuleDeps(project: Project) = with(project) {
+    dependencies {
+        if (includeKotlinUltimate) {
+            // Gradle projects with Kotlin/Native-specific logic
+            // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
+            add("compile", project(":idea:idea-native"))
+            add("compile", project(":idea:idea-gradle-native"))
+
+            // Detect IDE name and version
+            val ideName = if (rootProject.findProperty("intellijUltimateEnabled")?.toString()?.toBoolean() == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
+            val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+
+            // Java APIs (from Big Kotlin project)
+            val javaApis = add("compile", "kotlin.build:$ideName:$ideVersion") as ExternalModuleDependency
+            with(javaApis) {
+                artifact {
+                    name = "java-api"
+                    type = "jar"
+                    extension = "jar"
+                }
+                artifact {
+                    name = "java-impl"
+                    type = "jar"
+                    extension = "jar"
+                }
+                isTransitive = false
+            }
+        } else {
+            // contents of Kotlin plugin
+            val ideaPluginForCidrDir: String by rootProject.extra
+            val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
+                exclude(excludesListFromIdeaPlugin)
+            }
+            add("compile", ideaPluginJars)
+
+            // IntelliJ platform (out of CIDR IDE distribution)
+            val cidrIdeDir: String by rootProject.extra
+            val cidrPlatform = fileTree(cidrIdeDir) {
+                include("lib/*.jar")
+                exclude("lib/kotlin*.jar") // because Kotlin should be taken from Kotlin plugin
+                exclude("lib/clion*.jar") // don't take scrambled JARs
+                exclude("lib/appcode*.jar")
+            }
+            add("compile", cidrPlatform)
+
+            // standard CIDR plugins
+            val cidrPlugins = fileTree(cidrIdeDir) {
+                include("plugins/cidr-*/lib/*.jar")
+                include("plugins/gradle/lib/*.jar")
+            }
+            add("compile", cidrPlugins)
+
+            // Java APIs (private artifact that goes together with CIDR IDEs)
+            val cidrPlatformDepsDir: String by rootProject.extra
+            val cidrPlatformDeps = fileTree(cidrPlatformDepsDir) { include(platformDepsJarName) }
+            add("compile", cidrPlatformDeps)
         }
     }
 }
