@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ultimate.*
-
 plugins {
     kotlin("jvm")
 }
@@ -11,4 +9,7 @@ dependencies {
     compileOnly(fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
 }
 
-defaultSourceSets()
+the<JavaPluginConvention>().sourceSets["main"].apply {
+    java.setSrcDirs(listOf("src"))
+    resources.setSrcDirs(listOf("resources"))
+}

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ultimate.*
-
 plugins {
     kotlin("jvm")
 }
@@ -16,7 +14,10 @@ dependencies {
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
 }
 
-defaultSourceSets()
+the<JavaPluginConvention>().sourceSets["main"].apply {
+    java.setSrcDirs(listOf("src"))
+    resources.setSrcDirs(listOf("resources"))
+}
 
 enableTasksIfAtLeast(project, appcodeVersion, 191)
 enableTasksIfOsIsNot(project, listOf("Windows"))

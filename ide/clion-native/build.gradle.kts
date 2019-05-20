@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ultimate.*
-
 plugins {
     kotlin("jvm")
 }
@@ -27,4 +25,7 @@ dependencies {
     }
 }
 
-defaultSourceSets()
+the<JavaPluginConvention>().sourceSets["main"].apply {
+    java.setSrcDirs(listOf("src"))
+    resources.setSrcDirs(listOf("resources"))
+}
