@@ -9,6 +9,9 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.UnknownConfigurationType;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
+import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomUtilsWhiteListRule;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
@@ -80,7 +83,7 @@ public abstract class AbstractRunConfigurationTypeUsagesCollector extends Projec
     final StringBuilder keyBuilder = new StringBuilder();
     keyBuilder.append(configurationType.getId());
     if (configurationType.getConfigurationFactories().length > 1) {
-      keyBuilder.append(".").append(factory.getId());
+      keyBuilder.append("/").append(factory.getId());
     }
     return keyBuilder.toString();
   }
@@ -120,6 +123,58 @@ public abstract class AbstractRunConfigurationTypeUsagesCollector extends Projec
     @Override
     public int hashCode() {
       return Objects.hash(myKey, myData);
+    }
+  }
+
+  public static class RunConfigurationUtilValidator extends CustomUtilsWhiteListRule {
+
+    @Override
+    public boolean acceptRuleId(@Nullable String ruleId) {
+      return "run_config".equals(ruleId);
+    }
+
+    @NotNull
+    @Override
+    protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
+      if ("third.party".equals(data)) return ValidationResultType.ACCEPTED;
+
+      final String[] split = data.split("/");
+      if (split.length == 1 || split.length == 2) {
+        final ConfigurationType configuration = findRunConfigurationById(split[0].trim());
+        if (configuration != null && PluginInfoDetectorKt.getPluginInfo(configuration.getClass()).isDevelopedByJetBrains()) {
+          if (split.length == 1) {
+            return ValidationResultType.ACCEPTED;
+          }
+
+          final String factoryId = split[1].trim();
+          final ConfigurationFactory factory = findFactoryById(configuration, factoryId);
+          if (factory != null) {
+            return ValidationResultType.ACCEPTED;
+          }
+        }
+      }
+      return ValidationResultType.REJECTED;
+    }
+
+    @Nullable
+    private static ConfigurationType findRunConfigurationById(@NotNull String configuration) {
+      final ConfigurationType[] types = ConfigurationType.CONFIGURATION_TYPE_EP.getExtensions();
+      for (ConfigurationType type : types) {
+        if (StringUtil.equals(type.getId(), configuration)) {
+          return type;
+        }
+      }
+      return null;
+    }
+
+    @Nullable
+    private static ConfigurationFactory findFactoryById(ConfigurationType configuration, String factoryId) {
+      for (ConfigurationFactory factory : configuration.getConfigurationFactories()) {
+        if (StringUtil.equals(factory.getId(), factoryId)) {
+          return factory;
+        }
+      }
+      return null;
     }
   }
 }

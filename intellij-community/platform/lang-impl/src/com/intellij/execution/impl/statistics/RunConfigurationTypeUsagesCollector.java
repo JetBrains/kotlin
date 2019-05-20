@@ -27,6 +27,11 @@ public class RunConfigurationTypeUsagesCollector extends AbstractRunConfiguratio
   }
 
   @Override
+  public int getVersion() {
+    return 2;
+  }
+
+  @Override
   protected boolean isApplicable(@NotNull RunManager runManager, @NotNull RunnerAndConfigurationSettings settings) {
     return !settings.isTemporary();
   }

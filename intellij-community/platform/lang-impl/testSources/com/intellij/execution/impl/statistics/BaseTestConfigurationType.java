@@ -36,6 +36,11 @@ public abstract class BaseTestConfigurationType implements ConfigurationType {
     public String getId() {
       return FirstTestRunConfigurationType.class.getSimpleName();
     }
+
+    @Override
+    public ConfigurationFactory[] getConfigurationFactories() {
+      return new ConfigurationFactory[]{new BaseTestConfigurationFactory.FirstBaseTestConfigurationFactory()};
+    }
   }
 
   protected static class SecondTestRunConfigurationType extends BaseTestConfigurationType {
@@ -43,6 +48,27 @@ public abstract class BaseTestConfigurationType implements ConfigurationType {
     @NotNull
     public String getId() {
       return SecondTestRunConfigurationType.class.getSimpleName();
+    }
+
+    @Override
+    public ConfigurationFactory[] getConfigurationFactories() {
+      return new ConfigurationFactory[]{new BaseTestConfigurationFactory.SecondBaseTestConfigurationFactory()};
+    }
+  }
+
+  protected static class MultiFactoryTestRunConfigurationType extends BaseTestConfigurationType {
+    @Override
+    @NotNull
+    public String getId() {
+      return MultiFactoryTestRunConfigurationType.class.getSimpleName();
+    }
+
+    @Override
+    public ConfigurationFactory[] getConfigurationFactories() {
+      return new ConfigurationFactory[]{
+        new BaseTestConfigurationFactory.MultiFactoryLocalTestConfigurationFactory(),
+        new BaseTestConfigurationFactory.MultiFactoryRemoteTestConfigurationFactory()
+      };
     }
   }
 }
