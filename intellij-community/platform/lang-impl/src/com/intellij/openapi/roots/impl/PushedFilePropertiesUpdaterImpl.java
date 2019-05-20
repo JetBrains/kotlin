@@ -17,7 +17,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -56,15 +55,14 @@ public class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesUpdater
     myPushers = FilePropertyPusher.EP_NAME.getExtensions();
     myFilePushers = ContainerUtil.findAllAsArray(myPushers, pusher -> !pusher.pushDirectoriesOnly());
 
-    StartupManager.getInstance(project).registerPreStartupActivity(
-      () -> project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-        @Override
-        public void rootsChanged(@NotNull final ModuleRootEvent event) {
-          for (FilePropertyPusher pusher : myPushers) {
-            pusher.afterRootsChanged(project);
-          }
+    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      @Override
+      public void rootsChanged(@NotNull final ModuleRootEvent event) {
+        for (FilePropertyPusher pusher : myPushers) {
+          pusher.afterRootsChanged(project);
         }
-      }));
+      }
+    });
   }
 
   public void processAfterVfsChanges(@NotNull List<? extends VFileEvent> events) {

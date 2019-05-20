@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.file.impl;
 
 import com.intellij.AppTopics;
@@ -20,7 +20,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -54,7 +53,7 @@ public class PsiVFSListener implements BulkFileListener {
 
   private static final AtomicBoolean ourGlobalListenerInstalled = new AtomicBoolean(false);
 
-  public PsiVFSListener(Project project) {
+  public PsiVFSListener(@NotNull Project project) {
     installGlobalListener();
 
     myProject = project;
@@ -63,17 +62,15 @@ public class PsiVFSListener implements BulkFileListener {
     myManager = (PsiManagerImpl) PsiManager.getInstance(project);
     myFileManager = (FileManagerImpl) myManager.getFileManager();
 
-    StartupManager.getInstance(project).registerPreStartupActivity(() -> {
-      MessageBusConnection connection = project.getMessageBus().connect(project);
-      connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
-      connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
-        @Override
-        public void fileTypesChanged(@NotNull FileTypeEvent e) {
-          myFileManager.processFileTypesChanged();
-        }
-      });
-      connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerAdapter());
+    MessageBusConnection connection = project.getMessageBus().connect();
+    connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
+    connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
+      @Override
+      public void fileTypesChanged(@NotNull FileTypeEvent e) {
+        myFileManager.processFileTypesChanged();
+      }
     });
+    connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerAdapter());
   }
 
   /**
