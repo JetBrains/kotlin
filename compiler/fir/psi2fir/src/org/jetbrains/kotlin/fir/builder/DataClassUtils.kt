@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirReturnExpressionImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -89,7 +86,7 @@ internal fun KtClassOrObject.generateCopyFunction(
             isInfix = false, isInline = false,
             isTailRec = false, isExternal = false,
             isSuspend = false, receiverTypeRef = null,
-            returnTypeRef = FirImplicitTypeRefImpl(session, this)
+            returnTypeRef = firPrimaryConstructor.returnTypeRef//FirImplicitTypeRefImpl(session, this)
         ).apply {
             val copyFunction = this
             val zippedParameters =
@@ -105,29 +102,31 @@ internal fun KtClassOrObject.generateCopyFunction(
                     isCrossinline = false, isNoinline = false, isVararg = false
                 )
             }
-            body = FirSingleExpressionBlock(
-                session,
-                FirReturnExpressionImpl(
-                    session, this@generateCopyFunction,
-                    FirFunctionCallImpl(session, this@generateCopyFunction).apply {
-                        calleeReference = FirResolvedCallableReferenceImpl(
-                            session, this@generateCopyFunction, firClass.name,
-                            firPrimaryConstructor.symbol
-                        )
-                    }.apply {
-                        for ((ktParameter, firParameter) in primaryConstructorParameters.zip(valueParameters)) {
-                            this.arguments += FirQualifiedAccessExpressionImpl(session, ktParameter).apply {
-                                calleeReference = FirResolvedCallableReferenceImpl(
-                                    session, ktParameter, firParameter.name, firParameter.symbol
-                                )
-                            }
-                        }
-                    }
-                ).apply {
-                    target = FirFunctionTarget(null)
-                    target.bind(copyFunction)
-                }
-            )
+
+            body = FirEmptyExpressionBlock(session)
+//            body = FirSingleExpressionBlock(
+//                session,
+//                FirReturnExpressionImpl(
+//                    session, this@generateCopyFunction,
+//                    FirFunctionCallImpl(session, this@generateCopyFunction).apply {
+//                        calleeReference = FirResolvedCallableReferenceImpl(
+//                            session, this@generateCopyFunction, firClass.name,
+//                            firPrimaryConstructor.symbol
+//                        )
+//                    }.apply {
+//                        for ((ktParameter, firParameter) in primaryConstructorParameters.zip(valueParameters)) {
+//                            this.arguments += FirQualifiedAccessExpressionImpl(session, ktParameter).apply {
+//                                calleeReference = FirResolvedCallableReferenceImpl(
+//                                    session, ktParameter, firParameter.name, firParameter.symbol
+//                                )
+//                            }
+//                        }
+//                    }
+//                ).apply {
+//                    target = FirFunctionTarget(null)
+//                    target.bind(copyFunction)
+//                }
+//            )
         }
     )
 }
