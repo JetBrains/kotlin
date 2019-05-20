@@ -221,7 +221,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
       }
 
       ApplicationManager.getApplication().invokeLater(() -> {
-        if (myBalloon == null || myBalloon.getContent() == null) return;
+        if (myBalloon == null || myBalloon.isDisposed()) return;
 
         Dimension minSize = view.getMinimumSize();
         JBInsets.addTo(minSize, myBalloon.getContent().getInsets());

@@ -923,7 +923,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     }
     Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
     JBPopup popup = PopupUtil.getPopupContainerFor(focusOwner);
-    if (popup != null && popup != myHint) {
+    if (popup != null && popup != myHint && !popup.isDisposed()) {
       return popup.getContent();
     }
     return null;
