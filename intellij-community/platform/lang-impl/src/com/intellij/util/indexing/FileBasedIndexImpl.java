@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.util.indexing;
 
@@ -15,7 +15,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.application.impl.LaterInvocator;
-import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.EditorHighlighterCache;
@@ -100,7 +99,7 @@ import java.util.stream.Stream;
 /**
  * @author Eugene Zhuravlev
  */
-public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent, Disposable {
+public final class FileBasedIndexImpl extends FileBasedIndex implements Disposable {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
   static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.FileBasedIndexImpl");
   private static final String CORRUPTION_MARKER_NAME = "corruption.marker";
@@ -263,7 +262,9 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
     myChangedFilesCollector = new ChangedFilesCollector();
     myConnection = connection;
 
-    myConnection.subscribe(VirtualFileManager.VFS_CHANGES, myChangedFilesCollector);
+    connection.subscribe(VirtualFileManager.VFS_CHANGES, myChangedFilesCollector);
+
+    initComponent();
   }
 
   @VisibleForTesting
@@ -314,10 +315,9 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
     if (myInitialized) myChangedFilesCollector.ensureUpToDateAsync();
   }
 
-  @Override
-  public void initComponent() {
+  private void initComponent() {
     myStateFuture = IndexInfrastructure.submitGenesisTask(new FileIndexDataInitialization());
-    
+
     if (!IndexInfrastructure.ourDoAsyncIndicesInitialization) {
       waitUntilIndicesAreInitialized();
     }
@@ -1447,7 +1447,7 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
   public void requestRebuild(@NotNull final ID<?, ?> indexId, final Throwable throwable) {
     cleanupProcessedFlag();
     if (!myExtensionsRelatedDataWasLoaded) reportUnexpectedAsyncInitState();
-    
+
     if (RebuildStatus.requestRebuild(indexId)) {
       String message = "Rebuild requested for index " + indexId;
       Application app = ApplicationManager.getApplication();
@@ -2129,7 +2129,7 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
         int fileId = ((VirtualFileWithId)file).getId();
         if (usedFileIds.get(fileId)) continue;
         usedFileIds.set(fileId);
-        
+
         if (file.getFileSystem() instanceof LocalFileSystem) localFileSystemFiles.add(file);
         else archiveFiles.add(file);
       }
@@ -2367,7 +2367,7 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
 
     private void initAssociatedDataForExtensions() {
       long started = System.nanoTime();
-      Iterator<FileBasedIndexExtension> extensions = 
+      Iterator<FileBasedIndexExtension> extensions =
         IndexInfrastructure.hasIndices() ?
         ((ExtensionPointImpl<FileBasedIndexExtension>)FileBasedIndexExtension.EXTENSION_POINT_NAME.getPoint(null)).iterator() :
         Collections.emptyIterator();
@@ -2412,7 +2412,7 @@ public class FileBasedIndexImpl extends FileBasedIndex implements BaseComponent,
     @Override
     protected void prepare() {
       initAssociatedDataForExtensions();
-      
+
       mySerializationManagerEx = SerializationManagerEx.getInstanceEx();
       File indexRoot = PathManager.getIndexRoot();
 
