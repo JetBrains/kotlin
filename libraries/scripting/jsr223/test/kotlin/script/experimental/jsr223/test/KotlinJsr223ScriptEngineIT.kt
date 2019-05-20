@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.junit.Assert
 import org.junit.Test
 import javax.script.*
-import kotlin.script.experimental.jsr223.KotlinJsr223ScriptEngine
+import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
 class KotlinJsr223ScriptEngineIT {
 
@@ -44,7 +44,7 @@ class KotlinJsr223ScriptEngineIT {
         val factory = ScriptEngineManager().getEngineByExtension("kts").factory
         Assert.assertNotNull(factory)
         val engine = factory!!.scriptEngine
-        Assert.assertNotNull(engine as? KotlinJsr223ScriptEngine)
+        Assert.assertNotNull(engine as? KotlinJsr223ScriptEngineImpl)
         Assert.assertSame(factory, engine!!.factory)
         val bindings = engine.createBindings()
         Assert.assertTrue(bindings is SimpleBindings)
@@ -89,7 +89,7 @@ class KotlinJsr223ScriptEngineIT {
     fun testEngineRepeatWithReset() {
         val code = "open class A {}\n" +
                     "class B : A() {}"
-        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngine
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
 
         val res1 = engine.eval(code)
         Assert.assertNull(res1)
@@ -127,7 +127,7 @@ obj
 
     @Test
     fun testSimpleCompilable() {
-        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngine
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
         val comp1 = engine.compile("val x = 3")
         val comp2 = engine.compile("x + 2")
         val res1 = comp1.eval()
@@ -138,7 +138,7 @@ obj
 
     @Test
     fun testMultipleCompilable() {
-        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngine
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
         val compiled1 = engine.compile("""listOf(1,2,3).joinToString(",")""")
         val compiled2 = engine.compile("""val x = bindings["boundValue"] as Int + bindings["z"] as Int""")
         val compiled3 = engine.compile("""x""")

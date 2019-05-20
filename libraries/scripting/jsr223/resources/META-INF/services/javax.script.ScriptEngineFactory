@@ -1,2 +1,2 @@
-kotlin.script.experimental.jsr223.KotlinJsr223JvmScriptEngineFactory
+kotlin.script.experimental.jsr223.KotlinJsr223DefaultScriptEngineFactory
 
