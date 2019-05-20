@@ -284,4 +284,10 @@ class Strings {
         assertPrints(string.dropLastWhile { !it.isLetter() }, "<<<First Grade")
     }
 
+    @Sample
+    fun map() {
+        val string = "kotlin"
+        assertPrints(string.map { it.toUpperCase() }, "[K, O, T, L, I, N]")
+    }
+
 }

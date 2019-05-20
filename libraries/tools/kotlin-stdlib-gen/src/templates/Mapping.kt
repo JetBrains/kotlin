@@ -92,6 +92,19 @@ object Mapping : TemplateGroupBase() {
             to each ${f.element} in the original ${f.collection}.
             """
         }
+
+        specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            sample("samples.collections.Collections.Transformations.map")
+        }
+
+        specialFor(Maps) {
+            sample("samples.collections.Maps.Transformations.mapToList")
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.map")
+        }
+
         typeParam("R")
         returns("List<R>")
         body(Iterables) {

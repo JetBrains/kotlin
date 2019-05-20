@@ -854,6 +854,8 @@ public inline fun <T, K> Sequence<T>.groupingBy(crossinline keySelector: (T) -> 
  * to each element in the original sequence.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
  */
 public fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R> {
     return TransformingSequence(this, transform)
