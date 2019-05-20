@@ -320,7 +320,7 @@ class CallableReferencesCandidateFactory(
                     returnType, descriptor.builtIns, descriptor.isSuspend
                 ) to defaults
             }
-            else -> error("Unsupported descriptor type: $descriptor")
+            else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to 0
         }
     }
 
