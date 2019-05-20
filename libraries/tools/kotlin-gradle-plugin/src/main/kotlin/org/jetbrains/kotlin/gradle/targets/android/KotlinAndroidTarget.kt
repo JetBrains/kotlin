@@ -170,14 +170,14 @@ open class KotlinAndroidTarget(
         artifactClassifier: String?
     ): Set<DefaultKotlinUsageContext> {
         val variantName = getVariantName(variant)
-        val outputTask = getLibraryOutputTask(variant) ?: return emptySet()
+        val outputTaskOrProvider = getLibraryOutputTask(variant) ?: return emptySet()
         val artifact = run {
             val archivesConfigurationName = lowerCamelCaseName(targetName, variantName, "archives")
             project.configurations.maybeCreate(archivesConfigurationName).apply {
                 isCanBeConsumed = false
                 isCanBeResolved = false
             }
-            project.artifacts.add(archivesConfigurationName, outputTask) { artifact ->
+            project.artifacts.add(archivesConfigurationName, outputTaskOrProvider) { artifact ->
                 artifact.classifier = artifactClassifier
             }
         }

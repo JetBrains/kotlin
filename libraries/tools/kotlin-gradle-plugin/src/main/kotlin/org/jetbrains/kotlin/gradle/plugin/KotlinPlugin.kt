@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
-import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
@@ -26,7 +25,6 @@ import org.gradle.api.tasks.CompileClasspathNormalizer
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.Upload
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
@@ -698,7 +696,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     abstract fun getVariantName(variant: V): String
     abstract fun getFlavorNames(variant: V): List<String>
     abstract fun getBuildTypeName(variant: V): String
-    abstract fun getLibraryOutputTask(variant: V): AbstractArchiveTask?
+    abstract fun getLibraryOutputTask(variant: V): Any?
 
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
