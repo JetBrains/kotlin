@@ -74,7 +74,7 @@ fun case_4(x: Boolean?, y: Boolean?) {
 // TESTCASE NUMBER: 5
 fun case_5(x: Boolean?, y: Boolean?) {
     while (true) {
-        y.<!UNREACHABLE_CODE!><!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>to<!>(<!>break<!UNREACHABLE_CODE!>)<!>
+        y.<!UNREACHABLE_CODE!>to(<!>break<!UNREACHABLE_CODE!>)<!>
         <!UNREACHABLE_CODE!>x!!<!>
     }
 

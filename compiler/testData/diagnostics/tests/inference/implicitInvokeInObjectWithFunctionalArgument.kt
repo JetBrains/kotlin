@@ -11,5 +11,5 @@ fun test(s: String): String {
     a checkType { _<TestClass>() }
 
     <!UNREACHABLE_CODE!>val b =<!> TestClass { return s }
-    <!UNREACHABLE_CODE!>b <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>checkType<!> { _<Nothing>() }<!>
+    <!UNREACHABLE_CODE!>b checkType { _<Nothing>() }<!>
 }

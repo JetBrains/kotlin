@@ -13,4 +13,4 @@ fun <T> listOf(): List<T> = null!!
 // since it has 'out' type projection in 'in' position.
 val test1 = <!UNRESOLVED_REFERENCE!>BOutIn<!>(<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>listOf<!>(), null!!)
 
-val test2 = <!OI;EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED!><!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>BInIn<!>(<!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>listOf<!>(), null!!)<!>
+val test2 = <!OI;EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED!>BInIn(listOf(), null!!)<!>

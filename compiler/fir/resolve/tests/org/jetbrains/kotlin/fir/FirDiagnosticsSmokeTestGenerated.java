@@ -22223,9 +22223,9 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingAsTypeParameter.kt");
         }
 
-        @TestMetadata("implicitNothingAsTypeParameterNI.kt")
-        public void testImplicitNothingAsTypeParameterNI() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingAsTypeParameterNI.kt");
+        @TestMetadata("implicitNothingOnDelegates.kt")
+        public void testImplicitNothingOnDelegates() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingOnDelegates.kt");
         }
 
         @TestMetadata("misplacedConstraints.kt")

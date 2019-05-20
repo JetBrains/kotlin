@@ -3,7 +3,7 @@
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
-suspend fun suspendLogAndThrow(exception: Throwable): Nothing = <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>suspendCoroutineUninterceptedOrReturn<!> { c ->
+suspend fun suspendLogAndThrow(exception: Throwable): Nothing = suspendCoroutineUninterceptedOrReturn { c ->
     c.resumeWithException(exception)
     COROUTINE_SUSPENDED
 }

@@ -7,6 +7,6 @@ fun foo1() {
     <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT22<!>()
 }
 
-val n : Nothing = null.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>sure<!>()
+val n : Nothing = null.sure()
 
 fun <T : Any> T?.sure() : T = this!!

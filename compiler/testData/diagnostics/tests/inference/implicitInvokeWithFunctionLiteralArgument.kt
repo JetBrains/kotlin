@@ -8,7 +8,7 @@ class TestClass {
 
 fun <T> test(value: T, test: TestClass): T {
     <!UNREACHABLE_CODE!>val x =<!> test { return value }
-    <!UNREACHABLE_CODE!>x <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>checkType<!> { _<Nothing>() }<!>
+    <!UNREACHABLE_CODE!>x checkType { _<Nothing>() }<!>
 
     <!UNREACHABLE_CODE!>return value<!>
 }
