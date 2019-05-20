@@ -5,6 +5,11 @@ plugins {
     kotlin("jvm")
 }
 
+val ultimateTools: Map<String, Any> by rootProject.extra
+
+val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
+val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
+
 val appcodeVersion: String by rootProject.extra
 val appcodeFriendlyVersion: String by rootProject.extra
 val appcodeVersionStrict: Boolean by rootProject.extra
@@ -49,5 +54,5 @@ val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
         appcodeCustomPluginRepoUrl
 )
 
-enableTasksIfAtLeast(appcodeVersion, 191)
-enableTasksIfOsIsNot("Windows")
+enableTasksIfAtLeast(project, appcodeVersion, 191)
+enableTasksIfOsIsNot(project, listOf("Windows"))

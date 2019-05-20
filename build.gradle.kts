@@ -42,6 +42,7 @@ plugins {
 
 rootProject.apply {
     from(project.file("gradle/cidrPluginProperties.gradle.kts")) // this one must go the first
+    from(project.file("gradle/ultimateTools.gradle.kts"))
 }
 
 tasks["clean"].doLast { delete("dist") }
