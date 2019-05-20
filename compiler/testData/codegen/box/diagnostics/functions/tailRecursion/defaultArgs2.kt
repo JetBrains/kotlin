@@ -1,7 +1,7 @@
 // DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun test(x : Int = 0, e : Any = "a") {
-    if (!e.equals("a")) {
+    if (x < 100000 && !e.equals("a")) {
         throw IllegalArgumentException()
     }
     if (x > 0) {
@@ -10,6 +10,6 @@ tailrec fun test(x : Int = 0, e : Any = "a") {
 }
 
 fun box() : String {
-    test(100000)
+    test(100000, "b")
     return "OK"
 }
