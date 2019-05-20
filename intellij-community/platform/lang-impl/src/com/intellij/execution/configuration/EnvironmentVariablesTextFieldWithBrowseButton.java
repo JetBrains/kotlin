@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.UserActivityProviderComponent;
 import com.intellij.ui.table.JBTable;
 import com.intellij.ui.table.TableView;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -53,6 +55,16 @@ public class EnvironmentVariablesTextFieldWithBrowseButton extends TextFieldWith
       public void actionPerformed(final ActionEvent e) {
         setEnvs(EnvVariablesTable.parseEnvsFromText(getText()));
         new MyEnvironmentVariablesDialog().show();
+      }
+    });
+    getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(@NotNull DocumentEvent e) {
+        if (!StringUtil.equals(stringifyEnvs(myData.getEnvs()), getText())) {
+          Map<String, String> textEnvs = EnvVariablesTable.parseEnvsFromText(getText());
+          myData = EnvironmentVariablesData.create(textEnvs, myData.isPassParentEnvs());
+          fireStateChanged();
+        }
       }
     });
   }
