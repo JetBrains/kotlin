@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 class Foo<C : Any> {

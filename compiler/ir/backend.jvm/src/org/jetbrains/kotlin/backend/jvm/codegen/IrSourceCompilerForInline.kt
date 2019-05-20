@@ -58,9 +58,8 @@ class IrSourceCompilerForInline(
     override val callElementText: String
         get() = callElement.toString()
 
-    //TODO
     override val callsiteFile: PsiFile?
-        get() = callElement.descriptor.psiElement?.containingFile
+        get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
 
     override val contextKind: OwnerKind
         get() = OwnerKind.getMemberOwnerKind(callElement.descriptor.containingDeclaration)
