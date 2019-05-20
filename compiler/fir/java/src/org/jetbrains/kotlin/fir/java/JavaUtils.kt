@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
+import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
@@ -144,7 +145,8 @@ internal fun JavaClassifierType.toConeKotlinTypeWithNullability(
     return when (val classifier = classifier) {
         is JavaClass -> {
             //val classId = classifier.classId!!
-            val classId = JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId!!
+            var classId = JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId!!
+            classId = classId.readOnlyToMutable() ?: classId
 
             val lookupTag = ConeClassLikeLookupTagImpl(classId)
             lookupTag.constructClassType(

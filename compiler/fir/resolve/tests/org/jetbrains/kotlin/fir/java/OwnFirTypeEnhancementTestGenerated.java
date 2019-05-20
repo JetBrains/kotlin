@@ -115,6 +115,24 @@ public class OwnFirTypeEnhancementTestGenerated extends AbstractOwnFirTypeEnhanc
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/enhancement/mapping")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Mapping extends AbstractOwnFirTypeEnhancementTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("AbstractMap.java")
+        public void testAbstractMap() throws Exception {
+            runTest("compiler/fir/resolve/testData/enhancement/mapping/AbstractMap.java");
+        }
+
+        public void testAllFilesPresentInMapping() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/enhancement/mapping"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/enhancement/signatureAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

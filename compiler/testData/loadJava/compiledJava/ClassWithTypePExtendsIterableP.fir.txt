@@ -1,2 +1,2 @@
-public abstract class ClassWithTypePExtendsIterableP<P> : R|kotlin/Any|, R|kotlin/collections/Iterable<P>| {
+public abstract class ClassWithTypePExtendsIterableP<P> : R|kotlin/Any|, R|kotlin/collections/MutableIterable<P>| {
 }

@@ -114,7 +114,7 @@ private val KOTLIN_COLLECTIONS = FqName("kotlin.collections")
 
 private val KOTLIN_COLLECTIONS_PREFIX_LENGTH = KOTLIN_COLLECTIONS.asString().length + 1
 
-private fun ClassId.readOnlyToMutable(): ClassId? {
+internal fun ClassId.readOnlyToMutable(): ClassId? {
     val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(asSingleFqName().toUnsafe())
     return mutableFqName?.let {
         ClassId(KOTLIN_COLLECTIONS, FqName(it.asString().substring(KOTLIN_COLLECTIONS_PREFIX_LENGTH)), false)
