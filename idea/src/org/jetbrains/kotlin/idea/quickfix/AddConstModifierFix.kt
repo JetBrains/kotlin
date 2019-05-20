@@ -71,7 +71,9 @@ class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(KtProperty:
         fun isApplicableTo(element: KtProperty): Boolean {
             if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null
                 || element.getter?.hasBody() == true || element.receiverTypeReference != null
-                || element.hasModifier(KtTokens.CONST_KEYWORD) || element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                || element.hasModifier(KtTokens.CONST_KEYWORD) || element.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                || element.hasModifier(KtTokens.ACTUAL_KEYWORD)
+            ) {
                 return false
             }
             val propertyDescriptor = element.descriptor as? VariableDescriptor ?: return false

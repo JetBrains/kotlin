@@ -59,7 +59,7 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
     companion object {
         fun KtProperty.getStatus(): Status {
             if (isLocal || isVar || getter != null ||
-                hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)
+                hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
             ) {
                 return NONE
             }
