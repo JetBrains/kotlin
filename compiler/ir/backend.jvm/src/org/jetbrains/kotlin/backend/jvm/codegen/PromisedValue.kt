@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -81,35 +82,34 @@ fun PromisedValue.discard(): PromisedValue {
 private val IrType.unboxed: IrType
     get() = InlineClassAbi.getUnderlyingType(erasedUpperBound)
 
-fun PromisedValue.coerceInlineClasses(type: Type, irType: IrType, target: Type, irTarget: IrType): PromisedValue? {
-    val isFromTypeInlineClass = irType.erasedUpperBound.isInline
-    val isToTypeInlineClass = irTarget.erasedUpperBound.isInline
-    if (!isFromTypeInlineClass && !isToTypeInlineClass) return null
-
-    val isFromTypeUnboxed = isFromTypeInlineClass && typeMapper.mapType(irType.unboxed) == type
-    val isToTypeUnboxed = isToTypeInlineClass && typeMapper.mapType(irTarget.unboxed) == target
-
-    return when {
-        isFromTypeUnboxed && !isToTypeUnboxed -> object : PromisedValue(codegen, target, irTarget) {
-            override fun materialize() {
-                this@coerceInlineClasses.materialize()
-                // TODO: This is broken for type parameters
-                StackValue.boxInlineClass(irType.toKotlinType(), mv)
-            }
-        }
-        !isFromTypeUnboxed && isToTypeUnboxed -> object : PromisedValue(codegen, target, irTarget) {
-            override fun materialize() {
-                val value = this@coerceInlineClasses.materialized
-                StackValue.unboxInlineClass(value.type, irTarget.toKotlinType(), mv)
-            }
-        }
-        else -> null
-    }
-}
-
 // On materialization, cast the value to a different type.
 fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
-    coerceInlineClasses(type, irType, target, irTarget)?.let { return it }
+    val erasedSourceType = irType.eraseTypeParameters()
+    val erasedTargetType = irTarget.eraseTypeParameters()
+    val isFromTypeInlineClass = erasedSourceType.classOrNull!!.owner.isInline
+    val isToTypeInlineClass = erasedTargetType.classOrNull!!.owner.isInline
+
+    // Coerce inline classes
+    if (isFromTypeInlineClass || isToTypeInlineClass) {
+        val isFromTypeUnboxed = isFromTypeInlineClass && typeMapper.mapType(erasedSourceType.unboxed) == type
+        val isToTypeUnboxed = isToTypeInlineClass && typeMapper.mapType(erasedTargetType.unboxed) == target
+
+        when {
+            isFromTypeUnboxed && !isToTypeUnboxed -> return object : PromisedValue(codegen, target, irTarget) {
+                override fun materialize() {
+                    this@coerce.materialize()
+                    StackValue.boxInlineClass(erasedSourceType.toKotlinType(), mv)
+                }
+            }
+            !isFromTypeUnboxed && isToTypeUnboxed -> return object : PromisedValue(codegen, target, irTarget) {
+                override fun materialize() {
+                    val value = this@coerce.materialized
+                    StackValue.unboxInlineClass(value.type, erasedTargetType.toKotlinType(), mv)
+                }
+            }
+        }
+    }
+
     return when (type) {
         // All unsafe coercions between irTypes should use the UnsafeCoerce intrinsic
         target -> this
