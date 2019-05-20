@@ -85,20 +85,18 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
     Editor finalEditor = editor;
     PsiFile finalFile = file;
+    showIntentionHint(project, finalEditor, finalFile, intentions, showFeedbackOnEmptyMenu);
+  }
+
+  protected void showIntentionHint(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull ShowIntentionsPass.IntentionsInfo intentions, boolean showFeedbackOnEmptyMenu) {
     if (!intentions.isEmpty()) {
       editor.getScrollingModel().runActionOnScrollingFinished(() -> {
-        showIntentionHint(project, finalEditor, finalFile, intentions);
+          CachedIntentions cachedIntentions = CachedIntentions.createAndUpdateActions(project, file, editor, intentions);
+          IntentionHintComponent.showIntentionHint(project, file, editor, true, cachedIntentions);
       });
     }
     else if (showFeedbackOnEmptyMenu) {
-      HintManager.getInstance().showInformationHint(finalEditor, "No context actions available at this location");
-    }
-  }
-
-  protected void showIntentionHint(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull ShowIntentionsPass.IntentionsInfo intentions) {
-    if (!intentions.isEmpty()) {
-      CachedIntentions cachedIntentions = CachedIntentions.createAndUpdateActions(project, file, editor, intentions);
-      IntentionHintComponent.showIntentionHint(project, file, editor, true, cachedIntentions);
+      HintManager.getInstance().showInformationHint(editor, "No context actions available at this location");
     }
   }
 
