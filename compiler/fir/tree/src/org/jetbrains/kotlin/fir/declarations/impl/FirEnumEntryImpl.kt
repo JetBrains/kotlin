@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitEnumTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
@@ -42,7 +42,7 @@ class FirEnumEntryImpl(
     isData = false,
     isInline = false
 ), FirEnumEntry {
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(session, null)
+    override var typeRef: FirTypeRef = FirImplicitEnumTypeRef(session, null)
 
     override val arguments = mutableListOf<FirExpression>()
 
