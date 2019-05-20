@@ -3,6 +3,7 @@ package com.intellij.codeInsight.hints;
 
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory;
+import com.intellij.codeHighlighting.TextEditorHighlightingPassFactoryRegistrar;
 import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
@@ -51,5 +52,4 @@ public class ParameterHintsPassFactory implements TextEditorHighlightingPassFact
   protected static void putCurrentPsiModificationStamp(@NotNull Editor editor, @NotNull PsiFile file) {
     editor.putUserData(PSI_MODIFICATION_STAMP, getCurrentModificationStamp(file));
   }
-
 }

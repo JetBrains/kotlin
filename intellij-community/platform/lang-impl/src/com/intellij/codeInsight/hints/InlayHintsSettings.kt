@@ -55,7 +55,7 @@ class InlayHintsSettings : PersistentStateComponent<InlayHintsSettings.State> {
     myCachedSettingsMap[fullId] = value as Any
     val element = myState.settingsMapElement.clone()
     element.removeChild(fullId)
-    val serialized = value.serialize()
+    val serialized = serialize(value)
     if (serialized != null) {
       val storeElement = Element(fullId)
       val wrappedSettingsElement = storeElement.addContent(serialized)

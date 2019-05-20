@@ -52,7 +52,7 @@ internal fun <T: Any> copySettings(from: T, provider: InlayHintsProvider<T>): T 
   // Workaround to make a deep copy of settings. The other way is to parametrize T with something like
   // interface DeepCopyable<T> { fun deepCopy(from: T): T }, but there will be a lot of problems with recursive type bounds
   // That way was implemented and rejected
-  from.serialize()?.deserializeInto(settings)
+  serialize(from)?.deserializeInto(settings)
   return settings
 }
 
