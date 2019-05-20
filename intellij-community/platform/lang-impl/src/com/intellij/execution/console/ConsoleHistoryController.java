@@ -33,6 +33,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.SafeWriteRequestor;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -40,7 +41,6 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.SafeFileOutputStream;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +49,7 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -399,7 +400,7 @@ public class ConsoleHistoryController {
     }
   }
 
-  public static class ModelHelper {
+  public static class ModelHelper implements SafeWriteRequestor {
     private final ConsoleRootType myRootType;
     private final String myId;
     private final ConsoleHistoryModel myModel;
@@ -448,7 +449,7 @@ public class ConsoleHistoryController {
         if (getModel().isEmpty()) return;
         WriteAction.run(() -> {
           VirtualFile file = HistoryRootType.getInstance().findFile(null, getHistoryName(myRootType, myId), ScratchFileService.Option.create_if_missing);
-          try (Writer out = new OutputStreamWriter(new SafeFileOutputStream(VfsUtilCore.virtualToIoFile(file)), file.getCharset())) {
+          try (Writer out = new BufferedWriter(new OutputStreamWriter(file.getOutputStream(this), file.getCharset()))) {
             boolean first = true;
             for (String entry : getModel().getEntries()) {
               if (first) first = false;
