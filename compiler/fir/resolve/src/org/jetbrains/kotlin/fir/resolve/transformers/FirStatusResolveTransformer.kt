@@ -43,7 +43,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
                                 Modality.FINAL
                             this is FirNamedFunction && body == null ->
                                 Modality.ABSTRACT
-                            this is FirProperty && initializer == null && getter.body == null && setter.body == null ->
+                            this is FirProperty && initializer == null && getter.body == null && setter?.body == null ->
                                 Modality.ABSTRACT
                             else ->
                                 Modality.OPEN

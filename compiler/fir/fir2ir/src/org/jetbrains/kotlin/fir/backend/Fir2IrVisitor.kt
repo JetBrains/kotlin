@@ -494,7 +494,7 @@ internal class Fir2IrVisitor(
         }
         getter = property.getter.accept(this@Fir2IrVisitor, type) as IrSimpleFunction
         if (property.isVar) {
-            setter = property.setter.accept(this@Fir2IrVisitor, type) as IrSimpleFunction
+            setter = property.setter!!.accept(this@Fir2IrVisitor, type) as IrSimpleFunction
         }
         property.annotations.forEach {
             annotations += it.accept(this@Fir2IrVisitor, null) as IrConstructorCall

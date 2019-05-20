@@ -849,7 +849,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
         withIdentLevel {
             generate(property.getter)
-            generate(property.setter)
+            property.setter?.let { generate(it) }
         }
     }
 

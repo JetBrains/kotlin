@@ -159,6 +159,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else flags
         val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else flags
+        val isVar = Flags.IS_VAR.get(flags)
 
         return FirMemberPropertyImpl(
             c.session,
@@ -174,10 +175,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             isLateInit = Flags.IS_LATEINIT.get(flags),
             receiverTypeRef = proto.receiverType(c.typeTable)?.toTypeRef(local),
             returnTypeRef = returnTypeRef,
-            isVar = Flags.IS_VAR.get(flags),
+            isVar = isVar,
             initializer = null,
             getter = FirDefaultPropertyGetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))),
-            setter = FirDefaultPropertySetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))),
+            setter = if (isVar) {
+                FirDefaultPropertySetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags)))
+            } else null,
             delegate = null
         ).apply {
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }

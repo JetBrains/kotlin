@@ -281,7 +281,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     )
                 },
                 getter = FirDefaultPropertyGetter(session, this, type, visibility),
-                setter = FirDefaultPropertySetter(session, this, type, visibility),
+                setter = if (isMutable) FirDefaultPropertySetter(session, this, type, visibility) else null,
                 delegate = null
             )
             extractAnnotationsTo(firProperty)
@@ -796,7 +796,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     isVar,
                     initializer,
                     property.getter.toFirPropertyAccessor(property, propertyType, isGetter = true),
-                    property.setter.toFirPropertyAccessor(property, propertyType, isGetter = false),
+                    if (isVar) property.setter.toFirPropertyAccessor(property, propertyType, isGetter = false) else null,
                     if (property.hasDelegate()) {
                         { property.delegate?.expression }.toFirExpression("Should have delegate")
                     } else null
