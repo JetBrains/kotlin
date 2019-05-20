@@ -8,11 +8,11 @@
 
 package org.jetbrains.kotlin.ultimate
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.the
 import java.io.File
@@ -58,9 +58,6 @@ fun Project.prepareKotlinPluginXml(originalPluginJar: Configuration) = tasks.cre
     }
 }
 
-private val Project.mainSourceSetOutput: SourceSetOutput
-    get() = the<JavaPluginConvention>().sourceSets.getByName("main").output
-
 // Prepare plugin.xml file with the actual version information (kotlin, cidr, plugin).
 fun Project.preparePluginXml(
         predecessorProjectName: String,
@@ -74,7 +71,13 @@ fun Project.preparePluginXml(
     inputs.property("${project.name}-$name-cidrPluginVersionFull", cidrPluginVersionFull)
     outputs.dir("$buildDir/$name")
 
-    from(project(predecessorProjectName).mainSourceSetOutput.resourcesDir) { include(PLUGIN_XML_PATH) }
+    val predecessorProjectResources: File = project(predecessorProjectName)
+            .the<JavaPluginConvention>()
+            .sourceSets.getByName("main")
+            .output
+            .resourcesDir as File
+
+    from(predecessorProjectResources, Action { include(PLUGIN_XML_PATH) })
     into(outputs.files.singleFile)
 
     applyCidrVersionRestrictions(productVersion, strictProductVersionLimitation, cidrPluginVersionFull)
