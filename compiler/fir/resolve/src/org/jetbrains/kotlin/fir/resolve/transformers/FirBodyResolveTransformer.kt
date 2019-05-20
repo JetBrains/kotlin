@@ -879,7 +879,9 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         if (property.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property.compose()
         return withScopeCleanup(localScopes) {
             localScopes.addIfNotNull(primaryConstructorParametersScope)
-            transformVariable(property, data)
+            (transformVariable(property, data).single as FirProperty).apply {
+                setter?.let { it.valueParameters[0].transformReturnTypeRef(StoreType, property.returnTypeRef) }
+            }.compose()
         }
     }
 
