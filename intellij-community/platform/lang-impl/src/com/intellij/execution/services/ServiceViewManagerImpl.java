@@ -180,8 +180,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         }
       })
       .setCleanUpOnLeaveCallback(() -> {
-        if (myContentManager.getIndexOfContent(myDropTargetContent) >= 0) {
-          myContentManager.removeContent(myDropTargetContent, false);
+        ContentManager contentManager = myContentManager;
+        if (contentManager != null && contentManager.getIndexOfContent(myDropTargetContent) >= 0) {
+          contentManager.removeContent(myDropTargetContent, false);
         }
       })
       .setDropHandler(new DnDDropHandler() {
