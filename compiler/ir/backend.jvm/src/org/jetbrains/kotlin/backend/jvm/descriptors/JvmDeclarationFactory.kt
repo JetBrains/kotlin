@@ -148,7 +148,19 @@ class JvmDeclarationFactory(
             createStaticFunctionWithReceivers(
                 defaultImpls, name, interfaceFun,
                 dispatchReceiverType = parent.defaultType,
-                origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
+                // If `interfaceFun` is not a real implementation, then we're generating stubs in a descendant
+                // interface's DefaultImpls. For example,
+                //
+                //     interface I1 { fun f() { ... } }
+                //     interface I2 : I1
+                //
+                // is supposed to allow using `I2.DefaultImpls.f` as if it was inherited from `I1.DefaultImpls`.
+                // The classes are not actually related and `I2.DefaultImpls.f` is not a fake override but a bridge.
+                origin = when {
+                    interfaceFun.origin != IrDeclarationOrigin.FAKE_OVERRIDE -> interfaceFun.origin
+                    interfaceFun.resolveFakeOverride()!!.origin.isSynthetic -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
+                    else -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
+                }
             )
         }
     }

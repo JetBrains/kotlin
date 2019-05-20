@@ -156,6 +156,7 @@ class ExpressionCodegen(
         val startLabel = markNewLabel()
         val info = BlockInfo()
         val body = irFunction.body!!
+        generateNonNullAssertions()
         val result = body.accept(this, info)
         // If this function has an expression body, return the result of that expression.
         // Otherwise, if it does not end in a return statement, it must be void-returning,
@@ -174,6 +175,27 @@ class ExpressionCodegen(
         writeLocalVariablesInTable(info, endLabel)
         writeParameterInLocalVariableTable(startLabel, endLabel)
         mv.visitEnd()
+    }
+
+    private fun generateNonNullAssertions() {
+        val isSyntheticOrBridge = irFunction.origin.isSynthetic ||
+                // Although these are accessible from Java, the functions they bridge to already have the assertions.
+                irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
+                irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
+                irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+        if (!isInlineLambda && !isSyntheticOrBridge && !Visibilities.isPrivate(irFunction.visibility)) {
+            irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
+            irFunction.valueParameters.forEach(::generateNonNullAssertion)
+        }
+    }
+
+    private fun generateNonNullAssertion(param: IrValueParameter) {
+        val asmType = param.type.asmType
+        if (!param.type.isNullable() && !isPrimitive(asmType)) {
+            mv.load(findLocalIndex(param.symbol), asmType)
+            mv.aconst(param.name.asString())
+            mv.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+        }
     }
 
     private fun writeParameterInLocalVariableTable(startLabel: Label, endLabel: Label) {
