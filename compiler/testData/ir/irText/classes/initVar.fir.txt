@@ -133,10 +133,10 @@ FILE fqName:<root> fileName:/initVar.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitVarWithCustomSetter'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestInitVarWithCustomSetter declared in <root>.TestInitVarWithCustomSetter.<get-x>' type=<root>.TestInitVarWithCustomSetter origin=null
-      FUN name:<set-x> visibility:public modality:FINAL <> ($this:<root>.TestInitVarWithCustomSetter, value:IrErrorType) returnType:kotlin.Unit 
+      FUN name:<set-x> visibility:public modality:FINAL <> ($this:<root>.TestInitVarWithCustomSetter, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var] 
         $this: VALUE_PARAMETER name:<this> type:<root>.TestInitVarWithCustomSetter 
-        VALUE_PARAMETER name:value index:0 type:IrErrorType 
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 

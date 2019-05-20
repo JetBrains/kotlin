@@ -53,10 +53,10 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test4>' type=<root>.C origin=null
-      FUN name:<set-test4> visibility:public modality:FINAL <> ($this:<root>.C, value:IrErrorType) returnType:kotlin.Unit 
+      FUN name:<set-test4> visibility:public modality:FINAL <> ($this:<root>.C, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
         $this: VALUE_PARAMETER name:<this> type:<root>.C 
-        VALUE_PARAMETER name:value index:0 type:IrErrorType 
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
     PROPERTY name:test5 visibility:public modality:FINAL [var] 
@@ -70,10 +70,10 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test5>' type=<root>.C origin=null
-      FUN name:<set-test5> visibility:private modality:FINAL <> ($this:<root>.C, value:IrErrorType) returnType:kotlin.Unit 
+      FUN name:<set-test5> visibility:private modality:FINAL <> ($this:<root>.C, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [var] 
         $this: VALUE_PARAMETER name:<this> type:<root>.C 
-        VALUE_PARAMETER name:value index:0 type:IrErrorType 
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY name:test6 visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:public [final] 
         EXPRESSION_BODY

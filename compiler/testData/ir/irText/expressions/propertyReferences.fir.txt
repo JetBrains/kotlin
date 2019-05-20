@@ -131,9 +131,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-varWithBackingFieldAndAccessors> (): kotlin.Int declared in <root>'
           ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
-    FUN name:<set-varWithBackingFieldAndAccessors> visibility:public modality:FINAL <> (value:IrErrorType) returnType:kotlin.Unit 
+    FUN name:<set-varWithBackingFieldAndAccessors> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:varWithBackingFieldAndAccessors visibility:public modality:FINAL [var] 
-      VALUE_PARAMETER name:value index:0 type:IrErrorType 
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
   PROPERTY name:test_varWithBackingFieldAndAccessors visibility:public modality:FINAL [val] 
