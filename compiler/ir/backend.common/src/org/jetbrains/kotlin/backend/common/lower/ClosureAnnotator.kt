@@ -16,16 +16,32 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import kotlin.collections.List
+import kotlin.collections.emptyList
+import kotlin.collections.filterTo
+import kotlin.collections.firstOrNull
+import kotlin.collections.forEach
+import kotlin.collections.getOrElse
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
+import kotlin.collections.set
+import kotlin.collections.toList
 
 class Closure(val capturedValues: List<IrValueSymbol> = emptyList())
 
@@ -43,7 +59,7 @@ class ClosureAnnotator(declaration: IrDeclaration) {
     private fun getClosure(declaration: IrDeclaration): Closure {
         closureBuilders.values.forEach { it.processed = false }
         return closureBuilders
-            .getOrElse(declaration) { throw AssertionError("No closure builder for passed descriptor.") }
+            .getOrElse(declaration) { throw AssertionError("No closure builder for passed declaration ${ir2string(declaration)}.") }
             .buildClosure()
     }
 
@@ -183,7 +199,7 @@ class ClosureAnnotator(declaration: IrDeclaration) {
         }
 
         private fun processMemberAccess(declaration: IrDeclaration) {
-            if (DescriptorUtils.isLocal(declaration.descriptor)) {
+            if (declaration.isLocal) {
                 val builder = closureBuilders[declaration]
                 builder?.let {
                     closuresStack.peek()?.include(builder)
