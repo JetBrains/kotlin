@@ -21,25 +21,46 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.maddyhome.idea.copyright.CopyrightProfile;
 import com.maddyhome.idea.copyright.psi.UpdatePsiFileCopyright;
-import org.jetbrains.kotlin.psi.KtImportList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-class UpdateKotlinCopyright extends UpdatePsiFileCopyright {
-
+public class UpdateKotlinCopyright extends UpdatePsiFileCopyright {
     UpdateKotlinCopyright(Project project, Module module, VirtualFile root, CopyrightProfile copyrightProfile) {
         super(project, module, root, copyrightProfile);
     }
 
     @Override
     protected void scanFile() {
-        PsiElement first = getFile().getFirstChild();
+        PsiRange commentSearchRange = getCommentSearchRange(getFile());
+        PsiElement first = commentSearchRange.first;
+        PsiElement last = commentSearchRange.last;
+
+        if (first != null) {
+            checkComments(first, last, true);
+        }
+    }
+
+    public static class PsiRange {
+        public final @Nullable PsiElement first;
+        public final @Nullable PsiElement last;
+
+        public PsiRange(@Nullable PsiElement first, @Nullable PsiElement second) {
+            this.first = first;
+            this.last = second;
+        }
+    }
+
+    public static @NotNull PsiRange getCommentSearchRange(@NotNull PsiFile psiFile) {
+        PsiElement first = psiFile.getFirstChild();
         PsiElement last = first;
         PsiElement next = first;
         while (next != null) {
             if (next instanceof PsiComment || next instanceof PsiWhiteSpace || next.getText().isEmpty()) {
-                next = getNextSibling(next);
+                next = next.getNextSibling();
             }
             else {
                 break;
@@ -47,8 +68,6 @@ class UpdateKotlinCopyright extends UpdatePsiFileCopyright {
             last = next;
         }
 
-        if (first != null) {
-            checkComments(first, last, true);
-        }
+        return new PsiRange(first, last);
     }
 }

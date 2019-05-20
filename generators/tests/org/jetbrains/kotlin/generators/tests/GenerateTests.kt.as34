@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinBinariesCheckerTes
 import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinSourceCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJsCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
+import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
@@ -537,6 +538,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMoveOnCutPasteTest> {
             model("copyPaste/moveDeclarations", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTest")
+        }
+
+        testClass<AbstractUpdateKotlinCopyrightTest> {
+            model("copyright", pattern = KT_OR_KTS, testMethod = "doTest")
         }
 
         testClass<AbstractHighlightExitPointsTest> {
