@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.resolve.konan.platform
 
 import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
 
 object KonanPlatformConfigurator : PlatformConfiguratorBase(
-    additionalDeclarationCheckers = listOf(ExpectedActualDeclarationChecker()),
     additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker())
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
+    }
+
+    override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        super.configureModuleDependentCheckers(container)
+        container.useImpl<ExpectedActualDeclarationChecker>()
     }
 }
