@@ -104,6 +104,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/internalDependencyFromTests/");
     }
 
+    @TestMetadata("internalInheritanceToCommon")
+    public void testInternalInheritanceToCommon() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/internalInheritanceToCommon/");
+    }
+
     @TestMetadata("javaUsesPlatformFacade")
     public void testJavaUsesPlatformFacade() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/javaUsesPlatformFacade/");
