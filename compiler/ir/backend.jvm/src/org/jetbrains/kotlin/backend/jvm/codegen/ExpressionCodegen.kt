@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -644,15 +645,6 @@ class ExpressionCodegen(
         }
     }
 
-    // Copied from FinallyBlocksLowering
-    private val IrReturnTarget.returnType: IrType
-        get() = when (this) {
-            is IrConstructor -> context.irBuiltIns.unitType
-            is IrFunction -> returnType
-            is IrReturnableBlock -> type
-            else -> error("Unknown ReturnTarget: $this")
-        }
-
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
         val owner = expression.returnTargetSymbol.owner
         //TODO: should be owner != irFunction
@@ -670,7 +662,7 @@ class ExpressionCodegen(
         val target = data.findBlock<ReturnableBlockInfo> { it.returnSymbol == expression.returnTargetSymbol }
         val returnType = typeMapper.mapReturnType(owner)
         val afterReturnLabel = Label()
-        expression.value.accept(this, data).coerce(returnType, owner.returnType).materialize()
+        expression.value.accept(this, data).coerce(returnType, owner.returnType(context)).materialize()
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
         expression.markLineNumber(startOffset = true)
         if (target != null) {
