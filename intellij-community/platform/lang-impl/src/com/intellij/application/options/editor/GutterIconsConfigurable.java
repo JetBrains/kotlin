@@ -88,8 +88,8 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
           for (GutterIconDescriptor option : instance.getOptions()) {
             if (ids.add(option.getId())) {
               myDescriptors.add(option);
+              pluginDescriptorMap.put(option, descriptor);
             }
-            pluginDescriptorMap.put(option, descriptor);
           }
         }
         else {
