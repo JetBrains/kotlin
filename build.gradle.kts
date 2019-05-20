@@ -338,7 +338,6 @@ allprojects {
         maven(protobufRepo)
         maven(intellijRepo)
         maven(bootstrapKotlinRepo!!.replace("artifacts/content/maven/", "artifacts/content/internal/repo"))
-        maven(kotlinNativeRepo)
         maven("https://dl.bintray.com/kotlin/ktor")
     }
 

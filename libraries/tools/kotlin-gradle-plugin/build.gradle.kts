@@ -22,7 +22,8 @@ javadocJar()
 
 repositories {
     google()
-    maven(url = "https://plugins.gradle.org/m2/")
+    maven("https://plugins.gradle.org/m2/")
+    maven(kotlinNativeRepo)
 }
 
 pill {
