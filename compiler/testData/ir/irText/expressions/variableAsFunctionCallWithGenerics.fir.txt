@@ -4,11 +4,11 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
       correspondingProperty: PROPERTY name:gk visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-gk> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>'
-          BLOCK type=kotlin.Function0<T of <uninitialized parent>> origin=LAMBDA
+          BLOCK type=kotlin.Function1<kotlin.Function0<T of <uninitialized parent>>, kotlin.Function0<T of <uninitialized parent>>> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function0<T of <uninitialized parent>> 
               BLOCK_BODY
                 ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>.<get-gk>' type=kotlin.Function0<T of <uninitialized parent>> origin=LAMBDA
+            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>.<get-gk>' type=kotlin.Function1<kotlin.Function0<T of <uninitialized parent>>, kotlin.Function0<T of <uninitialized parent>>> origin=LAMBDA
   FUN name:testGeneric1 visibility:public modality:FINAL <> (x:kotlin.String) returnType:IrErrorType 
     VALUE_PARAMETER name:x index:0 type:kotlin.String 
     BLOCK_BODY
@@ -19,12 +19,12 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
       correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL [val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-kt26531Val> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>'
-          BLOCK type=kotlin.Function0<T of <uninitialized parent>> origin=ANONYMOUS_FUNCTION
+          BLOCK type=kotlin.Function0<kotlin.Function0<T of <uninitialized parent>>> origin=ANONYMOUS_FUNCTION
             FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Function0<T of <uninitialized parent>> 
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <no name provided> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>.<get-kt26531Val>'
                   ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
-            FUNCTION_REFERENCE 'local final fun <no name provided> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>.<get-kt26531Val>' type=kotlin.Function0<T of <uninitialized parent>> origin=ANONYMOUS_FUNCTION
+            FUNCTION_REFERENCE 'local final fun <no name provided> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>.<get-kt26531Val>' type=kotlin.Function0<kotlin.Function0<T of <uninitialized parent>>> origin=ANONYMOUS_FUNCTION
   FUN name:kt26531 visibility:public modality:FINAL <> () returnType:IrErrorType 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun kt26531 (): IrErrorType declared in <root>'

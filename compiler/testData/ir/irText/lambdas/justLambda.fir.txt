@@ -1,28 +1,27 @@
 FILE fqName:<root> fileName:/justLambda.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Int> visibility:public [final,static]
       EXPRESSION_BODY
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+        BLOCK type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
             BLOCK_BODY
-              CONST Int type=IrErrorType value=42
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test1' type=IrErrorType origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType 
+              CONST Int type=kotlin.Function0<kotlin.Int> value=42
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Int declared in <root>.test1' type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Int>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function0<kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Int> visibility:public [final,static] ' type=kotlin.Function0<kotlin.Int> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function0<kotlin.Unit> visibility:public [final,static]
       EXPRESSION_BODY
-        BLOCK type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
+        BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test2' type=IrErrorType origin=LAMBDA
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IrErrorType 
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
-
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function0<kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] ' type=kotlin.Function0<kotlin.Unit> origin=null

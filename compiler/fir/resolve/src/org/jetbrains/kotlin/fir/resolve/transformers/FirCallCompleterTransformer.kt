@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeProjectionWithVarianceImpl
@@ -80,6 +82,23 @@ class FirCallCompleterTransformer(
             )
         ).compose()
 
+    }
+
+    override fun transformAnonymousFunction(
+        anonymousFunction: FirAnonymousFunction,
+        data: Nothing?
+    ): CompositeTransformResult<FirDeclaration> {
+        val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+        if (initialType != null) {
+            val finalType = finalSubstitutor.substituteOrNull(initialType)
+
+            val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(session, finalType)
+
+            anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+
+            anonymousFunction.replaceTypeRef(anonymousFunction.constructFunctionalTypeRef(session))
+        }
+        return super.transformAnonymousFunction(anonymousFunction, data)
     }
 
 }

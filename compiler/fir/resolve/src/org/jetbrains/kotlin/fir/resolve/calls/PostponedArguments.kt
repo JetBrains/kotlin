@@ -129,7 +129,7 @@ private fun extraLambdaInfo(
     return ResolvedLambdaAtom(argument, isSuspend, receiverType, parameters, returnType, typeVariable.takeIf { newTypeVariableUsed })
 }
 
-private fun extractLambdaInfoFromFunctionalType(
+internal fun extractLambdaInfoFromFunctionalType(
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef,
     argument: FirAnonymousFunction

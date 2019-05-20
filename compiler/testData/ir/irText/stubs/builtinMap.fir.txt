@@ -14,12 +14,11 @@ FILE fqName:<root> fileName:/builtinMap.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public final fun apply (block: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): T of <uninitialized parent> [inline] declared in kotlin' type=java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> origin=null
-              block: BLOCK type=kotlin.Unit origin=LAMBDA
+              block: BLOCK type=kotlin.Function2<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.Unit 
                   VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> 
                   BLOCK_BODY
                     ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [java/util/HashMap.put]>#' type=IrErrorType
                       ERROR_CALL 'No getter found for R|kotlin/Pair.first|' type=A of kotlin.Pair
                       ERROR_CALL 'No getter found for R|kotlin/Pair.second|' type=B of kotlin.Pair
-                FUNCTION_REFERENCE 'local final fun <anonymous> (it: java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>): kotlin.Unit declared in <root>.plus' type=kotlin.Unit origin=LAMBDA
-
+                FUNCTION_REFERENCE 'local final fun <anonymous> (it: java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>): kotlin.Unit declared in <root>.plus' type=kotlin.Function2<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA

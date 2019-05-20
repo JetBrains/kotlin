@@ -2,11 +2,11 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
-        BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+        BLOCK type=kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Function0<kotlin.Unit>> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit> 
             BLOCK_BODY
               CONST Int type=kotlin.Function0<kotlin.Unit> value=42
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Function0<kotlin.Unit>> origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit> 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY

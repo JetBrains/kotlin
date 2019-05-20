@@ -24,20 +24,20 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:public [final] ' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value2>' type=<root>.X.B origin=null
       PROPERTY name:value visibility:public modality:FINAL [val] 
-        FIELD PROPERTY_BACKING_FIELD name:value type:IrErrorType visibility:public [final] 
+        FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:public [final]
           EXPRESSION_BODY
-            BLOCK type=IrErrorType origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType 
+            BLOCK type=kotlin.Function0<kotlin.String> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.String
                 $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
                 BLOCK_BODY
                   CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=null
-              FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.X.B.value' type=IrErrorType origin=LAMBDA
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:IrErrorType 
+              FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.String declared in <root>.X.B.value' type=kotlin.Function0<kotlin.String> origin=LAMBDA
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.Function0<kotlin.String>
           correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val] 
           $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-value> (): IrErrorType declared in <root>.X.B'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
+            RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X.B'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:public [final] ' type=kotlin.Function0<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value>' type=<root>.X.B origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
         overridden:

@@ -24,17 +24,17 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
     BLOCK_BODY
       VAR name:<unary> type:kotlin.Int [val] 
         CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          index: BLOCK type=kotlin.Unit origin=LAMBDA
+          index: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
               BLOCK_BODY
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Unit origin=LAMBDA
+            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
       CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        index: BLOCK type=kotlin.Unit origin=LAMBDA
+        index: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Unit origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
       GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null

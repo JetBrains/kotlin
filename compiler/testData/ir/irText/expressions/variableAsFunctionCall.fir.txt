@@ -2,11 +2,11 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
   FUN name:k visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.String> 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun k (): kotlin.Function0<kotlin.String> declared in <root>'
-        BLOCK type=kotlin.Function0<kotlin.String> origin=LAMBDA
+        BLOCK type=kotlin.Function1<kotlin.Function0<kotlin.String>, kotlin.Function0<kotlin.String>> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function0<kotlin.String> 
             BLOCK_BODY
               ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<kotlin.String> declared in <root>.k' type=kotlin.Function0<kotlin.String> origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<kotlin.String> declared in <root>.k' type=kotlin.Function1<kotlin.Function0<kotlin.String>, kotlin.Function0<kotlin.String>> origin=LAMBDA
   FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:IrErrorType 
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY

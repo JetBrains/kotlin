@@ -41,22 +41,22 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
             value: CONST Int type=kotlin.Int value=1
           CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
       PROPERTY name:aLambda visibility:public modality:FINAL [val] 
-        FIELD PROPERTY_BACKING_FIELD name:aLambda type:IrErrorType visibility:public [final] 
+        FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:public [final]
           EXPRESSION_BODY
-            BLOCK type=IrErrorType origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:IrErrorType 
+            BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:kotlin.Unit
                 $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z 
                 BLOCK_BODY
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
                     value: CONST Int type=kotlin.Int value=1
                   CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-              FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.MyEnum.Z.aLambda' type=IrErrorType origin=LAMBDA
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:IrErrorType 
+              FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.MyEnum.Z.aLambda' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:kotlin.Function0<kotlin.Unit>
           correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val] 
           $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z 
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-aLambda> (): IrErrorType declared in <root>.MyEnum.Z'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aLambda type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
+            RETURN type=kotlin.Nothing from='public final fun <get-aLambda> (): kotlin.Function0<kotlin.Unit> declared in <root>.MyEnum.Z'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:public [final] ' type=kotlin.Function0<kotlin.Unit> origin=null
                 receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-aLambda>' type=<root>.MyEnum.Z origin=null
       PROPERTY name:anObject visibility:public modality:FINAL [val] 
         FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:public [final] 
