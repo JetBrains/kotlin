@@ -68,11 +68,6 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-z> (): kotlin.Any declared in <root>.Test1' type=kotlin.Any origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.String, z: kotlin.Any): <root>.Test1 declared in <root>.Test1'
-          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.String, z: kotlin.Any) [primary] declared in <root>.Test1' type=<root>.Test1 origin=null
-            x: GET_VAR 'x: kotlin.Int declared in <root>.Test1.copy' type=IrErrorType origin=null
-            y: GET_VAR 'y: kotlin.String declared in <root>.Test1.copy' type=IrErrorType origin=null
-            z: GET_VAR 'z: kotlin.Any declared in <root>.Test1.copy' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -115,9 +110,6 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-x> (): kotlin.Any? declared in <root>.Test2' type=kotlin.Any? origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Any?): <root>.Test2 declared in <root>.Test2'
-          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any?) [primary] declared in <root>.Test2' type=<root>.Test2 origin=null
-            x: GET_VAR 'x: kotlin.Any? declared in <root>.Test2.copy' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -220,12 +212,6 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-df> (): kotlin.Float? declared in <root>.Test3' type=kotlin.Float? origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun copy (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?): <root>.Test3 declared in <root>.Test3'
-          CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Double, dn: kotlin.Double?, f: kotlin.Float, df: kotlin.Float?) [primary] declared in <root>.Test3' type=<root>.Test3 origin=null
-            d: GET_VAR 'd: kotlin.Double declared in <root>.Test3.copy' type=IrErrorType origin=null
-            dn: GET_VAR 'dn: kotlin.Double? declared in <root>.Test3.copy' type=IrErrorType origin=null
-            f: GET_VAR 'f: kotlin.Float declared in <root>.Test3.copy' type=IrErrorType origin=null
-            df: GET_VAR 'df: kotlin.Float? declared in <root>.Test3.copy' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

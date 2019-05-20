@@ -19,7 +19,6 @@ FILE: components.kt
         }
 
         public final fun copy(x: R|kotlin/Int| = R|/D.x|, y: R|kotlin/String| = R|/D.y|): R|D| {
-            ^copy R|/D.D|(R|<local>/x|, R|<local>/y|)
         }
 
     }

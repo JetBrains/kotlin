@@ -48,10 +48,6 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Int, y: kotlin.Int): <root>.A declared in <root>.A'
-          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.A' type=<root>.A origin=null
-            x: GET_VAR 'x: kotlin.Int declared in <root>.A.copy' type=IrErrorType origin=null
-            y: GET_VAR 'y: kotlin.Int declared in <root>.A.copy' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

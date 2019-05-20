@@ -34,9 +34,6 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-runA> (): kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A' type=kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun copy (runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>): <root>.A declared in <root>.A'
-          CONSTRUCTOR_CALL 'public constructor <init> (runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>) [primary] declared in <root>.A' type=<root>.A origin=null
-            runA: GET_VAR 'runA: kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A.copy' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -88,9 +85,6 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-x> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun copy (x: kotlin.Any): <root>.B declared in <root>.B'
-          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any) [primary] declared in <root>.B' type=<root>.B origin=null
-            x: GET_VAR 'x: kotlin.Any declared in <root>.B.copy' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

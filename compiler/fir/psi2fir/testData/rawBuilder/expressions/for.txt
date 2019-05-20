@@ -43,8 +43,7 @@ FILE: for.kt
             ^component2 R|/Some.y|
         }
 
-        public final fun copy(x: Int = R|/Some.x|, y: Int = R|/Some.y|): <implicit> {
-            ^copy R|/Some.Some|(R|<local>/x|, R|<local>/y|)
+        public final fun copy(x: Int = R|/Some.x|, y: Int = R|/Some.y|): R|Some| {
         }
 
     }

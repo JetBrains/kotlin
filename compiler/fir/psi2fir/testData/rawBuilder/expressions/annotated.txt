@@ -29,8 +29,7 @@ FILE: annotated.kt
             super<kotlin/Any>()
         }
 
-        public final fun copy(): <implicit> {
-            ^copy R|/Two.Two|()
+        public final fun copy(): R|Two| {
         }
 
     }
