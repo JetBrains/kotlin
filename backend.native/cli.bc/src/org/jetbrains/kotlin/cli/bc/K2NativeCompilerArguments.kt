@@ -108,6 +108,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = EMBED_BITCODE_MARKER_FLAG, description = "Embed placeholder LLVM IR data as a marker")
     var embedBitcodeMarker: Boolean = false
 
+    @Argument(value = "-Xemit-lazy-objc-header", description = "")
+    var emitLazyObjCHeader: String? = null
+
     @Argument(value = "-Xenable", deprecatedName = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
     var enablePhases: Array<String>? = null
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -190,7 +191,7 @@ internal class ObjCExportTranslatorImpl(
 
     private fun referenceClass(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         fun forwardDeclarationObjcClassName(objcGenerics: Boolean, descriptor: ClassDescriptor, namer:ObjCExportNamer): String {
-            val className = namer.getClassOrProtocolName(descriptor)
+            val className = translateClassOrInterfaceName(descriptor)
             val builder = StringBuilder(className.objCName)
             if (objcGenerics)
                 formatGenerics(builder, descriptor.typeConstructor.parameters.map { typeParameterDescriptor ->
@@ -221,13 +222,18 @@ internal class ObjCExportTranslatorImpl(
 
     private fun translateClassOrInterfaceName(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         assert(mapper.shouldBeExposed(descriptor))
+        if (ErrorUtils.isError(descriptor)) {
+            return ObjCExportNamer.ClassOrProtocolName("ERROR", "ERROR")
+        }
 
         return namer.getClassOrProtocolName(descriptor)
     }
 
     override fun translateInterface(descriptor: ClassDescriptor): ObjCProtocol {
-        require(mapper.shouldBeExposed(descriptor))
         require(descriptor.isInterface)
+        if (!mapper.shouldBeExposed(descriptor)) {
+            return translateUnexposedInterfaceAsUnavailableStub(descriptor)
+        }
 
         val name = translateClassOrInterfaceName(descriptor)
         val members: List<Stub<*>> = buildMembers { translateInterfaceMembers(descriptor) }
@@ -276,8 +282,10 @@ internal class ObjCExportTranslatorImpl(
     }
 
     override fun translateClass(descriptor: ClassDescriptor): ObjCInterface {
-        require(mapper.shouldBeExposed(descriptor))
         require(!descriptor.isInterface)
+        if (!mapper.shouldBeExposed(descriptor)) {
+            return translateUnexposedClassAsUnavailableStub(descriptor)
+        }
 
         val genericExportScope = genericExportScope(descriptor)
 

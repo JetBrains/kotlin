@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal class ObjCExportMapper {
+internal class ObjCExportMapper(private val local: Boolean = false) {
     companion object {
         val maxFunctionTypeParameterCount get() = KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
     }
@@ -36,8 +36,12 @@ internal class ObjCExportMapper {
 
     private val methodBridgeCache = mutableMapOf<FunctionDescriptor, MethodBridge>()
 
-    fun bridgeMethod(descriptor: FunctionDescriptor): MethodBridge = methodBridgeCache.getOrPut(descriptor) {
+    fun bridgeMethod(descriptor: FunctionDescriptor): MethodBridge = if (local) {
         bridgeMethodImpl(descriptor)
+    } else {
+        methodBridgeCache.getOrPut(descriptor) {
+            bridgeMethodImpl(descriptor)
+        }
     }
 }
 
@@ -63,12 +67,14 @@ internal fun ObjCExportMapper.getClassIfCategory(extensionReceiverType: KotlinTy
     }
 }
 
+// Note: partially duplicated in ObjCExportLazyImpl.translateTopLevels.
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.isEffectivelyPublicApi && !descriptor.isSuspend && !descriptor.isExpect
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
         shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
 
+// Note: the logic is duplicated in ObjCExportLazyImpl.translateClasses.
 internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Boolean =
         descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
         ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true

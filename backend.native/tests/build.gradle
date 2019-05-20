@@ -3355,16 +3355,34 @@ if (isAppleTarget(project)) {
 
     task testValuesFramework(type: FrameworkTest) {
         frameworkName = 'Values'
+
+        final String dir = "$testOutputFramework/$frameworkName"
+        final File lazyHeader = file("$dir/$target-lazy.h")
+
+        doFirst {
+            final File expectedLazyHeader = file("framework/values/expectedLazy.h")
+
+            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
+                exec {
+                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
+                    ignoreExitValue = true
+                }
+                throw new Error("$expectedLazyHeader and $lazyHeader files differ")
+            }
+
+        }
+
         konanArtifacts {
             framework(frameworkName, targets: [ target ]) {
                 srcDir 'framework/values'
-                baseDir "$testOutputFramework/$frameworkName"
+                baseDir dir
 
                 if (!useCustomDist) {
                     dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
+                extraOpts "-Xemit-lazy-objc-header=$lazyHeader"
             }
         }
         swiftSources = ['framework/values/values.swift']

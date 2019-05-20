@@ -22,6 +22,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("disable backend phases")
         val BITCODE_EMBEDDING_MODE: CompilerConfigurationKey<BitcodeEmbedding.Mode>
                 = CompilerConfigurationKey.create("bitcode embedding mode")
+        val EMIT_LAZY_OBJC_HEADER_FILE: CompilerConfigurationKey<String?> =
+                CompilerConfigurationKey.create("output file to emit lazy Obj-C header")
         val ENABLE_ASSERTIONS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("enable runtime assertions in generated code")
         val ENABLED_PHASES: CompilerConfigurationKey<List<String>> 
