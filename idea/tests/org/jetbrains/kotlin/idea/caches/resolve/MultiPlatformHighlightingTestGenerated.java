@@ -169,6 +169,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/typeAliasedParameter/");
     }
 
+    @TestMetadata("typeAliasedSam")
+    public void testTypeAliasedSam() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/typeAliasedSam/");
+    }
+
     @TestMetadata("useAppendable")
     public void testUseAppendable() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/useAppendable/");
