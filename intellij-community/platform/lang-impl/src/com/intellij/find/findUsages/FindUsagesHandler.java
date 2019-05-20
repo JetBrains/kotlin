@@ -142,7 +142,7 @@ public abstract class FindUsagesHandler {
                                      @NotNull GlobalSearchScope searchScope) {
     Collection<String> stringToSearch = ReadAction.compute(() -> getStringsToSearch(element));
     if (stringToSearch == null) return true;
-    return FindUsagesHelper.processUsagesInText(element, stringToSearch, searchScope, processor);
+    return FindUsagesHelper.processUsagesInText(element, stringToSearch, false, searchScope, processor);
   }
 
   @Nullable
