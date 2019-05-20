@@ -35,3 +35,12 @@ artifacts {
 }
 
 javadocJar()
+
+pluginBundle {
+    plugins {
+        kotlinSerialization {
+            id = 'org.jetbrains.kotlin.plugin.serialization'
+            description = displayName = 'Kotlin compiler plugin for kotlinx.serialization library'
+        }
+    }
+}
