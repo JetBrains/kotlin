@@ -25038,11 +25038,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/unsignedTypes/nullableUnsignedEqualsLiteral.kt");
         }
 
-        @TestMetadata("signedToUnsignedLiteralConversion.kt")
-        public void testSignedToUnsignedLiteralConversion() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/signedToUnsignedLiteralConversion.kt");
-        }
-
         @TestMetadata("unsignedIntCompare.kt")
         public void testUnsignedIntCompare() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare.kt");
