@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.artifacts;
 
 import com.intellij.compiler.server.BuildManager;
@@ -6,7 +6,6 @@ import com.intellij.configurationStore.XmlSerializer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -41,8 +40,7 @@ import java.util.*;
  * @author nik
  */
 @State(name = ArtifactManagerImpl.COMPONENT_NAME, storages = @Storage(value = "artifacts", stateSplitter = ArtifactManagerStateSplitter.class))
-public class ArtifactManagerImpl extends ArtifactManager implements BaseComponent, PersistentStateComponent<ArtifactManagerState>,
-                                                                    Disposable {
+public class ArtifactManagerImpl extends ArtifactManager implements PersistentStateComponent<ArtifactManagerState>, Disposable {
   private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.artifacts.ArtifactManagerImpl");
   @NonNls public static final String COMPONENT_NAME = "ArtifactManager";
   @NonNls public static final String PACKAGING_ELEMENT_NAME = "element";
@@ -269,13 +267,7 @@ public class ArtifactManagerImpl extends ArtifactManager implements BaseComponen
   }
 
   @Override
-  @NotNull
-  public String getComponentName() {
-    return COMPONENT_NAME;
-  }
-
-  @Override
-  public void initComponent() {
+  public void initializeComponent() {
     myProject.getMessageBus().connect(this).subscribe(VirtualFileManager.VFS_CHANGES, new ArtifactVirtualFileListener(myProject, this));
     updateWatchedRoots();
   }

@@ -95,6 +95,7 @@ abstract class ComponentStoreImpl : IComponentStore {
       @Suppress("DEPRECATION")
       if (component is PersistentStateComponent<*>) {
         componentName = initPersistenceStateComponent(component, getStateSpec(component), serviceDescriptor)
+        component.initializeComponent()
       }
       else if (component is com.intellij.openapi.util.JDOMExternalizable) {
         componentName = ComponentManagerImpl.getComponentName(component)

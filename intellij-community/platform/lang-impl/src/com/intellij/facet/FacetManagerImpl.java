@@ -42,7 +42,7 @@ import java.util.function.Predicate;
  * @author nik
  */
 @State(name = FacetManagerImpl.COMPONENT_NAME, useLoadedStateAsExisting = false)
-public class FacetManagerImpl extends FacetManager implements ModuleComponent, PersistentStateComponent<FacetManagerState> {
+public final class FacetManagerImpl extends FacetManager implements ModuleComponent, PersistentStateComponent<FacetManagerState> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.facet.FacetManagerImpl");
   @NonNls public static final String COMPONENT_NAME = "FacetManager";
 

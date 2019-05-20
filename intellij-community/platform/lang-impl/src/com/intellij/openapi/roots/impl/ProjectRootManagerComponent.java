@@ -105,7 +105,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   }
 
   @Override
-  public void initComponent() {
+  public void initializeComponent() {
     myConnection.subscribe(BatchUpdateListener.TOPIC, myHandler);
   }
 
