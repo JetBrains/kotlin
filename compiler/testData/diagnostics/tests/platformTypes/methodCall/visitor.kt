@@ -22,5 +22,5 @@ public class Element {
 import p.*
 
 fun test(v: Visitor<Nothing>, e: Element) {
-    e.<!NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>accept<!>(v, null)
+    e.accept(v, null)
 }

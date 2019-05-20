@@ -14,7 +14,7 @@ fun doSomething() {}
 
 fun test2() {
     fun f(x: Any?) = x
-    f(null?.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>let<!> { return })
+    f(null?.let { return })
 
     // false unreachable here
     doSomething()
