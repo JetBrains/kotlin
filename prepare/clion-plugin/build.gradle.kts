@@ -5,6 +5,11 @@ plugins {
     kotlin("jvm")
 }
 
+val cidrPluginTools: Map<String, Any> by rootProject.extra
+val packageCidrPlugin: (Project, String, File, Task, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
+val zipCidrPlugin: (Project, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
+val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> NamedDomainObjectContainerCreatingDelegateProvider<Task> by cidrPluginTools
+
 val clionVersion: String by rootProject.extra
 val clionFriendlyVersion: String by rootProject.extra
 val clionVersionStrict: Boolean by rootProject.extra
@@ -33,6 +38,7 @@ val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
 val platformDepsJar: Task by platformDepsJar("CLion", clionPlatformDepsDir)
 
 val clionPlugin: Task by packageCidrPlugin(
+        project,
         ":kotlin-ultimate:ide:clion-native",
         clionPluginDir,
         pluginJar,
@@ -40,9 +46,10 @@ val clionPlugin: Task by packageCidrPlugin(
         clionPlatformDepsDir
 )
 
-val zipCLionPlugin: Task by zipCidrPlugin(clionPlugin, clionPluginZipPath)
+val zipCLionPlugin: Task by zipCidrPlugin(project, clionPlugin, clionPluginZipPath)
 
 val clionUpdatePluginsXml: Task by cidrUpdatePluginsXml(
+        project,
         preparePluginXml,
         clionFriendlyVersion,
         clionPluginZipPath,

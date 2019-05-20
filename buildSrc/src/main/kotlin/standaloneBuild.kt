@@ -15,6 +15,13 @@ import org.gradle.kotlin.dsl.*
 internal val Project.includeKotlinUltimate
     get() = rootProject.findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
 
+private val EXCLUDES_LIST_FROM_IDEA_PLUGIN = listOf(
+        "lib/android-*.jar", // no need Android stuff
+        "lib/kapt3-*.jar", // no annotation processing
+        "lib/jps/**", // JSP plugin
+        "kotlinc/**"
+)
+
 fun Project.ideaPluginJarDep(): Any {
     return if (includeKotlinUltimate) {
         // depend on the artifact to be build

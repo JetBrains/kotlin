@@ -6,9 +6,13 @@ plugins {
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extra
-
 val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
 val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
+
+val cidrPluginTools: Map<String, Any> by rootProject.extra
+val packageCidrPlugin: (Project, String, File, Task, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
+val zipCidrPlugin: (Project, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
+val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> NamedDomainObjectContainerCreatingDelegateProvider<Task> by cidrPluginTools
 
 val appcodeVersion: String by rootProject.extra
 val appcodeFriendlyVersion: String by rootProject.extra
@@ -38,6 +42,7 @@ val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
 val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
 
 val appcodePlugin: Task by packageCidrPlugin(
+        project,
         ":kotlin-ultimate:ide:appcode-native",
         appcodePluginDir,
         pluginJar,
@@ -45,9 +50,10 @@ val appcodePlugin: Task by packageCidrPlugin(
         appcodePlatformDepsDir
 )
 
-val zipAppCodePlugin: Task by zipCidrPlugin(appcodePlugin, appcodePluginZipPath)
+val zipAppCodePlugin: Task by zipCidrPlugin(project, appcodePlugin, appcodePluginZipPath)
 
 val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
+        project,
         preparePluginXml,
         appcodeFriendlyVersion,
         appcodePluginZipPath,
