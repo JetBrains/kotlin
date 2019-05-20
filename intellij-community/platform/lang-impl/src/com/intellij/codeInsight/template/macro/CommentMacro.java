@@ -36,7 +36,7 @@ public abstract class CommentMacro extends MacroBase {
     Language language = editor == null ? null : PsiUtilBase.getLanguageInEditor(editor, context.getProject());
     Commenter commenter = language == null ? null : LanguageCommenters.INSTANCE.forLanguage(language);
     String lineCommentPrefix = commenter == null ? null : myCommenterFunction.apply(commenter);
-    return lineCommentPrefix == null ? null : new TextResult(lineCommentPrefix);
+    return lineCommentPrefix == null ? null : new TextResult(lineCommentPrefix.trim());
   }
 
   public static class LineCommentStart extends CommentMacro {
