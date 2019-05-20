@@ -21,6 +21,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class KotlinFrameworkTranslator(val project: Project) {
@@ -40,21 +41,12 @@ class KotlinFrameworkTranslator(val project: Project) {
         val moduleNodes = ExternalSystemApiUtil.findAll(projectNode, ProjectKeys.MODULE)
         val taskName = ":" + konanFile.target.name
         val moduleNode = moduleNodes.find { module -> module.data.id == taskName } ?: return emptyList()
-        val contentRoots = ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.CONTENT_ROOT)
 
         val vfs = LocalFileSystem.getInstance()
 
-        return contentRoots.asSequence()
-            .flatMap { node ->
-                val sourceRoots = node.data.sourceRoots
-                (if (sourceRoots.isNotEmpty())
-                    sourceRoots
-                else
-                    //todo[medvedev] this is a backup. get rid of it???
-                    //todo[medvedev] process only `./***Main/kotlin/`
-                    listOf(node.data.rootPath)
-                ).asSequence()
-            }
+        return ExternalSystemApiUtil.findAll(moduleNode, GradleSourceSetData.KEY).asSequence()
+            .flatMap { sourceSetData -> ExternalSystemApiUtil.findAll(sourceSetData, ProjectKeys.CONTENT_ROOT).asSequence() }
+            .flatMap { node -> node.data.sourceRoots.asSequence() }
             .mapNotNull {path -> vfs.findFileByPath(path) }
             .flatMap { dir -> findAllSources(dir).asSequence() }
             .toList()
