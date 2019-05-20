@@ -1,13 +1,17 @@
 import java.util.*
+import kotlin.reflect.KFunction
 
 // --------------------------------------------------
 // Exported items:
 // --------------------------------------------------
 
-val ultimateTools: MutableMap<String, Any> by rootProject.extra(mutableMapOf())
+// TODO: pack this as a Gradle plugin
+val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
+        ::enableTasksIfAtLeast,
+        ::enableTasksIfOsIsNot
+).map { it.name to it }.toMap()
 
-ultimateTools["enableTasksIfAtLeast"] = ::enableTasksIfAtLeast
-ultimateTools["enableTasksIfOsIsNot"] = ::enableTasksIfOsIsNot
+rootProject.extensions.add("ultimateTools", ultimateTools)
 
 // --------------------------------------------------
 // Compatibility tasks:

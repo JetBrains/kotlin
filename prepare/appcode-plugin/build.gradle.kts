@@ -5,11 +5,11 @@ plugins {
     kotlin("jvm")
 }
 
-val ultimateTools: Map<String, Any> by rootProject.extra
+val ultimateTools: Map<String, Any> by rootProject.extensions
 val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
 val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
 
-val cidrPluginTools: Map<String, Any> by rootProject.extra
+val cidrPluginTools: Map<String, Any> by rootProject.extensions
 val preparePluginXml: (Project, String, String, Boolean, String) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
 val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
 val platformDepsJar: (Project, String, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools

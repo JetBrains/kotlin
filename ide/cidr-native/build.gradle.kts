@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-val cidrPluginTools: Map<String, Any> by rootProject.extra
+val cidrPluginTools: Map<String, Any> by rootProject.extensions
 val addIdeaNativeModuleDeps: (Project) -> Unit by cidrPluginTools
 
 val cidrUnscrambledJarDir: File by rootProject.extra

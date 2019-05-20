@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
 }
 
-val cidrPluginTools: Map<String, Any> by rootProject.extra
+val cidrPluginTools: Map<String, Any> by rootProject.extensions
 val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
 val preparePluginXml: (Project, String, String, Boolean, String) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
 val platformDepsJar: (Project, String, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools

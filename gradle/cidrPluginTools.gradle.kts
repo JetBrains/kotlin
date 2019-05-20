@@ -10,28 +10,32 @@ import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.reflect.KFunction
 
 // --------------------------------------------------
 // Exported items:
 // --------------------------------------------------
 
-val cidrPluginTools: MutableMap<String, Any> by rootProject.extra(mutableMapOf())
+// TODO: pack this as a Gradle plugin
+val cidrPluginTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
+        ::ideaPluginJarDep,
+        ::addIdeaNativeModuleDeps,
 
-cidrPluginTools["ideaPluginJarDep"] = ::ideaPluginJarDep
-cidrPluginTools["addIdeaNativeModuleDeps"] = ::addIdeaNativeModuleDeps
+        ::packageCidrPlugin,
+        ::zipCidrPlugin,
+        ::cidrUpdatePluginsXml,
 
-cidrPluginTools["packageCidrPlugin"] = ::packageCidrPlugin
-cidrPluginTools["zipCidrPlugin"] = ::zipCidrPlugin
-cidrPluginTools["cidrUpdatePluginsXml"] = ::cidrUpdatePluginsXml
+        ::prepareKotlinPluginXml,
+        ::preparePluginXml,
 
-cidrPluginTools["prepareKotlinPluginXml"] = ::prepareKotlinPluginXml
-cidrPluginTools["preparePluginXml"] = ::preparePluginXml
+        ::pluginJar,
+        ::platformDepsJar,
 
-cidrPluginTools["pluginJar"] = ::pluginJar
-cidrPluginTools["platformDepsJar"] = ::platformDepsJar
+        ::patchFileTemplates,
+        ::patchGradleXml
+).map { it.name to it }.toMap()
 
-cidrPluginTools["patchFileTemplates"] = ::patchFileTemplates
-cidrPluginTools["patchGradleXml"] = ::patchGradleXml
+rootProject.extensions.add("cidrPluginTools", cidrPluginTools)
 
 // --------------------------------------------------
 // Shared utils:

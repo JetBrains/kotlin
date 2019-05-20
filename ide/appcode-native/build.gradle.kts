@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-val ultimateTools: Map<String, Any> by rootProject.extra
+val ultimateTools: Map<String, Any> by rootProject.extensions
 val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
 val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
 
