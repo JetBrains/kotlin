@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-public class ExtractServiceAction extends DumbAwareAction {
+public class ShowInNewTabAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     List<ServiceViewItem> items = getSelectedItems(e);
@@ -28,7 +28,7 @@ public class ExtractServiceAction extends DumbAwareAction {
     List<ServiceViewItem> items = getSelectedItems(e);
     if (items.isEmpty()) return;
 
-    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(e.getProject())).extract(new ServiceViewDragBean(items));
+    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).extract(new ServiceViewDragBean(items));
   }
 
   private static List<ServiceViewItem> getSelectedItems(@NotNull AnActionEvent e) {
