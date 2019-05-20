@@ -136,12 +136,10 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
                 errors.unknownExtraFlags += arg
             } else {
                 val newInternalArgument = parser.parseInternalArgument(arg, errors) ?: continue
-                val argumentWillBeOverridden = when (newInternalArgument) {
-                    is ManualLanguageFeatureSetting -> internalArguments.firstOrNull { (it is ManualLanguageFeatureSetting) && (it.languageFeature == newInternalArgument.languageFeature) }
-                    else -> null
-                }
-                if (argumentWillBeOverridden != null) {
-                    internalArguments.remove(argumentWillBeOverridden)
+                // Manual language feature setting overrides the previous value of the same feature setting, if it exists.
+                internalArguments.removeIf {
+                    (it as? ManualLanguageFeatureSetting)?.languageFeature ==
+                            (newInternalArgument as? ManualLanguageFeatureSetting)?.languageFeature
                 }
                 internalArguments.add(newInternalArgument)
             }
