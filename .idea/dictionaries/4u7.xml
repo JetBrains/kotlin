@@ -4,9 +4,11 @@
       <w>cidr</w>
       <w>foldable</w>
       <w>instrumentator</w>
+      <w>jdks</w>
       <w>protobuf</w>
       <w>redirector</w>
       <w>remapper</w>
+      <w>unpresent</w>
     </words>
   </dictionary>
 </component>

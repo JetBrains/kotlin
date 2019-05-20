@@ -1,4 +1,3 @@
-
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -64,11 +63,11 @@ buildScan {
 }
 
 val configuredJdks: List<JdkId> =
-        getConfiguredJdks().also {
-            it.forEach {
-                logger.info("Using ${it.majorVersion} home: ${it.homeDir}")
-            }
+    getConfiguredJdks().also {
+        it.forEach { jdkId ->
+            logger.info("Using ${jdkId.majorVersion} home: ${jdkId.homeDir}")
         }
+    }
 
 val defaultSnapshotVersion: String by extra
 val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
@@ -136,10 +135,20 @@ fun checkJDK() {
     if (jdkChecked) {
         return
     }
-    var unpresentJdks = JdkMajorVersion.values().filter { it.isMandatory() }.map { it -> it.name }.filter { it == null || extra[it] == jdkNotFoundConst }.toList()
-    if (!unpresentJdks.isEmpty()) {
-        throw GradleException("Please set environment variable${if (unpresentJdks.size > 1) "s" else ""}: ${unpresentJdks.joinToString()} to point to corresponding JDK installation.")
+
+    val unpresentJdks = JdkMajorVersion.values()
+        .filter { it.isMandatory() }
+        .map { it.name }
+        .filter { extra[it] == jdkNotFoundConst }
+        .toList()
+
+    if (unpresentJdks.isNotEmpty()) {
+        throw GradleException("Please set environment variable" +
+                                      (if (unpresentJdks.size > 1) "s" else "") +
+                                      ": " + unpresentJdks.joinToString() +
+                                      " to point to corresponding JDK installation.")
     }
+
     jdkChecked = true
 }
 
@@ -191,92 +200,94 @@ extra["intellijUltimateEnabled"] = intellijUltimateEnabled
 extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
-        listOf(if (Platform[191].orHigher()) "asm-all-7.0.1" else "asm-all",
-               "guava",
-               "jdom",
-               "jna",
-               "log4j",
-               "picocontainer",
-               "snappy-in-java",
-               "streamex",
-               "trove4j")
+    listOf(
+        if (Platform[191].orHigher()) "asm-all-7.0.1" else "asm-all",
+        "guava",
+        "jdom",
+        "jna",
+        "log4j",
+        "picocontainer",
+        "snappy-in-java",
+        "streamex",
+        "trove4j"
+    )
 
 
 extra["compilerModules"] = arrayOf(
-        ":compiler:util",
-        ":compiler:container",
-        ":compiler:resolution",
-        ":compiler:serialization",
-        ":compiler:psi",
-        ":compiler:frontend",
-        ":compiler:frontend.common",
-        ":compiler:frontend.java",
-        ":compiler:cli-common",
-        ":compiler:ir.tree",
-        ":compiler:ir.psi2ir",
-        ":compiler:ir.backend.common",
-        ":compiler:backend.jvm",
-        ":compiler:backend.js",
-        ":compiler:ir.serialization.common",
-        ":compiler:ir.serialization.js",
-        ":compiler:backend-common",
-        ":compiler:backend",
-        ":compiler:plugin-api",
-        ":compiler:light-classes",
-        ":compiler:cli",
-        ":compiler:cli-js",
-        ":compiler:incremental-compilation-impl",
-        ":js:js.ast",
-        ":js:js.serializer",
-        ":js:js.parser",
-        ":js:js.frontend",
-        ":js:js.translator",
-        ":js:js.dce",
-        ":compiler",
-        ":kotlin-build-common",
-        ":core:metadata",
-        ":core:metadata.jvm",
-        ":core:descriptors",
-        ":core:descriptors.jvm",
-        ":core:deserialization",
-        ":core:util.runtime",
-        ":core:type-system",
-        ":compiler:fir:cones",
-        ":compiler:fir:resolve",
-        ":compiler:fir:tree",
-        ":compiler:fir:psi2fir",
-        ":compiler:fir:fir2ir"
+    ":compiler:util",
+    ":compiler:container",
+    ":compiler:resolution",
+    ":compiler:serialization",
+    ":compiler:psi",
+    ":compiler:frontend",
+    ":compiler:frontend.common",
+    ":compiler:frontend.java",
+    ":compiler:cli-common",
+    ":compiler:ir.tree",
+    ":compiler:ir.psi2ir",
+    ":compiler:ir.backend.common",
+    ":compiler:backend.jvm",
+    ":compiler:backend.js",
+    ":compiler:ir.serialization.common",
+    ":compiler:ir.serialization.js",
+    ":compiler:backend-common",
+    ":compiler:backend",
+    ":compiler:plugin-api",
+    ":compiler:light-classes",
+    ":compiler:cli",
+    ":compiler:cli-js",
+    ":compiler:incremental-compilation-impl",
+    ":js:js.ast",
+    ":js:js.serializer",
+    ":js:js.parser",
+    ":js:js.frontend",
+    ":js:js.translator",
+    ":js:js.dce",
+    ":compiler",
+    ":kotlin-build-common",
+    ":core:metadata",
+    ":core:metadata.jvm",
+    ":core:descriptors",
+    ":core:descriptors.jvm",
+    ":core:deserialization",
+    ":core:util.runtime",
+    ":core:type-system",
+    ":compiler:fir:cones",
+    ":compiler:fir:resolve",
+    ":compiler:fir:tree",
+    ":compiler:fir:psi2fir",
+    ":compiler:fir:fir2ir"
 )
 
 val coreLibProjects = listOfNotNull(
-        ":kotlin-stdlib",
-        ":kotlin-stdlib-common",
-        ":kotlin-stdlib-js",
-        // Local builds are disabled at the request of the lib team
-        // TODO: Enable when tests are fixed
-        ":kotlin-stdlib-js-ir".takeIf { isTeamcityBuild },
-        ":kotlin-stdlib-jdk7",
-        ":kotlin-stdlib-jdk8",
-        ":kotlin-test:kotlin-test-common",
-        ":kotlin-test:kotlin-test-jvm",
-        ":kotlin-test:kotlin-test-junit",
-        ":kotlin-test:kotlin-test-junit5",
-        ":kotlin-test:kotlin-test-testng",
-        ":kotlin-test:kotlin-test-js",
-        ":kotlin-reflect"
+    ":kotlin-stdlib",
+    ":kotlin-stdlib-common",
+    ":kotlin-stdlib-js",
+    // Local builds are disabled at the request of the lib team
+    // TODO: Enable when tests are fixed
+    ":kotlin-stdlib-js-ir".takeIf { isTeamcityBuild },
+    ":kotlin-stdlib-jdk7",
+    ":kotlin-stdlib-jdk8",
+    ":kotlin-test:kotlin-test-common",
+    ":kotlin-test:kotlin-test-jvm",
+    ":kotlin-test:kotlin-test-junit",
+    ":kotlin-test:kotlin-test-junit5",
+    ":kotlin-test:kotlin-test-testng",
+    ":kotlin-test:kotlin-test-js",
+    ":kotlin-reflect"
 )
 
 val gradlePluginProjects = listOf(
-        ":kotlin-gradle-plugin",
-        ":kotlin-gradle-plugin:plugin-marker",
-        ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin",
+    ":kotlin-gradle-plugin:plugin-marker",
+    ":kotlin-gradle-plugin-api",
 //        ":kotlin-gradle-plugin-integration-tests",  // TODO: build fails
-        ":kotlin-allopen",
-        ":kotlin-allopen:plugin-marker",
-        ":kotlin-annotation-processing-gradle",
-        ":kotlin-noarg",
-        ":kotlin-noarg:plugin-marker",
-        ":kotlin-sam-with-receiver"
+    ":kotlin-allopen",
+    ":kotlin-allopen:plugin-marker",
+    ":kotlin-annotation-processing-gradle",
+    ":kotlin-noarg",
+    ":kotlin-noarg:plugin-marker",
+    ":kotlin-sam-with-receiver"
 )
 
 apply {
@@ -306,18 +317,13 @@ val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toSt
 allprojects {
 
     configurations.maybeCreate("embedded")
-    
-    jvmTarget = defaultJvmTarget
-    if (defaultJavaHome != null) {
-        javaHome = defaultJavaHome
-    } else {
-        logger.error("Could not find default java home. Please set environment variable JDK_${defaultJavaHome} to point to JDK ${defaultJavaHome} installation.")
-    }
 
+    jvmTarget = defaultJvmTarget
+    javaHome = defaultJavaHome
 
     // There are problems with common build dir:
     //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
-    //  - idea seems unable to exclude common builddir from indexing
+    //  - idea seems unable to exclude common buildDir from indexing
     // therefore it is disabled by default
     // buildDir = File(commonBuildDir, project.name)
 
@@ -385,16 +391,20 @@ allprojects {
         fun File.toProjectRootRelativePathOrSelf() = (relativeToOrNull(rootDir)?.takeUnless { it.startsWith("..") } ?: this).path
 
         fun FileCollection.printClassPath(role: String) =
-                println("${project.path} $role classpath:\n  ${joinToString("\n  ") { it.toProjectRootRelativePathOrSelf() } }")
+            println("${project.path} $role classpath:\n  ${joinToString("\n  ") { it.toProjectRootRelativePathOrSelf() }}")
 
-        try { javaPluginConvention() } catch (_: UnknownDomainObjectException) { null }?.let { javaConvention ->
+        try {
+            javaPluginConvention()
+        } catch (_: UnknownDomainObjectException) {
+            null
+        }?.let { javaConvention ->
             task("printCompileClasspath") { doFirst { javaConvention.sourceSets["main"].compileClasspath.printClassPath("compile") } }
             task("printRuntimeClasspath") { doFirst { javaConvention.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
             task("printTestCompileClasspath") { doFirst { javaConvention.sourceSets["test"].compileClasspath.printClassPath("test compile") } }
             task("printTestRuntimeClasspath") { doFirst { javaConvention.sourceSets["test"].runtimeClasspath.printClassPath("test runtime") } }
         }
 
-        run configureCompilerClasspath@ {
+        run configureCompilerClasspath@{
             val bootstrapCompilerClasspath by rootProject.buildscript.configurations
             configurations.findByName("kotlinCompilerClasspath")?.let {
                 dependencies.add(it.name, files(bootstrapCompilerClasspath))
@@ -471,18 +481,18 @@ tasks {
 
     create("coreLibsTest") {
         (coreLibProjects + listOf(
-                ":kotlin-stdlib:samples",
-                ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
-                ":kotlinx-metadata-jvm",
-                ":tools:binary-compatibility-validator"
+            ":kotlin-stdlib:samples",
+            ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+            ":kotlinx-metadata-jvm",
+            ":tools:binary-compatibility-validator"
         )).forEach {
-            dependsOn(it + ":check")
+            dependsOn("$it:check")
         }
     }
 
     create("gradlePluginTest") {
         gradlePluginProjects.forEach {
-            dependsOn(it + ":check")
+            dependsOn("$it:check")
         }
     }
 
@@ -492,10 +502,12 @@ tasks {
 
     create("jvmCompilerTest") {
         dependsOn("dist")
-        dependsOn(":compiler:test",
-                  ":compiler:container:test",
-                  ":compiler:tests-java8:test",
-                  ":compiler:tests-spec:remoteRunTests")
+        dependsOn(
+            ":compiler:test",
+            ":compiler:container:test",
+            ":compiler:tests-java8:test",
+            ":compiler:tests-spec:remoteRunTests"
+        )
         dependsOn(":plugins:jvm-abi-gen:test")
     }
 
@@ -566,46 +578,54 @@ tasks {
 
     create("idea-plugin-additional-tests") {
         dependsOn("dist")
-        dependsOn(":idea:idea-gradle:test",
-                  ":idea:idea-gradle-native:test",
-                  ":idea:idea-maven:test",
-                  ":j2k:test",
-                  ":idea:eval4j:test")
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:idea-gradle-native:test",
+            ":idea:idea-maven:test",
+            ":j2k:test",
+            ":idea:eval4j:test"
+        )
     }
 
     create("idea-plugin-tests") {
         dependsOn("dist")
-        dependsOn("idea-plugin-main-tests",
-                  "idea-plugin-additional-tests")
+        dependsOn(
+            "idea-plugin-main-tests",
+            "idea-plugin-additional-tests"
+        )
     }
 
     create("android-ide-tests") {
         dependsOn("dist")
-        dependsOn(":plugins:android-extensions-ide:test",
-                  ":idea:idea-android:test",
-                  ":kotlin-annotation-processing:test")
+        dependsOn(
+            ":plugins:android-extensions-ide:test",
+            ":idea:idea-android:test",
+            ":kotlin-annotation-processing:test"
+        )
     }
 
     create("plugins-tests") {
         dependsOn("dist")
-        dependsOn(":kotlin-annotation-processing:test",
-                  ":kotlin-source-sections-compiler-plugin:test",
-                  ":kotlin-allopen-compiler-plugin:test",
-                  ":kotlin-noarg-compiler-plugin:test",
-                  ":kotlin-sam-with-receiver-compiler-plugin:test",
-                  ":plugins:uast-kotlin:test",
-                  ":kotlin-annotation-processing-gradle:test",
-                  ":kotlinx-serialization-ide-plugin:test")
+        dependsOn(
+            ":kotlin-annotation-processing:test",
+            ":kotlin-source-sections-compiler-plugin:test",
+            ":kotlin-allopen-compiler-plugin:test",
+            ":kotlin-noarg-compiler-plugin:test",
+            ":kotlin-sam-with-receiver-compiler-plugin:test",
+            ":plugins:uast-kotlin:test",
+            ":kotlin-annotation-processing-gradle:test",
+            ":kotlinx-serialization-ide-plugin:test"
+        )
     }
 
 
     create("ideaPluginTest") {
         dependsOn(
-                "idea-plugin-tests",
-                "jps-tests",
-                "plugins-tests",
-                "android-ide-tests",
-                ":generators:test"
+            "idea-plugin-tests",
+            "jps-tests",
+            "plugins-tests",
+            "android-ide-tests",
+            ":generators:test"
         )
     }
 
@@ -691,11 +711,11 @@ val zipPlugin by task<Zip> {
 configure<IdeaModel> {
     module {
         excludeDirs = files(
-                project.buildDir,
-                commonLocalDataDir,
-                ".gradle",
-                "dependencies",
-                "dist"
+            project.buildDir,
+            commonLocalDataDir,
+            ".gradle",
+            "dependencies",
+            "dist"
         ).toSet()
     }
 }
@@ -703,7 +723,7 @@ configure<IdeaModel> {
 fun jdkPath(version: String): String {
     val jdkName = "JDK_${version.replace(".", "")}"
     val jdkMajorVersion = JdkMajorVersion.valueOf(jdkName)
-    return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath?:jdkNotFoundConst
+    return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath ?: jdkNotFoundConst
 }
 
 
