@@ -1,3 +1,7 @@
+// Bridges are not generated because their signatures would conflict. The logic
+// should be inserted directly into existing methods, but this is not implemented.
+// IGNORE_BACKEND: JVM_IR
+
 private object EmptyMap : Map<Any, Nothing> {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
