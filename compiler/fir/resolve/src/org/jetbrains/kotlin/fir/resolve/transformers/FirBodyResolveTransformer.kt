@@ -555,6 +555,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 receiverType: ConeKotlinType?,
                 parameters: List<ConeKotlinType>,
                 expectedReturnType: ConeKotlinType?,
+                rawReturnType: ConeKotlinType,
                 stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
             ): Pair<List<FirExpression>, InferenceSession> {
 
@@ -573,12 +574,19 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                     else -> null
                 }
 
+                val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
+
+                val functionalTypeId = StandardClassIds.byName("Function${receiverAndParameterTypes.size - 1}")
+                val functionalType = functionalTypeId(symbolProvider).constructType(receiverAndParameterTypes.toTypedArray(), isNullable = false)
+
+
                 val newLambdaExpression = lambdaArgument.copy(
                     receiverTypeRef = receiverType?.let { lambdaArgument.receiverTypeRef!!.resolvedTypeFromPrototype(it) },
                     valueParameters = lambdaArgument.valueParameters.mapIndexed { index, parameter ->
                         parameter.transformReturnTypeRef(StoreType, parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index]))
                         parameter
-                    } + listOfNotNull(itParam)
+                    } + listOfNotNull(itParam),
+                    returnTypeRef = lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(functionalType)
                 )
 
 
