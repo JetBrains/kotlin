@@ -1,2 +1,2 @@
-public open class ClassWithTypePRefNext<R : R|kotlin/collections/Iterable<P>|, P> : R|kotlin/Any| {
+public open class ClassWithTypePRefNext<R : R|kotlin/collections/MutableIterable<P>|, P> : R|kotlin/Any| {
 }
