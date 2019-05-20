@@ -20,6 +20,7 @@ import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class LookupTypedHandler extends TypedActionHandlerBase {
+  private static final Logger LOG = Logger.getInstance(LookupTypedHandler.class);
 
   public LookupTypedHandler(@Nullable TypedActionHandler originalHandler) {
     super(originalHandler);
@@ -167,7 +169,7 @@ public class LookupTypedHandler extends TypedActionHandlerBase {
   }
 
   static CharFilter.Result getLookupAction(final char charTyped, final LookupImpl lookup) {
-    final CharFilter.Result filtersDecision = getFiltersDecision(charTyped, lookup);
+    CharFilter.Result filtersDecision = getFilterDecision(charTyped, lookup);
     if (filtersDecision != null) {
       return filtersDecision;
     }
@@ -175,14 +177,17 @@ public class LookupTypedHandler extends TypedActionHandlerBase {
   }
 
   @Nullable
-  private static CharFilter.Result getFiltersDecision(char charTyped, LookupImpl lookup) {
+  private static CharFilter.Result getFilterDecision(char charTyped, LookupImpl lookup) {
     lookup.checkValid();
     LookupElement item = lookup.getCurrentItem();
     int prefixLength = item == null ? lookup.getAdditionalPrefix().length(): lookup.itemPattern(item).length();
 
-    for (final CharFilter extension : getFilters()) {
-      final CharFilter.Result result = extension.acceptChar(charTyped, prefixLength, lookup);
+    for (CharFilter extension : getFilters()) {
+      CharFilter.Result result = extension.acceptChar(charTyped, prefixLength, lookup);
       if (result != null) {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug(extension + " of " + extension.getClass() + " returned " + result);
+        }
         return result;
       }
       if (lookup.isLookupDisposed()) {
