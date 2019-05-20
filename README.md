@@ -14,7 +14,7 @@ Prerequisites:
 *   install JDK for your platform, instead of JRE. The build requires ```tools.jar```, which is not included in JRE;
 *   on macOS install Xcode 10.2
 *   on Fedora 26+ ```yum install ncurses-compat-libs``` may be needed
-*   on recent Ubuntu ```apt install libncurses5` is needed
+*   on recent Ubuntu ```apt install libncurses5``` is needed
 
 To compile from sources use following steps:
 
