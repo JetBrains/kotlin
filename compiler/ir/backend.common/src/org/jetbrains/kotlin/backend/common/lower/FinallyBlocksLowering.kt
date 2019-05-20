@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
+import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -160,14 +161,6 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         return performHighLevelJump(tryScopes, 0, jump, startOffset, endOffset, value)
     }
 
-    private val IrReturnTarget.returnType: IrType
-        get() = when (this) {
-            is IrConstructor -> context.irBuiltIns.unitType
-            is IrFunction -> returnType
-            is IrReturnableBlock -> type
-            else -> error("Unknown ReturnTarget: $this")
-        }
-
     private fun performHighLevelJump(tryScopes: List<TryScope>,
                                      index: Int,
                                      jump: HighLevelJump,
@@ -180,7 +173,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
 
         val currentTryScope = tryScopes[index]
         currentTryScope.jumps.getOrPut(jump) {
-            val type = (jump as? Return)?.target?.owner?.returnType ?: value.type
+            val type = (jump as? Return)?.target?.owner?.returnType(context) ?: value.type
             jump.toString()
             val symbol = IrReturnableBlockSymbolImpl(WrappedSimpleFunctionDescriptor())
             with(currentTryScope) {

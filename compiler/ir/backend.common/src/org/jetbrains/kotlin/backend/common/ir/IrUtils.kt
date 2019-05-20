@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.descriptors.*
@@ -111,6 +112,14 @@ val IrSimpleFunction.isOverridable: Boolean
     get() = visibility != Visibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
 
 val IrSimpleFunction.isOverridableOrOverrides: Boolean get() = isOverridable || overriddenSymbols.isNotEmpty()
+
+fun IrReturnTarget.returnType(context: CommonBackendContext) =
+    when (this) {
+        is IrConstructor -> context.irBuiltIns.unitType
+        is IrFunction -> returnType
+        is IrReturnableBlock -> type
+        else -> error("Unknown ReturnTarget: $this")
+    }
 
 val IrClass.isFinalClass: Boolean
     get() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
