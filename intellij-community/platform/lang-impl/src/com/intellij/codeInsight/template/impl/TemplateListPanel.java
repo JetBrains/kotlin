@@ -335,9 +335,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
 
       template.setGroupName(newGroupName);
 
-      DefaultMutableTreeNode parent = (DefaultMutableTreeNode)oldTemplateNode.getParent();
       removeNodeFromParent(oldTemplateNode);
-      if (parent.getChildCount() == 0) removeNodeFromParent(parent);
 
       toSelect.add(new TreePath(registerTemplate(template).getPath()));
     }
