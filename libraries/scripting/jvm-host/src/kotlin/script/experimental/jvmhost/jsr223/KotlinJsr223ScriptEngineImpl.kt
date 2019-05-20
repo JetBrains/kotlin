@@ -1,38 +1,30 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jsr223
+package kotlin.script.experimental.jvmhost.jsr223
 
 import org.jetbrains.kotlin.cli.common.repl.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
-import kotlin.reflect.KClass
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.jvm.baseClassLoader
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
-import kotlin.script.experimental.jvmhost.createJvmEvaluationConfigurationFromTemplate
 import kotlin.script.experimental.jvmhost.repl.JvmReplCompiler
 import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluator
 import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluatorState
 
-class KotlinJsr223ScriptEngine(
+// TODO: reimplement without legacy REPL infrastructure
+
+class KotlinJsr223ScriptEngineImpl(
     factory: ScriptEngineFactory,
-    val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
-    val scriptArgsTypes: Array<out KClass<out Any>>?
+    val compilationConfiguration: ScriptCompilationConfiguration,
+    val evaluationConfiguration: ScriptEvaluationConfiguration
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223InvocableScriptEngine {
-
-    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<KotlinJsr223DefaultScript> {
-        jvm {
-            dependenciesFromCurrentContext(wholeClasspath = true)
-        }
-    }
-
-    val evaluationConfiguration = createJvmEvaluationConfigurationFromTemplate<KotlinJsr223DefaultScript>()
 
     override val replCompiler: ReplCompiler by lazy {
         JvmReplCompiler(compilationConfiguration)
@@ -43,11 +35,12 @@ class KotlinJsr223ScriptEngine(
 
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 
-    internal val state: IReplStageState<*> get() = getCurrentState(getContext())
+    val state: IReplStageState<*> get() = getCurrentState(getContext())
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
-    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
+    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? =
+        ScriptArgsWithTypes(arrayOf(context.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class))
 
     override val invokeWrapper: InvokeWrapper?
         get() = null

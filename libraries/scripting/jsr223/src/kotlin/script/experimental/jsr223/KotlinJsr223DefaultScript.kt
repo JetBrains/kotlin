@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.repl.KOTLIN_SCRIPT_STATE_BINDINGS_KEY
 import javax.script.Bindings
 import javax.script.ScriptEngine
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 @Suppress("unused")
