@@ -19,7 +19,7 @@ public class LiveTemplateCharFilter extends CharFilter {
       if (c == ((LiveTemplateLookupElement)item).getTemplateShortcut()) {
         return Result.SELECT_ITEM_AND_FINISH_LOOKUP;
       }
-      return Result.HIDE_LOOKUP;
+      return null;
     }
     if (item instanceof TemplateExpressionLookupElement) {
       if (Character.isJavaIdentifierPart(c)) return Result.ADD_TO_PREFIX;
