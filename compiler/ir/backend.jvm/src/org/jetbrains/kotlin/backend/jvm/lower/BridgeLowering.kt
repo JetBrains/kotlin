@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -34,12 +34,10 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -337,27 +335,6 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             descriptor.bind(this)
             parent = target
         }
-    }
-
-    /* Perform type erasure as much as is significant for JVM signature generation. */
-    // TODO: should be a type mapper functionality.
-    private fun IrType.eraseTypeParameters() = when (this) {
-        is IrErrorType -> this
-        is IrSimpleType ->
-            when (val owner = classifier.owner) {
-                is IrClass -> this
-                is IrTypeParameter -> {
-                    val upperBound = owner.erasedUpperBound
-                    IrSimpleTypeImpl(
-                        upperBound.symbol,
-                        isNullable(),
-                        List(upperBound.typeParameters.size) { IrStarProjectionImpl },    // Should not affect JVM signature, but may result in an invalid type object
-                        owner.annotations
-                    )
-                }
-                else -> error("Unknown IrSimpleType classifier kind: $owner")
-            }
-        else -> error("Unknown IrType kind: $this")
     }
 
     private fun IrSimpleFunction.findAllReachableDeclarations() =
