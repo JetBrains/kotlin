@@ -50,7 +50,7 @@ public class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesUpdater
   private final FilePropertyPusher[] myFilePushers;
   private final Queue<Runnable> myTasks = new ConcurrentLinkedQueue<>();
 
-  public PushedFilePropertiesUpdaterImpl(final Project project) {
+  public PushedFilePropertiesUpdaterImpl(@NotNull Project project) {
     myProject = project;
     myPushers = FilePropertyPusher.EP_NAME.getExtensions();
     myFilePushers = ContainerUtil.findAllAsArray(myPushers, pusher -> !pusher.pushDirectoriesOnly());
@@ -143,10 +143,8 @@ public class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesUpdater
     });
   }
 
-  private void queueTasks(List<? extends Runnable> actions) {
-    for (Runnable action : actions) {
-      myTasks.offer(action);
-    }
+  private void queueTasks(@NotNull List<? extends Runnable> actions) {
+    actions.forEach(myTasks::offer);
     DumbModeTask task = new DumbModeTask(this) {
       @Override
       public void performInDumbMode(@NotNull ProgressIndicator indicator) {

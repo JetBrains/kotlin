@@ -77,34 +77,36 @@ public class PsiVFSListener implements BulkFileListener {
    * This code is implemented as static method (and not static constructor, as it was done before) to prevent installing listeners in Upsource
    */
   private static void installGlobalListener() {
-    if (ourGlobalListenerInstalled.compareAndSet(false, true)) {
-      Topics.subscribe(VirtualFileManager.VFS_CHANGES, null, new BulkFileListener() {
-        @Override
-        public void before(@NotNull List<? extends VFileEvent> events) {
-          for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-            PsiVFSListener listener = project.getComponent(PsiVFSListener.class);
-            listener.before(events);
-          }
-        }
-
-        @Override
-        public void after(@NotNull List<? extends VFileEvent> events) {
-          Project[] projects = ProjectManager.getInstance().getOpenProjects();
-
-          // let PushedFilePropertiesUpdater process all pending vfs events and update file properties before we issue PSI events
-          for (Project project : projects) {
-            PushedFilePropertiesUpdater updater = PushedFilePropertiesUpdater.getInstance(project);
-            if (updater instanceof PushedFilePropertiesUpdaterImpl) { // false in upsource
-              ((PushedFilePropertiesUpdaterImpl)updater).processAfterVfsChanges(events);
-            }
-          }
-          for (Project project : projects) {
-            PsiVFSListener listener = project.getComponent(PsiVFSListener.class);
-            listener.after(events);
-          }
-        }
-      });
+    if (!ourGlobalListenerInstalled.compareAndSet(false, true)) {
+      return;
     }
+
+    Topics.subscribe(VirtualFileManager.VFS_CHANGES, null, new BulkFileListener() {
+      @Override
+      public void before(@NotNull List<? extends VFileEvent> events) {
+        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+          PsiVFSListener listener = project.getComponent(PsiVFSListener.class);
+          listener.before(events);
+        }
+      }
+
+      @Override
+      public void after(@NotNull List<? extends VFileEvent> events) {
+        Project[] projects = ProjectManager.getInstance().getOpenProjects();
+        // let PushedFilePropertiesUpdater process all pending vfs events and update file properties before we issue PSI events
+        for (Project project : projects) {
+          PushedFilePropertiesUpdater updater = PushedFilePropertiesUpdater.getInstance(project);
+          // false in upsource
+          if (updater instanceof PushedFilePropertiesUpdaterImpl) {
+            ((PushedFilePropertiesUpdaterImpl)updater).processAfterVfsChanges(events);
+          }
+        }
+        for (Project project : projects) {
+          PsiVFSListener listener = project.getComponent(PsiVFSListener.class);
+          listener.after(events);
+        }
+      }
+    });
   }
 
   @Nullable
