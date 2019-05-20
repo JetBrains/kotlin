@@ -1926,6 +1926,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addValOrVar/dataClass.kt");
         }
 
+        @TestMetadata("expectClass.kt")
+        public void testExpectClass() throws Exception {
+            runTest("idea/testData/intentions/addValOrVar/expectClass.kt");
+        }
+
         @TestMetadata("funParameter.kt")
         public void testFunParameter() throws Exception {
             runTest("idea/testData/intentions/addValOrVar/funParameter.kt");

@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -69,7 +72,8 @@ interface AddValVarToConstructorParameterAction {
             AddValVarToConstructorParameterAction {
         override fun applicabilityRange(element: KtParameter): TextRange? {
             if (!canInvoke(element)) return null
-            if (element.getStrictParentOfType<KtClass>()?.isData() ?: false) return null
+            val containingClass = element.getStrictParentOfType<KtClass>() 
+            if (containingClass?.isData() == true || containingClass?.hasModifier(KtTokens.EXPECT_KEYWORD) == true) return null
             text = getActionText(element)
             return element.nameIdentifier?.textRange
         }
