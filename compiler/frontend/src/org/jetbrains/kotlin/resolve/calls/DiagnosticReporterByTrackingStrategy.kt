@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -126,6 +128,17 @@ class DiagnosticReporterByTrackingStrategy(
                     (diagnostic as NoneCallableReferenceCandidates).argument.psiExpression.safeAs<KtCallableReferenceExpression>()
                 reportIfNonNull(expression) {
                     trace.report(UNRESOLVED_REFERENCE.on(it.callableReference, it.callableReference))
+                }
+            }
+
+            ArgumentTypeMismatchDiagnostic::class.java -> {
+                require(diagnostic is ArgumentTypeMismatchDiagnostic)
+                reportIfNonNull(callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()) {
+                    if (it.isNull()) {
+                        trace.report(NULL_FOR_NONNULL_TYPE.on(it, diagnostic.expectedType))
+                    } else {
+                        trace.report(TYPE_MISMATCH.on(it, diagnostic.expectedType, diagnostic.actualType))
+                    }
                 }
             }
         }

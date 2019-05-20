@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
 import org.jetbrains.kotlin.types.lowerIfFlexible
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.types.upperIfFlexible
 
@@ -66,6 +67,14 @@ private fun checkExpressionArgument(
                 return UnstableSmartCast(expressionArgument, unstableType)
             }
         }
+
+        if (argumentType.isMarkedNullable) {
+            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, actualExpectedType, position)) return null
+            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType.makeNotNullable(), actualExpectedType, position)) {
+                return ArgumentTypeMismatchDiagnostic(actualExpectedType, argumentType, expressionArgument)
+            }
+        }
+
         csBuilder.addSubtypeConstraint(argumentType, actualExpectedType, position)
         return null
     }
