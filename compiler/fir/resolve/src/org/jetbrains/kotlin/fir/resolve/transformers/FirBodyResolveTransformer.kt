@@ -406,8 +406,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             }
             is FirResolvedCallableReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
-                    qualifiedAccessExpression.resultType =
-                        jump.tryCalculateReturnType(callee.coneSymbol.firUnsafe<FirCallableDeclaration>())
+                    storeTypeFromCallee(qualifiedAccessExpression)
                 }
             }
         }
