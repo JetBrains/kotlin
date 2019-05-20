@@ -1,3 +1,4 @@
+import org.apache.tools.ant.filters.LineContains
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.extra
@@ -6,6 +7,7 @@ import org.w3c.dom.Element
 import java.io.File
 import java.net.URL
 import java.util.*
+import java.util.regex.Pattern
 import javax.xml.parsers.DocumentBuilderFactory
 
 // --------------------------------------------------
@@ -17,6 +19,9 @@ val cidrPluginTools: MutableMap<String, Any> by rootProject.extra(mutableMapOf()
 cidrPluginTools["packageCidrPlugin"] = ::packageCidrPlugin
 cidrPluginTools["zipCidrPlugin"] = ::zipCidrPlugin
 cidrPluginTools["cidrUpdatePluginsXml"] = ::cidrUpdatePluginsXml
+
+cidrPluginTools["patchFileTemplates"] = ::patchFileTemplates
+cidrPluginTools["patchGradleXml"] = ::patchGradleXml
 
 // --------------------------------------------------
 // Shared utils:
@@ -36,6 +41,40 @@ val Project.includeKotlinUltimate
 
 fun Logger.kotlinInfo(message: () -> String) {
     if (isInfoEnabled) { info("[KOTLIN] ${message()}") }
+}
+
+// comment out lines in XML files
+fun AbstractCopyTask.commentXmlFiles(fileToMarkers: Map<String, List<String>>) {
+    val notDone = mutableSetOf<Pair<String, String>>()
+    fileToMarkers.forEach { (path, markers) ->
+        for (marker in markers) {
+            notDone += path to marker
+        }
+    }
+
+    eachFile {
+        val markers = fileToMarkers[this.sourcePath] ?: return@eachFile
+        this.filter {
+            var data = it
+            for (marker in markers) {
+                val newData = data.replace(("^(.*" + Pattern.quote(marker) + ".*)$").toRegex(), "<!-- $1 -->")
+                data = newData
+                notDone -= path to marker
+            }
+            data
+        }
+
+        logger.kotlinInfo {
+            "File \"${this.path}\" in task ${this@commentXmlFiles.path} has been patched to comment lines with the following items: $markers"
+        }
+    }
+
+    doLast {
+        check(notDone.size == 0) {
+            "Filtering failed for: " +
+                    notDone.joinToString(separator = "\n") { (file, marker) -> "file=$file, marker=`$marker`" }
+        }
+    }
 }
 
 // --------------------------------------------------
@@ -368,4 +407,42 @@ fun Project.renderTemplate(template: File, templateParameters: Map<String, Strin
         error("Template rendering resulted is blank string, however template file is not blank: $template")
 
     return result
+}
+
+// --------------------------------------------------
+// CIDR plugin patches:
+// --------------------------------------------------
+
+// See KT-30178
+fun patchFileTemplates(project: Project, originalPluginJar: Configuration): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> = with(project) {
+    tasks.creating(Copy::class) {
+        val filteredItems = listOf("#parse(\"File Header.java\")")
+
+        from(zipTree(originalPluginJar.singleFile).matching { include("fileTemplates/**/*.ft") })
+        destinationDir = file("$buildDir/$name")
+
+        filter(
+                mapOf("negate" to true, "contains" to filteredItems),
+                LineContains::class.java
+        )
+
+        eachFile {
+            logger.kotlinInfo {
+                "File \"${this.path}\" in task ${this@with.path} has been patched to remove lines with the following items: $filteredItems"
+            }
+        }
+    }
+}
+
+// Disable `KotlinMPPGradleProjectTaskRunner` in CIDR plugins
+fun patchGradleXml(project: Project, originalPluginJar: Configuration): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> = with(project) {
+    tasks.creating(Copy::class) {
+        val gradleXmlPath = "META-INF/gradle.xml"
+        val filteredItems = listOf("implementation=\"org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner\"")
+
+        from(zipTree(originalPluginJar.singleFile).matching { include(gradleXmlPath) })
+        destinationDir = file("$buildDir/$name")
+
+        commentXmlFiles(mapOf(gradleXmlPath to filteredItems))
+    }
 }

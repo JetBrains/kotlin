@@ -4,6 +4,10 @@ plugins {
     kotlin("jvm")
 }
 
+val cidrPluginTools: Map<String, Any> by rootProject.extra
+val patchFileTemplates: (Project, Configuration) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
+val patchGradleXml: (Project, Configuration) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
+
 val originalPluginJar: Configuration by configurations.creating
 
 dependencies {
@@ -12,11 +16,11 @@ dependencies {
 }
 
 val prepareKotlinPluginXml: Task by prepareKotlinPluginXml(originalPluginJar)
-val patchFileTemplates: Task by patchFileTemplates(originalPluginJar)
-val patchGradleXml: Task by patchGradleXml(originalPluginJar)
+val patchFileTemplatesTask: Task by patchFileTemplates(project, originalPluginJar)
+val patchGradleXmlTask: Task by patchGradleXml(project, originalPluginJar)
 
 // Pack Jar file with patched files (KotlinPlugin.xml, file templates) plus shadowed project classes.
 pluginJar(
         originalPluginJar,
-        listOf(prepareKotlinPluginXml, patchFileTemplates, patchGradleXml)
+        listOf(prepareKotlinPluginXml, patchFileTemplatesTask, patchGradleXmlTask)
 )
