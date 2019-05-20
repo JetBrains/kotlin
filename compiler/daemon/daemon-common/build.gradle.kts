@@ -1,5 +1,3 @@
-import com.sun.javafx.scene.CameraHelper.project
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
