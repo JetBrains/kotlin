@@ -48,7 +48,7 @@ fun URI.toCacheRedirectorUri() = URI("https://cache-redirector.jetbrains.com/$ho
 
 fun RepositoryHandler.redirect() = filterIsInstance<MavenArtifactRepository>().forEach { repository ->
     val uri = repository.url
-    if (uri.toString().trimEnd('/') in mirroredUrls) {
+    if (mirroredUrls.any { uri.toString().trimEnd('/').startsWith(it) }) {
         repository.url = uri.toCacheRedirectorUri()
     }
 }
