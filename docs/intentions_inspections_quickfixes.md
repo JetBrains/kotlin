@@ -25,6 +25,8 @@ used if there are no quick fixes available for the inspection).
 - `ProblemHighlightType` should always be `ProblemHighlightType.GENERIC_ERROR_OR_WARNING` or empty (there's a correspondent overload for 
 `ProblemsHolder.registerProblem()`), otherwise, it won't be possible to individually change the desired level in the inspection settings.
 
+- Inspection highlighting range shouldn't be too wide. For example, to show some problem in a class it's much better to highlight its name than to highlight the whole class (the latter just looks very nasty).
+
 - Resolve operations (`analyze`, `resolveToCall`, `resolveToDescriptors`) are considered to be expensive and shouldn't be triggered more 
 often than it's absolutely needed. All possible checks should be applied on PSI or file text before actual resolve. 
 
