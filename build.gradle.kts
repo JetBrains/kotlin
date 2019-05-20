@@ -400,6 +400,11 @@ allprojects {
                 dependencies.add(it.name, files(bootstrapCompilerClasspath))
             }
         }
+
+        if (cacheRedirectorEnabled()) {
+            logger.info("Redirecting repositories for $displayName")
+            repositories.redirect()
+        }
     }
 }
 
@@ -758,14 +763,5 @@ tasks.create("findShadowJarsInClasspath").doLast {
     for (project in rootProject.allprojects) {
         project.checkConfig("compileClasspath")
         project.checkConfig("testCompileClasspath")
-    }
-}
-
-allprojects {
-    afterEvaluate {
-        if (cacheRedirectorEnabled()) {
-            logger.info("Redirecting repositories for $displayName")
-            repositories.redirect()
-        }
     }
 }
