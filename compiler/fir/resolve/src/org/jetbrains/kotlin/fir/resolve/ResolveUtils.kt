@@ -115,6 +115,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
+        is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor) as T
         else -> error("sealed: ${this::class}")
     }
 }
