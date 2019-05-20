@@ -8,8 +8,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-import com.sun.javafx.scene.CameraHelper.project
-
 plugins {
     java
     kotlin("jvm")
