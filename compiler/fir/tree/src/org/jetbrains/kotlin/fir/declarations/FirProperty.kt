@@ -22,7 +22,7 @@ interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMemberDecla
     // Should it be nullable or have some default?
     val getter: FirPropertyAccessor
 
-    val setter: FirPropertyAccessor
+    val setter: FirPropertyAccessor?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitProperty(this, data)
@@ -32,6 +32,6 @@ interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMemberDecla
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
         getter.accept(visitor, data)
-        setter.accept(visitor, data)
+        setter?.accept(visitor, data)
     }
 }

@@ -350,8 +350,8 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             println()
         }
         if (property.isVar) {
-            property.setter.accept(this)
-            if (property.setter.body == null) {
+            property.setter?.accept(this)
+            if (property.setter?.body == null) {
                 println()
             }
         }
