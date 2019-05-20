@@ -93,6 +93,14 @@ fun AbstractCopyTask.commentXmlFiles(fileToMarkers: Map<String, List<String>>) {
     }
 }
 
+fun Project.guessCidrProductNameFromProject(lowerCase: Boolean): String = with(name) {
+    when {
+        startsWith("appcode") -> "AppCode"
+        startsWith("clion") -> "CLion"
+        else -> error("Invalid CIDR project name: $name")
+    }.let { if (lowerCase) it.toLowerCase() else it }
+}
+
 // --------------------------------------------------
 // CIDR plugin dependencies:
 // --------------------------------------------------
@@ -174,6 +182,7 @@ fun addIdeaNativeModuleDeps(project: Project) = with(project) {
 // CIDR plugin packaging tasks:
 // --------------------------------------------------
 
+// TODO: use Sync task here to avoid stale artifacts in `Kotlin\artifacts` dir
 fun packageCidrPlugin(
         project: Project,
         predecessorProjectName: String,
@@ -181,8 +190,8 @@ fun packageCidrPlugin(
         pluginJarTask: Task,
         platformDepsJarTask: Task,
         platformDepsDir: File
-): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> = with(project) {
-    tasks.creating(Copy::class) {
+): Copy = with(project) {
+    task<Copy>(guessCidrProductNameFromProject(true) + "Plugin") {
         into(cidrPluginDir)
 
         into("lib") {
@@ -216,8 +225,8 @@ fun packageCidrPlugin(
     }
 }
 
-fun zipCidrPlugin(project: Project, cidrPluginTask: Task, cidrPluginZipPath: File): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> = with(project) {
-    tasks.creating(Zip::class) {
+fun zipCidrPlugin(project: Project, cidrPluginTask: Task, cidrPluginZipPath: File): Zip = with(project) {
+    task<Zip>("zip" + guessCidrProductNameFromProject(false) + "Plugin") {
         destinationDirectory.set(cidrPluginZipPath.parentFile)
         archiveFileName.set(cidrPluginZipPath.name)
 
@@ -236,8 +245,8 @@ fun cidrUpdatePluginsXml(
         cidrProductFriendlyVersion: String,
         cidrPluginZipPath: File,
         cidrCustomPluginRepoUrl: URL
-): NamedDomainObjectContainerCreatingDelegateProvider<Task> = with(project) {
-    tasks.creating {
+): Task = with(project) {
+    task<Task>(guessCidrProductNameFromProject(true) + "UpdatePluginsXml") {
         dependsOn(pluginXmlTask)
 
         val updatePluginsXmlFile = cidrPluginZipPath.parentFile.resolve("updatePlugins-$cidrProductFriendlyVersion.xml")
@@ -508,8 +517,8 @@ fun Project.renderTemplate(template: File, templateParameters: Map<String, Strin
 
 // Extract plugin.xml from the original Kotlin plugin, patch this file to exclude non-CIDR stuff and version information,
 // and then save under new name KotlinPlugin.xml.
-fun prepareKotlinPluginXml(project: Project, originalPluginJar: Configuration): NamedDomainObjectContainerCreatingDelegateProvider<Task> = with(project) {
-    tasks.creating {
+fun prepareKotlinPluginXml(project: Project, originalPluginJar: Configuration): Task = with(project) {
+    task<Task>("prepareKotlinPluginXml") {
         val kotlinPluginXmlPath = "META-INF/KotlinPlugin.xml"
 
         inputs.files(originalPluginJar)
@@ -554,8 +563,8 @@ fun preparePluginXml(
         productVersion: String,
         strictProductVersionLimitation: Boolean,
         cidrPluginVersionFull: String
-): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> = with(project) {
-    tasks.creating(Copy::class) {
+): Copy = with(project) {
+    task<Copy>("preparePluginXml") {
         dependsOn("$predecessorProjectName:assemble")
 
         inputs.property("${project.name}-$name-strictProductVersionLimitation", strictProductVersionLimitation)
@@ -654,8 +663,9 @@ fun pluginJar(
 }
 
 // Prepare patched "platformDeps" JAR file.
-fun platformDepsJar(project: Project, productName: String, platformDepsDir: File): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> = with(project) {
-    tasks.creating(Zip::class) {
+fun platformDepsJar(project: Project, platformDepsDir: File): Zip = with(project) {
+    task<Zip>("platformDepsJar") {
+        val productName = guessCidrProductNameFromProject(false)
         archiveFileName.set("kotlinNative-platformDeps-$productName.jar")
         destinationDirectory.set(file("$buildDir/$name"))
 
@@ -701,8 +711,8 @@ fun Zip.patchJavaXmls() {
 // --------------------------------------------------
 
 // See KT-30178
-fun patchFileTemplates(project: Project, originalPluginJar: Configuration): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> = with(project) {
-    tasks.creating(Copy::class) {
+fun patchFileTemplates(project: Project, originalPluginJar: Configuration): Copy = with(project) {
+    task<Copy>("patchFileTemplates") {
         val filteredItems = listOf("#parse(\"File Header.java\")")
 
         from(zipTree(originalPluginJar.singleFile).matching { include("fileTemplates/**/*.ft") })
@@ -722,8 +732,8 @@ fun patchFileTemplates(project: Project, originalPluginJar: Configuration): Poly
 }
 
 // Disable `KotlinMPPGradleProjectTaskRunner` in CIDR plugins
-fun patchGradleXml(project: Project, originalPluginJar: Configuration): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> = with(project) {
-    tasks.creating(Copy::class) {
+fun patchGradleXml(project: Project, originalPluginJar: Configuration): Copy = with(project) {
+    task<Copy>("patchGradleXml") {
         val gradleXmlPath = "META-INF/gradle.xml"
         val filteredItems = listOf("implementation=\"org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner\"")
 

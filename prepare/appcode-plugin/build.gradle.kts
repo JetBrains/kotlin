@@ -10,12 +10,12 @@ val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
 val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
 
 val cidrPluginTools: Map<String, Any> by rootProject.extensions
-val preparePluginXml: (Project, String, String, Boolean, String) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
+val preparePluginXml: (Project, String, String, Boolean, String) -> Copy by cidrPluginTools
 val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
-val platformDepsJar: (Project, String, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
-val packageCidrPlugin: (Project, String, File, Task, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
-val zipCidrPlugin: (Project, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
-val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> NamedDomainObjectContainerCreatingDelegateProvider<Task> by cidrPluginTools
+val platformDepsJar: (Project, File) -> Zip by cidrPluginTools
+val packageCidrPlugin: (Project, String, File, Task, Task, File) -> Copy by cidrPluginTools
+val zipCidrPlugin: (Project, Task, File) -> Zip by cidrPluginTools
+val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> Task by cidrPluginTools
 
 val appcodeVersion: String by rootProject.extra
 val appcodeFriendlyVersion: String by rootProject.extra
@@ -33,7 +33,7 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
 }
 
-val preparePluginXmlTask: Task by preparePluginXml(
+val preparePluginXmlTask: Task = preparePluginXml(
         project,
         ":kotlin-ultimate:ide:appcode-native",
         appcodeVersion,
@@ -43,9 +43,9 @@ val preparePluginXmlTask: Task by preparePluginXml(
 
 val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
 
-val platformDepsJarTask: Task by platformDepsJar(project,"AppCode", appcodePlatformDepsDir)
+val platformDepsJarTask: Task = platformDepsJar(project, appcodePlatformDepsDir)
 
-val appcodePlugin: Task by packageCidrPlugin(
+val appcodePluginTask: Task = packageCidrPlugin(
         project,
         ":kotlin-ultimate:ide:appcode-native",
         appcodePluginDir,
@@ -54,9 +54,9 @@ val appcodePlugin: Task by packageCidrPlugin(
         appcodePlatformDepsDir
 )
 
-val zipAppCodePlugin: Task by zipCidrPlugin(project, appcodePlugin, appcodePluginZipPath)
+val zipAppCodePluginTask: Task = zipCidrPlugin(project, appcodePluginTask, appcodePluginZipPath)
 
-val appcodeUpdatePluginsXml: Task by cidrUpdatePluginsXml(
+val appcodeUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         project,
         preparePluginXmlTask,
         appcodeFriendlyVersion,
