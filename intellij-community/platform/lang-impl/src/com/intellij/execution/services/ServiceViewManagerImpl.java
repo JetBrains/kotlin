@@ -461,25 +461,23 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     Disposer.register(content, serviceView);
     Disposer.register(content, serviceView.getModel());
 
-    ServiceView selectedView = getSelectedView();
     myContentManager.addContent(content, index);
     if (select) {
       myContentManager.setSelectedContent(content);
-    }
-    if (selectedView != null) {
-      myModel.getInvoker().invokeLater(() -> selectedView.getModel().filtersChanged());
     }
     serviceView.getModel().addModelListener(() -> {
       if (serviceView.getModel().getRoots().isEmpty()) {
         AppUIUtil.invokeOnEdt(() -> myContentManager.removeContent(content, true), myProject.getDisposed());
       }
     });
+    filtersChanged();
     return content;
   }
 
   @Nullable
-  private ServiceView getSelectedView() {
-    Content content = myContentManager.getSelectedContent();
+  ServiceView getSelectedView() {
+    ContentManager contentManager = myContentManager;
+    Content content = contentManager == null ? null : contentManager.getSelectedContent();
     return content == null ? null : ObjectUtils.tryCast(content.getComponent(), ServiceView.class);
   }
 
@@ -552,6 +550,48 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
     content.setCloseable(true);
     return content;
+  }
+
+  boolean isSplitByTypeEnabled() {
+    ContentManager contentManager = myContentManager;
+    if (contentManager == null) return false;
+
+    if (contentManager.getIndexOfContent(myAllServicesContent) < 0) return false;
+
+    for (ServiceView serviceView : myServiceViews) {
+      if (!(serviceView.getModel() instanceof ContributorModel)) return false;
+    }
+
+    return true;
+  }
+
+  void splitByType() {
+    myModel.getInvoker().invokeLater(() -> {
+      List<ServiceViewContributor> contributors = new ArrayList<>();
+      for (ServiceViewContributor contributor : ServiceModel.EP_NAME.getExtensions()) {
+        if (!contributor.getServices(myProject).isEmpty()) {
+          contributors.add(contributor);
+        }
+      }
+      AppUIUtil.invokeOnEdt(() -> {
+        for (ServiceViewContributor contributor : contributors) {
+          splitByType(contributor);
+        }
+      });
+    });
+  }
+
+  private void splitByType(ServiceViewContributor contributor) {
+    for (ServiceView serviceView : myServiceViews) {
+      ServiceViewModel viewModel = serviceView.getModel();
+      if (viewModel instanceof ContributorModel && contributor.equals(((ContributorModel)viewModel).getContributor())) {
+        return;
+      }
+    }
+
+    ContributorModel contributorModel = new ContributorModel(myModel, myModelFilter, contributor, null);
+    ServiceView contributorView = ServiceView.createView(myProject, contributorModel, new ServiceViewState());
+    extractContributor(contributorModel, contributorView, true);
   }
 
   private class MyContentMangerListener extends ContentManagerAdapter {
