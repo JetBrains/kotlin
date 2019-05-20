@@ -25,10 +25,13 @@ import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
 
@@ -476,4 +479,12 @@ fun LazyParseablePsiElement.getContainingKtFile(): KtFile {
 
     val fileString = if (file != null && file.isValid) file.text else ""
     throw IllegalStateException("KtElement not inside KtFile: $file with text \"$fileString\" for element $this of type ${this::class.java} node = ${this.node}")
+}
+
+@UseExperimental(ExperimentalContracts::class)
+fun KtExpression.isNull(): Boolean {
+    contract {
+        returns(true) implies (this@isNull is KtConstantExpression)
+    }
+    return this is KtConstantExpression && this.node.elementType == KtNodeTypes.NULL
 }

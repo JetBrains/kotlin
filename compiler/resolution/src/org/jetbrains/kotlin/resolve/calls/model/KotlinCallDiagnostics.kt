@@ -186,3 +186,13 @@ class NonApplicableCallForBuilderInferenceDiagnostic(val kotlinCall: KotlinCall)
         reporter.onCall(this)
     }
 }
+
+class ArgumentTypeMismatchDiagnostic(
+    val expectedType: UnwrappedType,
+    val actualType: UnwrappedType,
+    val expressionArgument: ExpressionKotlinCallArgument
+) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(expressionArgument, this)
+    }
+}

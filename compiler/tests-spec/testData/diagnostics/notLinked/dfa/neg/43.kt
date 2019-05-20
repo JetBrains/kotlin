@@ -23,7 +23,7 @@ fun case_1(x: Double?, y: Double?) : Double {
     } else if (x == null && y != null) {
         <!DEBUG_INFO_SMARTCAST!>y<!>
     } else {
-        x <!NONE_APPLICABLE!>+<!> y
+        x <!UNSAFE_OPERATOR_CALL!>+<!> <!TYPE_MISMATCH!>y<!>
     }
 }
 
