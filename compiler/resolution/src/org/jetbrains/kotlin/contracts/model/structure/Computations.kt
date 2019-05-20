@@ -18,11 +18,10 @@ package org.jetbrains.kotlin.contracts.model.structure
 
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.types.KotlinType
 
-class CallComputation(override val type: KotlinType?, override val effects: List<ESEffect>) : Computation
+class CallComputation(override val type: ESType?, override val effects: List<ESEffect>) : Computation
 
 object UNKNOWN_COMPUTATION : Computation {
-    override val type: KotlinType? = null
+    override val type: ESType? = null
     override val effects: List<ESEffect> = emptyList()
 }
