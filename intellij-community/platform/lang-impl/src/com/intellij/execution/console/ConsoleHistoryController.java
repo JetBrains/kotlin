@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
@@ -135,13 +136,12 @@ public class ConsoleHistoryController {
 
   public void install() {
     MessageBusConnection busConnection = myConsole.getProject().getMessageBus().connect(myConsole);
-    busConnection
-      .subscribe(ProjectEx.ProjectSaved.TOPIC, new ProjectEx.ProjectSaved() {
-        @Override
-        public void duringSave(@NotNull Project project) {
-          ApplicationManager.getApplication().invokeAndWait(() -> saveHistory());
-        }
-      });
+    busConnection.subscribe(ProjectEx.ProjectSaved.TOPIC, new ProjectEx.ProjectSaved() {
+      @Override
+      public void duringSave(@NotNull Project project) {
+        ApplicationManager.getApplication().invokeAndWait(() -> saveHistory());
+      }
+    });
     busConnection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new FileDocumentManagerListener() {
       @Override
       public void beforeDocumentSaving(@NotNull Document document) {
@@ -194,9 +194,9 @@ public class ConsoleHistoryController {
    * @return true if some text has been loaded; otherwise false
    */
   public boolean loadHistory(String id) {
-    String prev = myHelper.getContent();
+    CharSequence prev = myHelper.getContent();
     boolean result = myHelper.loadHistory(id);
-    String userValue = myHelper.getContent();
+    CharSequence userValue = myHelper.getContent();
     if (prev != userValue && userValue != null) {
       setConsoleText(new Entry(userValue, -1), false, false);
     }
@@ -236,7 +236,7 @@ public class ConsoleHistoryController {
         myHelper.setContent(text);
         myHelper.getModel().setContent(text);
       }
-      String text = StringUtil.notNullize(command.getText());
+      CharSequence text = ObjectUtils.chooseNotNull(command.getText(), "");
       int offset;
       if (regularMode) {
         if (myMultiline) {
@@ -262,7 +262,7 @@ public class ConsoleHistoryController {
     });
   }
 
-  protected int insertTextMultiline(String text, Editor editor, Document document) {
+  protected int insertTextMultiline(CharSequence text, Editor editor, Document document) {
     TextRange selection = EditorUtil.getSelectionInAnyMode(editor);
 
     int start = document.getLineStartOffset(document.getLineNumber(selection.getStartOffset()));
@@ -400,11 +400,11 @@ public class ConsoleHistoryController {
     }
   }
 
-  public static class ModelHelper implements SafeWriteRequestor {
+  public static final class ModelHelper implements SafeWriteRequestor {
     private final ConsoleRootType myRootType;
     private final String myId;
     private final ConsoleHistoryModel myModel;
-    private String myContent;
+    private CharSequence myContent;
 
     public ModelHelper(ConsoleRootType rootType, String id, ConsoleHistoryModel model) {
       myRootType = rootType;
@@ -424,7 +424,7 @@ public class ConsoleHistoryController {
       return myId;
     }
 
-    public String getContent() {
+    public CharSequence getContent() {
       return myContent;
     }
 
