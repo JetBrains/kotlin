@@ -1306,6 +1306,8 @@ public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
  */
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
