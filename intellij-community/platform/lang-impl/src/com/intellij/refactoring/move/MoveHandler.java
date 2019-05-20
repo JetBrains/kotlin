@@ -43,7 +43,7 @@ public class MoveHandler implements RefactoringActionHandler {
     if (reference != null) {
       PsiElement refElement = reference.resolve();
       for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
-        if (delegate.tryToMove(refElement, project, dataContext, reference, editor)) {
+        if (refElement != null && delegate.tryToMove(refElement, project, dataContext, reference, editor)) {
           return;
         }
       }
@@ -168,9 +168,11 @@ public class MoveHandler implements RefactoringActionHandler {
       PsiReference reference = findReferenceAtCaret(element, editor.getCaretModel().getOffset());
       if (reference != null) {
         PsiElement refElement = reference.resolve();
-        MoveHandlerDelegate refDelegate = findDelegate(new PsiElement[]{refElement}, null, reference);
-        if (refDelegate != null) {
-          return refDelegate.getActionName(new PsiElement[] { refElement });
+        if (refElement != null) {
+          MoveHandlerDelegate refDelegate = findDelegate(new PsiElement[]{refElement}, null, reference);
+          if (refDelegate != null) {
+            return refDelegate.getActionName(new PsiElement[] { refElement });
+          }
         }
       }
 
