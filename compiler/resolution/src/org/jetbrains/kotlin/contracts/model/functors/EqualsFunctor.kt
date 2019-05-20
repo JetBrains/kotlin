@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.contracts.model.Computation
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.ESValue
+import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
+import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
-class EqualsFunctor(constants: ESConstants, val isNegated: Boolean) : AbstractReducingFunctor(constants) {
+class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
     /*
         Equals is a bit tricky case to produce clauses, because e.g. if we want to emit "Returns(true)"-clause,
         then we have to guarantee that we know *all* cases when 'true' could've been returned, and join
@@ -41,7 +38,7 @@ class EqualsFunctor(constants: ESConstants, val isNegated: Boolean) : AbstractRe
         We don't want to code here fair analysis for general cases, because it's too complex. Instead, we just
         check some specific cases, which are useful enough in practice
      */
-    override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
+    override fun doInvocation(arguments: List<Computation>, reducer: Reducer): List<ESEffect> {
         assert(arguments.size == 2) { "Equals functor expected 2 arguments, got ${arguments.size}" }
 
         // TODO: AnnotationConstructorCaller kills this with implicit receiver. Investigate, how.
@@ -77,16 +74,15 @@ class EqualsFunctor(constants: ESConstants, val isNegated: Boolean) : AbstractRe
             }
 
             if (effect.simpleEffect.value == constant) {
-                val trueClause = ConditionalEffect(effect.condition, ESReturns(constants.booleanValue(isNegated.not())))
+                val trueClause = ConditionalEffect(effect.condition, ESReturns(ESConstants.booleanValue(isNegated.not())))
                 resultingClauses.add(trueClause)
             }
 
             if (effect.simpleEffect.value != constant && effect.simpleEffect.value is ESConstant && isSafeToProduceFalse(
-                    call,
-                    effect.simpleEffect.value,
-                    constant
-                )) {
-                val falseClause = ConditionalEffect(effect.condition, ESReturns(constants.booleanValue(isNegated)))
+                    call, effect.simpleEffect.value, constant
+                )
+            ) {
+                val falseClause = ConditionalEffect(effect.condition, ESReturns(ESConstants.booleanValue(isNegated)))
                 resultingClauses.add(falseClause)
             }
         }
@@ -96,11 +92,15 @@ class EqualsFunctor(constants: ESConstants, val isNegated: Boolean) : AbstractRe
 
     // It is safe to produce false if we're comparing types which are isomorphic to Boolean. For such types we can be sure, that
     // if leftConstant != rightConstant, then this is the only way to produce 'false'.
-    private fun isSafeToProduceFalse(leftCall: Computation, leftConstant: ESConstant, rightConstant: ESConstant): Boolean = when {
-    // Comparison of Boolean
-        KotlinBuiltIns.isBoolean(rightConstant.type) && leftCall.type != null && KotlinBuiltIns.isBoolean(leftCall.type!!) -> true
+    private fun isSafeToProduceFalse(
+        leftCall: Computation,
+        leftConstant: ESConstant,
+        rightConstant: ESConstant
+    ): Boolean = when {
+        // Comparison of Boolean
+        rightConstant.type.isBoolean() && leftCall.type.isBoolean() -> true
 
-    // Comparison of NULL/NOT_NULL, which is essentially Boolean
+        // Comparison of NULL/NOT_NULL, which is essentially Boolean
         leftConstant.isNullConstant() && rightConstant.isNullConstant() -> true
 
         else -> false
@@ -108,8 +108,8 @@ class EqualsFunctor(constants: ESConstants, val isNegated: Boolean) : AbstractRe
 
     private fun equateValues(left: ESValue, right: ESValue): List<ESEffect> {
         return listOf(
-            ConditionalEffect(ESEqual(constants, left, right, isNegated), ESReturns(constants.trueValue)),
-            ConditionalEffect(ESEqual(constants, left, right, isNegated.not()), ESReturns(constants.falseValue))
+            ConditionalEffect(ESEqual(left, right, isNegated), ESReturns(ESConstants.trueValue)),
+            ConditionalEffect(ESEqual(left, right, isNegated.not()), ESReturns(ESConstants.falseValue))
         )
     }
 }

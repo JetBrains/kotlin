@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.contracts.model.structure.ESReturns
 import org.jetbrains.kotlin.contracts.model.structure.isFalse
 import org.jetbrains.kotlin.contracts.model.structure.isTrue
 
-class NotFunctor(constants: ESConstants) : AbstractUnaryFunctor(constants) {
+class NotFunctor : AbstractUnaryFunctor() {
     override fun invokeWithReturningEffects(list: List<ConditionalEffect>): List<ConditionalEffect> = list.mapNotNull {
         val outcome = it.simpleEffect
 
@@ -31,8 +31,8 @@ class NotFunctor(constants: ESConstants) : AbstractUnaryFunctor(constants) {
         val returnValue = (outcome as ESReturns).value
 
         when {
-            returnValue.isTrue -> ConditionalEffect(it.condition, ESReturns(constants.falseValue))
-            returnValue.isFalse -> ConditionalEffect(it.condition, ESReturns(constants.trueValue))
+            returnValue.isTrue -> ConditionalEffect(it.condition, ESReturns(ESConstants.falseValue))
+            returnValue.isFalse -> ConditionalEffect(it.condition, ESReturns(ESConstants.trueValue))
             else -> null
         }
     }
