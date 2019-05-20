@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase.getKotlinPaths
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
@@ -59,7 +60,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
         paths
     }
 
-    val compilerClassPath = listOf(kotlinPaths.compilerPath)
+    val compilerClassPath = getKotlinPaths().classPath(KotlinPaths.ClassPaths.Compiler)
     val scriptRuntimeClassPath = listOf( kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
     val sourceSectionsPluginJar = File(kotlinPaths.libPath, "kotlin-source-sections-compiler-plugin.jar")
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
