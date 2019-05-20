@@ -67,7 +67,7 @@ private fun ESValue.toDataFlowValue(builtIns: KotlinBuiltIns): DataFlowValue? = 
     is ESDataFlowValue -> dataFlowValue
     is ESConstant -> when (constantReference) {
         ConstantReference.NULL -> DataFlowValue.nullValue(builtIns)
-        else -> DataFlowValue(IdentifierInfo.NO, type)
+        else -> DataFlowValue(IdentifierInfo.NO, type.toKotlinType(builtIns))
     }
     else -> null
 }

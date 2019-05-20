@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.contracts.model
 
+import org.jetbrains.kotlin.contracts.model.visitors.Reducer
+
 /**
  * An abstraction of effect-generating nature of some computation.
  *
@@ -25,5 +27,13 @@ package org.jetbrains.kotlin.contracts.model
  * values, it takes effects and returns effects.
  */
 interface Functor {
-    fun invokeWithArguments(arguments: List<Computation>): List<ESEffect>
+    fun invokeWithArguments(arguments: List<Computation>, reducer: Reducer): List<ESEffect>
+}
+
+
+abstract class AbstractFunctor : Functor {
+    override fun invokeWithArguments(arguments: List<Computation>, reducer: Reducer): List<ESEffect> =
+        reducer.reduceEffects(doInvocation(arguments, reducer))
+
+    protected abstract fun doInvocation(arguments: List<Computation>, reducer: Reducer): List<ESEffect>
 }
