@@ -22,6 +22,8 @@ private val EXCLUDES_LIST_FROM_IDEA_PLUGIN = listOf(
         "kotlinc/**"
 )
 
+private const val PLATFORM_DEPS_JAR_NAME = "kotlinNative-platformDeps.jar"
+
 fun Project.ideaPluginJarDep(): Any {
     return if (includeKotlinUltimate) {
         // depend on the artifact to be build

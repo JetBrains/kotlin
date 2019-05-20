@@ -1,6 +1,7 @@
 import org.apache.tools.ant.filters.LineContains
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.extra
 import org.w3c.dom.Attr
 import org.w3c.dom.Element
@@ -20,6 +21,9 @@ cidrPluginTools["packageCidrPlugin"] = ::packageCidrPlugin
 cidrPluginTools["zipCidrPlugin"] = ::zipCidrPlugin
 cidrPluginTools["cidrUpdatePluginsXml"] = ::cidrUpdatePluginsXml
 
+cidrPluginTools["pluginJar"] = ::pluginJar
+cidrPluginTools["platformDepsJar"] = ::platformDepsJar
+
 cidrPluginTools["patchFileTemplates"] = ::patchFileTemplates
 cidrPluginTools["patchGradleXml"] = ::patchGradleXml
 
@@ -35,6 +39,8 @@ val excludesListFromIdeaPlugin = listOf(
 )
 
 val platformDepsJarName = "kotlinNative-platformDeps.jar"
+
+val pluginXmlPath = "META-INF/plugin.xml"
 
 val Project.includeKotlinUltimate
     get() = rootProject.findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
@@ -408,6 +414,89 @@ fun Project.renderTemplate(template: File, templateParameters: Map<String, Strin
 
     return result
 }
+
+// --------------------------------------------------
+// CIDR plugin JAR tasks:
+// --------------------------------------------------
+
+// Prepare Kotlin plugin main JAR file.
+fun pluginJar(
+        project: Project,
+        originalPluginJar: Configuration,
+        patchedFilesTasks: List<Task>
+): Jar = with(project) {
+    val jarTask = tasks.findByName("jar") as Jar? ?: task<Jar>("jar")
+
+    return jarTask.apply {
+        // First, include patched files.
+        for (t in patchedFilesTasks) {
+            dependsOn(t)
+            from(t)
+        }
+
+        // Only then include contents of original JAR file.
+        // Note: If there is a file with the same path inside of JAR file as in the output of one of
+        // `patchedFilesTasks`, then the file from JAR will be ignored (due to DuplicatesStrategy.EXCLUDE).
+        dependsOn(originalPluginJar)
+        from(provider { zipTree(originalPluginJar.singleFile) }) { exclude(pluginXmlPath) }
+
+        configurations.findByName("embedded")?.let { embedded ->
+            dependsOn(embedded)
+            from(provider { embedded.map(::zipTree) }) { exclude(pluginXmlPath) }
+        }
+
+        archiveBaseName.set(project.the<BasePluginConvention>().archivesBaseName)
+        archiveFileName.set("kotlin-plugin.jar")
+        manifest.attributes.apply {
+            put("Implementation-Vendor", "JetBrains")
+            put("Implementation-Title", archiveBaseName.get())
+        }
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    }
+}
+
+// Prepare patched "platformDeps" JAR file.
+fun platformDepsJar(project: Project, productName: String, platformDepsDir: File): PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> = with(project) {
+    tasks.creating(Zip::class) {
+        archiveFileName.set("kotlinNative-platformDeps-$productName.jar")
+        destinationDirectory.set(file("$buildDir/$name"))
+
+        val platformDepsReplacementsDir = file("resources/platformDeps")
+        val platformDepsReplacements = platformDepsReplacementsDir.walkTopDown()
+                .filter { it.isFile && it.length() > 0 }
+                .map { it.relativeTo(platformDepsReplacementsDir).path }
+                .toList()
+
+        inputs.property("${project.name}-$name-platformDepsReplacements-amount", platformDepsReplacements.size)
+
+        platformDepsReplacements.forEach {
+            from(platformDepsReplacementsDir) { include(it) }
+        }
+
+        from(zipTree(fileTree(platformDepsDir).matching { include(platformDepsJarName) }.singleFile)) {
+            exclude(pluginXmlPath)
+            platformDepsReplacements.forEach { exclude(it) }
+        }
+
+        patchJavaXmls()
+    }
+}
+
+fun Zip.patchJavaXmls() {
+    val javaPsiXmlPath = "META-INF/JavaPsiPlugin.xml"
+    val javaPluginXmlPath = "META-INF/JavaPlugin.xml"
+
+    val fileToMarkers = mapOf(
+            javaPsiXmlPath to listOf("implementation=\"org.jetbrains.uast.java.JavaUastLanguagePlugin\""),
+            javaPluginXmlPath to listOf(
+                    "implementation=\"com.intellij.spi.SPIFileTypeFactory\"",
+                    "implementationClass=\"com.intellij.lang.java.JavaDocumentationProvider\""
+            )
+    )
+
+    commentXmlFiles(fileToMarkers)
+}
+
 
 // --------------------------------------------------
 // CIDR plugin patches:

@@ -1,10 +1,13 @@
-import org.jetbrains.kotlin.ultimate.*
+import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.ultimate.ideaPluginJarDep
+import org.jetbrains.kotlin.ultimate.prepareKotlinPluginXml
 
 plugins {
     kotlin("jvm")
 }
 
 val cidrPluginTools: Map<String, Any> by rootProject.extra
+val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
 val patchFileTemplates: (Project, Configuration) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
 val patchGradleXml: (Project, Configuration) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
 
@@ -21,6 +24,7 @@ val patchGradleXmlTask: Task by patchGradleXml(project, originalPluginJar)
 
 // Pack Jar file with patched files (KotlinPlugin.xml, file templates) plus shadowed project classes.
 pluginJar(
+        project,
         originalPluginJar,
         listOf(prepareKotlinPluginXml, patchFileTemplatesTask, patchGradleXmlTask)
 )

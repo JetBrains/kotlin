@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.ultimate.*
+import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.ultimate.preparePluginXml
 import java.net.URL
 
 plugins {
@@ -10,6 +11,8 @@ val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
 val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
 
 val cidrPluginTools: Map<String, Any> by rootProject.extra
+val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
+val platformDepsJar: (Project, String, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
 val packageCidrPlugin: (Project, String, File, Task, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
 val zipCidrPlugin: (Project, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
 val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> NamedDomainObjectContainerCreatingDelegateProvider<Task> by cidrPluginTools
@@ -37,16 +40,16 @@ val preparePluginXml: Task by preparePluginXml(
         appcodePluginVersionFull
 )
 
-val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
+val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXml))
 
-val platformDepsJar: Task by platformDepsJar("AppCode", appcodePlatformDepsDir)
+val platformDepsJarTask: Task by platformDepsJar(project,"AppCode", appcodePlatformDepsDir)
 
 val appcodePlugin: Task by packageCidrPlugin(
         project,
         ":kotlin-ultimate:ide:appcode-native",
         appcodePluginDir,
-        pluginJar,
-        platformDepsJar,
+        pluginJarTask,
+        platformDepsJarTask,
         appcodePlatformDepsDir
 )
 

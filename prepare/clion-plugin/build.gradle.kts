@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.ultimate.*
+import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.ultimate.preparePluginXml
 import java.net.URL
 
 plugins {
@@ -6,6 +7,8 @@ plugins {
 }
 
 val cidrPluginTools: Map<String, Any> by rootProject.extra
+val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
+val platformDepsJar: (Project, String, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
 val packageCidrPlugin: (Project, String, File, Task, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Copy> by cidrPluginTools
 val zipCidrPlugin: (Project, Task, File) -> PolymorphicDomainObjectContainerCreatingDelegateProvider<Task, Zip> by cidrPluginTools
 val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> NamedDomainObjectContainerCreatingDelegateProvider<Task> by cidrPluginTools
@@ -33,16 +36,16 @@ val preparePluginXml: Task by preparePluginXml(
         clionPluginVersionFull
 )
 
-val pluginJar: Task = pluginJar(cidrPlugin, listOf(preparePluginXml))
+val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXml))
 
-val platformDepsJar: Task by platformDepsJar("CLion", clionPlatformDepsDir)
+val platformDepsJarTask: Task by platformDepsJar(project,"CLion", clionPlatformDepsDir)
 
 val clionPlugin: Task by packageCidrPlugin(
         project,
         ":kotlin-ultimate:ide:clion-native",
         clionPluginDir,
-        pluginJar,
-        platformDepsJar,
+        pluginJarTask,
+        platformDepsJarTask,
         clionPlatformDepsDir
 )
 
