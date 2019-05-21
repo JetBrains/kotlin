@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.*
+import kotlin.system.exitProcess
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the constants below:
 const val KONAN_STDLIB_NAME = "stdlib"
@@ -40,7 +41,7 @@ fun defaultResolver(
         target: KonanTarget,
         distribution: Distribution,
         compatibleCompilerVersions: List<KonanVersion>,
-        logger: Logger = ::dummyLogger,
+        logger: Logger = DummyLogger,
         skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget = KonanLibraryProperResolver(
         repositories,
@@ -58,8 +59,9 @@ fun resolverByName(
         directLibs: List<String> = emptyList(),
         distributionKlib: String? = null,
         localKonanDir: String? = null,
-        skipCurrentDir: Boolean = false
-): SearchPathResolver = KonanLibrarySearchPathResolver(repositories, directLibs, distributionKlib, localKonanDir, skipCurrentDir)
+        skipCurrentDir: Boolean = false,
+        logger: Logger = DummyLogger
+): SearchPathResolver = KonanLibrarySearchPathResolver(repositories, directLibs, distributionKlib, localKonanDir, skipCurrentDir, logger)
 
 internal open class KonanLibrarySearchPathResolver(
         repositories: List<String>,
@@ -67,7 +69,7 @@ internal open class KonanLibrarySearchPathResolver(
         val distributionKlib: String?,
         val localKonanDir: String?,
         val skipCurrentDir: Boolean,
-        override val logger:Logger = ::dummyLogger
+        override val logger:Logger = DummyLogger
 ) : SearchPathResolver {
 
     val localHead: File?
@@ -136,7 +138,9 @@ internal open class KonanLibrarySearchPathResolver(
         val givenPath = unresolved.path
         return resolutionSequence(givenPath).firstOrNull() ?. let {
             createKonanLibrary(it, null, isDefaultLink) as KonanLibraryImpl
-        } ?: error("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+        } ?: run {
+            logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+        }
     }
 
     override fun resolve(givenPath: String) = resolve(UnresolvedLibrary(givenPath, null), false)
@@ -180,7 +184,7 @@ internal class KonanLibraryProperResolver(
     distributionKlib: String?,
     localKonanDir: String?,
     skipCurrentDir: Boolean,
-    override val logger: Logger = ::dummyLogger
+    override val logger: Logger = DummyLogger
 ) : KonanLibrarySearchPathResolver(repositories, directLibs, distributionKlib, localKonanDir, skipCurrentDir, logger),
     SearchPathResolverWithTarget
 {
@@ -194,7 +198,9 @@ internal class KonanLibraryProperResolver(
                 .map { it.takeIf { libraryMatch(it, unresolved) } }
                 .filterNotNull()
 
-        return matching.firstOrNull() ?: error("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+        return matching.firstOrNull() ?: run {
+            logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+        }
     }
 }
 
@@ -207,7 +213,7 @@ internal fun SearchPathResolverWithTarget.libraryMatch(candidate: KonanLibraryIm
     val candidateLibraryVersion = candidate.versions.libraryVersion
 
     if (!candidate.targetList.contains(resolverTarget.visibleName)) {
-        logger("skipping $candidatePath. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}")
+        logger.warning("skipping $candidatePath. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}")
         return false
     }
 
@@ -220,12 +226,12 @@ internal fun SearchPathResolverWithTarget.libraryMatch(candidate: KonanLibraryIm
             knownCompilerVersions!!.any { it.compatible(candidateCompilerVersion) }
 
     if (!abiVersionMatch && !compilerVersionMatch) {
-        logger("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'")
+        logger.warning("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'")
 
         if (knownCompilerVersions != null) {
             val expected = knownCompilerVersions?.map { it.toString(false, false) }
             val found = candidateCompilerVersion?.toString(true, true)
-            logger("The compiler versions don't match either. Expected '${expected}', found '${found}'")
+            logger.warning("The compiler versions don't match either. Expected '${expected}', found '${found}'")
         }
 
         return false
@@ -234,7 +240,7 @@ internal fun SearchPathResolverWithTarget.libraryMatch(candidate: KonanLibraryIm
     if (candidateLibraryVersion != unresolved.libraryVersion &&
             candidateLibraryVersion != null &&
             unresolved.libraryVersion != null) {
-        logger("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'")
+        logger.warning("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'")
         return false
     }
 
