@@ -162,11 +162,18 @@ class FirResolveBench(val withProgress: Boolean) {
                 stream.println(it.report)
             }
 
-        stream.println("UNRESOLVED TYPES: $unresolvedTypes")
-        stream.println("RESOLVED TYPES: $resolvedTypes")
-        stream.println("GOOD TYPES: ${resolvedTypes - errorTypes}")
-        stream.println("ERROR TYPES: $errorTypes")
-        stream.println("IMPLICIT TYPES: $implicitTypes")
+        infix fun Int.percentOf(other: Int): String {
+            return String.format("%.1f%%", this * 100.0 / other)
+        }
+
+        val totalTypes = unresolvedTypes + resolvedTypes
+        stream.println("UNRESOLVED TYPES: $unresolvedTypes (${unresolvedTypes percentOf totalTypes})")
+        stream.println("RESOLVED TYPES: $resolvedTypes (${resolvedTypes percentOf totalTypes})")
+        val goodTypes = resolvedTypes - errorTypes - implicitTypes
+        stream.println("GOOD TYPES: $goodTypes (${goodTypes percentOf resolvedTypes} of resolved)")
+        stream.println("ERROR TYPES: $errorTypes (${errorTypes percentOf resolvedTypes} of resolved)")
+        stream.println("IMPLICIT TYPES: $implicitTypes (${implicitTypes percentOf resolvedTypes} of resolved)")
+        stream.println("INDUCED ERROR TYPES: $inducedErrorTypes, ORIGIN: ${errorTypes - inducedErrorTypes}")
         stream.println("UNIQUE ERROR TYPES: ${errorTypesReports.size}")
 
 
