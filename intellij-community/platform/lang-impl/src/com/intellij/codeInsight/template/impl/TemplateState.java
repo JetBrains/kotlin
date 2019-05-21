@@ -109,7 +109,7 @@ public class TemplateState implements Disposable {
       @Override
       public void itemSelected(@NotNull LookupEvent event) {
         if (isCaretOutsideCurrentSegment(null)) {
-          if (isCaretInsideNextVariable()) {
+          if (isCaretInsideOrBeforeNextVariable()) {
             nextTab();
           }
           else {
@@ -176,11 +176,17 @@ public class TemplateState implements Disposable {
     editor.getCaretModel().addCaretListener(listener, this);
   }
 
-  private boolean isCaretInsideNextVariable() {
+  private boolean isCaretInsideOrBeforeNextVariable() {
     if (myEditor != null && myCurrentVariableNumber >= 0) {
       int nextVar = getNextVariableNumber(myCurrentVariableNumber);
-      TextRange range = nextVar < 0 ? null : getVariableRange(myTemplate.getVariableNameAt(nextVar));
-      return range != null && range.containsOffset(myEditor.getCaretModel().getOffset());
+      TextRange nextVarRange = nextVar < 0 ? null : getVariableRange(myTemplate.getVariableNameAt(nextVar));
+      if (nextVarRange == null) return false;
+
+      int caretOffset = myEditor.getCaretModel().getOffset();
+      if (nextVarRange.containsOffset(caretOffset)) return true;
+
+      TextRange currentVarRange = getVariableRange(myTemplate.getVariableNameAt(myCurrentVariableNumber));
+      return currentVarRange != null && currentVarRange.getEndOffset() < caretOffset && caretOffset < nextVarRange.getStartOffset();
     }
     return false;
   }
@@ -960,7 +966,7 @@ public class TemplateState implements Disposable {
     TextRange range = getCurrentVariableRange();
     if (range != null && range.getLength() > 0) {
       int caret = myEditor.getCaretModel().getOffset();
-      if (caret == range.getEndOffset() || isCaretInsideNextVariable()) {
+      if (caret == range.getEndOffset() || isCaretInsideOrBeforeNextVariable()) {
         nextTab();
       }
       else if (caret > range.getEndOffset()) {
