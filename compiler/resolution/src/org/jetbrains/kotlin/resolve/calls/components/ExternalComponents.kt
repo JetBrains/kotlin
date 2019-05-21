@@ -55,6 +55,8 @@ interface KotlinResolutionCallbacks {
     val inferenceSession: InferenceSession
 
     fun getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedAtom: ResolvedCallAtom): UnwrappedType?
+
+    fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 }
 
 interface SamConversionTransformer {
