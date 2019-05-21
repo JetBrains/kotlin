@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.EditorMouseEvent
 import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.editor.event.EditorMouseMotionListener
-import com.intellij.util.messages.MessageBus
 import java.awt.Component
 import java.awt.Point
 import java.awt.event.MouseEvent

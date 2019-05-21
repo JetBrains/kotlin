@@ -100,10 +100,3 @@ class InlayHintsSettings : PersistentStateComponent<InlayHintsSettings.State> {
   }
 }
 
-/**
- * Similar to Key, but it also requires language to be unique
- */
-@Suppress("unused")
-data class SettingsKey<T>(val id: String) {
-  fun getFullId(language: Language) : String = language.id + "." + id
-}

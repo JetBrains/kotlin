@@ -14,7 +14,7 @@ class InsetPresentation(
   presentation: InlayPresentation,
   val left: Int = 0,
   val right: Int = 0,
-  val top: Int = 0 ,
+  val top: Int = 0,
   val down: Int = 0
 ) : StaticDelegatePresentation(presentation) {
   private var presentationUnderCursor: InlayPresentation? = null

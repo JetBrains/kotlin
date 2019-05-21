@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.ui.paint.EffectPainter
 import java.awt.Font
 import java.awt.Graphics2D
-import kotlin.IllegalArgumentException
 
 /**
  * Adds effects to the underlying text

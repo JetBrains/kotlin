@@ -103,7 +103,7 @@ class PresentationTest : TestCase() {
   private class ClickCheckingPresentation(
     val presentation: InlayPresentation,
     var expectedClick: Pair<Int, Int>?
-  ):  InlayPresentation by presentation {
+  ): InlayPresentation by presentation {
 
 
     override fun mouseClicked(e: MouseEvent, editorPoint: Point) {

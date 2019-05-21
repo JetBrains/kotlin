@@ -11,7 +11,7 @@ abstract class HintComponent<S : Any>(
   private var state: S
 ) {
   // TODO lazy presentation
-  private var presentation : InlayPresentation  = render(state)
+  private var presentation : InlayPresentation = render(state)
 
   abstract fun render(s: S) : InlayPresentation
 
