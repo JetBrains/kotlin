@@ -6,7 +6,6 @@ import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 
 class InlayProviderDisablingAction(

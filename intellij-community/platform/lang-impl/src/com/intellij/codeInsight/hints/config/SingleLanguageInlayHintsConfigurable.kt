@@ -6,7 +6,6 @@ import com.intellij.codeInsight.hints.InlayHintsPassFactory
 import com.intellij.codeInsight.hints.InlayHintsSettings
 import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import javax.swing.JComponent
