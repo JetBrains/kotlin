@@ -7,13 +7,14 @@ import com.intellij.openapi.externalSystem.model.project.LibraryData
 import com.intellij.openapi.externalSystem.model.project.LibraryDependencyData
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ModuleDependencyData
+import com.intellij.util.containers.HashSetInterner
 import com.intellij.util.containers.Interner
 import java.util.function.Function
 
 class DeduplicateVisitorsSupplier {
 
-  private val myModuleData: Interner<ModuleData> = Interner()
-  private val myLibraryData: Interner<LibraryData> = Interner()
+  private val myModuleData: Interner<ModuleData> = HashSetInterner()
+  private val myLibraryData: Interner<LibraryData> = HashSetInterner()
 
   fun getVisitor(key: Key<*>): Function<*,*>? = when (key) {
     ProjectKeys.LIBRARY_DEPENDENCY -> Function { dep: LibraryDependencyData? -> visit(dep) }

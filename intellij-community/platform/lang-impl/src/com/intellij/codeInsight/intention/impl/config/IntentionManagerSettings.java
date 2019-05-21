@@ -16,7 +16,7 @@ import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
-import com.intellij.util.containers.StringInterner;
+import com.intellij.util.containers.Interner;
 import com.intellij.util.containers.WeakStringInterner;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -32,7 +32,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   private static final Logger LOG = Logger.getInstance(IntentionManagerSettings.class);
 
   private static final class MetaDataKey extends Pair<String, String> {
-    private static final StringInterner ourInterner = new WeakStringInterner();
+    private static final Interner<String> ourInterner = new WeakStringInterner();
     private MetaDataKey(@NotNull String[] categoryNames, @NotNull final String familyName) {
       super(StringUtil.join(categoryNames, ":"), ourInterner.intern(familyName));
     }

@@ -2,7 +2,7 @@
 package com.intellij.compiler.impl;
 
 import com.intellij.util.containers.EmptyIterator;
-import com.intellij.util.containers.StringInterner;
+import com.intellij.util.containers.Interner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +15,11 @@ import java.util.Stack;
  */
 public class TreeBasedMap<T> {
   private Node<T> myRoot = new Node<>();
-  private final StringInterner myInterner;
+  private final Interner<String> myInterner;
   private final char mySeparator;
   private int mySize = 0;
 
-  public TreeBasedMap(StringInterner table, final char separator) {
+  public TreeBasedMap(Interner<String> table, final char separator) {
     myInterner = table;
     mySeparator = separator;
   }
@@ -48,12 +48,12 @@ public class TreeBasedMap<T> {
     }
 
     @Nullable
-    public Node<T> findRelative(String text, boolean create, final StringInterner table) {
+    public Node<T> findRelative(String text, boolean create, final Interner<String> table) {
       return findRelative(text, 0, create, table);
     }
 
     @Nullable
-    private Node<T> findRelative(final String text, final int nameStartIndex, final boolean create, final StringInterner table) {
+    private Node<T> findRelative(final String text, final int nameStartIndex, final boolean create, final Interner<String> table) {
       if (myChildren == null && !create) {
         return null;
       }
@@ -80,7 +80,7 @@ public class TreeBasedMap<T> {
     }
 
     @NotNull
-    private Node<T> addChild(final StringInterner table, final String text, final int nameStartIndex, final int nameEndIndex) {
+    private Node<T> addChild(final Interner<String> table, final String text, final int nameStartIndex, final int nameEndIndex) {
       if (myChildren == null) {
         myChildren = new HashMap<>(3, 0.95f);
       }

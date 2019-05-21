@@ -5,10 +5,9 @@ package com.intellij.codeInspection.ui;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.reference.RefEntity;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.openapi.util.AtomicClearableLazyValue;
-import com.intellij.openapi.util.RecursionGuard;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.Interner;
 import com.intellij.util.containers.WeakInterner;
 import gnu.trove.TObjectHashingStrategy;
 import gnu.trove.TObjectIntHashMap;
@@ -23,7 +22,7 @@ import java.util.*;
  * @author max
  */
 public abstract class InspectionTreeNode implements TreeNode {
-  private static final WeakInterner<LevelAndCount[]> LEVEL_AND_COUNT_INTERNER = new WeakInterner<>(new TObjectHashingStrategy<LevelAndCount[]>() {
+  private static final Interner<LevelAndCount[]> LEVEL_AND_COUNT_INTERNER = new WeakInterner<>(new TObjectHashingStrategy<LevelAndCount[]>() {
     @Override
     public int computeHashCode(LevelAndCount[] object) {
       return Arrays.hashCode(object);

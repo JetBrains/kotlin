@@ -40,6 +40,7 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.psi.*;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.Interner;
 import com.intellij.util.containers.SmartHashSet;
 import com.intellij.util.containers.WeakInterner;
 import com.intellij.util.ui.UIUtil;
@@ -592,7 +593,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
   }
 
 
-  private static final WeakInterner<String> tooltips = new WeakInterner<>();
+  private static final Interner<String> tooltips = new WeakInterner<>();
 
   private static boolean showToolDescription(@NotNull LocalInspectionToolWrapper tool) {
     return tool.getStaticDescription() == null || !tool.getStaticDescription().isEmpty();

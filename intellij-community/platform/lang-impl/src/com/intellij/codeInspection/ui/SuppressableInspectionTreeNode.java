@@ -5,15 +5,14 @@ package com.intellij.codeInspection.ui;
 
 import com.intellij.codeInspection.CommonProblemDescriptor;
 import com.intellij.codeInspection.SuppressIntentionAction;
-import com.intellij.codeInspection.offlineViewer.OfflineProblemDescriptorNode;
 import com.intellij.codeInspection.reference.RefEntity;
 import com.intellij.concurrency.ConcurrentCollectionFactory;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.HashSetInterner;
 import com.intellij.util.containers.Interner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -181,7 +180,7 @@ public abstract class SuppressableInspectionTreeNode extends InspectionTreeNode 
   }
 
   private static class NodeState {
-    private static final Interner<NodeState> INTERNER = new Interner<>();
+    private static final Interner<NodeState> INTERNER = new HashSetInterner<>();
     private final boolean isValid;
     private final boolean isSuppressed;
     private final boolean isFixApplied;
