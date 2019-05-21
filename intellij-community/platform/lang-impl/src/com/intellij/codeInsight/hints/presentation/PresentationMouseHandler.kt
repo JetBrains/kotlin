@@ -13,8 +13,7 @@ import java.awt.event.MouseEvent
 /**
  * Global mouse listener, that provide events to inlay hints at mouse coordinates.
  */
-class PresentationMouseHandler(val editorFactory: EditorFactory,
-                               val messageBus: MessageBus) {
+class PresentationMouseHandler(val editorFactory: EditorFactory) {
 
   private var activePresentation : InlayPresentation? = null
 
