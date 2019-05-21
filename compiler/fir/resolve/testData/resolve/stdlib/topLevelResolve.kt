@@ -14,3 +14,21 @@ fun testPlus() {
     val map = mapOf("" to 1, "." to 2) + (".." to 3)
     val mapAndMap = mapOf("-" to 4) + mapOf("_" to 5)
 }
+
+fun <T> id(arg: T): T = arg
+
+fun testMap() {
+    val first = listOf(1, 2, 3).map { it * 2 }
+    val second = intArrayOf(4, 5, 6).map { it * 2 }
+    val withId = listOf(1, 2, 3).map { id(it) }
+    val stringToInt = listOf("alpha", "omega").map { it.length }
+    val viaWith = with(listOf(42)) {
+        map { it * it }
+    }
+}
+
+fun testWith() {
+    val length = with("") { length }
+    val indices = with("") { indices }
+    val indicesNoWith = "".indices
+}

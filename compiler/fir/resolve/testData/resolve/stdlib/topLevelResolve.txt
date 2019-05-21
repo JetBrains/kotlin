@@ -15,3 +15,42 @@ FILE: topLevelResolve.kt
         lval map: R|kotlin/collections/Map<kotlin/String, kotlin/Int>| = R|kotlin/collections/mapOf|<R|kotlin/String|, R|kotlin/Int|>(String().R|kotlin/to|<R|kotlin/String|, R|kotlin/Int|>(Int(1)), String(.).R|kotlin/to|<R|kotlin/String|, R|kotlin/Int|>(Int(2))).R|kotlin/collections/plus|<R|kotlin/String|, R|kotlin/Int|>(String(..).R|kotlin/to|<R|kotlin/String|, R|kotlin/Int|>(Int(3)))
         lval mapAndMap: <ERROR TYPE REF: Ambiguity: plus, [kotlin/plus, kotlin/plus, kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus, kotlin/sequences/plus, kotlin/sequences/plus, kotlin/text/plus]> = <Ambiguity: mapOf, [kotlin/collections/mapOf, kotlin/collections/mapOf]>#(String(-).R|kotlin/to|(Int(4))).<Ambiguity: plus, [kotlin/plus, kotlin/plus, kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus, kotlin/sequences/plus, kotlin/sequences/plus, kotlin/text/plus]>#(<Ambiguity: mapOf, [kotlin/collections/mapOf, kotlin/collections/mapOf]>#(String(_).R|kotlin/to|(Int(5))))
     }
+    public final fun <T> id(arg: R|T|): R|T| {
+        ^id R|<local>/arg|
+    }
+    public final fun testMap(): R|kotlin/Unit| {
+        lval first: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1), Int(2), Int(3)).R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Function1<kotlin/Int, kotlin/Int>| {
+            R|<local>/it|.R|kotlin/Int.times|(Int(2))
+        }
+        )
+        lval second: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/intArrayOf|(Int(4), Int(5), Int(6)).R|kotlin/collections/map|<R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Function1<kotlin/Int, kotlin/Int>| {
+            R|<local>/it|.R|kotlin/Int.times|(Int(2))
+        }
+        )
+        lval withId: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1), Int(2), Int(3)).R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Function1<kotlin/Int, kotlin/Int>| {
+            R|/id|<R|kotlin/Int|>(R|<local>/it|)
+        }
+        )
+        lval stringToInt: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/String|>(String(alpha), String(omega)).R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Function1<kotlin/String, kotlin/Int>| {
+            R|<local>/it|.R|kotlin/String.length|
+        }
+        )
+        lval viaWith: R|kotlin/Nothing| = R|kotlin/with|<R|kotlin/collections/List<kotlin/Int>|, R|kotlin/Nothing|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)), <L> = with@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(it: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Function2<kotlin/collections/List<kotlin/Int>, kotlin/collections/List<kotlin/Int>, kotlin/Nothing>| {
+            <Unresolved name: map>#(<L> = map@fun <implicit>.<anonymous>(): <implicit> {
+                it#.times#(it#)
+            }
+            )
+        }
+        )
+    }
+    public final fun testWith(): R|kotlin/Unit| {
+        lval length: R|kotlin/Int| = R|kotlin/with|<R|kotlin/String|, R|kotlin/Int|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(it: R|kotlin/String|): R|kotlin/Function2<kotlin/String, kotlin/String, kotlin/Int>| {
+            R|kotlin/String.length|
+        }
+        )
+        lval indices: R|kotlin/Nothing| = R|kotlin/with|<R|kotlin/String|, R|kotlin/Nothing|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(it: R|kotlin/String|): R|kotlin/Function2<kotlin/String, kotlin/String, kotlin/Nothing>| {
+            <Unresolved name: indices>#
+        }
+        )
+        lval indicesNoWith: R|kotlin/ranges/IntRange| = String().R|kotlin/text/indices|
+    }
