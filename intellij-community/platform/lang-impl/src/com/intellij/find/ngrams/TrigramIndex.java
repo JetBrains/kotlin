@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class TrigramIndex extends ScalarIndexExtension<Integer> implements CustomInputsIndexFileBasedIndexExtension<Integer>,
-                                                                           DocumentChangesDependentIndex {
+                                                                           DocumentChangeDependentIndex {
   public static final boolean ENABLED = SystemProperties.getBooleanProperty("idea.internal.trigramindex.enabled", true);
 
   public static final ID<Integer,Void> INDEX_ID = ID.create("Trigram.Index");

@@ -2532,7 +2532,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     if (INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT) {
       return extension instanceof FileBasedIndexExtension &&
              ((FileBasedIndexExtension<?, ?>)extension).dependsOnFileContent() &&
-             !(extension instanceof DocumentChangesDependentIndex);
+             !(extension instanceof DocumentChangeDependentIndex);
     } else {
       return extension instanceof PsiDependentIndex;
     }
