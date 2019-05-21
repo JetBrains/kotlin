@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+
 class NewCodeBuilder(context: NewJ2kConverterContext) {
     private val elementInfoStorage = context.elementsInfoStorage
     val builder = StringBuilder()
@@ -971,7 +972,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
 
     fun printCodeOut(root: JKTreeElement): String {
         Visitor().also { root.accept(it) }
-        return builder.toString()
+        return builder.toString().replace("\r\n", "\n")
     }
 }
 
