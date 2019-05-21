@@ -9,10 +9,6 @@ if (project.findProperty("idl2k.deploy")?.toBoolean()) {
     configurePublishing(project)
 }
 
-repositories {
-    mavenCentral()
-}
-
 project.sourceSets.main.antlr.srcDirs = ["src/main/antlr4"]
 
 dependencies {
