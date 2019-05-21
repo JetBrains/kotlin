@@ -185,25 +185,9 @@ public class TopHitSEContributor implements SearchEverywhereContributor<Object> 
   private static class TopHitRenderer extends ColoredListCellRenderer<Object> {
 
     private final Project myProject;
-    private final MyAccessiblePanel myRendererPanel = new MyAccessiblePanel();
 
     private TopHitRenderer(Project project) {
       myProject = project;
-    }
-
-    private static class MyAccessiblePanel extends JPanel {
-      private Accessible myAccessible;
-      MyAccessiblePanel() {
-        super(new BorderLayout());
-        setOpaque(false);
-      }
-      void setAccessible(Accessible comp) {
-        myAccessible = comp;
-      }
-      @Override
-      public AccessibleContext getAccessibleContext() {
-        return accessibleContext = (myAccessible != null ? myAccessible.getAccessibleContext() : super.getAccessibleContext());
-      }
     }
 
     @Override
@@ -213,34 +197,16 @@ public class TopHitSEContributor implements SearchEverywhereContributor<Object> 
       if (value instanceof BooleanOptionDescription) {
         final JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(UIUtil.getListBackground(selected, true));
-        panel.add(cmp, BorderLayout.CENTER);
-        final Component rightComponent;
 
         final OnOffButton button = new OnOffButton();
         button.setSelected(((BooleanOptionDescription)value).isOptionEnabled());
-        rightComponent = button;
 
-        panel.add(rightComponent, BorderLayout.EAST);
+        panel.add(cmp, BorderLayout.CENTER);
+        panel.add(button, BorderLayout.EAST);
         cmp = panel;
       }
 
-      Color bg = cmp.getBackground();
-      if (bg == null) {
-        cmp.setBackground(UIUtil.getListBackground(selected, true));
-        bg = cmp.getBackground();
-      }
-
-      myRendererPanel.removeAll();
-
-      JPanel wrapped = new JPanel(new BorderLayout());
-      wrapped.setBackground(bg);
-      wrapped.add(cmp, BorderLayout.CENTER);
-      myRendererPanel.add(wrapped, BorderLayout.CENTER);
-      if (cmp instanceof Accessible) {
-        myRendererPanel.setAccessible((Accessible)cmp);
-      }
-
-      return myRendererPanel;
+      return cmp;
     }
 
     @Override
