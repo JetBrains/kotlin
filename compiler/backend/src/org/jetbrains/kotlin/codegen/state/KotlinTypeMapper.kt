@@ -912,7 +912,15 @@ class KotlinTypeMapper @JvmOverloads constructor(
             jvmSignature,
             if (isStaticMethod(kind, functionDescriptor) || isStaticDeclaration(functionDescriptor) || isConstructor)
                 null else ownerType.descriptor,
-            functionDescriptor.unwrapFrontendVersion()
+            functionDescriptor.unwrapFrontendVersion(),
+            if (isIrBackend && isConstructor) {
+                val containingDeclaration = functionDescriptor.containingDeclaration
+                when {
+                    isEnumClass(containingDeclaration) -> 2
+                    (containingDeclaration as? ClassDescriptor)?.isInner == true -> 1
+                    else -> 0
+                }
+            } else 0
         )
 
         return Method(if (isConstructor) "<init>" else jvmSignature.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor)
@@ -1578,10 +1586,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
         private fun getDefaultDescriptor(
             method: Method,
             dispatchReceiverDescriptor: String?,
-            callableDescriptor: CallableDescriptor
+            callableDescriptor: CallableDescriptor,
+            extraArgsShift: Int
         ): String {
             val descriptor = method.descriptor
-            val maskArgumentsCount = (callableDescriptor.valueParameters.size + Integer.SIZE - 1) / Integer.SIZE
+            val maskArgumentsCount = (callableDescriptor.valueParameters.size - extraArgsShift + Integer.SIZE - 1) / Integer.SIZE
             val defaultConstructorMarkerType = if (isConstructor(method) || isInlineClassConstructor(callableDescriptor))
                 DEFAULT_CONSTRUCTOR_MARKER
             else
