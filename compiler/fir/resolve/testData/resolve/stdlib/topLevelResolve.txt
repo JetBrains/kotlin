@@ -36,7 +36,7 @@ FILE: topLevelResolve.kt
         }
         )
         lval viaWith: R|kotlin/Nothing| = R|kotlin/with|<R|kotlin/collections/List<kotlin/Int>|, R|kotlin/Nothing|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)), <L> = with@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(it: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Function2<kotlin/collections/List<kotlin/Int>, kotlin/collections/List<kotlin/Int>, kotlin/Nothing>| {
-            <Unresolved name: map>#(<L> = map@fun <implicit>.<anonymous>(): <implicit> {
+            <Ambiguity: map, [kotlin/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/collections/map, kotlin/sequences/map, kotlin/text/map]>#(<L> = map@fun <implicit>.<anonymous>(): <implicit> {
                 it#.times#(it#)
             }
             )
@@ -49,7 +49,7 @@ FILE: topLevelResolve.kt
         }
         )
         lval indices: R|kotlin/Nothing| = R|kotlin/with|<R|kotlin/String|, R|kotlin/Nothing|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(it: R|kotlin/String|): R|kotlin/Function2<kotlin/String, kotlin/String, kotlin/Nothing>| {
-            <Unresolved name: indices>#
+            <Ambiguity: indices, [kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/collections/indices, kotlin/text/indices]>#
         }
         )
         lval indicesNoWith: R|kotlin/ranges/IntRange| = String().R|kotlin/text/indices|

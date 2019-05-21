@@ -2,5 +2,5 @@ FILE: extension.kt
     public final fun R|kotlin/String|.foo(): R|kotlin/Unit| {
     }
     public final fun R|kotlin/String|.bar(): R|kotlin/Unit| {
-        <Unresolved name: foo>#()
+        R|/foo|()
     }

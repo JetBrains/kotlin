@@ -245,7 +245,8 @@ private fun ConeCallableSymbol.hasExtensionReceiver(): Boolean = (this as? FirCa
 // (if explicit receiver exists, it always *should* be an extension receiver)
 class ScopeTowerLevel(
     session: FirSession,
-    val scope: FirScope
+    val scope: FirScope,
+    val implicitExtensionReceiver: ReceiverValue? = null
 ) : SessionBasedTowerLevel(session) {
     override fun <T : ConeSymbol> processElementsByName(
         token: TowerScopeLevel.Token<T>,
@@ -253,18 +254,21 @@ class ScopeTowerLevel(
         explicitReceiver: ExpressionReceiverValue?,
         processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
     ): ProcessorAction {
+        if (explicitReceiver != null && implicitExtensionReceiver != null) {
+            return ProcessorAction.NEXT
+        }
+        val extensionReceiver = explicitReceiver ?: implicitExtensionReceiver
         return when (token) {
 
             TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { candidate ->
-                if (candidate.hasConsistentExtensionReceiver(explicitReceiver) && candidate.dispatchReceiverValue() == null) {
+                if (candidate.hasConsistentExtensionReceiver(extensionReceiver) && candidate.dispatchReceiverValue() == null) {
                     processor.consumeCandidate(candidate as T, dispatchReceiverValue = null)
                 } else {
                     ProcessorAction.NEXT
                 }
             }
             TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(name) { candidate ->
-                // TODO: fix implicit receiver
-                if (candidate.hasConsistentExtensionReceiver(explicitReceiver) && candidate.dispatchReceiverValue() == null) {
+                if (candidate.hasConsistentExtensionReceiver(extensionReceiver) && candidate.dispatchReceiverValue() == null) {
                     processor.consumeCandidate(candidate as T, dispatchReceiverValue = null)
                 } else {
                     ProcessorAction.NEXT
@@ -605,6 +609,14 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: Inf
             MemberScopeTowerLevel(session, implicitReceiverValue, implicitReceiverValue),
             collector, group++
         )
+
+        for (scope in scopes!!) {
+            towerDataConsumer.consume(
+                TowerDataKind.TOWER_LEVEL,
+                ScopeTowerLevel(session, scope, implicitReceiverValue),
+                collector, group++
+            )
+        }
 
         return group
     }
