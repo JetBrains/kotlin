@@ -107,7 +107,7 @@ abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
 
 
 
-class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
+data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
     FlexibleTypeMarker {
 
     init {
