@@ -6,6 +6,10 @@ plugins {
     id("com.github.jk1.tcdeps") version "0.18"
 }
 
+rootProject.apply {
+    from(project.file("../../../gradle/cidrPluginProperties.gradle.kts"))
+}
+
 repositories {
     teamcityServer {
         setUrl("https://buildserver.labs.intellij.net")

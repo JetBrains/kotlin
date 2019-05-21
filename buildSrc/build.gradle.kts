@@ -3,7 +3,3 @@
 plugins {
     base
 }
-
-rootProject.apply {
-    from(rootProject.file("../gradle/cidrPluginProperties.gradle.kts"))
-}
