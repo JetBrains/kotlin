@@ -107,4 +107,17 @@ class IsolationgIncrementalProcessorTest {
             ), isolating[1].getGeneratedToSources()
         )
     }
+
+    @Test
+    fun testIsolatingWithMultipleOriginatingElements() {
+        val srcFiles = listOf("User.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
+        val isolating = listOf(ReportTwoOriginElements().toIsolating())
+        runAnnotationProcessing(srcFiles, isolating, generatedSources)
+
+        assertEquals(
+            mapOf(
+                generatedSources.resolve("test/UserGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/User.java").absoluteFile
+            ), isolating[0].getGeneratedToSources()
+        )
+    }
 }
