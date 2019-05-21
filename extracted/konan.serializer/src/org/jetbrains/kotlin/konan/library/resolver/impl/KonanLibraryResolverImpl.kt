@@ -66,7 +66,7 @@ internal class KonanLibraryResolverImpl(
             }
 
     private fun warnOnLibraryDuplicates(duplicatedPaths: Iterable<String>) {
-        duplicatedPaths.forEach { logger("library included more than once: $it") }
+        duplicatedPaths.forEach { logger.warning("library included more than once: $it") }
     }
 
 

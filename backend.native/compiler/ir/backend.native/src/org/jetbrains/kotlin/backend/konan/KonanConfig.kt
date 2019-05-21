@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -23,6 +22,8 @@ import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.library.toUnresolvedLibraries
+import org.jetbrains.kotlin.konan.util.Logger
+import kotlin.system.exitProcess
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -80,7 +81,16 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val unresolvedLibraries = libraryNames.toUnresolvedLibraries
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private fun resolverLogger(msg: String) = configuration.report(STRONG_WARNING, msg)
+    private val resolverLogger =
+        object : Logger {
+            override fun warning(message: String)= configuration.report(STRONG_WARNING, message)
+            override fun error(message: String) = configuration.report(ERROR, message)
+            override fun log(message: String) = configuration.report(LOGGING, message)
+            override fun fatal(message: String): Nothing {
+                configuration.report(ERROR, message)
+                exitProcess(1)
+            }
+        }
 
     private val compatibleCompilerVersions: List<KonanVersion> =
         configuration.getList(KonanConfigKeys.COMPATIBLE_COMPILER_VERSIONS).map { it.parseKonanVersion() }
@@ -91,7 +101,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         target,
         distribution,
         compatibleCompilerVersions + KonanVersion.CURRENT,
-        ::resolverLogger
+        resolverLogger
     ).libraryResolver()
 
     internal val resolvedLibraries by lazy {

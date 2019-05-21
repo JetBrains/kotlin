@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.konan.KonanAbiVersion
 import org.jetbrains.kotlin.konan.library.unpackZippedKonanLibraryTo
 import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.konan.util.Logger
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -72,9 +73,15 @@ fun warn(text: String) {
     println("warning: $text")
 }
 
-fun error(text: String) {
-    println("error: $text")
-    exitProcess(1)
+fun error(text: String): Nothing {
+    kotlin.error("error: $text")
+}
+
+object KlibToolLogger : Logger {
+    override fun warning(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
+    override fun error(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
+    override fun fatal(message: String) = org.jetbrains.kotlin.cli.klib.error(message)
+    override fun log(message: String) = println(message)
 }
 
 val defaultRepository = File(DependencyProcessor.localKonanDir.resolve("klib").absolutePath)
@@ -153,7 +160,8 @@ class Library(val name: String, val requestedRepository: String?, val target: St
             val resolver = resolverByName(
                     emptyList(),
                     distributionKlib = Distribution().klib,
-                    skipCurrentDir = true)
+                    skipCurrentDir = true,
+                    logger = KlibToolLogger)
             resolver.defaultLinks(false, true)
                     .mapTo(defaultModules) {
                         DefaultDeserializedDescriptorFactory.createDescriptor(
@@ -173,12 +181,12 @@ val currentLanguageVersion = LanguageVersion.LATEST_STABLE
 val currentApiVersion = ApiVersion.LATEST_STABLE
 
 fun libraryInRepo(repository: File, name: String) =
-        resolverByName(listOf(repository.absolutePath), skipCurrentDir = true).resolve(name)
+        resolverByName(listOf(repository.absolutePath), skipCurrentDir = true, logger = KlibToolLogger).resolve(name)
 
-fun libraryInCurrentDir(name: String) = resolverByName(emptyList()).resolve(name)
+fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logger = KlibToolLogger).resolve(name)
 
 fun libraryInRepoOrCurrentDir(repository: File, name: String) =
-        resolverByName(listOf(repository.absolutePath)).resolve(name)
+        resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger).resolve(name)
 
 fun main(args: Array<String>) {
     val command = Command(args)
