@@ -363,7 +363,6 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
   @NotNull
   private static FeatureUsageData create(boolean isShared, boolean isEditBeforeRun, boolean isActivate, boolean isParallel) {
     return new FeatureUsageData().
-      addData("plugin_type", "PLATFORM").
       addData("edit_before_run", isEditBeforeRun).
       addData("activate_before_run", isActivate).
       addData("shared", isShared).

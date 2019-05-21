@@ -18,11 +18,10 @@ import org.jetbrains.annotations.Nullable;
 public class RunConfigurationUsageTriggerCollector {
 
   public static void trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
-    final FeatureUsageData data = new FeatureUsageData().addProject(project);
-    final String key = AbstractRunConfigurationTypeUsagesCollector.toReportedId(factory, data);
+    final String key = AbstractRunConfigurationTypeUsagesCollector.toReportedId(factory);
     if (StringUtil.isNotEmpty(key)) {
-      data.addData("executor", executor.getId());
-
+      final FeatureUsageData data = new FeatureUsageData().
+        addProject(project).addData("executor", executor.getId());
       FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", key, data);
     }
   }
