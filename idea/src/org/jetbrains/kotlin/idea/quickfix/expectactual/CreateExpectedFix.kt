@@ -25,13 +25,12 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
+import org.jetbrains.kotlin.idea.util.allowedValOrVar
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -197,17 +196,11 @@ private tailrec fun KtDeclaration.recursivelyMakeActual() {
     containingClassOrObject?.takeUnless(KtDeclaration::hasActualModifier)?.recursivelyMakeActual()
 }
 
-private fun KtDeclaration.isAlwaysActual(): Boolean {
-    val primaryConstructor = when (this) {
-        is KtPrimaryConstructor -> this
-        is KtParameter -> (parent as? KtParameterList)?.parent as? KtPrimaryConstructor
-        else -> null
-    } ?: return false
-
-    return primaryConstructor.containingClass()?.let {
-        it.isAnnotation() || it.hasInlineModifier()
-    } ?: false
-}
+private fun KtDeclaration.isAlwaysActual(): Boolean = when (this) {
+    is KtPrimaryConstructor -> this
+    is KtParameter -> (parent as? KtParameterList)?.parent as? KtPrimaryConstructor
+    else -> null
+}?.allowedValOrVar() ?: false
 
 class CreateExpectedPropertyFix(
     property: KtNamedDeclaration,

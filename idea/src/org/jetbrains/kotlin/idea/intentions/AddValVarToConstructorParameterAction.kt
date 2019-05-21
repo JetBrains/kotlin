@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
+import org.jetbrains.kotlin.idea.util.allowedValOrVar
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -42,7 +43,7 @@ interface AddValVarToConstructorParameterAction {
 
     fun canInvoke(element: KtParameter): Boolean {
         return element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)
-            ?.takeUnless(KtDeclaration::isExpectDeclaration) != null
+            ?.takeIf { it.allowedValOrVar() || !it.isExpectDeclaration() } != null
     }
 
     fun invoke(element: KtParameter, editor: Editor?) {

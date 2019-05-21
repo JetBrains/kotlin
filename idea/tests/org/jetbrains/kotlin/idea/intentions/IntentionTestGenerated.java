@@ -1931,6 +1931,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addValOrVar/dataClass.kt");
         }
 
+        @TestMetadata("expectAnnotation.kt")
+        public void testExpectAnnotation() throws Exception {
+            runTest("idea/testData/intentions/addValOrVar/expectAnnotation.kt");
+        }
+
         @TestMetadata("expectClass.kt")
         public void testExpectClass() throws Exception {
             runTest("idea/testData/intentions/addValOrVar/expectClass.kt");
@@ -1939,6 +1944,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("expectClass2.kt")
         public void testExpectClass2() throws Exception {
             runTest("idea/testData/intentions/addValOrVar/expectClass2.kt");
+        }
+
+        @TestMetadata("expectInlineClass.kt")
+        public void testExpectInlineClass() throws Exception {
+            runTest("idea/testData/intentions/addValOrVar/expectInlineClass.kt");
         }
 
         @TestMetadata("funParameter.kt")
