@@ -327,13 +327,13 @@ class ExpressionCodegen(
         }
 
         callGenerator.beforeValueParametersStart()
-        val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size)
         val extraArgsShift =
             when {
                 callee is IrConstructor && callee.parentAsClass.isEnumClass -> 2
                 callee is IrConstructor && callee.parentAsClass.isInner -> 1 // skip the `$outer` parameter
                 else -> 0
             }
+        val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size - extraArgsShift)
         val typeParameters = if (callee is IrConstructor)
             callee.parentAsClass.typeParameters + callee.typeParameters
         else
