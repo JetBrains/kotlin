@@ -37,16 +37,16 @@ rootProject.extra["clionVersion"] = clionVersion
 rootProject.extra["clionFriendlyVersion"] = cidrProductFriendlyVersion("CLion", clionVersion)
 rootProject.extra["clionRepo"] = rootProject.extra["versions.clion.repo"] as String
 rootProject.extra["clionVersionStrict"] = (rootProject.extra["versions.clion.strict"] as String).toBoolean()
-rootProject.extra["clionPlatformDepsDir"] = externalDepsDir("platform-deps", "clion-platform-deps-$clionVersion")
-rootProject.extra["clionUnscrambledJarDir"] = externalDepsDir("platform-deps", "clion-unscrambled-$clionVersion")
+rootProject.extra["clionPlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-platform-deps-$clionVersion")
+rootProject.extra["clionUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion")
 
 val appcodeVersion: String = rootProject.extra["versions.appcode"] as String
 rootProject.extra["appcodeVersion"] = appcodeVersion
 rootProject.extra["appcodeFriendlyVersion"] = cidrProductFriendlyVersion("AppCode", appcodeVersion)
 rootProject.extra["appcodeRepo"] = rootProject.extra["versions.appcode.repo"] as String
 rootProject.extra["appcodeVersionStrict"] = (rootProject.extra["versions.appcode.strict"] as String).toBoolean()
-rootProject.extra["appcodePlatformDepsDir"] = externalDepsDir("platform-deps", "appcode-platform-deps-$appcodeVersion")
-rootProject.extra["appcodeUnscrambledJarDir"] = externalDepsDir("platform-deps", "appcode-unscrambled-$appcodeVersion")
+rootProject.extra["appcodePlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-platform-deps-$appcodeVersion")
+rootProject.extra["appcodeUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion")
 
 val artifactsForCidrDir: File = rootProject.rootDir.resolve("dist/artifacts")
 rootProject.extra["artifactsForCidrDir"] = artifactsForCidrDir
