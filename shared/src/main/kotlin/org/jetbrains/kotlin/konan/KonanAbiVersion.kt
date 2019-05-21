@@ -22,7 +22,7 @@ fun String.parseKonanAbiVersion(): KonanAbiVersion {
 
 data class KonanAbiVersion(val version: Int) {
     companion object {
-        val CURRENT = KonanAbiVersion(9)
+        val CURRENT = KonanAbiVersion(10)
     }
     override fun toString() = "$version"
 }
