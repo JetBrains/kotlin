@@ -42,17 +42,19 @@ private fun Project.ideModuleVersion() = when (IdeVersionConfigurator.currentIde
 
 fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactRepository = ivy {
     val baseDir = project.kotlinBuildLocalRepoDir()
-    setUrl(baseDir)
+    url = baseDir.toURI()
 
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/[module].ivy.xml")
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/ivy/[module].ivy.xml")
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/${project.ideModuleName()}/[revision]/ivy/[module].ivy.xml") // bundled plugins
+    patternLayout {
+        ivy("[organisation]/[module]/[revision]/[module].ivy.xml")
+        ivy("[organisation]/[module]/[revision]/ivy/[module].ivy.xml")
+        ivy("[organisation]/${project.ideModuleName()}/[revision]/ivy/[module].ivy.xml") // bundled plugins
 
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/artifacts/lib/[artifact](-[classifier]).[ext]")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/artifacts/[artifact](-[classifier]).[ext]")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/${project.ideModuleName()}/[revision]/artifacts/plugins/[module]/lib/[artifact](-[classifier]).[ext]") // bundled plugins
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/sources/[artifact]-[revision](-[classifier]).[ext]")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[module]/[revision]/[artifact](-[classifier]).[ext]")
+        artifact("[organisation]/[module]/[revision]/artifacts/lib/[artifact](-[classifier]).[ext]")
+        artifact("[organisation]/[module]/[revision]/artifacts/[artifact](-[classifier]).[ext]")
+        artifact("[organisation]/${project.ideModuleName()}/[revision]/artifacts/plugins/[module]/lib/[artifact](-[classifier]).[ext]") // bundled plugins
+        artifact("[organisation]/sources/[artifact]-[revision](-[classifier]).[ext]")
+        artifact("[organisation]/[module]/[revision]/[artifact](-[classifier]).[ext]")
+    }
 
     metadataSources {
         ivyDescriptor()

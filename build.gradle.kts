@@ -11,9 +11,15 @@ buildscript {
     // when updating please also update JPS artifacts configuration: https://jetbrains.quip.com/zzGUAYSJ6gv3/JPS-Build-update-bootstrap
     kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.50-dev-397", onlySuccessBootstrap = false))
 
-    repositories.withRedirector(project) {
+    repositories {
         bootstrapKotlinRepo?.let(::maven)
-        maven("https://plugins.gradle.org/m2")
+
+        val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+        if (cacheRedirectorEnabled) {
+            maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
+        } else {
+            maven("https://plugins.gradle.org/m2")
+        }
     }
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -410,10 +416,12 @@ allprojects {
             }
         }
 
-        if (cacheRedirectorEnabled()) {
-            logger.info("Redirecting repositories for $displayName")
-            repositories.redirect()
+        // Aggregate task for build related checks
+        tasks.register("checkBuild") {
+            tasks.findByName("check")?.dependsOn(this)
         }
+
+        apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
     }
 }
 

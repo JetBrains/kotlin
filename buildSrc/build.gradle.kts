@@ -1,15 +1,17 @@
+extra["versions.shadow"] = "4.0.3"
+extra["versions.native-platform"] = "0.14"
 
 buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
-    extra["versions.shadow"] = "4.0.3"
-    extra["versions.native-platform"] = "0.14"
 
     repositories {
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+        } else {
+            jcenter()
         }
 
         buildSrcKotlinRepo?.let {
@@ -77,18 +79,13 @@ extra["versions.androidDxSources"] = "5.0.0_r2"
 extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
-    if (cacheRedirectorEnabled) {
-        maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
-        maven("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-third-party-dependencies/")
-    }
+    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://plugins.gradle.org/m2/")
+    jcenter()
 
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
-
-    jcenter()
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
-    maven("https://plugins.gradle.org/m2/")
 }
 
 dependencies {
@@ -112,3 +109,10 @@ fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gr
         extensions.configure("samWithReceiver", configure)
 
 tasks["build"].dependsOn(":prepare-deps:build")
+
+allprojects {
+    afterEvaluate {
+        apply(from = "$rootDir/../gradle/cacheRedirector.gradle.kts")
+        tasks["check"].dependsOn(tasks["checkRepositories"])
+    }
+}

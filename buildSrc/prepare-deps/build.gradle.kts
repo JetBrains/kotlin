@@ -5,8 +5,12 @@ import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIdentity
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import org.gradle.internal.os.OperatingSystem
+import java.net.URI
 
-val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+plugins {
+    base
+}
+
 val verifyDependencyOutput: Boolean by rootProject.extra
 val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
@@ -65,11 +69,12 @@ val androidToolsOs by lazy {
 repositories {
     if (androidStudioRelease != null) {
         ivy {
-            if (cacheRedirectorEnabled) {
-                artifactPattern("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.[ext]")
+            url = URI("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease")
+
+            patternLayout {
+                artifact("[artifact]-[revision]-$androidStudioOs.[ext]")
             }
 
-            artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$androidStudioOs.[ext]")
             metadataSources {
                 artifact()
             }
@@ -77,17 +82,28 @@ repositories {
     }
 
     ivy {
-        artifactPattern("https://dl.google.com/android/repository/[artifact]_[revision](-[classifier]).[ext]")
-        artifactPattern("https://android.googlesource.com/platform/dalvik/+archive/android-$androidDxSourcesVersion/[artifact].[ext]")
+        url = URI("https://dl.google.com/android/repository")
+
+        patternLayout {
+            artifact("[artifact]_[revision](-[classifier]).[ext]")
+        }
+
         metadataSources {
             artifact()
         }
     }
 
-    if (cacheRedirectorEnabled) {
-        maven("https://cache-redirector.jetbrains.com/www.jetbrains.com/intellij-repository/$intellijReleaseType")
-        maven("https://cache-redirector.jetbrains.com/plugins.jetbrains.com/maven")
-        maven("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-third-party-dependencies/")
+
+    ivy {
+        url = URI("https://android.googlesource.com/platform/dalvik/+archive/android-$androidDxSourcesVersion")
+
+        patternLayout {
+            artifact("[artifact].[ext]")
+        }
+
+        metadataSources {
+            artifact()
+        }
     }
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
@@ -272,19 +288,20 @@ val makeIde = if (androidStudioBuild != null) {
     task
 }
 
-val build by tasks.creating {
+val buildJpsStandalone = buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+val buildNodeJsPlugin = buildIvyRepositoryTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
+
+tasks.named("build") {
     dependsOn(
         makeIntellijCore,
         makeIde,
-        buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile),
+        buildJpsStandalone,
         makeIntellijAnnotations,
         buildIvyRepoForAndroidDx
     )
 
     if (installIntellijUltimate) {
-        dependsOn(
-            buildIvyRepositoryTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
-        )
+        dependsOn(buildNodeJsPlugin)
     }
 }
 
@@ -294,7 +311,7 @@ tasks.create("cleanLegacy", Delete::class.java) {
     delete("$projectDir/intellij-sdk")
 }
 
-tasks.create("clean", Delete::class.java) {
+tasks.named<Delete>("clean") {
     delete(customDepsRepoDir)
 }
 

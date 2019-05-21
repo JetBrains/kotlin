@@ -6,12 +6,15 @@ pluginManagement {
                 url pluginRepo
             }
         }
-        gradlePluginPortal()
-    }
 
-    if (cacheRedirectorEnabled == 'true') {
-        logger.info("Redirecting repositories for settings.gradle pluginManagement")
-        JbCacheRedirectorKt.redirect(repositories)
+        if (cacheRedirectorEnabled == 'true') {
+            logger.info("Using cache redirector for settings.gradle pluginManagement")
+            maven {
+                url "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2"
+            }
+        } else {
+            gradlePluginPortal()
+        }
     }
 }
 

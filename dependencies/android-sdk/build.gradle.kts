@@ -1,16 +1,17 @@
-
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import java.io.File
 import org.gradle.internal.os.OperatingSystem
+import java.net.URI
 
 // TODO: consider adding dx sources (the only jar used on the compile time so far)
 // e.g. from "https://android.googlesource.com/platform/dalvik/+archive/android-5.0.0_r2/dx.tar.gz"
 
 repositories {
     ivy {
-        artifactPattern("https://dl-ssl.google.com/android/repository/[artifact]-[revision].[ext]")
-        artifactPattern("https://dl-ssl.google.com/android/repository/[artifact]_[revision](-[classifier]).[ext]")
-        artifactPattern("https://dl.google.com/android/repository/[artifact]_[revision](-[classifier]).[ext]")
+        url = URI("https://dl.google.com/android/repository")
+        patternLayout {
+            artifact("[artifact]-[revision].[ext]")
+            artifact("[artifact]_[revision](-[classifier]).[ext]")
+            artifact("[artifact]_[revision](-[classifier]).[ext]")
+        }
     }
 }
 
