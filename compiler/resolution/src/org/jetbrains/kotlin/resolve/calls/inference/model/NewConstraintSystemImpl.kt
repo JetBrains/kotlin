@@ -179,8 +179,8 @@ class NewConstraintSystemImpl(
         return !type.contains {
             val capturedType = it.asSimpleType()?.asCapturedType()
             // TODO: change NewCapturedType to markered one for FE-IR
-            val typeToCheck = if (capturedType is NewCapturedType && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
-                capturedType.constructor.projection.type
+            val typeToCheck = if (capturedType is CapturedTypeMarker && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
+                capturedType.typeConstructorProjection().getType()
             else
                 it
 

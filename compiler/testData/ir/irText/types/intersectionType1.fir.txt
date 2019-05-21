@@ -43,14 +43,15 @@ FILE fqName:<root> fileName:/intersectionType1.kt
           GET_VAR 'y: kotlin.Any? declared in <root>.ofType' type=kotlin.Any? origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:a1 type:kotlin.Array<kotlin.Any?> [val]
-        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
+      VAR name:a1 type:kotlin.Array<<root>.In<kotlin.Int>> [val]
+        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<<root>.In<kotlin.Int>> origin=null
           elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.Int> origin=null
             <class: I>: <none>
-      VAR name:a2 type:kotlin.Array<kotlin.Any?> [val]
-        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
+      VAR name:a2 type:kotlin.Array<<root>.In<kotlin.String>> [val]
+        CALL 'public final fun arrayOf (elements: kotlin.Array<out T of <uninitialized parent>>): kotlin.Array<T of <uninitialized parent>> [inline] declared in kotlin' type=kotlin.Array<<root>.In<kotlin.String>> origin=null
           elements: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.String> origin=null
             <class: I>: <none>
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/foo]>#' type=IrErrorType
-        GET_VAR 'val a1: kotlin.Array<kotlin.Any?> [val] declared in <root>.test' type=kotlin.Array<kotlin.Any?> origin=null
-        GET_VAR 'val a2: kotlin.Array<kotlin.Any?> [val] declared in <root>.test' type=kotlin.Array<kotlin.Any?> origin=null
+      CALL 'public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+        <T>: <none>
+        a: GET_VAR 'val a1: kotlin.Array<<root>.In<kotlin.Int>> [val] declared in <root>.test' type=kotlin.Array<<root>.In<kotlin.Int>> origin=null
+        b: GET_VAR 'val a2: kotlin.Array<<root>.In<kotlin.String>> [val] declared in <root>.test' type=kotlin.Array<<root>.In<kotlin.String>> origin=null
