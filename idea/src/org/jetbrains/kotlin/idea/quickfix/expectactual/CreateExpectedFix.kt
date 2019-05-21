@@ -74,25 +74,37 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
             // For function we allow it, because overloads are possible
             if (compatibility.isNotEmpty() && declaration !is KtFunction) return emptyList()
 
-            val containingClass = declaration.containingClassOrObject
-            val expectedContainingClass = containingClass?.liftToExpected() as? KtClassOrObject
-            if (containingClass != null && expectedContainingClass == null) {
-                // In this case fix should be invoked on containingClass
-                return emptyList()
-            }
+            val (actualDeclaration, expectedContainingClass) = findFirstActualWithExpectedClass(declaration)
+            if (compatibility.isNotEmpty() && actualDeclaration !is KtFunction) return emptyList()
+
             // If there is already an expected class, we suggest only for its module,
             // otherwise we suggest for all relevant expected modules
             val expectedModules = expectedContainingClass?.module?.let { listOf(it) }
-                ?: declaration.module?.implementedModules
+                ?: actualDeclaration.module?.implementedModules
                 ?: return emptyList()
-            return when (declaration) {
-                is KtClassOrObject -> expectedModules.map { CreateExpectedClassFix(declaration, expectedContainingClass, it) }
-                is KtFunction -> expectedModules.map { CreateExpectedFunctionFix(declaration, expectedContainingClass, it) }
-                is KtProperty, is KtParameter -> expectedModules.map { CreateExpectedPropertyFix(declaration, expectedContainingClass, it) }
+            return when (actualDeclaration) {
+                is KtClassOrObject -> expectedModules.map { CreateExpectedClassFix(actualDeclaration, expectedContainingClass, it) }
+                is KtFunction -> expectedModules.map { CreateExpectedFunctionFix(actualDeclaration, expectedContainingClass, it) }
+                is KtProperty, is KtParameter -> expectedModules.map {
+                    CreateExpectedPropertyFix(
+                        actualDeclaration,
+                        expectedContainingClass,
+                        it
+                    )
+                }
                 else -> emptyList()
             }
         }
     }
+}
+
+private tailrec fun findFirstActualWithExpectedClass(declaration: KtNamedDeclaration): Pair<KtNamedDeclaration, KtClassOrObject?> {
+    val containingClass = declaration.containingClassOrObject
+    val expectedContainingClass = containingClass?.liftToExpected() as? KtClassOrObject
+    return if (containingClass != null && expectedContainingClass == null)
+        findFirstActualWithExpectedClass(containingClass)
+    else
+        declaration to expectedContainingClass
 }
 
 class CreateExpectedClassFix(
