@@ -2,10 +2,10 @@ import java.io.FileReader
 import java.net.URL
 import java.util.*
 
-val includeKotlinUltimate: Boolean = rootProject.findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
+val isJointBuild: Boolean = rootProject.findProperty("cidrPluginsEnabled")?.toString()?.toBoolean() == true
 
 fun locatePropertiesFile(): File {
-    val basePropertiesFilePath = if (includeKotlinUltimate) { // in composite build:
+    val basePropertiesFilePath = if (isJointBuild) { // in joint build:
         "kotlin-ultimate/versions.properties"
     } else { // in standalone build:
         "versions.properties"
@@ -55,7 +55,7 @@ rootProject.extra["appcodePluginDir"] = artifactsForCidrDir.resolve("appcodePlug
 
 rootProject.extra["cidrUnscrambledJarDir"] = rootProject.extra["clionUnscrambledJarDir"]
 
-if (!includeKotlinUltimate) { // setup additional properties that are required only when running in standalone mode:
+if (!isJointBuild) { // setup additional properties that are required only when running in standalone mode:
     val useAppCodeForCommon = findProperty("useAppCodeForCommon")?.toString()?.toBoolean() ?: false
     if (useAppCodeForCommon) {
         rootProject.extra["cidrIdeDir"] = externalDepsDir("cidr", "appcode-$appcodeVersion")
@@ -114,7 +114,7 @@ fun cidrProductFriendlyVersion(productName: String, productVersion: String): Str
 }
 
 fun cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginNumber: String): String {
-    val cidrPluginVersion = if (includeKotlinUltimate) { // in composite build:
+    val cidrPluginVersion = if (isJointBuild) { // in joint build:
         // take it from Big Kotlin
         val buildNumber: String by rootProject.extra
         buildNumber

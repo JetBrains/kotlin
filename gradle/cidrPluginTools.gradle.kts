@@ -52,8 +52,8 @@ val platformDepsJarName = "kotlinNative-platformDeps.jar"
 
 val pluginXmlPath = "META-INF/plugin.xml"
 
-val Project.includeKotlinUltimate
-    get() = rootProject.findProperty("includeKotlinUltimate")?.toString()?.toBoolean() == true
+val Project.isJointBuild
+    get() = rootProject.findProperty("cidrPluginsEnabled")?.toString()?.toBoolean() == true
 
 fun Logger.kotlinInfo(message: () -> String) {
     if (isInfoEnabled) { info("[KOTLIN] ${message()}") }
@@ -106,7 +106,7 @@ fun Project.guessCidrProductNameFromProject(lowerCase: Boolean): String = with(n
 // --------------------------------------------------
 
 fun ideaPluginJarDep(project: Project): Any = with(project) {
-    return if (includeKotlinUltimate) {
+    return if (isJointBuild) {
         // depend on the artifact to be build
         dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
     } else {
@@ -120,7 +120,7 @@ fun ideaPluginJarDep(project: Project): Any = with(project) {
 
 fun addIdeaNativeModuleDeps(project: Project) = with(project) {
     dependencies {
-        if (includeKotlinUltimate) {
+        if (isJointBuild) {
             // Gradle projects with Kotlin/Native-specific logic
             // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
             add("compile", project(":idea:idea-native"))
@@ -207,7 +207,7 @@ fun packageCidrPlugin(
 
         includeProjectTemplates(project(predecessorProjectName))
 
-        val ideaPluginDir = if (includeKotlinUltimate) {
+        val ideaPluginDir = if (isJointBuild) {
             dependsOn(":ideaPlugin")
             // use IDEA plugin dir from Big Kotlin
             val ideaPluginDir: File by rootProject.extra
@@ -428,7 +428,7 @@ fun Project.getTemplateParameters(): Map<String, String> {
 }
 
 val Project.kotlinBuildNumberByIdeaPlugin: String
-    get() = if (includeKotlinUltimate) {
+    get() = if (isJointBuild) {
         // take it from Big Kotlin
         val buildNumber: String by rootProject.extra
         buildNumber
