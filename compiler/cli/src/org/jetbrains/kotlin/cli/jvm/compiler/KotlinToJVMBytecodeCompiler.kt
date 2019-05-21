@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -116,6 +113,45 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
+    private fun Module.getSourceFiles(
+        environment: KotlinCoreEnvironment,
+        localFileSystem: VirtualFileSystem,
+        multiModuleChunk: Boolean,
+        buildFile: File?
+    ): List<KtFile> {
+        return if (multiModuleChunk) {
+            // filter out source files from other modules
+            assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
+            val (moduleSourceDirs, moduleSourceFiles) =
+                getBuildFilePaths(buildFile, getSourceFiles())
+                    .mapNotNull(localFileSystem::findFileByPath)
+                    .partition(VirtualFile::isDirectory)
+
+            environment.getSourceFiles().filter { file ->
+                val virtualFile = file.virtualFile
+                virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
+                    VfsUtilCore.isAncestor(dir, virtualFile, true)
+                }
+            }
+        } else {
+            environment.getSourceFiles()
+        }
+    }
+
+    private fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?): CompilerConfiguration {
+        return copy().apply {
+            if (buildFile != null) {
+                fun checkKeyIsNull(key: CompilerConfigurationKey<*>, name: String) {
+                    assert(get(key) == null) { "$name should be null, when buildFile is used" }
+                }
+
+                checkKeyIsNull(JVMConfigurationKeys.OUTPUT_DIRECTORY, "OUTPUT_DIRECTORY")
+                checkKeyIsNull(JVMConfigurationKeys.OUTPUT_JAR, "OUTPUT_JAR")
+                put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
+            }
+        }
+    }
+
     internal fun compileModules(environment: KotlinCoreEnvironment, buildFile: File?, chunk: List<Module>): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -150,37 +186,9 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-            val ktFiles = if (chunk.size > 1) {
-                // filter out source files from other modules
-                assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
-                val (moduleSourceDirs, moduleSourceFiles) =
-                    getBuildFilePaths(buildFile, module.getSourceFiles())
-                        .mapNotNull(localFileSystem::findFileByPath)
-                        .partition(VirtualFile::isDirectory)
-
-                environment.getSourceFiles().filter { file ->
-                    val virtualFile = file.virtualFile
-                    virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
-                        VfsUtilCore.isAncestor(dir, virtualFile, true)
-                    }
-                }
-            } else {
-                environment.getSourceFiles()
-            }
-
+            val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
-
-            val moduleConfiguration = projectConfiguration.copy().apply {
-                if (buildFile != null) {
-                    fun checkKeyIsNull(key: CompilerConfigurationKey<*>, name: String) {
-                        assert(get(key) == null) { "$name should be null, when buildFile is used" }
-                    }
-
-                    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_DIRECTORY, "OUTPUT_DIRECTORY")
-                    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_JAR, "OUTPUT_JAR")
-                    put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
-                }
-            }
+            val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
             outputs[module] = generate(environment, moduleConfiguration, result, ktFiles, module)
         }
@@ -280,37 +288,9 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-            val ktFiles = if (chunk.size > 1) {
-                // filter out source files from other modules
-                assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
-                val (moduleSourceDirs, moduleSourceFiles) =
-                    getBuildFilePaths(buildFile, module.getSourceFiles())
-                        .mapNotNull(localFileSystem::findFileByPath)
-                        .partition(VirtualFile::isDirectory)
-
-                environment.getSourceFiles().filter { file ->
-                    val virtualFile = file.virtualFile
-                    virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
-                        VfsUtilCore.isAncestor(dir, virtualFile, true)
-                    }
-                }
-            } else {
-                environment.getSourceFiles()
-            }
-
+            val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
-
-            val moduleConfiguration = projectConfiguration.copy().apply {
-                if (buildFile != null) {
-                    fun checkKeyIsNull(key: CompilerConfigurationKey<*>, name: String) {
-                        assert(get(key) == null) { "$name should be null, when buildFile is used" }
-                    }
-
-                    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_DIRECTORY, "OUTPUT_DIRECTORY")
-                    checkKeyIsNull(JVMConfigurationKeys.OUTPUT_JAR, "OUTPUT_JAR")
-                    put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
-                }
-            }
+            val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
             val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
