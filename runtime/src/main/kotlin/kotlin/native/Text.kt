@@ -42,7 +42,6 @@ public fun ByteArray.stringFromUtf8OrThrow() : String {
  * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
 @Deprecated("Use decodeToString instead", ReplaceWith("decodeToString(start, start + size, throwOnInvalidSequence = true)"))
-@UseExperimental(ExperimentalStdlibApi::class)
 public fun ByteArray.stringFromUtf8OrThrow(start: Int = 0, size: Int = this.size) : String {
     checkBoundsIndexes(start, start + size, this.size)
     try {
@@ -92,7 +91,6 @@ public fun String.toUtf8OrThrow() : ByteArray {
  * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
 @Deprecated("Use encodeToByteArray instead", ReplaceWith("encodeToByteArray(start, start + size, throwOnInvalidSequence = true)"))
-@UseExperimental(ExperimentalStdlibApi::class)
 public fun String.toUtf8OrThrow(start: Int = 0, size: Int = this.length) : ByteArray {
     checkBoundsIndexes(start, start + size, this.length)
     try {

@@ -71,7 +71,6 @@ internal fun ThrowNotImplementedError(): Nothing {
 
 @ExportForCppRuntime
 internal fun ThrowCharacterCodingException(): Nothing {
-    @UseExperimental(ExperimentalStdlibApi::class)
     throw CharacterCodingException()
 }
 
