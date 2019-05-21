@@ -241,7 +241,6 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
  * Concatenates characters in this [CharArray] into a String.
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 public actual fun CharArray.concatToString(): String = fromCharArray(this, 0, size)
 
 /**
@@ -254,7 +253,6 @@ public actual fun CharArray.concatToString(): String = fromCharArray(this, 0, si
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): String {
     checkBoundsIndexes(startIndex, endIndex, size)
     return fromCharArray(this, startIndex, endIndex - startIndex)
@@ -270,7 +268,6 @@ public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): Stri
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 public actual fun String.toCharArray(startIndex: Int, endIndex: Int): CharArray {
     checkBoundsIndexes(startIndex, endIndex, length)
     return toCharArray(this, startIndex, endIndex - startIndex)
@@ -282,7 +279,6 @@ public actual fun String.toCharArray(startIndex: Int, endIndex: Int): CharArray 
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 public actual fun ByteArray.decodeToString(): String = stringFromUtf8Impl(0, size)
 
 /**
@@ -297,7 +293,6 @@ public actual fun ByteArray.decodeToString(): String = stringFromUtf8Impl(0, siz
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 public actual fun ByteArray.decodeToString(startIndex: Int, endIndex: Int, throwOnInvalidSequence: Boolean): String {
     checkBoundsIndexes(startIndex, endIndex, size)
     return if (throwOnInvalidSequence)
@@ -312,7 +307,6 @@ public actual fun ByteArray.decodeToString(startIndex: Int, endIndex: Int, throw
  * Any malformed char sequence is replaced by the replacement byte sequence.
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 public actual fun String.encodeToByteArray(): ByteArray = toUtf8Impl(0, length)
 
 /**
@@ -327,7 +321,6 @@ public actual fun String.encodeToByteArray(): ByteArray = toUtf8Impl(0, length)
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 public actual fun String.encodeToByteArray(startIndex: Int, endIndex: Int, throwOnInvalidSequence: Boolean): ByteArray {
     checkBoundsIndexes(startIndex, endIndex, length)
     return if (throwOnInvalidSequence)

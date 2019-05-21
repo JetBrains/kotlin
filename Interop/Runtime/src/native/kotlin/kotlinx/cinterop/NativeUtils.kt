@@ -20,9 +20,9 @@ import kotlin.native.internal.Intrinsic
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
-internal fun decodeFromUtf8(bytes: ByteArray): String = bytes.stringFromUtf8()
+internal fun decodeFromUtf8(bytes: ByteArray): String = bytes.decodeToString()
 
-fun encodeToUtf8(str: String): ByteArray = str.toUtf8()
+fun encodeToUtf8(str: String): ByteArray = str.encodeToByteArray()
 
 @TypedIntrinsic(IntrinsicType.INTEROP_BITS_TO_FLOAT)
 external fun bitsToFloat(bits: Int): Float
