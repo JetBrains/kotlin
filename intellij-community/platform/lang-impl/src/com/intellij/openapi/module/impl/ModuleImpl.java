@@ -107,7 +107,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     }
 
     for (String optionName : options.keySet()) {
-      if ("workspace".equals(optionName)) {
+      if ("workspace".equals(optionName) || "overrides".equals(optionName)) {
         continue;
       }
 
