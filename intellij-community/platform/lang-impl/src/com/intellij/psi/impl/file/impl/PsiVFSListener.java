@@ -20,6 +20,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -62,15 +63,18 @@ public class PsiVFSListener implements BulkFileListener {
     myManager = (PsiManagerImpl) PsiManager.getInstance(project);
     myFileManager = (FileManagerImpl) myManager.getFileManager();
 
-    MessageBusConnection connection = project.getMessageBus().connect();
-    connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
-    connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
-      @Override
-      public void fileTypesChanged(@NotNull FileTypeEvent e) {
-        myFileManager.processFileTypesChanged();
-      }
+    // events must handled only after pre-startup (https://upsource.jetbrains.com/intellij/review/IDEA-CR-47395)
+    StartupManager.getInstance(project).registerPreStartupActivity(() -> {
+      MessageBusConnection connection = project.getMessageBus().connect();
+      connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
+      connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
+        @Override
+        public void fileTypesChanged(@NotNull FileTypeEvent e) {
+          myFileManager.processFileTypesChanged();
+        }
+      });
+      connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerAdapter());
     });
-    connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerAdapter());
   }
 
   /**
