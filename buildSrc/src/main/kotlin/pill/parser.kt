@@ -130,7 +130,7 @@ fun parse(project: Project, libraries: List<PLibrary>, context: ParserContext): 
  */
 private val CONFIGURATION_MAPPING = mapOf(
     listOf("runtime") to Scope.RUNTIME,
-    listOf("compile") to Scope.COMPILE,
+    listOf("compile", "embedded") to Scope.COMPILE,
     listOf("compileOnly") to Scope.PROVIDED
 )
 
