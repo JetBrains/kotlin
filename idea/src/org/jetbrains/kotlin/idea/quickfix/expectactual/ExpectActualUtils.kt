@@ -207,7 +207,7 @@ internal fun KtPsiFactory.generateClassOrObject(
     if (
         generatedClass is KtClass
         && originalPrimaryConstructor != null
-        && (!generateExpectClass || originalClass.hasInlineModifier() || originalPrimaryConstructor.hasActualModifier())
+        && (!generateExpectClass || originalPrimaryConstructor.hasActualModifier())
         && !originalPrimaryConstructor.exists()
     ) {
         val descriptor = originalPrimaryConstructor.toDescriptor()
