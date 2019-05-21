@@ -434,6 +434,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectNestedClass/");
     }
 
+    @TestMetadata("expectPrimaryConstructor")
+    public void testExpectPrimaryConstructor() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectPrimaryConstructor/");
+    }
+
     @TestMetadata("expectProperty")
     public void testExpectProperty() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectProperty/");

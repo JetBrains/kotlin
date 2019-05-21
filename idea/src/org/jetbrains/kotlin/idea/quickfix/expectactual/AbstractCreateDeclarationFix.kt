@@ -77,7 +77,12 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                     }
                 }
                 val generatedDeclaration = when {
-                    targetClass != null -> targetClass.addDeclaration(generated as KtNamedDeclaration)
+                    targetClass != null -> {
+                        if (generated is KtPrimaryConstructor && targetClass is KtClass)
+                            targetClass.createPrimaryConstructorIfAbsent().replace(generated)
+                        else
+                            targetClass.addDeclaration(generated as KtNamedDeclaration)
+                    }
                     else -> targetFile.add(generated) as KtElement
                 }
                 val reformatted = CodeStyleManager.getInstance(project).reformat(generatedDeclaration)
