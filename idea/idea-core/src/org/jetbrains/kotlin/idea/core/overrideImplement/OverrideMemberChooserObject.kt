@@ -344,13 +344,16 @@ private fun generateFunction(
     }
 }
 
+private fun OverrideMemberChooserObject.BodyType.effectiveBodyType(canBeEmpty: Boolean): OverrideMemberChooserObject.BodyType =
+    if (!canBeEmpty && this == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else this
+
 fun generateUnsupportedOrSuperCall(
     project: Project,
     descriptor: CallableMemberDescriptor,
     bodyType: OverrideMemberChooserObject.BodyType,
     canBeEmpty: Boolean = true
 ): String {
-    when (if (!canBeEmpty && bodyType == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else bodyType) {
+    when (bodyType.effectiveBodyType(canBeEmpty)) {
         EMPTY_OR_TEMPLATE -> return ""
         FROM_TEMPLATE -> {
             val templateKind = if (descriptor is FunctionDescriptor) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER
