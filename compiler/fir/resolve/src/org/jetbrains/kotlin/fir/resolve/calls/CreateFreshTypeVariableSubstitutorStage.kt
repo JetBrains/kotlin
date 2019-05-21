@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
-    override fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val declaration = candidate.symbol.firUnsafe<FirDeclaration>()
         if (declaration !is FirCallableMemberDeclaration || declaration.typeParameters.isEmpty()) {
             candidate.substitutor = ConeSubstitutor.Empty
@@ -35,7 +35,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) {
-            sink.reportApplicability(CandidateApplicability.INAPPLICABLE) //TODO: auto report it
+            sink.yieldApplicability(CandidateApplicability.INAPPLICABLE) //TODO: auto report it
             return
         }
 

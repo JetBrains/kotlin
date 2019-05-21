@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import java.util.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 
 class CallInfo(
     val callKind: CallKind,
@@ -55,14 +58,33 @@ class CallInfo(
 
 interface CheckerSink {
     fun reportApplicability(new: CandidateApplicability)
+    suspend fun yield()
+    suspend fun yieldApplicability(new: CandidateApplicability) {
+        reportApplicability(new)
+        yield()
+    }
+
     val components: InferenceComponents
+
+    suspend fun yieldIfNeed()
 }
 
 
-class CheckerSinkImpl(override val components: InferenceComponents) : CheckerSink {
+class CheckerSinkImpl(override val components: InferenceComponents, var continuation: Continuation<Unit>? = null) : CheckerSink {
     var current = CandidateApplicability.RESOLVED
     override fun reportApplicability(new: CandidateApplicability) {
         if (new < current) current = new
+    }
+
+    override suspend fun yield() = kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn<Unit> {
+        continuation = it
+        kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+    }
+
+    override suspend fun yieldIfNeed() {
+        if (current < CandidateApplicability.SYNTHETIC_RESOLVED) {
+            yield()
+        }
     }
 }
 
@@ -627,6 +649,9 @@ enum class CandidateApplicability {
     RESOLVED
 }
 
+
+var ID = ""
+
 class CandidateCollector(val callInfo: CallInfo, val components: InferenceComponents) {
 
     val groupNumbers = mutableListOf<Int>()
@@ -648,12 +673,30 @@ class CandidateCollector(val callInfo: CallInfo, val components: InferenceCompon
     ): CandidateApplicability {
 
         val sink = CheckerSinkImpl(components)
+        var finished = false
+        sink.continuation = suspend {
+            for (stage in callInfo.callKind.sequence()) {
+                stage.check(candidate, sink, callInfo)
+            }
+        }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
+            override val context: CoroutineContext
+                get() = EmptyCoroutineContext
+
+            override fun resumeWith(result: Result<Unit>) {
+                result.exceptionOrNull()?.let { throw it }
+                finished = true
+            }
+        })
 
 
-        callInfo.callKind.sequence().forEach {
-            it.check(candidate, sink, callInfo)
+
+
+        while (!finished) {
+            sink.continuation!!.resume(Unit)
+            if (sink.current < CandidateApplicability.SYNTHETIC_RESOLVED) {
+                break
+            }
         }
-
         return sink.current
     }
 
