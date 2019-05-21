@@ -351,9 +351,6 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
 
