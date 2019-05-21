@@ -47,7 +47,7 @@ private enum class Visibility {
     ABI, NON_ABI
 }
 
-private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val compilationUnit: CompilationUnitTree,  val sourceStructure: SourceFileStructure) :
+private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val compilationUnit: CompilationUnitTree, val sourceStructure: SourceFileStructure) :
     SimpleTreeVisitor<Void, Visibility>() {
 
     val constantTreeVisitor = ConstantTreeVisitor(sourceStructure)
@@ -113,7 +113,9 @@ private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val 
             val flags = node.modifiers.getFlags()
 
             node.sym.constValue?.let { _ ->
-                constantTreeVisitor.scan(trees.getPath(compilationUnit, node.init), null)
+                if (!constantTreeVisitor.isTrivialLiteralExpression(node.init)) {
+                    constantTreeVisitor.scan(trees.getPath(compilationUnit, node.init), null)
+                }
             }
             if (flags.contains(Modifier.PRIVATE)) Visibility.NON_ABI else Visibility.ABI
         } else {
@@ -196,12 +198,23 @@ private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val 
     }
 }
 
+private val literalKinds = setOf(
+    Tree.Kind.BOOLEAN_LITERAL,
+    Tree.Kind.INT_LITERAL,
+    Tree.Kind.LONG_LITERAL,
+    Tree.Kind.DOUBLE_LITERAL,
+    Tree.Kind.FLOAT_LITERAL,
+    Tree.Kind.CHAR_LITERAL,
+    Tree.Kind.STRING_LITERAL
+)
+
 /**
  * Visits a constant initializer expression, and extracts all references to constants, either through field select (A.MY_FIELD) or
  * identifier (MY_FIELD, which happens if A.MY_FIELD is statically imported).
  */
 private class ConstantTreeVisitor(val sourceStructure: SourceFileStructure) : TreePathScanner<Void, Void>() {
 
+    fun isTrivialLiteralExpression(tree: Tree) = tree.kind in literalKinds
 
     override fun visitAssignment(node: AssignmentTree, p: Void?): Void? {
         // Annotation element values are in "element = expression" form, and we only want to analyze "expression" part. So ignore variable.
