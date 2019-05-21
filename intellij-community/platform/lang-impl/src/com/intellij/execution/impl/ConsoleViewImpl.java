@@ -65,7 +65,6 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.UIUtil;
-import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1067,10 +1066,14 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     myEditor.getFoldingModel().runBatchFoldingOperation(() -> {
       Document document = myEditor.getDocument();
 
-      ConsoleFolding lastFolding = null;
-      int lastStartLine = -1;
+      FoldRegion existingRegion =
+        startLine > 0 ? myEditor.getFoldingModel().getCollapsedRegionAtOffset(document.getLineStartOffset(startLine - 1)) : null;
+      ConsoleFolding lastFolding = USED_FOLDING_KEY.get(existingRegion);
+      int lastStartLine = lastFolding == null ? Integer.MAX_VALUE :
+                          existingRegion.getStartOffset() == 0 ? 0 :
+                          document.getLineNumber(existingRegion.getStartOffset()) + 1;
 
-      for (int line = Math.max(0, startLine); line <= endLine; line++) {
+      for (int line = startLine; line <= endLine; line++) {
         /*
         Grep Console plugin allows to fold empty lines. We need to handle this case in a special way.
 
@@ -1086,6 +1089,9 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
         ConsoleFolding next = line < endLine ? foldingForLine(line, document) : null;
         if (next != lastFolding) {
           if (lastFolding != null) {
+            if (line > startLine && existingRegion != null && lastStartLine < startLine) {
+              myEditor.getFoldingModel().removeFoldRegion(existingRegion);
+            }
             addFoldRegion(document, lastFolding, lastStartLine, line - 1);
           }
           lastFolding = next;
@@ -1094,6 +1100,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       }
     });
   }
+
+  private static final Key<ConsoleFolding> USED_FOLDING_KEY = Key.create("USED_FOLDING_KEY");
 
   private void addFoldRegion(@NotNull Document document, @NotNull ConsoleFolding folding, int startLine, int endLine) {
     List<String> toFold = new ArrayList<>(endLine - startLine + 1);
@@ -1109,6 +1117,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     FoldRegion region = placeholder == null ? null : myEditor.getFoldingModel().addFoldRegion(oStart, oEnd, placeholder);
     if (region != null) {
       region.setExpanded(false);
+      region.putUserData(USED_FOLDING_KEY, folding);
     }
   }
 
