@@ -33,7 +33,7 @@ public class GradleSystemRunningSettings {
   @Deprecated
   public static GradleSystemRunningSettings getInstance() {
     if (!alreadyLogged) {
-      LOG.error("This class is deprecated please migrate to GradleProjectSettings");
+      LOG.warn("This class is deprecated please migrate to GradleProjectSettings");
       alreadyLogged = true;
     }
     return new GradleSystemRunningSettings();
