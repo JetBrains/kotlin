@@ -116,8 +116,8 @@ fun cidrProductFriendlyVersion(productName: String, productVersion: String): Str
 fun cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginNumber: String): String {
     val cidrPluginVersion = if (isJointBuild) { // in joint build:
         // take it from Big Kotlin
-        val buildNumber: String by rootProject.extra
-        buildNumber
+        val buildNumber: String? by rootProject.extra
+        buildNumber ?: "unknownBuildNumber"
     } else { // in standalone build:
         val ideaPluginForCidrBuildNumber: String by rootProject.extra
         ideaPluginForCidrBuildNumber
