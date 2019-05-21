@@ -255,7 +255,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
             return this
         }
-    }, session)
+    }, session, jump)
 
     private var qualifierStack = mutableListOf<Name>()
     private var qualifierPartsToDrop = 0

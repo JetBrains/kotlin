@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -37,7 +38,8 @@ fun resolveArgumentExpression(
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     return when (argument) {
-        is FirQualifiedAccessExpression, is FirFunctionCall -> resolvePlainExpressionArgument(
+        is FirFunctionCall -> resolveSubCallArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+        is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
             csBuilder,
             argument,
             expectedType,
@@ -76,6 +78,21 @@ fun resolveArgumentExpression(
         )
         else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
     }
+}
+
+fun resolveSubCallArgument(
+    csBuilder: ConstraintSystemBuilder,
+    argument: FirFunctionCall,
+    expectedType: ConeKotlinType,
+    sink: CheckerSink,
+    isReceiver: Boolean,
+    isSafeCall: Boolean,
+    typeProvider: (FirExpression) -> FirTypeRef?
+) {
+    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+    val type = sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe<ConeKotlinType>()
+    val argumentType = candidate.substitutor.substituteOrSelf(type)
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
 }
 
 fun resolvePlainExpressionArgument(

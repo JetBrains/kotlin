@@ -36,22 +36,40 @@ fun Candidate.computeCompletionMode(
     return when {
         // Consider call foo(bar(x)), if return type of bar is a proper one, then we can complete resolve for bar => full completion mode
         // Otherwise, we shouldn't complete bar until we process call foo
-        system.getBuilder().isProperType(currentReturnType) -> KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
+        csBuilder.isProperType(currentReturnType) -> KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
 
         // Nested call is connected with the outer one through the UPPER constraint (returnType <: expectedOuterType)
         // This means that there will be no new LOWER constraints =>
         //   it's possible to complete call now if there are proper LOWER constraints
-        system.getBuilder().isTypeVariable(currentReturnType) ->
+        csBuilder.isTypeVariable(currentReturnType) ->
             if (hasProperNonTrivialLowerConstraints(components, currentReturnType))
                 KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
             else
                 KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
+
+        // Return type has proper equal constraints => there is no need in the outer call
+        containsTypeVariablesWithProperEqualConstraints(components, currentReturnType) -> KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
 
         else -> KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
     }
 }
 
 val Candidate.csBuilder get() = system.getBuilder()
+
+private fun Candidate.containsTypeVariablesWithProperEqualConstraints(components: InferenceComponents, type: ConeKotlinType): Boolean =
+    with(components.ctx){
+        for ((variableConstructor, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
+            if (!type.contains { it.typeConstructor() == variableConstructor }) continue
+
+            val constraints = variableWithConstraints.constraints
+            val onlyProperEqualConstraints =
+                constraints.isNotEmpty() && constraints.all { it.kind.isEqual() && csBuilder.isProperType(it.type) }
+
+            if (!onlyProperEqualConstraints) return false
+        }
+
+        return true
+    }
 
 private fun Candidate.hasProperNonTrivialLowerConstraints(components: InferenceComponents, typeVariable: ConeKotlinType): Boolean {
     assert(csBuilder.isTypeVariable(typeVariable)) { "$typeVariable is not a type variable" }

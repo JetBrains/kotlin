@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -45,7 +46,7 @@ open class ConeTypeVariable(name: String) : TypeVariableMarker {
     val defaultType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
 }
 
-class InferenceComponents(val ctx: TypeSystemInferenceExtensionContextDelegate, val session: FirSession) {
+class InferenceComponents(val ctx: TypeSystemInferenceExtensionContextDelegate, val session: FirSession, val returnTypeCalculator: ReturnTypeCalculator) {
     private val approximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {
             return ConeClassErrorType(message)
@@ -59,5 +60,6 @@ class InferenceComponents(val ctx: TypeSystemInferenceExtensionContextDelegate, 
     fun createConstraintSystem(): NewConstraintSystemImpl {
         return NewConstraintSystemImpl(injector, ctx)
     }
+
 }
 
