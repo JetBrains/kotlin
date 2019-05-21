@@ -3,6 +3,7 @@
 package com.intellij.psi.impl.source.codeStyle;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.diagnostic.PluginException;
 import com.intellij.formatting.*;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.*;
@@ -13,6 +14,7 @@ import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
@@ -103,8 +105,11 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
         try {
           result = postFormatProcessor.processElement(result, settingsForFile);
         }
-        catch (Exception e) {
-          LOG.error("Cannot process element using extension \"" + postFormatProcessor + '"', e);
+        catch (ProcessCanceledException e) {
+          throw e;
+        }
+        catch (Throwable e) {
+          LOG.error(PluginException.createByClass(e, postFormatProcessor.getClass()));
         }
       }
     }
