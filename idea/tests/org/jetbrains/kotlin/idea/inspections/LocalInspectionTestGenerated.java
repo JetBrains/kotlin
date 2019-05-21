@@ -7757,46 +7757,46 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
-    @TestMetadata("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection")
+    @TestMetadata("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceManualRangeWithIndicesCallsInspection extends AbstractLocalInspectionTest {
+    public static class ReplaceManualRangeWithIndicesCalls extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInReplaceManualRangeWithIndicesCallsInspection() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        public void testAllFilesPresentInReplaceManualRangeWithIndicesCalls() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("forNotTarget.kt")
         public void testForNotTarget() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/forNotTarget.kt");
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls/forNotTarget.kt");
         }
 
         @TestMetadata("indexInLvalue.kt")
         public void testIndexInLvalue() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/indexInLvalue.kt");
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls/indexInLvalue.kt");
         }
 
         @TestMetadata("notUsedAsIndex.kt")
         public void testNotUsedAsIndex() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/notUsedAsIndex.kt");
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls/notUsedAsIndex.kt");
         }
 
         @TestMetadata("simpleExpression.kt")
         public void testSimpleExpression() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/simpleExpression.kt");
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls/simpleExpression.kt");
         }
 
         @TestMetadata("simpleExpressionUntil.kt")
         public void testSimpleExpressionUntil() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/simpleExpressionUntil.kt");
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls/simpleExpressionUntil.kt");
         }
 
         @TestMetadata("simpleFor.kt")
         public void testSimpleFor() throws Exception {
-            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCallsInspection/simpleFor.kt");
+            runTest("idea/testData/inspectionsLocal/replaceManualRangeWithIndicesCalls/simpleFor.kt");
         }
     }
 
