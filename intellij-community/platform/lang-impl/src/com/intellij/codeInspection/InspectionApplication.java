@@ -12,7 +12,6 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
@@ -147,7 +146,7 @@ public class InspectionApplication {
       return;
     }
 
-    Project project = openProject(projectPath);
+    Project project = ProjectUtil.openOrImport(projectPath, null, false);
     if (project == null) {
       logError("Unable to open project");
       gracefulExit();
@@ -242,12 +241,6 @@ public class InspectionApplication {
         printHelp();
       }
     }
-  }
-
-  private static Project openProject(@NotNull @SystemIndependent String projectPath) {
-    Project[] project = new Project[1];
-    TransactionGuard.getInstance().submitTransactionAndWait(() -> project[0] = ProjectUtil.openOrImport(projectPath, null, false));
-    return project[0];
   }
 
   private void runUnderProgress(@NotNull Project project,
