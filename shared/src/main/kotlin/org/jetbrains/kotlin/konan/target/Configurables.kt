@@ -104,10 +104,12 @@ interface LinuxBasedConfigurables : TargetableConfigurables, LlvmLtoFlags {
 interface LinuxConfigurables : LinuxBasedConfigurables
 interface LinuxMIPSConfigurables : LinuxBasedConfigurables
 interface RaspberryPiConfigurables : LinuxBasedConfigurables
-interface AndroidConfigurables : TargetableConfigurables
+interface AndroidConfigurables : TargetableConfigurables, LlvmLtoFlags
 
 interface WasmConfigurables : TargetableConfigurables, OptFlags, LlcFlags, LldFlags
 
+// Codegen for Zephyr calls opt and llc with predefined set of flags
+// so there is no need for OptFlags or LlcFlags.
 interface ZephyrConfigurables : TargetableConfigurables {
     val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
 }
