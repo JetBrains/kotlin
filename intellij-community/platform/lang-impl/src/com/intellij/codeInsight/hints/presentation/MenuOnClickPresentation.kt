@@ -19,7 +19,7 @@ class MenuOnClickPresentation(
 ) : StaticDelegatePresentation(presentation) {
   override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
     super.mouseClicked(e, editorPoint)
-    if (SwingUtilities.isRightMouseButton(e)) {
+    if (SwingUtilities.isRightMouseButton(e) && !SwingUtilities.isLeftMouseButton(e)) {
       val manager = project.getComponent(ActionManager::class.java)
       val actions = actionsSupplier()
       if (actions.isEmpty()) return
