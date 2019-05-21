@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.konan.util
 
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.StringReader
 import java.util.*
@@ -163,3 +164,5 @@ private fun parseDefFile(file: File?, substitutions: Map<String, String>): Tripl
 }
 
 private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
+
+fun DefFile(file: File?, target: KonanTarget) = DefFile(file, defaultTargetSubstitutions(target))
