@@ -49,6 +49,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/enum.kt");
     }
 
+    @TestMetadata("extension.kt")
+    public void testExtension() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/extension.kt");
+    }
+
     @TestMetadata("F.kt")
     public void testF() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/F.kt");
