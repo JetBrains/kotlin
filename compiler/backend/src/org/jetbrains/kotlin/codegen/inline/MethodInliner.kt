@@ -153,7 +153,7 @@ class MethodInliner(
             LocalVariablesSorter(
                 resultNode.access,
                 resultNode.desc,
-                resultNode
+                wrapWithMaxLocalCalc(resultNode)
             ), AsmTypeRemapper(remapper, result)
         )
 
