@@ -103,14 +103,14 @@ public class ExternalSystemJdkUtil {
     SdkType javaSdkType = getJavaSdkType();
 
     if (project != null) {
-      Stream<Sdk> projectSdks = Stream.concat(
-        Stream.of(ProjectRootManager.getInstance(project).getProjectSdk()),
-        Stream.of(ModuleManager.getInstance(project).getModules()).map(module -> ModuleRootManager.getInstance(module).getSdk()));
-      Sdk projectSdk = projectSdks
-        .filter(sdk -> sdk != null && sdk.getSdkType() == javaSdkType && isValidJdk(sdk.getHomePath()))
-        .findFirst().orElse(null);
-      if (projectSdk != null) {
-        return pair(USE_PROJECT_JDK, projectSdk);
+      Sdk projectJdk = findProjectJDK(project, javaSdkType);
+      if (projectJdk != null) {
+        return pair(USE_PROJECT_JDK, projectJdk);
+      }
+
+      Sdk referencedJdk = findReferencedJDK(project);
+      if (referencedJdk != null) {
+        return pair(USE_PROJECT_JDK, referencedJdk);
       }
     }
 
@@ -119,6 +119,7 @@ public class ExternalSystemJdkUtil {
     if (mostRecentSdk != null) {
       return pair(mostRecentSdk.getName(), mostRecentSdk);
     }
+
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       String javaHome = EnvironmentUtil.getEnvironmentMap().get("JAVA_HOME");
       if (isValidJdk(javaHome)) {
@@ -129,6 +130,32 @@ public class ExternalSystemJdkUtil {
     }
 
     return pair(USE_INTERNAL_JAVA, getInternalJdk());
+  }
+
+  private static Sdk findProjectJDK(@NotNull Project project, SdkType javaSdkType) {
+    Sdk projectSdk = ProjectRootManager.getInstance(project).getProjectSdk();
+    Stream<Sdk> projectSdks = Stream.concat(Stream.of(projectSdk),
+                                            Stream.of(ModuleManager.getInstance(project).getModules()).map(module -> ModuleRootManager
+                                              .getInstance(module).getSdk()));
+    return projectSdks
+      .filter(sdk -> sdk != null && sdk.getSdkType() == javaSdkType && isValidJdk(sdk.getHomePath()))
+      .findFirst().orElse(null);
+  }
+
+  private static Sdk findReferencedJDK(Project project) {
+    Sdk projectSdk = ProjectRootManager.getInstance(project).getProjectSdk();
+    if (projectSdk != null && projectSdk.getSdkType() instanceof JavaDependentSdkType) {
+      final JavaDependentSdkType sdkType = (JavaDependentSdkType)projectSdk.getSdkType();
+      final String jdkPath = FileUtil.toSystemIndependentName(new File(sdkType.getBinPath(projectSdk)).getParent());
+      return Arrays.stream(ProjectJdkTable.getInstance().getAllJdks())
+        .filter(sdk -> {
+          final String homePath = sdk.getHomePath();
+          return homePath != null && FileUtil.toSystemIndependentName(homePath).equals(jdkPath);
+        })
+        .findFirst().orElse(null);
+    } else {
+      return null;
+    }
   }
 
   @NotNull
