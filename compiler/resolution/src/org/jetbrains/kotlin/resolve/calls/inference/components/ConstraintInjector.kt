@@ -181,7 +181,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
                 if (kind == UPPER) {
                     val subType =
                         typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
-                    if (subType != null && !subType.typeConstructor().isNothingConstructor()) {
+                    if (subType != null) {
                         targetType = subType
                     }
                 }
@@ -189,7 +189,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
                 if (kind == LOWER) {
                     val superType =
                         typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
-                    if (superType != null && !superType.typeConstructor().isAnyConstructor()) { // todo rethink error reporting for Any cases
+                    if (superType != null) { // todo rethink error reporting for Any cases
                         targetType = superType
                     }
                 }

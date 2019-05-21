@@ -1,0 +1,27 @@
+package
+
+public fun </*0*/ R> choose1(/*0*/ c: Out<Out<R>>): kotlin.Unit
+public fun </*0*/ R> choose2(/*0*/ c: In<In<R>>): kotlin.Unit
+public fun </*0*/ R> choose3(/*0*/ c: Inv<Inv<R>>): kotlin.Unit
+public fun f(/*0*/ o: Out<Out<*>>, /*1*/ i: In<In<*>>, /*2*/ inv: Inv<Inv<*>>): kotlin.Unit
+
+public final class In</*0*/ in T> {
+    public constructor In</*0*/ in T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out T> {
+    public constructor Out</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
