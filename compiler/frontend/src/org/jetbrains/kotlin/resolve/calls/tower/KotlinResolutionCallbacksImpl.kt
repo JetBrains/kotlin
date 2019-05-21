@@ -265,4 +265,10 @@ class KotlinResolutionCallbacksImpl(
         trace.record(BindingContext.CAST_TYPE_USED_AS_EXPECTED_TYPE, binaryParent)
         return resultType
     }
+
+    override fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom) {
+        val atom = resolvedAtom.atom as? PSIKotlinCall ?: return
+        val context = topLevelCallContext ?: return
+        disableContractsInsideContractsBlock(atom.psiCall, resolvedAtom.candidateDescriptor, context.scope, trace)
+    }
 }

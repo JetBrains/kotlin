@@ -135,19 +135,7 @@ class CallCompleter(
         context: BasicCallResolutionContext,
         tracing: TracingStrategy
     ) {
-        context.call.callElement.safeAs<KtExpression>()?.let { callExpression ->
-            if (callExpression.isFirstStatement() && callExpression.isContractDescriptionCallPsiCheck()) {
-                if (resolvedCall?.resultingDescriptor?.isContractCallDescriptor() != true) {
-                    context.scope.ownerDescriptor
-                        .safeAs<FunctionDescriptor>()
-                        ?.getUserData(ContractProviderKey)
-                        ?.safeAs<LazyContractProvider>()
-                        ?.setContractDescription(null)
-                } else {
-                    context.trace.record(BindingContext.IS_CONTRACT_DECLARATION_BLOCK, callExpression, true)
-                }
-            }
-        }
+        disableContractsInsideContractsBlock(context.call, resolvedCall?.resultingDescriptor, context.scope, context.trace)
 
         if (resolvedCall == null || resolvedCall.isCompleted || resolvedCall.constraintSystem == null) {
             completeArguments(context, results)
