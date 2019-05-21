@@ -124,15 +124,15 @@ internal class AnnotationProcessorDependencyCollector(private val runtimeProcTyp
     }
 }
 
-private fun getSrcFiles(elements: Array<out Element?>): List<File> {
+private fun getSrcFiles(elements: Array<out Element?>): Set<File> {
     return elements.filterNotNull().mapNotNull { elem ->
         var origin = elem
         while (origin.enclosingElement != null && origin.enclosingElement !is PackageElement) {
             origin = origin.enclosingElement
         }
         val uri = (origin as? Symbol.ClassSymbol)?.sourcefile?.toUri()?.takeIf { it.isAbsolute }
-        uri?.let { File(it) }
-    }
+        uri?.let { File(it).canonicalFile }
+    }.toSet()
 }
 
 enum class DeclaredProcType {

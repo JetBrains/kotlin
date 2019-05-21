@@ -148,3 +148,17 @@ class SimpleGeneratingIfTypeDoesNotExist: SimpleProcessor() {
         return false
     }
 }
+
+open class ReportTwoOriginElements : SimpleProcessor() {
+    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
+        if (annotations.isEmpty()) return false
+
+        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach {
+            it as TypeElement
+            // Report 2 elements from the same file as originating
+            filer.createSourceFile("${it.qualifiedName}Generated", it, it).openWriter().use { it.write("") }
+        }
+
+        return false
+    }
+}
