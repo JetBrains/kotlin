@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -18,42 +17,45 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.io.File
 
-
 val IrConstructor.constructedClass get() = this.parent as IrClass
 
 val <T : IrDeclaration> T.original get() = this
 
-val IrDeclarationParent.fqNameSafe: FqName
+val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
         is IrPackageFragment -> this.fqName
-        is IrDeclaration -> this.parent.fqNameSafe.child(this.name)
-
+        is IrDeclaration -> this.parent.fqNameForIrSerialization.child(this.nameForIrSerialization)
         else -> error(this)
     }
+
+@Deprecated(
+    "Use fqNameForIrSerialization instead.",
+    ReplaceWith("fqNameForIrSerialization", "org.jetbrains.kotlin.ir.util.fqNameForIrSerialization"),
+    DeprecationLevel.ERROR
+)
+val IrDeclarationParent.fqNameSafe: FqName
+    get() = fqNameForIrSerialization
 
 val IrClass.classId: ClassId?
-    get() {
-        val parent = this.parent
-        return when (parent) {
-            is IrClass -> parent.classId?.createNestedClassId(this.name)
-            is IrPackageFragment -> ClassId.topLevel(parent.fqName.child(this.name))
-            else -> null
-        }
+    get() = when (val parent = this.parent) {
+        is IrClass -> parent.classId?.createNestedClassId(this.name)
+        is IrPackageFragment -> ClassId.topLevel(parent.fqName.child(this.name))
+        else -> null
     }
 
-val IrDeclaration.name: Name
+val IrDeclaration.nameForIrSerialization: Name
     get() = when (this) {
-        is IrSimpleFunction -> this.name
-        is IrClass -> this.name
-        is IrEnumEntry -> this.name
-        is IrProperty -> this.name
-        is IrLocalDelegatedProperty -> this.name
-        is IrField -> this.name
-        is IrVariable -> this.name
+        is IrDeclarationWithName -> this.name
         is IrConstructor -> SPECIAL_INIT_NAME
-        is IrValueParameter -> this.name
         else -> error(this)
     }
+@Deprecated(
+    "Use nameForIrSerialization instead.",
+    ReplaceWith("nameForIrSerialization", "org.jetbrains.kotlin.ir.util.nameForIrSerialization"),
+    DeprecationLevel.ERROR
+)
+val IrDeclaration.name: Name
+    get() = nameForIrSerialization
 
 private val SPECIAL_INIT_NAME = Name.special("<init>")
 
@@ -79,10 +81,10 @@ private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
 
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
-    any { it.annotationClass.fqNameSafe == fqName }
+    any { it.annotationClass.fqNameWhenAvailable == fqName }
 
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
-    firstOrNull { it.annotationClass.fqNameSafe == fqName }
+    firstOrNull { it.annotationClass.fqNameWhenAvailable == fqName }
 
 val IrDeclaration.fileEntry: SourceManager.FileEntry
     get() = parent.let {

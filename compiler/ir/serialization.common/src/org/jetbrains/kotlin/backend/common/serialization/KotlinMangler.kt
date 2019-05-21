@@ -110,7 +110,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
             return "#GENERIC${if (type.isMarkedNullable()) "?" else ""}$upperBounds"
         }
 
-        var hashString = type.getClass()?.run { fqNameSafe.asString() } ?: "<dynamic>"
+        var hashString = type.getClass()?.run { fqNameForIrSerialization.asString() } ?: "<dynamic>"
 
         when (type) {
             is IrSimpleType -> {
@@ -185,7 +185,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
 
     val IrField.symbolName: String
         get() {
-            val containingDeclarationPart = parent.fqNameSafe.let {
+            val containingDeclarationPart = parent.fqNameForIrSerialization.let {
                 if (it.isRoot) "" else "$it."
             }
             return "kfield:$containingDeclarationPart$name"
@@ -195,12 +195,12 @@ abstract class KotlinManglerImpl: KotlinMangler {
     val IrClass.typeInfoSymbolName: String
         get() {
             assert(this.isExported())
-            return "ktype:" + this.fqNameSafe.toString()
+            return "ktype:" + this.fqNameForIrSerialization.toString()
         }
 
     val IrTypeParameter.symbolName: String
         get() {
-            val containingDeclarationPart = parent.fqNameSafe
+            val containingDeclarationPart = parent.fqNameForIrSerialization
             return "ktypeparam:$containingDeclarationPart$name"
         }
 
@@ -233,14 +233,14 @@ abstract class KotlinManglerImpl: KotlinMangler {
     private val IrDeclaration.uniqName: Name
         get() = when (this) {
             is IrSimpleFunction -> Name.special("<${this.uniqFunctionName}>")
-            else -> this.name
+            else -> this.nameForIrSerialization
         }
 
     private val IrProperty.symbolName: String
         get() {
             val extensionReceiver: String = getter!!.extensionReceiverParameter?.extensionReceiverNamePart ?: ""
 
-            val containingDeclarationPart = parent.fqNameSafe.let {
+            val containingDeclarationPart = parent.fqNameForIrSerialization.let {
                 if (it.isRoot) "" else "$it."
             }
             return "kprop:$containingDeclarationPart$extensionReceiver$name"
@@ -248,7 +248,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
 
     private val IrEnumEntry.symbolName: String
         get() {
-            val containingDeclarationPart = parent.fqNameSafe.let {
+            val containingDeclarationPart = parent.fqNameForIrSerialization.let {
                 if (it.isRoot) "" else "$it."
             }
             return "kenumentry:$containingDeclarationPart$name"

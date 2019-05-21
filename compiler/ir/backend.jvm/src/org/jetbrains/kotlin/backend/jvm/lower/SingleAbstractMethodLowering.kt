@@ -79,7 +79,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                 // the `irDelegatingConstructorCall` in the constructor below would need to be modified.
                 assert(superClass.kind == ClassKind.INTERFACE) { "SAM conversion to an abstract class not allowed" }
 
-                val superClassName = superClass.fqNameSafe.pathSegments().joinToString("_") { it.toString() }
+                val superClassName = superClass.fqNameWhenAvailable!!.pathSegments().joinToString("_") { it.toString() }
                 val subclass = buildClass {
                     // TODO this is not the name some tests (e.g. kt11519) expect
                     name = Name.identifier("sam\$$superClassName\$${cachedImplementations.size + localImplementations.size}")

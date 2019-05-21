@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.FqName
 
@@ -158,5 +158,5 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
         get() = hasAnnotation("kotlin.test.AfterTest")
 
     private fun IrAnnotationContainer.hasAnnotation(fqName: String) =
-        annotations.any { it.symbol.owner.parent.fqNameSafe == FqName(fqName) }
+        annotations.any { it.symbol.owner.fqNameWhenAvailable?.parent()?.asString() == fqName }
 }

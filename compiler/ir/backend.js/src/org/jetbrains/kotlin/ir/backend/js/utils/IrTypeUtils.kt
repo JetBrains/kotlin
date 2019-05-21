@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -35,6 +35,6 @@ private fun IrTypeArgument.asString(): String = when(this) {
 
 private fun IrClassifierSymbol.asString() = when (this) {
     is IrTypeParameterSymbol -> this.owner.name.asString()
-    is IrClassSymbol -> this.owner.fqNameSafe.asString()
+    is IrClassSymbol -> this.owner.fqNameWhenAvailable!!.asString()
     else -> error("Unexpected kind of IrClassifierSymbol: " + javaClass.typeName)
 }
