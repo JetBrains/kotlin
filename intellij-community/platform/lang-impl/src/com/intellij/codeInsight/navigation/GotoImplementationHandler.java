@@ -101,20 +101,18 @@ public class GotoImplementationHandler extends GotoTargetHandler {
   public static int tryGetNavigationSourceOffsetFromGutterIcon(@NotNull Editor editor, String actionId) {
     int line = editor.getCaretModel().getVisualPosition().line;
     List<GutterMark> renderers = ((EditorGutterComponentEx)editor.getGutter()).getGutterRenderers(line);
-    if (renderers != null) {
-      List<PsiElement> elementCandidates = new ArrayList<>();
-      for (GutterMark renderer : renderers) {
-        if (renderer instanceof LineMarkerInfo.LineMarkerGutterIconRenderer) {
-          LineMarkerInfo.LineMarkerGutterIconRenderer lineMarkerRenderer = (LineMarkerInfo.LineMarkerGutterIconRenderer)renderer;
-          AnAction clickAction = ((LineMarkerInfo.LineMarkerGutterIconRenderer)renderer).getClickAction();
-          if (clickAction instanceof NavigateAction && actionId.equals(((NavigateAction)clickAction).getOriginalActionId())) {
-            elementCandidates.add(lineMarkerRenderer.getLineMarkerInfo().getElement());
-          }
+    List<PsiElement> elementCandidates = new ArrayList<>();
+    for (GutterMark renderer : renderers) {
+      if (renderer instanceof LineMarkerInfo.LineMarkerGutterIconRenderer) {
+        LineMarkerInfo.LineMarkerGutterIconRenderer lineMarkerRenderer = (LineMarkerInfo.LineMarkerGutterIconRenderer)renderer;
+        AnAction clickAction = ((LineMarkerInfo.LineMarkerGutterIconRenderer)renderer).getClickAction();
+        if (clickAction instanceof NavigateAction && actionId.equals(((NavigateAction)clickAction).getOriginalActionId())) {
+          elementCandidates.add(lineMarkerRenderer.getLineMarkerInfo().getElement());
         }
       }
-      if (elementCandidates.size() == 1) {
-        return elementCandidates.iterator().next().getTextRange().getStartOffset();
-      }
+    }
+    if (elementCandidates.size() == 1) {
+      return elementCandidates.iterator().next().getTextRange().getStartOffset();
     }
     return -1;
   }
