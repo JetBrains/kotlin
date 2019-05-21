@@ -21,29 +21,16 @@ import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 import java.io.File
 import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.system.measureNanoTime
 
-
-private fun NodeList.toList(): List<Node> {
-    val list = mutableListOf<Node>()
-    for (index in 0 until this.length) {
-        list += item(index)
-    }
-    return list
-}
-
-private val Node.childNodesList get() = childNodes.toList()
 
 private const val FAIL_FAST = true
 private const val DUMP_FIR = true
@@ -52,18 +39,9 @@ private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 private const val FIR_LOGS_PATH = "tmp/fir-logs"
 
-private data class ModuleData(
-    val name: String,
-    val qualifiedName: String,
-    val classpath: List<File>,
-    val sources: List<File>,
-    val javaSourceRoots: List<File>
-)
-
 private const val PASSES = 1
 
-class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
-
+class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private lateinit var bench: FirResolveBench
     private lateinit var dump: MultiModuleHtmlFirDump
@@ -115,7 +93,7 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
         }
     }
 
-    private fun processModule(moduleData: ModuleData) {
+    override fun processModule(moduleData: ModuleData): ProcessorAction {
         val configurationKind = ConfigurationKind.ALL
         val testJdkKind = TestJdkKind.FULL_JDK
 
@@ -138,63 +116,15 @@ class FirResolveModularizedTotalKotlinTest : KtUsefulTestCase() {
         runAnalysis(moduleData, environment)
 
         Disposer.dispose(disposable)
+        if (bench.hasFiles && FAIL_FAST) return ProcessorAction.STOP
+        return ProcessorAction.NEXT
     }
 
-    private fun loadModule(file: File): ModuleData {
-
-        val factory = DocumentBuilderFactory.newInstance()
-        factory.isIgnoringComments = true
-        factory.isIgnoringElementContentWhitespace = true
-        val builder = factory.newDocumentBuilder()
-        val document = builder.parse(file)
-        val moduleElement = document.childNodes.item(0).childNodesList.first { it.nodeType == Node.ELEMENT_NODE }
-        val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
-        val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
-        val qualifiedModuleName = outputDir.substringAfterLast("/")
-        val javaSourceRoots = mutableListOf<File>()
-        val classpath = mutableListOf<File>()
-        val sources = mutableListOf<File>()
-
-        for (index in 0 until moduleElement.childNodes.length) {
-            val item = moduleElement.childNodes.item(index)
-
-            if (item.nodeName == "classpath") {
-                val path = item.attributes.getNamedItem("path").nodeValue
-                if (path != outputDir) {
-                    classpath += File(path)
-                }
-            }
-            if (item.nodeName == "javaSourceRoots") {
-                javaSourceRoots += File(item.attributes.getNamedItem("path").nodeValue)
-            }
-            if (item.nodeName == "sources") {
-                sources += File(item.attributes.getNamedItem("path").nodeValue)
-            }
-        }
-
-        return ModuleData(moduleName, qualifiedModuleName, classpath, sources, javaSourceRoots)
-    }
-
-
-    private fun runTestOnce(pass: Int) {
+    override fun beforePass() {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
-        val testDataPath = "/Users/jetbrains/jps"
-        val root = File(testDataPath)
+    }
 
-        println("BASE PATH: ${root.absolutePath}")
-
-        val modules =
-            root.listFiles().sortedBy { it.lastModified() }.map { loadModule(it) }
-//                .sortedByDescending { it.name == "idea" }
-
-
-        for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
-            processModule(module)
-            if (bench.hasFiles && FAIL_FAST) {
-                break
-            }
-        }
-
+    override fun afterPass() {
         bench.report(System.out, errorTypeReports = false)
 
         saveReport()
