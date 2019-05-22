@@ -484,4 +484,4 @@ fun IrClass.addFakeOverrides() {
 }
 
 fun IrValueParameter.isInlineParameter() =
-    !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()
+    !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype())

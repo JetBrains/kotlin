@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineParameter
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality

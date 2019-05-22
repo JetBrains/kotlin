@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -161,11 +162,12 @@ class IrExpressionLambdaImpl(
 }
 
 fun isInlineIrExpression(argumentExpression: IrExpression) =
-    argumentExpression is IrBlock &&
-            (argumentExpression.origin == IrStatementOrigin.LAMBDA || argumentExpression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
+    when (argumentExpression) {
+        is IrBlock -> (argumentExpression.origin == IrStatementOrigin.LAMBDA || argumentExpression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
+        //TODO: support bound CR
+        is IrCallableReference -> argumentExpression.dispatchReceiver == null && argumentExpression.extensionReceiver == null
+        else -> false
+    }
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline
-
-fun IrValueParameter.isInlineParameter() =
-    !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()
