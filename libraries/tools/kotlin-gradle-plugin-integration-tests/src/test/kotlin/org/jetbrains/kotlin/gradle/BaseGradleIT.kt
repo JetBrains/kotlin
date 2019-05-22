@@ -601,30 +601,35 @@ abstract class BaseGradleIT {
      * @param assertionFileName path to xml with expected test results, relative to test resources root
      */
     fun CompiledProject.assertTestResults(
-            @TestDataFile assertionFileName: String,
-            testReportName: String
+        @TestDataFile assertionFileName: String,
+        vararg testReportNames: String
     ) {
         val projectDir = project.projectDir
-        val testReportDir = projectDir.resolve("build/test-results/$testReportName")
+        val testReportDirs = testReportNames.map { projectDir.resolve("build/test-results/$it") }
 
-        if (!testReportDir.isDirectory) {
-            error("Test report dir $testReportDir was not created")
+        testReportDirs.forEach {
+            if (!it.isDirectory) {
+                error("Test report dir $it was not created")
+            }
         }
 
-        val actualTestResults = readAndCleanupTestResults(testReportDir, projectDir)
+        val actualTestResults = readAndCleanupTestResults(testReportDirs, projectDir)
         val expectedTestResults = prettyPrintXml(resourcesRootFile.resolve(assertionFileName).readText())
 
         assertEquals(expectedTestResults, actualTestResults)
     }
 
-    private fun readAndCleanupTestResults(testReportDir: File, projectDir: File): String {
-        val files = testReportDir
-                .listFiles()
-                .filter { it.isFile && it.name.endsWith(".xml") }
-                .sortedBy {
-                    // let containing test suite be first
-                    it.name.replace(".xml", ".A.xml")
+    private fun readAndCleanupTestResults(testReportDirs: List<File>, projectDir: File): String {
+        val files = testReportDirs
+            .flatMap {
+                (it.listFiles() ?: arrayOf()).filter {
+                    it.isFile && it.name.endsWith(".xml")
                 }
+            }
+            .sortedBy {
+                // let containing test suite be first
+                it.name.replace(".xml", ".A.xml")
+            }
 
         val xmlString = buildString {
             appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
