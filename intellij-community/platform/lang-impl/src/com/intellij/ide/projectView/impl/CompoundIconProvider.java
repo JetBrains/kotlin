@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.icons.AllIcons;
@@ -8,13 +8,13 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.ElementBase;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.RowIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 /**
  * This class is intended to combine all providers for batch usages.
@@ -60,7 +60,7 @@ public final class CompoundIconProvider extends IconProvider {
       }
       if (element instanceof PsiDirectory) {
         LOG.debug("add default folder icon: ", element);
-        return ElementBase.createLayeredIcon(element, AllIcons.Nodes.Folder, flags);
+        return IconManager.getInstance().createLayeredIcon(element, AllIcons.Nodes.Folder, flags);
       }
     }
     return null;
