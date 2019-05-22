@@ -97,7 +97,7 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
         val name = npmProject.name
         val packageJson = PackageJson(
             name,
-            project.version.toString()
+            fixSemver(project.version.toString())
         )
         val npmDependencies = mutableSetOf<NpmDependency>()
         val gradleDeps = NpmGradleDependencies()
