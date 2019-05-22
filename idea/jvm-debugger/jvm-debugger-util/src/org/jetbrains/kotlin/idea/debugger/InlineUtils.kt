@@ -22,7 +22,6 @@ fun getInlineDepth(variables: List<LocalVariableProxyImpl>): Int {
         if (depth > 0) {
             return depth
         } else if (name.startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)) {
-            // TODO this heuristics doesn't support debugging inlined lambdas inside inline functions.
             return 0
         }
     }
@@ -45,6 +44,15 @@ fun getInlineDepth(variableName: String): Int {
     }
 
     return depth
+}
+
+fun dropInlineSuffix(name: String): String {
+    val depth = getInlineDepth(name)
+    if (depth == 0) {
+        return name
+    }
+
+    return name.dropLast(depth * INLINE_FUN_VAR_SUFFIX.length)
 }
 
 private fun getLocalVariableNameRegexInlineAware(name: String): Regex {

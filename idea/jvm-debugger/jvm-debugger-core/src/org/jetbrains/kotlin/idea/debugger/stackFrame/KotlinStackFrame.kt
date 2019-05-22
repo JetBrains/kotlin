@@ -129,7 +129,7 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
         val inlineDepth = getInlineDepth(variables)
         val declarationSiteThis = variables.firstOrNull { v ->
             val name = v.name()
-            name.endsWith(INLINE_FUN_VAR_SUFFIX) && name.dropInlineSuffix() == AsmUtil.INLINE_DECLARATION_SITE_THIS
+            name.endsWith(INLINE_FUN_VAR_SUFFIX) && dropInlineSuffix(name) == AsmUtil.INLINE_DECLARATION_SITE_THIS
         }
 
         if (inlineDepth > 0 && declarationSiteThis != null) {
@@ -282,7 +282,7 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
     }
 
     private fun LocalVariableProxyImpl.remapThisVariableIfNeeded(customName: String? = null): LocalVariableProxyImpl {
-        val name = this.name().dropInlineSuffix()
+        val name = dropInlineSuffix(this.name())
 
         @Suppress("ConvertToStringTemplate")
         return when {
@@ -324,15 +324,6 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
         }
 
         return label
-    }
-
-    private fun String.dropInlineSuffix(): String {
-        val depth = getInlineDepth(this)
-        if (depth == 0) {
-            return this
-        }
-
-        return dropLast(depth * INLINE_FUN_VAR_SUFFIX.length)
     }
 
     private fun LocalVariableProxyImpl.clone(name: String, label: String?): LocalVariableProxyImpl {

@@ -16,7 +16,7 @@ Compile bytecode for element
    local    = $i$f$inlineFun: int = undefined (sp = null)
    local    = element$iv$iv: double = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
    local    = it$iv: int = 1 (sp = null)
-   local    = $i$a$-inlineFun-B$foo$1: int = undefined (sp = null)
+   local    = $i$a$-inlineFun-B$foo$1$iv: int = undefined (sp = null)
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -58,7 +58,7 @@ fun isInsideInlineArgument(
                 val lambdaClassName = asmTypeForAnonymousClass(bindingContext, inlineArgument)
                     .internalName.substringAfterLast("/")
 
-                variableName == "-$functionName-$lambdaClassName"
+                dropInlineSuffix(variableName) == "-$functionName-$lambdaClassName"
             } else {
                 // For Kotlin up to 1.3.10
                 lambdaOrdinalByLocalVariable(variableName) == lambdaOrdinal
@@ -100,6 +100,7 @@ private fun Location.visibleVariables(debugProcess: DebugProcessImpl): List<Loca
     return stackFrame.visibleVariables()
 }
 
+// For Kotlin up to 1.3.10
 private fun lambdaOrdinalByLocalVariable(name: String): Int {
     try {
         val nameWithoutPrefix = name.removePrefix(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
@@ -110,6 +111,7 @@ private fun lambdaOrdinalByLocalVariable(name: String): Int {
     }
 }
 
+// For Kotlin up to 1.3.10
 private fun functionNameByLocalVariable(name: String): String {
     val nameWithoutPrefix = name.removePrefix(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
     return nameWithoutPrefix.substringAfterLast("$", "unknown")
