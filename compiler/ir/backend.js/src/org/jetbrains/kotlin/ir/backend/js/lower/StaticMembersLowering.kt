@@ -38,11 +38,10 @@ class StaticMembersLowering(val context: JsIrBackendContext) : FileLoweringPass 
                 super.visitSimpleFunction(declaration)
             }
 
-            override fun visitVariable(declaration: IrVariable) {
-                // TODO: Don't generate variables inside classes
-                if (declaration.parent is IrClass)
+            override fun visitField(declaration: IrField) {
+                if (declaration.parent is IrClass && declaration.isStatic)
                     staticDeclarationsInClasses.add(declaration)
-                super.visitVariable(declaration)
+                super.visitField(declaration)
             }
         })
 

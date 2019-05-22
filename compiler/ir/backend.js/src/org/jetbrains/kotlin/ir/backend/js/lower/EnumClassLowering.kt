@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
@@ -412,17 +414,20 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
     }
 
     private fun createEnumEntryInstanceVariables() = enumEntries.map { enumEntry ->
-        val type = enumEntry.getType(irClass).makeNullable()
-        val name = "${enumName}_${enumEntry.name.identifier}_instance"
-        val result = builder.run {
-            scope.createTmpVariable(irImplicitCast(irNull(), type), name)
+        val result = buildField {
+            name = Name.identifier("${enumName}_${enumEntry.name.identifier}_instance")
+            type = enumEntry.getType(irClass).makeNullable()
+            isStatic = true
+        }.apply {
+            parent = irClass
+            initializer = builder.run { irExprBody(irImplicitCast(irNull(), type)) }
         }
 
         enumEntry.correspondingClass?.constructors?.forEach {
             // Initialize entry instance at the beginning of constructor so it can be used inside constructor body
             (it.body as? IrBlockBody)?.apply {
                 statements.add(0, context.createIrBuilder(it.symbol).run {
-                    irSetVar(result.symbol, irGet(enumEntry.correspondingClass!!.thisReceiver!!))
+                    irSetField(null, result, irGet(enumEntry.correspondingClass!!.thisReceiver!!))
                 })
             }
         }
@@ -449,37 +454,39 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
 
     private fun createGetEntryInstanceFuns(
         initEntryInstancesFun: IrSimpleFunction,
-        entryInstances: List<IrVariable>
+        entryInstances: List<IrField>
     ) = enumEntries.mapIndexed { index, enumEntry ->
         context.enumEntryToGetInstanceFunction.getOrPut(enumEntry.symbol) {
             buildFunction(createEntryAccessorName(enumName, enumEntry), enumEntry.getType(irClass))
         }.apply {
             body = context.createIrBuilder(symbol).irBlockBody(this) {
                 +irCall(initEntryInstancesFun)
-                +irReturn(irGet(entryInstances[index]))
+                +irReturn(irGetField(null, entryInstances[index]))
             }
         }
     }
 
     private fun createInitEntryInstancesFun(
-        entryInstancesInitializedVar: IrVariable,
-        entryInstances: List<IrVariable>
+        entryInstancesInitializedField: IrField,
+        entryInstances: List<IrField>
     ) = buildFunction("${enumName}_initEntries") {
-        +irIfThen(irGet(entryInstancesInitializedVar), irReturnUnit())
-        +irSetVar(entryInstancesInitializedVar.symbol, irBoolean(true))
-        for ((entry, instanceVar) in enumEntries.zip(entryInstances)) {
-            +irSetVar(instanceVar.symbol, entry.initializerExpression!!)
+        +irIfThen(irGetField(null, entryInstancesInitializedField), irReturnUnit())
+        +irSetField(null, entryInstancesInitializedField, irBoolean(true))
+        for ((entry, instanceField) in enumEntries.zip(entryInstances)) {
+            +irSetField(null, instanceField, entry.initializerExpression!!)
         }
     }.also {
         // entry.initializerExpression can have local declarations
         it.acceptVoid(PatchDeclarationParentsVisitor(irClass))
     }
 
-    private fun createEntryInstancesInitializedVar(): IrVariable {
-        return builder.scope.createTemporaryVariable(
-            builder.irBoolean(false),
-            "${enumName}_entriesInitialized"
-        )
+    private fun createEntryInstancesInitializedVar(): IrField = buildField {
+        name = Name.identifier("${enumName}_entriesInitialized")
+        type = context.irBuiltIns.booleanType
+        isStatic = true
+    }.apply {
+        parent = irClass
+        initializer = builder.run { irExprBody(irBoolean(false)) }
     }
 
 
