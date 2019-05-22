@@ -354,6 +354,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/reifiedIsCheckWithNullable.kt");
     }
 
+    @TestMetadata("reifiedSafeAsCheck.kt")
+    public void testReifiedSafeAsCheck() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/reifiedSafeAsCheck.kt");
+    }
+
     @TestMetadata("safeAsWithMutable.kt")
     public void testSafeAsWithMutable() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/safeAsWithMutable.kt");
