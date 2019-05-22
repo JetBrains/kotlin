@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -83,11 +84,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
     private val resolverLogger =
         object : Logger {
-            override fun warning(message: String)= configuration.report(STRONG_WARNING, message)
-            override fun error(message: String) = configuration.report(ERROR, message)
-            override fun log(message: String) = configuration.report(LOGGING, message)
+            private val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            override fun warning(message: String)= collector.report(STRONG_WARNING, message)
+            override fun error(message: String) = collector.report(ERROR, message)
+            override fun log(message: String) = collector.report(LOGGING, message)
             override fun fatal(message: String): Nothing {
-                configuration.report(ERROR, message)
+                collector.report(ERROR, message)
+                (collector as? GroupingMessageCollector)?.flush()
                 exitProcess(1)
             }
         }
