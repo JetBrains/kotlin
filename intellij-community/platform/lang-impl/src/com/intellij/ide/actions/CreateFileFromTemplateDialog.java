@@ -29,6 +29,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
@@ -301,6 +302,8 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
 
       contentPanel.setApplyAction(e -> {
         String newElementName = contentPanel.getEnteredName();
+        if (StringUtil.isEmptyOrSpaces(newElementName)) return;
+
         boolean isValid = myInputValidator == null || myInputValidator.canClose(newElementName);
         if (isValid) {
           popup.closeOk(e);
