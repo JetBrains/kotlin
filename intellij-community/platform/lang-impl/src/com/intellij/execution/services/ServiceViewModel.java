@@ -14,13 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   protected final ServiceModel myModel;
   protected final ServiceModelFilter myModelFilter;
   private final ServiceViewFilter myFilter;
-  private final List<ServiceViewModelListener> myListeners = ContainerUtil.newSmartList();
+  private final List<ServiceViewModelListener> myListeners = new CopyOnWriteArrayList<>();
 
   protected ServiceViewModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, ServiceViewFilter condition) {
     myModel = model;
