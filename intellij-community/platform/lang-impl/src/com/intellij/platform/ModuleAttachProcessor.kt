@@ -2,6 +2,7 @@
 package com.intellij.platform
 
 import com.intellij.CommonBundle
+import com.intellij.configurationStore.StoreUtil
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.Module
@@ -93,7 +94,7 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
       val newProject = ProjectManagerEx.getInstanceEx().newProject(projectDir.fileName.toString(), projectDir.toString(), true, false) ?: return false
       val baseDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectDir.systemIndependentPath)
       PlatformProjectOpenProcessor.runDirectoryProjectConfigurators(baseDir, newProject)
-      newProject.save()
+      StoreUtil.saveSettings(newProject)
       runWriteAction { Disposer.dispose(newProject) }
     }
 

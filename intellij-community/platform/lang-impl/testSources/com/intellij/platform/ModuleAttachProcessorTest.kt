@@ -9,6 +9,7 @@ import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.TemporaryDirectory
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.testFramework.createOrLoadProject
+import com.intellij.util.io.createDirectories
 import kotlinx.coroutines.runBlocking
 import org.junit.ClassRule
 import org.junit.Rule
@@ -28,7 +29,7 @@ internal class ModuleAttachProcessorTest {
   val tempDirManager = TemporaryDirectory()
 
   @Test
-  fun directoryBasedStorage() = runBlocking {
+  fun `attach with iml`() = runBlocking {
     var existingProjectDir: String by Delegates.notNull()
     createOrLoadProject(tempDirManager) { existingProject ->
       existingProjectDir = existingProject.basePath!!
@@ -41,6 +42,15 @@ internal class ModuleAttachProcessorTest {
     createOrLoadProject(tempDirManager) { currentProject ->
       currentProject.stateStore.save()
       assertThat(ModuleAttachProcessor().attachToProject(currentProject, Paths.get(existingProjectDir), null)).isTrue()
+    }
+  }
+
+  @Test
+  fun `attach without iml`() = runBlocking {
+    createOrLoadProject(tempDirManager) { currentProject ->
+      currentProject.stateStore.save()
+      val existingProjectDir = tempDirManager.newPath().createDirectories()
+      assertThat(ModuleAttachProcessor().attachToProject(currentProject, existingProjectDir, null)).isTrue()
     }
   }
 }
