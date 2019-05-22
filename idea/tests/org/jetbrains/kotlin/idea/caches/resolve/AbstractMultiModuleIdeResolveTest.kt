@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.psi.PsiFile
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import com.intellij.util.io.exists
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
-import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -35,13 +36,23 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
         // This will implicitly copy all source files to temporary directory, clearing them from diagnostic markup in process
         setupMppProjectFromTextFile(testRoot)
 
-        for (tempFile in project.allKotlinFiles()) {
-            checkFile(tempFile, tempFile.findCorrespondingFileInTestDir(testRoot))
+        project.allKotlinFiles()
+
+        for (module in ModuleManager.getInstance(project).modules) {
+            for (sourceRoot in module.sourceRoots) {
+                VfsUtilCore.processFilesRecursively(sourceRoot) { file ->
+                    if (file.isDirectory) return@processFilesRecursively true
+
+                    val tempSourceKtFile = PsiManager.getInstance(project).findFile(file) as KtFile
+                    checkFile(tempSourceKtFile, tempSourceKtFile.findCorrespondingFileInTestDir(sourceRoot, testRoot))
+                    true
+                }
+            }
         }
     }
 
-    private fun KtFile.findCorrespondingFileInTestDir(testDir: File): File {
-        val tempRootPath = Paths.get(this.module!!.sourceRoots.single().path)
+    private fun KtFile.findCorrespondingFileInTestDir(containingRoot: VirtualFile, testDir: File): File {
+        val tempRootPath = Paths.get(containingRoot.path)
         val tempProjectDirPath = tempRootPath.parent
         val tempSourcePath = Paths.get(this.virtualFilePath)
 
@@ -92,4 +103,8 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
 
 abstract class AbstractHierarchicalExpectActualTest : AbstractMultiModuleIdeResolveTest() {
     override fun getTestDataPath(): String = "${PluginTestCaseBase.getTestDataPathBase()}/hierarchicalExpectActual"
+}
+
+abstract class AbstractMultiplatformAnalysisTest : AbstractMultiModuleIdeResolveTest() {
+    override fun getTestDataPath(): String = "${PluginTestCaseBase.getTestDataPathBase()}/multiplatform"
 }
