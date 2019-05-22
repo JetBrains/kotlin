@@ -118,7 +118,7 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
   }
 
   @Override
-  public ExternalSystemProjectsWatcher getExternalProjectsWatcher() {
+  public ExternalSystemProjectsWatcherImpl getExternalProjectsWatcher() {
     return myWatcher;
   }
 

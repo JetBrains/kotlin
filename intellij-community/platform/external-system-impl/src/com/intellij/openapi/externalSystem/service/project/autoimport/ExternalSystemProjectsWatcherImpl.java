@@ -94,6 +94,8 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   private final Map<String, Long/*LocalTimeStamp*/> myStartUpdatesTimeStamps = Collections.synchronizedMap(new LinkedHashMap<>());
   private final Map<String, Long/*LocalTimeStamp*/> myFileModificationTimeStamps = Collections.synchronizedMap(new LinkedHashMap<>());
 
+  private boolean myEnabledAutoUpdateProjects = true;
+
   public ExternalSystemProjectsWatcherImpl(Project project) {
     myProject = project;
     myChangedDocumentsQueue = new MergingUpdateQueue("ExternalSystemProjectsWatcher: Document changes queue",
@@ -225,6 +227,25 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     ServiceManager.getService(ExternalSystemProgressNotificationManager.class).removeNotificationListener(this);
   }
 
+  /**
+   * Disable project auto import and notification, but doesn't disable file watching.
+   * Automatically enabled after project sync
+   */
+  public void disableAutoUpdate() {
+    LOG.info("Auto update disabled");
+    myEnabledAutoUpdateProjects = false;
+    closeAllNotifications();
+  }
+
+  private void enableAutoUpdate() {
+    LOG.info("Auto update enabled");
+    myEnabledAutoUpdateProjects = true;
+  }
+
+  private boolean isEnabledAutoUpdate() {
+    return myEnabledAutoUpdateProjects;
+  }
+
   @Override
   public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
     if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
@@ -251,8 +272,17 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   public void onSuccess(@NotNull ExternalSystemTaskId id) {
     if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
       LOG.info("Refresh finished");
+      enableAutoUpdate();
       updateWatchedRoots(false);
     }
+  }
+
+  @Override
+  public void onEnd(@NotNull ExternalSystemTaskId id) {
+    if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
+      enableAutoUpdate();
+    }
+    super.onEnd(id);
   }
 
   private void scheduleUpdate(@Nullable String projectPath) {
@@ -281,6 +311,10 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     ProjectSystemId systemId = manager.getSystemId();
     boolean useAutoImport = linkedProject.second.isUseAutoImport();
 
+    if (!isEnabledAutoUpdate()) {
+      LOG.info("Update disabled for '" + projectPath + "'");
+      return;
+    }
     if (manager instanceof ExternalSystemAutoImportAware) {
       if (!updateIsNeededFor((ExternalSystemAutoImportAware)manager, projectPath)) {
         LOG.info("Update skipped for '" + projectPath + "'");
@@ -498,6 +532,13 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
       myKnownAffectedFiles.putValue(externalProjectPath, path);
     }
     return externalProjectPath;
+  }
+
+  private void closeAllNotifications() {
+    for (MyNotification notification : myNotificationMap.values()) {
+      notification.expire();
+    }
+    myNotificationMap.clear();
   }
 
   private void doUpdateNotifications(boolean close, @NotNull ProjectSystemId systemId, @NotNull String projectPath) {
