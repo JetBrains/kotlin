@@ -29,15 +29,14 @@ fun functionB() {
     functionA()
 }
 
+const val depth = 5
+
 fun main(args : Array<String>) {
     try {
         functionB()
     } catch (e: Throwable) {
         val stacktrace = e.getStackTrace()
-        if (stacktrace.size >= 3) {
-          repeat(3) {
-            checkStringFormat(stacktrace[it])
-          }
-        }
+	assert(stacktrace.size >= depth)
+	stacktrace.take(depth).forEach(::checkStringFormat)
     }
 }

@@ -2081,7 +2081,7 @@ task extend_exception(type: RunKonanTest) {
 }
 
 task check_stacktrace_format(type: RunStandaloneKonanTest) {
-    disabled = true // !isAppleTarget(project)
+    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
