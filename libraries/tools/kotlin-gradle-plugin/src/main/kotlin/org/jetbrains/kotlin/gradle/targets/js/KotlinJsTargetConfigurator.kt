@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
@@ -27,7 +28,11 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     }
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        // tests configured in KotlinJsSubTarget.configure
+        target as KotlinJsTarget
+
+        // always create jsTest task for compatibility (KT-31527)
+        // actual tests tasks for browser and nodejs will be configured in KotlinJsSubTarget.configure
+        target.testTask
     }
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {

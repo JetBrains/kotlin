@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
-import org.jetbrains.kotlin.gradle.testing.internal.getAggregatedTestTask
+import org.jetbrains.kotlin.gradle.testing.internal.allTestsTask
+import org.jetbrains.kotlin.gradle.testing.internal.getOrCreateAggregatedTestTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
@@ -25,10 +26,11 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
 
     val testTaskName get() = lowerCamelCaseName(disambiguationClassifier, testTaskNameSuffix)
     val testTask
-        get() = project.getAggregatedTestTask(
+        get() = project.getOrCreateAggregatedTestTask(
             name = testTaskName,
             description = "Run JS tests for all platforms",
-            reportName = "jsAll"
+            reportName = "jsAll",
+            parent = project.allTestsTask.doGetTask()
         )
 
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
