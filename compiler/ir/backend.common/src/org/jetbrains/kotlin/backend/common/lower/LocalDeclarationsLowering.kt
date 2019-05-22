@@ -703,7 +703,7 @@ class LocalDeclarationsLowering(
                 val oldNameStr = declaration.name.asString()
                 oldNameStr.substring(1, oldNameStr.length - 1).synthesizedName
             } else
-                declaration.name
+                declaration.name.asString().synthesizedName
 
 
         private fun collectClosureForLocalDeclarations() {
