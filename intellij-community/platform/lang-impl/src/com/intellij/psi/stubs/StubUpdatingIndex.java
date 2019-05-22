@@ -142,7 +142,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
             contentLength = -1;
           }
           else {
-            contentLength = ((FileContentImpl)inputData).getPsiFileForPsiDependentIndex().getTextLength();
+            contentLength = inputData.getPsiFile().getTextLength();
           }
           rememberIndexingStamp(file, contentLength);
 
