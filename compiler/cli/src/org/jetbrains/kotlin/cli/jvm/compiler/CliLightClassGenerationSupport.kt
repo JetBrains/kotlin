@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
@@ -45,7 +46,7 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
 
     override fun createUltraLightClassForFacade(
         facadeClassFqName: FqName,
-        searchScope: GlobalSearchScope,
+        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
         facadeFile: KtFile
     ): KtUltraLightClassForFacade? = null
 

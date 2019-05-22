@@ -24,6 +24,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -178,12 +179,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun createUltraLightClassForFacade(
         facadeClassFqName: FqName,
-        searchScope: GlobalSearchScope,
+        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
         facadeFile: KtFile
     ): KtUltraLightClassForFacade? {
-
-        val lightClassDataCache =
-            KtLightClassForFacade.FacadeStubCache.getInstance(project).get(facadeClassFqName, searchScope)
 
         if (facadeFile.isScript()) return null
 

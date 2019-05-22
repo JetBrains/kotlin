@@ -12,6 +12,7 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.asJava.classes.isPrivateOrParameterInPrivateMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -20,9 +21,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
 
 fun UsefulTestCase.forceUsingOldLightClassesForTest() {
-    KtUltraLightClass.forceUsingOldLightClasses = true
+    KtUltraLightSupport.forceUsingOldLightClasses = true
     Disposer.register(testRootDisposable, Disposable {
-        KtUltraLightClass.forceUsingOldLightClasses = false
+        KtUltraLightSupport.forceUsingOldLightClasses = false
     })
 }
 

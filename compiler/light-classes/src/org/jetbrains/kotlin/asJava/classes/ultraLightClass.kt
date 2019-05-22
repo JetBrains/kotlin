@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: KtUltraLightSupport) :
     KtLightClassImpl(classOrObject) {
 
-    private val methodsBuilder by lazyPub {
+    private val membersBuilder by lazyPub {
         UltraLightMembersCreator(this, isNamedObject(), classOrObject.hasModifier(SEALED_KEYWORD), support)
     }
 
@@ -128,14 +128,14 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         val usedNames = hashSetOf<String>()
 
         for (parameter in propertyParameters()) {
-            methodsBuilder.createPropertyField(parameter, usedNames, forceStatic = false)?.let(result::add)
+            membersBuilder.createPropertyField(parameter, usedNames, forceStatic = false)?.let(result::add)
         }
 
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             result.add(
                 KtUltraLightField(
                     companion,
-                    methodsBuilder.generateUniqueFieldName(companion.name.orEmpty(), usedNames),
+                    membersBuilder.generateUniqueFieldName(companion.name.orEmpty(), usedNames),
                     this,
                     support,
                     setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)
@@ -144,7 +144,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
             for (property in companion.declarations.filterIsInstance<KtProperty>()) {
                 if (isInterface && !property.isConstOrJvmField()) continue
-                methodsBuilder.createPropertyField(property, usedNames, true)?.let(result::add)
+                membersBuilder.createPropertyField(property, usedNames, true)?.let(result::add)
             }
         }
 
@@ -156,7 +156,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
                 if (isCompanion && (containingClass?.isInterface == false || property.isJvmField())) continue
 
-                methodsBuilder.createPropertyField(property, usedNames, forceStatic = this.classOrObject is KtObjectDeclaration)?.let(result::add)
+                membersBuilder.createPropertyField(property, usedNames, forceStatic = this.classOrObject is KtObjectDeclaration)?.let(result::add)
             }
         }
 
@@ -200,13 +200,13 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         for (declaration in this.classOrObject.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
             when (declaration) {
-                is KtNamedFunction -> result.addAll(methodsBuilder.createMethods(declaration, false))
-                is KtProperty -> result.addAll(methodsBuilder.propertyAccessors(declaration, declaration.isVar, false,false))
+                is KtNamedFunction -> result.addAll(membersBuilder.createMethods(declaration, false))
+                is KtProperty -> result.addAll(membersBuilder.propertyAccessors(declaration, declaration.isVar, false, false))
             }
         }
 
         for (parameter in propertyParameters()) {
-            result.addAll(methodsBuilder.propertyAccessors(parameter, parameter.isMutable, false,false))
+            result.addAll(membersBuilder.propertyAccessors(parameter, parameter.isMutable, false, false))
         }
 
         if (!isInterface) {
@@ -216,8 +216,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             for (declaration in companion.declarations.filterNot { isHiddenByDeprecation(it) }) {
                 when (declaration) {
-                    is KtNamedFunction -> if (isJvmStatic(declaration)) result.addAll(methodsBuilder.createMethods(declaration, true))
-                    is KtProperty -> result.addAll(methodsBuilder.propertyAccessors(declaration, declaration.isVar, false,true))
+                    is KtNamedFunction -> if (isJvmStatic(declaration)) result.addAll(membersBuilder.createMethods(declaration, true))
+                    is KtProperty -> result.addAll(membersBuilder.propertyAccessors(declaration, declaration.isVar, false, true))
                 }
             }
         }
@@ -298,7 +298,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             result.add(defaultConstructor())
         }
         for (constructor in constructors.filterNot { isHiddenByDeprecation(it) }) {
-            result.addAll(methodsBuilder.createMethods(constructor, false, forcePrivate = isEnum))
+            result.addAll(membersBuilder.createMethods(constructor, false, forcePrivate = isEnum))
         }
         val primary = classOrObject.primaryConstructor
         if (primary != null && shouldGenerateNoArgOverload(primary)) {

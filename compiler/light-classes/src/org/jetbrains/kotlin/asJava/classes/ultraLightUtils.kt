@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.cache.TypeInfo

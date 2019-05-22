@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
@@ -50,7 +51,7 @@ abstract class LightClassGenerationSupport {
 
     abstract fun createUltraLightClassForFacade(
         facadeClassFqName: FqName,
-        searchScope: GlobalSearchScope,
+        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
         facadeFile: KtFile
     ): KtUltraLightClassForFacade?
 

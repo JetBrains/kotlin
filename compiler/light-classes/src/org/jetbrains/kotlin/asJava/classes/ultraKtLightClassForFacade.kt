@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -26,7 +24,7 @@ class KtUltraLightClassForFacade(
     private val support: KtUltraLightSupport
 ) : KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, listOf(file)) {
 
-    private val methodsBuilder by lazyPub { UltraLightMembersCreator(this, false, true, support) }
+    private val membersBuilder by lazyPub { UltraLightMembersCreator(this, false, true, support) }
 
     private inline fun <T> forTooComplex(getter: () -> T): T {
         check(tooComplex) {
@@ -50,8 +48,8 @@ class KtUltraLightClassForFacade(
         for (declaration in file.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
             if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
             when (declaration) {
-                is KtNamedFunction -> result.addAll(methodsBuilder.createMethods(declaration, true))
-                is KtProperty -> result.addAll(methodsBuilder.propertyAccessors(declaration, declaration.isVar, true, false))
+                is KtNamedFunction -> result.addAll(membersBuilder.createMethods(declaration, true))
+                is KtProperty -> result.addAll(membersBuilder.propertyAccessors(declaration, declaration.isVar, true, false))
             }
         }
 
@@ -61,7 +59,7 @@ class KtUltraLightClassForFacade(
     private val ownFieldsForNotTooComplex: List<KtLightField> by lazyPub {
         hashSetOf<String>().run {
             file.declarations.filterIsInstance<KtProperty>().mapNotNull {
-                methodsBuilder.createPropertyField(it, this, forceStatic = true)
+                membersBuilder.createPropertyField(it, this, forceStatic = true)
             }
         }
     }
@@ -70,13 +68,8 @@ class KtUltraLightClassForFacade(
 
     override fun getOwnMethods() = if (!tooComplex) ownMethodsForNotTooComplex else super.getOwnMethods()
 
-    override fun hashCode(): Int = file.hashCode()
-
     override fun toString(): String = "UltraLight class for file facade"
-
-    override fun equals(other: Any?): Boolean = this === other
 
     override fun copy(): KtLightClassForFacade = KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, file, support)
 
-    override fun setName(name: String): PsiElement? = this
 }
