@@ -84,7 +84,6 @@ public class AttachExternalProjectAction extends AnAction {
                                                                           projectImportProviders);
     if (wizard != null && (wizard.getStepCount() <= 0 || wizard.showAndGet())) {
       ImportModuleAction.createFromWizard(project, wizard);
-      wizard.disposeIfNeeded();
     }
   }
 }
