@@ -11,7 +11,10 @@ repositories {
 kotlin {
     val jvmWithoutJava = jvm("jvmWithoutJava")
     val jvmWithJava = targetFromPreset(presets["jvmWithJava"])
-    val js = js()
+    val js = js {
+        browser()
+        nodejs()
+    }
     val macos64 = macosX64("macos64")
     val linux64 = linuxX64("linux64")
     val mingw64 = mingwX64("mingw64")
