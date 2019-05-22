@@ -17,6 +17,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.SuggestedNameInfo;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.RefactoringBundle;
@@ -292,10 +294,14 @@ public class RenameDialog extends RefactoringDialog {
 
   @Nullable
   protected JComponent createSearchScopePanel() {
-    JPanel optionsPanel = new JPanel(new BorderLayout());
-    String scope = "Project Files";
-    myScopeCombo = new ScopeChooserCombo(myProject, false, true, scope);
+    myScopeCombo = new ScopeChooserCombo(myProject, false, true, "Project Files");
     Disposer.register(myDisposable, myScopeCombo);
+
+    // do not show scope chooser for local variables
+    SearchScope useScope = PsiSearchHelper.getInstance(myProject).getUseScope(myPsiElement);
+    if (useScope instanceof LocalSearchScope) return null;
+
+    JPanel optionsPanel = new JPanel(new BorderLayout());
     optionsPanel.add(myScopeCombo, BorderLayout.CENTER);
     JComponent separator = SeparatorFactory.createSeparator(FindBundle.message("find.scope.label"), myScopeCombo.getComboBox());
     optionsPanel.add(separator, BorderLayout.NORTH);
