@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.IStubFileElementType;
+import com.intellij.util.BitUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.*;
 import com.intellij.util.io.*;
@@ -47,10 +48,10 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   implements PsiDependentIndex,
              CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
   static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubUpdatingIndex");
-  private static final int VERSION = 38 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0);
+  private static final int VERSION = 39 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0);
 
   // todo remove once we don't need this for stub-ast mismatch debug info
-  private static final FileAttribute INDEXED_STAMP = new FileAttribute("stubIndexStamp", 2, true);
+  private static final FileAttribute INDEXED_STAMP = new FileAttribute("stubIndexStamp", 3, true);
 
   public static final ID<Integer, SerializedStubTree> INDEX_ID = ID.create("Stubs");
 
@@ -132,14 +133,10 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
           if (rootStub == null) return null;
 
           VirtualFile file = inputData.getFile();
-          int contentLength;
-          if (file.getFileType().isBinary()) {
-            contentLength = -1;
-          }
-          else {
-            contentLength = inputData.getPsiFile().getTextLength();
-          }
-          rememberIndexingStamp(file, contentLength);
+          boolean isBinary = file.getFileType().isBinary();
+          int contentLength = isBinary ? -1 : inputData.getPsiFile().getTextLength();
+          long byteLength = file.getLength();
+          rememberIndexingStamp(file, isBinary, byteLength, contentLength);
 
           final BufferExposingByteArrayOutputStream bytes = new BufferExposingByteArrayOutputStream();
           SerializationManagerEx.getInstanceEx().serialize(rootStub, bytes);
@@ -158,12 +155,12 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
             }
           }
           SerializedStubTree serializedStubTree =
-            new SerializedStubTree(bytes.getInternalBuffer(), bytes.size(), rootStub, file.getLength(), contentLength);
+            new SerializedStubTree(bytes.getInternalBuffer(), bytes.size(), rootStub);
           if (LOG.isDebugEnabled()) {
-            LOG.debug("Indexing " + file + "; lengths=" + serializedStubTree.dumpLengths());
+            LOG.debug("Indexing " + file + "; " + IndexingStampInfo.dumpSize(byteLength, contentLength));
           }
           try {
-            serializedStubTree.indexTree(SingleEntryFileBasedIndexExtension.getFileKey(inputData.getFile()));
+            serializedStubTree.indexTree();
           }
           catch (SerializerNotFoundException ex) {
             throw new RuntimeException(ex);
@@ -184,10 +181,22 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     }
   }
 
-  private static void rememberIndexingStamp(@NotNull VirtualFile file, long contentLength) {
+  private static final byte IS_BINARY_MASK = 1;
+  private static final byte BYTE_AND_CHAR_LENGTHS_ARE_THE_SAME_MASK = 1 << 1;
+  private static void rememberIndexingStamp(@NotNull VirtualFile file, boolean isBinary, long contentByteLength, int contentCharLength) {
     try (DataOutputStream stream = INDEXED_STAMP.writeAttribute(file)) {
       DataInputOutputUtil.writeTIME(stream, file.getTimeStamp());
-      DataInputOutputUtil.writeLONG(stream, contentLength);
+      DataInputOutputUtil.writeLONG(stream, contentByteLength);
+
+      boolean lengthsAreTheSame = contentByteLength == contentCharLength;
+      byte flags = 0;
+      flags = BitUtil.set(flags, IS_BINARY_MASK, isBinary);
+      flags = BitUtil.set(flags, BYTE_AND_CHAR_LENGTHS_ARE_THE_SAME_MASK, lengthsAreTheSame);
+      stream.writeByte(flags);
+
+      if (!lengthsAreTheSame && !isBinary) {
+        DataInputOutputUtil.writeINT(stream, contentCharLength);
+      }
     }
     catch (IOException e) {
       LOG.error(e);
@@ -200,10 +209,23 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       if (stream == null) {
         return null;
       }
-
       long stamp = DataInputOutputUtil.readTIME(stream);
-      long size = DataInputOutputUtil.readLONG(stream);
-      return new IndexingStampInfo(stamp, size);
+      long byteLength = DataInputOutputUtil.readLONG(stream);
+
+      byte flags = stream.readByte();
+      boolean isBinary = BitUtil.isSet(flags, IS_BINARY_MASK);
+      boolean readOnlyOneLength = BitUtil.isSet(flags, BYTE_AND_CHAR_LENGTHS_ARE_THE_SAME_MASK);
+
+      int charLength;
+      if (isBinary) {
+        charLength = -1;
+      }
+      else if (readOnlyOneLength) {
+        charLength = (int)byteLength;
+      } else {
+        charLength = DataInputOutputUtil.readINT(stream);
+      }
+      return new IndexingStampInfo(stamp, byteLength, charLength);
     }
     catch (IOException e) {
       LOG.error(e);

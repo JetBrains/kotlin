@@ -19,31 +19,42 @@
  */
 package com.intellij.psi.stubs;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.ThreadLocalCachedValue;
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.CompressionUtil;
 import com.intellij.util.io.DataInputOutputUtil;
+import com.intellij.util.io.DigestUtil;
 import com.intellij.util.io.PersistentHashMapValueStorage;
 import com.intellij.util.io.UnsyncByteArrayInputStream;
+import one.util.streamex.IntStreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.Map;
 
 public class SerializedStubTree {
+  private static final Logger LOG = Logger.getInstance(SerializedStubTree.class);
+  private static final ThreadLocalCachedValue<MessageDigest> HASHER = new ThreadLocalCachedValue<MessageDigest>() {
+    @NotNull
+    @Override
+    protected MessageDigest create() {
+      return DigestUtil.sha256();
+    }
+  };
+
   private final byte[] myBytes;
   private final int myLength;
-  private final long myByteContentLength;
-  private final int myCharContentLength;
   private Stub myStubElement;
   private IndexedStubs myIndexedStubs;
 
-  public SerializedStubTree(final byte[] bytes, int length, @Nullable Stub stubElement, long byteContentLength, int charContentLength) {
+  public SerializedStubTree(final byte[] bytes, int length, @Nullable Stub stubElement) {
     myBytes = bytes;
     myLength = length;
-    myByteContentLength = byteContentLength;
-    myCharContentLength = charContentLength;
     myStubElement = stubElement;
   }
 
@@ -54,14 +65,10 @@ public class SerializedStubTree {
       in.readFully(bytes);
       myBytes = bytes;
       myLength = myBytes.length;
-      myByteContentLength = DataInputOutputUtil.readLONG(in);
-      myCharContentLength = DataInputOutputUtil.readINT(in);
     }
     else {
       myBytes = CompressionUtil.readCompressed(in);
       myLength = myBytes.length;
-      myByteContentLength = in.readLong();
-      myCharContentLength = in.readInt();
     }
   }
 
@@ -69,13 +76,9 @@ public class SerializedStubTree {
     if (PersistentHashMapValueStorage.COMPRESSION_ENABLED) {
       DataInputOutputUtil.writeINT(out, myLength);
       out.write(myBytes, 0, myLength);
-      DataInputOutputUtil.writeLONG(out, myByteContentLength);
-      DataInputOutputUtil.writeINT(out, myCharContentLength);
     }
     else {
       CompressionUtil.writeCompressed(out, myBytes, 0, myLength);
-      out.writeLong(myByteContentLength);
-      out.writeInt(myCharContentLength);
     }
   }
 
@@ -97,7 +100,7 @@ public class SerializedStubTree {
     return serializationManager.deserialize(new UnsyncByteArrayInputStream(myBytes));
   }
 
-  void indexTree(int fileId) throws SerializerNotFoundException {
+  void indexTree() throws SerializerNotFoundException {
     ObjectStubBase root = (ObjectStubBase)getStub(true);
     ObjectStubTree objectStubTree = root instanceof PsiFileStub ? new StubTree((PsiFileStub)root, false) :
                                     new ObjectStubTree(root, false);
@@ -113,23 +116,12 @@ public class SerializedStubTree {
       }
     }
 
-    myIndexedStubs = new IndexedStubs(fileId, (Map)map);
+    myIndexedStubs = new IndexedStubs(calculateHash(myBytes), (Map)map);
   }
 
   @NotNull
   IndexedStubs getIndexedStubs() {
     return myIndexedStubs;
-  }
-
-  public boolean contentLengthMatches(long byteContentLength, int charContentLength) {
-    if (myCharContentLength >= 0 && charContentLength >= 0) {
-      return myCharContentLength == charContentLength;
-    }
-    return myByteContentLength == byteContentLength;
-  }
-
-  String dumpLengths() {
-    return "{chars=" + myCharContentLength + ", bytes=" + myByteContentLength + "}";
   }
 
   public boolean equals(final Object that) {
@@ -140,12 +132,7 @@ public class SerializedStubTree {
       return false;
     }
     final SerializedStubTree thatTree = (SerializedStubTree)that;
-    
-    if (myCharContentLength != thatTree.myCharContentLength ||
-        myByteContentLength != thatTree.myByteContentLength
-    ) {
-      return false;
-    }
+
     final int length = myLength;
     if (length != thatTree.myLength) {
       return false;
@@ -175,11 +162,36 @@ public class SerializedStubTree {
     return result;
   }
 
-  public long getByteContentLength() {
-    return myByteContentLength;
+  @NotNull
+  private String dumpStub() {
+    String deserialized;
+    try {
+      deserialized = "stub: " + DebugUtil.stubTreeToString(getStub(true));
+    }
+    catch (SerializerNotFoundException e) {
+      LOG.error(e);
+      deserialized = "error while stub deserialization: " + e.getMessage();
+    }
+    return deserialized + "\n bytes: " + toHexString(myBytes, myLength);
   }
 
-  public int getCharContentLength() {
-    return myCharContentLength;
+  @NotNull
+  private static byte[] calculateHash(@NotNull byte[] content) {
+    MessageDigest digest = HASHER.getValue();
+    digest.update(content);
+    return digest.digest();
+  }
+
+  static void reportStubTreeHashCollision(@NotNull SerializedStubTree newTree,
+                                          @NotNull SerializedStubTree existingTree,
+                                          @NotNull byte[] hash) {
+    String oldTreeDump = "\nexisting tree " + existingTree.dumpStub();
+    String newTreeDump = "\nnew tree " + newTree.dumpStub();
+    LOG.info("Stub tree hashing collision. Different trees have the same hash = " + toHexString(hash, hash.length) +
+             ". Hashing algorithm = " + HASHER.getValue().getAlgorithm() + "." + oldTreeDump + newTreeDump, new Exception());
+  }
+
+  private static String toHexString(byte[] hash, int length) {
+    return IntStreamEx.of(hash).limit(length).mapToObj(b -> String.format("%02x", b & 0xFF)).joining();
   }
 }

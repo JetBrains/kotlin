@@ -1,7 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
+import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.StorageException;
+import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
 import com.intellij.util.indexing.impl.RemovedKeyProcessor;
@@ -11,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, SerializedStubTree> {
+  private static final Logger LOG = Logger.getInstance(StubCumulativeInputDiffBuilder.class);
   private final int myInputId;
   @Nullable // null if input was not indexed before
   private final IndexedStubs myIndexedStubs;
@@ -28,10 +35,12 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
                                @NotNull KeyValueUpdateProcessor<? super Integer, ? super SerializedStubTree> updateProcessor,
                                @NotNull RemovedKeyProcessor<? super Integer> removeProcessor) throws StorageException {
     if (newData.containsKey(myInputId)) {
+      SerializedStubTree newSerializedStubTree = newData.get(myInputId);
       if (myIndexedStubs != null) {
+        byte[] currentHash = myIndexedStubs.getStubTreeHash();
+        if (treesAreEqual(newSerializedStubTree, currentHash)) return false;
         removeProcessor.process(myInputId, myInputId);
       }
-      SerializedStubTree newSerializedStubTree = newData.get(myInputId);
       addProcessor.process(myInputId, newSerializedStubTree, myInputId);
       updateStubIndices(newSerializedStubTree);
     }
@@ -40,6 +49,40 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
       updateStubIndices(null);
     }
     return true;
+  }
+
+  private boolean treesAreEqual(@NotNull SerializedStubTree newSerializedStubTree, @NotNull byte[] currentHash) throws StorageException {
+    return Arrays.equals(currentHash, newSerializedStubTree.getIndexedStubs().getStubTreeHash()) &&
+           treesAreReallyEqual(newSerializedStubTree, currentHash);
+  }
+
+  private boolean treesAreReallyEqual(@NotNull SerializedStubTree newSerializedStubTree, @NotNull byte[] hash) throws StorageException {
+    Map<Integer, SerializedStubTree>
+      data = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID).getIndexedFileData(myInputId);
+    if (data.isEmpty()) {
+      LOG.error("inconsistent \'" + StubUpdatingIndex.INDEX_ID.getName() + "\' index storage & forward-index. Serialized stub tree isn't present");
+    }
+    else if (data.size() != 1) {
+      LOG.error(StubUpdatingIndex.INDEX_ID.getName() + " should contain only one tree per file: " + getIndexingFileName());
+      return false;
+    }
+    SerializedStubTree storedTree = data.values().iterator().next();
+    if (storedTree == null) {
+      LOG.error("nullable trees are not allowed but found in " + getIndexingFileName());
+      return false;
+    }
+    if (newSerializedStubTree.equals(storedTree)) {
+      return true;
+    }
+    if (DebugAssertions.DEBUG) {
+      SerializedStubTree.reportStubTreeHashCollision(newSerializedStubTree, storedTree, hash);
+    }
+    return false;
+  }
+
+  private String getIndexingFileName() {
+    VirtualFile file = ManagingFS.getInstance().findFileById(myInputId);
+    return file == null ? null : file.getName();
   }
 
   private void updateStubIndices(@Nullable SerializedStubTree newSerializedStubTree) {
@@ -56,7 +99,6 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
       newStubIndicesValueMap
     );
   }
-
 
   static void updateStubIndices(@NotNull final Collection<StubIndexKey> indexKeys,
                                 final int inputId,
