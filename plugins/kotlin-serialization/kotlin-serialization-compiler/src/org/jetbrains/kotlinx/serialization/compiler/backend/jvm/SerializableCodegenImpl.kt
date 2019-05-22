@@ -143,7 +143,8 @@ class SerializableCodegenImpl(
                 val writeLabel = Label()
                 val nonWriteLabel = Label()
                 // obj.prop != DEFAULT_VAL
-                ImplementationBodyCodegen.genPropertyOnStack(
+                val propAsmType = classCodegen.typeMapper.mapType(property.type)
+                val actualType: JvmKotlinType = ImplementationBodyCodegen.genPropertyOnStack(
                     this,
                     exprCodegen.context,
                     property.descriptor,
@@ -151,7 +152,7 @@ class SerializableCodegenImpl(
                     thisI,
                     classCodegen.state
                 )
-                val propAsmType = classCodegen.typeMapper.mapType(property.type)
+                StackValue.coerce(actualType.type, propAsmType, this)
                 val lhs = StackValue.onStack(propAsmType)
                 val (expr, _) = initializersMapper(property)
                 exprCodegen.gen(expr, propAsmType)
