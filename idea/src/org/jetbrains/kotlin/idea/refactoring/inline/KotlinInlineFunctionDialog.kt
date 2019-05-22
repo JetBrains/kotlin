@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.help.HelpManager
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.HelpID
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtConstructor
@@ -37,7 +37,7 @@ class KotlinInlineFunctionDialog(
         init()
     }
 
-    override fun isInlineThis() = JavaRefactoringSettings.getInstance().INLINE_METHOD_THIS
+    override fun isInlineThis() = KotlinRefactoringSettings.instance.INLINE_METHOD_THIS
 
     public override fun doAction() {
         invokeRefactoring(
@@ -46,7 +46,7 @@ class KotlinInlineFunctionDialog(
                                               deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly)
         )
 
-        val settings = JavaRefactoringSettings.getInstance()
+        val settings = KotlinRefactoringSettings.instance
         if (myRbInlineThisOnly.isEnabled && myRbInlineAll.isEnabled) {
             settings.INLINE_METHOD_THIS = isInlineThisOnly
         }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -88,10 +88,10 @@ class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
 
     override fun getOptionName() = RefactoringBundle.message("rename.overloads")
 
-    override fun isEnabled() = JavaRefactoringSettings.getInstance().isRenameOverloads
+    override fun isEnabled() = KotlinRefactoringSettings.instance.renameOverloads
 
     override fun setEnabled(enabled: Boolean) {
-        JavaRefactoringSettings.getInstance().isRenameOverloads = enabled
+        KotlinRefactoringSettings.instance.renameOverloads = enabled
     }
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>)
