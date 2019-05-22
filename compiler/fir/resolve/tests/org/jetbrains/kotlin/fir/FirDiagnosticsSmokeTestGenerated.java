@@ -22376,6 +22376,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasObject.kt");
         }
 
+        @TestMetadata("importMemberFromJavaViaAlias.kt")
+        public void testImportMemberFromJavaViaAlias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/typealias/importMemberFromJavaViaAlias.kt");
+        }
+
         @TestMetadata("inGenerics.kt")
         public void testInGenerics() throws Exception {
             runTest("compiler/testData/diagnostics/tests/typealias/inGenerics.kt");
@@ -22709,6 +22714,16 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
         @TestMetadata("typeAliasShouldExpandToClass.kt")
         public void testTypeAliasShouldExpandToClass() throws Exception {
             runTest("compiler/testData/diagnostics/tests/typealias/typeAliasShouldExpandToClass.kt");
+        }
+
+        @TestMetadata("typeAliasesInImportDirectives.kt")
+        public void testTypeAliasesInImportDirectives() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/typealias/typeAliasesInImportDirectives.kt");
+        }
+
+        @TestMetadata("typeAliasesInQualifiers.kt")
+        public void testTypeAliasesInQualifiers() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/typealias/typeAliasesInQualifiers.kt");
         }
 
         @TestMetadata("typealiasRhsAnnotations.kt")
