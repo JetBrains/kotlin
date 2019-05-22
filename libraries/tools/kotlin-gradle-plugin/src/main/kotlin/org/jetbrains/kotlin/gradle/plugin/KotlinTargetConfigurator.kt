@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
-import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
+import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 
@@ -383,7 +383,7 @@ abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilatio
             }
         }
 
-        registerTestTask(testTask)
+        target.project.kotlinTestRegistry.registerTestTask(testTask)
     }
 
     private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {
