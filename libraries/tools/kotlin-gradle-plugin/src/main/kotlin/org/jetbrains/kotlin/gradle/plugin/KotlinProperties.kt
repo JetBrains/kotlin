@@ -96,6 +96,15 @@ internal class PropertiesProvider(private val project: Project) {
     val parallelTasksInProject: Boolean?
         get() = booleanProperty("kotlin.parallel.tasks.in.project")
 
+    /**
+     * Enables individual test task reporting for aggregated test tasks.
+     *
+     * By default individual test tasks will not fail build if this task will be executed,
+     * also individual html and xml reports will replaced by one consolidated html report.
+     */
+    val individualTaskReports: Boolean?
+        get() = booleanProperty("kotlin.tests.individualTaskReports")
+
     private fun booleanProperty(propName: String): Boolean? =
         property(propName)?.toBoolean()
 
