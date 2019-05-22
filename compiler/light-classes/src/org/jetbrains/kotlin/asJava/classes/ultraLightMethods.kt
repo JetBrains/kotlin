@@ -29,7 +29,7 @@ internal abstract class KtUltraLightMethod(
     internal val delegate: LightMethodBuilder,
     closestDeclarationForOrigin: KtDeclaration?,
     protected val support: KtUltraLightSupport,
-    containingClass: KtUltraLightClass
+    containingClass: KtLightClass
 ) : KtLightMethodImpl(
     { delegate },
     closestDeclarationForOrigin?.let {
@@ -101,7 +101,7 @@ internal class KtUltraLightMethodForSourceDeclaration(
     delegate: LightMethodBuilder,
     declaration: KtDeclaration,
     support: KtUltraLightSupport,
-    containingClass: KtUltraLightClass
+    containingClass: KtLightClass
 ) : KtUltraLightMethod(
     delegate,
     declaration,

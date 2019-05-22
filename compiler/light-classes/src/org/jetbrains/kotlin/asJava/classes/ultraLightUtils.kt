@@ -24,10 +24,24 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
+import org.jetbrains.kotlin.resolve.inline.isInlineOnly
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -285,4 +299,17 @@ private fun packMethodFlags(access: Int, isInterface: Boolean): Int {
     }
 
     return flags
+}
+
+internal fun KtDeclaration.isHiddenByDeprecation(support: KtUltraLightSupport): Boolean {
+    val deprecated = support.findAnnotation(this, FqName("kotlin.Deprecated"))?.second
+    return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
+}
+
+internal fun KtAnnotated.isJvmStatic(support: KtUltraLightSupport): Boolean = support.findAnnotation(this, JVM_STATIC_ANNOTATION_FQ_NAME) !== null
+
+internal fun KtDeclaration.simpleVisibility(): String = when {
+    hasModifier(KtTokens.PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
+    hasModifier(KtTokens.PROTECTED_KEYWORD) -> PsiModifier.PROTECTED
+    else -> PsiModifier.PUBLIC
 }

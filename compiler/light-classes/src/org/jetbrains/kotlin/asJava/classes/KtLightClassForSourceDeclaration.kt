@@ -339,7 +339,10 @@ abstract class KtLightClassForSourceDeclaration(
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
             CachedValuesManager.getCachedValue(classOrObject) {
                 CachedValueProvider.Result
-                    .create(createNoCache(classOrObject, KtUltraLightClass.forceUsingOldLightClasses), OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                    .create(
+                        createNoCache(classOrObject, KtUltraLightSupport.forceUsingOldLightClasses),
+                        OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                    )
             }
 
         fun createNoCache(classOrObject: KtClassOrObject, forceUsingOldLightClasses: Boolean): KtLightClassForSourceDeclaration? {

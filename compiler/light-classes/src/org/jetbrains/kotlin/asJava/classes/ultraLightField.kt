@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 internal open class KtUltraLightField(
     protected val declaration: KtNamedDeclaration,
     name: String,
-    private val containingClass: KtUltraLightClass,
+    private val containingClass: KtLightClass,
     private val support: KtUltraLightSupport,
     modifiers: Set<String>
 ) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField,
@@ -75,7 +75,7 @@ internal open class KtUltraLightField(
             declaration is KtObjectDeclaration ->
                 (declaration.resolve() as? ClassDescriptor)?.defaultType
             declaration is KtEnumEntry -> {
-                (containingClass.kotlinOrigin.resolve() as? ClassDescriptor)?.defaultType
+                (containingClass.kotlinOrigin?.resolve() as? ClassDescriptor)?.defaultType
             }
             else -> {
                 declaration.getKotlinType()

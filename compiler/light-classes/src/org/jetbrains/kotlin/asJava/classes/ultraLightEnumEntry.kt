@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 internal class KtUltraLightEnumEntry(
     declaration: KtEnumEntry,
     name: String,
-    containingClass: KtUltraLightClass,
+    containingClass: KtLightClass,
     support: KtUltraLightSupport,
     modifiers: Set<String>
 ) : KtUltraLightField(declaration, name, containingClass, support, modifiers), PsiEnumConstant {
@@ -19,7 +19,7 @@ internal class KtUltraLightEnumEntry(
     private val enumEntry get() = declaration as KtEnumEntry
 
     private val _initializingClass by lazyPub {
-        enumEntry.body?.let { KtUltraLightClassForEnumEntry(enumEntry, containingClass.support, this) }
+        enumEntry.body?.let { KtUltraLightClassForEnumEntry(enumEntry, support, this) }
     }
 
     override fun getInitializingClass(): PsiEnumConstantInitializer? = _initializingClass
