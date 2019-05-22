@@ -128,7 +128,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
         return object : MutableIterator<MutableEntry<K, V>> {
             var state = -1 // -1 not ready, 0 - ready, 1 - done
 
-            val keys: Array<Int> = js("Object").keys(backingMap)
+            val keys: Array<String> = js("Object").keys(backingMap)
             var keyIndex = -1
 
             var chainOrEntry: dynamic = null
