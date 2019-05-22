@@ -89,10 +89,6 @@ public class PsiVFSListener implements BulkFileListener {
       @Override
       public void before(@NotNull List<? extends VFileEvent> events) {
         for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-          if (project.isDisposed()) {
-            continue;
-          }
-
           project.getComponent(PsiVFSListener.class).before(events);
         }
       }
@@ -102,10 +98,6 @@ public class PsiVFSListener implements BulkFileListener {
         Project[] projects = ProjectManager.getInstance().getOpenProjects();
         // let PushedFilePropertiesUpdater process all pending vfs events and update file properties before we issue PSI events
         for (Project project : projects) {
-          if (project.isDisposed()) {
-            continue;
-          }
-
           PushedFilePropertiesUpdater updater = PushedFilePropertiesUpdater.getInstance(project);
           // false in upsource
           if (updater instanceof PushedFilePropertiesUpdaterImpl) {
@@ -113,10 +105,6 @@ public class PsiVFSListener implements BulkFileListener {
           }
         }
         for (Project project : projects) {
-          if (project.isDisposed()) {
-            continue;
-          }
-
           project.getComponent(PsiVFSListener.class).after(events);
         }
       }
