@@ -29,7 +29,8 @@ open class ResolveModule(
     val name: String,
     val root: File,
     val platform: TargetPlatform,
-    val dependencies: List<ResolveDependency>
+    val dependencies: List<ResolveDependency>,
+    val testRoot: File? = null
 ) {
     final override fun toString(): String {
         return buildString { renderDescription(Printer(this)) }
@@ -40,6 +41,7 @@ open class ResolveModule(
         printer.pushIndent()
         printer.println("platform=$platform")
         printer.println("root=${root.absolutePath}")
+        if (testRoot != null) printer.println("testRoot=${testRoot.absolutePath}")
         printer.println("dependencies=${dependencies.joinToString { it.to.name }}")
     }
 
@@ -66,6 +68,7 @@ open class ResolveModule(
         var root: File? = null
         var platform: TargetPlatform? = null
         val dependencies: MutableList<ResolveDependency.Builder> = mutableListOf()
+        var testRoot: File? = null
 
         open fun build(): ResolveModule {
             if (state == State.BUILT) return cachedResult!!
@@ -74,7 +77,7 @@ open class ResolveModule(
             state = State.BUILDING
 
             val builtDependencies = dependencies.map { it.build() }
-            cachedResult = ResolveModule(name!!, root!!, platform!!, builtDependencies)
+            cachedResult = ResolveModule(name!!, root!!, platform!!, builtDependencies, testRoot)
             state = State.BUILT
 
             return cachedResult!!
