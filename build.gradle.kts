@@ -583,6 +583,7 @@ tasks {
             ":idea:idea-gradle-native:test",
             ":idea:idea-maven:test",
             ":j2k:test",
+            ":nj2k:test",
             ":idea:eval4j:test"
         )
     }
