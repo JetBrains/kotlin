@@ -68,6 +68,9 @@ open class ProjectStructureParser(private val projectRoot: File) {
 
         val root = attributes["root"] ?: builder.name!!
         builder.root = File(projectRoot, root)
+
+        val testRoot = attributes["testRoot"]
+        if (testRoot != null) builder.testRoot = File(projectRoot, testRoot)
     }
 
     private fun Reader.parseDependenciesDefinition(fromName: String) {

@@ -53,12 +53,23 @@ fun AbstractMultiModuleTest.setupMppProjectFromTextFile(testRoot: File) {
 fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
     val resolveModulesToIdeaModules = projectModel.modules.map { resolveModule ->
         val ideaModule = createModule(resolveModule.name)
+
         addRoot(
             ideaModule,
             resolveModule.root,
             isTestRoot = false,
             transformContainedFiles = { if (it.extension == "kt") clearFileFromDiagnosticMarkup(it) }
         )
+
+        if (resolveModule.testRoot != null) {
+            addRoot(
+                ideaModule,
+                resolveModule.testRoot,
+                isTestRoot = true,
+                transformContainedFiles = { if (it.extension == "kt") clearFileFromDiagnosticMarkup(it) }
+            )
+        }
+
         resolveModule to ideaModule
     }.toMap()
 
