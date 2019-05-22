@@ -23788,6 +23788,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/statics/inlineCallsStaticMethod.kt");
         }
 
+        @TestMetadata("inlineCallsStaticMethodFromOtherPackage.kt")
+        public void testInlineCallsStaticMethodFromOtherPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/statics/inlineCallsStaticMethodFromOtherPackage.kt");
+        }
+
         @TestMetadata("kt8089.kt")
         public void testKt8089() throws Exception {
             runTest("compiler/testData/codegen/box/statics/kt8089.kt");

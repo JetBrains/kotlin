@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
@@ -20,6 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -30,12 +29,10 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
@@ -48,10 +45,8 @@ internal val syntheticAccessorPhase = makeIrFilePhase(
 
 private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
-    private val inlinedLambdasCollector = InlinedLambdasCollector()
 
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(inlinedLambdasCollector)
         irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
     }
@@ -110,6 +105,14 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             else -> error("Unknown subclass of IrFunctionSymbol")
         }
 
+    // In case of Java `protected static`, access could be done from a public inline function in the same package,
+    // requiring an accessor, which we cannot add to the Java class.
+    private fun IrDeclarationWithVisibility.accessorParent() =
+        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY)
+            currentClass!!.irElement as IrClass
+        else
+            parent
+
     private fun IrConstructor.makeConstructorAccessor(): IrConstructor {
         val source = this
 
@@ -161,7 +164,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
                 // TODO: Handle the exception after targeting Java 8 or newer, where JVM default methods are available.
                 context.declarationFactory.getDefaultImplsClass(source.parent as IrClass)
             } else {
-                source.parent
+                source.accessorParent()
             }
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
@@ -202,7 +205,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             modality = Modality.FINAL
             returnType = fieldSymbol.owner.type
         }.also { accessor ->
-            accessor.parent = fieldSymbol.owner.parent
+            accessor.parent = fieldSymbol.owner.accessorParent()
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             if (!fieldSymbol.owner.isStatic) {
@@ -238,7 +241,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             modality = Modality.FINAL
             returnType = context.irBuiltIns.unitType
         }.also { accessor ->
-            accessor.parent = fieldSymbol.owner.parent
+            accessor.parent = fieldSymbol.owner.accessorParent()
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             if (!fieldSymbol.owner.isStatic) {
@@ -406,6 +409,14 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         return Name.identifier("access\$prop\$$setterName")
     }
 
+    private val Visibility.isPrivate
+        get() = Visibilities.isPrivate(this)
+
+    private val Visibility.isProtected
+        get() = this == Visibilities.PROTECTED ||
+                this == JavaVisibilities.PROTECTED_AND_PACKAGE ||
+                this == JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
@@ -418,24 +429,25 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         // There is never a problem with visibility of inline functions, as those don't end up as Java entities
         if (declaration is IrFunction && declaration.isInline) return true
 
-        // The only two visibilities where Kotlin rules differ from JVM rules.
-        if (!withSuper && !Visibilities.isPrivate(declaration.visibility) && declaration.visibility != Visibilities.PROTECTED) return true
+        // `internal` maps to public and requires no accessor.
+        if (!withSuper && !declaration.visibility.isPrivate && !declaration.visibility.isProtected) return true
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
 
         // Within inline functions, we have to assume the worst.
-        if (inlinedLambdasCollector.isInlineNonpublicContext(allScopes))
+        val function = currentFunction?.irElement as IrFunction?
+        if (function?.isInline == true && !function.visibility.isPrivate && (withSuper || !function.visibility.isProtected))
             return false
 
         val contextDeclarationContainer = allScopes.lastOrNull { it.irElement is IrDeclarationContainer }?.irElement
 
         val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer?.getPackageFragment()?.fqName
         return when {
-            Visibilities.isPrivate(declaration.visibility) && symbolDeclarationContainer != contextDeclarationContainer -> false
-            (declaration.visibility == Visibilities.PROTECTED && !samePackage &&
+            declaration.visibility.isPrivate && symbolDeclarationContainer != contextDeclarationContainer -> false
+            declaration.visibility.isProtected && !samePackage &&
                     !(symbolDeclarationContainer is IrClass && contextDeclarationContainer is IrClass &&
-                            contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer))) -> false
+                            contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer)) -> false
             // Invoking with super qualifier is implemented by invokespecial, which requires
             // 1. `this` to be assign compatible with current class.
             // 2. the method is a member of a superclass of current class.
@@ -446,34 +458,3 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         }
     }
 }
-
-private class InlinedLambdasCollector : IrElementVisitorVoidWithContext() {
-    private val inlinedLambdasInNonPublicContexts = mutableSetOf<IrFunction>()
-
-    fun isInlineNonpublicContext(scopeStack: List<ScopeWithIr>): Boolean {
-        val currentFunction = scopeStack.map { it.irElement }.lastOrNull { it is IrFunction } as? IrFunction ?: return false
-        return (currentFunction.isInline && currentFunction.visibility in setOf(Visibilities.PRIVATE, Visibilities.PROTECTED))
-                || currentFunction in inlinedLambdasInNonPublicContexts
-    }
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
-        val callTarget = expression.symbol.owner
-        if (callTarget.isInline && isInlineNonpublicContext(allScopes)) {
-            for (i in 0 until expression.valueArgumentsCount) {
-                val argument = expression.getValueArgument(i)?.removeBlocks()
-                if (argument is IrFunctionReference &&
-                    argument.symbol.owner.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
-                    !callTarget.valueParameters[i].isNoinline
-                ) {
-                    inlinedLambdasInNonPublicContexts.add(argument.symbol.owner)
-                }
-            }
-        }
-        super.visitFunctionAccess(expression)
-    }
-}
-
