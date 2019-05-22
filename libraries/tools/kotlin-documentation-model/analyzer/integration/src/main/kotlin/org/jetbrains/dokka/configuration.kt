@@ -8,7 +8,6 @@ enum class Platform(val key: String) {
     native("native"),
     common("common");
 
-
     companion object {
         val DEFAULT = jvm
 
@@ -22,7 +21,6 @@ enum class Platform(val key: String) {
             }
         }
     }
-
 }
 
 interface DokkaConfiguration {
@@ -47,7 +45,7 @@ interface DokkaConfiguration {
         val jdkVersion: Int
         val sourceLinks: List<SourceLinkDefinition>
         val perPackageOptions: List<PackageOptions>
-        val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>
+        val externalDocumentationLinks: List<ExternalDocumentationLink>
         val languageVersion: String?
         val apiVersion: String?
         val noStdlibLink: Boolean
@@ -86,7 +84,7 @@ interface DokkaConfiguration {
 
             constructor(root: String, packageList: String? = null) : this(URL(root), packageList?.let { URL(it) })
 
-            fun build(): DokkaConfiguration.ExternalDocumentationLink =
+            fun build(): ExternalDocumentationLink =
                 if (packageListUrl != null && url != null)
                     ExternalDocumentationLinkImpl(url!!, packageListUrl!!)
                 else if (url != null)
