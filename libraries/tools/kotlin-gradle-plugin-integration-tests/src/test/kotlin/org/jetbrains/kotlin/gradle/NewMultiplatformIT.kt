@@ -432,8 +432,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             )
 
             val expectedKotlinOutputFiles = listOf(
-                kotlinClassesDir(sourceSet = "js/main") + "new-mpp-lib-with-tests.js",
-                kotlinClassesDir(sourceSet = "js/test") + "new-mpp-lib-with-tests_test.js",
                 *kotlinClassesDir(sourceSet = "jvmWithJava/main").let {
                     arrayOf(
                         it + "com/example/lib/JavaClassUsageKt.class",
@@ -466,6 +464,14 @@ class NewMultiplatformIT : BaseGradleIT() {
             )
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }
+
+            assertTestResults(
+                "testProject/new-mpp-lib-with-tests/TEST-all.xml",
+                "jsBrowserTest",
+                "jsNodeTest",
+                "test", // jvmTest
+                "${nativeHostTargetName}Test"
+            )
         }
     }
 
