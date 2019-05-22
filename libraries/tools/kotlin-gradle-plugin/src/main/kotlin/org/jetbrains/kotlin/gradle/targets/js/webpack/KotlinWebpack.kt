@@ -118,7 +118,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         }
 
     @TaskAction
-    fun execute() {
+    fun doExecute() {
         NpmResolver.checkRequiredDependencies(project, this)
 
         val runner = createRunner()
