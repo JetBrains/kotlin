@@ -7,6 +7,7 @@ import com.intellij.execution.ui.layout.*;
 import com.intellij.execution.ui.layout.actions.CloseViewAction;
 import com.intellij.execution.ui.layout.actions.MinimizeViewAction;
 import com.intellij.execution.ui.layout.actions.RestoreViewAction;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.CloseAction;
 import com.intellij.openapi.Disposable;
@@ -299,8 +300,10 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
         dockManager.register(this);
       }
     }
-    myViewActions.addAction(ActionManager.getInstance().getAction("Runner.RestoreLayout")).setAsSecondary(true);
-    myViewActions.addAction(new Separator()).setAsSecondary(true);
+    if (myMinimizeActionEnabled) {
+      myViewActions.addAction(ActionManager.getInstance().getAction("Runner.RestoreLayout")).setAsSecondary(true);
+      myViewActions.addAction(new Separator()).setAsSecondary(true);
+    }
   }
 
   private void rebuildTabPopup() {
@@ -658,12 +661,13 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
         event.getContent().addPropertyChangeListener(RunnerContentUi.this);
         fireContentOpened(event.getContent());
-
-        AnAction[] actions = myViewActions.getChildren(null);
-        for (AnAction action : actions) {
-          if (action instanceof RestoreViewAction && ((RestoreViewAction)action).getContent() == event.getContent()) return;
+        if (myMinimizeActionEnabled) {
+          AnAction[] actions = myViewActions.getChildren(null);
+          for (AnAction action : actions) {
+            if (action instanceof RestoreViewAction && ((RestoreViewAction)action).getContent() == event.getContent()) return;
+          }
+          myViewActions.addAction(new RestoreViewAction(RunnerContentUi.this, event.getContent())).setAsSecondary(true);
         }
-        myViewActions.addAction(new RestoreViewAction(RunnerContentUi.this, event.getContent())).setAsSecondary(true);
       }
 
       @Override
@@ -896,6 +900,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     for (Map.Entry<GridImpl, Wrapper> entry : myMinimizedButtonsPlaceholder.entrySet()) {
       Wrapper eachPlaceholder = entry.getValue();
       ActionToolbar tb = myActionManager.createActionToolbar(ActionPlaces.DEBUGGER_TOOLBAR, myViewActions, true);
+      tb.setSecondaryActionsIcon(AllIcons.Debugger.RestoreLayout);
       tb.setTargetComponent(myComponent);
       tb.getComponent().setBorder(null);
       tb.setReservePlaceAutoPopupIcon(false);

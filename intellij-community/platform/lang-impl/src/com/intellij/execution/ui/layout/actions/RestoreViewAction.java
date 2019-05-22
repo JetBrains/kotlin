@@ -50,6 +50,9 @@ public class RestoreViewAction extends DumbAwareToggleAction {
   public void update(@NotNull final AnActionEvent e) {
     super.update(e);
     e.getPresentation().setText(myContent.getDisplayName());
+    if (isSelected(e)) {
+      e.getPresentation().setEnabled(myUi.getContentManager().getContents().length > 1);
+    }
   }
 
   public Content getContent() {
