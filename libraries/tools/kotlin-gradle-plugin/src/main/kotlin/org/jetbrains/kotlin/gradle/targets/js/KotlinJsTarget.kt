@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.testTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
@@ -17,20 +18,18 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
-import org.jetbrains.kotlin.gradle.testing.internal.allTestsTask
-import org.jetbrains.kotlin.gradle.testing.internal.getOrCreateAggregatedTestTask
+import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
+import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     KotlinOnlyTarget<KotlinJsCompilation>(project, platformType), KotlinJsTargetDsl {
 
     val testTaskName get() = lowerCamelCaseName(disambiguationClassifier, testTaskNameSuffix)
-    val testTask
-        get() = project.getOrCreateAggregatedTestTask(
+    val testTask: TaskHolder<KotlinTestReport>
+        get() = project.kotlinTestRegistry.getOrCreateAggregatedTestTask(
             name = testTaskName,
-            description = "Run JS tests for all platforms",
-            reportName = "jsAll",
-            parent = project.allTestsTask.doGetTask()
+            description = "Run JS tests for all platforms"
         )
 
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)

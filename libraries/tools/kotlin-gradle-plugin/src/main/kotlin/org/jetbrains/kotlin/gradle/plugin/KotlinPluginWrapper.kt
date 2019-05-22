@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import javax.inject.Inject
@@ -73,12 +73,16 @@ abstract class KotlinBasePluginWrapper(
             project.kotlinExtension.sourceSets = kotlinSourceSetContainer(kotlinSourceSetFactory(project))
         }
 
+        project.extensions.add(KotlinTestsRegistry.PROJECT_EXTENSION_NAME, createTestRegistry(project))
+
         val plugin = getPlugin(project, kotlinGradleBuildServices)
 
         setupAttributeMatchingStrategy(project)
 
         plugin.apply(project)
     }
+
+    internal open fun createTestRegistry(project: Project) = KotlinTestsRegistry(project)
 
     private fun setupAttributeMatchingStrategy(project: Project) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
@@ -144,6 +148,8 @@ open class KotlinJsPluginWrapper @Inject constructor(
 
     override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
         get() = KotlinJsProjectExtension::class
+
+    override fun createTestRegistry(project: Project) = KotlinTestsRegistry(project, "test")
 }
 
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
