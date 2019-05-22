@@ -18,14 +18,13 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
-import org.jetbrains.kotlin.gradle.testing.internal.registerTestTask
+import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import java.io.File
 import java.util.*
 
@@ -145,7 +144,7 @@ open class KotlinNativeTargetConfigurator(
                 testTask.configureConventions()
             }
 
-            registerTestTask(testTask)
+            kotlinTestRegistry.registerTestTask(testTask)
         } else {
             tasks.create(taskName, Exec::class.java).apply {
                 group = RUN_GROUP
