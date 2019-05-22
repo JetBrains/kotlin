@@ -76,6 +76,7 @@ struct ObjCTypeAdapter {
 };
 
 typedef id (*convertReferenceToObjC)(ObjHeader* obj);
+typedef OBJ_GETTER((*convertReferenceFromObjC), id obj);
 
 struct TypeInfoObjCExportAddition {
   /*convertReferenceToObjC*/ void* convert;
@@ -106,6 +107,14 @@ inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* type
   ObjHeader* result = AllocInstance(typeInfo, OBJ_RESULT);
   SetAssociatedObject(result, associatedObject);
   return result;
+}
+
+extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
+                            const TypeInfo* typeInfo, id associatedObject) RUNTIME_NOTHROW;
+
+extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
+                            const TypeInfo* typeInfo, id associatedObject) {
+  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, associatedObject);
 }
 
 static Class getOrCreateClass(const TypeInfo* typeInfo);
@@ -248,8 +257,6 @@ extern "C" id Kotlin_ObjCExport_convertUnit(ObjHeader* unitInstance) {
   });
   return instance;
 }
-
-extern "C" id objc_retainBlock(id self);
 
 extern "C" id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str) {
   KChar* utf16Chars = CharArrayAddressOfElementAt(str->array(), 0);
@@ -575,9 +582,9 @@ static const char* getBlockEncoding(id block) {
 }
 
 // Note: replaced by compiler in appropriate compilation modes.
-__attribute__((weak)) const TypeInfo * const * Kotlin_ObjCExport_functionAdaptersToBlock = nullptr;
+__attribute__((weak)) convertReferenceFromObjC* Kotlin_ObjCExport_blockToFunctionConverters = nullptr;
 
-static const TypeInfo* getFunctionTypeInfoForBlock(id block) {
+static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   const char* encoding = getBlockEncoding(block);
 
   // TODO: optimize:
@@ -602,15 +609,7 @@ static const TypeInfo* getFunctionTypeInfoForBlock(id block) {
           format:@"Blocks with non-reference-typed return value aren't supported (%s)", returnTypeEncoding];
   }
 
-  // TODO: support Unit-as-void.
-
-  return Kotlin_ObjCExport_functionAdaptersToBlock[parameterCount];
-}
-
-static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd) {
-  const TypeInfo* typeInfo = getFunctionTypeInfoForBlock(self);
-  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retainBlock(self));
-  // TODO: call (Any) constructor?
+  RETURN_RESULT_OF(Kotlin_ObjCExport_blockToFunctionConverters[parameterCount], block);
 }
 
 static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj);

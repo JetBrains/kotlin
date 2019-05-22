@@ -14,6 +14,12 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 
 internal sealed class TypeBridge
 internal object ReferenceBridge : TypeBridge()
+
+internal data class BlockPointerBridge(
+        val numberOfParameters: Int,
+        val returnsVoid: Boolean
+) : TypeBridge()
+
 internal data class ValueTypeBridge(val objCValueType: ObjCValueType) : TypeBridge()
 
 internal sealed class MethodBridgeParameter

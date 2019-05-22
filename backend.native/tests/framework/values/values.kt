@@ -379,3 +379,45 @@ class GH2959 {
 
     fun getI(id: Int): List<I> = listOf(PrivateImpl(id))
 }
+
+fun runUnitBlock(block: () -> Unit): Boolean {
+    val blockAny: () -> Any? = block
+    return blockAny() === Unit
+}
+
+fun asUnitBlock(block: () -> Any?): () -> Unit = { block() }
+
+fun runNothingBlock(block: () -> Nothing) = try {
+    block()
+    false
+} catch (e: Throwable) {
+    true
+}
+
+fun asNothingBlock(block: () -> Any?): () -> Nothing = {
+    block()
+    TODO()
+}
+
+fun getNullBlock(): (() -> Unit)? = null
+fun isBlockNull(block: (() -> Unit)?): Boolean = block == null
+
+interface IntBlocks<T> {
+    fun getPlusOneBlock(): T
+    fun callBlock(argument: Int, block: T): Int
+}
+
+object IntBlocksImpl : IntBlocks<(Int) -> Int> {
+    override fun getPlusOneBlock(): (Int) -> Int = { it: Int -> it + 1 }
+    override fun callBlock(argument: Int, block: (Int) -> Int): Int = block(argument)
+}
+
+interface UnitBlockCoercion<T : Any> {
+    fun coerce(block: () -> Unit): T
+    fun uncoerce(block: T): () -> Unit
+}
+
+object UnitBlockCoercionImpl : UnitBlockCoercion<() -> Unit> {
+    override fun coerce(block: () -> Unit): () -> Unit = block
+    override fun uncoerce(block: () -> Unit): () -> Unit = block
+}

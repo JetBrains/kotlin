@@ -25,10 +25,9 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun TypeBridge.makeNothing() = when (this) {
-    is ReferenceBridge -> kNullInt8Ptr
+    is ReferenceBridge, is BlockPointerBridge -> kNullInt8Ptr
     is ValueTypeBridge -> LLVMConstNull(this.objCValueType.llvmType)!!
 }
 
@@ -121,23 +120,59 @@ internal class ObjCExportCodeGenerator(
     fun FunctionGenerationContext.objCReferenceToKotlin(value: LLVMValueRef, resultLifetime: Lifetime) =
             callFromBridge(context.llvm.Kotlin_ObjCExport_refFromObjC, listOf(value), resultLifetime)
 
+    private fun FunctionGenerationContext.objCBlockPointerToKotlin(
+            value: LLVMValueRef,
+            typeBridge: BlockPointerBridge,
+            resultLifetime: Lifetime
+    ) = callFromBridge(
+            blockToKotlinFunctionConverter(typeBridge),
+            listOf(value),
+            resultLifetime
+    )
+
+    private val blockToKotlinFunctionConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
+
+    internal fun blockToKotlinFunctionConverter(bridge: BlockPointerBridge): LLVMValueRef =
+            blockToKotlinFunctionConverterCache.getOrPut(bridge) {
+                generateBlockToKotlinFunctionConverter(bridge)
+            }
+
+    private fun FunctionGenerationContext.kotlinFunctionToObjCBlockPointer(
+            typeBridge: BlockPointerBridge,
+            value: LLVMValueRef
+    ) = callFromBridge(kotlinFunctionToBlockConverter(typeBridge), listOf(value))
+
+    private val blockAdapterToFunctionGenerator = BlockAdapterToFunctionGenerator(this)
+
+    private val functionToBlockConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
+
+    internal fun kotlinFunctionToBlockConverter(bridge: BlockPointerBridge): LLVMValueRef =
+            functionToBlockConverterCache.getOrPut(bridge) {
+                blockAdapterToFunctionGenerator.run {
+                    generateConvertFunctionToBlock(bridge)
+                }
+            }
+
     fun FunctionGenerationContext.kotlinToObjC(
             value: LLVMValueRef,
             typeBridge: TypeBridge
-    ): LLVMValueRef = when {
-            LLVMTypeOf(value) == voidType -> typeBridge.makeNothing()
-            typeBridge is ReferenceBridge -> kotlinReferenceToObjC(value)
-            typeBridge is ValueTypeBridge -> kotlinToObjC(value, typeBridge.objCValueType)
-            else -> TODO()
+    ): LLVMValueRef = if (LLVMTypeOf(value) == voidType) {
+        typeBridge.makeNothing()
+    } else {
+        when (typeBridge) {
+            is ReferenceBridge -> kotlinReferenceToObjC(value)
+            is BlockPointerBridge -> kotlinFunctionToObjCBlockPointer(typeBridge, value)
+            is ValueTypeBridge -> kotlinToObjC(value, typeBridge.objCValueType)
         }
+    }
 
     fun FunctionGenerationContext.objCToKotlin(
             value: LLVMValueRef,
             typeBridge: TypeBridge,
             resultLifetime: Lifetime
     ): LLVMValueRef = when (typeBridge) {
-        // TODO: if we add value type check here, we could bridge on Unit better.
         is ReferenceBridge -> objCReferenceToKotlin(value, resultLifetime)
+        is BlockPointerBridge -> objCBlockPointerToKotlin(value, typeBridge, resultLifetime)
         is ValueTypeBridge -> objCToKotlin(value, typeBridge.objCValueType)
     }
 
@@ -426,39 +461,25 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
 }
 
 private fun ObjCExportCodeGenerator.emitFunctionConverters() {
-    val generator = BlockAdapterToFunctionGenerator(this)
-
     (0 .. ObjCExportMapper.maxFunctionTypeParameterCount).forEach { numberOfParameters ->
-        val converter = generator.run { generateConvertFunctionToBlock(numberOfParameters) }
+        val converter = kotlinFunctionToBlockConverter(BlockPointerBridge(numberOfParameters, returnsVoid = false))
         setObjCExportTypeInfo(symbols.functions[numberOfParameters].owner, constPointer(converter))
     }
 }
 
-private fun ObjCExportCodeGenerator.generateKotlinFunctionAdapterToBlock(numberOfParameters: Int): ConstPointer {
-    val irInterface = symbols.functions[numberOfParameters].owner
-    val invokeMethod = irInterface.declarations.filterIsInstance<IrSimpleFunction>()
-            .single { it.name == OperatorNameConventions.INVOKE }
-
-    val invokeImpl = generateKotlinFunctionImpl(invokeMethod)
-
-    return rttiGenerator.generateSyntheticInterfaceImpl(
-            irInterface,
-            mapOf(invokeMethod to invokeImpl),
-            immutable = true
-    )
-}
-
-private fun ObjCExportCodeGenerator.emitKotlinFunctionAdaptersToBlock() {
+private fun ObjCExportCodeGenerator.emitBlockToKotlinFunctionConverters() {
+    val converters = (0 .. ObjCExportMapper.maxFunctionTypeParameterCount).map {
+        val bridge = BlockPointerBridge(numberOfParameters = it, returnsVoid = false)
+        constPointer(blockToKotlinFunctionConverter(bridge))
+    }
     val ptr = staticData.placeGlobalArray(
             "",
-            pointerType(runtime.typeInfoType),
-            (0 .. ObjCExportMapper.maxFunctionTypeParameterCount).map {
-                generateKotlinFunctionAdapterToBlock(it)
-            }
+            converters.first().llvmType,
+            converters
     ).pointer.getElementPtr(0)
 
     // Note: this global replaces the weak global defined in runtime.
-    staticData.placeGlobal("Kotlin_ObjCExport_functionAdaptersToBlock", ptr, isExported = true)
+    staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters", ptr, isExported = true)
 }
 
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
@@ -501,7 +522,7 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
 
     emitFunctionConverters()
 
-    emitKotlinFunctionAdaptersToBlock()
+    emitBlockToKotlinFunctionConverters()
 }
 
 private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
@@ -1199,7 +1220,7 @@ private fun MethodBridge.ReturnValue.objCType(context: Context): LLVMTypeRef {
 }
 
 private val TypeBridge.objCType: LLVMTypeRef get() = when (this) {
-    is ReferenceBridge -> int8TypePtr
+    is ReferenceBridge, is BlockPointerBridge -> int8TypePtr
     is ValueTypeBridge -> this.objCValueType.llvmType
 }
 
@@ -1240,7 +1261,7 @@ private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
 }
 
 private val TypeBridge.objCEncoding: String get() = when (this) {
-    ReferenceBridge -> "@"
+    ReferenceBridge, is BlockPointerBridge -> "@"
     is ValueTypeBridge -> this.objCValueType.encoding
 }
 

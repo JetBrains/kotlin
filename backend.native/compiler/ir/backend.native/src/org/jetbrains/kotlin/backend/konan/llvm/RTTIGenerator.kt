@@ -188,16 +188,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
                 pointerType(runtime.typeInfoType), interfaces)
 
-        val objOffsets = getStructElements(bodyType).mapIndexedNotNull { index, type ->
-            if (isObjectType(type)) {
-                LLVMOffsetOfElement(llvmTargetData, bodyType, index)
-            } else {
-                null
-            }
-        }
+        val objOffsets = getObjOffsets(bodyType)
 
-        val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", int32Type,
-                objOffsets.map { Int32(it.toInt()) })
+        val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", int32Type, objOffsets)
 
         val objOffsetsCount = if (irClass.descriptor == context.builtIns.array) {
             1 // To mark it as non-leaf.
@@ -241,6 +234,15 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         exportTypeInfoIfRequired(irClass, irClass.llvmTypeInfoPtr)
     }
+
+    private fun getObjOffsets(bodyType: LLVMTypeRef): List<Int32> =
+            getStructElements(bodyType).mapIndexedNotNull { index, type ->
+                if (isObjectType(type)) {
+                    LLVMOffsetOfElement(llvmTargetData, bodyType, index)
+                } else {
+                    null
+                }
+            }.map { Int32(it.toInt()) }
 
     fun vtable(irClass: IrClass): ConstArray {
         // TODO: compile-time resolution limits binary compatibility.
@@ -314,11 +316,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
             methodImpls: Map<IrFunction, ConstPointer>,
+            bodyType: LLVMTypeRef,
             immutable: Boolean = false
     ): ConstPointer {
         assert(irClass.isInterface)
 
-        val size = LLVMStoreSizeOfType(llvmTargetData, kObjHeader).toInt()
+        val size = LLVMStoreSizeOfType(llvmTargetData, bodyType).toInt()
 
         val superClass = context.ir.symbols.any.owner
 
@@ -328,8 +331,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 pointerType(runtime.typeInfoType), interfaces)
 
         assert(superClass.declarations.all { it !is IrProperty && it !is IrField })
-        val objOffsetsPtr = NullPointer(int32Type)
-        val objOffsetsCount = 0
+
+        val objOffsets = getObjOffsets(bodyType)
+        val objOffsetsPtr = staticData.placeGlobalConstArray("", int32Type, objOffsets)
+        val objOffsetsCount = objOffsets.size
 
         val methods = (methodTableRecords(superClass) + methodImpls.map { (method, impl) ->
             assert(method.parent == irClass)

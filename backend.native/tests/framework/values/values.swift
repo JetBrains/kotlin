@@ -350,6 +350,42 @@ func testCharExtensions() throws {
 
 func testLambda() throws {
     try assertEquals(actual: ValuesKt.sumLambda(3, 4), expected: 7)
+
+    var blockRuns = 0
+
+    try assertTrue(ValuesKt.runUnitBlock { blockRuns += 1 })
+    try assertEquals(actual: blockRuns, expected: 1)
+
+    let unitBlock: () -> Void = ValuesKt.asUnitBlock {
+        blockRuns += 1
+        return 42
+    }
+    try assertTrue(unitBlock() == Void())
+    try assertEquals(actual: blockRuns, expected: 2)
+
+    let nothingBlock: () -> Void = ValuesKt.asNothingBlock { blockRuns += 1 }
+    try assertTrue(ValuesKt.runNothingBlock(block: nothingBlock))
+    try assertEquals(actual: blockRuns, expected: 3)
+
+    try assertTrue(ValuesKt.getNullBlock() == nil)
+    try assertTrue(ValuesKt.isBlockNull(block: nil))
+
+    // Test dynamic conversion:
+    let intBlocks = IntBlocksImpl()
+    try assertEquals(actual: intBlocks.getPlusOneBlock()(1), expected: 2)
+    try assertEquals(actual: intBlocks.callBlock(argument: 2) { KotlinInt(value: $0.int32Value + 2) }, expected: 4)
+
+    // Test round trip with dynamic conversion:
+    let coercedUnitBlock: () -> KotlinUnit = UnitBlockCoercionImpl().coerce { blockRuns += 1 }
+    try assertTrue(coercedUnitBlock() === KotlinUnit())
+    try assertEquals(actual: blockRuns, expected: 4)
+
+    let uncoercedUnitBlock: () -> Void = UnitBlockCoercionImpl().uncoerce {
+        blockRuns += 1
+        return KotlinUnit()
+    }
+    try assertTrue(uncoercedUnitBlock() == Void())
+    try assertEquals(actual: blockRuns, expected: 5)
 }
 
 // -------- Tests for classes and interfaces -------

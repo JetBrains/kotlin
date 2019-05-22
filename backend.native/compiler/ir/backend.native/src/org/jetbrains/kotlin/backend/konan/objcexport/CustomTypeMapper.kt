@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
@@ -116,16 +113,7 @@ internal object CustomTypeMappers {
         override val mappedClassId: ClassId = KotlinBuiltIns.getFunctionClassId(parameterCount)
 
         override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType {
-            val functionType = mappedSuperType
-
-            val returnType = functionType.getReturnTypeFromFunctionType()
-            val parameterTypes = listOfNotNull(functionType.getReceiverTypeFromFunctionType()) +
-                    functionType.getValueParameterTypesFromFunctionType().map { it.type }
-
-            return ObjCBlockPointerType(
-                    translator.mapReferenceType(returnType, objCExportScope),
-                    parameterTypes.map { translator.mapReferenceType(it, objCExportScope) }
-            )
+            return translator.mapFunctionTypeIgnoringNullability(mappedSuperType, objCExportScope, returnsVoid = false)
         }
     }
 }

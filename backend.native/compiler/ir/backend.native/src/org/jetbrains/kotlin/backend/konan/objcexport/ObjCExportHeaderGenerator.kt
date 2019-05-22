@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
@@ -596,12 +596,13 @@ internal class ObjCExportTranslatorImpl(
     }
 
     internal fun mapReferenceType(kotlinType: KotlinType, objCExportScope: ObjCExportScope): ObjCReferenceType =
-            mapReferenceTypeIgnoringNullability(kotlinType, objCExportScope).let {
-                if (kotlinType.binaryRepresentationIsNullable()) {
-                    ObjCNullableReferenceType(it)
-                } else {
-                    it
-                }
+            mapReferenceTypeIgnoringNullability(kotlinType, objCExportScope).withNullabilityOf(kotlinType)
+
+    private fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KotlinType): ObjCReferenceType =
+            if (kotlinType.binaryRepresentationIsNullable()) {
+                ObjCNullableReferenceType(this)
+            } else {
+                this
             }
 
     internal fun mapReferenceTypeIgnoringNullability(kotlinType: KotlinType, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType {
@@ -695,8 +696,46 @@ internal class ObjCExportTranslatorImpl(
         return ObjCIdType
     }
 
+    internal fun mapFunctionTypeIgnoringNullability(
+            functionType: KotlinType,
+            objCExportScope: ObjCExportScope,
+            returnsVoid: Boolean
+    ): ObjCBlockPointerType {
+        val parameterTypes = listOfNotNull(functionType.getReceiverTypeFromFunctionType()) +
+                functionType.getValueParameterTypesFromFunctionType().map { it.type }
+
+        return ObjCBlockPointerType(
+                if (returnsVoid) {
+                    ObjCVoidType
+                } else {
+                    mapReferenceType(functionType.getReturnTypeFromFunctionType(), objCExportScope)
+                },
+                parameterTypes.map { mapReferenceType(it, objCExportScope) }
+        )
+    }
+
+    private fun mapFunctionType(
+            kotlinType: KotlinType,
+            objCExportScope: ObjCExportScope,
+            typeBridge: BlockPointerBridge
+    ): ObjCReferenceType {
+        val expectedDescriptor = builtIns.getFunction(typeBridge.numberOfParameters)
+
+        // Somewhat similar to mapType:
+        val functionType = if (TypeUtils.getClassDescriptor(kotlinType) == expectedDescriptor) {
+            kotlinType
+        } else {
+            kotlinType.supertypes().singleOrNull { TypeUtils.getClassDescriptor(it) == expectedDescriptor }
+                    ?: expectedDescriptor.defaultType // Should not happen though.
+        }
+
+        return mapFunctionTypeIgnoringNullability(functionType, objCExportScope, typeBridge.returnsVoid)
+                .withNullabilityOf(kotlinType)
+    }
+
     private fun mapType(kotlinType: KotlinType, typeBridge: TypeBridge, objCExportScope: ObjCExportScope): ObjCType = when (typeBridge) {
         ReferenceBridge -> mapReferenceType(kotlinType, objCExportScope)
+        is BlockPointerBridge -> mapFunctionType(kotlinType, objCExportScope, typeBridge)
         is ValueTypeBridge -> {
             when (typeBridge.objCValueType) {
                 ObjCValueType.BOOL -> ObjCPrimitiveType("BOOL")
@@ -770,7 +809,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
                 override fun reportWarning(method: FunctionDescriptor, text: String) =
                         this@ObjCExportHeaderGenerator.reportWarning(method, text)
-            }, 
+            },
             objcGenerics)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()

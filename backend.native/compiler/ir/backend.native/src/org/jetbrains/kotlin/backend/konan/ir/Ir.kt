@@ -134,6 +134,8 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
 
     val interopAllocObjCObject = symbolTable.referenceSimpleFunction(context.interopBuiltIns.allocObjCObject)
 
+    val interopForeignObjCObject = interopClass("ForeignObjCObject")
+
     // These are possible supertypes of forward declarations - we need to reference them explicitly to force their deserialization.
     // TODO: Do it lazily.
     val interopCOpaque = symbolTable.referenceClass(context.interopBuiltIns.cOpaque)
@@ -428,6 +430,11 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
             context.interopBuiltIns.packageScope
                     .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                     .single()
+    )
+
+    private fun interopClass(name: String) = symbolTable.referenceClass(
+            context.interopBuiltIns.packageScope
+                    .getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
     )
 
     val functions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)

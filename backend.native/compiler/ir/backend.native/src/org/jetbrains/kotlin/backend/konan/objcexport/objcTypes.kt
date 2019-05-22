@@ -75,7 +75,7 @@ object ObjCInstanceType : ObjCNonNullReferenceType() {
 }
 
 class ObjCBlockPointerType(
-        val returnType: ObjCReferenceType,
+        val returnType: ObjCType,
         val parameterTypes: List<ObjCReferenceType>
 ) : ObjCNonNullReferenceType() {
 
