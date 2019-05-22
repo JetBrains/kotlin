@@ -27,7 +27,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object DEFAULT_IMPLS_BRIDGE : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE")
     object DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC", isSynthetic = true)
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
-    object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
+    object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL", isSynthetic = true)
     object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR", isSynthetic = true)
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
     object JVM_STATIC_WRAPPER : IrDeclarationOriginImpl("JVM_STATIC_WRAPPER")
