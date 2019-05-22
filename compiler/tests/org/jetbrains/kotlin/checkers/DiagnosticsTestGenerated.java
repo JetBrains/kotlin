@@ -22633,6 +22633,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/typealias/simpleTypeAlias.kt");
             }
 
+            @TestMetadata("starImportOnTypeAlias.kt")
+            public void testStarImportOnTypeAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/starImportOnTypeAlias.kt");
+            }
+
             @TestMetadata("starProjection.kt")
             public void testStarProjection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/starProjection.kt");

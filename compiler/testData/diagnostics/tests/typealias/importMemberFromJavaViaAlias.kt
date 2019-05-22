@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// SKIP_JAVAC
 
 // FILE: test/jv/JavaSample.java
 
