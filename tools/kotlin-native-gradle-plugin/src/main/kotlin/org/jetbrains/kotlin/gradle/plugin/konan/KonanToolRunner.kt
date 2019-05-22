@@ -82,7 +82,7 @@ internal abstract class KonanCliRunner(
                 put("DYLD_INSERT_LIBRARIES", "$jre/lib/libjsig.dylib")
             }
             Family.LINUX -> {
-                put("LD_PRELOAD", "$jre/lib/libjsig.so")
+                put("LD_PRELOAD", "$jre/lib/amd64/libjsig.so")
             }
             else -> { /* No signal chaining required. */ }
         }
