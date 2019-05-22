@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui
 
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.HelpID
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtractSuperclassHandler
@@ -75,10 +75,10 @@ class KotlinExtractSuperclassDialog(
 
     override fun getTopLabelText() = RefactoringBundle.message("extract.superclass.from")!!
 
-    override fun getDocCommentPolicySetting() = JavaRefactoringSettings.getInstance().EXTRACT_SUPERCLASS_JAVADOC
+    override fun getDocCommentPolicySetting() = KotlinRefactoringSettings.instance.EXTRACT_SUPERCLASS_JAVADOC
 
     override fun setDocCommentPolicySetting(policy: Int) {
-        JavaRefactoringSettings.getInstance().EXTRACT_SUPERCLASS_JAVADOC = policy
+        KotlinRefactoringSettings.instance.EXTRACT_SUPERCLASS_JAVADOC = policy
     }
 
     override fun getExtractedSuperNameNotSpecifiedMessage() = RefactoringBundle.message("no.superclass.name.specified")!!

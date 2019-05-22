@@ -21,7 +21,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiNamedElement
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.classMembers.MemberInfoChange
 import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
@@ -166,7 +166,7 @@ class KotlinPullUpDialog(
                 sourceClass.toLightClass() ?: error("can't build lightClass for $sourceClass"),
                 targetPsiClass,
                 memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
-                DocCommentPolicy<PsiComment>(JavaRefactoringSettings.getInstance().PULL_UP_MEMBERS_JAVADOC))
+                DocCommentPolicy<PsiComment>(KotlinRefactoringSettings.instance.PULL_UP_MEMBERS_JAVADOC))
         }
     }
 }

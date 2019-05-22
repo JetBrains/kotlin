@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
 import org.jetbrains.kotlin.idea.core.util.PhysicalFileSystemUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
@@ -399,7 +400,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private void saveRefactoringSettings() {
-        JavaRefactoringSettings refactoringSettings = JavaRefactoringSettings.getInstance();
+        KotlinRefactoringSettings refactoringSettings = KotlinRefactoringSettings.getInstance();
         refactoringSettings.MOVE_SEARCH_IN_COMMENTS = isSearchInComments();
         refactoringSettings.MOVE_SEARCH_FOR_TEXT = isSearchInNonJavaFiles();
         refactoringSettings.MOVE_PREVIEW_USAGES = isPreviewUsages();

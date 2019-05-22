@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -69,10 +69,10 @@ class AutomaticParameterRenamerFactory : AutomaticRenamerFactory {
 
     override fun getOptionName() = RefactoringBundle.message("rename.parameters.hierarchy")!!
 
-    override fun isEnabled() = JavaRefactoringSettings.getInstance().isRenameParameterInHierarchy
+    override fun isEnabled() = KotlinRefactoringSettings.instance.renameParameterInHierarchy
 
     override fun setEnabled(enabled: Boolean) {
-        JavaRefactoringSettings.getInstance().isRenameParameterInHierarchy = enabled
+        KotlinRefactoringSettings.instance.renameParameterInHierarchy = enabled
     }
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>): AutomaticRenamer {

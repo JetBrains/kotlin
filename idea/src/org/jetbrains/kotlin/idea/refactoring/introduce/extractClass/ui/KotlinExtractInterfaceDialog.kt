@@ -20,7 +20,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.refactoring.HelpID
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.classMembers.MemberInfoModel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
@@ -120,10 +120,10 @@ class KotlinExtractInterfaceDialog(
 
     override fun getTopLabelText() = RefactoringBundle.message("extract.interface.from")!!
 
-    override fun getDocCommentPolicySetting() = JavaRefactoringSettings.getInstance().EXTRACT_INTERFACE_JAVADOC
+    override fun getDocCommentPolicySetting() = KotlinRefactoringSettings.instance.EXTRACT_INTERFACE_JAVADOC
 
     override fun setDocCommentPolicySetting(policy: Int) {
-        JavaRefactoringSettings.getInstance().EXTRACT_INTERFACE_JAVADOC = policy
+        KotlinRefactoringSettings.instance.EXTRACT_INTERFACE_JAVADOC = policy
     }
 
     override fun getExtractedSuperNameNotSpecifiedMessage() = RefactoringBundle.message("no.interface.name.specified")!!
