@@ -301,8 +301,8 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
       }
     }
     if (myMinimizeActionEnabled) {
-      myViewActions.addAction(ActionManager.getInstance().getAction("Runner.RestoreLayout")).setAsSecondary(true);
       myViewActions.addAction(new Separator()).setAsSecondary(true);
+      myViewActions.addAction(ActionManager.getInstance().getAction("Runner.RestoreLayout")).setAsSecondary(true);
     }
   }
 
@@ -343,6 +343,13 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
       else {
         group.add(each);
       }
+    }
+    if (myViewActions.getChildrenCount() > 0) {
+      DefaultActionGroup layoutGroup = new DefaultActionGroup(myViewActions.getChildren(null));
+      layoutGroup.getTemplatePresentation().setText("Layout");
+      layoutGroup.setPopup(true);
+      group.addSeparator();
+      group.addAction(layoutGroup);
     }
     return group;
   }
@@ -667,6 +674,16 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
             if (action instanceof RestoreViewAction && ((RestoreViewAction)action).getContent() == event.getContent()) return;
           }
           myViewActions.addAction(new RestoreViewAction(RunnerContentUi.this, event.getContent())).setAsSecondary(true);
+          List<AnAction> toAdd = new ArrayList<>();
+          for (AnAction anAction : myViewActions.getChildren(null)) {
+            if (!(anAction instanceof RestoreViewAction)) {
+              myViewActions.remove(anAction);
+              toAdd.add(anAction);
+            }
+          }
+          for (AnAction anAction : toAdd) {
+            myViewActions.addAction(anAction).setAsSecondary(true);
+          }
         }
       }
 
@@ -1171,22 +1188,17 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
   @Override
   public void restoreLayout() {
     final RunnerContentUi[] children = myChildren.toArray(new RunnerContentUi[0]);
-    final List<Content> contents = new ArrayList<>();
+    final LinkedHashSet<Content> contents = new LinkedHashSet<>();
     Collections.addAll(contents, myManager.getContents());
     for (RunnerContentUi child : children) {
       Collections.addAll(contents, child.myManager.getContents());
     }
     for (AnAction action : myViewActions.getChildren(null)) {
       if (!(action instanceof RestoreViewAction)) continue;
-      final Content content = ((RestoreViewAction)action).getContent();
-      contents.add(content);
+      contents.add(((RestoreViewAction)action).getContent());
     }
     Content[] all = contents.toArray(new Content[0]);
-    Arrays.sort(all, (content, content1) -> {
-      final int i = getStateFor(content).getTab().getDefaultIndex();
-      final int i1 = getStateFor(content1).getTab().getDefaultIndex();
-      return i - i1;
-    });
+    Arrays.sort(all, Comparator.comparingInt(content -> getStateFor(content).getTab().getDefaultIndex()));
 
     setStateIsBeingRestored(true, this);
     try {
@@ -1194,7 +1206,6 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
         child.myManager.removeAllContents(false);
       }
       myManager.removeAllContents(false);
-      //myViewActions.removeAll();
     }
     finally {
       setStateIsBeingRestored(false, this);
