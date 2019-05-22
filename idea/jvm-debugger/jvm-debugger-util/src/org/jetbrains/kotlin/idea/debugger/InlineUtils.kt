@@ -14,18 +14,20 @@ import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_F
 val INLINED_THIS_REGEX = getLocalVariableNameRegexInlineAware(AsmUtil.INLINE_DECLARATION_SITE_THIS)
 
 fun getInlineDepth(variables: List<LocalVariableProxyImpl>): Int {
-    val inlineFunVariables = variables
-        .filter { it.name().startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
+    val rawInlineFunDepth = variables.count { it.name().startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 
-    if (inlineFunVariables.isEmpty()) {
-        return 0
+    for (variable in variables.sortedByDescending { it.variable }) {
+        val name = variable.name()
+        val depth = getInlineDepth(name)
+        if (depth > 0) {
+            return depth
+        } else if (name.startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)) {
+            // TODO this heuristics doesn't support debugging inlined lambdas inside inline functions.
+            return 0
+        }
     }
 
-    val closestInlineFun = inlineFunVariables.maxBy { it.variable }!!.variable
-    val inlineLambdaDepth = variables
-        .count { it.name().startsWith(LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) && it.variable > closestInlineFun }
-
-    return maxOf(0, inlineFunVariables.size - inlineLambdaDepth)
+    return rawInlineFunDepth
 }
 
 fun getInlineDepth(variableName: String): Int {

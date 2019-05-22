@@ -900,6 +900,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/localFunctionMangling.kt");
             }
 
+            @TestMetadata("nestedInlineFun.kt")
+            public void testNestedInlineFun() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/nestedInlineFun.kt");
+            }
+
             @TestMetadata("remapThis.kt")
             public void testRemapThis() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/remapThis.kt");
