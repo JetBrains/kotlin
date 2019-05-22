@@ -95,7 +95,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     myTypeLabel = new MySimpleColoredComponent();
     myTypeLabel.setIpad(JBUI.emptyInsets());
-    myTypeLabel.setBorder(JBUI.Borders.emptyRight(6));
+    myTypeLabel.setBorder(JBUI.Borders.emptyRight(10));
 
     myPanel = new LookupPanel();
     myPanel.add(myNameComponent, BorderLayout.WEST);
