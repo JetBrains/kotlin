@@ -377,7 +377,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 val jvmTestTaskName = if (testJavaSupportInJvmTargets) "jvm6Test" else "test"
                 assertTasksExecuted(":$jvmTestTaskName")
-                assertFileExists("build/reports/tests/$jvmTestTaskName/classes/com.example.lib.JavaTest.html")
+                assertFileExists("build/reports/tests/allTests/classes/com.example.lib.JavaTest.html")
 
                 if (testJavaSupportInJvmTargets) {
                     assertNotContains(KotlinJvmWithJavaTargetPreset.DEPRECATION_WARNING)
