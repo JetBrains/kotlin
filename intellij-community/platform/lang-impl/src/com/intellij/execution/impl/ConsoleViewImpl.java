@@ -1598,8 +1598,9 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
     @Override
     public final void run() {
+      if (isDisposed()) return;
       // flush requires UndoManger/CommandProcessor properly initialized
-      if (!isDisposed() && !StartupManagerEx.getInstanceEx(myProject).startupActivityPassed()) {
+      if (!StartupManagerEx.getInstanceEx(myProject).startupActivityPassed()) {
         addFlushRequest(DEFAULT_FLUSH_DELAY, FLUSH);
       }
 
