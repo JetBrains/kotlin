@@ -17,6 +17,7 @@ import kotlin.reflect.KFunction
 // --------------------------------------------------
 
 // TODO: pack this as a Gradle plugin
+@Suppress("RemoveExplicitTypeArguments")
 val cidrPluginTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
         ::ideaPluginJarDep,
         ::addIdeaNativeModuleDeps,
@@ -29,7 +30,8 @@ val cidrPluginTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
         ::preparePluginXml,
 
         ::pluginJar,
-        ::platformDepsJar,
+        ::patchedPlatformDepsJar,
+        ::otherPlatformDepsJars,
 
         ::patchFileTemplates,
         ::patchGradleXml
@@ -51,6 +53,8 @@ val excludesListFromIdeaPlugin = listOf(
 val platformDepsJarName = "kotlinNative-platformDeps.jar"
 
 val pluginXmlPath = "META-INF/plugin.xml"
+
+val javaApiArtifacts = listOf("java-api", "java-impl")
 
 val Project.isStandaloneBuild: Boolean
     get() = rootProject.findProject(":idea") == null
@@ -147,7 +151,10 @@ fun addIdeaNativeModuleDeps(project: Project) = with(project) {
 
             // Java APIs (private artifact that goes together with CIDR IDEs)
             val cidrPlatformDepsDir: String by rootProject.extra
-            val cidrPlatformDeps = fileTree(cidrPlatformDepsDir) { include(platformDepsJarName) }
+            val cidrPlatformDeps = fileTree(cidrPlatformDepsDir) {
+                include(platformDepsJarName)
+                javaApiArtifacts.forEach { include("$it*.jar") }
+            }
             add("compile", cidrPlatformDeps)
         } else {
             // Gradle projects with Kotlin/Native-specific logic
@@ -162,15 +169,12 @@ fun addIdeaNativeModuleDeps(project: Project) = with(project) {
             // Java APIs (from Big Kotlin project)
             val javaApis = add("compile", "kotlin.build:$ideName:$ideVersion") as ExternalModuleDependency
             with(javaApis) {
-                artifact {
-                    name = "java-api"
-                    type = "jar"
-                    extension = "jar"
-                }
-                artifact {
-                    name = "java-impl"
-                    type = "jar"
-                    extension = "jar"
+                javaApiArtifacts.forEach {
+                    artifact {
+                        name = it
+                        type = "jar"
+                        extension = "jar"
+                    }
                 }
                 isTransitive = false
             }
@@ -187,22 +191,18 @@ fun packageCidrPlugin(
         project: Project,
         predecessorProjectName: String,
         cidrPluginDir: File,
-        pluginJarTask: Task,
-        platformDepsJarTask: Task,
-        platformDepsDir: File
+        jarTasks: List<Task>
 ): Copy = with(project) {
     task<Copy>(guessCidrProductNameFromProject(true) + "Plugin") {
+        duplicatesStrategy = DuplicatesStrategy.FAIL
+
         into(cidrPluginDir)
 
         into("lib") {
-            from(pluginJarTask)
-            from(platformDepsJarTask)
-
-            val otherPlatformDepsJars = fileTree(platformDepsDir) {
-                include("*.jar")
-                exclude(platformDepsJarName)
-            }.files
-            from(otherPlatformDepsJars)
+            for (t in jarTasks) {
+                dependsOn(t)
+                from(t)
+            }
         }
 
         includeProjectTemplates(project(predecessorProjectName))
@@ -562,13 +562,15 @@ fun preparePluginXml(
         predecessorProjectName: String,
         productVersion: String,
         strictProductVersionLimitation: Boolean,
-        cidrPluginVersionFull: String
+        cidrPluginVersionFull: String,
+        useJavaPlugin: Boolean
 ): Copy = with(project) {
     task<Copy>("preparePluginXml") {
         dependsOn("$predecessorProjectName:assemble")
 
         inputs.property("${project.name}-$name-strictProductVersionLimitation", strictProductVersionLimitation)
         inputs.property("${project.name}-$name-cidrPluginVersionFull", cidrPluginVersionFull)
+        inputs.property("${project.name}-$name-useJavaPlugin", useJavaPlugin)
         outputs.dir("$buildDir/$name")
 
         val predecessorProjectResources: File = project(predecessorProjectName)
@@ -580,14 +582,15 @@ fun preparePluginXml(
         from(predecessorProjectResources, Action { include(pluginXmlPath) })
         into(outputs.files.singleFile)
 
-        applyCidrVersionRestrictions(productVersion, strictProductVersionLimitation, cidrPluginVersionFull)
+        applyCidrVersionRestrictions(productVersion, strictProductVersionLimitation, cidrPluginVersionFull, useJavaPlugin)
     }
 }
 
 fun Copy.applyCidrVersionRestrictions(
         productVersion: String,
         strictProductVersionLimitation: Boolean,
-        cidrPluginVersionFull: String
+        cidrPluginVersionFull: String,
+        useJavaPlugin: Boolean
 ) {
     val dotsCount = productVersion.count { it == '.' }
     check(dotsCount in 1..2) {
@@ -601,7 +604,8 @@ fun Copy.applyCidrVersionRestrictions(
         // it does not make sense for private versions to apply strict version limitation
         logger.warn("Non-public CIDR product version [$productVersion] has been specified. The corresponding `versions.<product>.strict` property will be ignored.")
         false
-    } else strictProductVersionLimitation
+    } else
+        strictProductVersionLimitation
 
     val sinceBuild = if (privateProductVersion)
         productVersion
@@ -611,14 +615,33 @@ fun Copy.applyCidrVersionRestrictions(
     val untilBuild = if (applyStrictProductVersionLimitation) {
         // if `strict` then restrict plugin to the same single version of CLion or AppCode
         "$sinceBuild.*"
-    } else productVersion.substringBefore('.') + ".*"
+    } else
+        productVersion.substringBefore('.') + ".*"
+
+    val javaPluginDependency = if (useJavaPlugin)
+        "<depends>com.intellij.java</depends>"
+    else
+        """
+        |  <xi:include href="/META-INF/JavaAnalysisPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+        |  <xi:include href="/META-INF/JavaIndexingPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+        |  <xi:include href="/META-INF/JavaPsiPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+        |  <xi:include href="/META-INF/JavaPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+        """.trimMargin().trimStart()
 
     filter {
         it
-                .replace("<!--idea_version_placeholder-->",
-                        "<idea-version since-build=\"$sinceBuild\" until-build=\"$untilBuild\"/>")
-                .replace("<!--version_placeholder-->",
-                        "<version>$cidrPluginVersionFull</version>")
+                .replace(
+                        "<!--idea_version_placeholder-->",
+                        "<idea-version since-build=\"$sinceBuild\" until-build=\"$untilBuild\"/>"
+                )
+                .replace(
+                        "<!--version_placeholder-->",
+                        "<version>$cidrPluginVersionFull</version>"
+                )
+                .replace(
+                        "<!--java_plugin_dependency-->",
+                        javaPluginDependency
+                )
     }
 }
 
@@ -663,8 +686,8 @@ fun pluginJar(
 }
 
 // Prepare patched "platformDeps" JAR file.
-fun platformDepsJar(project: Project, platformDepsDir: File): Zip = with(project) {
-    task<Zip>("platformDepsJar") {
+fun patchedPlatformDepsJar(project: Project, platformDepsDir: File): Zip = with(project) {
+    task<Zip>("patchedPlatformDepsJar") {
         val productName = guessCidrProductNameFromProject(false)
         archiveFileName.set("kotlinNative-platformDeps-$productName.jar")
         destinationDirectory.set(file("$buildDir/$name"))
@@ -687,6 +710,18 @@ fun platformDepsJar(project: Project, platformDepsDir: File): Zip = with(project
         }
 
         patchJavaXmls()
+    }
+}
+
+fun otherPlatformDepsJars(project: Project, platformDepsDir: File): Task = with(project) {
+    task<Task>("otherPlatformDepsJars") {
+        val otherPlatformDepsJars = fileTree(platformDepsDir) {
+            include("*.jar")
+            exclude(platformDepsJarName)
+        }.files
+
+        inputs.files(otherPlatformDepsJars)
+        outputs.files(otherPlatformDepsJars)
     }
 }
 

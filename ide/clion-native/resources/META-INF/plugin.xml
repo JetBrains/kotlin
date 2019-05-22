@@ -13,6 +13,7 @@
   <change-notes/>
 
   <depends>com.intellij.modules.clion</depends>
+  <!--java_plugin_dependency-->
 
   <application-components>
     <component>
@@ -33,6 +34,7 @@
     <executionTargetProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanExecutionTargetProvider"/>
     <runLineMarkerContributor language="ObjectiveC"
                               implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
+
     <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
   </extensions>
 

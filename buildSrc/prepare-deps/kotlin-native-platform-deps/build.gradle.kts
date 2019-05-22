@@ -24,11 +24,13 @@ val clionRepo: String by rootProject.extra
 val clionVersion: String by rootProject.extra
 val clionPlatformDepsDir: File by rootProject.extra
 val clionUnscrambledJarDir: File by rootProject.extra
+val clionUseJavaPlugin: Boolean by rootProject.extra
 
 val appcodeRepo: String by rootProject.extra
 val appcodeVersion: String by rootProject.extra
 val appcodePlatformDepsDir: File by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
+val appcodeUseJavaPlugin: Boolean by rootProject.extra
 
 val clionUnscrambledJar: Configuration by configurations.creating
 val clionPlatformDepsZip: Configuration by configurations.creating
@@ -38,10 +40,10 @@ val appcodePlatformDepsZip: Configuration by configurations.creating
 
 dependencies {
     clionUnscrambledJar(tc("$clionRepo:$clionVersion:unscrambled/clion.jar"))
-    clionPlatformDepsZip(tc("$clionRepo:$clionVersion:CL-plugins/kotlinNative-platformDeps-$clionVersion.zip"))
+    clionPlatformDepsZip(tc("$clionRepo:$clionVersion:CL-plugins/${platformDepsArtifactName(clionUseJavaPlugin, clionVersion)}"))
 
     appcodeUnscrambledJar(tc("$appcodeRepo:$appcodeVersion:unscrambled/appcode.jar"))
-    appcodePlatformDepsZip(tc("$appcodeRepo:$appcodeVersion:OC-plugins/kotlinNative-platformDeps-$appcodeVersion.zip"))
+    appcodePlatformDepsZip(tc("$appcodeRepo:$appcodeVersion:OC-plugins/${platformDepsArtifactName(appcodeUseJavaPlugin, appcodeVersion)}"))
 }
 
 val downloadCLionUnscrambledJar: Task by downloading(clionUnscrambledJar, clionUnscrambledJarDir)
@@ -89,3 +91,6 @@ fun Project.downloading(
         }
     }
 }
+
+fun platformDepsArtifactName(useJavaPlugin: Boolean, productVersion: String): String =
+        if (useJavaPlugin) "java.zip" else "kotlinNative-platformDeps-$productVersion.zip"

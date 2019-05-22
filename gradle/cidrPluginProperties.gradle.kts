@@ -42,6 +42,7 @@ rootProject.extra["clionRepo"] = rootProject.extra["versions.clion.repo"] as Str
 rootProject.extra["clionVersionStrict"] = rootProject.extra["versions.clion.strict"].toBoolean()
 rootProject.extra["clionPlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-platform-deps-$clionVersion")
 rootProject.extra["clionUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion")
+rootProject.extra["clionUseJavaPlugin"] = cidrProductBranch(clionVersion) >= 192
 
 val appcodeVersion: String = rootProject.extra["versions.appcode"] as String
 rootProject.extra["appcodeVersion"] = appcodeVersion
@@ -50,6 +51,7 @@ rootProject.extra["appcodeRepo"] = rootProject.extra["versions.appcode.repo"] as
 rootProject.extra["appcodeVersionStrict"] = rootProject.extra["versions.appcode.strict"].toBoolean()
 rootProject.extra["appcodePlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-platform-deps-$appcodeVersion")
 rootProject.extra["appcodeUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion")
+rootProject.extra["appcodeUseJavaPlugin"] = false // not supported yet
 
 val artifactsForCidrDir: File = rootProject.rootDir.resolve("dist/artifacts")
 rootProject.extra["artifactsForCidrDir"] = artifactsForCidrDir
@@ -107,9 +109,13 @@ rootProject.extra["clionPluginZipPath"] = clionPluginZipPath
 // Note: "clionPluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
 rootProject.extra["clionCustomPluginRepoUrl"] = cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath)
 
-fun cidrProductFriendlyVersion(productName: String, productVersion: String): String {
-    val productBranch = productVersion.substringBefore('.').toIntOrNull()
+fun cidrProductBranch(productVersion: String): Int {
+    return productVersion.substringBefore('.').toIntOrNull()
             ?: error("Invalid product version format: $productVersion")
+}
+
+fun cidrProductFriendlyVersion(productName: String, productVersion: String): String {
+    val productBranch = cidrProductBranch(productVersion)
     val year = 2000 + productBranch / 10
     val majorRelease = productBranch % 10
 
