@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import java.io.File
 import java.net.URI
 
@@ -19,7 +20,8 @@ import java.net.URI
  *
  * Individual test tasks will not fail build if this task will be executed,
  * also individual html and xml reports will replaced by one consolidated html report.
- * This behavior can be disabled by setting [overrideReporting] to `false`.
+ * This behavior can be disabled by setting `kotlin.tests.individualTaskReports` property
+ * to true.
  *
  * Aggregate test reports may form hierarchy, for example:
  *  - allTest // aggregates all tests
@@ -45,8 +47,10 @@ open class KotlinTestReport : TestReport() {
     @Internal
     val children = mutableListOf<KotlinTestReport>()
 
-    @Input
-    var overrideReporting: Boolean = true
+    private val projectProperties = PropertiesProvider(project)
+
+    val overrideReporting: Boolean
+        @Input get() = projectProperties.individualTaskReports == null
 
     @Input
     var checkFailedTests: Boolean = false
@@ -139,6 +143,7 @@ open class KotlinTestReport : TestReport() {
     }
 
     fun maybeOverrideReporting(graph: TaskExecutionGraph) {
+        if (!overrideReporting) return
         if (!graph.hasTask(this)) return
 
         // only topmost aggregate should override reporting
