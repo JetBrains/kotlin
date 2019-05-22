@@ -155,10 +155,10 @@ extra["versions.org.springframework"] = "4.2.0.RELEASE"
 extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
-extra["versions.kotlin-native-shared"] = "1.0-dev-50"
+extra["versions.kotlin-native-shared"] = "1.0-dev-89"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.3-eap-10124"
+    extra["versions.kotlin-native"] = "1.3-eap-10240"
 }
 
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
