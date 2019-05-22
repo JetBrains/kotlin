@@ -52,7 +52,7 @@ internal class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracke
   }
 
   private fun logProjectInitializedComponentsAndContinue(projects: ArrayDeque<Project>): CompletableFuture<Void?> {
-    val project = projects.peekFirst()
+    val project = projects.pollFirst()
     if (project == null || !project.isInitialized || project.isDisposed) {
       return CompletableFuture.completedFuture(null)
     }
