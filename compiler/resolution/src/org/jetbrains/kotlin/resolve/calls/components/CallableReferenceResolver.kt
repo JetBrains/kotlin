@@ -130,8 +130,7 @@ class CallableReferenceResolver(
         return callableReferenceOverloadConflictResolver.chooseMaximallySpecificCandidates(
             candidates,
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            discriminateGenerics = false, // we can't specify generics explicitly for callable references
-            isDebuggerContext = scopeTower.isDebuggerContext
+            discriminateGenerics = false // we can't specify generics explicitly for callable references
         )
     }
 }

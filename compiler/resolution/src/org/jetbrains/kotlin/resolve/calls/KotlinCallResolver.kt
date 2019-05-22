@@ -129,8 +129,6 @@ class KotlinCallResolver(
         expectedType: UnwrappedType?,
         candidates: Collection<KotlinResolutionCandidate>
     ): CallResolutionResult {
-        val isDebuggerContext = candidateFactory.scopeTower.isDebuggerContext
-
         var refinedCandidates = candidates
         if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.RefinedSamAdaptersPriority)) {
             val nonSynthesized = candidates.filter { !it.resolvedCall.candidateDescriptor.isSynthesized }
@@ -142,8 +140,7 @@ class KotlinCallResolver(
         val maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
             refinedCandidates,
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            discriminateGenerics = true, // todo
-            isDebuggerContext = isDebuggerContext
+            discriminateGenerics = true // todo
         )
 
         return kotlinCallCompleter.runCompletion(candidateFactory, maximallySpecificCandidates, expectedType, resolutionCallbacks)
