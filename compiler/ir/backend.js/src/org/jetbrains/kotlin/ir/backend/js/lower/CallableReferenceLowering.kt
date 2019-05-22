@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -326,7 +327,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             // }
             //
             val cacheName = "${factoryFunction.name}_${Namer.KCALLABLE_CACHE_SUFFIX}"
-            val type = factoryFunction.returnType
+            val type = factoryFunction.returnType.makeNullable()
             val irNull = { JsIrBuilder.buildNull(context.irBuiltIns.nothingNType) }
             val cacheVar = JsIrBuilder.buildVar(type, factoryFunction.parent, cacheName, true, initializer = irNull())
 

@@ -426,7 +426,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
         syntheticParameters += newFunction.valueParameter(
             syntheticParameters.last().index + 1,
             "handler".synthesizedName,
-            context.irBuiltIns.anyType
+            context.irBuiltIns.anyNType
         )
     }
 
