@@ -14,6 +14,9 @@ import kotlin.test.assertTrue
 open class KotlinAndroid33GradleIT : KotlinAndroid32GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_3_2
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("5.0")
 }
 
 open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
