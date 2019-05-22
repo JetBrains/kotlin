@@ -11,33 +11,51 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.TaskHolder
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 
-private val Project.allTestsTask: TaskHolder<AggregateTestReport>
-    get() = getAggregatedTestTask(
+internal val Project.allTestsTask: TaskHolder<KotlinTestReport>
+    get() = getOrCreateAggregatedTestTask(
         name = "allTests",
         description = "Runs the tests for all targets and create aggregated report",
         reportName = "all"
-    ).also {
+    ) {
         tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME)
             .dependsOn(it.getTaskOrProvider())
     }
 
-internal fun Project.getAggregatedTestTask(name: String, description: String, reportName: String): TaskHolder<AggregateTestReport> {
-    return locateOrRegisterTask(name) { aggregate ->
+internal fun Project.getOrCreateAggregatedTestTask(
+    name: String,
+    description: String,
+    reportName: String,
+    parent: KotlinTestReport? = null,
+    configure: (TaskHolder<KotlinTestReport>) -> Unit = {}
+): TaskHolder<KotlinTestReport> {
+    val existed = locateTask<KotlinTestReport>(name)
+    if (existed != null) return existed
+
+    val aggregate: TaskHolder<KotlinTestReport> = createOrRegisterTask(name) { aggregate ->
         aggregate.description = description
         aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 
-        aggregate.configureReportsConvention(reportName)
-
-        aggregate.onlyIf {
-            aggregate.testTasks.size > 1
-        }
+        aggregate.destinationDir = testReportsDir.resolve(reportName)
 
         if (System.getProperty("idea.active") != null) {
             aggregate.extensions.extraProperties.set("idea.internal.test", true)
         }
+
+        project.gradle.taskGraph.whenReady { graph ->
+            aggregate.maybeOverrideReporting(graph)
+        }
+
+        parent?.addChild(aggregate)
     }
+
+    parent?.dependsOn(aggregate.getTaskOrProvider())
+
+    configure(aggregate)
+
+    return aggregate
 }
 
 private fun cleanTaskName(taskName: String): String {
@@ -61,7 +79,7 @@ internal fun registerTestTask(taskHolder: TaskHolder<AbstractTestTask>) {
 
 internal fun registerTestTaskInAggregate(
     taskHolder: TaskHolder<AbstractTestTask>,
-    allTests: AggregateTestReport
+    allTests: KotlinTestReport
 ) {
     val project = taskHolder.project
 
@@ -71,18 +89,6 @@ internal fun registerTestTaskInAggregate(
 
     taskHolder.configure { task ->
         allTests.registerTestTask(task)
-
-        project.gradle.taskGraph.whenReady {
-            if (it.hasTask(allTests)) {
-                // when [allTestsTask] task enabled, test failure should be reported only on [allTestsTask],
-                // not at individual target's test tasks. To do that, we need:
-                // - disable all reporting in test tasks
-                // - enable [checkFailedTests] on [allTestsTask]
-
-                allTests.overrideReporting(task)
-            }
-        }
-
         ijListenTestTask(task)
     }
 }
