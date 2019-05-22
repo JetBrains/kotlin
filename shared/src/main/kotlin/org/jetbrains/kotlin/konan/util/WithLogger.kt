@@ -13,14 +13,12 @@ interface WithLogger {
     val logger: Logger
 }
 
-fun dummyLogger(message: String) {}
-
 object DummyLogger : Logger {
-    override fun log(message: String) = dummyLogger(message)
-    override fun error(message: String) = dummyLogger(message)
-    override fun warning(message: String) = dummyLogger(message)
+    override fun log(message: String) = println(message)
+    override fun error(message: String) = println("e: $message")
+    override fun warning(message: String) = println("w: $message")
     override fun fatal(message: String): Nothing {
-        dummyLogger(message)
+        println("e: $message")
         exitProcess(1)
     }
 }
