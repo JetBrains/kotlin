@@ -7,9 +7,11 @@ import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.packaging.artifacts.ModifiableArtifactModel
 import com.intellij.projectImport.DeprecatedProjectBuilderForImport
 import com.intellij.projectImport.ProjectImportBuilder
+import com.intellij.projectImport.ProjectImportProvider.getDefaultPath
 import icons.GradleIcons
 import org.jetbrains.plugins.gradle.service.project.open.importProject
 import org.jetbrains.plugins.gradle.util.GradleBundle
@@ -29,6 +31,14 @@ class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedPr
   override fun setList(list: List<Any>) {}
 
   override fun setOpenProjectSettingsAfter(on: Boolean) {}
+
+  private fun getPathToBeImported(path: String): String {
+    val localForImport = LocalFileSystem.getInstance()
+    val file = localForImport.refreshAndFindFileByPath(path)
+    return file?.let(::getDefaultPath) ?: path
+  }
+
+  override fun setFileToImport(path: String) = super.setFileToImport(getPathToBeImported(path))
 
   override fun createProject(name: String?, path: String): Project? {
     return setupCreatedProject(super.createProject(name, path))?.also {
