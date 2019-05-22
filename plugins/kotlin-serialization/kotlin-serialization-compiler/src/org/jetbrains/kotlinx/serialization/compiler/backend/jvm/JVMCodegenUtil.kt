@@ -191,7 +191,6 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithou
             ?: if (!property.type.isTypeParameter()) serializerCodegen.findTypeSerializerOrContext(
                 property.module,
                 property.type,
-                property.descriptor.annotations,
                 property.descriptor.findPsi()
             ) else null
     return serializerCodegen.stackValueSerializerInstance(
@@ -382,7 +381,6 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                 ?: findTypeSerializerOrContext(
                     property.module,
                     property.type,
-                    property.descriptor.annotations,
                     property.descriptor.findPsi()
                 )
             return JVMSerialTypeInfo(

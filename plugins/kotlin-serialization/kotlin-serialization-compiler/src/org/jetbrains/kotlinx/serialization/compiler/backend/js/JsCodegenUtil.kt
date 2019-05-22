@@ -124,7 +124,6 @@ internal fun SerializerJsTranslator.serializerTower(property: SerializableProper
             ?: if (!property.type.isTypeParameter()) findTypeSerializerOrContext(
                 property.module,
                 property.type,
-                property.descriptor.annotations,
                 property.descriptor.findPsi()
             ) else null
     return serializerInstance(serializer, property.module, property.type, property.genericIndex)

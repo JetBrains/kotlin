@@ -451,7 +451,6 @@ interface IrBuilderExtension {
                 ?: if (!property.type.isTypeParameter()) generator.findTypeSerializerOrContext(
                     property.module,
                     property.type,
-                    property.descriptor.annotations,
                     property.descriptor.findPsi()
                 ) else null
         return serializerInstance(
