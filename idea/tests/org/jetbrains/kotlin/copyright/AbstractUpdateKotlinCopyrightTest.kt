@@ -29,10 +29,11 @@ abstract class AbstractUpdateKotlinCopyrightTest : KotlinLightCodeInsightFixture
         val comments = UpdateKotlinCopyright.getExistentComments(myFixture.file)
         for (comment in comments) {
             val commentText = comment.text
-            when (commentText) {
-                "/* PRESENT */" -> {}
-                "/* ABSENT */" -> {
-                    throw AssertionFailedError("Unexpected comment found")
+            when {
+                commentText.contains("PRESENT") -> {
+                }
+                commentText.contains("ABSENT") -> {
+                    throw AssertionFailedError("Unexpected comment found: `$commentText`")
                 }
                 else -> {
                     throw AssertionFailedError("A comment with bad directive found: `$commentText`")
@@ -40,7 +41,10 @@ abstract class AbstractUpdateKotlinCopyrightTest : KotlinLightCodeInsightFixture
             }
         }
 
-        Assert.assertEquals("Wrong number of comments found", expectedNumberOfComments, comments.size)
+        Assert.assertEquals(
+            "Wrong number of comments found:\n${comments.joinToString(separator = "\n") { it.text }}\n",
+            expectedNumberOfComments, comments.size
+        )
     }
 
     override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/copyright").path + File.separator

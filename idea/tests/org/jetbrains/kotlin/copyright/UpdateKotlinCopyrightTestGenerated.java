@@ -39,6 +39,11 @@ public class UpdateKotlinCopyrightTestGenerated extends AbstractUpdateKotlinCopy
         runTest("idea/testData/copyright/Empty.kt");
     }
 
+    @TestMetadata("MultiComments.kt")
+    public void testMultiComments() throws Exception {
+        runTest("idea/testData/copyright/MultiComments.kt");
+    }
+
     @TestMetadata("NoPackage.kt")
     public void testNoPackage() throws Exception {
         runTest("idea/testData/copyright/NoPackage.kt");
