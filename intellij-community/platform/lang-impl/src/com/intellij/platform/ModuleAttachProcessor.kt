@@ -1,23 +1,9 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform
 
 import com.intellij.CommonBundle
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.impl.ModuleManagerImpl
@@ -44,18 +30,18 @@ import java.io.File
 import java.nio.file.Path
 import java.util.*
 
-private val LOG = Logger.getInstance(ModuleAttachProcessor::class.java)
+private val LOG = logger<ModuleAttachProcessor>()
 
 class ModuleAttachProcessor : ProjectAttachProcessor() {
   companion object {
     @JvmStatic
     fun findModuleInBaseDir(project: Project): Module? {
       val baseDir = project.baseDir
-      return ModuleManager.getInstance(project).modules.firstOrNull { it.rootManager.contentRoots.any { it == baseDir } }
+      return ModuleManager.getInstance(project).modules.firstOrNull { module -> module.rootManager.contentRoots.any { it == baseDir } }
     }
 
     @JvmStatic
-    fun getPrimaryModule(project: Project): Module? = if (ProjectAttachProcessor.canAttachToProject()) findModuleInBaseDir(project) else null
+    fun getPrimaryModule(project: Project) = if (canAttachToProject()) findModuleInBaseDir(project) else null
 
     @JvmStatic
     fun getSortedModules(project: Project): List<Module> {
@@ -75,7 +61,7 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
      */
     @JvmStatic
     fun getMultiProjectDisplayName(project: Project): String? {
-      if (!ProjectAttachProcessor.canAttachToProject()) {
+      if (!canAttachToProject()) {
         return null
       }
 
@@ -111,11 +97,17 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
       runWriteAction { Disposer.dispose(newProject) }
     }
 
-    var isAttached = findMainModule(project, dotIdeaDir, callback)
-    if (!isAttached) {
-      isAttached = findMainModule(project, projectDir, callback)
+    val newModule = try {
+      findMainModule(project, dotIdeaDir) ?: findMainModule(project, projectDir)
     }
-    if (isAttached) {
+    catch (e: Exception) {
+      LOG.info(e)
+      Messages.showErrorDialog(project, "Cannot attach project: ${e.message}", CommonBundle.getErrorTitle())
+      return false
+    }
+
+    if (newModule != null) {
+      callback?.projectOpened(project, newModule)
       return true
     }
 
@@ -125,38 +117,29 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
   }
 }
 
-private fun findMainModule(project: Project, projectDir: Path, callback: ProjectOpenedCallback?): Boolean {
-  projectDir.directoryStreamIfExists({ path -> path.fileName.toString().endsWith(ModuleManagerImpl.IML_EXTENSION) }) {
-    for (file in it) {
-      LocalFileSystem.getInstance().refreshAndFindFileByPath(file.systemIndependentPath)?.let {
-        attachModule(project, it, callback)
-        return true
-      }
+private fun findMainModule(project: Project, projectDir: Path): Module? {
+  projectDir.directoryStreamIfExists({ path -> path.fileName.toString().endsWith(ModuleManagerImpl.IML_EXTENSION) }) { directoryStream ->
+    for (file in directoryStream) {
+      return attachModule(project, file)
     }
   }
-  return false
+  return null
 }
 
-private fun attachModule(project: Project, imlFile: VirtualFile, callback: ProjectOpenedCallback?) {
-  try {
-    val module = project.modifyModules {
-      loadModule(imlFile.path)
-    }
-    val newModule = ModuleManager.getInstance(project).findModuleByName(module.name)!!
-    val primaryModule = addPrimaryModuleDependency(project, newModule)
-    if (primaryModule != null) {
-      val dotIdeaDir = imlFile.parent
-      if (dotIdeaDir != null) {
-        updateVcsMapping(primaryModule, dotIdeaDir.parent)
-      }
-    }
+private fun attachModule(project: Project, imlFile: Path): Module {
+  val module = project.modifyModules {
+    loadModule(imlFile.systemIndependentPath)
+  }
 
-    callback?.projectOpened(project, newModule)
+  val newModule = ModuleManager.getInstance(project).findModuleByName(module.name)!!
+  val primaryModule = addPrimaryModuleDependency(project, newModule)
+  if (primaryModule != null) {
+    val dotIdeaDirParent = imlFile.parent?.parent?.let { LocalFileSystem.getInstance().findFileByPath(it.toString()) }
+    if (dotIdeaDirParent != null) {
+      updateVcsMapping(primaryModule, dotIdeaDirParent)
+    }
   }
-  catch (e: Exception) {
-    LOG.info(e)
-    Messages.showErrorDialog(project, "Cannot attach project: ${e.message}", CommonBundle.getErrorTitle())
-  }
+  return newModule
 }
 
 private fun updateVcsMapping(primaryModule: Module, addedModuleContentRoot: VirtualFile) {
