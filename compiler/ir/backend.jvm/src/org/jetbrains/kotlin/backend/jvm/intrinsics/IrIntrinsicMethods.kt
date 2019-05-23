@@ -48,8 +48,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val KOTLIN_JVM = FqName("kotlin.jvm")
     private val KOTLIN_JVM_INTERNAL_UNSAFE = FqName("kotlin.jvm.internal.unsafe")
 
-    val andandSymbol = irBuiltIns.run { defineOperator(OperatorNames.ANDAND, bool, listOf(bool, bool)) }
-
     private val intrinsicsMap = (
             listOf(
                 Key(KOTLIN_JVM, FqName("T"),"<get-javaClass>", emptyList()) to JavaClassProperty,
@@ -96,12 +94,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     "clone",
                     emptyList()
                 ) to Clone,
-                Key(
-                    KOTLIN_INTERNAL_IR,
-                    null,
-                    OperatorNames.ANDAND,
-                    listOf(KotlinBuiltIns.FQ_NAMES._boolean.toSafe(), KotlinBuiltIns.FQ_NAMES._boolean.toSafe())
-                ) to AndAnd,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.float]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
@@ -110,7 +102,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.enumValueOfSymbol.toKey()!! to IrEnumValueOf,
                 irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
-                irBuiltIns.throwNpeSymbol.toKey()!! to ThrowNPE
+                irBuiltIns.throwNpeSymbol.toKey()!! to ThrowNPE,
+                irBuiltIns.andandSymbol.toKey()!! to AndAnd,
+                irBuiltIns.ororSymbol.toKey()!! to OrOr
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
@@ -225,9 +219,5 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             typeToIrFun.map { (type, irFunSymbol) ->
                 irFunSymbol.toKey()!! to PrimitiveComparison(type, operator)
             }
-    }
-
-    private object OperatorNames {
-        const val ANDAND = "ANDAND"
     }
 }

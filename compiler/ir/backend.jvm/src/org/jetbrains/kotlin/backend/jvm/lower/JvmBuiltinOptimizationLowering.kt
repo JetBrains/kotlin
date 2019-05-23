@@ -114,10 +114,30 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                         expression.startOffset,
                         expression.endOffset,
                         context.irBuiltIns.booleanType,
-                        context.irIntrinsics.andandSymbol
+                        context.irBuiltIns.andandSymbol
                     ).apply {
-                        dispatchReceiver = expression.branches[0].condition
-                        putValueArgument(0, expression.branches[0].result)
+                        putValueArgument(0, expression.branches[0].condition)
+                        putValueArgument(1, expression.branches[0].result)
+                    }
+                }
+                if (expression.origin == IrStatementOrigin.OROR) {
+                    assert(
+                        expression.type.isBoolean()
+                                && expression.branches.size == 2
+                                && expression.branches[0].result.isTrueConst()
+                                && expression.branches[1].condition.isTrueConst()) {
+                        "OROR condition should have an 'if a then true' body on its first branch, " +
+                                "and an 'if true then b' body on its second branch. " +
+                                "Failing expression: ${expression.dump()}"
+                    }
+                    return IrCallImpl(
+                        expression.startOffset,
+                        expression.endOffset,
+                        context.irBuiltIns.booleanType,
+                        context.irBuiltIns.ororSymbol
+                    ).apply {
+                        putValueArgument(0, expression.branches[0].condition)
+                        putValueArgument(1, expression.branches[1].result)
                     }
                 }
                 // If the only condition that is left has a constant true condition remove the
