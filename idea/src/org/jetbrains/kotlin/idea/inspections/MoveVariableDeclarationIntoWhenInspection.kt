@@ -11,13 +11,17 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.countUsages
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 class MoveVariableDeclarationIntoWhenInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
@@ -96,6 +100,21 @@ private class VariableDeclarationIntoWhenFix(
         val property = descriptor.psiElement as? KtProperty ?: return
         val subjectExpression = subjectExpressionPointer.element ?: return
         val newElement = transform(property)?.copy() ?: return
+
+        val lastChild = newElement.lastChild
+        if (lastChild is PsiComment && lastChild.node.elementType == KtTokens.EOL_COMMENT) {
+            val leftBrace = subjectExpression.siblings(withItself = false).firstOrNull { it.node.elementType == KtTokens.LBRACE }
+            val whiteSpaceBeforeComment = lastChild.prevSibling?.takeIf { it is PsiWhiteSpace }
+            if (leftBrace != null) {
+                subjectExpression.parent.addAfter(lastChild, leftBrace)
+                if (whiteSpaceBeforeComment != null) {
+                    subjectExpression.parent.addAfter(whiteSpaceBeforeComment, leftBrace)
+                }
+            }
+            whiteSpaceBeforeComment?.delete()
+            lastChild.delete()
+        }
+
         subjectExpression.replace(newElement)
         property.delete()
     }
