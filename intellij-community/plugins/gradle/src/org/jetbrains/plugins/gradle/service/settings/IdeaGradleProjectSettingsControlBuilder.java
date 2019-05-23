@@ -80,6 +80,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   private static final Logger LOG = Logger.getInstance("#" + IdeaGradleProjectSettingsControlBuilder.class.getPackage().getName());
 
   private static final long BALLOON_DELAY_MILLIS = TimeUnit.SECONDS.toMillis(1);
+  private static final String HIDDEN_KEY = "hidden";
   @NotNull
   private final GradleInstallationManager myInstallationManager;
   @NotNull
@@ -113,9 +114,9 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
   private JPanel myImportPanel;
 
+  private JPanel myModulePerSourceSetPanel;
   @Nullable
   private JBCheckBox myResolveModulePerSourceSetCheckBox;
-  private JBLabel myResolveModulePerSourceSetHintLabel;
   private boolean dropResolveModulePerSourceSetCheckBox;
 
   @Nullable
@@ -238,6 +239,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       // some controls need to remain hidden depending on the selection
       // also error notifications should be shown
       updateDistributionComponents();
+      updateDeprecatedControls();
     }
   }
 
@@ -301,12 +303,15 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   private void addImportComponents(PaintAwarePanel content, int indentLevel) {
     myImportPanel = addComponentsGroup(null, content, indentLevel, panel -> {
       if (!dropResolveModulePerSourceSetCheckBox) {
-        panel.add(
+        myModulePerSourceSetPanel = new JPanel(new GridBagLayout());
+        panel.add(myModulePerSourceSetPanel, ExternalSystemUiUtil.getFillLineConstraints(0).insets(0, 0, 0, 0));
+
+        myModulePerSourceSetPanel.add(
           myResolveModulePerSourceSetCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.module.per.source.set",
                                                                                     getIDEName())),
           ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
 
-        myResolveModulePerSourceSetHintLabel = new JBLabel(
+        JBLabel myResolveModulePerSourceSetHintLabel = new JBLabel(
           XmlStringUtil.wrapInHtml(GradleBundle.message("gradle.settings.text.module.per.source.set.hint")),
           UIUtil.ComponentStyle.SMALL);
         myResolveModulePerSourceSetHintLabel.setIcon(AllIcons.General.BalloonWarning12);
@@ -316,7 +321,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         GridBag constraints = ExternalSystemUiUtil.getFillLineConstraints(indentLevel);
         constraints.insets.top = 0;
         constraints.insets.left += UIUtil.getCheckBoxTextHorizontalOffset(myResolveModulePerSourceSetCheckBox);
-        panel.add(myResolveModulePerSourceSetHintLabel, constraints);
+        myModulePerSourceSetPanel.add(myResolveModulePerSourceSetHintLabel, constraints);
       }
 
       if (!dropResolveExternalAnnotationsCheckBox) {
@@ -655,12 +660,14 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         new DelayedBalloonInfo(MessageType.ERROR, myGradleHomeSettingType, 0).run();
       }
     }
+    updateDeprecatedControls();
   }
 
   @Override
   public void update(String linkedProjectPath, GradleProjectSettings settings, boolean isDefaultModuleCreation) {
     resetWrapperControls(linkedProjectPath, settings, isDefaultModuleCreation);
     resetImportControls(settings);
+    updateDeprecatedControls();
   }
 
   private void resetImportControls(GradleProjectSettings settings) {
@@ -668,12 +675,15 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       myResolveModulePerSourceSetCheckBox.setSelected(settings.isResolveModulePerSourceSet());
       boolean showSetting = !settings.isResolveModulePerSourceSet()
                             || Registry.is("gradle.settings.showDeprecatedSettings", false);
-      myResolveModulePerSourceSetCheckBox.setVisible(showSetting);
-      myResolveModulePerSourceSetHintLabel.setVisible(showSetting);
+      myModulePerSourceSetPanel.putClientProperty(HIDDEN_KEY, showSetting);
     }
     if (myResolveExternalAnnotationsCheckBox != null) {
       myResolveExternalAnnotationsCheckBox.setSelected(settings.isResolveExternalAnnotations());
     }
+  }
+
+  private void updateDeprecatedControls() {
+    myModulePerSourceSetPanel.setVisible(myModulePerSourceSetPanel.getClientProperty(HIDDEN_KEY) == Boolean.TRUE);
   }
 
   protected void resetGradleJdkComboBox(@Nullable final Project project,
