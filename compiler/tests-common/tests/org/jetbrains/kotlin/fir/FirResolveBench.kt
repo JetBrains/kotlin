@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
@@ -123,6 +120,14 @@ class FirResolveBench(val withProgress: Boolean) {
                             val psi = typeRef.psi!!
                             val problem = "${typeRef::class.simpleName}: ${typeRef.render()}"
                             reportProblem(problem, psi)
+                        }
+                    }
+
+                    override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
+                        if (implicitTypeRef is FirResolvedTypeRef) {
+                            visitResolvedTypeRef(implicitTypeRef)
+                        } else {
+                            visitTypeRef(implicitTypeRef)
                         }
                     }
 
