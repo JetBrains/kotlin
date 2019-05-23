@@ -8,6 +8,9 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerMain;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
+import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomUtilsWhiteListRule;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.internal.statistic.utils.StatisticsUtilKt;
@@ -17,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -62,6 +66,10 @@ public abstract class AbstractToolsUsagesCollector extends ProjectUsagesCollecto
     if (StringUtil.isNotEmpty(language)) {
       data.addLanguage(Language.findLanguageByID(language));
     }
+    final InspectionEP extension = tool.getExtension();
+    if (extension != null) {
+      data.addPluginInfo(PluginInfoDetectorKt.getPluginInfoById(extension.getPluginId()));
+    }
     return data;
   }
 
@@ -72,19 +80,6 @@ public abstract class AbstractToolsUsagesCollector extends ProjectUsagesCollecto
 
   @NotNull
   protected abstract Stream<ScopeToolState> filter(@NotNull final Stream<ScopeToolState> tools);
-
-  protected static abstract class AbstractListedToolsUsagesCollector extends AbstractToolsUsagesCollector {
-    @NotNull
-    @Override
-    protected FeatureUsageData getInspectionToolData(InspectionToolWrapper tool) {
-      final FeatureUsageData data = super.getInspectionToolData(tool);
-      final InspectionEP extension = tool.getExtension();
-      if (extension != null) {
-        data.addPluginInfo(PluginInfoDetectorKt.getPluginInfoById(extension.getPluginId()));
-      }
-      return data;
-    }
-  }
 
   public static class EnabledBundledToolsUsagesCollector extends AbstractToolsUsagesCollector {
 
@@ -102,7 +97,7 @@ public abstract class AbstractToolsUsagesCollector extends ProjectUsagesCollecto
     }
   }
 
-  public static class EnabledListedToolsUsagesCollector extends AbstractListedToolsUsagesCollector {
+  public static class EnabledListedToolsUsagesCollector extends AbstractToolsUsagesCollector {
 
     @NotNull
     @Override
@@ -132,7 +127,7 @@ public abstract class AbstractToolsUsagesCollector extends ProjectUsagesCollecto
     }
   }
 
-  public static class DisabledListedToolsUsagesCollector extends AbstractListedToolsUsagesCollector {
+  public static class DisabledListedToolsUsagesCollector extends AbstractToolsUsagesCollector {
 
     @NotNull
     @Override
@@ -144,6 +139,20 @@ public abstract class AbstractToolsUsagesCollector extends ProjectUsagesCollecto
     @Override
     protected Stream<ScopeToolState> filter(@NotNull final Stream<ScopeToolState> tools) {
       return tools.filter(DISABLED).filter(LISTED);
+    }
+  }
+
+  public static class AbstractToolValidator extends CustomUtilsWhiteListRule {
+
+    @Override
+    public boolean acceptRuleId(@Nullable String ruleId) {
+      return "tool".equals(ruleId);
+    }
+
+    @NotNull
+    @Override
+    protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
+      return acceptWhenReportedByPluginFromPluginRepository(context);
     }
   }
 }
