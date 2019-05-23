@@ -85,6 +85,11 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     return filterEmptyGroups(myModelFilter.filter(parent.getChildren(), myFilter));
   }
 
+  @Nullable
+  ServiceViewItem findItem(@NotNull ServiceViewItem item) {
+    return findItem(item, myModel.getRoots());
+  }
+
   void addModelListener(@NotNull ServiceViewModelListener listener) {
     myListeners.add(listener);
   }
@@ -370,7 +375,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
       ServiceGroupNode group = myGroupRef.get();
       if (group == null || !e.contributorClass.isInstance(group.getRootContributor())) return;
 
-      myGroupRef.set((ServiceGroupNode)findItem(group, myModel.getRoots()));
+      myGroupRef.set((ServiceGroupNode)findItem(group));
       notifyListeners();
     }
 
@@ -414,7 +419,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
       ServiceViewItem service = myServiceRef.get();
       if (service == null || !e.contributorClass.isInstance(service.getRootContributor())) return;
 
-      myServiceRef.set(findItem(service, myModel.getRoots()));
+      myServiceRef.set(findItem(service));
       notifyListeners();
     }
 
@@ -461,7 +466,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
         ServiceViewItem node = myRoots.get(i);
         if (!e.contributorClass.isInstance(node.getRootContributor())) continue;
 
-        ServiceViewItem updatedNode = findItem(node, myModel.getRoots());
+        ServiceViewItem updatedNode = findItem(node);
         if (updatedNode != null) {
           //noinspection SuspiciousListRemoveInLoop
           myRoots.remove(i);
