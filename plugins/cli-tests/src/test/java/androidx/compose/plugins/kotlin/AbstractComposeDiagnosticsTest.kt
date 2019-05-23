@@ -50,7 +50,7 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
             files,
             moduleTrace,
             environment.configuration.copy().apply {
-                this.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_6)
+                this.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
             },
             environment::createPackagePartProvider
         )

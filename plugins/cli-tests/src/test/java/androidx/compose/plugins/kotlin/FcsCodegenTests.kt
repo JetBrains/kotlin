@@ -189,7 +189,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
             """,
             { mapOf<String, String>() },
-            "SimpleComposable(state=FancyButtonCount())"
+            "SimpleComposable(state=+memo { FancyButtonCount() })"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
