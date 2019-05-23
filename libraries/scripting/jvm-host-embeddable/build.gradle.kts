@@ -1,12 +1,8 @@
-
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.jvm.tasks.Jar
 
 description = "Kotlin Scripting JVM host (for using with embeddable compiler)"
 
 plugins { java }
-
-val embedded by configurations.creating
 
 dependencies {
     embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
@@ -26,12 +22,7 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
-
-runtimeJar(rewriteDepsToShadedCompiler(
-        task<ShadowJar>("shadowJar")  {
-            from(embedded)
-        }
-))
+val jar = tasks.getByName<Jar>("jar")
+runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()
 javadocJar()
