@@ -135,6 +135,8 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testClassMember4() { doTest(); }
     public void testClassMember5() { doTest(); }
 
+    public void testEscapedIdentifier() { doTest(); }
+
     private void doTest() {
         String dirName = getTestName(false);
 
