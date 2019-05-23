@@ -9,5 +9,4 @@ FILE fqName:<root> fileName:/samAdapter.kt
                 ERROR_CALL 'Unresolved reference: println#' type=IrErrorType
                   CONST String type=IrErrorType value="Hello, world!"
             FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.test1' type=IrErrorType origin=LAMBDA
-      ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/run]>#' type=IrErrorType
-
+      ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/run]>#' type=IrErrorType

@@ -37,6 +37,6 @@ FILE fqName:<root> fileName:/calls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun ext3 (x: kotlin.Int): kotlin.Int declared in <root>'
         CALL 'public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          x: ERROR_CALL 'Unresolved reference: <Unresolved name: ext1>#' type=IrErrorType
+          x: CALL 'public final fun ext1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           y: GET_VAR 'x: kotlin.Int declared in <root>.ext3' type=kotlin.Int origin=null
 

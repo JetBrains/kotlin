@@ -98,23 +98,35 @@ internal sealed class CheckReceivers : ResolutionStage() {
     abstract fun ExplicitReceiverKind.shouldBeResolvedAsImplicit(): Boolean
 
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val receiverParameterValue = candidate.getReceiverValue()
+        val expectedReceiverParameterValue = candidate.getReceiverValue()
         val explicitReceiverExpression = callInfo.explicitReceiver
         val explicitReceiverKind = candidate.explicitReceiverKind
 
-        if (receiverParameterValue != null) {
+        if (expectedReceiverParameterValue != null) {
             if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeResolvedAsExplicit()) {
                 resolveArgumentExpression(
                     candidate.csBuilder,
-                    explicitReceiverExpression,
-                    candidate.substitutor.substituteOrSelf(receiverParameterValue.type),
-                    explicitReceiverExpression.typeRef,
-                    sink,
+                    argument = explicitReceiverExpression,
+                    expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                    expectedTypeRef = explicitReceiverExpression.typeRef,
+                    sink = sink,
                     isReceiver = true,
                     isSafeCall = callInfo.isSafeCall,
                     typeProvider = callInfo.typeProvider,
                     acceptLambdaAtoms = { candidate.postponedAtoms += it }
                 )
+            } else {
+                val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
+                if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeResolvedAsImplicit()) {
+                    resolvePlainArgumentType(
+                        candidate.csBuilder,
+                        argumentType = argumentExtensionReceiverValue.type,
+                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                        sink = sink,
+                        isReceiver = true,
+                        isSafeCall = callInfo.isSafeCall
+                    )
+                }
             }
         }
     }
