@@ -173,7 +173,7 @@ class FirResolveBench(val withProgress: Boolean) {
         stream.println("GOOD TYPES: $goodTypes (${goodTypes percentOf resolvedTypes} of resolved)")
         stream.println("ERROR TYPES: $errorTypes (${errorTypes percentOf resolvedTypes} of resolved)")
         stream.println("IMPLICIT TYPES: $implicitTypes (${implicitTypes percentOf resolvedTypes} of resolved)")
-        stream.println("INDUCED ERROR TYPES: $inducedErrorTypes, ORIGIN: ${errorTypes - inducedErrorTypes}")
+        //stream.println("INDUCED ERROR TYPES: $inducedErrorTypes, ORIGIN: ${errorTypes - inducedErrorTypes}")
         stream.println("UNIQUE ERROR TYPES: ${errorTypesReports.size}")
 
 
