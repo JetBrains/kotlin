@@ -325,7 +325,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         class Foo {
             @Composable
             operator fun invoke() {
-                val foo = object: Function2<@kotlin.ParameterName("x") String, @kotlin.ParameterName("y")Int, Unit> {
+                val foo = object: Function2<@kotlin.ParameterName("x") String,
+                  @kotlin.ParameterName("y")Int, Unit> {
                     override fun invoke(x: String, y: Int) {
                         <Bar />
                     }
@@ -643,7 +644,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
                     for(i in 1..100) {
                         <TextView text=(x+y+i) />
                     }
-                    Unit // NOTE(lmr): this Unit is needed here but it's a general compiler bug, not our bug. Remove when fixed.
+                    Unit // NOTE(lmr): this Unit is needed here but it's a general compiler bug,
+                         // not our bug. Remove when fixed.
                 </HelperComponent>
             }
         }
@@ -656,7 +658,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
             for (i in 1..100) {
                 print("wat")
             }
-            Unit // NOTE(lmr): this Unit is needed here but it's a general compiler bug, not our bug. Remove when fixed.
+            Unit // NOTE(lmr): this Unit is needed here but it's a general compiler bug,
+                 // not our bug. Remove when fixed.
         }
         """
     )
@@ -1106,7 +1109,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testSimpleLambdaChildrenProperty() = testCompile(
+    // disabled: b/133441299
+    fun xtestSimpleLambdaChildrenProperty() = testCompile(
         """
         import androidx.compose.*
         import android.widget.*
@@ -1180,7 +1184,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testChildrenLambdaPropertyWithSingleParam() = testCompile(
+    // disabled: b/133441299
+    fun xtestChildrenLambdaPropertyWithSingleParam() = testCompile(
         """
         import androidx.compose.*
 
@@ -1227,7 +1232,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testChildrenLambdaPropertyWithMultipleParams() = testCompile(
+    // disabled: b/133441299
+    fun xtestChildrenLambdaPropertyWithMultipleParams() = testCompile(
         """
         import androidx.compose.*
 
@@ -1268,7 +1274,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testGenericChildrenArgProperty() = testCompile(
+    // disabled b/133441299
+    fun xtestGenericChildrenArgProperty() = testCompile(
         """
         import androidx.compose.*
 
@@ -1318,7 +1325,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testFunctionComponentWithGenericChildren() = testCompile(
+    // disabled: b/133441299
+    fun xtestFunctionComponentWithGenericChildren() = testCompile(
         """
         import androidx.compose.*
 
@@ -1568,7 +1576,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testOverloadedChildren() = testCompile(
+    // disabled: b/133441299
+    fun xtestOverloadedChildren() = testCompile(
         """
         import androidx.compose.*
         import androidx.ui.androidview.adapters.*
@@ -1629,7 +1638,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testPassChildrenLambdaVarWithCorrectType() = testCompile(
+    // disabled: b/133441299
+    fun xtestPassChildrenLambdaVarWithCorrectType() = testCompile(
         """
         import androidx.compose.*
         import androidx.ui.androidview.adapters.*
@@ -1671,7 +1681,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     )
 
-    fun testChildrenLiteral() = testCompile(
+    // disabled: b/133441299
+    fun xtestChildrenLiteral() = testCompile(
         """
         import androidx.compose.*
         import androidx.ui.androidview.adapters.*

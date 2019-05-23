@@ -25,13 +25,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.compose.Recomposer
 import androidx.compose.Component
 import androidx.compose.CompositionContext
 import androidx.compose.Compose
-import androidx.compose.composer
-import androidx.compose.runWithCurrent
-import junit.framework.TestCase
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -111,7 +107,9 @@ class ModelClass() {
                 @Composable
                 fun SimpleComposable(state: FancyButtonCount) {
                     <FancyBox2>
-                        <Button text=("Button clicked "+state.count+" times") onClick={state.count++} id=42 />
+                        <Button
+                          text=("Button clicked "+state.count+" times")
+                          onClick={state.count++} id=42 />
                     </FancyBox2>
                 }
 
@@ -121,7 +119,7 @@ class ModelClass() {
                 }
             """,
             { mapOf<String, String>() },
-            "<SimpleComposable state=FancyButtonCount() />"
+            "<SimpleComposable state=+memo { FancyButtonCount() } />"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -1668,7 +1666,7 @@ class ModelClass() {
             button.performClick()
             button.performClick()
         }.then { activity ->
-            TestCase.assertNotNull(activity.findViewById(46))
+            assertNotNull(activity.findViewById(46))
         }
     }
 
@@ -1682,7 +1680,9 @@ class ModelClass() {
             fun Reordering() {
                 <LinearLayout>
                     <Recompose> recompose ->
-                        <Button id=50 text="Recompose!" onClick={ list.add(list.removeAt(0)); recompose(); } />
+                        <Button id=50 text="Recompose!" onClick={
+                          list.add(list.removeAt(0)); recompose();
+                         } />
                         <LinearLayout id=100>
                             for(id in list) {
                                 <Key key=id>
@@ -1861,25 +1861,19 @@ private class Root(val composable: () -> Unit) : Component() {
 class CompositionTest(val composable: () -> Unit) {
 
     inner class ActiveTest(val activity: Activity, val cc: CompositionContext) {
-
         fun then(block: (activity: Activity) -> Unit): ActiveTest {
-
-            val composer = cc.composer
-            composer.runWithCurrent {
-                val scheduler = RuntimeEnvironment.getMasterScheduler()
-                scheduler.pause()
-                composer.startRoot()
-                composable()
-                composer.endRoot()
-                composer.applyChanges()
-                scheduler.advanceToLastPostedRunnable()
-                block(activity)
-            }
+            val scheduler = RuntimeEnvironment.getMasterScheduler()
+            scheduler.advanceToLastPostedRunnable()
+            cc.compose()
+            scheduler.advanceToLastPostedRunnable()
+            block(activity)
             return this
         }
     }
 
     fun then(block: (activity: Activity) -> Unit): ActiveTest {
+        val scheduler = RuntimeEnvironment.getMasterScheduler()
+        scheduler.pause()
         val controller = Robolectric.buildActivity(TestActivity::class.java)
         val activity = controller.create().get()
         val root = activity.root

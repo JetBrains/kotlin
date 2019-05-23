@@ -77,33 +77,11 @@ abstract class AbstractCompilerTest : TestCase() {
         tearDown()
     }
 
-    protected val defaultClassPath by lazy {
-        listOf(
-            assertExists(
-                kotlinRuntimeJar(
-                    "kotlin-stdlib"
-                )
-            ),
-            assertExists(
-                outputClassesJar(
-                    "compose-runtime"
-                )
-            ),
-            assertExists(
-                outputClassesJar(
-                    "ui-android-view-non-ir"
-                )
-            ),
-            assertExists(
-                File(
-                    projectRoot,
-                    "prebuilts/fullsdk-linux/platforms/android-28/android.jar"
-                )
-            )
-        )
-    }
+    protected val defaultClassPath by lazy { systemClassLoaderJars() }
 
-    protected fun createClasspath() = defaultClassPath
+    protected fun createClasspath() = defaultClassPath.filter {
+        !it.path.contains("robolectric")
+    }.toList()
 
     val myTestRootDisposable = TestDisposable()
 
@@ -128,11 +106,9 @@ abstract class AbstractCompilerTest : TestCase() {
     }
 
     protected fun createClassLoader(): GeneratedClassLoader {
-        val uris = arrayOf(
-            kotlinRuntimeJar(
-                "kotlin-stdlib"
-            ).toURI().toURL())
-        val classLoader = URLClassLoader(uris, null)
+        val classLoader = URLClassLoader(defaultClassPath.map {
+            it.toURI().toURL()
+        }.toTypedArray(), null)
         return GeneratedClassLoader(
             generateClassesInFile(),
             classLoader,
@@ -241,22 +217,21 @@ abstract class AbstractCompilerTest : TestCase() {
                 "prebuilts/androidx/external/org/jetbrains/kotlin/$module/" +
                         "$KOTLIN_RUNTIME_VERSION/$module-$KOTLIN_RUNTIME_VERSION.jar")
 
-        fun outputClassesJar(module: String): File {
-            fun name(variant: String): File =
-                File(
-                    projectRoot, "out/ui/$module/build/" +
-                        "intermediates//runtime_library_classes/$variant/classes.jar")
-            return name("release").let {
-                if (it.exists()) it else name("debug")
-            }
-        }
-
         init {
             System.setProperty("idea.home",
                 homeDir
             )
         }
     }
+}
+
+private fun systemClassLoaderJars(): List<File> {
+    val result = (ClassLoader.getSystemClassLoader() as? URLClassLoader)?.urLs?.filter {
+        it.protocol == "file"
+    }?.map {
+        File(it.path)
+    }?.toList() ?: emptyList()
+    return result
 }
 
 private fun computeHomeDirectory(): String {

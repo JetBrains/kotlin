@@ -43,22 +43,6 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         configuration.addJvmClasspathRoots(classPath)
         updateConfiguration(configuration)
 
-        additionalDependencies = listOf(
-            assertExists(
-                outputClassesJar(
-                    "compose-runtime"
-                )
-            ),
-            assertExists(
-                outputClassesJar(
-                    "ui-android-view-non-ir"
-                )
-            ),
-            assertExists(
-                File("../../../../../prebuilts/fullsdk-linux/platforms/android-28/android.jar")
-            )
-        )
-
         myEnvironment = KotlinCoreEnvironment.createForTests(
             myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).also { setupEnvironment(it) }
@@ -66,7 +50,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
 
     open fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.put(JVMConfigurationKeys.IR, true)
-        configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_6)
+        configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
     }
 
     protected open fun helperFiles(): List<KtFile> = emptyList()
