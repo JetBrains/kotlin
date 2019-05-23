@@ -22,7 +22,6 @@ import com.intellij.conversion.ModuleSettings;
 import com.intellij.facet.FacetManagerImpl;
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
@@ -34,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
+import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer;
 
 import java.io.File;
 import java.util.*;
@@ -130,10 +130,10 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   public Collection<File> getSourceRoots(boolean includeTests) {
     final List<File> result = new ArrayList<>();
     for (Element contentRoot : getContentRootElements()) {
-      for (Element sourceFolder : JDOMUtil.getChildren(contentRoot, SourceFolderImpl.ELEMENT_NAME)) {
-        boolean isTestFolder = Boolean.parseBoolean(sourceFolder.getAttributeValue(SourceFolderImpl.TEST_SOURCE_ATTR));
+      for (Element sourceFolder : JDOMUtil.getChildren(contentRoot, JpsModuleRootModelSerializer.SOURCE_FOLDER_TAG)) {
+        boolean isTestFolder = Boolean.parseBoolean(sourceFolder.getAttributeValue(JpsModuleRootModelSerializer.IS_TEST_SOURCE_ATTRIBUTE));
         if (includeTests || !isTestFolder) {
-          result.add(getFile(sourceFolder.getAttributeValue(SourceFolderImpl.URL_ATTRIBUTE)));
+          result.add(getFile(sourceFolder.getAttributeValue(JpsModuleRootModelSerializer.URL_ATTRIBUTE)));
         }
       }
     }
@@ -141,7 +141,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   }
 
   private List<Element> getContentRootElements() {
-    return JDOMUtil.getChildren(getComponentElement(MODULE_ROOT_MANAGER_COMPONENT), ContentEntryImpl.ELEMENT_NAME);
+    return JDOMUtil.getChildren(getComponentElement(MODULE_ROOT_MANAGER_COMPONENT), JpsModuleRootModelSerializer.CONTENT_TAG);
   }
 
   @Override
@@ -149,7 +149,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   public Collection<File> getContentRoots() {
     final List<File> result = new ArrayList<>();
     for (Element contentRoot : getContentRootElements()) {
-      String path = VfsUtil.urlToPath(contentRoot.getAttributeValue(ContentEntryImpl.URL_ATTRIBUTE));
+      String path = VfsUtil.urlToPath(contentRoot.getAttributeValue(JpsModuleRootModelSerializer.URL_ATTRIBUTE));
       result.add(new File(FileUtil.toSystemDependentName(expandPath(path))));
     }
     return result;
@@ -183,7 +183,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
       }
     }
     for (Element contentRoot : getContentRootElements()) {
-      final File root = getFile(contentRoot.getAttributeValue(ContentEntryImpl.URL_ATTRIBUTE));
+      final File root = getFile(contentRoot.getAttributeValue(JpsModuleRootModelSerializer.URL_ATTRIBUTE));
       if (FileUtil.isAncestor(root, directory, true)) {
         addExcludedFolder(directory, contentRoot);
       }
@@ -205,7 +205,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   @Nullable
   private Element findModuleLibraryElement(String libraryName) {
     for (Element element : getOrderEntries()) {
-      if (ModuleLibraryOrderEntryImpl.ENTRY_TYPE.equals(element.getAttributeValue(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR))) {
+      if (JpsModuleRootModelSerializer.MODULE_LIBRARY_TYPE.equals(element.getAttributeValue(JpsModuleRootModelSerializer.TYPE_ATTRIBUTE))) {
         final Element library = element.getChild(LibraryImpl.ELEMENT);
         if (library != null && libraryName.equals(library.getAttributeValue(LibraryImpl.LIBRARY_NAME_ATTR))) {
           return library;
@@ -218,7 +218,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   @Override
   public List<Element> getOrderEntries() {
     final Element component = getComponentElement(MODULE_ROOT_MANAGER_COMPONENT);
-    return JDOMUtil.getChildren(component, OrderEntryFactory.ORDER_ENTRY_ELEMENT_NAME);
+    return JDOMUtil.getChildren(component, JpsModuleRootModelSerializer.ORDER_ENTRY_TAG);
   }
 
   @Override
@@ -235,8 +235,8 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
     }
 
     for (Element element : getOrderEntries()) {
-      if (ModuleOrderEntryImpl.ENTRY_TYPE.equals(element.getAttributeValue(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR))) {
-        final String moduleName = element.getAttributeValue(ModuleOrderEntryImpl.MODULE_NAME_ATTR);
+      if (JpsModuleRootModelSerializer.MODULE_TYPE.equals(element.getAttributeValue(JpsModuleRootModelSerializer.TYPE_ATTRIBUTE))) {
+        final String moduleName = element.getAttributeValue(JpsModuleRootModelSerializer.MODULE_NAME_ATTRIBUTE);
         if (moduleName != null) {
           final ModuleSettings moduleSettings = myContext.getModuleSettings(moduleName);
           if (moduleSettings != null) {
@@ -248,14 +248,14 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   }
 
   private void addExcludedFolder(File directory, Element contentRoot) {
-    for (Element excludedFolder : JDOMUtil.getChildren(contentRoot, ExcludeFolderImpl.ELEMENT_NAME)) {
-      final File excludedDir = getFile(excludedFolder.getAttributeValue(ExcludeFolderImpl.URL_ATTRIBUTE));
+    for (Element excludedFolder : JDOMUtil.getChildren(contentRoot, JpsModuleRootModelSerializer.EXCLUDE_FOLDER_TAG)) {
+      final File excludedDir = getFile(excludedFolder.getAttributeValue(JpsModuleRootModelSerializer.URL_ATTRIBUTE));
       if (FileUtil.isAncestor(excludedDir, directory, false)) {
         return;
       }
     }
     String path = ConversionContextImpl.collapsePath(FileUtil.toSystemIndependentName(directory.getAbsolutePath()), this);
-    contentRoot.addContent(new Element(ExcludeFolderImpl.ELEMENT_NAME).setAttribute(ExcludeFolderImpl.URL_ATTRIBUTE, VfsUtil.pathToUrl(path)));
+    contentRoot.addContent(new Element(JpsModuleRootModelSerializer.EXCLUDE_FOLDER_TAG).setAttribute(JpsModuleRootModelSerializer.URL_ATTRIBUTE, VfsUtil.pathToUrl(path)));
   }
 
   private File getFile(String url) {
