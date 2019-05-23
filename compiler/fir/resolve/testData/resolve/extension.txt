@@ -4,3 +4,15 @@ FILE: extension.kt
     public final fun R|kotlin/String|.bar(): R|kotlin/Unit| {
         R|/foo|()
     }
+    public final class My : R|kotlin/Any| {
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            R|/foo|()
+        }
+
+    }
+    public final fun R|My|.foo(): R|kotlin/Unit| {
+    }
