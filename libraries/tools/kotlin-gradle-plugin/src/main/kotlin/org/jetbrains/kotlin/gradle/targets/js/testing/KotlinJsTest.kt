@@ -56,6 +56,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
+    fun useNodeJs() = useNodeJs {}
     fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(compilation), body)
     fun useNodeJs(fn: Closure<*>) {
         useNodeJs {
@@ -63,6 +64,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
         }
     }
 
+    fun useMocha() = useMocha {}
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation), body)
     fun useMocha(fn: Closure<*>) {
         useMocha {
@@ -70,6 +72,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
         }
     }
 
+    fun useKarma() = useKarma {}
     fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(compilation), body)
     fun useKarma(fn: Closure<*>) {
         useKarma {
