@@ -55,7 +55,7 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
     }
 
     private fun wrapInIncrementalProcessor(processors: List<Processor>, classpath: Iterable<File>): List<IncrementalProcessor> {
-        if (!options[KaptFlag.INCREMENTAL_APT]) {
+        if (options.incrementalCache == null) {
             return processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL) }
         }
 
