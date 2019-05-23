@@ -911,7 +911,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         val isConstructor = isConstructor(jvmSignature)
         val descriptor = getDefaultDescriptor(
             jvmSignature,
-            if (isStaticMethod(kind, functionDescriptor) || isStaticDeclaration(functionDescriptor) || isConstructor)
+            if (isStaticMethod(kind, functionDescriptor) || isConstructor || (isIrBackend && isStaticDeclaration(functionDescriptor)))
                 null else ownerType.descriptor,
             functionDescriptor.unwrapFrontendVersion(),
             if (isIrBackend && isConstructor) {
