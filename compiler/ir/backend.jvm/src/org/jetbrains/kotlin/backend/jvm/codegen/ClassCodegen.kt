@@ -296,7 +296,7 @@ open class ClassCodegen protected constructor(
     // See FileBasedKotlinClass.convertAnnotationVisitor
     override fun addInnerClassInfoFromAnnotation(innerClass: IrClass) {
         var current: IrDeclaration? = innerClass
-        while (current != null) {
+        while (current != null && !current.isTopLevelDeclaration) {
             if (current is IrClass) {
                 innerClasses.add(current)
             }
