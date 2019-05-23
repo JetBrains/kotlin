@@ -15,7 +15,6 @@ import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -102,13 +101,7 @@ public class ModuleDependencyDataService extends AbstractDependencyDataService<M
       orderEntry.setScope(dependencyData.getScope());
       orderEntry.setExported(dependencyData.isExported());
 
-      final boolean productionOnTestDependency = dependencyData.isProductionOnTestDependency();
-      if (orderEntry instanceof ModuleOrderEntryImpl) {
-        ((ModuleOrderEntryImpl)orderEntry).setProductionOnTestDependency(productionOnTestDependency);
-      }
-      else if (productionOnTestDependency) {
-        LOG.warn("Unable to set productionOnTestDependency for entry: " + orderEntry);
-      }
+      orderEntry.setProductionOnTestDependency(dependencyData.isProductionOnTestDependency());
 
       orderEntryDataMap.put(orderEntry, dependencyData);
     }

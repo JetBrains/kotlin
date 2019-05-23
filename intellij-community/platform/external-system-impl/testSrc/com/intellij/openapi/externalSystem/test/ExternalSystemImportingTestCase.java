@@ -34,7 +34,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.Messages;
@@ -340,7 +339,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
   protected void assertProductionOnTestDependencies(String moduleName, String... expectedDeps) {
     assertOrderedElementsAreEqual(collectModuleDepsNames(
-      moduleName, entry -> entry instanceof ModuleOrderEntryImpl && ((ModuleOrderEntryImpl)entry).isProductionOnTestDependency()
+      moduleName, entry -> entry instanceof ModuleOrderEntry && ((ModuleOrderEntry)entry).isProductionOnTestDependency()
     ), expectedDeps);
   }
 
