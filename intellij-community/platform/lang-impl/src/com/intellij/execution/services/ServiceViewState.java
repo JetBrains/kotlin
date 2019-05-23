@@ -19,7 +19,9 @@ final class ServiceViewState {
   public float contentProportion = DEFAULT_CONTENT_PROPORTION;
   @Tag("treeState")
   public Element treeStateElement;
+
   public boolean flat = false;
+  public boolean groupByType = false;
 
   public String viewType = "";
   public List<ServiceState> roots = new ArrayList<>();

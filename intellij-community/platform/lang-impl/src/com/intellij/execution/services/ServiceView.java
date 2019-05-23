@@ -50,17 +50,27 @@ abstract class ServiceView extends JPanel implements Disposable {
   abstract void onViewUnselected();
 
   boolean isFlat() {
-    return false;
+    return myModel.isFlat();
   }
 
   void setFlat(boolean flat) {
+    myModel.setFlat(flat);
   }
 
-  static ServiceView createView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewState state) {
-    ServiceView serviceView = model instanceof ServiceViewModel.SingeServiceModel ?
-                              createSingleView(project, model) :
-                              createTreeView(project, model, state);
+  boolean isGroupByType() {
+    return myModel.isGroupByType();
+  }
+
+  void setGroupByType(boolean value) {
+    myModel.setGroupByType(value);
+  }
+
+  static ServiceView createView(@NotNull Project project, @NotNull ServiceViewModel viewModel, @NotNull ServiceViewState viewState) {
+    ServiceView serviceView = viewModel instanceof ServiceViewModel.SingeServiceModel ?
+                              createSingleView(project, viewModel) :
+                              createTreeView(project, viewModel, viewState);
     setDataProvider(serviceView);
+    setViewModelState(viewModel, viewState);
     return serviceView;
   }
 
@@ -89,5 +99,10 @@ abstract class ServiceView extends JPanel implements Disposable {
       }
       return null;
     });
+  }
+
+  private static void setViewModelState(@NotNull ServiceViewModel viewModel, @NotNull ServiceViewState viewState) {
+    viewModel.setFlat(viewState.flat);
+    viewModel.setGroupByType(viewState.groupByType);
   }
 }

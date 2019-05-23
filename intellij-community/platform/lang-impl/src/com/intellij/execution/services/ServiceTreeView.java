@@ -35,9 +35,7 @@ class ServiceTreeView extends ServiceView {
 
     myTreeModel = new ServiceViewTreeModel(model);
     myTree = new ServiceViewTree(myTreeModel, this);
-
-    myTreeModel.setFlat(state.flat);
-    myTree.setShowsRootHandles(!state.flat);
+    myTree.setShowsRootHandles(!model.isFlat());
 
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
     ui.setServiceToolbar(actionProvider);
@@ -47,10 +45,10 @@ class ServiceTreeView extends ServiceView {
 
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
     model.addModelListener(() -> AppUIUtil.invokeOnEdt(() -> {
-      if (mySelected && myLastSelection != null) {
-        ServiceViewDescriptor descriptor = myLastSelection.getViewDescriptor();
-        myUi.setDetailsComponent(descriptor.getContentComponent());
-      }
+        if (mySelected && myLastSelection != null) {
+          ServiceViewDescriptor descriptor = myLastSelection.getViewDescriptor();
+          myUi.setDetailsComponent(descriptor.getContentComponent());
+        }
     }, myProject.getDisposed()));
 
     state.treeState.applyTo(myTree, myTreeModel.getRoot());
@@ -61,7 +59,6 @@ class ServiceTreeView extends ServiceView {
     super.saveState(state);
     myUi.saveState(state);
     state.treeState = TreeState.createOn(myTree);
-    state.flat = myTreeModel.isFlat();
   }
 
   @NotNull
@@ -115,13 +112,8 @@ class ServiceTreeView extends ServiceView {
   }
 
   @Override
-  boolean isFlat() {
-    return myTreeModel.isFlat();
-  }
-
-  @Override
   void setFlat(boolean flat) {
-    myTreeModel.setFlat(flat);
+    super.setFlat(flat);
     myTree.setShowsRootHandles(!flat);
   }
 
