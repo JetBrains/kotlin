@@ -42,7 +42,6 @@ import java.util.Set;
 
 public class PostfixLiveTemplate extends CustomLiveTemplateBase {
   public static final String POSTFIX_TEMPLATE_ID = "POSTFIX_TEMPLATE_ID";
-  private static final String USAGE_GROUP = "completion.postfix";
   private static final Logger LOG = Logger.getInstance(PostfixLiveTemplate.class);
 
   @NotNull
@@ -227,21 +226,10 @@ public class PostfixLiveTemplate extends CustomLiveTemplateBase {
     return result;
   }
 
-  private static final String THIRD_PARTY_PLUGIN_POSTFIX_TEMPLATE_ID = "third.party.plugin.postfix.template";
-
   private static void expandTemplate(@NotNull final PostfixTemplate template,
                                      @NotNull final Editor editor,
                                      @NotNull final PsiElement context) {
-    if (template.isBuiltin()) {
-      PostfixTemplateProvider provider = template.getProvider();
-      PluginInfo pluginInfo = PluginInfoDetectorKt.getPluginInfo(provider != null ? provider.getClass() : template.getClass());
-      if (pluginInfo.getType().isSafeToReport()) {
-        String templateId = provider != null ? provider.getId() + "/" + template.getId() : template.getId();
-        String id = pluginInfo.getType().isDevelopedByJetBrains() ? templateId : THIRD_PARTY_PLUGIN_POSTFIX_TEMPLATE_ID;
-        FeatureUsageData data = new FeatureUsageData().addPluginInfo(pluginInfo);
-        FUCounterUsageLogger.getInstance().logEvent(context.getProject(), USAGE_GROUP, id, data);
-      }
-    }
+    PostfixTemplateLogger.log(template, context);
     if (template.startInWriteAction()) {
       ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance()
                                                                                .executeCommand(context.getProject(),
