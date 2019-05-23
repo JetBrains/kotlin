@@ -45,7 +45,6 @@ import com.intellij.refactoring.listeners.impl.RefactoringListenerManagerImpl;
 import com.intellij.refactoring.listeners.impl.RefactoringTransaction;
 import com.intellij.refactoring.ui.ConflictsDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.refactoring.util.MoveRenameUsageInfo;
 import com.intellij.ui.GuiUtils;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
@@ -338,20 +337,17 @@ public abstract class BaseRefactoringProcessor implements Runnable {
         final PsiElement element = elementUsage.getElement();
         if (element == null) continue;
         final PsiFile containingFile = element.getContainingFile();
-        if (elementUsage.isNonCodeUsage()) {
+        if (usage instanceof UsageInfo2UsageAdapter && ((UsageInfo2UsageAdapter)usage).getUsageInfo().isDynamicUsage()) {
+          dynamicUsagesCount++;
+          dynamicUsagesCodeFiles.add(containingFile);
+        }
+        else if (elementUsage.isNonCodeUsage()) {
           nonCodeUsageCount++;
           nonCodeFiles.add(containingFile);
         }
         else {
           codeUsageCount++;
           codeFiles.add(containingFile);
-        }
-        if (usage instanceof UsageInfo2UsageAdapter) {
-          final UsageInfo usageInfo = ((UsageInfo2UsageAdapter)usage).getUsageInfo();
-          if (usageInfo instanceof MoveRenameUsageInfo && usageInfo.isDynamicUsage()) {
-            dynamicUsagesCount++;
-            dynamicUsagesCodeFiles.add(containingFile);
-          }
         }
       }
     }
