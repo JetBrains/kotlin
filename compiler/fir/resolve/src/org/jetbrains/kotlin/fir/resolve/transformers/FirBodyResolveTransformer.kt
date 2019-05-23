@@ -501,8 +501,12 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val consumer = createFunctionConsumer(session, name, info, inferenceComponents)
         val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
         val bestCandidates = result.bestCandidates()
-        val reducedCandidates = ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
-            .chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+        val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
+            bestCandidates.toSet()
+        } else {
+            ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
+                .chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+        }
 
 
 //        fun isInvoke()
