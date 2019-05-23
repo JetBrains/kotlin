@@ -152,7 +152,11 @@ class NewCapturedType(
         )
 }
 
-class NewCapturedTypeConstructor(override val projection: TypeProjection, private var supertypes: List<UnwrappedType>? = null) :
+class NewCapturedTypeConstructor(
+    override val projection: TypeProjection,
+    private var supertypes: List<UnwrappedType>? = null,
+    private val original: NewCapturedTypeConstructor? = null
+) :
     CapturedTypeConstructor {
     fun initializeSupertypes(supertypes: List<UnwrappedType>) {
         assert(this.supertypes == null) {
@@ -171,7 +175,21 @@ class NewCapturedTypeConstructor(override val projection: TypeProjection, privat
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
-        NewCapturedTypeConstructor(projection.refine(kotlinTypeRefiner), supertypes?.map { it.refine(kotlinTypeRefiner) })
+        NewCapturedTypeConstructor(
+            projection.refine(kotlinTypeRefiner),
+            supertypes?.map { it.refine(kotlinTypeRefiner) },
+            original ?: this
+        )
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as NewCapturedTypeConstructor
+
+        return (original ?: this) === (other.original ?: other)
+    }
+
+    override fun hashCode(): Int = original?.hashCode() ?: super.hashCode()
     override fun toString() = "CapturedType($projection)"
 }
