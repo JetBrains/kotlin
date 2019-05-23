@@ -57,7 +57,7 @@ class ExternalSystemTaskMenu : DefaultActionGroup(), DumbAware {
       val project = e.project
       val systemId = ExternalSystemDataKeys.EXTERNAL_SYSTEM_ID.getData(e.dataContext)
       ExternalSystemActionsCollector.trigger(project, systemId, "RunExternalSystemTaskAction", e,
-                                             "executor_id" to executor.id)
+                                             "executor" to executor.id)
     }
   }
 
