@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.util.allowedValOrVar
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
@@ -111,19 +110,21 @@ class CreateExpectedClassFix(
     outerExpectedClass: KtClassOrObject?,
     commonModule: Module
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, element ->
-    val originalCollection = element.collectDeclarations(false).filter(KtDeclaration::canAddActualModifier).toList()
-    val collection = originalCollection.filterNot(KtDeclaration::isAlwaysActual)
+    val originalElements = element.collectDeclarations(false).filter(KtDeclaration::canAddActualModifier).toList()
+    val members = originalElements.filterNot(KtDeclaration::isAlwaysActual)
     val selectedElements = when {
-        ApplicationManager.getApplication().isUnitTestMode -> collection.filter { it.isEffectivelyActual(false) }
-        collection.any(KtDeclaration::hasActualModifier) && collection.any { !it.hasActualModifier() } -> {
+        members.all(KtDeclaration::hasActualModifier) -> originalElements
+        ApplicationManager.getApplication().isUnitTestMode -> members.filter(KtDeclaration::hasActualModifier)
+        else -> {
             val prefix = klass.fqName?.asString()?.plus(".") ?: ""
-            chooseMembers(project, collection, prefix) ?: return@block null
+            chooseMembers(project, members, prefix) ?: return@block null
         }
-        else -> null
     }
 
-    project.executeWriteCommand("Repair actual members") {
-        repairActualModifiers(originalCollection, selectedElements)
+    if (originalElements.isNotEmpty()) {
+        project.executeWriteCommand("Repair actual members") {
+            repairActualModifiers(originalElements, selectedElements)
+        }
     }
 
     generateClassOrObject(project, true, element, listOfNotNull(outerExpectedClass))
@@ -140,6 +141,11 @@ private fun KtDeclaration.canAddActualModifier() = when (this) {
  */
 private fun chooseMembers(project: Project, collection: Collection<KtDeclaration>, prefixToRemove: String): List<KtDeclaration>? {
     val classMembers = collection.map { Member(prefixToRemove, it, it.resolveToDescriptorIfAny()!!) }
+    val filter = if (collection.any(KtDeclaration::hasActualModifier)) {
+        { declaration: KtDeclaration -> declaration.hasActualModifier() }
+    } else {
+        { true }
+    }
     return MemberChooser(
         classMembers.toTypedArray(),
         true,
@@ -148,7 +154,7 @@ private fun chooseMembers(project: Project, collection: Collection<KtDeclaration
     ).run {
         title = "Choose actual members"
         setCopyJavadocVisible(false)
-        selectElements(classMembers.filter { (it.element as KtDeclaration).hasActualModifier() }.toTypedArray())
+        selectElements(classMembers.filter { filter((it.element as KtDeclaration)) }.toTypedArray())
         show()
         if (!isOK) null else selectedElements?.map { it.element as KtDeclaration }.orEmpty()
     }
@@ -175,25 +181,24 @@ private fun KtClassOrObject.collectDeclarations(withSelf: Boolean = true): Seque
 
 private fun repairActualModifiers(
     originalElements: Collection<KtDeclaration>,
-    // If null, all class declarations are actual
-    selectedElements: Collection<KtDeclaration>?
+    selectedElements: Collection<KtDeclaration>
 ) {
-    if (selectedElements == null)
+    if (originalElements.size == selectedElements.size)
         for (original in originalElements) {
-            original.recursivelyMakeActual()
+            original.makeActualWithParents()
         }
     else
         for (original in originalElements) {
             if (original.isAlwaysActual() || original in selectedElements)
-                original.recursivelyMakeActual()
+                original.makeActualWithParents()
             else
                 original.makeNotActual()
         }
 }
 
-private tailrec fun KtDeclaration.recursivelyMakeActual() {
+private tailrec fun KtDeclaration.makeActualWithParents() {
     makeActual()
-    containingClassOrObject?.takeUnless(KtDeclaration::hasActualModifier)?.recursivelyMakeActual()
+    containingClassOrObject?.takeUnless(KtDeclaration::hasActualModifier)?.makeActualWithParents()
 }
 
 private fun KtDeclaration.isAlwaysActual(): Boolean = when (this) {
