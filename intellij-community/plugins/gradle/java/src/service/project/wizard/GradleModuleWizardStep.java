@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.service.project.wizard;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.ProjectWizardUtil;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
@@ -151,7 +152,6 @@ public class GradleModuleWizardStep extends ModuleWizardStep {
     updateComponents();
   }
 
-
   private void updateComponents() {
     final boolean isAddToVisible = myParentProjectForm.isVisible();
 
@@ -190,6 +190,17 @@ public class GradleModuleWizardStep extends ModuleWizardStep {
       myInheritGroupIdCheckBox.setEnabled(true);
       myInheritVersionCheckBox.setEnabled(true);
     }
+
+    setTextIfEmpty(myArtifactIdField, suggestArtifactId());
+  }
+
+  @NotNull
+  private String suggestArtifactId() {
+    if (myContext.isCreatingNewProject()) {
+      String baseDir = myContext.getProjectFileDirectory();
+      return ProjectWizardUtil.findNonExistingFileName(baseDir, "untitled", "");
+    }
+    return "";
   }
 
   public static boolean isGradleModuleExist(WizardContext myContext) {
