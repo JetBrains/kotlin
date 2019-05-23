@@ -62,7 +62,7 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
         : this(detachObjectGraphInternal(mode.value, producer as () -> Any?))
 
     /**
-     * Creates detached object graph from value stored earlier in a C raw pointer.
+     * Restores detached object graph from the value stored earlier in a C raw pointer.
      */
     public constructor(pointer: COpaquePointer?) : this(pointer?.rawValue ?: NativePtr.NULL)
 
@@ -74,8 +74,9 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
 
 /**
  * Attaches previously detached object subgraph created by [DetachedObjectGraph].
- * Please note, that once object graph is attached, the [DetachedObjectGraph.stable] pointer does not have sense anymore,
- * and shall be discarded.
+ * Please note, that once object graph is attached, the [DetachedObjectGraph.stable] pointer does not
+ * make sense anymore, and shall be discarded, so attach of one DetachedObjectGraph object can only
+ * happen once.
  */
 public inline fun <reified T> DetachedObjectGraph<T>.attach(): T {
     var rawStable: NativePtr
