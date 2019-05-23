@@ -25,9 +25,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectModelExternalSource;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.packaging.artifacts.*;
 import com.intellij.packaging.elements.CompositePackagingElement;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class IdeModifiableModelsProviderImpl extends AbstractIdeModifiableModels
 
   public IdeModifiableModelsProviderImpl(Project project) {
     super(project);
-    myLibrariesModel = ProjectLibraryTable.getInstance(myProject).getModifiableModel();
+    myLibrariesModel = LibraryTablesRegistrar.getInstance().getLibraryTable(myProject).getModifiableModel();
   }
 
   @NotNull

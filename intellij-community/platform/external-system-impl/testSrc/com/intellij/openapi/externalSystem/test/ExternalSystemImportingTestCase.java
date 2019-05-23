@@ -34,8 +34,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.util.Couple;
@@ -383,7 +383,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
   public void assertProjectLibraries(String... expectedNames) {
     List<String> actualNames = new ArrayList<>();
-    for (Library each : ProjectLibraryTable.getInstance(myProject).getLibraries()) {
+    for (Library each : LibraryTablesRegistrar.getInstance().getLibraryTable(myProject).getLibraries()) {
       String name = each.getName();
       actualNames.add(name == null ? "<unnamed>" : name);
     }
