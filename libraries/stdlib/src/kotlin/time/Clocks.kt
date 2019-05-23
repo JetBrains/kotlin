@@ -20,7 +20,7 @@ public abstract class AbstractLongClock(protected val unit: DurationUnit) : Cloc
 
     override fun mark(): ClockMark = object : ClockMark {
         val startedAt = read()
-        override fun elapsed(): Duration = Duration(read() - startedAt, this@AbstractLongClock.unit)
+        override fun elapsed(): Duration = (read() - startedAt).toDuration(this@AbstractLongClock.unit)
     }
 }
 
@@ -32,7 +32,7 @@ public abstract class AbstractDoubleClock(protected val unit: DurationUnit) : Cl
 
     override fun mark(): ClockMark = object : ClockMark {
         val startedAt = read()
-        override fun elapsed(): Duration = Duration(read() - startedAt, this@AbstractDoubleClock.unit)
+        override fun elapsed(): Duration = (read() - startedAt).toDuration(this@AbstractDoubleClock.unit)
     }
 }
 

@@ -25,13 +25,13 @@ class DurationTest {
             val value = Random.nextInt(1_000_000)
             val unit = units.random()
             val expected = convertDurationUnit(value.toDouble(), unit, expectStorageUnit)
-            assertEquals(expected, Duration(value, unit)._value)
-            assertEquals(expected, Duration(value.toLong(), unit)._value)
-            assertEquals(expected, Duration(value.toDouble(), unit)._value)
+            assertEquals(expected, value.toDuration(unit)._value)
+            assertEquals(expected, value.toLong().toDuration(unit)._value)
+            assertEquals(expected, value.toDouble().toDuration(unit)._value)
         }
 
         todo {
-            assertFails { Duration(Double.NaN, DurationUnit.SECONDS) }
+            assertFails { Double.NaN.toDuration(DurationUnit.SECONDS) }
         }
     }
 
@@ -50,14 +50,14 @@ class DurationTest {
 
         for ((value, unit) in data) {
             repeat(10) {
-                val d1 = Duration(value, unit)
+                val d1 = value.toDuration(unit)
                 val unit2 = units.random()
                 val value2 = convertDurationUnit(value, unit, unit2)
-                val d2 = Duration(value2, unit2)
+                val d2 = value2.toDuration(unit2)
                 assertEquals(d1, d2, "$value $unit in $unit2")
                 assertEquals(d1.hashCode(), d2.hashCode())
 
-                val d3 = Duration(value2 * 2, unit2)
+                val d3 = (value2 * 2).toDuration(unit2)
                 assertNotEquals(d1, d3, "$value $unit in $unit2")
             }
         }
@@ -70,33 +70,33 @@ class DurationTest {
         val n2 = Random.nextLong(Long.MAX_VALUE)
         val n3 = Random.nextDouble()
 
-        assertEquals(Duration(n1, DurationUnit.DAYS), n1.days)
-        assertEquals(Duration(n2, DurationUnit.DAYS), n2.days)
-        assertEquals(Duration(n3, DurationUnit.DAYS), n3.days)
+        assertEquals(n1.toDuration(DurationUnit.DAYS), n1.days)
+        assertEquals(n2.toDuration(DurationUnit.DAYS), n2.days)
+        assertEquals(n3.toDuration(DurationUnit.DAYS), n3.days)
 
-        assertEquals(Duration(n1, DurationUnit.HOURS), n1.hours)
-        assertEquals(Duration(n2, DurationUnit.HOURS), n2.hours)
-        assertEquals(Duration(n3, DurationUnit.HOURS), n3.hours)
+        assertEquals(n1.toDuration(DurationUnit.HOURS), n1.hours)
+        assertEquals(n2.toDuration(DurationUnit.HOURS), n2.hours)
+        assertEquals(n3.toDuration(DurationUnit.HOURS), n3.hours)
 
-        assertEquals(Duration(n1, DurationUnit.MINUTES), n1.minutes)
-        assertEquals(Duration(n2, DurationUnit.MINUTES), n2.minutes)
-        assertEquals(Duration(n3, DurationUnit.MINUTES), n3.minutes)
+        assertEquals(n1.toDuration(DurationUnit.MINUTES), n1.minutes)
+        assertEquals(n2.toDuration(DurationUnit.MINUTES), n2.minutes)
+        assertEquals(n3.toDuration(DurationUnit.MINUTES), n3.minutes)
 
-        assertEquals(Duration(n1, DurationUnit.SECONDS), n1.seconds)
-        assertEquals(Duration(n2, DurationUnit.SECONDS), n2.seconds)
-        assertEquals(Duration(n3, DurationUnit.SECONDS), n3.seconds)
+        assertEquals(n1.toDuration(DurationUnit.SECONDS), n1.seconds)
+        assertEquals(n2.toDuration(DurationUnit.SECONDS), n2.seconds)
+        assertEquals(n3.toDuration(DurationUnit.SECONDS), n3.seconds)
 
-        assertEquals(Duration(n1, DurationUnit.MILLISECONDS), n1.milliseconds)
-        assertEquals(Duration(n2, DurationUnit.MILLISECONDS), n2.milliseconds)
-        assertEquals(Duration(n3, DurationUnit.MILLISECONDS), n3.milliseconds)
+        assertEquals(n1.toDuration(DurationUnit.MILLISECONDS), n1.milliseconds)
+        assertEquals(n2.toDuration(DurationUnit.MILLISECONDS), n2.milliseconds)
+        assertEquals(n3.toDuration(DurationUnit.MILLISECONDS), n3.milliseconds)
 
-        assertEquals(Duration(n1, DurationUnit.MICROSECONDS), n1.microseconds)
-        assertEquals(Duration(n2, DurationUnit.MICROSECONDS), n2.microseconds)
-        assertEquals(Duration(n3, DurationUnit.MICROSECONDS), n3.microseconds)
+        assertEquals(n1.toDuration(DurationUnit.MICROSECONDS), n1.microseconds)
+        assertEquals(n2.toDuration(DurationUnit.MICROSECONDS), n2.microseconds)
+        assertEquals(n3.toDuration(DurationUnit.MICROSECONDS), n3.microseconds)
 
-        assertEquals(Duration(n1, DurationUnit.NANOSECONDS), n1.nanoseconds)
-        assertEquals(Duration(n2, DurationUnit.NANOSECONDS), n2.nanoseconds)
-        assertEquals(Duration(n3, DurationUnit.NANOSECONDS), n3.nanoseconds)
+        assertEquals(n1.toDuration(DurationUnit.NANOSECONDS), n1.nanoseconds)
+        assertEquals(n2.toDuration(DurationUnit.NANOSECONDS), n2.nanoseconds)
+        assertEquals(n3.toDuration(DurationUnit.NANOSECONDS), n3.nanoseconds)
     }
 
     @Test
@@ -118,7 +118,7 @@ class DurationTest {
             val unit = units.random()
             val unit2 = units.random()
 
-            assertAlmostEquals(convertDurationUnit(value.toDouble(), unit, unit2), Duration(value, unit).inUnits(unit2))
+            assertAlmostEquals(convertDurationUnit(value.toDouble(), unit, unit2), value.toDuration(unit).toDouble(unit2))
         }
     }
 
@@ -166,12 +166,6 @@ class DurationTest {
         assertTrue((-Duration.INFINITE).isInfinite())
         assertTrue(Double.POSITIVE_INFINITY.nanoseconds.isInfinite())
 
-        assertTrue(Duration.MAX_VALUE.isFinite())
-        assertTrue(Duration.MIN_VALUE.isFinite())
-
-        assertFalse((Duration.MAX_VALUE * 2).isFinite())
-        assertFalse((Duration.MIN_VALUE * 2).isFinite())
-
         // seconds converted to nanoseconds overflow to infinite
         assertTrue(Double.MAX_VALUE.seconds.isInfinite())
         assertTrue((-Double.MAX_VALUE).seconds.isInfinite())
@@ -184,7 +178,7 @@ class DurationTest {
             val value = Random.nextLong()
             val unit = units.random()
 
-            assertEquals(Duration(-value, unit), -Duration(value, unit))
+            assertEquals((-value).toDuration(unit), -value.toDuration(unit))
         }
     }
 
@@ -298,8 +292,8 @@ class DurationTest {
         d = (d - 516.nanoseconds) / 17
         test(DurationUnit.NANOSECONDS, "0ns", "0.0ns", "0.02ns", "0.020ns", "0.0202ns")
 
-        d = Duration.MAX_VALUE
         testOnJvm {
+            d = Double.MAX_VALUE.nanoseconds
             // are such long representations ok?
             test(DurationUnit.DAYS, "20806633505350875${"0".repeat(278)}d")
             test(DurationUnit.NANOSECONDS, "17976931348623157${"0".repeat(292)}ns")
@@ -375,7 +369,7 @@ class DurationTest {
 
         test(universeAge, "5.04e12d")
         test(planckTime, "5.4e-44s", "5.40e-44s")
-        test(Duration.MAX_VALUE, "2.08e294d")
+        test(Double.MAX_VALUE.nanoseconds, "2.08e294d")
         test(Duration.INFINITE, "Infinity")
     }
 
