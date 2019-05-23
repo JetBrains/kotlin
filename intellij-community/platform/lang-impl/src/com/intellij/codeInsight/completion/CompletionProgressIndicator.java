@@ -497,7 +497,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
 
     CompletionPhase oldPhase = CompletionServiceImpl.getCompletionPhase();
     if (oldPhase instanceof CompletionPhase.CommittingDocuments) {
-      LOG.assertTrue(((CompletionPhase.CommittingDocuments)oldPhase).isRestartingCompletion(), oldPhase);
+      LOG.assertTrue(((CompletionPhase.CommittingDocuments)oldPhase).indicator != null, oldPhase);
       ((CompletionPhase.CommittingDocuments)oldPhase).replaced = true;
     }
     CompletionServiceImpl.setCompletionPhase(CompletionPhase.NoCompletion);

@@ -58,8 +58,7 @@ public class LookupTypedHandler extends TypedActionHandlerBase {
     }
 
     CompletionPhase oldPhase = CompletionServiceImpl.getCompletionPhase();
-    if (oldPhase instanceof CompletionPhase.CommittingDocuments && ((CompletionPhase.CommittingDocuments)oldPhase).isRestartingCompletion()) {
-      assert oldPhase.indicator != null;
+    if (oldPhase instanceof CompletionPhase.CommittingDocuments && oldPhase.indicator != null) {
       oldPhase.indicator.scheduleRestart();
     }
 

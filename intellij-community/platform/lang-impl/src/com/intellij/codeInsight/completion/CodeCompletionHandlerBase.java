@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.OverridingAction;
 import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
+import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.WriteAction;
@@ -234,22 +235,52 @@ public class CodeCompletionHandlerBase {
                                                                             initContext.getHostOffsets(),
                                                                             hasModifiers, lookup);
 
-    CompletionServiceImpl.setCompletionPhase(synchronous && isValidContext ? new CompletionPhase.Synchronous(indicator) : new CompletionPhase.BgCalculation(indicator));
+    OffsetsInFile hostCopyOffsets = WriteAction.compute(() -> CompletionInitializationUtil.insertDummyIdentifier(initContext, indicator));
 
-    if (!isValidContext) {
-      indicator.makeSureLookupIsShown(0);
-      return;
+    if (synchronous && isValidContext && commitDocumentsWithTimeout(initContext, startingTime)) {
+      trySynchronousCompletion(initContext, hasModifiers, startingTime, indicator, hostCopyOffsets);
+    } else {
+      scheduleContributorsAfterAsyncCommit(initContext, indicator, hostCopyOffsets, hasModifiers);
     }
+  }
 
-    Future<?> future = indicator.getCompletionThreading().startThread(indicator, () -> AsyncCompletion.tryReadOrCancel(indicator, () -> {
-      CompletionParameters parameters = CompletionInitializationUtil.prepareCompletionParameters(initContext, indicator);
-      if (parameters != null) {
-        parameters.setIsTestingMode(isTestingMode());
-        indicator.runContributors(initContext);
+  private void scheduleContributorsAfterAsyncCommit(CompletionInitializationContextImpl initContext,
+                                                    CompletionProgressIndicator indicator,
+                                                    OffsetsInFile hostCopyOffsets,
+                                                    boolean hasModifiers) {
+    CompletionPhase phase;
+    if (synchronous) {
+      phase = new CompletionPhase.BgCalculation(indicator);
+      indicator.makeSureLookupIsShown(0);
+    } else {
+      phase = new CompletionPhase.CommittingDocuments(indicator, InjectedLanguageUtil.getTopLevelEditor(indicator.getEditor()));
+    }
+    CompletionServiceImpl.setCompletionPhase(phase);
+
+    AppUIExecutor.onUiThread().withDocumentsCommitted(initContext.getProject()).expireWith(phase).submit(() -> {
+      if (phase instanceof CompletionPhase.CommittingDocuments) {
+        ((CompletionPhase.CommittingDocuments)phase).replaced = true;
       }
-    }));
+      CompletionServiceImpl.setCompletionPhase(new CompletionPhase.BgCalculation(indicator));
+      startContributorThread(initContext, indicator, hostCopyOffsets, hasModifiers);
+    });
+  }
 
-    if (!synchronous) {
+  private boolean commitDocumentsWithTimeout(CompletionInitializationContextImpl initContext, long startingTime) {
+    return withTimeout(calcSyncTimeOut(startingTime), () -> {
+      PsiDocumentManager.getInstance(initContext.getProject()).commitAllDocuments();
+      return true;
+    }) != null;
+  }
+
+  private void trySynchronousCompletion(CompletionInitializationContextImpl initContext,
+                                        boolean hasModifiers,
+                                        long startingTime,
+                                        CompletionProgressIndicator indicator, OffsetsInFile hostCopyOffsets) {
+    CompletionServiceImpl.setCompletionPhase(new CompletionPhase.Synchronous(indicator));
+
+    Future<?> future = startContributorThread(initContext, indicator, hostCopyOffsets, hasModifiers);
+    if (future == null) {
       return;
     }
 
@@ -271,6 +302,28 @@ public class CodeCompletionHandlerBase {
 
     CompletionServiceImpl.setCompletionPhase(new CompletionPhase.BgCalculation(indicator));
     indicator.showLookup();
+  }
+
+  @Nullable
+  private Future<?> startContributorThread(CompletionInitializationContextImpl initContext,
+                                           CompletionProgressIndicator indicator,
+                                           OffsetsInFile hostCopyOffsets,
+                                           boolean hasModifiers) {
+    if (!hostCopyOffsets.getFile().isValid()) {
+      completionFinished(indicator, hasModifiers);
+      return null;
+    }
+
+    return indicator.getCompletionThreading().startThread(indicator, () -> AsyncCompletion.tryReadOrCancel(indicator, () -> {
+      OffsetsInFile finalOffsets = CompletionInitializationUtil.toInjectedIfAny(initContext.getFile(), hostCopyOffsets);
+      indicator.registerChildDisposable(finalOffsets::getOffsets);
+
+      CompletionParameters parameters = CompletionInitializationUtil.createCompletionParameters(initContext, indicator, finalOffsets);
+      parameters.setIsTestingMode(isTestingMode());
+      indicator.setParameters(parameters);
+
+      indicator.runContributors(initContext);
+    }));
   }
 
   private static void checkForExceptions(Future<?> future) {

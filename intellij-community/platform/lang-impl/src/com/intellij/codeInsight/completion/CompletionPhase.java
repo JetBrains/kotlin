@@ -30,6 +30,7 @@ import com.intellij.ui.LightweightHint;
 import com.intellij.util.ThreeState;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,17 +69,13 @@ public abstract class CompletionPhase implements Disposable {
     boolean replaced;
     private final ActionTracker myTracker;
 
-    private CommittingDocuments(@Nullable CompletionProgressIndicator prevIndicator, Editor editor) {
+    CommittingDocuments(@Nullable CompletionProgressIndicator prevIndicator, @NotNull Editor editor) {
       super(prevIndicator);
       myTracker = new ActionTracker(editor, this);
     }
 
     public void ignoreCurrentDocumentChange() {
       myTracker.ignoreCurrentDocumentChange();
-    }
-
-    public boolean isRestartingCompletion() {
-      return indicator != null;
     }
 
     private boolean isExpired() {
@@ -102,9 +99,7 @@ public abstract class CompletionPhase implements Disposable {
       return "CommittingDocuments{hasIndicator=" + (indicator != null) + '}';
     }
 
-    /**
-     * Don't call this method in client code, it's public for implementation reasons
-     */
+    @ApiStatus.Internal
     public static void scheduleAsyncCompletion(@NotNull Editor _editor,
                                                @NotNull CompletionType completionType,
                                                @Nullable Condition<? super PsiFile> condition,
