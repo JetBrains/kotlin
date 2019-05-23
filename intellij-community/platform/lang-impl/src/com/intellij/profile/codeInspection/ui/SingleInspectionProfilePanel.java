@@ -394,7 +394,7 @@ public class SingleInspectionProfilePanel extends JPanel {
       reloadModel();
       restoreTreeState();
       if (myTreeTable.getTree().getSelectionPath() == null) {
-        TreeUtil.selectFirstNode(myTreeTable.getTree());
+        TreeUtil.promiseSelectFirst(myTreeTable.getTree());
       }
     }
   }

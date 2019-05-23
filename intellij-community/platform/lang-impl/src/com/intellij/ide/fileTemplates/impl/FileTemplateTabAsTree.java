@@ -147,7 +147,7 @@ abstract class FileTemplateTabAsTree extends FileTemplateTab {
       selectTemplate(selection);
     }
     else {
-      TreeUtil.selectFirstNode(myTree);
+      TreeUtil.promiseSelectFirst(myTree);
     }
   }
 

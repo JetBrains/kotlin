@@ -74,7 +74,7 @@ public class ImageDuplicateResultsDialog extends DialogWrapper {
     init();
     TreeUtil.expandAll(myTree);
     setTitle("Image Duplicates");
-    TreeUtil.selectFirstNode(myTree);
+    TreeUtil.promiseSelectFirst(myTree);
   }
 
   @NotNull
