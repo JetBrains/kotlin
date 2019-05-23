@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.platform.compat
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
@@ -46,11 +47,19 @@ fun OldPlatform.toNewPlatform(): NewPlatform = when (this) {
     )
 }
 
-
 fun IdePlatform<*, *>.toNewPlatform(): NewPlatform = when (this) {
     is CommonIdePlatformKind.Platform -> CommonPlatforms.defaultCommonPlatform
     is JvmIdePlatformKind.Platform -> JvmPlatforms.jvmPlatformByTargetVersion(this.version)
     is JsIdePlatformKind.Platform -> JsPlatforms.defaultJsPlatform
     is NativeIdePlatformKind.Platform -> KonanPlatforms.defaultKonanPlatform
     else -> error("Unknown platform $this")
+}
+
+fun NewPlatform.toIdePlatform(): IdePlatform<*, *> = when (val single = singleOrNull()) {
+    null -> CommonIdePlatformKind.Platform
+    is JdkPlatform -> JvmIdePlatformKind.Platform(single.targetVersion)
+    is JvmPlatform -> JvmIdePlatformKind.Platform(JvmTarget.DEFAULT)
+    is JsPlatform -> JsIdePlatformKind.Platform
+    is KonanPlatform -> NativeIdePlatformKind.Platform
+    else -> error("Unknown platform $single")
 }
