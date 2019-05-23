@@ -89,8 +89,8 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift control F8",         "ViewBreakpoints", "EditBreakpoint"},
     { "shift control G",          "ClassTemplateNavigation", "GoToClass"},
     { "shift control H",          "ChangesView.ShelveSilently", "MethodHierarchy"},
-    { "shift control LEFT",       "EditorPreviousWordWithSelection", "ResizeToolWindowLeft", "Terminal.MoveToolWindowTabLeft"},
-    { "shift control RIGHT",      "EditorNextWordWithSelection", "ResizeToolWindowRight", "Terminal.MoveToolWindowTabRight"},
+    { "shift control LEFT",       "EditorPreviousWordWithSelection", "ResizeToolWindowLeft"},
+    { "shift control RIGHT",      "EditorNextWordWithSelection", "ResizeToolWindowRight"},
     { "shift control T",          "GotoTest", "Images.ShowThumbnails", "RunDashboard.ShowConfigurations"},
     { "shift control UP",         "ResizeToolWindowUp", "MoveStatementUp"},
     { "shift control alt D",      "UML.ShowChanges", "Console.TableResult.CloneColumn"},
@@ -107,6 +107,8 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "PAGE_DOWN",                "EditorPageDown", "SearchEverywhere.NavigateToNextGroup"},
     { "PAGE_UP",                  "EditorPageUp", "SearchEverywhere.NavigateToPrevGroup"},
     { "ESCAPE",                   "EditorEscape", "Terminal.SwitchFocusToEditor"},
+    { "shift ctrl alt LEFT",      "MoveElementLeft", "Terminal.MoveToolWindowTabLeft"},
+    { "shift ctrl alt RIGHT",     "MoveElementRight", "Terminal.MoveToolWindowTabRight"},
     });
     put("Mac OS X 10.5+", new String[][] {
     { "BACK_SPACE",               "$Delete", "EditorBackSpace", "Images.Thumbnails.UpFolder"},
@@ -133,8 +135,8 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift ctrl RIGHT",         "Diff.ApplyLeftSide", "NextEditorTab"},
     { "shift meta G",             "ClassTemplateNavigation", "GoToClass", "FindPrevious"},
     { "shift meta M",             "ChangesView.Move", "Vcs.MoveChangedLinesToChangelist"},
-    { "shift meta LEFT",          "EditorLineStartWithSelection", "ResizeToolWindowLeft", "Terminal.MoveToolWindowTabLeft"},
-    { "shift meta RIGHT",         "EditorLineEndWithSelection", "ResizeToolWindowRight", "Terminal.MoveToolWindowTabRight"},
+    { "shift meta LEFT",          "EditorLineStartWithSelection", "ResizeToolWindowLeft"},
+    { "shift meta RIGHT",         "EditorLineEndWithSelection", "ResizeToolWindowRight"},
     { "shift meta CLOSE_BRACKET", "Diff.NextChange", "NextTab"},
     { "shift meta OPEN_BRACKET",  "Diff.PrevChange", "PreviousTab"},
     { "alt R",                    "Django.RunManageTaskAction", "org.jetbrains.plugins.ruby.tasks.rake.actions.RakeTasksPopupAction"},
@@ -161,8 +163,8 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "meta 3",                   "ActivateFindToolWindow", "FileChooser.GotoModule"},
     { "shift ctrl LEFT",          "Diff.ApplyRightSide", "PreviousEditorTab"},
     { "shift ctrl RIGHT",         "Diff.ApplyLeftSide", "NextEditorTab"},
-    { "shift meta LEFT",          "EditorLineStartWithSelection", "ResizeToolWindowLeft", "Terminal.MoveToolWindowTabLeft"},
-    { "shift meta RIGHT",         "EditorLineEndWithSelection", "ResizeToolWindowRight", "Terminal.MoveToolWindowTabRight"},
+    { "shift meta LEFT",          "EditorLineStartWithSelection", "ResizeToolWindowLeft"},
+    { "shift meta RIGHT",         "EditorLineEndWithSelection", "ResizeToolWindowRight"},
     { "alt R",                    "Django.RunManageTaskAction", "org.jetbrains.plugins.ruby.tasks.rake.actions.RakeTasksPopupAction"},
     });
     put("Emacs", new String[][] {
@@ -272,6 +274,8 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift control K",          "Vcs.Push", "FindPrevious"},
     { "shift control X",          "EditorToggleCase", "com.jetbrains.php.framework.FrameworkRunConsoleAction"},
     { "shift control T",          "GotoClass", "GotoChangedFile"},
+    { "shift ctrl alt RIGHT",     "PreviousEditorTab", "Terminal.MoveToolWindowTabRight"},
+    { "shift ctrl alt LEFT",      "NextEditorTab", "Terminal.MoveToolWindowTabLeft"},
     });
     put("NetBeans 6.5", new String[][] {
     { "F4",                       "RunToCursor", "EditSource"},
