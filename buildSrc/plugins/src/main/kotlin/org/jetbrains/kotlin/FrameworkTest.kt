@@ -98,8 +98,16 @@ open class FrameworkTest : DefaultTask() {
                 ?: throw RuntimeException("Executor wasn't found")
         // Hopefully, lexicographical comparison will work.
         val newMacos = System.getProperty("os.version").compareTo("10.14.4") >= 0
+        val dyldLibraryPathKey = if (target == KonanTarget.IOS_X64) {
+            "SIMCTL_CHILD_DYLD_LIBRARY_PATH"
+        } else {
+            "DYLD_LIBRARY_PATH"
+        }
+        val environment = if (newMacos) emptyMap() else mapOf(
+                dyldLibraryPathKey to libraryPath
+        )
         val (stdOut, stdErr, exitCode) = runProcess(
-                executor = executor.add(Action { it.environment = if (newMacos) emptyMap() else mapOf("DYLD_LIBRARY_PATH" to libraryPath) })::execute,
+                executor = executor.add(Action { it.environment = environment })::execute,
                 executable = testExecutable.toString())
 
         println("""
