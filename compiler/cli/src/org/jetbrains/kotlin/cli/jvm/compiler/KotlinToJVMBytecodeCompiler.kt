@@ -374,7 +374,7 @@ object KotlinToJVMBytecodeCompiler {
             val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
             performanceManager?.notifyGenerationStarted()
             generationState.beforeCompile()
-            codegenFactory.generateModule(
+            codegenFactory.generateModuleInFrontendIRMode(
                 generationState, moduleFragment, CompilationErrorHandler.THROW_EXCEPTION, symbolTable, sourceManager
             )
             CodegenFactory.doCheckCancelled(generationState)

@@ -48,10 +48,11 @@ object JvmBackendFacade {
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
-        phaseConfig: PhaseConfig
+        phaseConfig: PhaseConfig,
+        firMode: Boolean = false
     ) {
         val jvmBackendContext = JvmBackendContext(
-            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig
+            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, firMode
         )
         //TODO
         ExternalDependenciesGenerator(

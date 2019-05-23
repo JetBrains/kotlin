@@ -30,7 +30,8 @@ class JvmBackendContext(
     override val irBuiltIns: IrBuiltIns,
     irModuleFragment: IrModuleFragment,
     symbolTable: SymbolTable,
-    val phaseConfig: PhaseConfig
+    val phaseConfig: PhaseConfig,
+    private val firMode: Boolean
 ) : CommonBackendContext {
     override val builtIns = state.module.builtIns
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(state)
@@ -70,7 +71,7 @@ class JvmBackendContext(
         irModuleFragment: IrModuleFragment,
         symbolTable: ReferenceSymbolTable
     ) : Ir<JvmBackendContext>(this, irModuleFragment) {
-        override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
+        override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable, firMode)
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
