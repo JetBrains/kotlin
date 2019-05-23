@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.ConcurrentMap
 
 class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
@@ -178,21 +179,25 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun createUltraLightClassForFacade(
+        manager: PsiManager,
         facadeClassFqName: FqName,
         lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
-        facadeFile: KtFile
+        files: Collection<KtFile>
     ): KtUltraLightClassForFacade? {
 
-        if (facadeFile.isScript()) return null
+        if (files.any { it.isScript() }) return null
 
-        val module = ModuleUtilCore.findModuleForPsiElement(facadeFile) ?: return null
+        val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
+            val module = ModuleUtilCore.findModuleForPsiElement(it) ?: return null
+            it to KtUltraLightSupportImpl(it, module)
+        }
 
         return KtUltraLightClassForFacade(
-            facadeFile.manager,
+            manager,
             facadeClassFqName,
             lightClassDataCache,
-            facadeFile,
-            KtUltraLightSupportImpl(facadeFile, module)
+            files,
+            filesToSupports
         )
     }
 

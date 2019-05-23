@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.codegen.inline.getOrPut
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -266,23 +267,14 @@ open class KtLightClassForFacade protected constructor(
             val ultraLightEnabled =
                 !KtUltraLightSupport.forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)
 
-            if (ultraLightEnabled && files.count() == 1) {
-                val facadeFile = files.first()
-
-                return CachedValuesManager.getCachedValue(facadeFile) {
-
-                    val lightClassDataCache = FacadeStubCache.getInstance(manager.project).get(facadeClassFqName, searchScope)
-
-                    val classForFacade = LightClassGenerationSupport.getInstance(facadeFile.project)
-                        .createUltraLightClassForFacade(facadeClassFqName, lightClassDataCache, facadeFile)
-                        ?: KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
-
-                    CachedValueProvider.Result.create(classForFacade, OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-                }
-            }
-
             val lightClassDataCache = FacadeStubCache.getInstance(manager.project).get(facadeClassFqName, searchScope)
-            return KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
+
+            val ultraLightClass = if (ultraLightEnabled)
+                LightClassGenerationSupport.getInstance(manager.project)
+                    .createUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
+            else null
+
+            return ultraLightClass ?: KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
         }
 
         fun createForSyntheticFile(

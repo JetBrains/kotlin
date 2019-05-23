@@ -20,11 +20,9 @@ class KtUltraLightClassForFacade(
     manager: PsiManager,
     facadeClassFqName: FqName,
     lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
-    private val file: KtFile,
-    private val support: KtUltraLightSupport
-) : KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, listOf(file)) {
-
-    private val membersBuilder by lazyPub { UltraLightMembersCreator(this, false, true, support) }
+    files: Collection<KtFile>,
+    private val filesToSupports: Collection<Pair<KtFile, KtUltraLightSupport>>
+) : KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files) {
 
     private inline fun <T> forTooComplex(getter: () -> T): T {
         check(tooComplex) {
@@ -39,17 +37,30 @@ class KtUltraLightClassForFacade(
     override val clsDelegate: PsiClass
         get() = forTooComplex { super.clsDelegate }
 
-    private val tooComplex: Boolean by lazyPub { file.declarations.any { support.isTooComplexForUltraLightGeneration(it) } }
+    private val tooComplex: Boolean by lazyPub {
+        filesToSupports.any { (file, support) ->
+            file.declarations.any { support.isTooComplexForUltraLightGeneration(it) }
+        }
+    }
+
+    private val filesToSupportsToMemberCreators by lazyPub {
+        filesToSupports.map { (file, support) ->
+            Triple(file, support, UltraLightMembersCreator(this, false, true, support))
+        }
+    }
 
     private val ownMethodsForNotTooComplex: List<KtLightMethod> by lazyPub {
 
         val result = arrayListOf<KtLightMethod>()
 
-        for (declaration in file.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
-            if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
-            when (declaration) {
-                is KtNamedFunction -> result.addAll(membersBuilder.createMethods(declaration, true))
-                is KtProperty -> result.addAll(membersBuilder.propertyAccessors(declaration, declaration.isVar, true, false))
+        for ((file, support, creator) in filesToSupportsToMemberCreators) {
+
+            for (declaration in file.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
+                if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
+                when (declaration) {
+                    is KtNamedFunction -> result.addAll(creator.createMethods(declaration, true))
+                    is KtProperty -> result.addAll(creator.propertyAccessors(declaration, declaration.isVar, true, false))
+                }
             }
         }
 
@@ -57,9 +68,11 @@ class KtUltraLightClassForFacade(
     }
 
     private val ownFieldsForNotTooComplex: List<KtLightField> by lazyPub {
-        hashSetOf<String>().run {
-            file.declarations.filterIsInstance<KtProperty>().mapNotNull {
-                membersBuilder.createPropertyField(it, this, forceStatic = true)
+        hashSetOf<String>().let { nameCache ->
+            filesToSupportsToMemberCreators.flatMap { (file, support, creator) ->
+                file.declarations.filterIsInstance<KtProperty>().mapNotNull {
+                    creator.createPropertyField(it, nameCache, forceStatic = true)
+                }
             }
         }
     }
@@ -68,8 +81,6 @@ class KtUltraLightClassForFacade(
 
     override fun getOwnMethods() = if (!tooComplex) ownMethodsForNotTooComplex else super.getOwnMethods()
 
-    override fun toString(): String = "UltraLight class for file facade"
-
-    override fun copy(): KtLightClassForFacade = KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, file, support)
-
+    override fun copy(): KtLightClassForFacade =
+        KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesToSupports)
 }
