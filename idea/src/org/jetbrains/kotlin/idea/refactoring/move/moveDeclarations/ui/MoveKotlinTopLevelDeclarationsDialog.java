@@ -13,7 +13,6 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.JavaProjectRootsUtil;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
@@ -61,6 +60,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.psi.KtPureElement;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getSuitableDestinationSourceRoots;
 
 import javax.swing.*;
 import java.awt.*;
@@ -396,7 +396,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private boolean hasAnySourceRoots() {
-        return !JavaProjectRootsUtil.getSuitableDestinationSourceRoots(myProject).isEmpty();
+        return !getSuitableDestinationSourceRoots(myProject).isEmpty();
     }
 
     private void saveRefactoringSettings() {

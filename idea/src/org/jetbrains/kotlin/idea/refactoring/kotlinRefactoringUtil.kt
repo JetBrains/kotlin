@@ -25,7 +25,6 @@ import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
@@ -75,6 +74,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
+import org.jetbrains.kotlin.idea.roots.isOutsideKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.actualsForExpected
@@ -138,8 +138,8 @@ fun PsiElement.getUsageContext(): PsiElement {
     }
 }
 
-fun PsiElement.isInJavaSourceRoot(): Boolean =
-    !JavaProjectRootsUtil.isOutsideJavaSourceRoot(containingFile)
+fun PsiElement.isInKotlinAwareSourceRoot(): Boolean =
+    !isOutsideKotlinAwareSourceRoot(containingFile)
 
 fun KtFile.createTempCopy(text: String? = null): KtFile {
     val tmpFile = KtPsiFactory(this).createAnalyzableFile(name, text ?: this.text ?: "", this)

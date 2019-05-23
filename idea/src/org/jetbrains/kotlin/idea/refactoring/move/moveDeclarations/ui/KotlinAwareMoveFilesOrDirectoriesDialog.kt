@@ -33,7 +33,7 @@ import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.util.onTextChange
-import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -131,7 +131,8 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         this.helpID = helpID
 
         with(updatePackageDirectiveCb) {
-            val jetFiles = psiElements.filterIsInstance<KtFile>().filter(KtFile::isInJavaSourceRoot)
+            val jetFiles = psiElements.filterIsInstance<KtFile>().filter(KtFile::isInKotlinAwareSourceRoot)
+
             if (jetFiles.isEmpty()) {
                 parent.remove(updatePackageDirectiveCb)
                 return
