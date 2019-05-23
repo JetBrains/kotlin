@@ -29,7 +29,7 @@ import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -71,7 +71,7 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
 
             elementsToMove.forEach {
                 MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir)
-                if (it is KtFile && it.isInJavaSourceRoot()) {
+                if (it is KtFile && it.isInKotlinAwareSourceRoot()) {
                     it.updatePackageDirective = updatePackageDirective
                 }
             }

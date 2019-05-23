@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiDirectory
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
+import org.jetbrains.kotlin.idea.roots.isOutsideKotlinAwareSourceRoot
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -104,7 +104,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
     override fun canProcessElement(element: PsiFile?): Boolean {
         if (element is PsiCompiledElement || element !is KtFile) return false
-        return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
+        return !isOutsideKotlinAwareSourceRoot(element)
     }
 
     override fun findUsages(

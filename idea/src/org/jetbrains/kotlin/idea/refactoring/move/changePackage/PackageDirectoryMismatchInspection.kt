@@ -10,7 +10,6 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.isInjectedFragment
+import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -70,7 +70,7 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
             val file = descriptor.psiElement as? KtFile ?: return
             val directive = file.packageDirective ?: return
 
-            val sourceRoots = JavaProjectRootsUtil.getSuitableDestinationSourceRoots(project)
+            val sourceRoots = getSuitableDestinationSourceRoots(project)
             val packageWrapper = PackageWrapper(PsiManager.getInstance(project), directive.qualifiedName)
             val fileToMove = directive.containingFile
             val chosenRoot =

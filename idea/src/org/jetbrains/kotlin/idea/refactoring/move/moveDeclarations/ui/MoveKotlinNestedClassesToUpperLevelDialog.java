@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.JavaProjectRootsUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.NullableComputable;
@@ -72,6 +71,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
+import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getSuitableDestinationSourceRoots;
 
 public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
     @NonNls private static final String RECENTS_KEY = MoveKotlinNestedClassesToUpperLevelDialog.class.getName() + ".RECENTS_KEY";
@@ -267,7 +267,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             String targetName = packageNameField.getText();
             if (!Comparing.equal(oldPackageFqName != null ? oldPackageFqName.asString() : null, targetName)) {
                 ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
-                List<VirtualFile> contentSourceRoots = JavaProjectRootsUtil.getSuitableDestinationSourceRoots(project);
+                List<VirtualFile> contentSourceRoots = getSuitableDestinationSourceRoots(project);
                 final PackageWrapper newPackage = new PackageWrapper(PsiManager.getInstance(project), targetName);
                 final VirtualFile targetSourceRoot;
                 if (contentSourceRoots.size() > 1) {

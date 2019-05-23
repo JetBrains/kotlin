@@ -17,7 +17,6 @@ package org.jetbrains.kotlin.idea.refactoring.copy
 
 import com.intellij.ide.util.DirectoryChooser
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinDestinationFolderComboBox
+import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
 import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -103,7 +103,7 @@ class CopyKotlinDeclarationDialog(
         packageLabel.labelFor = packageNameField
 
         val label = JLabel(RefactoringBundle.message("target.destination.folder"))
-        val isMultipleSourceRoots = JavaProjectRootsUtil.getSuitableDestinationSourceRoots(project).size > 1
+        val isMultipleSourceRoots = getSuitableDestinationSourceRoots(project).size > 1
         destinationComboBox.isVisible = isMultipleSourceRoots
         label.isVisible = isMultipleSourceRoots
         label.labelFor = destinationComboBox

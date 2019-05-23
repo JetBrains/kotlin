@@ -23,3 +23,5 @@ object ResourceKotlinRootType : KotlinResourceRootType()
 object TestResourceKotlinRootType : KotlinResourceRootType() {
     override fun isForTests() = true
 }
+
+val ALL_KOTLIN_RESOURCE_ROOT_TYPES = setOf(ResourceKotlinRootType, TestResourceKotlinRootType)
