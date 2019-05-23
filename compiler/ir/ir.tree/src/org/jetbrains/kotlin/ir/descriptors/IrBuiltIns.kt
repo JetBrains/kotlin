@@ -216,6 +216,8 @@ class IrBuiltIns(
     val throwNpeSymbol = defineOperator(OperatorNames.THROW_NPE, nothing, listOf())
     val throwCceSymbol = defineOperator(OperatorNames.THROW_CCE, nothing, listOf())
     val throwIseSymbol = defineOperator(OperatorNames.THROW_ISE, nothing, listOf())
+    val andandSymbol = defineOperator(OperatorNames.ANDAND, bool, listOf(bool, bool))
+    val ororSymbol = defineOperator(OperatorNames.OROR, bool, listOf(bool, bool))
     val noWhenBranchMatchedExceptionSymbol = defineOperator(OperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothing, listOf())
     val illegalArgumentExceptionSymbol = defineOperator(OperatorNames.ILLEGAL_ARGUMENT_EXCEPTION, nothing, listOf(string))
 
@@ -274,5 +276,7 @@ class IrBuiltIns(
         const val THROW_ISE = "THROW_ISE"
         const val NO_WHEN_BRANCH_MATCHED_EXCEPTION = "noWhenBranchMatchedException"
         const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException"
+        const val ANDAND = "ANDAND"
+        const val OROR = "OROR"
     }
 }
