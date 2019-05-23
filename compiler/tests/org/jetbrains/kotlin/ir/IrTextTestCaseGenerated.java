@@ -1267,6 +1267,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/whenReturn.kt");
         }
 
+        @TestMetadata("whenUnusedExpression.kt")
+        public void testWhenUnusedExpression() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/whenUnusedExpression.kt");
+        }
+
         @TestMetadata("whenWithSubjectVariable.kt")
         public void testWhenWithSubjectVariable() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/whenWithSubjectVariable.kt");
