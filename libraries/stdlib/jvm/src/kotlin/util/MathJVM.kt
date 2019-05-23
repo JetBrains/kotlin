@@ -532,7 +532,7 @@ public actual inline val Double.absoluteValue: Double get() = nativeMath.abs(thi
 public actual inline val Double.sign: Double get() = nativeMath.signum(this)
 
 /**
- * Returns this value with the sign bit same as of the [sign] value.
+ * Returns this value with the same sign as that of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
  */
@@ -541,7 +541,7 @@ public actual inline val Double.sign: Double get() = nativeMath.signum(this)
 public actual inline fun Double.withSign(sign: Double): Double = nativeMath.copySign(this, sign)
 
 /**
- * Returns this value with the sign bit same as of the [sign] value.
+ * Returns this value with the same sign as that of the [sign] value.
  */
 @SinceKotlin("1.2")
 @InlineOnly
