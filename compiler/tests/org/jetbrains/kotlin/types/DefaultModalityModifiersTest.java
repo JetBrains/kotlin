@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -138,7 +139,10 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                    classDescriptor, scope, scope, property,
+                    KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY,
+                    InferenceSession.Companion.getDefault()
+            );
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
@@ -151,7 +155,10 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                    classDescriptor, scope, scope, property,
+                    KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY,
+                    InferenceSession.Companion.getDefault()
+            );
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();

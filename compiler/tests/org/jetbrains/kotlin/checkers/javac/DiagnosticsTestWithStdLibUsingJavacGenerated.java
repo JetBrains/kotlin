@@ -1867,6 +1867,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/inferCoroutineTypeInOldVersion.kt");
             }
 
+            @TestMetadata("inferenceFromMethodInsideLocalVariable.kt")
+            public void testInferenceFromMethodInsideLocalVariable() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/inferenceFromMethodInsideLocalVariable.kt");
+            }
+
             @TestMetadata("kt15516.kt")
             public void testKt15516() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt15516.kt");

@@ -72,6 +72,7 @@ class DelegatedPropertyResolver(
         variableDescriptor: VariableDescriptorWithAccessors,
         delegateExpression: KtExpression,
         propertyHeaderScope: LexicalScope,
+        inferenceSession: InferenceSession,
         trace: BindingTrace
     ) {
         property.getter?.let { getter ->
@@ -86,8 +87,9 @@ class DelegatedPropertyResolver(
                 ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, variableDescriptor)
             else propertyHeaderScope
 
-        val byExpressionType =
-            resolveDelegateExpression(delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo)
+        val byExpressionType =resolveDelegateExpression(
+            delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo, inferenceSession
+        )
 
         resolveProvideDelegateMethod(variableDescriptor, delegateExpression, byExpressionType, trace, initializerScope, outerDataFlowInfo)
         val delegateType = getResolvedDelegateType(variableDescriptor, delegateExpression, byExpressionType, trace)
@@ -455,7 +457,8 @@ class DelegatedPropertyResolver(
         variableDescriptor: VariableDescriptorWithAccessors,
         scopeForDelegate: LexicalScope,
         trace: BindingTrace,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        inferenceSession: InferenceSession
     ): KotlinType {
         val traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property")
 
@@ -475,12 +478,13 @@ class DelegatedPropertyResolver(
         }
 
         val delegatedPropertyTypeFromNI =
-            resolveWithNewInference(delegateExpression, variableDescriptor, scopeForDelegate, trace, dataFlowInfo)
+            resolveWithNewInference(delegateExpression, variableDescriptor, scopeForDelegate, trace, dataFlowInfo, inferenceSession)
         val delegateType = expressionTypingServices.safeGetType(
             scopeForDelegate,
             delegateExpression,
             delegatedPropertyTypeFromNI ?: NO_EXPECTED_TYPE,
             dataFlowInfo,
+            inferenceSession,
             traceToResolveDelegatedProperty
         )
 
@@ -494,7 +498,8 @@ class DelegatedPropertyResolver(
         variableDescriptor: VariableDescriptorWithAccessors,
         scopeForDelegate: LexicalScope,
         trace: BindingTrace,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        inferenceSession: InferenceSession
     ): KotlinType? {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null
 
@@ -503,7 +508,7 @@ class DelegatedPropertyResolver(
         val traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property")
 
         val delegateTypeInfo = expressionTypingServices.getTypeInfo(
-            scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE, dataFlowInfo,
+            scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE, dataFlowInfo, inferenceSession,
             traceToResolveDelegatedProperty, false, delegateExpression, ContextDependency.DEPENDENT
         )
 
