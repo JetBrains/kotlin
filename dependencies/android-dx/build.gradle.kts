@@ -3,6 +3,7 @@ import java.net.URI
 plugins {
     base
     `maven-publish`
+    id("com.jfrog.bintray") version "1.8.4"
 }
 
 apply(from = "../../gradle/versions.gradle.kts")
@@ -107,5 +108,18 @@ publishing {
         maven {
             url = uri("${rootProject.buildDir}/internal/repo")
         }
+    }
+}
+
+bintray {
+    user = extra["bintray.user"] as String
+    key = extra["bintray.key"] as String
+
+    setPublications("maven")
+
+    pkg.apply {
+        repo = "kotlin-dependencies"
+        name = project.name
+        userOrg = "kotlin"
     }
 }
