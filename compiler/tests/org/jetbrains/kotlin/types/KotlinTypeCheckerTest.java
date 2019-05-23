@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TypeResolver;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -530,7 +531,11 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     private void assertType(String expression, KotlinType expectedType) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KotlinType type = expressionTypingServices.getType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfoFactory.EMPTY, KotlinTestUtils.DUMMY_TRACE);
+        KotlinType type = expressionTypingServices.getType(
+                scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
+                DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
+                KotlinTestUtils.DUMMY_TRACE
+        );
         assertNotNull(type);
         assertEquals(type + " != " + expectedType, expectedType, type);
     }
@@ -556,7 +561,11 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     private void assertType(LexicalScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KotlinType type = expressionTypingServices.getType(scope, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfoFactory.EMPTY, new BindingTraceContext());
+        KotlinType type = expressionTypingServices.getType(
+                scope, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
+                DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
+                new BindingTraceContext()
+        );
         KotlinType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }

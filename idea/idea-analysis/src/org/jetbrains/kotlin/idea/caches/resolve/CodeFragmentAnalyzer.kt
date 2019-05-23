@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -64,7 +65,7 @@ class CodeFragmentAnalyzer(
 
                 expressionTypingServices.getTypeInfo(
                     scope, contentElement, TypeUtils.NO_EXPECTED_TYPE,
-                    dataFlowInfo, bindingTrace, false
+                    dataFlowInfo, InferenceSession.default, bindingTrace, false
                 )
             }
 

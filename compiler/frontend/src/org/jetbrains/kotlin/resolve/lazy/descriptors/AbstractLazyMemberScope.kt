@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.AbstractPsiBasedDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
@@ -129,7 +130,8 @@ protected constructor(
                 getScopeForInitializerResolution(propertyDeclaration),
                 propertyDeclaration,
                 trace,
-                c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration)
+                c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration),
+                InferenceSession.default
             )
             result.add(propertyDescriptor)
         }
@@ -141,7 +143,8 @@ protected constructor(
                 getScopeForInitializerResolution(entry),
                 entry,
                 trace,
-                c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(entry)
+                c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(entry),
+                InferenceSession.default
             )
             result.add(propertyDescriptor)
         }
