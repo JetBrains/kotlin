@@ -113,6 +113,12 @@ class DurationTest {
 
         assertEquals(0.0, Duration.ZERO.inNanoseconds)
 
+        assertEquals(10500, 10.5.seconds.toLongMilliseconds())
+        assertEquals(11, 11.5.milliseconds.toLongMilliseconds())
+        assertEquals(-11, (-11.5).milliseconds.toLongMilliseconds())
+        assertEquals(252_000_000, 252.milliseconds.toLongNanoseconds())
+        assertEquals(Long.MAX_VALUE, (365.days * 293).toLongNanoseconds()) // clamping overflowed value
+
         repeat(100) {
             val value = Random.nextLong(1000)
             val unit = units.random()

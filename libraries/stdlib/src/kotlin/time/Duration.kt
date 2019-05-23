@@ -100,6 +100,10 @@ public inline class Duration internal constructor(internal val _value: Double) :
     val inMicroseconds: Double get() = toDouble(DurationUnit.MICROSECONDS)
     val inNanoseconds: Double get() = toDouble(DurationUnit.NANOSECONDS)
 
+    // shortcuts
+
+    fun toLongNanoseconds(): Long = toLong(DurationUnit.NANOSECONDS)
+    fun toLongMilliseconds(): Long = toLong(DurationUnit.MILLISECONDS)
 
     override fun toString(): String = buildString {
         if (isInfinite()) {
