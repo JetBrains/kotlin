@@ -28,7 +28,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
         sequenceOf(requestedReceiver) + backwardInstancesHistory.filterNot { it == requestedReceiver }
 
     override fun invokeFunction(name: String?, vararg args: Any?): Any? {
-        if (name == null) throw java.lang.NullPointerException("function name cannot be null")
+        if (name == null) throw AssertionError("function name cannot be null")
         return invokeImpl(backwardInstancesHistory, name, args)
     }
 

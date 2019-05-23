@@ -8,7 +8,7 @@ package kotlin.script.experimental.api
 import java.io.Serializable
 
 const val REPL_SNIPPET_FIRST_NO = 1
-const val REPL_Snippet_FIRST_GEN = 1
+const val REPL_SNIPPET_FIRST_GEN = 1
 
 interface ReplSnippetId : Serializable, Comparable<ReplSnippetId> {
     val no: Int

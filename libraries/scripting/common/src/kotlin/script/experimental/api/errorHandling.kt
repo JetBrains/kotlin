@@ -167,5 +167,5 @@ fun <R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {
  */
 inline fun <R> ResultWithDiagnostics<R>.resultOr(body: (ResultWithDiagnostics.Failure) -> Nothing): R = when (this) {
     is ResultWithDiagnostics.Success<R> -> value
-    else -> body(this as ResultWithDiagnostics.Failure)
+    is ResultWithDiagnostics.Failure -> body(this)
 }
