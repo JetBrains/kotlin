@@ -249,8 +249,8 @@ public class ExternalToolPass extends ProgressableTextEditorHighlightingPass {
     VirtualFile file = root.getVirtualFile();
     String path = file != null ? file.getPath() : root.getName();
 
-    final PluginException pluginException =
-      PluginException.createByClass("annotator: " + annotator + " (" + annotator.getClass() + ")", t, annotator.getClass());
-    LOG.error("ExternalToolPass: ", pluginException, new Attachment("root_path.txt", path));
+    String message = "annotator: " + annotator + " (" + annotator.getClass() + ")";
+    PluginException pe = PluginException.createByClass(message, t, annotator.getClass());
+    LOG.error("ExternalToolPass: ", pe, new Attachment("root_path.txt", path));
   }
 }
