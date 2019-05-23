@@ -17,14 +17,11 @@ dependencies {
     compileOnly(intellijCoreDep())
     runtime(project(":kotlin-compiler"))
     runtime(project(":kotlin-reflect"))
-    testCompile(commonDep("junit"))
-    testCompileOnly(project(":compiler:cli"))
-    testCompileOnly(project(":core:util.runtime"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {}
 }
 
 publish()
