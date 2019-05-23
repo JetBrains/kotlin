@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
@@ -94,6 +95,8 @@ class FirCallCompleterTransformer(
             val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(session, finalType)
 
             anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+
+            anonymousFunction.replaceTypeRef(anonymousFunction.constructFunctionalTypeRef(session))
         }
         return super.transformAnonymousFunction(anonymousFunction, data)
     }

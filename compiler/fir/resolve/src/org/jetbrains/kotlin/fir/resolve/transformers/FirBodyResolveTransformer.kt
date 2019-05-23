@@ -424,7 +424,20 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
         if (data == null) return anonymousFunction.compose()
         if (data is LambdaResolution) return transformAnonymousFunction(anonymousFunction, data).compose()
-        return super.transformAnonymousFunction(anonymousFunction, data)
+
+        if (data is FirResolvedTypeRef) {
+            return super.transformAnonymousFunction(anonymousFunction, data)
+        } else if (data is FirImplicitTypeRef) {
+            var af = super.transformAnonymousFunction(anonymousFunction, data).single as FirAnonymousFunction
+            af = af.copy(
+                receiverTypeRef = af.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef },
+                returnTypeRef = af.body!!.resultType.takeIf { af.returnTypeRef is FirImplicitTypeRef } ?: af.returnTypeRef
+            )
+            af.replaceTypeRef(af.constructFunctionalTypeRef(session))
+            return af.compose()
+        } else {
+            return super.transformAnonymousFunction(anonymousFunction, data)
+        }
     }
 
     fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, lambdaResolution: LambdaResolution): FirAnonymousFunction {
@@ -589,8 +602,9 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                         parameter.transformReturnTypeRef(StoreType, parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index]))
                         parameter
                     } + listOfNotNull(itParam),
-                    returnTypeRef = lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(functionalType)
+                    returnTypeRef = lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(rawReturnType)
                 )
+                //newLambdaExpression.replaceTypeRef(newLambdaExpression.constructFunctionalTypeRef(session))
 
 
                 val expectedReturnTypeRef = expectedReturnType?.let { newLambdaExpression.returnTypeRef.resolvedTypeFromPrototype(it) }
