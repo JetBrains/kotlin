@@ -139,6 +139,9 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
                 }
               }
           }
+
+          override fun shouldStartInBackground(): Boolean = !ApplicationManager.getApplication().isUnitTestMode
+          override fun isConditionalModal(): Boolean = !ApplicationManager.getApplication().isUnitTestMode
         })
     }
 
