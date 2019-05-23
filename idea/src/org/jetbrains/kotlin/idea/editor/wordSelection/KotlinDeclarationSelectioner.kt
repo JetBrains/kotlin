@@ -55,6 +55,10 @@ class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
             .siblings(forward = false, withItself = true)
             .first { it !is PsiComment && it !is PsiWhiteSpace }
 
+        if (firstComment != null && cursorOffset <= firstComment.startOffset) {
+            result.addRange(editorText, TextRange(firstComment.startOffset, firstComment.endOffset))
+        }
+
         if (firstComment != null || lastComment != null) {
             val startOffset = minOf(
                 firstComment?.startOffset ?: Int.MAX_VALUE,
