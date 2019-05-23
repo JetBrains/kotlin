@@ -13,7 +13,6 @@ import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
-import com.intellij.openapi.externalSystem.service.project.autoimport.ExternalSystemProjectsWatcher;
 import com.intellij.openapi.externalSystem.service.project.autoimport.ExternalSystemProjectsWatcherImpl;
 import com.intellij.openapi.externalSystem.util.CompositeRunnable;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -63,7 +62,7 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
   private final ExternalSystemTaskActivator myTaskActivator;
   private final ExternalSystemShortcutsManager myShortcutsManager;
   private final List<ExternalProjectsView> myProjectsViews = new SmartList<>();
-  private ExternalSystemProjectsWatcherImpl myWatcher;
+  private final ExternalSystemProjectsWatcherImpl myWatcher;
 
   public ExternalProjectsManagerImpl(@NotNull Project project) {
     myProject = project;
@@ -72,6 +71,7 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
     myTaskActivator = new ExternalSystemTaskActivator(project);
     myRunManagerListener = new ExternalSystemRunManagerListener(this);
     myWatcher = new ExternalSystemProjectsWatcherImpl(myProject);
+    Disposer.register(this, myWatcher);
   }
 
   public static ExternalProjectsManagerImpl getInstance(@NotNull Project project) {
@@ -306,10 +306,6 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
     myPostInitializationActivities.clear();
     myProjectsViews.clear();
     myRunManagerListener.detach();
-    if (myWatcher != null) {
-      myWatcher.stop();
-    }
-    myWatcher = null;
   }
 
   public interface ExternalProjectsStateProvider {
