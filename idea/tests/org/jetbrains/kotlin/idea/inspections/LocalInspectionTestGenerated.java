@@ -4698,6 +4698,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/withComment.kt");
         }
 
+        @TestMetadata("withComment2.kt")
+        public void testWithComment2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/withComment2.kt");
+        }
+
         @TestMetadata("withNewLine.kt")
         public void testWithNewLine() throws Exception {
             runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/withNewLine.kt");
