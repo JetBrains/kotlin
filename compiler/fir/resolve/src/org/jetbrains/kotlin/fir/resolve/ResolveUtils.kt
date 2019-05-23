@@ -147,7 +147,9 @@ fun FirFunction.constructFunctionalTypeRef(session: FirSession): FirResolvedType
         else -> null
     }
     val receiverType = receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
-    val parameters = valueParameters.map { it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>() }
+    val parameters = valueParameters.map {
+        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter")
+    }
     val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 

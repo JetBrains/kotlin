@@ -422,25 +422,78 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
-        if (data == null) return anonymousFunction.compose()
-        if (data is LambdaResolution) return transformAnonymousFunction(anonymousFunction, data).compose()
+        return when (data) {
+            null -> {
+                anonymousFunction.compose()
+            }
+            is LambdaResolution -> {
+                transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).compose()
+            }
+            is FirTypeRef -> {
+                val resolvedLambdaAtom = (data as? FirResolvedTypeRef)?.let {
+                    extractLambdaInfoFromFunctionalType(
+                        it.type, it, anonymousFunction
+                    )
+                }
+                var af = super.transformAnonymousFunction(anonymousFunction, data).single as FirAnonymousFunction
+                val valueParameters =
+                    if (resolvedLambdaAtom == null) af.valueParameters
+                    else {
+                        val singleParameterType = resolvedLambdaAtom.parameters.singleOrNull()
+                        val itParam = when {
+                            af.valueParameters.isEmpty() && singleParameterType != null ->
+                                FirValueParameterImpl(
+                                    session,
+                                    null,
+                                    Name.identifier("it"),
+                                    FirResolvedTypeRefImpl(session, null, singleParameterType, emptyList()),
+                                    defaultValue = null,
+                                    isCrossinline = false,
+                                    isNoinline = false,
+                                    isVararg = false
+                                )
+                            else -> null
+                        }
+                        if (itParam != null) {
+                            listOf(itParam)
+                        } else {
+                            af.valueParameters.mapIndexed { index, param ->
+                                if (param.returnTypeRef is FirResolvedTypeRef) {
+                                    param
+                                } else {
+                                    param.transformReturnTypeRef(
+                                        StoreType,
+                                        param.returnTypeRef.resolvedTypeFromPrototype(
+                                            resolvedLambdaAtom.parameters[index]
+                                        )
+                                    )
+                                    param
+                                }
+                            }
+                        }
 
-        if (data is FirResolvedTypeRef) {
-            return super.transformAnonymousFunction(anonymousFunction, data)
-        } else if (data is FirImplicitTypeRef) {
-            var af = super.transformAnonymousFunction(anonymousFunction, data).single as FirAnonymousFunction
-            af = af.copy(
-                receiverTypeRef = af.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef },
-                returnTypeRef = af.body!!.resultType.takeIf { af.returnTypeRef is FirImplicitTypeRef } ?: af.returnTypeRef
-            )
-            af.replaceTypeRef(af.constructFunctionalTypeRef(session))
-            return af.compose()
-        } else {
-            return super.transformAnonymousFunction(anonymousFunction, data)
+                    }
+                af = af.copy(
+                    receiverTypeRef = af.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef }
+                        ?: resolvedLambdaAtom?.receiver?.let { af.receiverTypeRef?.resolvedTypeFromPrototype(it) },
+                    valueParameters = valueParameters,
+                    returnTypeRef = (af.returnTypeRef as? FirResolvedTypeRef)
+                        ?: resolvedLambdaAtom?.returnType?.let { af.returnTypeRef.resolvedTypeFromPrototype(it) }
+                        ?: af.body?.resultType?.takeIf { af.returnTypeRef is FirImplicitTypeRef }
+                        ?: FirErrorTypeRefImpl(session, af.psi, "No result type for lambda")
+                )
+                af.replaceTypeRef(af.constructFunctionalTypeRef(session))
+                af.compose()
+            }
+            else -> {
+                super.transformAnonymousFunction(anonymousFunction, data)
+            }
         }
     }
 
-    fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, lambdaResolution: LambdaResolution): FirAnonymousFunction {
+    private fun transformAnonymousFunctionWithLambdaResolution(
+        anonymousFunction: FirAnonymousFunction, lambdaResolution: LambdaResolution
+    ): FirAnonymousFunction {
         val receiverTypeRef = anonymousFunction.receiverTypeRef
         fun transform(): FirAnonymousFunction {
             return withScopeCleanup(scopes) {
@@ -594,12 +647,6 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                     else -> null
                 }
 
-                val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
-
-                val functionalTypeId = StandardClassIds.byName("Function${receiverAndParameterTypes.size - 1}")
-                val functionalType = functionalTypeId(symbolProvider).constructType(receiverAndParameterTypes.toTypedArray(), isNullable = false)
-
-
                 val newLambdaExpression = lambdaArgument.copy(
                     receiverTypeRef = receiverType?.let { lambdaArgument.receiverTypeRef!!.resolvedTypeFromPrototype(it) },
                     valueParameters = lambdaArgument.valueParameters.mapIndexed { index, parameter ->
@@ -608,8 +655,6 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                     } + listOfNotNull(itParam),
                     returnTypeRef = lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(rawReturnType)
                 )
-                //newLambdaExpression.replaceTypeRef(newLambdaExpression.constructFunctionalTypeRef(session))
-
 
                 val expectedReturnTypeRef = expectedReturnType?.let { newLambdaExpression.returnTypeRef.resolvedTypeFromPrototype(it) }
                 replacements[lambdaArgument] =
