@@ -104,11 +104,9 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
         val inferredType = getInferredTypeWithImplicitCastsOrFail(expression)
 
-        // TODO relies on ControlFlowInformationProvider, get rid of it
-        val isUsedAsExpression = get(BindingContext.USED_AS_EXPRESSION, expression) ?: false
-
         val resultType = when {
-            isUsedAsExpression -> inferredType.toIrType()
+            // Non-exhaustive when can only be used as statement.
+            expression.isExhaustiveWhen() -> inferredType.toIrType()
             KotlinBuiltIns.isNothing(inferredType) -> inferredType.toIrType()
             else -> context.irBuiltIns.unitType
         }
