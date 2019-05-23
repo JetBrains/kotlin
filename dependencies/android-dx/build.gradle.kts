@@ -94,32 +94,7 @@ val dxArtifact = artifacts.add("default", unzipDxJar.outputs.files.singleFile) {
     builtBy(unzipDxJar)
 }
 
-artifacts.add("default", prepareDxSourcesJar)
+artifacts.add("archives", dxArtifact)
+artifacts.add("archives", prepareDxSourcesJar)
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            artifact(dxArtifact)
-            artifact(prepareDxSourcesJar)
-        }
-    }
-
-    repositories {
-        maven {
-            url = uri("${rootProject.buildDir}/internal/repo")
-        }
-    }
-}
-
-bintray {
-    user = extra["bintray.user"] as String
-    key = extra["bintray.key"] as String
-
-    setPublications("maven")
-
-    pkg.apply {
-        repo = "kotlin-dependencies"
-        name = project.name
-        userOrg = "kotlin"
-    }
-}
+apply(from="../publishing.gradle.kts")
