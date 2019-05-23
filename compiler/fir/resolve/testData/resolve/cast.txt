@@ -1,0 +1,10 @@
+FILE: cast.kt
+    public final val x: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+    public final val y: R|kotlin/Any| = (Int(2) as R|kotlin/Any|)
+        public get(): R|kotlin/Any|
+    public final val f: <ERROR TYPE REF: No result type for initializer> = fun <anonymous>(): <ERROR TYPE REF: No result type for initializer> {
+        ^ (Int(3) as R|kotlin/Any|)
+    }
+
+        public get(): <ERROR TYPE REF: No result type for initializer>
