@@ -332,5 +332,5 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
 }
 
 internal fun PsiElement.getModuleInfoPreferringJvmPlatform(): IdeaModuleInfo {
-    return getPlatformModuleInfo(JvmPlatforms.defaultJvmPlatform) ?: getModuleInfo()
+    return getPlatformModuleInfo(JvmPlatforms.unspecifiedJvmPlatform) ?: getModuleInfo()
 }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 class FirTestModuleInfo(
     override val name: Name = Name.identifier("TestModule"),
     val dependencies: MutableList<ModuleInfo> = mutableListOf(),
-    override val platform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
+    override val platform: TargetPlatform = JvmPlatforms.unspecifiedJvmPlatform,
     override val analyzerServices: PlatformDependentAnalyzerServices = JvmPlatformAnalyzerServices
 ) : ModuleInfo {
     override fun dependencies(): List<ModuleInfo> = dependencies

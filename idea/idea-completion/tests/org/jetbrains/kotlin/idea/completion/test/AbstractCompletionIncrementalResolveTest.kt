@@ -82,7 +82,7 @@ abstract class AbstractCompletionIncrementalResolveTest : KotlinLightCodeInsight
             }
 
             testCompletion(FileUtil.loadFile(file, true),
-                           JvmPlatforms.defaultJvmPlatform,
+                           JvmPlatforms.unspecifiedJvmPlatform,
                            { completionType, count -> myFixture.complete(completionType, count) },
                            additionalValidDirectives = listOf(TYPE_DIRECTIVE_PREFIX, BACKSPACES_DIRECTIVE_PREFIX))
 

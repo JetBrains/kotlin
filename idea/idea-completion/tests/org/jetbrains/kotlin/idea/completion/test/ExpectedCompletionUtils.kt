@@ -89,7 +89,7 @@ object ExpectedCompletionUtils {
         }
     }
 
-    private val UNSUPPORTED_PLATFORM_MESSAGE = "Only ${JvmPlatforms.defaultJvmPlatform} and ${JsPlatforms.defaultJsPlatform} platforms are supported"
+    private val UNSUPPORTED_PLATFORM_MESSAGE = "Only ${JvmPlatforms.unspecifiedJvmPlatform} and ${JsPlatforms.defaultJsPlatform} platforms are supported"
 
     private val EXIST_LINE_PREFIX = "EXIST:"
 

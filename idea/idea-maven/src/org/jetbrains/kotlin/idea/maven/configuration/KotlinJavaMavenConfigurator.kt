@@ -68,7 +68,7 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
     }
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatforms.defaultJvmPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
 
     @Suppress("DEPRECATION_ERROR")
     override fun getTargetPlatform() = JvmPlatforms.CompatJvmPlatform

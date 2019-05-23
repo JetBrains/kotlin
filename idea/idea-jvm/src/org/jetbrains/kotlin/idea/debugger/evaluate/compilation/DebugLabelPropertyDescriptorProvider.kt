@@ -179,7 +179,7 @@ private object DebugLabelModuleDescriptor
     }
 
     override val platform: TargetPlatform?
-        get() = JvmPlatforms.defaultJvmPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         return emptyList()

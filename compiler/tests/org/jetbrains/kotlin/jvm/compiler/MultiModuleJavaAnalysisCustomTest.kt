@@ -62,7 +62,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         override val name = Name.special("<$_name>")
 
         override val platform: TargetPlatform
-            get() = JvmPlatforms.defaultJvmPlatform
+            get() = JvmPlatforms.unspecifiedJvmPlatform
 
         override val analyzerServices: PlatformDependentAnalyzerServices
             get() = JvmPlatformAnalyzerServices

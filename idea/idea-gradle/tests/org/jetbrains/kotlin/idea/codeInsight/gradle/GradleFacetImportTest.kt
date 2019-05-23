@@ -48,9 +48,6 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.isCommon
-import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.js.isJs
@@ -947,8 +944,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         configureByFiles()
         importProject()
 
-        checkStableModuleName("project_main", "project", JvmPlatforms.defaultJvmPlatform, isProduction = true)
-        checkStableModuleName("project_test", "project", JvmPlatforms.defaultJvmPlatform, isProduction = false)
+        checkStableModuleName("project_main", "project", JvmPlatforms.unspecifiedJvmPlatform, isProduction = true)
+        checkStableModuleName("project_test", "project", JvmPlatforms.unspecifiedJvmPlatform, isProduction = false)
 
         assertAllModulesConfigured()
     }

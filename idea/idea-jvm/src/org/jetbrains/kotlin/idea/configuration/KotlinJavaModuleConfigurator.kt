@@ -71,7 +71,7 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
         get() = NAME
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatforms.defaultJvmPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
 
     @Suppress("DEPRECATION_ERROR")
     override fun getTargetPlatform() = JvmPlatforms.CompatJvmPlatform

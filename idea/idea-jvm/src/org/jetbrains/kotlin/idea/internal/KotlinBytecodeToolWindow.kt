@@ -286,7 +286,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             if (!platform.isCommon() && !platform.isJvm()) return null
 
             val resolutionFacade = KotlinCacheService.getInstance(ktFile.project)
-                .getResolutionFacadeByFile(ktFile, JvmPlatforms.defaultJvmPlatform)
+                .getResolutionFacadeByFile(ktFile, JvmPlatforms.unspecifiedJvmPlatform)
                     ?: return null
 
             val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext

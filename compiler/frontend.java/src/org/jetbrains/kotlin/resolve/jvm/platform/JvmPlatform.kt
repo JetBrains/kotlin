@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 
 @Deprecated(
     message = "This class is deprecated and will be removed soon, use API from 'org.jetbrains.kotlin.platform.*' packages instead",
-    replaceWith = ReplaceWith("JvmPlatforms.defaultJvmPlatform", "org.jetbrains.kotlin.platform.jvm.JvmPlatforms"),
+    replaceWith = ReplaceWith("JvmPlatforms.unspecifiedJvmPlatform", "org.jetbrains.kotlin.platform.jvm.JvmPlatforms"),
     level = DeprecationLevel.ERROR
 )
 interface JvmPlatform : TargetPlatform {

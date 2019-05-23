@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.platform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms.defaultJsPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.defaultJvmPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.jvm18
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.unspecifiedJvmPlatform
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms.defaultKonanPlatform
 
@@ -17,12 +16,12 @@ import org.jetbrains.kotlin.platform.konan.KonanPlatforms.defaultKonanPlatform
 object CommonPlatforms {
 
     @Deprecated(
-        message = "Should be accessed only by compatibility layer, other clients should use 'defaultJvmPlatform'",
+        message = "Should be accessed only by compatibility layer, other clients should use 'unspecifiedJvmPlatform'",
         level = DeprecationLevel.ERROR
     )
     object CompatCommonPlatform : TargetPlatform(
         setOf(
-            defaultJvmPlatform.single(),
+            unspecifiedJvmPlatform.single(),
             defaultJsPlatform.single(),
             defaultKonanPlatform.single()
         )

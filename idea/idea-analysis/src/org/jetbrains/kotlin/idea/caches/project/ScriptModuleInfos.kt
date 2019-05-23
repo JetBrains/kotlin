@@ -51,7 +51,7 @@ data class ScriptModuleInfo(
     }
 
     override val platform: TargetPlatform
-        get() = JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): choose proper target version
+        get() = JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): choose proper target version
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = JvmPlatformAnalyzerServices
@@ -77,7 +77,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
         get() = ScriptDependenciesSourceInfo.ForProject(project)
 
     override val platform: TargetPlatform
-        get() = JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
+        get() = JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = JvmPlatformAnalyzerServices
@@ -132,7 +132,7 @@ sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo
     override fun equals(other: Any?): Boolean = other is ScriptDependenciesSourceInfo && this.project == other.project
 
     override val platform: TargetPlatform
-        get() = JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
+        get() = JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = JvmPlatformAnalyzerServices

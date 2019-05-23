@@ -67,7 +67,7 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
                 ModuleInfo.DependencyOnBuiltIns.NONE
 
     override val platform: TargetPlatform
-        get() = JvmPlatforms.defaultJvmPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = JvmPlatformAnalyzerServices

@@ -37,7 +37,7 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
         super.tearDown()
     }
 
-    override fun getPlatform() = JvmPlatforms.defaultJvmPlatform
+    override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
     override fun defaultCompletionType() = CompletionType.BASIC
 
     override fun doTest(testPath: String) {

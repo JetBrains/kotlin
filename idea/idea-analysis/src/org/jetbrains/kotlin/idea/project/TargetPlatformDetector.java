@@ -58,7 +58,7 @@ public class TargetPlatformDetector {
         if (context != null) {
             PsiFile contextFile = context.getContainingFile();
             // TODO(dsavvinov): Get default platform with proper target
-            return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : JvmPlatforms.INSTANCE.getDefaultJvmPlatform();
+            return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : JvmPlatforms.INSTANCE.getUnspecifiedJvmPlatform();
         }
 
         if (file.isScript()) {

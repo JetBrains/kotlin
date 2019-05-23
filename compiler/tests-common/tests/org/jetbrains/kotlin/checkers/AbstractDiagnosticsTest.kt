@@ -594,7 +594,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             when {
                 nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
                 nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
-                nameSuffix == "JVM" -> JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
+                nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
                 nameSuffix == "NATIVE" -> KonanPlatforms.defaultKonanPlatform
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")

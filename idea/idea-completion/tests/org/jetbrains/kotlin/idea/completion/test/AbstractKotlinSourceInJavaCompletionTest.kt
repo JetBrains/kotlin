@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 
 abstract class AbstractKotlinSourceInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = JvmPlatforms.defaultJvmPlatform
+    override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
 
     override fun doTest(testPath: String) {
         val mockPath = RELATIVE_COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib"

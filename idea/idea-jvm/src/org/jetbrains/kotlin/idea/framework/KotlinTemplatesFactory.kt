@@ -41,7 +41,7 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
         val result = mutableListOf<ProjectTemplate>(
             BuilderBasedTemplate(
                 KotlinModuleBuilder(
-                    JvmPlatforms.defaultJvmPlatform,
+                    JvmPlatforms.unspecifiedJvmPlatform,
                     "JVM | IDEA",
                     "Kotlin project with a JVM target based on the IntelliJ IDEA build system",
                     KotlinIcons.SMALL_LOGO

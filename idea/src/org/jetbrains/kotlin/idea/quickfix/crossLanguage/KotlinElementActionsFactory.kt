@@ -365,7 +365,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         if (!modifierBuilder.isValid) return emptyList()
 
         val resolutionFacade = KotlinCacheService.getInstance(targetContainer.project)
-            .getResolutionFacadeByFile(targetContainer.containingFile, JvmPlatforms.defaultJvmPlatform) ?: return emptyList()
+            .getResolutionFacadeByFile(targetContainer.containingFile, JvmPlatforms.unspecifiedJvmPlatform) ?: return emptyList()
         val returnTypeInfo = request.returnType.toKotlinTypeInfo(resolutionFacade)
         val parameters = request.parameters as List<Pair<SuggestedNameInfo, List<ExpectedType>>>
         val parameterInfos = parameters.map { (suggestedNames, expectedTypes) ->

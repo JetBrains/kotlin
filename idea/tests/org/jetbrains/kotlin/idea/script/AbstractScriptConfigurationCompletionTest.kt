@@ -13,7 +13,7 @@ abstract class AbstractScriptConfigurationCompletionTest : AbstractScriptConfigu
         configureScriptFile(path)
         testCompletion(
             file.text,
-            JvmPlatforms.defaultJvmPlatform,
+            JvmPlatforms.unspecifiedJvmPlatform,
             additionalValidDirectives = switches,
             complete = { completionType, count ->
                 setType(completionType)

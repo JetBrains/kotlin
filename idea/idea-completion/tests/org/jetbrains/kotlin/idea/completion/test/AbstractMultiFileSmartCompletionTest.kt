@@ -18,7 +18,7 @@ abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTestCase()
     protected fun doTest(testPath: String) {
         configureByFile(getTestName(false) + ".kt", "")
         AstAccessControl.testWithControlledAccessToAst(false, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
-            testCompletion(file.text, JvmPlatforms.defaultJvmPlatform, { completionType, invocationCount ->
+            testCompletion(file.text, JvmPlatforms.unspecifiedJvmPlatform, { completionType, invocationCount ->
                 setType(completionType)
                 complete(invocationCount)
                 myItems

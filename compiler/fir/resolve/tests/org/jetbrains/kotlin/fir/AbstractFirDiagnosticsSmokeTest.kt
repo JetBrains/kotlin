@@ -138,7 +138,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
             when {
                 nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
                 nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
-                nameSuffix == "JVM" -> JvmPlatforms.defaultJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
+                nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
                 nameSuffix == "NATIVE" -> KonanPlatforms.defaultKonanPlatform
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
@@ -148,7 +148,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
 
     class BuiltInModuleInfo(override val name: Name) : ModuleInfo {
         override val platform: TargetPlatform
-            get() = JvmPlatforms.defaultJvmPlatform
+            get() = JvmPlatforms.unspecifiedJvmPlatform
 
         override val analyzerServices: PlatformDependentAnalyzerServices
             get() = JvmPlatformAnalyzerServices
@@ -160,7 +160,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
 
     protected class TestModuleInfo(override val name: Name) : ModuleInfo {
         override val platform: TargetPlatform
-            get() = JvmPlatforms.defaultJvmPlatform
+            get() = JvmPlatforms.unspecifiedJvmPlatform
 
         override val analyzerServices: PlatformDependentAnalyzerServices
             get() = JvmPlatformAnalyzerServices

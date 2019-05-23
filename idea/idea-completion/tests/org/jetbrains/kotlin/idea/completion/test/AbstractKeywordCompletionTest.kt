@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.test.KotlinProjectDescriptorWithFacet
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = JvmPlatforms.defaultJvmPlatform
+    override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
 
     override fun defaultCompletionType() = CompletionType.BASIC
 

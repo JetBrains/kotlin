@@ -2529,7 +2529,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         }
 
         with(facetSettings("my-jvm-module")) {
-            Assert.assertEquals(JvmPlatforms.defaultJvmPlatform, platform)
+            Assert.assertEquals(JvmPlatforms.jvm16, platform)
             Assert.assertEquals(listOf("my-common-module1", "my-common-module2"), implementedModuleNames)
         }
 
@@ -2974,8 +2974,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         assertImporterStatePresent()
 
-        checkStableModuleName("project", "project", JvmPlatforms.defaultJvmPlatform, isProduction = true)
-        checkStableModuleName("project", "project", JvmPlatforms.defaultJvmPlatform, isProduction = false)
+        checkStableModuleName("project", "project", JvmPlatforms.unspecifiedJvmPlatform, isProduction = true)
+        checkStableModuleName("project", "project", JvmPlatforms.unspecifiedJvmPlatform, isProduction = false)
     }
 
     fun testStableModuleNameWhileUsngMaven_JS() {

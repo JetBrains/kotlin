@@ -154,7 +154,7 @@ fun PsiElement.hasJavaResolutionFacade(): Boolean = this.originalElement.contain
 fun PsiElement.javaResolutionFacade() =
     KotlinCacheService.getInstance(project).getResolutionFacadeByFile(
         this.originalElement.containingFile ?: reportCouldNotCreateJavaFacade(),
-        JvmPlatforms.defaultJvmPlatform
+        JvmPlatforms.unspecifiedJvmPlatform
     )
 
 private fun PsiElement.reportCouldNotCreateJavaFacade(): Nothing =

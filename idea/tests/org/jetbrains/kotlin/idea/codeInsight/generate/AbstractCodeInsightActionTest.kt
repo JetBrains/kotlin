@@ -78,7 +78,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
             val targetPlatformName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PLATFORM: ")
             if (targetPlatformName != null) {
                 val targetPlatform = when (targetPlatformName) {
-                    "JVM" -> JvmPlatforms.defaultJvmPlatform
+                    "JVM" -> JvmPlatforms.unspecifiedJvmPlatform
                     "JavaScript" -> JsPlatforms.defaultJsPlatform
                     "Common" -> CommonPlatforms.defaultCommonPlatform
                     else -> error("Unexpected platform name: $targetPlatformName")

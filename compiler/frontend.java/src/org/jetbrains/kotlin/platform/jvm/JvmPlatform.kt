@@ -22,8 +22,13 @@ object JvmPlatforms {
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
         JvmTarget.values().map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 
-    val defaultJvmPlatform: TargetPlatform
-        get() = CompatJvmPlatform
+    // This platform is needed mostly for compatibility and migration of code base,
+    // as previously some clients used TargetPlatform just as platform-marker
+    // and didn't care about particular jvmTarget.
+    // TODO(dsavvinov): review all usages and choose proper JvmTarget
+    val unspecifiedJvmPlatform: TargetPlatform = CompatJvmPlatform
+
+    val defaultJvmPlatform: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.DEFAULT]!!
 
     val jvm16: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_6]!!
     val jvm18: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_8]!!
@@ -34,7 +39,7 @@ object JvmPlatforms {
     val allJvmPlatforms: List<TargetPlatform> = jvmTargetToJdkPlatform.values.toList()
 
     @Deprecated(
-        message = "Should be accessed only by compatibility layer, other clients should use 'defaultJvmPlatform'",
+        message = "Should be accessed only by compatibility layer, other clients should use 'unspecifiedJvmPlatform'",
         level = DeprecationLevel.ERROR
     )
     object CompatJvmPlatform : TargetPlatform(setOf(UNSPECIFIED_SIMPLE_JVM_PLATFORM)),
