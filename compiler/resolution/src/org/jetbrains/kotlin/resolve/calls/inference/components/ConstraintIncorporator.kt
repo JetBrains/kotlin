@@ -29,6 +29,8 @@ class ConstraintIncorporator(
         fun getConstraintsForVariable(typeVariable: TypeVariableMarker): Collection<Constraint>
 
         fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker)
+
+        fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
@@ -138,23 +140,48 @@ class ConstraintIncorporator(
 
         if (baseConstraint.kind != ConstraintKind.UPPER) {
             val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = false)
-            if (!trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
-                    otherConstraint, generatedConstraintType, isSubtype = true
-                )
-            ) {
-                addNewIncorporatedConstraint(generatedConstraintType, targetVariable.defaultType())
-            }
+            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = true)
         }
         if (baseConstraint.kind != ConstraintKind.LOWER) {
             val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = true)
-            if (!trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
-                    otherConstraint, generatedConstraintType, isSubtype = false
-                )
-            ) {
-                addNewIncorporatedConstraint(targetVariable.defaultType(), generatedConstraintType)
-            }
+            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = false)
         }
     }
+
+    private fun Context.addNewConstraint(
+        targetVariable: TypeVariableMarker,
+        baseConstraint: Constraint,
+        otherVariable: TypeVariableMarker,
+        otherConstraint: Constraint,
+        newConstraint: KotlinTypeMarker,
+        isSubtype: Boolean
+    ) {
+        if (targetVariable in getNestedTypeVariables(newConstraint)) return
+        if (!containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)) return
+        if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(otherConstraint, newConstraint, isSubtype)) return
+
+        val derivedFrom = (baseConstraint.derivedFrom + otherConstraint.derivedFrom).toMutableSet()
+        if (otherVariable in derivedFrom) return
+
+        derivedFrom.add(otherVariable)
+
+        val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
+
+        addNewIncorporatedConstraint(targetVariable, newConstraint, ConstraintContext(kind, derivedFrom))
+    }
+
+    fun Context.containsConstrainingTypeWithoutProjection(
+        newConstraint: KotlinTypeMarker,
+        otherConstraint: Constraint
+    ): Boolean {
+        return getNestedArguments(newConstraint).any {
+            it.getType().typeConstructor() == otherConstraint.type.typeConstructor() && it.getVariance() == TypeVariance.INV
+        }
+    }
+
+    fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
+        getNestedArguments(type).mapNotNull { getTypeVariable(it.getType().typeConstructor()) }
+
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
         val substitutor = c.typeSubstitutorByTypeConstructor(mapOf(typeVariable.freshTypeConstructor(c) to value))
@@ -165,4 +192,24 @@ class ConstraintIncorporator(
     private fun approximateCapturedTypes(type: KotlinTypeMarker, toSuper: Boolean): KotlinTypeMarker =
         if (toSuper) typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
         else typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
+}
+
+private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinTypeMarker): List<TypeArgumentMarker> {
+    val result = ArrayList<TypeArgumentMarker>()
+
+    val stack = ArrayDeque<TypeArgumentMarker>()
+    stack.push(createTypeArgument(type, TypeVariance.INV))
+
+    while (!stack.isEmpty()) {
+        val typeProjection = stack.pop()
+        if (typeProjection.isStarProjection()) continue
+
+        result.add(typeProjection)
+
+        val projectedType = typeProjection.getType()
+        for (argumentIndex in 0 until projectedType.argumentsCount()) {
+            stack.add(projectedType.getArgument(argumentIndex))
+        }
+    }
+    return result
 }

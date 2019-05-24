@@ -167,8 +167,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker
     fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker
 
-    fun SimpleTypeMarker.argumentsCount(): Int
-    fun SimpleTypeMarker.getArgument(index: Int): TypeArgumentMarker
+    fun KotlinTypeMarker.argumentsCount(): Int
+    fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker
 
     fun SimpleTypeMarker.getArgumentOrNull(index: Int): TypeArgumentMarker? {
         if (index in 0 until argumentsCount()) return getArgument(index)

@@ -163,7 +163,24 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         private fun addConstraint(typeVariableConstructor: TypeConstructorMarker, type: KotlinTypeMarker, kind: ConstraintKind) {
             val typeVariable = c.allTypeVariables[typeVariableConstructor]
-                    ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
+                ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
+
+            addNewIncorporatedConstraint(typeVariable, type, ConstraintContext(kind, emptySet()))
+        }
+
+        // from ConstraintIncorporator.Context
+        override fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
+            if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
+                runIsSubtypeOf(lowerType, upperType)
+            }
+        }
+
+        override fun addNewIncorporatedConstraint(
+            typeVariable: TypeVariableMarker,
+            type: KotlinTypeMarker,
+            constraintContext: ConstraintContext
+        ) {
+            val (kind, derivedFrom) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {
@@ -200,14 +217,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
                 }
             }
 
-            possibleNewConstraints.add(typeVariable to Constraint(kind, targetType, position))
-        }
-
-        // from ConstraintIncorporator.Context
-        override fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
-            if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
-                runIsSubtypeOf(lowerType, upperType)
-            }
+            possibleNewConstraints.add(typeVariable to Constraint(kind, targetType, position, derivedFrom = derivedFrom))
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
@@ -235,3 +245,5 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
         private fun renderBaseConstraint() = "Base constraint: $baseLowerType <: $baseUpperType from position: $position"
     }
 }
+
+data class ConstraintContext(val kind: ConstraintKind, val derivedFrom: Set<TypeVariableMarker>)

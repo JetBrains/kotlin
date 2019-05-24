@@ -47,7 +47,13 @@ class MutableVariableWithConstraints(
         }
 
         val actualConstraint = if (addAsEqualityConstraint)
-            Constraint(ConstraintKind.EQUALITY, constraint.type, constraint.position, constraint.typeHashCode)
+            Constraint(
+                ConstraintKind.EQUALITY,
+                constraint.type,
+                constraint.position,
+                constraint.typeHashCode,
+                derivedFrom = constraint.derivedFrom
+            )
         else
             constraint
 

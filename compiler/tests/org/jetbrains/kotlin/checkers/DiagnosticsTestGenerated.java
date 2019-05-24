@@ -10061,6 +10061,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/kt8879.kt");
                 }
 
+                @TestMetadata("manyConstraintsDueToFlexibleRawTypes.kt")
+                public void testManyConstraintsDueToFlexibleRawTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/manyConstraintsDueToFlexibleRawTypes.kt");
+                }
+
+                @TestMetadata("manyConstraintsDueToRecursiveFlexibleTypesWithWildcards.kt")
+                public void testManyConstraintsDueToRecursiveFlexibleTypesWithWildcards() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/manyConstraintsDueToRecursiveFlexibleTypesWithWildcards.kt");
+                }
+
                 @TestMetadata("notNullConstraintOnNullableType.kt")
                 public void testNotNullConstraintOnNullableType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/notNullConstraintOnNullableType.kt");

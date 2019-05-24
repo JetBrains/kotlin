@@ -158,9 +158,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         }
          */
 
-        val simpleType = this.asSimpleType() ?: return false
-        repeat(simpleType.argumentsCount()) { index ->
-            val argument = simpleType.getArgument(index)
+        repeat(argumentsCount()) { index ->
+            val argument = getArgument(index)
             if (!argument.isStarProjection() && argument.getType().containsInternal(predicate, visited)) return true
         }
 
