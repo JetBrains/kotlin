@@ -302,4 +302,8 @@ class NewConstraintSystemImpl(
 
         return constraints.any { (it.kind == ConstraintKind.UPPER || it.kind == ConstraintKind.EQUALITY) && it.type.isUnit() }
     }
+
+    override fun addNotNullUpperConstraint(type: KotlinTypeMarker, position: ConstraintPosition) {
+        addSubtypeConstraint(type, anyType(), position)
+    }
 }

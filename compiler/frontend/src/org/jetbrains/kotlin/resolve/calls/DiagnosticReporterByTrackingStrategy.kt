@@ -135,7 +135,7 @@ class DiagnosticReporterByTrackingStrategy(
                 require(diagnostic is ArgumentTypeMismatchDiagnostic)
                 reportIfNonNull(callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()) {
                     if (it.isNull()) {
-                        trace.report(NULL_FOR_NONNULL_TYPE.on(it, diagnostic.expectedType))
+                        trace.reportDiagnosticOnce(NULL_FOR_NONNULL_TYPE.on(it, diagnostic.expectedType))
                     } else {
                         trace.report(TYPE_MISMATCH.on(it, diagnostic.expectedType, diagnostic.actualType))
                     }

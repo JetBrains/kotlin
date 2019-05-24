@@ -27,6 +27,10 @@ interface CustomTypeVariable {
     fun substitutionResult(replacement: KotlinType): KotlinType
 }
 
+// That interface is needed to provide information about definitely not null
+//   type parameters (e.g. from @NotNull annotation) to type system
+interface NotNullTypeVariable : CustomTypeVariable
+
 fun KotlinType.isCustomTypeVariable(): Boolean = (unwrap() as? CustomTypeVariable)?.isTypeVariable ?: false
 fun KotlinType.getCustomTypeVariable(): CustomTypeVariable? =
         (unwrap() as? CustomTypeVariable)?.let {
