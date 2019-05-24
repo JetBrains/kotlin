@@ -189,22 +189,8 @@ internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMappe
     AsmUtil.boxType(this, kotlinType, typeMapper)
 
 abstract class ExpressionLambda(protected val typeMapper: KotlinTypeMapper, isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
-
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
-        val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
-        val asmMethod = jvmMethodSignature.asmMethod
-        val methodNode = MethodNode(
-            Opcodes.API_VERSION, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
-            asmMethod.name, asmMethod.descriptor, null, null
-        )
-
-        node = wrapWithMaxLocalCalc(methodNode).let { adapter ->
-            val smap = sourceCompiler.generateLambdaBody(
-                adapter, jvmMethodSignature, this
-            )
-            adapter.visitMaxs(-1, -1)
-            SMAPAndMethodNode(methodNode, smap)
-        }
+        node = sourceCompiler.generateLambdaBody(this)
     }
 }
 

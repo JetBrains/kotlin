@@ -174,7 +174,6 @@ class ExpressionCodegen(
         val endLabel = markNewLabel()
         writeLocalVariablesInTable(info, endLabel)
         writeParameterInLocalVariableTable(startLabel, endLabel)
-        mv.visitEnd()
     }
 
     private fun generateNonNullAssertions() {

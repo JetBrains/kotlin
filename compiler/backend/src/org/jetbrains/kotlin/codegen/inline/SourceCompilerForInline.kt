@@ -48,11 +48,7 @@ interface SourceCompilerForInline {
 
     val lazySourceMapper: DefaultSourceMapper
 
-    fun generateLambdaBody(
-        adapter: MethodVisitor,
-        jvmMethodSignature: JvmMethodSignature,
-        lambdaInfo: ExpressionLambda
-    ): SMAP
+    fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode
 
     fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -133,13 +129,16 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     override val lazySourceMapper
         get() = codegen.parentCodegen.orCreateSourceMapper
 
-    override fun generateLambdaBody(
-        adapter: MethodVisitor,
-        jvmMethodSignature: JvmMethodSignature,
-        lambdaInfo: ExpressionLambda
-    ): SMAP {
+    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode {
         lambdaInfo as? PsiExpressionLambda ?: error("TODO")
         val invokeMethodDescriptor = lambdaInfo.invokeMethodDescriptor
+        val jvmMethodSignature = state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
+        val asmMethod = jvmMethodSignature.asmMethod
+        val methodNode = MethodNode(
+            Opcodes.API_VERSION, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, state),
+            asmMethod.name, asmMethod.descriptor, null, null
+        )
+        val adapter = wrapWithMaxLocalCalc(methodNode)
         val closureContext = when {
             lambdaInfo.isPropertyReference ->
                 codegen.getContext().intoAnonymousClass(lambdaInfo.classDescriptor, codegen, OwnerKind.IMPLEMENTATION)
@@ -150,12 +149,13 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             else -> codegen.getContext().intoClosure(invokeMethodDescriptor, codegen, state.typeMapper)
         }
         val context = closureContext.intoInlinedLambda(invokeMethodDescriptor, lambdaInfo.isCrossInline, lambdaInfo.isPropertyReference)
-
-        return generateMethodBody(
+        val smap = generateMethodBody(
             adapter, invokeMethodDescriptor, context,
             lambdaInfo.functionWithBodyOrCallableReference,
             jvmMethodSignature, lambdaInfo
         )
+        adapter.visitMaxs(-1, -1)
+        return SMAPAndMethodNode(methodNode, smap)
     }
 
     private fun generateMethodBody(
