@@ -132,8 +132,8 @@ class JavaClassUseSiteScope(
                 val self = firUnsafe<FirFunction>()
                 self as FirCallableMemberDeclaration
                 candidates.firstOrNull {
-                    val overridden = (it as FirFunctionSymbol).fir as FirFunction
-                    self.modality != Modality.FINAL && isOverriddenFunCheck(overridden, self)
+                    val overridden = (it as? FirFunctionSymbol)?.fir as? FirFunction
+                    overridden != null && self.modality != Modality.FINAL && isOverriddenFunCheck(overridden, self)
                 }
             }
             is FirPropertySymbol -> {
@@ -156,8 +156,8 @@ class JavaClassUseSiteScope(
             is FirAccessorSymbol -> {
                 val self = fir as FirNamedFunction
                 candidates.firstOrNull {
-                    val overridden = (it as FirFunctionSymbol).fir as FirNamedFunction
-                    self.modality != Modality.FINAL && isOverriddenFunCheck(overridden, self)
+                    val overridden = (it as? FirFunctionSymbol)?.fir as? FirNamedFunction
+                    overridden != null && self.modality != Modality.FINAL && isOverriddenFunCheck(overridden, self)
                 }
             }
             else -> error("Unexpected callable symbol: $this")
