@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
 
@@ -88,6 +88,15 @@ fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: B
         }
     }.filter { (it as? MemberDescriptor)?.isEffectivelyActual() == true }
 
+private fun MemberDescriptor.isEffectivelyActual(checkConstructor: Boolean = true): Boolean =
+    isActual || isEnumEntryInActual() || isConstructorInActual(checkConstructor)
+
+private fun MemberDescriptor.isConstructorInActual(checkConstructor: Boolean) =
+    checkConstructor && this is ClassConstructorDescriptor && containingDeclaration.isEffectivelyActual(checkConstructor)
+
+private fun MemberDescriptor.isEnumEntryInActual() =
+    (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)
+
 private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor> {
     if (this is MemberDescriptor) {
         if (!this.isExpect) return emptyList()
@@ -111,35 +120,18 @@ fun KtDeclaration.actualsForExpected(module: Module? = null): Set<KtDeclaration>
             DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
         } ?: emptySet()
 
-
-fun KtDeclaration.isExpectDeclaration(): Boolean {
-    if (hasExpectModifier()) return true
-    if (this is KtClassOrObject) return this.isExpected()
-
-    return containingClassOrObject?.isExpected() == true
-}
-
-private fun KtClassOrObject.isExpected(): Boolean {
-    return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
-}
+fun KtDeclaration.isExpectDeclaration(): Boolean = if (hasExpectModifier())
+    true
+else
+    containingClassOrObject?.isExpectDeclaration() == true
 
 fun KtDeclaration.hasMatchingExpected() = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() != null
 
-fun KtDeclaration.isEffectivelyActual(checkConstructor: Boolean = true): Boolean {
-    if (hasActualModifier()) return true
-
-    val descriptor = toDescriptor() as? MemberDescriptor ?: return false
-    return descriptor.isEffectivelyActual(checkConstructor)
+fun KtDeclaration.isEffectivelyActual(checkConstructor: Boolean = true): Boolean = when {
+    hasActualModifier() -> true
+    this is KtEnumEntry || checkConstructor && this is KtConstructor<*> -> containingClass()?.hasActualModifier() == true
+    else -> false
 }
-
-private fun MemberDescriptor.isEffectivelyActual(checkConstructor: Boolean = true): Boolean =
-    isActual || isEnumEntryInActual() || isConstructorInActual(checkConstructor)
-
-private fun MemberDescriptor.isConstructorInActual(checkConstructor: Boolean) =
-    checkConstructor && this is ClassConstructorDescriptor && containingDeclaration.isEffectivelyActual(checkConstructor)
-
-private fun MemberDescriptor.isEnumEntryInActual() =
-    (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)
 
 fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, f: (KtDeclaration) -> Unit) {
     if (hasActualModifier()) {
