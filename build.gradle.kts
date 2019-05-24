@@ -337,13 +337,13 @@ allprojects {
     repositories {
         kotlinBuildLocalRepo(project)
         mirrorRepo?.let(::maven)
-        bootstrapKotlinRepo?.let(::maven)
         jcenter()
         maven(protobufRepo)
         maven(intellijRepo)
         maven("https://dl.bintray.com/kotlin/ktor")
         maven("https://kotlin.bintray.com/kotlin-dependencies")
-        maven(bootstrapKotlinRepo!!.replace("artifacts/content/maven/", "artifacts/content/internal/repo"))
+        bootstrapKotlinRepo?.let(::maven)
+        internalKotlinRepo?.let(::maven)
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
