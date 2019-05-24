@@ -39,7 +39,7 @@ class CliKotlinAsJavaSupport(
         return findFacadeFilesInPackage(packageFqName, scope)
             .groupBy { it.javaFileFacadeFqName }
             .mapNotNull { (facadeClassFqName, files) ->
-                KtLightClassForFacade.createForFacade(psiManager, facadeClassFqName, scope, files)
+                KtLightClassForFacade.createForFacade(psiManager, facadeClassFqName, scope)
             }
     }
 
@@ -56,12 +56,7 @@ class CliKotlinAsJavaSupport(
         .orEmpty()
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesForFacade = findFilesForFacade(facadeFqName, scope)
-        if (filesForFacade.isEmpty()) return emptyList()
-
-        return listOfNotNull(
-            KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade)
-        )
+        return listOfNotNull(KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope))
     }
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {

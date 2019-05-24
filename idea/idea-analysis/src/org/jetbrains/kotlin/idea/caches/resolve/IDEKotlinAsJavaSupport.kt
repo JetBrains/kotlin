@@ -143,13 +143,12 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
         KtLightClassForScript.create(script)
 
     private fun withFakeLightClasses(
-        lightClassForFacade: KtLightClassForFacade,
-        facadeFiles: List<KtFile>
+        lightClassForFacade: KtLightClassForFacade
     ): List<PsiClass> {
         val lightClasses = ArrayList<PsiClass>()
         lightClasses.add(lightClassForFacade)
-        if (facadeFiles.size > 1) {
-            lightClasses.addAll(facadeFiles.map {
+        if (lightClassForFacade.files.size > 1) {
+            lightClasses.addAll(lightClassForFacade.files.map {
                 FakeLightClassForFileOfPackage(lightClassForFacade, it)
             })
         }
@@ -208,24 +207,23 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
         facadeFiles: List<KtFile>,
         moduleInfo: IdeaModuleInfo
     ): List<PsiClass> {
-        val (clsFiles, sourceFiles) = facadeFiles.partition { it is KtClsFile }
+        val (clsFiles, _) = facadeFiles.partition { it is KtClsFile }
         val facadesFromCls = clsFiles.mapNotNull { createLightClassForDecompiledKotlinFile(it as KtClsFile) }
-        val facadesFromSources = createFacadesForSourceFiles(moduleInfo, sourceFiles, facadeFqName)
+        val facadesFromSources = createFacadesForSourceFiles(moduleInfo, facadeFqName)
         return facadesFromSources + facadesFromCls
     }
 
     private fun createFacadesForSourceFiles(
         moduleInfo: IdeaModuleInfo,
-        sourceFiles: List<KtFile>,
         facadeFqName: FqName
     ): List<PsiClass> {
-        if (sourceFiles.isEmpty()) return listOf()
         if (moduleInfo !is ModuleSourceInfo && moduleInfo !is PlatformModuleInfo) return listOf()
 
         val lightClassForFacade = KtLightClassForFacade.createForFacade(
-            psiManager, facadeFqName, moduleInfo.contentScope(), sourceFiles
+            psiManager, facadeFqName, moduleInfo.contentScope()
         )
-        return withFakeLightClasses(lightClassForFacade, sourceFiles)
+
+        return if (lightClassForFacade !== null) withFakeLightClasses(lightClassForFacade) else emptyList()
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {

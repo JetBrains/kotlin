@@ -142,7 +142,8 @@ sealed class LazyLightClassDataHolder(
     }
 
     private fun <T : PsiMember> T?.assertMatches(dummyMember: T, containingClass: KtLightClass): T {
-        if (this == null) throw LazyLightClassMemberMatchingError.NoMatch(dummyMember, containingClass)
+        if (this == null)
+            throw LazyLightClassMemberMatchingError.NoMatch(dummyMember, containingClass)
 
         val parameterCountMatches = (this as? PsiMethod)?.parameterList?.parametersCount ?: 0 ==
                 (dummyMember as? PsiMethod)?.parameterList?.parametersCount ?: 0

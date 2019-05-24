@@ -69,7 +69,7 @@ class KtUltraLightClassForFacade(
 
     private val ownFieldsForNotTooComplex: List<KtLightField> by lazyPub {
         hashSetOf<String>().let { nameCache ->
-            filesToSupportsToMemberCreators.flatMap { (file, support, creator) ->
+            filesToSupportsToMemberCreators.flatMap { (file, _, creator) ->
                 file.declarations.filterIsInstance<KtProperty>().mapNotNull {
                     creator.createPropertyField(it, nameCache, forceStatic = true)
                 }
