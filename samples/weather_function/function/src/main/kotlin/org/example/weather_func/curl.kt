@@ -91,4 +91,4 @@ fun writeCallback(buffer: CPointer<ByteVar>?, size: size_t, totalItems: size_t, 
     return responseSize
 }
 
-private fun CPointer<ByteVar>.toKString(length: Int) = readBytes(length).stringFromUtf8()
+private fun CPointer<ByteVar>.toKString(length: Int) = readBytes(length).decodeToString()

@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
     memScoped {
 
         val buffer = ByteArray(1024)
-        val prefixBuffer = "echo: ".toUtf8()
+        val prefixBuffer = "echo: ".encodeToByteArray()
         val serverAddr = alloc<sockaddr_in>()
 
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)

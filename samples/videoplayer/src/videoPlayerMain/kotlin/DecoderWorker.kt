@@ -34,7 +34,7 @@ private fun Int.checkAVError() {
     if (this != 0) {
         val buffer = ByteArray(1024)
         av_strerror(this, buffer.refTo(0), buffer.size.convert())
-        throw Error("AVError: ${buffer.stringFromUtf8()}")
+        throw Error("AVError: ${buffer.decodeToString()}")
     }
 }
 
