@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/Derived.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived 
     CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary] 
       BLOCK_BODY
-        ERROR_CALL 'Cannot find delegated constructor call' type=<root>.Derived
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY

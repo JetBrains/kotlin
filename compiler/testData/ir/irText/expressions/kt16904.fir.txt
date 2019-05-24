@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/kt16904.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2 
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test2 [primary] 
       BLOCK_BODY
-        ERROR_CALL 'Cannot find delegated constructor call' type=<root>.Test2
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.J]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
