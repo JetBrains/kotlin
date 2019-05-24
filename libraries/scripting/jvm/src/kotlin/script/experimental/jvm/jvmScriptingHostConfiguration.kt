@@ -31,14 +31,22 @@ val ScriptingHostConfigurationKeys.jvm
 
 val defaultJvmScriptingHostConfiguration
     get() = ScriptingHostConfiguration {
-        getScriptingClass(JvmGetScriptingClass)
+        getScriptingClass(JvmGetScriptingClass())
     }
 
-object JvmGetScriptingClass : GetScriptingClass, Serializable {
+class JvmGetScriptingClass : GetScriptingClass, Serializable {
 
+    @Transient
     private var dependencies: List<ScriptDependency>? = null
+
+    @Transient
     private var classLoader: ClassLoader? = null
-    private var baseClassLoaderIsInitialized = false
+
+    @Transient
+    // TODO: find out whether Transient fields are initialized on deserialization and if so, convert back to not-nullable val
+    private var baseClassLoaderIsInitialized: Boolean? = null
+
+    @Transient
     private var baseClassLoader: ClassLoader? = null
 
     @Synchronized
@@ -62,7 +70,7 @@ object JvmGetScriptingClass : GetScriptingClass, Serializable {
             )
         }
 
-        if (!baseClassLoaderIsInitialized) {
+        if (baseClassLoaderIsInitialized != true) {
             baseClassLoader = contextClassloader
             baseClassLoaderIsInitialized = true
         }
@@ -91,6 +99,23 @@ object JvmGetScriptingClass : GetScriptingClass, Serializable {
         }
     }
 
-    @JvmStatic
-    private val serialVersionUID = 1L
+    override fun equals(other: Any?): Boolean =
+        when {
+            other === this -> true
+            other !is JvmGetScriptingClass -> false
+            else -> {
+                other.dependencies == dependencies &&
+                        (other.classLoader == null || classLoader == null || other.classLoader == classLoader) &&
+                        (other.baseClassLoader == null || baseClassLoader == null || other.baseClassLoader == baseClassLoader)
+            }
+        }
+
+
+    override fun hashCode(): Int {
+        return dependencies.hashCode() + 23 * classLoader.hashCode() + 37 * baseClassLoader.hashCode()
+    }
+
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
