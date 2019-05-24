@@ -181,8 +181,12 @@ public class TemplateSettings implements PersistentStateComponent<TemplateSettin
 
   private TemplateKey myLastSelectedTemplate;
 
-  public TemplateSettings(@NotNull SchemeManagerFactory schemeManagerFactory) {
-    mySchemeManager = schemeManagerFactory.create(TEMPLATES_DIR_PATH, new BaseSchemeProcessor<TemplateGroup, TemplateGroup>() {
+  public TemplateSettings() {
+    this(SchemeManagerFactory.getInstance());
+  }
+
+  public TemplateSettings(SchemeManagerFactory factory) {
+    mySchemeManager = factory.create(TEMPLATES_DIR_PATH, new BaseSchemeProcessor<TemplateGroup, TemplateGroup>() {
       @Nullable
       @Override
       public TemplateGroup readScheme(@NotNull Element element, boolean duringLoad) {

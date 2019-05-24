@@ -35,13 +35,10 @@ public final class IntentionManagerImpl extends IntentionManager {
   private static final Logger LOG = Logger.getInstance(IntentionManagerImpl.class);
 
   private final List<IntentionAction> myActions;
-  private final IntentionManagerSettings mySettings;
   private final AtomicReference<ScheduledFuture<?>> myScheduledFuture = new AtomicReference<>();
   private boolean myIntentionsDisabled;
 
-  public IntentionManagerImpl(IntentionManagerSettings intentionManagerSettings) {
-    mySettings = intentionManagerSettings;
-
+  public IntentionManagerImpl() {
     List<IntentionAction> actions = new ArrayList<>();
     actions.add(new EditInspectionToolsSettingsInSuppressedPlaceIntention());
     for (IntentionActionBean extension : IntentionManager.EP_INTENTION_ACTIONS.getExtensionList()) {
@@ -57,13 +54,15 @@ public final class IntentionManagerImpl extends IntentionManager {
     String descriptionDirectoryName = action instanceof IntentionActionWrapper
                                       ? ((IntentionActionWrapper)action).getDescriptionDirectoryName()
                                       : IntentionActionWrapper.getDescriptionDirectoryName(action.getClass().getName());
-    mySettings.registerIntentionMetaData(action, category, descriptionDirectoryName);
+    IntentionManagerSettings settings = IntentionManagerSettings.getInstance();
+    settings.registerIntentionMetaData(action, category, descriptionDirectoryName);
   }
 
   @Override
   public void unregisterIntention(@NotNull IntentionAction intentionAction) {
     myActions.remove(intentionAction);
-    mySettings.unregisterMetaData(intentionAction);
+    IntentionManagerSettings settings = IntentionManagerSettings.getInstance();
+    settings.unregisterMetaData(intentionAction);
   }
 
   @Override
@@ -180,8 +179,9 @@ public final class IntentionManagerImpl extends IntentionManager {
     if (myIntentionsDisabled) return IntentionAction.EMPTY_ARRAY;
     checkForDuplicates();
     List<IntentionAction> list = new ArrayList<>(myActions.size());
+    IntentionManagerSettings settings = IntentionManagerSettings.getInstance();
     for (IntentionAction action : myActions) {
-      if (mySettings.isEnabled(action)) {
+      if (settings.isEnabled(action)) {
         list.add(action);
       }
     }

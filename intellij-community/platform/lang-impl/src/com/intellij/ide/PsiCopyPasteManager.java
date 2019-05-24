@@ -45,8 +45,8 @@ public class PsiCopyPasteManager {
   private MyData myRecentData;
   private final CopyPasteManagerEx myCopyPasteManager;
 
-  public PsiCopyPasteManager(CopyPasteManager copyPasteManager) {
-    myCopyPasteManager = (CopyPasteManagerEx) copyPasteManager;
+  public PsiCopyPasteManager() {
+    myCopyPasteManager = CopyPasteManagerEx.getInstanceEx();
     ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
       public void projectClosing(@NotNull Project project) {
