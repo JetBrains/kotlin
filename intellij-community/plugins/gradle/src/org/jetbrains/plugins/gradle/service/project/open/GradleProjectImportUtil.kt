@@ -26,7 +26,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.util.EnvironmentUtil
-import com.intellij.util.ThreeState.YES
 import com.intellij.util.io.exists
 import com.intellij.util.text.nullize
 import org.gradle.util.GradleVersion
@@ -155,16 +154,14 @@ private fun GradleSettings.setupGradleSettings() {
   isOfflineWork = GRADLE_OFFLINE?.toBoolean() ?: isOfflineWork
   serviceDirectoryPath = GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
   if (ExternalSystemUtil.isNewProject(project) && linkedProjectsSettings.isEmpty()) {
-    ExternalProjectsManagerImpl.getInstance(project).setStoreExternally(true)
+    storeProjectFilesExternally = true
   }
 }
 
 private fun GradleProjectSettings.setupGradleProjectSettings(projectDirectory: String, project: Project, projectSdk: Sdk? = null) {
   externalProjectPath = projectDirectory
   isUseAutoImport = false
-  isCreateEmptyContentRootDirectories = false
   isUseQualifiedModuleNames = true
-  storeProjectFilesExternally = YES
   distributionType = GRADLE_DISTRIBUTION_TYPE?.let(DistributionType::valueOf) ?: DEFAULT_WRAPPED
   gradleHome = GRADLE_HOME ?: suggestGradleHome()
   gradleJvm = suggestGradleJvm(project, projectSdk, resolveGradleVersion())
