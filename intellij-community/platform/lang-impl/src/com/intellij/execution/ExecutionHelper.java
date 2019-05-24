@@ -308,6 +308,12 @@ public class ExecutionHelper {
                                              @NotNull final ProcessHandler processHandler,
                                              @NotNull final ExecutionMode mode,
                                              @NotNull final String presentableCmdline) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      LOG.warn("Running " + presentableCmdline);
+      processHandler.waitFor();
+      return;
+    }
+
     final String title = mode.getTitle() != null ? mode.getTitle() : "Please wait...";
     final Runnable process;
     if (mode.cancelable()) {
