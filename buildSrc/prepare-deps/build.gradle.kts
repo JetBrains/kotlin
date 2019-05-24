@@ -22,9 +22,6 @@ val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled
 
-val androidBuildToolsVersion = rootProject.extra["versions.androidBuildTools"] as String
-val androidDxSourcesVersion = rootProject.extra["versions.androidDxSources"] as String
-
 val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
 if (intellijVersionDelimiterIndex == -1) {
     error("Invalid IDEA version $intellijVersion")
@@ -53,19 +50,6 @@ val androidStudioOs by lazy {
     }
 }
 
-val androidToolsOs by lazy {
-    when {
-        OperatingSystem.current().isWindows -> "windows"
-        OperatingSystem.current().isMacOsX -> "macosx"
-        OperatingSystem.current().isLinux -> "linux"
-        else -> {
-            logger.error("Unknown operating system for android tools: ${OperatingSystem.current().name}")
-            ""
-        }
-    }
-}
-
-
 repositories {
     if (androidStudioRelease != null) {
         ivy {
@@ -81,31 +65,6 @@ repositories {
         }
     }
 
-    ivy {
-        url = URI("https://dl.google.com/android/repository")
-
-        patternLayout {
-            artifact("[artifact]_[revision](-[classifier]).[ext]")
-        }
-
-        metadataSources {
-            artifact()
-        }
-    }
-
-
-    ivy {
-        url = URI("https://android.googlesource.com/platform/dalvik/+archive/android-$androidDxSourcesVersion")
-
-        patternLayout {
-            artifact("[artifact].[ext]")
-        }
-
-        metadataSources {
-            artifact()
-        }
-    }
-
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
@@ -118,8 +77,6 @@ val sources by configurations.creating
 val jpsStandalone by configurations.creating
 val intellijCore by configurations.creating
 val nodeJSPlugin by configurations.creating
-val androidBuildTools by configurations.creating
-val androidDxSources by configurations.creating
 
 /**
  * Special repository for annotations.jar required for idea runtime only.
@@ -132,10 +89,6 @@ val customDepsRepoDir = rootProject.rootDir.parentFile.resolve("dependencies/rep
 val customDepsOrg: String by rootProject.extra
 val customDepsRevision = intellijVersion
 val repoDir = File(customDepsRepoDir, customDepsOrg)
-
-val androidDxModuleName = "android-dx"
-val androidDxRevision = androidBuildToolsVersion
-val androidDxRepoModuleDir = File(repoDir, "$androidDxModuleName/$androidDxRevision")
 
 dependencies {
     if (androidStudioRelease != null) {
@@ -163,66 +116,6 @@ dependencies {
     intellijCore("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
     if (intellijUltimateEnabled) {
         nodeJSPlugin("com.jetbrains.plugins:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}@zip")
-    }
-
-    androidBuildTools("google:build-tools:$androidBuildToolsVersion:$androidToolsOs@zip")
-    androidDxSources("google:dx:0@tar.gz")
-}
-
-val dxSourcesTargetDir = File(buildDir, "dx_src")
-
-val untarDxSources by tasks.creating {
-    dependsOn(androidDxSources)
-    inputs.files(androidDxSources)
-    outputs.dir(dxSourcesTargetDir)
-    doFirst {
-        project.copy {
-            from(tarTree(androidDxSources.singleFile))
-            include("src/**")
-            includeEmptyDirs = false
-            into(dxSourcesTargetDir)
-        }
-    }
-}
-
-val prepareDxSourcesJar by tasks.creating(Jar::class) {
-    dependsOn(untarDxSources)
-    from("$dxSourcesTargetDir/src")
-    destinationDir = File(repoDir, sources.name)
-    baseName = androidDxModuleName
-    classifier = "sources"
-    version = androidBuildToolsVersion
-}
-
-val unzipDxJar by tasks.creating {
-    dependsOn(androidBuildTools)
-    inputs.files(androidBuildTools)
-    outputs.files(File(androidDxRepoModuleDir, "dx.jar"))
-    doFirst {
-        project.copy {
-            from(zipTree(androidBuildTools.singleFile).files)
-            include("**/dx.jar")
-            into(androidDxRepoModuleDir)
-        }
-    }
-}
-
-val buildIvyRepoForAndroidDx by tasks.creating {
-    dependsOn(unzipDxJar, prepareDxSourcesJar)
-    inputs.files(unzipDxJar, prepareDxSourcesJar)
-    outputs.file(File(androidDxRepoModuleDir, "$androidDxModuleName.ivy.xml"))
-
-    doLast {
-        writeIvyXml(
-            customDepsOrg,
-            androidDxModuleName,
-            androidBuildToolsVersion,
-            androidDxModuleName,
-            androidDxRepoModuleDir,
-            androidDxRepoModuleDir,
-            androidDxRepoModuleDir,
-            prepareDxSourcesJar.outputs.files.singleFile
-        )
     }
 }
 
@@ -296,8 +189,7 @@ tasks.named("build") {
         makeIntellijCore,
         makeIde,
         buildJpsStandalone,
-        makeIntellijAnnotations,
-        buildIvyRepoForAndroidDx
+        makeIntellijAnnotations
     )
 
     if (installIntellijUltimate) {
