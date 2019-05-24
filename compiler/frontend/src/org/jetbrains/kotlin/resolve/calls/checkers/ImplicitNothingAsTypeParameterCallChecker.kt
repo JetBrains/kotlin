@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -37,7 +38,10 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val resultingDescriptor = resolvedCall.resultingDescriptor
         val inferredReturnType = resultingDescriptor.returnType
-        if (inferredReturnType is DeferredType)
+        val isBuiltinFunctionalType =
+            resolvedCall.resultingDescriptor.dispatchReceiverParameter?.value?.type?.isBuiltinFunctionalType == true
+
+        if (inferredReturnType is DeferredType || isBuiltinFunctionalType)
             return
         if (resultingDescriptor.name !in SPECIAL_FUNCTION_NAMES && resolvedCall.call.typeArguments.isEmpty()) {
             val lambdasFromArgumentsReturnTypes =

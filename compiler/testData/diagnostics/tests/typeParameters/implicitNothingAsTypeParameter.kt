@@ -89,3 +89,15 @@ fun <InputT, OutputT : Any, RenderingT> stateless(
 interface Worker<out T>
 
 interface RenderContext<StateT, in OutputT : Any>
+
+val emptyOrNull: List<Nothing>? = null
+val x = emptyOrNull?.<!OI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>get<!>(0)
+
+val errorCompletion = { <!OI;UNUSED_ANONYMOUS_PARAMETER!>e<!>: Throwable -> throw Exception() }
+
+fun test1() {
+    errorCompletion(Exception("fail"))
+}
+fun test2() {
+    errorCompletion.invoke(Exception("fail"))
+}
