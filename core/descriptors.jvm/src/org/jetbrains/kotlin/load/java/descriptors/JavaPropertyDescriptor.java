@@ -37,7 +37,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     @Nullable
     private final Pair<UserDataKey<?>, ?> singleUserData;
 
-    private JavaPropertyDescriptor(
+    protected JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Modality modality,

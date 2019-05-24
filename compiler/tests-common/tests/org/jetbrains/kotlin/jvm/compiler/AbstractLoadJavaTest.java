@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
+import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
@@ -237,7 +237,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         configureEnvironment(environment);
         KtFile ktFile = KotlinTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
 
-        ModuleDescriptor module = JvmResolveUtil.analyzeAndCheckForErrors(Collections.singleton(ktFile), environment).getModuleDescriptor();
+        ModuleDescriptor module = GenerationUtils.compileFiles(Collections.singletonList(ktFile), environment).getModule();
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assertFalse(packageView.isEmpty());
 

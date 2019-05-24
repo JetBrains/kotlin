@@ -514,11 +514,7 @@ class LazyJavaClassMemberScope(
                     "for getter is ${getterMethod.modality}, but for setter is ${setterMethod?.modality}"
         }
 
-        val propertyDescriptor = JavaPropertyDescriptor.create(
-            ownerDescriptor, Annotations.EMPTY, getterMethod.modality, getterMethod.visibility,
-            /* isVar = */ setterMethod != null, overriddenProperty.name, getterMethod.source,
-            /* isStaticFinal = */ false
-        )
+        val propertyDescriptor = JavaForKotlinOverridePropertyDescriptor(ownerDescriptor, getterMethod, setterMethod, overriddenProperty)
 
         propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null)
 
