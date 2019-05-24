@@ -12390,6 +12390,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/j+k/sam/privateCandidatesWithWrongArguments.kt");
                 }
 
+                @TestMetadata("recursiveSamsAndInvoke.kt")
+                public void testRecursiveSamsAndInvoke() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/sam/recursiveSamsAndInvoke.kt");
+                }
+
                 @TestMetadata("samOnTypeParameter.kt")
                 public void testSamOnTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/sam/samOnTypeParameter.kt");

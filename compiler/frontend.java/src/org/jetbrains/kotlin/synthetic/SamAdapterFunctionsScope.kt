@@ -60,8 +60,7 @@ class SamAdapterFunctionsScope(
     private val deprecationResolver: DeprecationResolver,
     private val lookupTracker: LookupTracker
 ) : SyntheticScope.Default() {
-    private val samViaSyntheticScopeDisabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference) &&
-            languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)
+    private val samViaSyntheticScopeDisabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
     private val extensionForFunction =
             storageManager.createMemoizedFunctionWithNullableValues<FunctionDescriptor, FunctionDescriptor> { function ->
