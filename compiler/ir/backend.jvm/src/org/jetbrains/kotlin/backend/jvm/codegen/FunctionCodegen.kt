@@ -58,11 +58,12 @@ open class FunctionCodegen(
 
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
-            methodVisitor.visitEnd()
         } else {
             val frameMap = createFrameMapWithReceivers(signature)
             ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
+            methodVisitor.visitMaxs(-1, -1)
         }
+        methodVisitor.visitEnd()
 
         return signature
     }

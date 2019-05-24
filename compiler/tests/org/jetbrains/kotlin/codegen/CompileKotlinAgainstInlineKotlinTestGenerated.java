@@ -2914,6 +2914,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/simple/funImportedFromObject.kt");
         }
 
+        @TestMetadata("inlineCallInInlineLambda.kt")
+        public void testInlineCallInInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/inlineCallInInlineLambda.kt");
+        }
+
         @TestMetadata("kt17431.kt")
         public void testKt17431() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/kt17431.kt");

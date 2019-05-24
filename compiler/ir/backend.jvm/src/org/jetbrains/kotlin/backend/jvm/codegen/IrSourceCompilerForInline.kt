@@ -38,7 +38,6 @@ class IrSourceCompilerForInline(
     private val data: BlockInfo
 ) : SourceCompilerForInline {
 
-
     //TODO
     override val lookupLocation: LookupLocation
         get() = NoLookupLocation.FROM_BACKEND
@@ -59,18 +58,23 @@ class IrSourceCompilerForInline(
     override val lazySourceMapper: DefaultSourceMapper
         get() = codegen.classCodegen.getOrCreateSourceMapper()
 
-    override fun generateLambdaBody(adapter: MethodVisitor, jvmMethodSignature: JvmMethodSignature, lambdaInfo: ExpressionLambda): SMAP {
-        lambdaInfo as? IrExpressionLambdaImpl ?: error("Expecting ir lambda, but $lambdaInfo")
-
-        val functionCodegen = object : FunctionCodegen(lambdaInfo.function, codegen.classCodegen, true) {
+    private fun makeInlineNode(function: IrFunction, classCodegen: ClassCodegen, marker: CallSiteMarker?): SMAPAndMethodNode {
+        var node: MethodNode? = null
+        val functionCodegen = object : FunctionCodegen(function, classCodegen, isInlineLambda = marker == null) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-                return adapter
+                val asmMethod = signature.asmMethod
+                node = MethodNode(Opcodes.API_VERSION, flags, asmMethod.name, asmMethod.descriptor, signature.genericsSignature, null)
+                return wrapWithMaxLocalCalc(node!!)
             }
         }
+        lazySourceMapper.callSiteMarker = marker
         functionCodegen.generate()
-
-        return SMAP(codegen.classCodegen.getOrCreateSourceMapper().resultMappings)
+        lazySourceMapper.callSiteMarker = null
+        return SMAPAndMethodNode(node!!, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
     }
+
+    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
+        makeInlineNode((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, null)
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -99,31 +103,8 @@ class IrSourceCompilerForInline(
             }
         }
 
-        //ExpressionCodegen()
-        var node: MethodNode? = null
-        var maxCalcAdapter: MethodVisitor? = null
-        val fakeClassCodegen = FakeClassCodegen(irFunction, codegen.classCodegen)
-        val functionCodegen = object : FunctionCodegen(irFunction, fakeClassCodegen) {
-            override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-                node = MethodNode(
-                    Opcodes.API_VERSION,
-                    flags,
-                    signature.asmMethod.name, signature.asmMethod.descriptor,
-                    signature.genericsSignature, null
-                )
-                maxCalcAdapter = wrapWithMaxLocalCalc(node!!)
-                return maxCalcAdapter!!
-            }
-        }
-
         assert(codegen.lastLineNumber >= 0)
-        lazySourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
-        functionCodegen.generate()
-        lazySourceMapper.callSiteMarker = null
-        maxCalcAdapter!!.visitMaxs(-1, -1)
-        maxCalcAdapter!!.visitEnd()
-
-        return SMAPAndMethodNode(node!!, SMAP(fakeClassCodegen.getOrCreateSourceMapper().resultMappings))
+        return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), CallSiteMarker(codegen.lastLineNumber))
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
