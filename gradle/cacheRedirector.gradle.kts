@@ -48,7 +48,8 @@ val mirroredUrls = listOf(
     "https://cdn.azul.com/zulu/bin",
     "https://jetbrains.bintray.com/kotlin-native-dependencies",
     "https://dl.bintray.com/kotlin/kotlinx",
-    "https://dl.bintray.com/kotlin/kotlinx.html"
+    "https://dl.bintray.com/kotlin/kotlinx.html",
+    "https://kotlin.bintray.com/kotlin-dependencies"
 )
 
 val aliases = mapOf(
