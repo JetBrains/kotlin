@@ -30,8 +30,8 @@ configure<PublishingExtension> {
 }
 
 configure<BintrayExtension> {
-    user = extra["bintray.user"] as String
-    key = extra["bintray.apikey"] as String
+    user = findProperty("bintray.user") as String?
+    key = findProperty("bintray.apikey") as String?
 
     setPublications("maven")
 
