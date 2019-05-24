@@ -105,12 +105,13 @@ class ResolverForProjectImpl<M : ModuleInfo>(
 
     private class ModuleData(
         val moduleDescriptor: ModuleDescriptorImpl,
-        val modificationTracker: ModificationTracker?,
-        val modificationCount: Long?
+        val modificationTracker: ModificationTracker?
     ) {
+        val modificationCount: Long = modificationTracker?.modificationCount ?: Long.MIN_VALUE
+
         fun isOutOfDate(): Boolean {
             val currentModCount = modificationTracker?.modificationCount
-            return currentModCount != null && currentModCount > modificationCount!!
+            return currentModCount != null && currentModCount > modificationCount
         }
     }
 
@@ -263,7 +264,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         setupModuleDescriptor(module, moduleDescriptor)
         val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker()
                 ?: (PsiModificationTracker.SERVICE.getInstance(projectContext.project).outOfCodeBlockModificationTracker.takeIf { invalidateOnOOCB })
-        return ModuleData(moduleDescriptor, modificationTracker, modificationTracker?.modificationCount)
+        return ModuleData(moduleDescriptor, modificationTracker)
     }
 }
 
