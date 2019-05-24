@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -31,11 +32,15 @@ class KtUltraLightClassForFacade(
         return getter()
     }
 
+    override fun getDelegate(): PsiClass = forTooComplex { super.getDelegate() }
+
     override val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>
         get() = forTooComplex { super.lightClassDataCache }
 
     override val clsDelegate: PsiClass
         get() = forTooComplex { super.clsDelegate }
+
+    override fun getScope(): PsiElement? = if (!tooComplex) parent else super.getScope()
 
     private val tooComplex: Boolean by lazyPub {
         filesToSupports.any { (file, support) ->
@@ -80,6 +85,8 @@ class KtUltraLightClassForFacade(
     override fun getOwnFields() = if (!tooComplex) ownFieldsForNotTooComplex else super.getOwnFields()
 
     override fun getOwnMethods() = if (!tooComplex) ownMethodsForNotTooComplex else super.getOwnMethods()
+
+    override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 
     override fun copy(): KtLightClassForFacade =
         KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesToSupports)

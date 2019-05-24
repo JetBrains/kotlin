@@ -48,7 +48,7 @@ open class KtLightClassForFacade constructor(
     files: Collection<KtFile>
 ) : KtLazyLightClass(manager) {
 
-    val files: Collection<KtFile> = files.toSet() // needed for hashCode
+    val files: Collection<KtFile> = files.toSet()
 
     private val firstFileInFacade by lazyPub { files.iterator().next() }
 
@@ -80,6 +80,8 @@ open class KtLightClassForFacade constructor(
 
     override fun hasModifierProperty(@NonNls name: String) = modifierList.hasModifierProperty(name)
 
+    override fun getExtendsList(): PsiReferenceList? = null
+
     override fun isDeprecated() = false
 
     override fun isInterface() = false
@@ -88,33 +90,39 @@ open class KtLightClassForFacade constructor(
 
     override fun isEnum() = false
 
-    override fun getContainingClass() = null
+    override fun getContainingClass(): PsiClass? = null
 
     override fun getContainingFile() = packageClsFile
 
     override fun hasTypeParameters() = false
 
-    override fun getTypeParameters() = PsiTypeParameter.EMPTY_ARRAY
+    override fun getTypeParameters(): Array<out PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
-    override fun getTypeParameterList() = null
+    override fun getTypeParameterList(): PsiTypeParameterList? = null
 
-    override fun getDocComment() = null
+    override fun getDocComment(): Nothing? = null
 
     override fun getImplementsList() = implementsList
 
-    override fun getImplementsListTypes() = PsiClassType.EMPTY_ARRAY
+    override fun getImplementsListTypes(): Array<out PsiClassType> = PsiClassType.EMPTY_ARRAY
 
-    override fun getInterfaces() = PsiClass.EMPTY_ARRAY
+    override fun getInterfaces(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
 
-    override fun getInnerClasses() = PsiClass.EMPTY_ARRAY
+    override fun getInnerClasses(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
 
     override fun getOwnInnerClasses(): List<PsiClass> = listOf()
 
-    override fun getAllInnerClasses() = PsiClass.EMPTY_ARRAY
+    override fun getAllInnerClasses(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
 
-    override fun getInitializers() = PsiClassInitializer.EMPTY_ARRAY
+    override fun getInitializers(): Array<out PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY
 
-    override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean) = null
+    override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean): PsiClass? = null
+
+    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+
+    override fun getLBrace(): PsiElement? = null
+
+    override fun getRBrace(): PsiElement? = null
 
     override fun getName() = facadeClassFqName.shortName().asString()
 
@@ -157,6 +165,8 @@ open class KtLightClassForFacade constructor(
     }
 
     override fun getQualifiedName() = facadeClassFqName.asString()
+
+    override fun getNameIdentifier(): PsiIdentifier? = null
 
     override fun isValid() = files.all { it.isValid && it.hasTopLevelCallables() && facadeClassFqName == it.javaFileFacadeFqName }
 
