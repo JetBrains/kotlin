@@ -315,7 +315,7 @@ class JavaClassEnhancementScope(
         return signatureParts.type
     }
 
-    private val overrideBindCache = mutableMapOf<Name, Map<ConeFunctionSymbol?, List<ConeCallableSymbol>>>()
+    private val overrideBindCache = mutableMapOf<Name, Map<ConeCallableSymbol?, List<ConeCallableSymbol>>>()
 
     private fun FirCallableMemberDeclaration.overriddenMembers(): List<FirCallableMemberDeclaration> {
         val backMap = overrideBindCache.getOrPut(this.name) {
