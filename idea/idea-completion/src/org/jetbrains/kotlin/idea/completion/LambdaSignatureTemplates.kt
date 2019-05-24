@@ -154,6 +154,7 @@ object LambdaSignatureTemplates {
             template.addTextSegment("{ ")
         }
 
+        val noNameParameterCount = mutableMapOf<KotlinType, Int>()
         for ((i, parameterType) in parameterTypes.withIndex()) {
             if (i > 0) {
                 template.addTextSegment(", ")
@@ -168,7 +169,10 @@ object LambdaSignatureTemplates {
                 }
             }
             else {
-                val nameSuggestions = nameSuggestions(parameterType)
+                val count = (noNameParameterCount[parameterType] ?: 0) + 1
+                noNameParameterCount[parameterType] = count
+                val suffix = if (count == 1) null else "$count"
+                val nameSuggestions = nameSuggestions(parameterType, suffix)
                 object : Expression() {
                     override fun calculateResult(context: ExpressionContext?) = TextResult(nameSuggestions[0])
                     override fun calculateQuickResult(context: ExpressionContext?): Result? = null
@@ -193,7 +197,11 @@ object LambdaSignatureTemplates {
         return template
     }
 
-    private fun nameSuggestions(parameterType: KotlinType) = KotlinNameSuggester.suggestNamesByType(parameterType, { true }, "p")
+    private fun nameSuggestions(parameterType: KotlinType, suffix: String? = null): List<String> {
+        val suggestions = KotlinNameSuggester.suggestNamesByType(parameterType, { true }, "p")
+        return if (suffix != null) suggestions.map { "$it$suffix" } else suggestions
+    }
+    
     private fun nameSuggestion(parameterType: KotlinType) = nameSuggestions(parameterType)[0]
 
     private fun functionParameterTypes(functionType: KotlinType): List<KotlinType> {
