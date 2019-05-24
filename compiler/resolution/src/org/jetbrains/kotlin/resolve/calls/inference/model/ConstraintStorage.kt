@@ -67,7 +67,8 @@ class Constraint(
     val kind: ConstraintKind,
     val type: KotlinTypeMarker, // flexible types here is allowed
     val position: IncorporationConstraintPosition,
-    val typeHashCode: Int = type.hashCode()
+    val typeHashCode: Int = type.hashCode(),
+    val derivedFrom: Set<TypeVariableMarker>
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

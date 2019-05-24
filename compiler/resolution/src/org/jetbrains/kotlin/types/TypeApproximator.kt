@@ -189,9 +189,15 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                      * Similar for L_1 <: L_2: Let B : resultType <: B. L_2 <: B and L_1 <: B.
                      * I.e. for every type B such as L_2 <: B, L_1 <: B. For example B = L_2.
                      */
+                    val lowerBound = type.lowerBound()
+                    val upperBound = type.upperBound()
 
-                    val lowerResult = approximateTo(type.lowerBound(), conf, depth)
-                    val upperResult = approximateTo(type.upperBound(), conf, depth)
+                    val lowerResult = approximateTo(lowerBound, conf, depth)
+
+                    val upperResult = if (lowerBound.typeConstructor() == upperBound.typeConstructor())
+                        lowerResult?.withNullability(upperBound.isMarkedNullable())
+                    else
+                        approximateTo(upperBound, conf, depth)
                     if (lowerResult == null && upperResult == null) return null
 
                     /**
@@ -202,8 +208,8 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                      * If U_1 <: U_2.lower .. U_2.upper, then we know only that U_1 <: U_2.upper.
                      */
                     return createFlexibleType(
-                        lowerResult?.lowerBoundIfFlexible() ?: type.lowerBound(),
-                        upperResult?.upperBoundIfFlexible() ?: type.upperBound()
+                        lowerResult?.lowerBoundIfFlexible() ?: lowerBound,
+                        upperResult?.upperBoundIfFlexible() ?: upperBound
                     )
                 } else {
                     return type.bound().let { approximateTo(it, conf, depth) ?: it }

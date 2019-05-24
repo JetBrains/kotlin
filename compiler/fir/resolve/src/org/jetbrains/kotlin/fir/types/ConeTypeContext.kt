@@ -144,13 +144,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         return typeConstructor
     }
 
-    override fun SimpleTypeMarker.argumentsCount(): Int {
+    override fun KotlinTypeMarker.argumentsCount(): Int {
         require(this is ConeKotlinType)
 
         return this.typeArguments.size
     }
 
-    override fun SimpleTypeMarker.getArgument(index: Int): TypeArgumentMarker {
+    override fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker {
         require(this is ConeKotlinType)
 
         return this.typeArguments.getOrNull(index)

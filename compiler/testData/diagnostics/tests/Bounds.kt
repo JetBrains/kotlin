@@ -7,7 +7,7 @@ package boundsWithSubstitutors
     class C : A<C>()
 
     val a = B<C>()
-    val a1 = B<<!NI;UPPER_BOUND_VIOLATED, NI;UPPER_BOUND_VIOLATED, NI;UPPER_BOUND_VIOLATED, NI;UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Int<!>>()
+    val a1 = B<<!NI;UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Int<!>>()
 
     class X<A, B : A>()
 
