@@ -83,7 +83,7 @@ open class KotlinNativeTest : KotlinTest() {
             name,
             testNameSuffix = targetName,
             prependSuiteName = targetName != null,
-            treatFailedTestOutputAsStacktrace = true,
+            treatFailedTestOutputAsStacktrace = false,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm
         )
 
