@@ -96,7 +96,8 @@ class Candidate(
     val implicitExtensionReceiverValue: ImplicitReceiverValue?,
     val explicitReceiverKind: ExplicitReceiverKind,
     private val inferenceComponents: InferenceComponents,
-    private val baseSystem: ConstraintStorage
+    private val baseSystem: ConstraintStorage,
+    val callInfo: CallInfo
 ) {
     val system by lazy {
         val system = inferenceComponents.createConstraintSystem()
@@ -280,7 +281,8 @@ class ScopeTowerLevel(
                 if (candidate.hasConsistentExtensionReceiver(extensionReceiver) && candidate.dispatchReceiverValue() == null) {
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue = null,
-                        implicitExtensionReceiverValue = implicitExtensionReceiver)
+                        implicitExtensionReceiverValue = implicitExtensionReceiver
+                    )
                 } else {
                     ProcessorAction.NEXT
                 }
@@ -349,7 +351,7 @@ class QualifiedReceiverTowerDataConsumer<T : ConeSymbol>(
         towerScopeLevel: TowerScopeLevel,
         group: Int
     ): ProcessorAction {
-        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
+        if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         if (kind != TowerDataKind.EMPTY) return ProcessorAction.NEXT
 
         return QualifiedReceiverTowerLevel(session).processElementsByName(
@@ -388,12 +390,20 @@ abstract class TowerDataConsumer {
         group: Int
     ): ProcessorAction
 
+    private var processed = -1
     private var stopGroup = Int.MAX_VALUE
-    fun checkSkip(group: Int, resultCollector: CandidateCollector): Boolean {
+    fun skipGroup(group: Int, resultCollector: CandidateCollector): Boolean {
         if (resultCollector.isSuccess() && stopGroup == Int.MAX_VALUE) {
             stopGroup = group
         }
-        return group > stopGroup
+        if (group > processed) {
+            processed = group
+        }
+        if (group < processed) {
+            return true
+        }
+        if (group > stopGroup) return true
+        return false
     }
 }
 
@@ -452,6 +462,17 @@ fun createFunctionConsumer(
     resultCollector: CandidateCollector,
     callResolver: CallResolver
 ): TowerDataConsumer {
+    val varCallInfo = CallInfo(
+        CallKind.VariableAccess,
+        callInfo.explicitReceiver,
+        emptyList(),
+        callInfo.isSafeCall,
+        callInfo.typeArguments,
+        inferenceComponents.session,
+        callInfo.containingFile,
+        callInfo.container,
+        callInfo.typeProvider
+    )
     return PrioritizedTowerDataConsumer(
         resultCollector,
         createSimpleConsumer(
@@ -462,29 +483,23 @@ fun createFunctionConsumer(
             inferenceComponents,
             resultCollector
         ),
-        createSimpleConsumer(
-            session,
-            name,
-            TowerScopeLevel.Token.Properties,
-            callInfo,
-            inferenceComponents,
-            InvokeCandidateCollector(
-                callResolver,
-                varCallInfo = CallInfo(
-                    CallKind.VariableAccess,
-                    callInfo.explicitReceiver,
-                    emptyList(),
-                    callInfo.isSafeCall,
-                    callInfo.typeArguments,
-                    inferenceComponents.session,
-                    callInfo.containingFile,
-                    callInfo.container,
-                    callInfo.typeProvider
-                ),
-                invokeCallInfo = callInfo,
-                components = inferenceComponents
+        MultiplexerTowerDataConsumer(resultCollector).apply {
+            addConsumer(
+                createSimpleConsumer(
+                    session,
+                    name,
+                    TowerScopeLevel.Token.Properties,
+                    varCallInfo,
+                    inferenceComponents,
+                    InvokeCandidateCollector(
+                        callResolver,
+                        invokeCallInfo = callInfo,
+                        components = inferenceComponents,
+                        multiplexer = this
+                    )
+                )
             )
-        )
+        }
     )
 }
 
@@ -534,7 +549,7 @@ class PrioritizedTowerDataConsumer(
         towerScopeLevel: TowerScopeLevel,
         group: Int
     ): ProcessorAction {
-        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
+        if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         for ((index, consumer) in consumers.withIndex()) {
             val action = consumer.consume(kind, towerScopeLevel, group * consumers.size + index)
             if (action.stop()) {
@@ -544,6 +559,52 @@ class PrioritizedTowerDataConsumer(
         return ProcessorAction.NEXT
     }
 }
+
+class MultiplexerTowerDataConsumer(
+    val resultCollector: CandidateCollector
+) : TowerDataConsumer() {
+
+    val consumers = mutableListOf<TowerDataConsumer>()
+    val newConsumers = mutableListOf<TowerDataConsumer>()
+
+    val kinds = mutableListOf<TowerDataKind>()
+    val groups = mutableListOf<Int>()
+    val levels = mutableListOf<TowerScopeLevel>()
+
+    override fun consume(
+        kind: TowerDataKind,
+        towerScopeLevel: TowerScopeLevel,
+        group: Int
+    ): ProcessorAction {
+        if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
+        consumers += newConsumers
+        newConsumers.clear()
+        kinds += kind
+        groups += group
+        levels += towerScopeLevel
+
+        for (consumer in consumers) {
+            val action = consumer.consume(kind, towerScopeLevel, group)
+            if (action.stop()) {
+                return ProcessorAction.STOP
+            }
+        }
+        return ProcessorAction.NEXT
+    }
+
+    fun addConsumer(consumer: TowerDataConsumer): ProcessorAction =
+        run {
+            for (index in kinds.indices) {
+                if (consumer.consume(kinds[index], levels[index], groups[index]).stop()) {
+                    return@run ProcessorAction.STOP
+                }
+            }
+            return@run ProcessorAction.NEXT
+        }.also {
+            newConsumers += consumer
+        }
+}
+
 
 class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val session: FirSession,
@@ -560,7 +621,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
         towerScopeLevel: TowerScopeLevel,
         group: Int
     ): ProcessorAction {
-        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
+        if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
             TowerDataKind.EMPTY ->
                 MemberScopeTowerLevel(session, explicitReceiver).processElementsByName(
@@ -631,7 +692,7 @@ class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
         towerScopeLevel: TowerScopeLevel,
         group: Int
     ): ProcessorAction {
-        if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
+        if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
 
             TowerDataKind.TOWER_LEVEL -> {
@@ -703,20 +764,14 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: Inf
         return group
     }
 
-    val collector = CandidateCollector(callInfo!!, components)
-    private lateinit var towerDataConsumer: TowerDataConsumer
+    val collector by lazy { CandidateCollector(components) }
+    lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue>
 
-    fun runTowerResolver(towerDataConsumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue>): CandidateCollector {
-        this.towerDataConsumer = towerDataConsumer
+    fun runTowerResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue>): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
+        towerDataConsumer = consumer
 
-        runTowerResolver()
-
-        return collector
-    }
-
-    fun runTowerResolver(towerDataConsumer: TowerDataConsumer = this.towerDataConsumer) {
         var group = 0
 
         towerDataConsumer.consume(TowerDataKind.EMPTY, TowerScopeLevel.Empty, group++)
@@ -739,8 +794,9 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: Inf
         }
 
 
-    }
 
+        return collector
+    }
 
 }
 
@@ -755,9 +811,7 @@ enum class CandidateApplicability {
 }
 
 
-var ID = ""
-
-open class CandidateCollector(val callInfo: CallInfo, val components: InferenceComponents) {
+open class CandidateCollector(val components: InferenceComponents) {
 
     val groupNumbers = mutableListOf<Int>()
     val candidates = mutableListOf<Candidate>()
@@ -780,8 +834,8 @@ open class CandidateCollector(val callInfo: CallInfo, val components: InferenceC
         val sink = CheckerSinkImpl(components)
         var finished = false
         sink.continuation = suspend {
-            for (stage in callInfo.callKind.sequence()) {
-                stage.check(candidate, sink, callInfo)
+            for (stage in candidate.callInfo.callKind.sequence()) {
+                stage.check(candidate, sink, candidate.callInfo)
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
             override val context: CoroutineContext
@@ -847,8 +901,11 @@ open class CandidateCollector(val callInfo: CallInfo, val components: InferenceC
 }
 
 class InvokeCandidateCollector(
-    val callResolver: CallResolver, val varCallInfo: CallInfo, val invokeCallInfo: CallInfo, components: InferenceComponents
-) : CandidateCollector(varCallInfo, components) {
+    val callResolver: CallResolver,
+    val invokeCallInfo: CallInfo,
+    components: InferenceComponents,
+    val multiplexer: MultiplexerTowerDataConsumer
+) : CandidateCollector(components) {
     override fun consumeCandidate(group: Int, candidate: Candidate): CandidateApplicability {
         val applicability = super.consumeCandidate(group, candidate)
 
@@ -858,7 +915,13 @@ class InvokeCandidateCollector(
             val boundInvokeCallInfo = CallInfo(
                 invokeCallInfo.callKind,
                 FirQualifiedAccessExpressionImpl(session, null, false).apply {
-                    calleeReference = FirNamedReferenceWithCandidate(session, null, (candidate.symbol as ConeCallableSymbol).callableId.callableName, candidate)
+                    calleeReference = FirNamedReferenceWithCandidate(
+                        session,
+                        null,
+                        (candidate.symbol as ConeCallableSymbol).callableId.callableName,
+                        candidate
+                    )
+                    typeRef = callResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
                 },
                 invokeCallInfo.arguments,
                 invokeCallInfo.isSafeCall,
@@ -868,9 +931,10 @@ class InvokeCandidateCollector(
                 invokeCallInfo.container,
                 invokeCallInfo.typeProvider
             )
-            val invokeConsumer = createSimpleFunctionConsumer(session, Name.identifier("invoke"), boundInvokeCallInfo, components, callResolver.collector)
+            val invokeConsumer =
+                createSimpleFunctionConsumer(session, Name.identifier("invoke"), boundInvokeCallInfo, components, callResolver.collector)
 
-            callResolver.runTowerResolver(invokeConsumer)
+            multiplexer.addConsumer(invokeConsumer)
         }
 
         return applicability

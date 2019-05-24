@@ -348,7 +348,8 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         val consumer = createVariableAndObjectConsumer(
             session,
             callee.name,
-            info, inferenceComponents
+            info, inferenceComponents,
+            resolver.collector
         )
         val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
 
@@ -551,7 +552,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
 
-        val consumer = createFunctionConsumer(session, name, info, inferenceComponents)
+        val consumer = createFunctionConsumer(session, name, info, inferenceComponents, resolver.collector, resolver)
         val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {

@@ -10,5 +10,5 @@ FILE: simple.kt
 
     }
     public final fun test(s: R|Simple|): R|kotlin/Unit| {
-        lval result: <ERROR TYPE REF: Unresolved name: s> = <Unresolved name: s>#()
+        lval result: R|kotlin/String| = R|/Simple.invoke|()
     }

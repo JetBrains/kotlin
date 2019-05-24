@@ -1,6 +1,6 @@
 
 class A {
-    fun bar() = foo()
+    fun bar() = foo() // should resolve to invoke
 
     fun invoke() = this
 }
