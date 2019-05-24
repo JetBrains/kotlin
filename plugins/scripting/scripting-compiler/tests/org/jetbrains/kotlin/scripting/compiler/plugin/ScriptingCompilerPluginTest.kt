@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
 import org.jetbrains.kotlin.scripting.definitions.discoverScriptTemplatesInClasspath
 import org.jetbrains.kotlin.scripting.definitions.loadScriptTemplatesFromClasspath
+import org.jetbrains.kotlin.scripting.definitions.reporter
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -115,7 +116,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
         loadScriptTemplatesFromClasspath(
             listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"),
-            listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector
+            listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector.reporter
         ).toList()
 
         for (def in defClasses) {
@@ -141,7 +142,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
                 listOf(defsOut),
                 this::class.java.classLoader,
                 emptyMap(),
-                messageCollector
+                messageCollector.reporter
             )
 
         assertTrue(messageCollector.messages.isEmpty()) {
@@ -212,7 +213,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
             listOf(defsOut),
             this::class.java.classLoader,
             emptyMap(),
-            messageCollector
+            messageCollector.reporter
         ).toList()
 
         assertTrue(
