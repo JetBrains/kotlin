@@ -69,6 +69,11 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
         runTest("idea/testData/fir/multiModule/javaGetPrefixConflict/");
     }
 
+    @TestMetadata("javaInheritsKotlinDerived")
+    public void testJavaInheritsKotlinDerived() throws Exception {
+        runTest("idea/testData/fir/multiModule/javaInheritsKotlinDerived/");
+    }
+
     @TestMetadata("javaInheritsKotlinExtension")
     public void testJavaInheritsKotlinExtension() throws Exception {
         runTest("idea/testData/fir/multiModule/javaInheritsKotlinExtension/");
