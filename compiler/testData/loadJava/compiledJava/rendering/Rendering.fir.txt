@@ -1,2 +1,4 @@
 public open class Rendering : R|kotlin/Any| {
+    public constructor(): R|test/Rendering|
+
 }

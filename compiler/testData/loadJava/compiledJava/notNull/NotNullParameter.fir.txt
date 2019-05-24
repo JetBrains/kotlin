@@ -1,4 +1,6 @@
 public open class NotNullParameter : R|kotlin/Any| {
     public open operator fun hi(@R|org/jetbrains/annotations/NotNull|() param: R|kotlin/String|): R|kotlin/Unit|
 
+    public constructor(): R|test/NotNullParameter|
+
 }

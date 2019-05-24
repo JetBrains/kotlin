@@ -1,2 +1,4 @@
 public final class FakeStaticOverrides : R|kotlin/Any| {
+    public constructor(): R|test/FakeStaticOverrides|
+
 }

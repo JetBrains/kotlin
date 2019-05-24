@@ -1,2 +1,4 @@
 public open class NestedClass : R|kotlin/Any| {
+    public constructor(): R|test/NestedClass|
+
 }

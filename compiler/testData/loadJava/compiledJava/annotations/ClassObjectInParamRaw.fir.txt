@@ -1,2 +1,4 @@
 public open class ClassObjectInParamRaw : R|kotlin/Any| {
+    public constructor(): R|test/ClassObjectInParamRaw|
+
 }

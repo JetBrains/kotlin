@@ -3,4 +3,6 @@ public open class MethodWithMappedClasses : R|kotlin/Any| {
 
     public open operator fun <T> copyMap(dest: R|ft<kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>, in T>, kotlin/collections/Map<ft<kotlin/String, kotlin/String?>, in T>?>|!, src: R|ft<kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>, ft<T, T?>>, kotlin/collections/Map<ft<kotlin/String, kotlin/String?>, ft<T, T?>>?>|!): R|kotlin/Unit|
 
+    public constructor(): R|test/MethodWithMappedClasses|
+
 }

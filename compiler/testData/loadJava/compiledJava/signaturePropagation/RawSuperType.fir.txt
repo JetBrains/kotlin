@@ -1,2 +1,4 @@
 public open class RawSuperType : R|kotlin/Any| {
+    public constructor(): R|test/RawSuperType|
+
 }

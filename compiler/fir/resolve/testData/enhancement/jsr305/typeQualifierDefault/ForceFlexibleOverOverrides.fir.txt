@@ -7,6 +7,8 @@
 
     public open operator fun foobar(@R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.UNKNOWN|()) x: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
 
+    public constructor(): R|A|
+
 }
 public abstract interface B : R|kotlin/Any| {
     public abstract operator fun foo(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/Unit|

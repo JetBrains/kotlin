@@ -5,4 +5,6 @@ public open class TypeParameterOfMethod : R|kotlin/Any| {
 
     public open static operator fun <A : R|kotlin/CharSequence|, B : R|kotlin/collections/MutableList<A>|> method(a: R|ft<java/util/Comparator<ft<A, A?>>, java/util/Comparator<ft<A, A?>>?>|!, b: R|ft<B, B?>|!): R|kotlin/Unit|
 
+    public constructor(): R|test/TypeParameterOfMethod|
+
 }

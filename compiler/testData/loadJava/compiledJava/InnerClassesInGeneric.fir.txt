@@ -1,2 +1,4 @@
 public open class InnerClassesInGeneric<P, Q> : R|kotlin/Any| {
+    public constructor<P, Q>(): R|test/InnerClassesInGeneric<P, Q>|
+
 }

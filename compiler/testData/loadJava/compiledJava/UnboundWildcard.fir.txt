@@ -3,4 +3,6 @@ public final class UnboundWildcard : R|kotlin/Any| {
 
     public final operator fun collection(): R|ft<kotlin/collections/MutableCollection<*>, kotlin/collections/Collection<*>?>|!
 
+    public constructor(): R|test/UnboundWildcard|
+
 }

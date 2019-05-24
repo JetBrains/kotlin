@@ -1,4 +1,6 @@
 public open class JavaBeanVal : R|kotlin/Any| {
     public open operator fun getColor(): R|ft<kotlin/String, kotlin/String?>|!
 
+    public constructor(): R|test/JavaBeanVal|
+
 }

@@ -7,6 +7,8 @@ public/*package*/ open class A : R|kotlin/Any| {
 
     public open operator fun bam(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Mixed, Mixed?>|! = R|/Mixed.NOT_ENTRY_EITHER|): R|ft<Mixed, Mixed?>|!
 
+    public constructor(): R|A|
+
 }
 public final enum class Mixed : R|kotlin/Enum<Mixed>| {
     public final static field NOT_ENTRY_EITHER: R|ft<Mixed, Mixed?>|!

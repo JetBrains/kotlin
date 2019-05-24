@@ -3,4 +3,6 @@ public open class DifferentGetterAndSetter : R|kotlin/Any| {
 
     public open operator fun getSomething(): R|kotlin/Int|
 
+    public constructor(): R|test/DifferentGetterAndSetter|
+
 }

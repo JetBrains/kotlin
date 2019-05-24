@@ -3,4 +3,6 @@ public open class JavaBeanVar : R|kotlin/Any| {
 
     public open operator fun setColor(string: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
 
+    public constructor(): R|test/JavaBeanVar|
+
 }

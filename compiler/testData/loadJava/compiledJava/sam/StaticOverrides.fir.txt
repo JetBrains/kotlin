@@ -1,2 +1,4 @@
 public final class StaticOverrides : R|kotlin/Any| {
+    public constructor(): R|test/StaticOverrides|
+
 }

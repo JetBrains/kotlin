@@ -3,4 +3,6 @@ public open class TwoSetters : R|kotlin/Any| {
 
     public open operator fun setSize(size: R|kotlin/Int|): R|kotlin/Unit|
 
+    public constructor(): R|test/TwoSetters|
+
 }

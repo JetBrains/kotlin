@@ -3,8 +3,12 @@ public open class A : R|kotlin/Any| {
 
     public open operator fun bar(@R|kotlin/annotations/jvm/internal/DefaultNull|() x: R|kotlin/Int| = Null(null)): R|kotlin/Unit|
 
+    public constructor(): R|A|
+
 }
 public open class B<T> : R|kotlin/Any| {
     public open operator fun foo(@R|kotlin/annotations/jvm/internal/DefaultNull|() t: R|ft<T, T?>|! = Null(null)): R|kotlin/Unit|
+
+    public constructor<T>(): R|B<T>|
 
 }

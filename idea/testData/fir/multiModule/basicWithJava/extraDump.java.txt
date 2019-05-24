@@ -1,2 +1,4 @@
 public open class Some : R|kotlin/Any| {
+    public constructor(): R|Some|
+
 }

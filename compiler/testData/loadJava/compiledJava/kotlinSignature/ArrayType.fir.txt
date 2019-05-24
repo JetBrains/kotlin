@@ -1,4 +1,6 @@
 public open class ArrayType : R|kotlin/Any| {
     public open operator fun foo(): R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|
 
+    public constructor(): R|test/ArrayType|
+
 }

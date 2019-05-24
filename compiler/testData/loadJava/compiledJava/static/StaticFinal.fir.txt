@@ -11,4 +11,6 @@ public open class StaticFinal : R|kotlin/Any| {
 
     private final static field privateNull: R|ft<kotlin/String, kotlin/String?>|!
 
+    public constructor(): R|test/StaticFinal|
+
 }

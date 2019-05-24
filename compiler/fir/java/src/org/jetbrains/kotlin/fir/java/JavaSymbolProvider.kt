@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.java
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -206,14 +209,14 @@ class JavaSymbolProvider(
                         }
                         declarations += firJavaMethod
                     }
-                    for (javaConstructor in javaClass.constructors) {
-                        val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
+                    val javaClassDeclaredConstructors = javaClass.constructors
+                    val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
+
+                    fun addJavaConstructor(visibility: Visibility = Visibilities.PUBLIC): FirJavaConstructor {
                         val constructorSymbol = FirFunctionSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
-                        val constructorTypeParameters = javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
-                        val typeParameters = classTypeParameters + constructorTypeParameters
                         val firJavaConstructor = FirJavaConstructor(
-                            this@JavaSymbolProvider.session, constructorSymbol, javaConstructor.visibility,
+                            this@JavaSymbolProvider.session, constructorSymbol, visibility,
                             FirResolvedTypeRefImpl(
                                 this@JavaSymbolProvider.session, null,
                                 firSymbol.constructType(
@@ -221,7 +224,18 @@ class JavaSymbolProvider(
                                 )
                             )
                         ).apply {
-                            this.typeParameters += typeParameters
+                            this.typeParameters += classTypeParameters
+                        }
+                        declarations += firJavaConstructor
+                        return firJavaConstructor
+                    }
+
+                    if (javaClassDeclaredConstructors.isEmpty() && javaClass.classKind == ClassKind.CLASS) {
+                        addJavaConstructor()
+                    }
+                    for (javaConstructor in javaClassDeclaredConstructors) {
+                        addJavaConstructor(javaConstructor.visibility).apply {
+                            this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
                             addAnnotationsFrom(this@JavaSymbolProvider.session, javaConstructor, javaTypeParameterStack)
                             for (valueParameter in javaConstructor.valueParameters) {
                                 valueParameters += valueParameter.toFirValueParameters(
@@ -229,7 +243,6 @@ class JavaSymbolProvider(
                                 )
                             }
                         }
-                        declarations += firJavaConstructor
                     }
                 }
             }

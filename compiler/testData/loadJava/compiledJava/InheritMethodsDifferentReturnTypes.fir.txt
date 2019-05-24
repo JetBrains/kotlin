@@ -1,2 +1,4 @@
 public final class InheritMethodsDifferentReturnTypes : R|kotlin/Any| {
+    public constructor(): R|test/InheritMethodsDifferentReturnTypes|
+
 }

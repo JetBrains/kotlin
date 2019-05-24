@@ -1,4 +1,6 @@
 public open class ProtectedPackageProperty : R|kotlin/Any| {
     protected/*protected and package*/ open field foo: R|kotlin/Int|
 
+    public constructor(): R|test/ProtectedPackageProperty|
+
 }

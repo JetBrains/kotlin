@@ -3,4 +3,6 @@ public open class Some : R|kotlin/Any| {
 
     public open operator fun bar(arr: R|kotlin/IntArray|): R|kotlin/Array<ft<kotlin/String, kotlin/String?>>|
 
+    public constructor(): R|Some|
+
 }
