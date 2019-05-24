@@ -42,7 +42,8 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<<root>.Host>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<<root>.Host> 
     BLOCK_BODY
-      VAR name:<complex-set> type:IrErrorType [val] 
-        ERROR_CALL 'Unresolved reference: <Unresolved name: a>#' type=IrErrorType
-      SET_VAR 'val <complex-set>: IrErrorType [val] declared in <root>.test4' type=IrErrorType origin=null
-        CONST Int type=IrErrorType value=1
+      VAR name:<complex-set> type:<root>.Host [val]
+        CALL 'public abstract fun invoke (): <root>.Host declared in kotlin.Function0' type=<root>.Host origin=null
+          $this: GET_VAR 'a: kotlin.Function0<<root>.Host> declared in <root>.test4' type=kotlin.Function0<<root>.Host> origin=null
+      SET_VAR 'val <complex-set>: <root>.Host [val] declared in <root>.test4' type=<root>.Host origin=null
+        CONST Int type=<root>.Host value=1

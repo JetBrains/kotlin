@@ -4,8 +4,8 @@ FILE: implicitTypeOrder.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun bar(): <ERROR TYPE REF: Unresolved name: foo> {
-            ^bar <Unresolved name: foo>#()
+        public final fun bar(): R|A| {
+            ^bar R|/foo|.R|/A.invoke|()
         }
 
         public final fun invoke(): R|A| {

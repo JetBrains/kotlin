@@ -23,8 +23,8 @@ FILE: explicitReceiver2.kt
         public final val x: R|Bar| = R|/Bar.Bar|()
             public get(): R|Bar|
 
-        public final fun bar(): R|kotlin/Unit| {
-            ^bar R|/x|()
+        public final fun bar(): R|Foo| {
+            ^bar R|/Foo.x|.R|/Bar.invoke|()
         }
 
     }

@@ -1,6 +1,6 @@
 FILE: functionTypes.kt
     public final fun <T> simpleRun(f: R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
-        ^simpleRun <Unresolved name: f>#()
+        ^simpleRun R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(^simpleRun Unit)
     }
     public final fun <T, R> R|kotlin/collections/List<T>|.simpleMap(f: R|kotlin/Function1<T, R>|): R|R| {
     }

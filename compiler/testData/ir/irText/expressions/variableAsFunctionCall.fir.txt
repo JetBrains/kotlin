@@ -7,11 +7,12 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
             BLOCK_BODY
               ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
           FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Function0<kotlin.String> declared in <root>.k' type=kotlin.Function1<kotlin.Function0<kotlin.String>, kotlin.Function0<kotlin.String>> origin=LAMBDA
-  FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:IrErrorType 
+  FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (f: kotlin.Function0<kotlin.Unit>): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: f>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test1 (f: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>'
+        CALL 'public abstract fun invoke (): kotlin.Unit declared in kotlin.Function0' type=kotlin.Unit origin=null
+          $this: GET_VAR 'f: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test2 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:IrErrorType 
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.Unit> 
     BLOCK_BODY
@@ -22,9 +23,9 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
       RETURN type=kotlin.Nothing from='public final fun test3 (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: invoke>#' type=IrErrorType
           CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
-  FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:IrErrorType 
+  FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:kotlin.String
     VALUE_PARAMETER name:ns index:0 type:kotlin.String? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (ns: kotlin.String?): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: invoke>#' type=IrErrorType
-
+      RETURN type=kotlin.Nothing from='public final fun test4 (ns: kotlin.String?): kotlin.String declared in <root>'
+        CALL 'public abstract fun invoke (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
+          $this: CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null

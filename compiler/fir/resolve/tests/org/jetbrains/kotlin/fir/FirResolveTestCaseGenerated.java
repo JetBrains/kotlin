@@ -372,6 +372,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/implicitTypeOrder.kt");
             }
 
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/simple.kt");
+            }
+
             @TestMetadata("threeReceivers.kt")
             public void testThreeReceivers() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/threeReceivers.kt");

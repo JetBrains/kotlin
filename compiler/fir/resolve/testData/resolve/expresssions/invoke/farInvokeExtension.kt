@@ -8,5 +8,5 @@ class Foo {
 
     val x = 0
 
-    fun foo() = x()
+    fun foo() = x() // should resolve to fun x
 }
