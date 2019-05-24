@@ -167,9 +167,7 @@ private fun GradleProjectSettings.setupGradleProjectSettings(projectDirectory: S
   storeProjectFilesExternally = YES
   distributionType = GRADLE_DISTRIBUTION_TYPE?.let(DistributionType::valueOf) ?: DEFAULT_WRAPPED
   gradleHome = GRADLE_HOME ?: suggestGradleHome()
-  with(SettingsContext(project, projectSdk, resolveGradleVersion())) {
-    gradleJvm = getProjectJdk() ?: getMostRecentJdk() ?: getJavaHomeJdk()
-  }
+  gradleJvm = suggestGradleJvm(project, projectSdk, resolveGradleVersion())
 }
 
 private fun suggestGradleHome(): String? {
@@ -180,7 +178,21 @@ private fun suggestGradleHome(): String? {
   return FileUtil.toCanonicalPath(gradleHome.path)
 }
 
+private fun suggestGradleJvm(project: Project, projectSdk: Sdk?, gradleVersion: GradleVersion): String? {
+  with(SettingsContext(project, projectSdk, gradleVersion)) {
+    return getGradleJdk() ?: getProjectJdk() ?: getMostRecentJdk() ?: getJavaHomeJdk()
+  }
+}
+
 private class SettingsContext(val project: Project, val projectSdk: Sdk?, val gradleVersion: GradleVersion)
+
+private fun SettingsContext.getGradleJdk(): String? {
+  val settings = ExternalSystemApiUtil.getSettings(project, SYSTEM_ID)
+  return settings.getLinkedProjectsSettings()
+    .filterIsInstance<GradleProjectSettings>()
+    .mapNotNull { it.gradleJvm }
+    .firstOrNull()
+}
 
 private fun SettingsContext.getJavaHomeJdk(): String? {
   val javaHome = EnvironmentUtil.getEnvironmentMap()["JAVA_HOME"] ?: return null
