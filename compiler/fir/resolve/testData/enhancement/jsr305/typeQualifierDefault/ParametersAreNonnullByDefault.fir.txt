@@ -5,4 +5,6 @@
 
     @R|javax/annotation/Nonnull|() public open operator fun bar(): R|kotlin/String|
 
+    public constructor(): R|A|
+
 }

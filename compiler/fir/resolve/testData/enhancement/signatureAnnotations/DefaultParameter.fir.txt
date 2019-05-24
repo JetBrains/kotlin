@@ -9,4 +9,6 @@ public/*package*/ open class A : R|kotlin/Any| {
 
     public open operator fun wrong(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(hello)) i: R|ft<kotlin/Int, kotlin/Int?>|!): R|kotlin/Unit|
 
+    public constructor(): R|A|
+
 }

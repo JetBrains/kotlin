@@ -3,4 +3,6 @@ public final class TwoFields : R|kotlin/Any| {
 
     public open field b: R|kotlin/Short|
 
+    public constructor(): R|test/TwoFields|
+
 }

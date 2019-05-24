@@ -5,4 +5,6 @@ public/*package*/ open class A : R|kotlin/Any| {
 
     public open operator fun numberName(@R|kotlin/annotations/jvm/internal/ParameterName|(Int(42)) first: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
 
+    public constructor(): R|A|
+
 }

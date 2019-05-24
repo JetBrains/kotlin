@@ -1,2 +1,4 @@
 public open class PrivateMembersInHierarchy : R|kotlin/Any| {
+    public constructor(): R|test/PrivateMembersInHierarchy|
+
 }

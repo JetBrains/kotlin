@@ -1,2 +1,4 @@
 public open class TypeParameterOfOuterClass<T> : R|kotlin/Any| {
+    public constructor<T>(): R|test/TypeParameterOfOuterClass<T>|
+
 }

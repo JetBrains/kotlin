@@ -1,4 +1,6 @@
 public open class NotNullField : R|kotlin/Any| {
     @R|org/jetbrains/annotations/NotNull|() public open field hi: R|kotlin/String|
 
+    public constructor(): R|test/NotNullField|
+
 }

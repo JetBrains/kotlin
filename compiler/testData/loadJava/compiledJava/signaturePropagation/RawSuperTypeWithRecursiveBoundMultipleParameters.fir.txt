@@ -1,2 +1,4 @@
 public open class RawSuperTypeWithRecursiveBoundMultipleParameters : R|kotlin/Any| {
+    public constructor(): R|test/RawSuperTypeWithRecursiveBoundMultipleParameters|
+
 }

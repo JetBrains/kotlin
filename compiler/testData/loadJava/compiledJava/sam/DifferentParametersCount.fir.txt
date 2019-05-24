@@ -1,2 +1,4 @@
 public final class DifferentParametersCount : R|kotlin/Any| {
+    public constructor(): R|test/DifferentParametersCount|
+
 }

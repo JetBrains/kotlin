@@ -3,4 +3,6 @@ public open class ModalityOfFakeOverrides : R|java/util/AbstractList<kotlin/Stri
 
     @R|java/lang/Override|() public open operator fun size(): R|kotlin/Int|
 
+    public constructor(): R|test/ModalityOfFakeOverrides|
+
 }

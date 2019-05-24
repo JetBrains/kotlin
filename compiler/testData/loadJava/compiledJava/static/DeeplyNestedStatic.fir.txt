@@ -1,2 +1,4 @@
 public open class DeeplyNestedStatic : R|kotlin/Any| {
+    public constructor(): R|test/DeeplyNestedStatic|
+
 }

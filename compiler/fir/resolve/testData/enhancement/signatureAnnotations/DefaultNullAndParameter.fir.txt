@@ -7,6 +7,8 @@ public open class A : R|kotlin/Any| {
 
     public open operator fun baz(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(42)) a: R|ft<kotlin/Int, kotlin/Int?>|! = Int(42)): R|kotlin/Unit|
 
+    public constructor(): R|A|
+
 }
 public abstract interface AInt : R|kotlin/Any| {
     public abstract operator fun foo(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(42)) i: R|ft<kotlin/Int, kotlin/Int?>|! = Int(42)): R|kotlin/Unit|
@@ -21,6 +23,10 @@ public open class B : R|A| {
 
     public open operator fun bam(@R|kotlin/annotations/jvm/internal/DefaultNull|() @R|kotlin/annotations/jvm/internal/DefaultValue|(String(42)) a: R|ft<kotlin/Int, kotlin/Int?>|! = Int(42)): R|kotlin/Unit|
 
+    public constructor(): R|B|
+
 }
 public open class C : R|A|, R|AInt| {
+    public constructor(): R|C|
+
 }

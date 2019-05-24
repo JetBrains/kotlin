@@ -5,4 +5,6 @@ public open class NonNullNever : R|kotlin/Any| {
 
     @R|MyNullable|() public open operator fun foo(@R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) x: R|kotlin/String|?, @R|MyNullable|() y: R|kotlin/CharSequence|?): R|kotlin/String|?
 
+    public constructor(): R|NonNullNever|
+
 }

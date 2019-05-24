@@ -1,2 +1,4 @@
 public open class AnnotationTargets : R|kotlin/Any| {
+    public constructor(): R|test/AnnotationTargets|
+
 }

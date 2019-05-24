@@ -1,2 +1,4 @@
 public open class DeeplyInnerClass : R|kotlin/Any| {
+    public constructor(): R|test/DeeplyInnerClass|
+
 }

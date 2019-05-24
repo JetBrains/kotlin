@@ -1,2 +1,4 @@
 public open class InnerOfGeneric : R|kotlin/Any| {
+    public constructor(): R|test/InnerOfGeneric|
+
 }

@@ -3,4 +3,6 @@ public final class ClassWithConstVal : R|kotlin/Any| {
 
     public final field f2: R|kotlin/Int|
 
+    public constructor(): R|test/ClassWithConstVal|
+
 }

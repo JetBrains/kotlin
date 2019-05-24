@@ -5,4 +5,6 @@ public open class PropertyArrayTypes<T> : R|kotlin/Any| {
 
     public open field genericArray: R|kotlin/Array<ft<T, T?>>|
 
+    public constructor<T>(): R|test/PropertyArrayTypes<T>|
+
 }

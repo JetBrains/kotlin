@@ -1,2 +1,4 @@
 public open class ConstructorInProtectedStaticNestedClass : R|kotlin/Any| {
+    public constructor(): R|test/ConstructorInProtectedStaticNestedClass|
+
 }

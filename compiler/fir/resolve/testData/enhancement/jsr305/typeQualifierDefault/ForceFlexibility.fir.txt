@@ -3,6 +3,8 @@
 
     @R|spr/ForceFlexibility|() public open operator fun bar(x: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() y: R|kotlin/CharSequence|): R|ft<kotlin/String, kotlin/String?>|!
 
+    public constructor(): R|A|
+
 }
 @R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) @R|java/lang/annotation/Documented|() @R|spr/UnknownNullability|() @R|javax/annotation/meta/TypeQualifierDefault|(<implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|(), R|java/lang/annotation/ElementType.PARAMETER|())) public abstract annotation class ForceFlexibility : R|kotlin/Annotation| {
 }
