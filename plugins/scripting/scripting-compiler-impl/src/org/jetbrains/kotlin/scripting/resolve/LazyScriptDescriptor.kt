@@ -204,7 +204,7 @@ class LazyScriptDescriptor(
             // TODO: use PositioningStrategies to highlight some specific place in case of error, instead of treating the whole file as invalid
             resolveSession.trace.report(
                 errorDiagnostic.on(
-                    scriptInfo.script,
+                    scriptInfo.script.containingFile,
                     arg
                 )
             )
