@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassUseSiteScope(
     klass: FirRegularClass,
     session: FirSession,
-    internal val superTypesScope: FirScope,
+    private val superTypesScope: FirScope,
     private val declaredMemberScope: FirScope
 ) : FirAbstractProviderBasedScope(session, lookupInFir = true) {
     internal val symbol = klass.symbol
@@ -169,10 +169,27 @@ class JavaClassUseSiteScope(
     private fun processAccessorFunctionsByName(
         propertyName: Name,
         accessorName: Name,
+        isGetter: Boolean,
         processor: (ConePropertySymbol) -> ProcessorAction
     ): ProcessorAction {
         val overrideCandidates = mutableSetOf<ConeFunctionSymbol>()
         if (!declaredMemberScope.processFunctionsByName(accessorName) { functionSymbol ->
+                if (functionSymbol is FirFunctionSymbol) {
+                    val fir = functionSymbol.fir
+                    if (fir is FirNamedFunction) {
+                        if (fir.isStatic) {
+                            return@processFunctionsByName ProcessorAction.NEXT
+                        }
+                        when (isGetter) {
+                            true -> if (fir.valueParameters.isNotEmpty()) {
+                                return@processFunctionsByName ProcessorAction.NEXT
+                            }
+                            false -> if (fir.valueParameters.size != 1) {
+                                return@processFunctionsByName ProcessorAction.NEXT
+                            }
+                        }
+                    }
+                }
                 overrideCandidates += functionSymbol
                 val accessorSymbol = FirAccessorSymbol(
                     accessorId = functionSymbol.callableId,
@@ -207,7 +224,7 @@ class JavaClassUseSiteScope(
         ) return ProcessorAction.STOP
 
         val getterName = Name.identifier(getterPrefix + name.asString().capitalize())
-        return processAccessorFunctionsByName(name, getterName, processor)
+        return processAccessorFunctionsByName(name, getterName, isGetter = true, processor = processor)
     }
 
     companion object {
