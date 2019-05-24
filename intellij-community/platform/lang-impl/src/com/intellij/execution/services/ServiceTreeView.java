@@ -142,12 +142,11 @@ class ServiceTreeView extends ServiceView {
 
     ServiceViewItem updatedItem = getModel().findItem(lastSelection);
     myLastSelection = updatedItem;
-    if (updatedItem == null) return;
 
     AppUIUtil.invokeOnEdt(() -> {
       if (mySelected && updatedItem == myLastSelection) {
-        ServiceViewDescriptor descriptor = updatedItem.getViewDescriptor();
-        myUi.setDetailsComponent(descriptor.getContentComponent());
+        ServiceViewDescriptor descriptor = updatedItem == null ? null : updatedItem.getViewDescriptor();
+        myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
       }
     }, myProject.getDisposed());
   }
