@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasPlatformDependentAnnotation
@@ -42,17 +44,26 @@ class DescriptorBasedFunctionHandleForJvm(
     override val mightBeIncorrectCode: Boolean
         get() = state.classBuilderMode.mightBeIncorrectCode
 
-    override fun hashCode(): Int = descriptor.containerEntityForEqualityAndHashCode().hashCode() + 31 * asmMethod.hashCode()
-    override fun equals(other: Any?): Boolean {
-        if (other !is DescriptorBasedFunctionHandleForJvm) return false
+    override fun hashCode(): Int =
+        (descriptor.containerEntityForEqualityAndHashCode().hashCode() * 31 +
+                descriptor.isJavaForKotlinOverrideProperty.hashCode()) * 31 +
+                asmMethod.hashCode()
 
-        return asmMethod == other.asmMethod &&
-                descriptor.containerEntityForEqualityAndHashCode() == other.descriptor.containerEntityForEqualityAndHashCode()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+
+        return other is DescriptorBasedFunctionHandleForJvm &&
+                asmMethod == other.asmMethod &&
+                descriptor.containerEntityForEqualityAndHashCode() == other.descriptor.containerEntityForEqualityAndHashCode() &&
+                descriptor.isJavaForKotlinOverrideProperty == other.descriptor.isJavaForKotlinOverrideProperty
     }
 }
 
 private fun FunctionDescriptor.containerEntityForEqualityAndHashCode(): Any =
     (containingDeclaration as? ClassDescriptor)?.typeConstructor ?: containingDeclaration
+
+private val FunctionDescriptor.isJavaForKotlinOverrideProperty: Boolean
+    get() = this is PropertyAccessorDescriptor && correspondingProperty is JavaForKotlinOverridePropertyDescriptor
 
 private fun CallableMemberDescriptor.isJvmDefaultOrPlatformDependent() =
     hasJvmDefaultAnnotation() || hasPlatformDependentAnnotation()

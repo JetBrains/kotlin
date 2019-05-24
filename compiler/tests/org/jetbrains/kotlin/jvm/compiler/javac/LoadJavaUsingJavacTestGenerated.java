@@ -5052,6 +5052,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
             runTest("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/InheritParameterName.kt");
         }
 
+        @TestMetadata("javaGetterImplementsKotlinProperty.kt")
+        public void testJavaGetterImplementsKotlinProperty() throws Exception {
+            runTest("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/javaGetterImplementsKotlinProperty.kt");
+        }
+
         @TestMetadata("javaRefersToKotlin.kt")
         public void testJavaRefersToKotlin() throws Exception {
             runTest("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/javaRefersToKotlin.kt");
