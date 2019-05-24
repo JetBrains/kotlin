@@ -199,7 +199,12 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     { expression }.toFirExpression("Argument is absent")
                 }
             }
-            return if (name != null) FirNamedArgumentExpressionImpl(session, expression, name, firExpression) else firExpression
+            val isSpread = getSpreadElement() != null
+            return when {
+                name != null -> FirNamedArgumentExpressionImpl(session, expression, name, isSpread, firExpression)
+                isSpread -> FirSpreadArgumentExpressionImpl(session, expression, firExpression)
+                else -> firExpression
+            }
         }
 
         private fun KtPropertyAccessor?.toFirPropertyAccessor(

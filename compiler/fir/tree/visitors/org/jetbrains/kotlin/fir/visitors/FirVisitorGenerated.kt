@@ -300,6 +300,10 @@ abstract class FirVisitor<out R, in D> {
         return visitWrappedArgumentExpression(namedArgumentExpression, data)
     }
 
+    open fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): R {
+        return visitWrappedArgumentExpression(spreadArgumentExpression, data)
+    }
+
     open fun visitLoop(loop: FirLoop, data: D): R {
         return visitStatement(loop, data)
     }

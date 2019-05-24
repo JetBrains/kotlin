@@ -1166,17 +1166,10 @@ private object ReplaceInArguments : FirTransformer<Map<FirElement, FirElement>>(
         return (functionCall.transformChildren(this, data) as FirStatement).compose()
     }
 
-    override fun transformNamedArgumentExpression(
-        namedArgumentExpression: FirNamedArgumentExpression,
+    override fun transformWrappedArgumentExpression(
+        wrappedArgumentExpression: FirWrappedArgumentExpression,
         data: Map<FirElement, FirElement>
     ): CompositeTransformResult<FirStatement> {
-        return (namedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
-    }
-
-    override fun transformLambdaArgumentExpression(
-        lambdaArgumentExpression: FirLambdaArgumentExpression,
-        data: Map<FirElement, FirElement>
-    ): CompositeTransformResult<FirStatement> {
-        return (lambdaArgumentExpression.transformChildren(this, data) as FirStatement).compose()
+        return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
     }
 }

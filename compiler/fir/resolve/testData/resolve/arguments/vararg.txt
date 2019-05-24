@@ -7,9 +7,10 @@ FILE: vararg.kt
         R|/foo|(Int(1))
         R|/foo|(Int(1), String())
         R|/foo|(Int(1), String(my), String(yours))
+        R|/foo|(Int(1), *R|kotlin/arrayOf|<R|kotlin/String|>(String(my), String(yours)))
         <Inapplicable(INAPPLICABLE): [/foo]>#(String())
         <Inapplicable(INAPPLICABLE): [/foo]>#(Int(1), Int(2))
-        R|/bar|(Int(1), z = Boolean(true), y = R|kotlin/arrayOf|<R|TypeVariable(T)|>(String(my), String(yours)))
+        R|/bar|(Int(1), z = Boolean(true), y = *R|kotlin/arrayOf|<R|kotlin/String|>(String(my), String(yours)))
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(Int(0), z = Boolean(false), y = String(), y = String(other))
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(Int(0), String(), Boolean(true))
     }

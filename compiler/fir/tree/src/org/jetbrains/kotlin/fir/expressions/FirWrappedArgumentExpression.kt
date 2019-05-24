@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 interface FirWrappedArgumentExpression : FirExpression {
     val expression: FirExpression
 
+    val isSpread: Boolean
+        get() = false
+
     override val typeRef: FirTypeRef
         get() = expression.typeRef
 

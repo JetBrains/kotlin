@@ -83,7 +83,7 @@ abstract class AbstractAnnotationDeserializer(
                     val parameter = parameterByName[name] ?: return@mapNotNull null
                     val value = resolveValue(parameter.returnTypeRef, it.value, nameResolver) ?: return@mapNotNull null
                     FirNamedArgumentExpressionImpl(
-                        session, null, name, value
+                        session, null, name, false, value
                     )
                 }
             }

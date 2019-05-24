@@ -21,16 +21,15 @@ FILE fqName:<root> fileName:/vararg.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Array<kotlin.String> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<kotlin.String> visibility:public [final,static] ' type=kotlin.Array<kotlin.String> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Cannot bind 4 arguments to arrayOf call with 1 parameters' type=kotlin.Array<kotlin.String>
+        ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/arrayOf]>#' type=IrErrorType
           CONST String type=kotlin.String value="0"
           CALL 'public final fun <get-test2> (): kotlin.Array<kotlin.String> declared in <root>' type=kotlin.Array<kotlin.String> origin=null
           CALL 'public final fun <get-test1> (): kotlin.Array<kotlin.String> declared in <root>' type=kotlin.Array<kotlin.String> origin=null
           CONST String type=kotlin.String value="4"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String> 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:IrErrorType
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Array<kotlin.String> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:public [final,static] ' type=kotlin.Array<kotlin.String> origin=null
-
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null

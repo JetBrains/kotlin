@@ -300,6 +300,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitWrappedArgumentExpression(namedArgumentExpression, null)
     }
 
+    open fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression) {
+        visitWrappedArgumentExpression(spreadArgumentExpression, null)
+    }
+
     open fun visitLoop(loop: FirLoop) {
         visitStatement(loop, null)
     }
@@ -678,6 +682,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Nothing?) {
         visitReturnExpression(returnExpression)
+    }
+
+    final override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: Nothing?) {
+        visitSpreadArgumentExpression(spreadArgumentExpression)
     }
 
     final override fun visitStarProjection(starProjection: FirStarProjection, data: Nothing?) {

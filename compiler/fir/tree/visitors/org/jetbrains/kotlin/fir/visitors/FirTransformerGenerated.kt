@@ -300,6 +300,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformWrappedArgumentExpression(namedArgumentExpression, data)
     }
 
+    open fun transformSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformWrappedArgumentExpression(spreadArgumentExpression, data)
+    }
+
     open fun transformLoop(loop: FirLoop, data: D): CompositeTransformResult<FirStatement> {
         return transformStatement(loop, data)
     }
@@ -678,6 +682,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitReturnExpression(returnExpression: FirReturnExpression, data: D): CompositeTransformResult<FirElement> {
         return transformReturnExpression(returnExpression, data)
+    }
+
+    final override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformSpreadArgumentExpression(spreadArgumentExpression, data)
     }
 
     final override fun visitStarProjection(starProjection: FirStarProjection, data: D): CompositeTransformResult<FirElement> {

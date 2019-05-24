@@ -288,7 +288,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 result += FirAnnotationCallImpl(session, null, null, symbol.toDefaultResolvedTypeRef(annotationClassId)).apply {
                     for ((name, expression) in argumentMap) {
                         arguments += FirNamedArgumentExpressionImpl(
-                            this@KotlinDeserializedJvmSymbolsProvider.session, null, name, expression
+                            this@KotlinDeserializedJvmSymbolsProvider.session, null, name, false, expression
                         )
                     }
                 }

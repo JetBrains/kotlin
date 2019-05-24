@@ -5,6 +5,7 @@ fun test() {
     foo(1)
     foo(1, "")
     foo(1, "my", "yours")
+    foo(1, *arrayOf("my", "yours"))
 
     foo("")
     foo(1, 2)

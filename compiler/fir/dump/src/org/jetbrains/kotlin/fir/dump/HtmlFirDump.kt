@@ -1212,7 +1212,15 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirNamedArgumentExpression -> {
                     simpleName(expression.name)
                     +" = "
+                    if (expression.isSpread) {
+                        +"*"
+                    }
                     generate(expression.expression)
+                }
+                is FirSpreadArgumentExpression -> {
+                    +"*"
+                    generate(expression.expression)
+
                 }
                 is FirLambdaArgumentExpression -> {
                     keyword("lambda")

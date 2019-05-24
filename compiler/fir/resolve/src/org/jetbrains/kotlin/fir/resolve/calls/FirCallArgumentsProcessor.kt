@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -13,8 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.types.ConeClassType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 class FirCallArgumentsProcessor(
     private val function: FirFunction,
@@ -25,7 +22,7 @@ class FirCallArgumentsProcessor(
     fun process(): Result {
         var currentState: State = State.PositionalOnly(function.valueParameters)
         for (argument in arguments) {
-            if (argument is FirWrappedArgumentExpression) {
+            if (argument is FirNamedArgumentExpression || argument is FirLambdaArgumentExpression) {
                 currentState = State.PositionalThenNamed(
                     function.valueParameters,
                     currentState.argumentMap,
@@ -65,21 +62,19 @@ class FirCallArgumentsProcessor(
 
             val currentParameter get() = valueParameters.getOrNull(currentParameterIndex)
 
-            fun nextParameter() {
-                val currentParameter = currentParameter ?: return
-                if (currentParameter.isVararg) return
-                usedParameters += currentParameter
-                currentParameterIndex++
-            }
-
             override fun processArgument(argument: FirExpression): MappingStatus {
                 require(argument !is FirNamedArgumentExpression) {
-                    "Positional-only argument processor state should not receiver ${argument.render()}"
+                    "Positional-only argument processor state should not receive ${argument.render()}"
                 }
 
                 val currentParameter = currentParameter ?: return MappingStatus.ERROR
                 argumentMap[argument] = currentParameter
-                nextParameter()
+                if (!currentParameter.isVararg ||
+                    argument is FirWrappedArgumentExpression && argument.isSpread
+                ) {
+                    usedParameters += currentParameter
+                    currentParameterIndex++
+                }
 
                 return MappingStatus.SUCCESS
             }

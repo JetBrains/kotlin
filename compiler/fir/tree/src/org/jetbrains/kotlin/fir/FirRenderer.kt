@@ -627,7 +627,17 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) {
         print(namedArgumentExpression.name)
         print(" = ")
+        if (namedArgumentExpression.isSpread) {
+            print("*")
+        }
         namedArgumentExpression.expression.accept(this)
+    }
+
+    override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression) {
+        if (spreadArgumentExpression.isSpread) {
+            print("*")
+        }
+        spreadArgumentExpression.expression.accept(this)
     }
 
     override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression) {

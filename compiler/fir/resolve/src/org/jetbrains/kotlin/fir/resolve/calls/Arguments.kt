@@ -54,18 +54,7 @@ fun resolveArgumentExpression(
         is FirCallableReferenceAccess -> Unit
         // TODO:!
         //TODO: Collection literal
-        is FirLambdaArgumentExpression -> resolveArgumentExpression(
-            csBuilder,
-            argument.expression,
-            expectedType,
-            expectedTypeRef,
-            sink,
-            isReceiver,
-            isSafeCall,
-            acceptLambdaAtoms,
-            typeProvider
-        )
-        is FirNamedArgumentExpression -> resolveArgumentExpression(
+        is FirWrappedArgumentExpression -> resolveArgumentExpression(
             csBuilder,
             argument.expression,
             expectedType,
@@ -180,7 +169,7 @@ internal fun FirExpression.getExpectedType(
 //    if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
 //        parameter.type.unwrap()
 //    } else {
-    if (parameter.isVararg) {
+    if (parameter.isVararg && (this !is FirWrappedArgumentExpression || !isSpread)) {
         parameter.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().varargElementType(session)
     } else {
         parameter.returnTypeRef.coneTypeUnsafe()
