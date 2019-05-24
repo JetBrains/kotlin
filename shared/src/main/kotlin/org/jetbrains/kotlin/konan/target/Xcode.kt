@@ -44,7 +44,7 @@ private object CurrentXcode : Xcode {
 
     override val additionalTools: String by lazy {
         val bitcodeBuildToolPath = xcrun("-f", "bitcode-build-tool")
-        File(bitcodeBuildToolPath).parentFile.absolutePath
+        File(bitcodeBuildToolPath).parentFile.parentFile.absolutePath
     }
 
     override val macosxSdk by lazy { getSdkPath("macosx") }
