@@ -57,7 +57,7 @@ android {
         unitTests.all {
             // There is only one version of the compose plugin built so the debug tests are
             // sufficient as they test that one version
-            if (it.name == 'testReleaseUnitTest') {
+            if (it.name == 'testReleaseUnitTest' || it.name == 'testDebugUnitTest') {
                 filter {
                     exclude '*'
                 }
