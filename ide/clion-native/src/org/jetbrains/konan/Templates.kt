@@ -6,7 +6,7 @@ import com.intellij.util.io.systemIndependentPath
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
-import org.jetbrains.konan.util.cidrKotlinPlugin
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -107,7 +107,7 @@ class KonanProjectTemplate(
 }
 
 private fun <T> withProjectTemplateDirectory(action: (File) -> T): T {
-    val projectTemplatesDir = cidrKotlinPlugin.path.resolve("templates")
+    val projectTemplatesDir = KotlinPluginUtil.getPluginPath().resolve("templates")
     check(projectTemplatesDir.isDirectory) { "Project templates directory does not exist: $projectTemplatesDir" }
     return action(projectTemplatesDir)
 }

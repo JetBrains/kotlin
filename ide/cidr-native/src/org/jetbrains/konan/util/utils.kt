@@ -7,8 +7,6 @@
 
 package org.jetbrains.konan.util
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.konan.gradle.KonanProjectDataService
 import org.jetbrains.kotlin.konan.KonanVersion
@@ -30,11 +28,3 @@ fun getKotlinNativeHome(project: Project): String? {
 fun getKotlinNativeVersion(kotlinNativeHome: String): KonanVersion? {
     return LiteKonanDistributionProvider.getDistribution(File(kotlinNativeHome))?.konanVersion
 }
-
-// A descriptor of Kotlin/Native for CLion or Kotlin/Native for AppCode plugin.
-val cidrKotlinPlugin: IdeaPluginDescriptor by lazy {
-    val pluginIn = PluginManager.getPluginByClassName(ForClassloader::class.java.name)
-    PluginManager.getPlugin(pluginIn)!!
-}
-
-private object ForClassloader
