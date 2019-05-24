@@ -428,7 +428,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             when (effectiveVariance) {
                 null -> {
                     return if (conf.errorType) {
-                        ErrorUtils.createErrorType(
+                        createErrorType(
                             "Inconsistent type: $type ($index parameter has declared variance: ${parameter.getVariance()}, " +
                                     "but argument variance is ${argument.getVariance()})"
                         )
