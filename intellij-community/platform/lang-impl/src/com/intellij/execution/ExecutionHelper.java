@@ -20,8 +20,10 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -43,10 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -214,26 +213,39 @@ public class ExecutionHelper {
 
   public static Collection<RunContentDescriptor> findRunningConsole(@NotNull Project project,
                                                                     @NotNull NotNullFunction<? super RunContentDescriptor, Boolean> descriptorMatcher) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    final Ref<Collection<RunContentDescriptor>> ref = new Ref<>();
 
-    RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
-    final RunContentDescriptor selectedContent = contentManager.getSelectedContent();
-    if (selectedContent != null) {
-      final ToolWindow toolWindow = contentManager.getToolWindowByDescriptor(selectedContent);
-      if (toolWindow != null && toolWindow.isVisible()) {
-        if (descriptorMatcher.fun(selectedContent)) {
-          return Collections.singletonList(selectedContent);
+    final Runnable computeDescriptors = () -> {
+      RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
+      final RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+      if (selectedContent != null) {
+        final ToolWindow toolWindow = contentManager.getToolWindowByDescriptor(selectedContent);
+        if (toolWindow != null && toolWindow.isVisible()) {
+          if (descriptorMatcher.fun(selectedContent)) {
+            ref.set(Collections.singletonList(selectedContent));
+            return;
+          }
         }
       }
+
+      final List<RunContentDescriptor> result = new SmartList<>();
+      for (RunContentDescriptor runContentDescriptor : contentManager.getAllDescriptors()) {
+        if (descriptorMatcher.fun(runContentDescriptor)) {
+          result.add(runContentDescriptor);
+        }
+      }
+      ref.set(result);
+    };
+
+    if (ApplicationManager.getApplication().isDispatchThread()) {
+      computeDescriptors.run();
+    }
+    else {
+      LOG.assertTrue(!ApplicationManager.getApplication().isReadAccessAllowed());
+      ApplicationManager.getApplication().invokeAndWait(computeDescriptors);
     }
 
-    final List<RunContentDescriptor> result = new SmartList<>();
-    for (RunContentDescriptor runContentDescriptor : contentManager.getAllDescriptors()) {
-      if (descriptorMatcher.fun(runContentDescriptor)) {
-        result.add(runContentDescriptor);
-      }
-    }
-    return result;
+    return ref.get();
   }
 
   public static List<RunContentDescriptor> collectConsolesByDisplayName(@NotNull Project project,
