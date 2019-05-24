@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -300,7 +298,7 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
 
     val argumentIsFunctional = when (argument) {
-        is SimpleKotlinCallArgument -> argument.receiver.stableType.isSubtypeOfFunctionType()
+        is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
         is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
         else -> false
     }
@@ -322,10 +320,6 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
     return convertedTypeByCandidate
-}
-
-private fun UnwrappedType.isSubtypeOfFunctionType() = anySuperTypeConstructor {
-    it.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
 }
 
 internal object CheckReceivers : ResolutionPart() {

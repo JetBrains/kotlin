@@ -1,0 +1,27 @@
+package
+
+public fun </*0*/ T> MyFuture<T>.setup(): kotlin.Unit
+
+public final class ListenerImpl</*0*/ T, /*1*/ F : MyFuture<T>> : MyListener<F>, Handler /* = (cause: kotlin.Throwable?) -> kotlin.Unit */ {
+    public constructor ListenerImpl</*0*/ T, /*1*/ F : MyFuture<T>>()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun invoke(/*0*/ cause: kotlin.Throwable?): kotlin.Unit
+    public open override /*1*/ fun operationComplete(/*0*/ future: F): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MyFuture</*0*/ V : kotlin.Any!> {
+    public abstract fun addListener(/*0*/ listener: MyListener<out MyFuture<in V!>!>!): MyFuture<V!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MyListener</*0*/ F : MyFuture<*>!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun operationComplete(/*0*/ future: F!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Handler = (cause: kotlin.Throwable?) -> kotlin.Unit
