@@ -1,4 +1,4 @@
-@file:Suppress("PropertyName")
+@file:Suppress("PropertyName", "HasPlatformType", "UnstableApiUsage")
 
 import org.gradle.api.publish.ivy.internal.artifact.FileBasedIvyArtifact
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
@@ -149,10 +149,10 @@ val makeIntellijAnnotations by tasks.creating(Copy::class.java) {
 val mergeSources by tasks.creating(Jar::class.java) {
     dependsOn(sources)
     from(provider { sources.map(::zipTree) })
-    destinationDir = File(repoDir, sources.name)
-    baseName = "intellij"
-    classifier = "sources"
-    version = intellijVersion
+    destinationDirectory.set(File(repoDir, sources.name))
+    archiveBaseName.set("intellij")
+    archiveClassifier.set("sources")
+    archiveVersion.set(intellijVersion)
 }
 
 val sourcesFile = mergeSources.outputs.files.singleFile
