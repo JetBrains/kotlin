@@ -33,6 +33,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
@@ -132,7 +133,10 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         })
 
         val allElementsToResolve = elementsByRange.values.flatten().flatMap { it.collectDescendantsOfType<KtElement>() }
-        val bindingContext = file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
+        val bindingContext =
+            allowResolveInWriteAction {
+                file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
+            }
 
         val result = ArrayList<KotlinReferenceData>()
         for ((range, elements) in elementsByRange) {
