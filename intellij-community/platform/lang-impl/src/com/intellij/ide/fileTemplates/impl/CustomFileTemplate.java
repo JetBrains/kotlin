@@ -57,6 +57,7 @@ public final class CustomFileTemplate extends FileTemplateBase {
     return "";  // todo: some default description?
   }
 
+  @NotNull
   @Override
   public CustomFileTemplate clone() {
     return (CustomFileTemplate)super.clone();

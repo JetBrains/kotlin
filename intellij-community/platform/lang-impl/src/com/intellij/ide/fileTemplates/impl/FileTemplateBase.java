@@ -86,13 +86,13 @@ public abstract class FileTemplateBase implements FileTemplate {
 
   @Override
   @NotNull
-  public final String getText(Map attributes) throws IOException{
+  public final String getText(@NotNull Map attributes) throws IOException{
     return FileTemplateUtil.mergeTemplate(attributes, getText(), false);
   }
 
   @Override
   @NotNull
-  public final String getText(Properties attributes) throws IOException{
+  public final String getText(@NotNull Properties attributes) throws IOException{
     return FileTemplateUtil.mergeTemplate(attributes, getText(), false);
   }
 
@@ -102,6 +102,7 @@ public abstract class FileTemplateBase implements FileTemplate {
     return FileTemplateUtil.calculateAttributes(getText(), properties, false, project);
   }
 
+  @NotNull
   @Override
   public FileTemplateBase clone() {
     try {
