@@ -51,14 +51,19 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     @VisibleForTesting
     var isClsDelegateLoaded = false
 
-    override fun findLightClassData(): LightClassData = super.findLightClassData().also {
+    private inline fun <T> forTooComplex(getter: () -> T): T {
         if (!isClsDelegateLoaded) {
             isClsDelegateLoaded = true
             check(tooComplex) {
                 "Cls delegate shouldn't be loaded for not too complex ultra-light classes! Qualified name: $qualifiedName"
             }
         }
+        return getter()
     }
+
+    override fun findLightClassData(): LightClassData = forTooComplex { super.findLightClassData() }
+
+    override fun getDelegate(): PsiClass = forTooComplex { super.getDelegate() }
 
     private fun allSuperTypes() =
         getDescriptor()?.typeConstructor?.supertypes.orEmpty().asSequence()
@@ -360,5 +365,11 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun getParent(): PsiElement? = if (tooComplex) super.getParent() else containingClass ?: containingFile
 
     override fun getScope(): PsiElement? = if (tooComplex) super.getScope() else parent
+
+    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean {
+        //TODO: Implement inheritor deep to avoid access to clsDelegate
+        return super.isInheritorDeep(baseClass, classToByPass)
+    }
+
     override fun copy(): KtLightClassImpl = KtUltraLightClass(classOrObject.copy() as KtClassOrObject, support)
 }
