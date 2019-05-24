@@ -5,15 +5,28 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
+import java.io.File
 import java.util.*
 
 object KotlinPluginUtil {
+    private class KotlinPluginInfo(val id: PluginId, val version: String, val path: File) {
+        constructor(plugin: IdeaPluginDescriptor) : this(plugin.pluginId, plugin.version, plugin.path)
+    }
 
-    val KOTLIN_PLUGIN_ID: PluginId = PluginManagerCore.getPluginByClassName(KotlinPluginUtil::class.java.name)
-        ?: PluginId.getId("org.jetbrains.kotlin")
+    private val KOTLIN_PLUGIN_INFO: KotlinPluginInfo by lazy {
+        val plugin = PluginManagerCore.getPluginByClassName(KotlinPluginUtil::class.java.name)?.let { pluginId ->
+            PluginManager.getPlugin(pluginId)
+        } ?: error("Kotlin plugin not found: " + Arrays.toString(PluginManagerCore.getPlugins()))
+
+        KotlinPluginInfo(plugin)
+    }
+
+    val KOTLIN_PLUGIN_ID: PluginId
+        get() = KOTLIN_PLUGIN_INFO.id
 
     private const val PATCHED_PLUGIN_VERSION_KEY = "kotlin.plugin.version"
     private val PATCHED_PLUGIN_VERSION: String? = System.getProperty(PATCHED_PLUGIN_VERSION_KEY, null)
@@ -32,9 +45,7 @@ object KotlinPluginUtil {
     @Deprecated("This method returns original plugin version. Please use getPluginVersion() instead.")
     @JvmStatic
     fun getPluginVersionFromIdea(): String {
-        val plugin = PluginManager.getPlugin(KOTLIN_PLUGIN_ID)
-            ?: error("Kotlin plugin not found: " + Arrays.toString(PluginManagerCore.getPlugins()))
-        return plugin.version
+        return KOTLIN_PLUGIN_INFO.version
     }
 
     @JvmStatic
@@ -49,5 +60,9 @@ object KotlinPluginUtil {
 
     fun isDevVersion(): Boolean {
         return getPluginVersion().contains("-dev-")
+    }
+
+    fun getPluginPath(): File {
+        return KOTLIN_PLUGIN_INFO.path
     }
 }
