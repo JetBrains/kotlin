@@ -15,6 +15,7 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.MnemonicHelper;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
+import com.intellij.openapi.actionSystem.impl.ActionButtonWithText;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -23,7 +24,6 @@ import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ui.configuration.actions.IconWithTextAction;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Comparing;
@@ -52,6 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -373,7 +374,12 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
 
     @NotNull @Override
     public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
-      JComponent c = IconWithTextAction.createCustomComponentImpl(this, presentation, place);
+      JComponent c = new ActionButtonWithText(this, presentation, place, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE) {
+        @Override
+        public int getMnemonic() {
+          return KeyEvent.getExtendedKeyCodeForChar(MNEMONIC);
+        }
+      };
       MnemonicHelper.registerMnemonicAction(c, MNEMONIC);
       return c;
     }
