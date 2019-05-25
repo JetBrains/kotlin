@@ -568,18 +568,13 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
 
   @NotNull
   private ActionToolbarImpl createToolbar(@NotNull ActionGroup group) {
-    return tweakToolbar((ActionToolbarImpl)ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true));
-  }
-
-  @NotNull
-  private ActionToolbarImpl tweakToolbar(@NotNull ActionToolbarImpl toolbar) {
+    ActionToolbarImpl toolbar = (ActionToolbarImpl)ActionManager.getInstance()
+      .createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true);
     toolbar.setTargetComponent(this);
     toolbar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
-    toolbar.setBorder(null);
     Utils.setSmallerFontForChildren(toolbar);
     return toolbar;
   }
-
 
   public interface Listener extends EventListener {
     void searchFieldDocumentChanged();
