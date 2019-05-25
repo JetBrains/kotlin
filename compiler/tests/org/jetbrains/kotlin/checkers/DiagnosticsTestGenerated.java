@@ -1711,6 +1711,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/callableReference/parsingPriorityOfGenericArgumentsVsLess.kt");
             }
 
+            @TestMetadata("rewriteAtSliceOnGetOperator.kt")
+            public void testRewriteAtSliceOnGetOperator() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/rewriteAtSliceOnGetOperator.kt");
+            }
+
             @TestMetadata("sam.kt")
             public void testSam() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/sam.kt");
