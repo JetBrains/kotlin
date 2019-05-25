@@ -64,15 +64,17 @@ public inline class Duration internal constructor(internal val _value: Double) :
 
     // splitting to components
 
-    // problem: withComponents can be confused with 'wither' function
-    // perhaps better name would be 'letComponents'
-
-    inline fun <T> withComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
-        action(inHours.toInt(), minutesComponent, secondsComponent, nanosecondsComponent)
-
-    inline fun <T> withComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
+    inline fun <T> toComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
         action(inDays.toInt(), hoursComponent, minutesComponent, secondsComponent, nanosecondsComponent)
 
+    inline fun <T> toComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
+        action(inHours.toInt(), minutesComponent, secondsComponent, nanosecondsComponent)
+
+    inline fun <T> toComponents(action: (minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
+        action(inMinutes.toInt(), secondsComponent, nanosecondsComponent)
+
+    inline fun <T> toComponents(action: (seconds: Long, nanoseconds: Int) -> T): T =
+        action(inSeconds.toLong(), nanosecondsComponent)
 
     @PublishedApi
     internal val hoursComponent: Int get() = (inHours % 24).toInt()
@@ -151,7 +153,7 @@ public inline class Duration internal constructor(internal val _value: Double) :
     fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append('P')
-        absoluteValue().withComponents { days, hours, minutes, seconds, nanoseconds ->
+        absoluteValue().toComponents { days, hours, minutes, seconds, nanoseconds ->
             if (days != 0)
                 append(days).append('D')
 

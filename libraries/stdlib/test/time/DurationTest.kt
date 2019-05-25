@@ -136,13 +136,22 @@ class DurationTest {
             val s = Random.nextInt(60)
             val ns = Random.nextInt(1e9.toInt())
             (h.hours + m.minutes + s.seconds + ns.nanoseconds).run {
-                withComponents { hours, minutes, seconds, nanoseconds ->
+                toComponents { seconds, nanoseconds ->
+                    assertEquals(h.toLong() * 3600 + m * 60 + s, seconds)
+                    assertEquals(ns, nanoseconds)
+                }
+                toComponents { minutes, seconds, nanoseconds ->
+                    assertEquals(h * 60 + m, minutes)
+                    assertEquals(s, seconds)
+                    assertEquals(ns, nanoseconds)
+                }
+                toComponents { hours, minutes, seconds, nanoseconds ->
                     assertEquals(h, hours)
                     assertEquals(m, minutes)
                     assertEquals(s, seconds)
-                    assertEquals(ns, nanoseconds, "ns component of duration ${this.toIsoString()} differs too much, expected: $ns, actual: $nanoseconds")
+                    assertEquals(ns, nanoseconds, "ns component of duration ${toIsoString()} differs too much, expected: $ns, actual: $nanoseconds")
                 }
-                withComponents { days, hours, minutes, seconds, nanoseconds ->
+                toComponents { days, hours, minutes, seconds, nanoseconds ->
                     assertEquals(0, days)
                     assertEquals(h, hours)
                     assertEquals(m, minutes)
@@ -156,7 +165,7 @@ class DurationTest {
     @Test
     fun componentsOfCarriedSum() {
         (36.hours + 90.minutes + 90.seconds + 1500.milliseconds).run {
-            withComponents { days, hours, minutes, seconds, nanoseconds ->
+            toComponents { days, hours, minutes, seconds, nanoseconds ->
                 assertEquals(1, days)
                 assertEquals(13, hours)
                 assertEquals(31, minutes)
