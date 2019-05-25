@@ -11,7 +11,7 @@ package kotlin.time
  * The only operation provided by the clock is [mark]. It returns a [ClockMark], which can be used to query the elapsed time later.
  *
  * @see [measureTime]
- * @see [withMeasureTime]
+ * @see [measureTimedValue]
  */
 public interface Clock {
     /**

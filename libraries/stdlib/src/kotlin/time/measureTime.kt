@@ -7,42 +7,69 @@ package kotlin.time
 
 import kotlin.contracts.*
 
-public inline fun measureTime(action: () -> Unit): Duration {
+/**
+ * Executes the given function [block] and returns the duration of elapsed time interval.
+ *
+ * The elapsed time is measured with [MonoClock].
+ */
+public inline fun measureTime(block: () -> Unit): Duration {
     contract {
-        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    return MonoClock.measureTime(action)
+    return MonoClock.measureTime(block)
 }
 
 
-public inline fun Clock.measureTime(action: () -> Unit): Duration {
+/**
+ * Executes the given function [block] and returns the duration of elapsed time interval.
+ *
+ * The elapsed time is measured with the specified `this` [Clock] instance.
+ */
+public inline fun Clock.measureTime(block: () -> Unit): Duration {
     contract {
-        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
     val mark = mark()
-    action()
+    block()
     return mark.elapsed()
 }
 
 
+/**
+ * Data class representing a result of executing an action, along with the duration of elapsed time interval.
+ *
+ * @property value the result of the action.
+ * @property duration the time elapsed to execute the action.
+ */
+public data class TimedValue<T>(val value: T, val duration: Duration)
 
-public data class DurationMeasured<T>(val value: T, val duration: Duration)
-
-public inline fun <T> withMeasureTime(action: () -> T): DurationMeasured<T> {
+/**
+ * Executes the given function [block] and returns an instance of [TimedValue] class, containing both
+ * the result of the function execution and the duration of elapsed time interval.
+ *
+ * The elapsed time is measured with [MonoClock].
+ */
+public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
-        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    return MonoClock.withMeasureTime(action)
+    return MonoClock.measureTimedValue(block)
 }
 
-public inline fun <T> Clock.withMeasureTime(action: () -> T): DurationMeasured<T> {
+/**
+ * Executes the given [block] and returns an instance of [TimedValue] class, containing both
+ * the result of function execution and the duration of elapsed time interval.
+ *
+ * The elapsed time is measured with the specified `this` [Clock] instance.
+ */
+public inline fun <T> Clock.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
-        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
     val mark = mark()
-    val result = action()
-    return DurationMeasured(result, mark.elapsed())
+    val result = block()
+    return TimedValue(result, mark.elapsed())
 }

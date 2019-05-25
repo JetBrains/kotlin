@@ -36,7 +36,7 @@ class MeasureTimeTest {
     fun measureTimeAndResult() {
         val someResult: String
 
-        val measured: DurationMeasured<String> = withMeasureTime { longRunningCalc().also { someResult = it } }
+        val measured: TimedValue<String> = measureTimedValue { longRunningCalc().also { someResult = it } }
         println("measured: $measured")
 
         val (result, elapsed) = measured
@@ -57,7 +57,7 @@ class MeasureTimeTest {
 
         val expectedResult: Long
 
-        val (result, elapsed2) = clock.withMeasureTime {
+        val (result, elapsed2) = clock.measureTimedValue {
             clock.reading += expectedNs
             expectedResult = expectedNs
             expectedNs
