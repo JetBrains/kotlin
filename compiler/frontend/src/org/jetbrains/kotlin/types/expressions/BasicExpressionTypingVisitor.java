@@ -1717,15 +1717,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context, call, arrayAccessExpression, isGet ? OperatorNameConventions.GET : OperatorNameConventions.SET);
 
         List<KtExpression> indices = arrayAccessExpression.getIndexExpressions();
-        // The accumulated data flow info of all index expressions is saved on the last index
-        KotlinTypeInfo resultTypeInfo = arrayTypeInfo;
-        if (!indices.isEmpty()) {
-            resultTypeInfo = facade.getTypeInfo(indices.get(indices.size() - 1), context);
-        }
 
-        if (!isGet) {
-            resultTypeInfo = facade.getTypeInfo(rightHandSide, context);
-        }
+        KotlinTypeInfo resultTypeInfo =
+                computeAccumulatedInfoForArrayAccessExpression(arrayTypeInfo, indices, rightHandSide, isGet, context, facade);
 
         if ((isImplicit && !functionResults.isSuccess()) || !functionResults.isSingleResult()) {
             traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
@@ -1734,5 +1728,41 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression,
                                      functionResults.getResultingCall());
         return resultTypeInfo.replaceType(functionResults.getResultingDescriptor().getReturnType());
+    }
+
+    private static KotlinTypeInfo computeAccumulatedInfoForArrayAccessExpression(
+            @NotNull KotlinTypeInfo arrayTypeInfo,
+            @NotNull List<KtExpression> indices,
+            @Nullable KtExpression rightHandSide,
+            boolean isGet,
+            @NotNull ExpressionTypingContext context,
+            @NotNull ExpressionTypingInternals facade
+    ) {
+        KotlinTypeInfo accumulatedTypeInfo = null;
+        boolean forceResolve = !context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
+
+        // The accumulated data flow info of all index expressions is saved on the last index
+        if (!indices.isEmpty()) {
+            accumulatedTypeInfo = getTypeInfo(indices.get(indices.size() - 1), facade, context, forceResolve);
+        }
+
+        if (!isGet && rightHandSide != null) {
+            accumulatedTypeInfo = getTypeInfo(rightHandSide, facade, context, forceResolve);
+        }
+
+        return accumulatedTypeInfo != null ? accumulatedTypeInfo : arrayTypeInfo;
+    }
+
+    private static KotlinTypeInfo getTypeInfo(
+            @NotNull KtExpression expression,
+            @NotNull ExpressionTypingInternals facade,
+            @NotNull ExpressionTypingContext context,
+            boolean forceExpressionResolve
+    ) {
+        if (forceExpressionResolve) {
+            return facade.getTypeInfo(expression, context);
+        } else {
+            return BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
+        }
     }
 }
