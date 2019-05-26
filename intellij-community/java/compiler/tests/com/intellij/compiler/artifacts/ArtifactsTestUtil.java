@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.artifacts;
 
 import com.intellij.openapi.application.WriteAction;
@@ -37,8 +23,7 @@ import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
 /**
  * @author nik
@@ -65,7 +50,7 @@ public class ArtifactsTestUtil {
   }
 
   public static void assertLayout(PackagingElement element, String expected) {
-    assertEquals(adjustMultiLine(expected), printToString(element, 0));
+    assertThat(printToString(element, 0)).isEqualTo(adjustMultiLine(expected));
   }
 
   private static String adjustMultiLine(String expected) {
@@ -82,7 +67,7 @@ public class ArtifactsTestUtil {
     for (String s : strings) {
       lines.add(s.substring(min));
     }
-    return StringUtil.join(lines, "\n") + "\n";      
+    return StringUtil.join(lines, "\n") + "\n";
   }
 
   public static void assertLayout(Project project, String artifactName, String expected) {
@@ -90,11 +75,11 @@ public class ArtifactsTestUtil {
   }
 
   public static void assertOutputPath(Project project, String artifactName, String expected) {
-    assertEquals(expected, findArtifact(project, artifactName).getOutputPath());
+    assertThat(findArtifact(project, artifactName).getOutputPath()).isEqualTo(expected);
   }
 
   public static void assertOutputFileName(Project project, String artifactName, String expected) {
-    assertEquals(expected, findArtifact(project, artifactName).getRootElement().getName());
+    assertThat(findArtifact(project, artifactName).getRootElement().getName()).isEqualTo(expected);
   }
 
   public static void setOutput(final Project project, final String artifactName, final String outputPath) {
@@ -117,7 +102,7 @@ public class ArtifactsTestUtil {
   public static Artifact findArtifact(Project project, String artifactName) {
     final ArtifactManager manager = ArtifactManager.getInstance(project);
     final Artifact artifact = manager.findArtifact(artifactName);
-    assertNotNull("'" + artifactName + "' artifact not found", artifact);
+    assertThat(artifact).describedAs("'" + artifactName + "' artifact not found").isNotNull();
     return artifact;
   }
 
@@ -132,10 +117,9 @@ public class ArtifactsTestUtil {
                                      ArtifactType type,
                                      @Nullable String mainClass, @Nullable String classpath) {
     final VirtualFile file = ManifestFileUtil.findManifestFile(rootElement, context, type);
-    assertNotNull(file);
+    assertThat(file).isNotNull();
     final Manifest manifest = ManifestFileUtil.readManifest(file);
-    assertEquals(mainClass, manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS));
-    assertEquals(classpath, manifest.getMainAttributes().getValue(Attributes.Name.CLASS_PATH));
+    assertThat(manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS)).isEqualTo(mainClass);
+    assertThat(manifest.getMainAttributes().getValue(Attributes.Name.CLASS_PATH)).isEqualTo(classpath);
   }
-
 }
