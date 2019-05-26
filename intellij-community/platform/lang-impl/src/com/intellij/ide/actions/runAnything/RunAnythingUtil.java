@@ -15,6 +15,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
@@ -50,7 +51,7 @@ public class RunAnythingUtil {
   }
 
   static JComponent createTitle(@NotNull String titleText) {
-    JLabel titleLabel = new JLabel(titleText);
+    JLabel titleLabel = new JLabel(StringUtil.capitalizeWords(titleText, true));
     titleLabel.setFont(getTitleFont());
     titleLabel.setForeground(UIUtil.getLabelDisabledForeground());
 
