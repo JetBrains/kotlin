@@ -194,7 +194,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
                     val lowerResult = approximateTo(lowerBound, conf, depth)
 
-                    val upperResult = if (lowerBound.typeConstructor() == upperBound.typeConstructor())
+                    val upperResult = if (type !is RawTypeMarker && lowerBound.typeConstructor() == upperBound.typeConstructor())
                         lowerResult?.withNullability(upperBound.isMarkedNullable())
                     else
                         approximateTo(upperBound, conf, depth)
