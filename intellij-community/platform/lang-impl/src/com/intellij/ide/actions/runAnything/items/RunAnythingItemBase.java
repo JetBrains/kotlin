@@ -95,4 +95,9 @@ public class RunAnythingItemBase extends RunAnythingItem {
       component.appendTextPadding(660, SwingConstants.RIGHT);
     }
   }
+
+  @NotNull
+  protected static SimpleTextAttributes getDescriptionAttributes(boolean isSelected) {
+    return new SimpleTextAttributes(STYLE_SMALLER, UIUtil.getListForeground(isSelected, true));
+  }
 }

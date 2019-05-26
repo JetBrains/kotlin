@@ -3,20 +3,38 @@ package com.intellij.ide.actions.runAnything.activity;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.RecentProjectsManager;
+import com.intellij.ide.ReopenProjectAction;
+import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
+import com.intellij.ide.actions.runAnything.items.RunAnythingItemBase;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import static com.intellij.openapi.util.text.StringUtil.shortenTextWithEllipsis;
 
 public class RunAnythingRecentProjectProvider extends RunAnythingAnActionProvider<AnAction> {
   @NotNull
   @Override
   public Collection<AnAction> getValues(@NotNull DataContext dataContext, @NotNull String pattern) {
     return Arrays.stream(RecentProjectsManager.getInstance().getRecentProjectsActions(false)).collect(Collectors.toList());
+  }
+
+  @NotNull
+  @Override
+  public RunAnythingItem getMainListItem(@NotNull DataContext dataContext, @NotNull AnAction value) {
+    if (value instanceof ReopenProjectAction) {
+      return new RecentProjectElement(((ReopenProjectAction)value), getCommand(value), value.getTemplatePresentation().getIcon());
+    }
+    return super.getMainListItem(dataContext, value);
   }
 
   @Override
@@ -42,5 +60,28 @@ public class RunAnythingRecentProjectProvider extends RunAnythingAnActionProvide
   public String getCommand(@NotNull AnAction value) {
     return getHelpCommand() + " " + ObjectUtils
       .notNull(value.getTemplatePresentation().getText(), IdeBundle.message("run.anything.actions.undefined"));
+  }
+
+  static class RecentProjectElement extends RunAnythingItemBase {
+    @NotNull private final ReopenProjectAction myValue;
+
+    RecentProjectElement(@NotNull ReopenProjectAction value, @NotNull String command, @Nullable Icon icon) {
+      super(command, icon);
+      myValue = value;
+    }
+
+    @NotNull
+    @Override
+    public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
+      JPanel component = (JPanel)super.createComponent(pattern, groupIcon, isSelected, hasFocus);
+
+      String description = myValue.getProjectPath();
+      if (description != null) {
+        SimpleColoredComponent descriptionComponent = new SimpleColoredComponent();
+        descriptionComponent.append(" " + shortenTextWithEllipsis(description, 200, 0), getDescriptionAttributes(isSelected));
+        component.add(descriptionComponent, BorderLayout.EAST);
+      }
+      return component;
+    }
   }
 }
