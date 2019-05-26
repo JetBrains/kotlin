@@ -11,9 +11,11 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.toCanonicalPath
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -45,6 +47,7 @@ import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.util.*
+import kotlin.collections.HashMap
 
 @Order(ExternalSystemConstants.UNORDERED + 1)
 open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
@@ -120,7 +123,37 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
     override fun populateModuleDependencies(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>, ideProject: DataNode<ProjectData>) {
         if (resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) == null) {
-            super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+            // Add mpp-artifacts into map used for dependency substitution
+            val mppArtifacts = ideProject.getUserData(MPP_CONFIGURATION_ARTIFACTS)
+            val configArtifacts = ideProject.getUserData(CONFIGURATION_ARTIFACTS)
+            if (mppArtifacts != null && configArtifacts != null) {
+                // processing case when one artifact could be produced by several (actualized!)source sets
+                if (mppArtifacts.isNotEmpty() && resolverCtx.isResolveModulePerSourceSet) {
+                    val externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java)
+                    val artifactToDependency = HashMap<String, ExternalProjectDependency>()
+                    externalProject?.sourceSets?.values?.forEach { sourceSet ->
+                        sourceSet.dependencies.forEach { dependency ->
+                            if (dependency is ExternalProjectDependency) {
+                                dependency.projectDependencyArtifacts.map { toCanonicalPath(it.absolutePath) }
+                                    .filter { mppArtifacts.keys.contains(it) }.forEach {
+                                        artifactToDependency[it] = dependency
+                                    }
+                            }
+                        }
+                    }
+                    // create 'fake' dependency artifact files and put them into dependency substitution map
+                    mppArtifacts.forEach { (k, v) ->
+                        artifactToDependency[k]?.apply {
+                            for ((index, module) in v.withIndex()) {
+                                val fakeArtifact = "$k-MPP-$index"
+                                configArtifacts[fakeArtifact] = module
+                                this.projectDependencyArtifacts.add(File(fakeArtifact))
+                            }
+                        }
+                    }
+                }
+            }
+            super.populateModuleDependencies(gradleModule, ideModule, ideProject)//TODO add dependencies on mpp module
         }
         populateModuleDependencies(gradleModule, ideProject, ideModule, resolverCtx)
     }
@@ -133,7 +166,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         moduleOutputsMap: MutableMap<String, Pair<String, ExternalSystemSourceType>>,
         gradleOutputMap: MultiMap<ExternalSystemSourceType, String>
     ) {
-        val gradleOutputPath = ExternalSystemApiUtil.toCanonicalPath(gradleOutputDir.absolutePath)
+        val gradleOutputPath = toCanonicalPath(gradleOutputDir.absolutePath)
         gradleOutputMap.putValue(sourceType, gradleOutputPath)
         if (gradleOutputDir.path != effectiveOutputDir.path) {
             moduleOutputsMap[gradleOutputPath] = Pair(moduleData.id, sourceType)
@@ -155,6 +188,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
     }
 
     companion object {
+        val MPP_CONFIGURATION_ARTIFACTS =
+            Key.create<MutableMap<String/* artifact path */, MutableList<String> /* module ids*/>>("gradleMPPArtifactsMap")
         val proxyObjectCloningCache = WeakHashMap<Any, Any>()
 
         fun initializeModuleData(
@@ -172,6 +207,24 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             if (mppModel == null || externalProject == null) return
 
             val jdkName = gradleModule.jdkNameIfAny
+
+            // save artefacts locations.
+            val userData = projectDataNode.getUserData(MPP_CONFIGURATION_ARTIFACTS) ?: HashMap<String, MutableList<String>>().apply {
+                projectDataNode.putUserData(MPP_CONFIGURATION_ARTIFACTS, this)
+            }
+
+            mppModel.targets.filter { it.jar != null && it.jar!!.archiveFile != null }.forEach { target ->
+                val path = toCanonicalPath(target.jar!!.archiveFile!!.absolutePath)
+                val currentModules = userData[path] ?: ArrayList<String>().apply { userData[path] = this }
+                //TODO possibly add support of test modules
+                val allSourceSets = target.compilations.filter { !it.isTestModule }.flatMap { it.sourceSets }.toSet()
+                val availableViaDependsOn = allSourceSets.flatMap { it.dependsOnSourceSets }.toSet()
+                allSourceSets.filter { !availableViaDependsOn.contains(it.name) }.forEach { sourceSet ->
+                    run {
+                        currentModules.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))
+                    }
+                }
+            }
 
             val moduleGroup: Array<String>? = if (!resolverCtx.isUseQualifiedModuleNames) {
                 val gradlePath = gradleModule.gradleProject.path
