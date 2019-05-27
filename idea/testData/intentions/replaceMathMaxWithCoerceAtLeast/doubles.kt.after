@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-
-import java.lang.Math.max
-
-fun foo() {
-    1.1.coerceAtLeast(1.2)
-}
