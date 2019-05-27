@@ -79,13 +79,14 @@ RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
   RuntimeState* result = konanConstructInstance<RuntimeState>();
   if (!result) return nullptr;
+  RuntimeCheck(runtimeState == nullptr, "No active runtimes allowed");
+  runtimeState = result;
   result->memoryState = InitMemory();
   bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
   // Keep global variables in state as well.
   if (firstRuntime) {
     isMainThread = 1;
     konan::consoleInit();
-
     InitOrDeinitGlobalVariables(INIT_GLOBALS);
   }
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS);
@@ -117,7 +118,7 @@ void AppendToInitializersTail(InitNode *next) {
 
 void Kotlin_initRuntimeIfNeeded() {
   if (runtimeState == nullptr) {
-    runtimeState = initRuntime();
+    initRuntime();
     RuntimeCheck(updateStatusIf(runtimeState, SUSPENDED, RUNNING), "Cannot transition state to RUNNING for init");
     // Register runtime deinit function at thread cleanup.
     konan::onThreadExit(Kotlin_deinitRuntimeIfNeeded);

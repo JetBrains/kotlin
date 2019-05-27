@@ -598,6 +598,12 @@ task array_to_any(type: RunKonanTest) {
     source = "codegen/basics/array_to_any.kt"
 }
 
+task runtime_basic_init(type: RunStandaloneKonanTest) {
+    source = "runtime/basic/init.kt"
+    flags = ['-g']
+    expectedExitStatus = 0
+}
+
 task runtime_basic_exit(type: RunStandaloneKonanTest) {
     source = "runtime/basic/exit.kt"
     expectedExitStatus = 42
