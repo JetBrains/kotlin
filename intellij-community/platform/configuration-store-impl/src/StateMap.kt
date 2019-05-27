@@ -167,7 +167,7 @@ class StateMap private constructor(private val names: Array<String>, private val
   }
 }
 
-fun setStateAndCloneIfNeed(key: String, newState: Element?, oldStates: StateMap, newLiveStates: MutableMap<String, Element>? = null): MutableMap<String, Any>? {
+fun setStateAndCloneIfNeeded(key: String, newState: Element?, oldStates: StateMap, newLiveStates: MutableMap<String, Element>? = null): MutableMap<String, Any>? {
   val oldState = oldStates.get(key)
   if (newState == null || newState.isEmpty()) {
     if (oldState == null) {

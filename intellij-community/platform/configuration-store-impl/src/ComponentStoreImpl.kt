@@ -386,7 +386,7 @@ abstract class ComponentStoreImpl : IComponentStore {
 
         val storage = storageManager.getStateStorage(storageSpec)
 
-        // if storage marked as changed, it means that analyzeExternalChangesAndUpdateIfNeed was called for it and storage is already reloaded
+        // if storage marked as changed, it means that analyzeExternalChangesAndUpdateIfNeeded was called for it and storage is already reloaded
         val isReloadDataForStorage = if (reloadData == ThreeState.UNSURE) changedStorages!!.contains(storage) else reloadData.toBoolean()
 
         val stateGetter = doCreateStateGetter(isReloadDataForStorage, storage, info, name, stateClass)
@@ -530,7 +530,7 @@ abstract class ComponentStoreImpl : IComponentStore {
       LOG.runAndLogException {
         // we must update (reload in-memory storage data) even if non-reloadable component will be detected later
         // not saved -> user does own modification -> new (on disk) state will be overwritten and not applied
-        storage.analyzeExternalChangesAndUpdateIfNeed(componentNames)
+        storage.analyzeExternalChangesAndUpdateIfNeeded(componentNames)
       }
     }
 

@@ -92,17 +92,17 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
 
   protected abstract fun createSaveSession(states: StateMap): SaveSessionProducer
 
-  override fun analyzeExternalChangesAndUpdateIfNeed(componentNames: MutableSet<in String>) {
+  override fun analyzeExternalChangesAndUpdateIfNeeded(componentNames: MutableSet<in String>) {
     val oldData = storageDataRef.get()
     val newData = getStorageData(true)
     if (oldData == null) {
-      LOG.debug { "analyzeExternalChangesAndUpdateIfNeed: old data null, load new for ${toString()}" }
+      LOG.debug { "analyzeExternalChangesAndUpdateIfNeeded: old data null, load new for ${toString()}" }
       componentNames.addAll(newData.keys())
     }
     else {
       val changedComponentNames = oldData.getChangedComponentNames(newData)
       if (changedComponentNames.isNotEmpty()) {
-        LOG.debug { "analyzeExternalChangesAndUpdateIfNeed: changedComponentNames $changedComponentNames for ${toString()}" }
+        LOG.debug { "analyzeExternalChangesAndUpdateIfNeeded: changedComponentNames $changedComponentNames for ${toString()}" }
         componentNames.addAll(changedComponentNames)
       }
     }
@@ -179,7 +179,7 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
 
       val normalized = element?.normalizeRootName()
       if (copiedStates == null) {
-        copiedStates = setStateAndCloneIfNeed(componentName, normalized, originalStates, newLiveStates)
+        copiedStates = setStateAndCloneIfNeeded(componentName, normalized, originalStates, newLiveStates)
       }
       else {
         updateState(copiedStates!!, componentName, normalized, newLiveStates)

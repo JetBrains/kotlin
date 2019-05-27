@@ -360,7 +360,7 @@ public final class LanguageConsoleBuilder {
         });
       }
 
-      private void addLineSeparatorPainterIfNeed() {
+      private void addLineSeparatorPainterIfNeeded() {
         if (lineSeparatorPainter != null) {
           return;
         }
@@ -383,7 +383,7 @@ public final class LanguageConsoleBuilder {
         }
 
         if (document.getTextLength() > 0) {
-          addLineSeparatorPainterIfNeed();
+          addLineSeparatorPainterIfNeeded();
           int startDocLine = document.getLineNumber(event.getOffset());
           int endDocLine = document.getLineNumber(event.getOffset() + event.getNewLength());
           if (event.getOldLength() > event.getNewLength() || startDocLine != endDocLine || StringUtil.indexOf(event.getOldFragment(), '\n') != -1) {
@@ -411,7 +411,7 @@ public final class LanguageConsoleBuilder {
           documentCleared();
         }
         else {
-          addLineSeparatorPainterIfNeed();
+          addLineSeparatorPainterIfNeeded();
           updateGutterSize(0, Integer.MAX_VALUE);
         }
       }

@@ -31,7 +31,7 @@ abstract class DirectoryBasedStorageBase(@Suppress("DEPRECATION") protected val 
 
   override fun createSaveSessionProducer(): SaveSessionProducer? = null
 
-  override fun analyzeExternalChangesAndUpdateIfNeed(componentNames: MutableSet<in String>) {
+  override fun analyzeExternalChangesAndUpdateIfNeeded(componentNames: MutableSet<in String>) {
     // todo reload only changed file, compute diff
     val newData = loadData()
     storageDataRef.set(newData)
@@ -138,7 +138,7 @@ open class DirectoryBasedStorage(private val dir: Path,
 
     private fun doSetState(fileName: String, subState: Element) {
       if (copiedStorageData == null) {
-        copiedStorageData = setStateAndCloneIfNeed(fileName, subState, originalStates)
+        copiedStorageData = setStateAndCloneIfNeeded(fileName, subState, originalStates)
         if (copiedStorageData != null) {
           dirtyFileNames.add(fileName)
         }
