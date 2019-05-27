@@ -19,37 +19,41 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
-abstract class AbstractApplicabilityBasedInspection<TElement: KtElement>(
-        val elementType: Class<TElement>
+abstract class AbstractApplicabilityBasedInspection<TElement : KtElement>(
+    val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
 
     final override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            object : KtVisitorVoid() {
-                override fun visitKtElement(element: KtElement) {
-                    super.visitKtElement(element)
+        object : KtVisitorVoid() {
+            override fun visitKtElement(element: KtElement) {
+                super.visitKtElement(element)
 
-                    if (!elementType.isInstance(element) || element.textLength == 0) return
-                    @Suppress("UNCHECKED_CAST")
-                    visitTargetElement(element as TElement, holder, isOnTheFly)
-                }
+                if (!elementType.isInstance(element) || element.textLength == 0) return
+                @Suppress("UNCHECKED_CAST")
+                visitTargetElement(element as TElement, holder, isOnTheFly)
             }
+        }
 
     // This function should be called from visitor built by a derived inspection
     protected fun visitTargetElement(element: TElement, holder: ProblemsHolder, isOnTheFly: Boolean) {
         if (!isApplicable(element)) return
 
         holder.registerProblemWithoutOfflineInformation(
-                inspectionTarget(element),
-                inspectionText(element),
-                isOnTheFly,
-                inspectionHighlightType(element),
-                LocalFix(fixText(element))
+            inspectionTarget(element),
+            inspectionText(element),
+            isOnTheFly,
+            inspectionHighlightType(element),
+            inspectionRange(element),
+            LocalFix(fixText(element))
         )
     }
+
+    open fun inspectionRange(element: TElement): TextRange? = null
 
     open fun inspectionTarget(element: TElement): PsiElement = element
 

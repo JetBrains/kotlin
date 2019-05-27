@@ -8211,6 +8211,194 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceSubstring")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSubstring extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceSubstring() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSubstring"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceSubstring/withDropLast")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithDropLast extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWithDropLast() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSubstring/withDropLast"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("immutableProperty.kt")
+            public void testImmutableProperty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withDropLast/immutableProperty.kt");
+            }
+
+            @TestMetadata("methodCallReceiver.kt")
+            public void testMethodCallReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withDropLast/methodCallReceiver.kt");
+            }
+
+            @TestMetadata("nonZeroFirstArgument.kt")
+            public void testNonZeroFirstArgument() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withDropLast/nonZeroFirstArgument.kt");
+            }
+
+            @TestMetadata("replaceWithDropLast.kt")
+            public void testReplaceWithDropLast() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withDropLast/replaceWithDropLast.kt");
+            }
+
+            @TestMetadata("semicolon.kt")
+            public void testSemicolon() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withDropLast/semicolon.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceSubstring/withIndexingOperation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithIndexingOperation extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWithIndexingOperation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSubstring/withIndexingOperation"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("oneFirstTwoSecondArgument.kt")
+            public void testOneFirstTwoSecondArgument() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withIndexingOperation/oneFirstTwoSecondArgument.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withIndexingOperation/simple.kt");
+            }
+
+            @TestMetadata("zeroFirstTenSecondArgument.kt")
+            public void testZeroFirstTenSecondArgument() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withIndexingOperation/zeroFirstTenSecondArgument.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceSubstring/withSubstringAfter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithSubstringAfter extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWithSubstringAfter() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSubstring/withSubstringAfter"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("immutableProperty.kt")
+            public void testImmutableProperty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringAfter/immutableProperty.kt");
+            }
+
+            @TestMetadata("methodCallReceiver.kt")
+            public void testMethodCallReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringAfter/methodCallReceiver.kt");
+            }
+
+            @TestMetadata("replaceWithSubstringAfter.kt")
+            public void testReplaceWithSubstringAfter() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringAfter/replaceWithSubstringAfter.kt");
+            }
+
+            @TestMetadata("semicolon.kt")
+            public void testSemicolon() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringAfter/semicolon.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceSubstring/withSubstringBefore")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithSubstringBefore extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWithSubstringBefore() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSubstring/withSubstringBefore"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("immutableProperty.kt")
+            public void testImmutableProperty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringBefore/immutableProperty.kt");
+            }
+
+            @TestMetadata("methodCallReceiver.kt")
+            public void testMethodCallReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringBefore/methodCallReceiver.kt");
+            }
+
+            @TestMetadata("nonZeroFirstArgument.kt")
+            public void testNonZeroFirstArgument() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringBefore/nonZeroFirstArgument.kt");
+            }
+
+            @TestMetadata("replaceWithSubstringBefore.kt")
+            public void testReplaceWithSubstringBefore() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringBefore/replaceWithSubstringBefore.kt");
+            }
+
+            @TestMetadata("semicolon.kt")
+            public void testSemicolon() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withSubstringBefore/semicolon.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceSubstring/withTake")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithTake extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWithTake() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSubstring/withTake"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("constantAsFirstArgument.kt")
+            public void testConstantAsFirstArgument() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withTake/constantAsFirstArgument.kt");
+            }
+
+            @TestMetadata("expressionAsFirstArgument.kt")
+            public void testExpressionAsFirstArgument() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withTake/expressionAsFirstArgument.kt");
+            }
+
+            @TestMetadata("nonZeroFirstArgument.kt")
+            public void testNonZeroFirstArgument() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withTake/nonZeroFirstArgument.kt");
+            }
+
+            @TestMetadata("replaceWithTake.kt")
+            public void testReplaceWithTake() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withTake/replaceWithTake.kt");
+            }
+
+            @TestMetadata("semicolon.kt")
+            public void testSemicolon() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceSubstring/withTake/semicolon.kt");
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceToStringWithStringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
