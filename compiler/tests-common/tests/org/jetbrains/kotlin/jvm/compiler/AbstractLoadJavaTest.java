@@ -121,6 +121,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File txtFile = getTxtFileFromKtFile(ktFileName);
 
         CompilerConfiguration configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, getClasspath(), Collections.emptyList());
+        updateConfiguration(configuration);
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
@@ -189,6 +190,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void configureEnvironment(KotlinCoreEnvironment environment) {}
 
+    protected void updateConfiguration(CompilerConfiguration configuration) {}
+
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
         File expectedFile = new File(expectedFileName);
         File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
@@ -196,6 +199,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         FileUtil.copyDir(sourcesDir, new File(tmpdir, "test"), pathname -> pathname.getName().endsWith(".java"));
 
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind());
+        updateConfiguration(configuration);
         ContentRootsKt.addKotlinSourceRoot(configuration, sourcesDir.getAbsolutePath());
         JvmContentRootsKt.addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
         JvmContentRootsKt.addJavaSourceRoot(configuration, tmpdir);

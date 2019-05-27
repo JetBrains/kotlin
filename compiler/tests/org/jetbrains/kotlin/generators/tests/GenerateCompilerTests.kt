@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
@@ -381,6 +382,38 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrWriteFlagsTest> {
             model("writeFlags", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrLoadJavaTest> {
+            model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava", targetBackend = TargetBackend.JVM_IR)
+            model(
+                "loadJava/compiledJavaAndKotlin",
+                extension = "txt",
+                testMethod = "doTestCompiledJavaAndKotlin",
+                targetBackend = TargetBackend.JVM_IR
+            )
+            model(
+                "loadJava/compiledJavaIncludeObjectMethods",
+                extension = "java",
+                testMethod = "doTestCompiledJavaIncludeObjectMethods",
+                targetBackend = TargetBackend.JVM_IR
+            )
+            model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin", targetBackend = TargetBackend.JVM_IR)
+            model("loadJava/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib", targetBackend = TargetBackend.JVM_IR)
+            model(
+                "loadJava/javaAgainstKotlin",
+                extension = "txt",
+                testMethod = "doTestJavaAgainstKotlin",
+                targetBackend = TargetBackend.JVM_IR
+            )
+            model(
+                "loadJava/kotlinAgainstCompiledJavaWithKotlin",
+                extension = "kt",
+                testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin",
+                recursive = false,
+                targetBackend = TargetBackend.JVM_IR
+            )
+            model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrLineNumberTest> {
