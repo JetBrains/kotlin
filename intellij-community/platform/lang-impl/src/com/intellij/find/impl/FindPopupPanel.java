@@ -501,65 +501,13 @@ public class FindPopupPanel extends JBPanel implements FindUI {
         }
       };
     myShowFilterPopupAction.registerCustomShortcutSet(myShowFilterPopupAction.getShortcutSet(), this);
-    ToggleAction pinAction = new ToggleAction(null, null, AllIcons.General.Pin_tab) {
-      @Override
-      public boolean isDumbAware() {
-        return true;
-      }
-
-      @Override
-      public boolean isSelected(@NotNull AnActionEvent e) {
-        return UISettings.getInstance().getPinFindInPath();
-      }
-
-      @Override
-      public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        myIsPinned.set(state);
-        UISettings.getInstance().setPinFindInPath(state);
-      }
-    };
+    ToggleAction pinAction = new MyPinAction();
     myPinButton = new ActionButton(pinAction, pinAction.getTemplatePresentation(), ActionPlaces.UNKNOWN, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
 
 
     DefaultActionGroup tabResultsContextGroup = new DefaultActionGroup();
-    tabResultsContextGroup.add(new ToggleAction(FindBundle.message("find.options.skip.results.tab.with.one.usage.action")) {
-      @Override
-      public boolean isDumbAware() {
-        return true;
-      }
-
-      @Override
-      public boolean isSelected(@NotNull AnActionEvent e) {
-        return FindSettings.getInstance().isSkipResultsWithOneUsage();
-      }
-
-      @Override
-      public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        FindSettings.getInstance().setSkipResultsWithOneUsage(state);
-      }
-
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        super.update(e);
-        e.getPresentation().setVisible(!myHelper.isReplaceState());
-      }
-    });
-    tabResultsContextGroup.add(new ToggleAction(FindBundle.message("find.open.in.new.tab.action")) {
-      @Override
-      public boolean isDumbAware() {
-        return true;
-      }
-
-      @Override
-      public boolean isSelected(@NotNull AnActionEvent e) {
-        return FindSettings.getInstance().isShowResultsInSeparateView();
-      }
-
-      @Override
-      public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        FindSettings.getInstance().setShowResultsInSeparateView(state);
-      }
-    });
+    tabResultsContextGroup.add(new MySkipTabWithOneUsageAction());
+    tabResultsContextGroup.add(new MyOpenResultsInNewTabAction());
     tabResultsContextGroup.setPopup(true);
     Presentation tabSettingsPresentation = new Presentation();
     tabSettingsPresentation.setIcon(AllIcons.General.GearPlain);
@@ -605,35 +553,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     TouchbarDataKeys.putDialogButtonDescriptor(myOKButton, 0, true);
     boolean enterAsOK = Registry.is("ide.find.enter.as.ok", false);
 
-    new DumbAwareAction() {
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(
-          e.getData(CommonDataKeys.EDITOR) == null ||
-          SwingUtilities.isDescendingFrom(e.getData(PlatformDataKeys.CONTEXT_COMPONENT), myFileMaskField));
-      }
-
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        if (SwingUtilities.isDescendingFrom(e.getData(PlatformDataKeys.CONTEXT_COMPONENT), myFileMaskField) && myFileMaskField.isPopupVisible()) {
-          myFileMaskField.hidePopup();
-          return;
-        }
-        if (myScopeUI.hideAllPopups()) {
-          return;
-        }
-        if (enterAsOK) {
-          myOkActionListener.actionPerformed(null);
-        }
-        else {
-          if (myHelper.isReplaceState()) {
-            myReplaceSelectedButton.doClick();
-          } else {
-            navigateToSelectedUsage(null);
-          }
-        }
-      }
-    }.registerCustomShortcutSet(new CustomShortcutSet(ENTER), this);
+    new MyEnterAction(enterAsOK).registerCustomShortcutSet(new CustomShortcutSet(ENTER), this);
     DumbAwareAction.create(__ -> processCtrlEnter()).registerCustomShortcutSet(new CustomShortcutSet(ENTER_WITH_MODIFIERS), this);
     DumbAwareAction.create(__ -> myReplaceAllButton.doClick()).registerCustomShortcutSet(new CustomShortcutSet(REPLACE_ALL), this);
     myReplaceAllButton.setToolTipText(KeymapUtil.getKeystrokeText(REPLACE_ALL));
@@ -1573,6 +1493,27 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     return searchContext;
   }
 
+  private static class MyOpenResultsInNewTabAction extends ToggleAction {
+    private MyOpenResultsInNewTabAction() {
+      super(FindBundle.message("find.open.in.new.tab.action"));
+    }
+
+    @Override
+    public boolean isDumbAware() {
+      return true;
+    }
+
+    @Override
+    public boolean isSelected(@NotNull AnActionEvent e) {
+      return FindSettings.getInstance().isShowResultsInSeparateView();
+    }
+
+    @Override
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+      FindSettings.getInstance().setShowResultsInSeparateView(state);
+    }
+  }
+
   private class MySwitchContextToggleAction extends ToggleAction implements DumbAware {
     MySwitchContextToggleAction(FindModel.SearchContext context) {
       super(FindInProjectUtil.getPresentableName(context));
@@ -1752,6 +1693,89 @@ public class FindPopupPanel extends JBPanel implements FindUI {
         myFileAndLineNumber.setBackground(color);
       }
       return this;
+    }
+  }
+
+  private class MyPinAction extends ToggleAction {
+    private MyPinAction() {super(null, null, AllIcons.General.Pin_tab);}
+
+    @Override
+    public boolean isDumbAware() {
+      return true;
+    }
+
+    @Override
+    public boolean isSelected(@NotNull AnActionEvent e) {
+      return UISettings.getInstance().getPinFindInPath();
+    }
+
+    @Override
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+      myIsPinned.set(state);
+      UISettings.getInstance().setPinFindInPath(state);
+    }
+  }
+
+  private class MySkipTabWithOneUsageAction extends ToggleAction {
+    private MySkipTabWithOneUsageAction() {
+      super(FindBundle.message("find.options.skip.results.tab.with.one.usage.action"));
+    }
+
+    @Override
+    public boolean isDumbAware() {
+      return true;
+    }
+
+    @Override
+    public boolean isSelected(@NotNull AnActionEvent e) {
+      return FindSettings.getInstance().isSkipResultsWithOneUsage();
+    }
+
+    @Override
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+      FindSettings.getInstance().setSkipResultsWithOneUsage(state);
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      super.update(e);
+      e.getPresentation().setVisible(!myHelper.isReplaceState());
+    }
+  }
+
+  private class MyEnterAction extends DumbAwareAction {
+    private final boolean myEnterAsOK;
+
+    private MyEnterAction(boolean enterAsOK) {
+      myEnterAsOK = enterAsOK;
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      e.getPresentation().setEnabled(
+        e.getData(CommonDataKeys.EDITOR) == null ||
+        SwingUtilities.isDescendingFrom(e.getData(PlatformDataKeys.CONTEXT_COMPONENT), myFileMaskField));
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      if (SwingUtilities.isDescendingFrom(e.getData(PlatformDataKeys.CONTEXT_COMPONENT), myFileMaskField) && myFileMaskField.isPopupVisible()) {
+        myFileMaskField.hidePopup();
+        return;
+      }
+      if (myScopeUI.hideAllPopups()) {
+        return;
+      }
+      if (myEnterAsOK) {
+        myOkActionListener.actionPerformed(null);
+      }
+      else {
+        if (myHelper.isReplaceState()) {
+          myReplaceSelectedButton.doClick();
+        } else {
+          navigateToSelectedUsage(null);
+        }
+      }
     }
   }
 }
