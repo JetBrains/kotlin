@@ -130,7 +130,7 @@ class Executable constructor(
         get() = runTaskName?.let { project.tasks.getByName(it) as AbstractExecTask<*> }
 }
 
-class Test(
+class TestExecutable(
     name: String,
     baseName: String,
     buildType: NativeBuildType,

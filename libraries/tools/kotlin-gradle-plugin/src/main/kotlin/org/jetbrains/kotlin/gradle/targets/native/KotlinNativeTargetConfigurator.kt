@@ -121,7 +121,7 @@ open class KotlinNativeTargetConfigurator(
             destinationDir = binary.outputDirectory
             addCompilerPlugins()
 
-            if (binary !is Test) {
+            if (binary !is TestExecutable) {
                 tasks.maybeCreate(target.artifactsTaskName).dependsOn(this)
                 tasks.maybeCreate(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(this)
             }
