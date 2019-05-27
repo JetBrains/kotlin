@@ -22,11 +22,13 @@ buildscript {
 }
 
 val buildKotlinCompilerRepo: String by project
+val kotlinCompilerRepo: String by project
 
 val repos = listOf(
     buildKotlinCompilerRepo,
+    kotlinCompilerRepo,
     "https://cache-redirector.jetbrains.com/maven-central",
-    "https://kotlin.bintray.com/kotlinx",
+    "https://kotlin.bintray.com/kotlinx"
 )
 
 allprojects {

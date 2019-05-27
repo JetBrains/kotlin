@@ -21,6 +21,11 @@ import org.jetbrains.kotlin.konan.*
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
+
+    repositories {
+        maven { url kotlinCompilerRepo }
+    }
+
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     }
@@ -53,12 +58,12 @@ ext {
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
 
-    konanVersionFull = KonanVersion.Companion.CURRENT
+    konanVersionFull = KonanVersionGeneratedKt.getCurrentKonanVersion()
 
     if (konanVersionFull.meta == MetaVersion.RELEASE) {
         gradlePluginVersion = kotlinVersion
     } else {
-        gradlePluginVersion = "$kotlinVersion-native-${KonanVersion.Companion.CURRENT.toString()}"
+        gradlePluginVersion = "$kotlinVersion-native-$konanVersionFull"
     }
 }
 

@@ -29,9 +29,8 @@ version = konanVersion
 
 repositories {
     mavenCentral()
-    maven {
-        url buildKotlinCompilerRepo
-    }
+    maven { url buildKotlinCompilerRepo }
+    maven { url kotlinCompilerRepo }
 }
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: drop generation of KonanVersion!
@@ -47,6 +46,7 @@ sourceSets {
 
 compileKotlin {
     dependsOn('generateCompilerVersion')
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 clean {
@@ -62,4 +62,5 @@ jar {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
 }

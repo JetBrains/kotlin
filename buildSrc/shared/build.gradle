@@ -30,15 +30,15 @@ apply plugin: 'kotlin'
 // We reuse the source code from the Project in buildSrc.
 sourceSets.main.kotlin.srcDirs = ["$projectDir/../../shared/src/main/kotlin"]
 
-repositories {
-    maven {
-        url buildKotlinCompilerRepo
-    }
-}
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
 }
 
 rootProject.dependencies {
     runtime project(path)
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
 }

@@ -102,6 +102,7 @@ dependencies {
     bundleDependencies "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion"
+    bundleDependencies "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
     testImplementation 'junit:junit:4.12'
