@@ -14,10 +14,7 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -108,6 +105,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     installDnDSupport(toolWindowEx.getDecorator());
 
     loadViews();
+
+    registerActivateByContributorActions();
   }
 
   private void createAllServicesView() {
@@ -275,6 +274,20 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         serviceView.getModel().filtersChanged();
       }
     });
+  }
+
+  private void registerActivateByContributorActions() {
+    for (ServiceViewContributor contributor : ServiceModel.EP_NAME.getExtensions()) {
+      ActionManager actionManager = ActionManager.getInstance();
+      String actionId = getActivateContributorActionId(contributor);
+      if (actionId == null) continue;
+
+      AnAction action = actionManager.getAction(actionId);
+      if (action == null) {
+        action = new ActivateToolWindowByContributorAction(contributor);
+        actionManager.registerAction(actionId, action);
+      }
+    }
   }
 
   @NotNull
@@ -629,6 +642,74 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     }
   }
 
+  private static String getActivateContributorActionId(ServiceViewContributor contributor) {
+    String id = contributor.getViewDescriptor().getId();
+    return id == null ? null : "ServiceView.Activate" + id.replaceAll(" ", "");
+  }
+
+  private static class ActivateToolWindowByContributorAction extends DumbAwareAction {
+    private final ServiceViewContributor myContributor;
+
+    private ActivateToolWindowByContributorAction(ServiceViewContributor contributor) {
+      myContributor = contributor;
+      ItemPresentation presentation = contributor.getViewDescriptor().getPresentation();
+      Presentation templatePresentation = getTemplatePresentation();
+      templatePresentation.setText(ServiceViewDragHelper.getDisplayName(presentation) + " (Services)");
+      templatePresentation.setIcon(presentation.getIcon(false));
+      templatePresentation.setDescription("Activate " + getToolWindowId() + " window");
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      Project project = e.getProject();
+      if (project == null) {
+        e.getPresentation().setEnabledAndVisible(false);
+        return;
+      }
+
+      ServiceViewManagerImpl manager = (ServiceViewManagerImpl)ServiceViewManager.getInstance(project);
+      for (ServiceViewItem root : manager.myModel.getRoots()) {
+        if (myContributor.equals(root.getContributor())) {
+          e.getPresentation().setEnabledAndVisible(true);
+          return;
+        }
+      }
+      e.getPresentation().setEnabledAndVisible(false);
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      Project project = e.getProject();
+      if (project == null) return;
+
+      ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
+      ToolWindow window = windowManager.getToolWindow(getToolWindowId());
+
+      if (window.isActive()) {
+        selectContributorView(project);
+      }
+      else {
+        window.activate(() -> selectContributorView(project));
+      }
+    }
+
+    private void selectContributorView(Project project) {
+      ServiceViewManagerImpl manager = (ServiceViewManagerImpl)ServiceViewManager.getInstance(project);
+      for (ServiceView serviceView : manager.myServiceViews) {
+        if (serviceView.getModel() instanceof ContributorModel &&
+            myContributor.equals(((ContributorModel)serviceView.getModel()).getContributor())) {
+          Content content = manager.myContentManager.getContent(serviceView);
+          if (content != null) {
+            manager.myContentManager.setSelectedContent(content, true);
+          }
+          return;
+        }
+      }
+      if (manager.myContentManager.getIndexOfContent(manager.myAllServicesContent) >= 0) {
+        manager.myContentManager.setSelectedContent(manager.myAllServicesContent, true);
+      }
+    }
+  }
 
   static boolean isAutoScrollToSourceEnabled(@NotNull Project project) {
     return PropertiesComponent.getInstance(project).getBoolean(AUTO_SCROLL_TO_SOURCE_PROPERTY);

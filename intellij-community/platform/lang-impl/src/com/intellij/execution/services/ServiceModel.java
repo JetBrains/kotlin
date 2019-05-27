@@ -13,17 +13,19 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.CancellablePromise;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class ServiceModel implements Disposable, InvokerSupplier {
   static final ExtensionPointName<ServiceViewContributor> EP_NAME = ExtensionPointName.create("com.intellij.serviceViewContributor");
 
   private final Project myProject;
   private final Invoker myInvoker = new Invoker.BackgroundThread(this);
-  private final List<ServiceViewItem> myRoots = new ArrayList<>();
-  private boolean myRootInitialized;
+  private final List<ServiceViewItem> myRoots = new CopyOnWriteArrayList<>();
+  private volatile boolean myRootsInitialized;
 
   ServiceModel(@NotNull Project project) {
     myProject = project;
+    initRoots();
   }
 
   @Override
@@ -38,12 +40,14 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
   @NotNull
   List<? extends ServiceViewItem> getRoots() {
-    if (!myRootInitialized) {
-      myRootInitialized = true;
-      myRoots.clear();
+    return myRootsInitialized ? myRoots : Collections.emptyList();
+  }
+
+  private void initRoots() {
+    myInvoker.invokeLater(() -> {
       myRoots.addAll(doGetRoots());
-    }
-    return myRoots;
+      myRootsInitialized = true;
+    });
   }
 
   private List<? extends ServiceViewItem> doGetRoots() {
