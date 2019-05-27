@@ -1483,6 +1483,39 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
         """
     )
 
+    fun testValueArgumentList6() = doFileTest(
+        """
+        fun foo(s: String) = 1
+        fun test() {
+            foo(""<caret>
+            val aValue = ""
+        }
+        """,
+        """
+        fun foo(s: String) = 1
+        fun test() {
+            foo("")<caret>
+            val aValue = ""
+        }
+        """
+    )
+
+    fun testValueArgumentList7() = doFileTest(
+        """
+        fun test() {
+            String.to("123"<caret>
+            val aValue = ""
+        }
+        """,
+        """
+        fun test() {
+            String.to("123")
+            <caret>
+            val aValue = ""
+        }
+        """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----\n${this.trimIndent()}\n//----"
