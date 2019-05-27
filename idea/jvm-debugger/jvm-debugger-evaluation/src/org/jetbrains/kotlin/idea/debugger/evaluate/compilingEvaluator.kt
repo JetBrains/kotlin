@@ -23,21 +23,32 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassLoadingAdapter
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 
-fun loadClassesSafely(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference? {
+sealed class ClassLoadingResult {
+    class Success(val classLoader: ClassLoaderReference) : ClassLoadingResult()
+    class Failure(val error: Throwable) : ClassLoadingResult()
+    object NotNeeded : ClassLoadingResult()
+}
+
+fun loadClassesSafely(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoadingResult {
+    if (classes.isEmpty()) {
+        return ClassLoadingResult.NotNeeded
+    }
+
     return try {
-        loadClasses(context, classes)
+        val cl = loadClasses(context, classes)
+        if (cl != null) {
+            ClassLoadingResult.Success(cl)
+        } else {
+            ClassLoadingResult.NotNeeded
+        }
     } catch (e: EvaluateException) {
         throw e
     } catch (e: Throwable) {
         LOG.debug("Failed to evaluate expression", e)
-        null
+        ClassLoadingResult.Failure(e)
     }
 }
 
 fun loadClasses(context: ExecutionContext, classes: Collection<ClassToLoad>): ClassLoaderReference? {
-    if (classes.isEmpty()) {
-        return null
-    }
-
     return ClassLoadingAdapter.loadClasses(context, classes)
 }

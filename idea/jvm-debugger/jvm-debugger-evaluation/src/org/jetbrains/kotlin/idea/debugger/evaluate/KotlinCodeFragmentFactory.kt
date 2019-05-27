@@ -68,7 +68,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         }
 
         val codeFragment = constructor(project, "fragment.kt", item.text, initImports(item.imports), contextElement)
-        supplyDebugLabels(codeFragment, context)
+        supplyDebugInformation(item, codeFragment, context)
 
         codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, { expression: KtExpression ->
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
@@ -139,10 +139,16 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         return codeFragment
     }
 
-    private fun supplyDebugLabels(codeFragment: KtCodeFragment, context: PsiElement?) {
+    private fun supplyDebugInformation(item: TextWithImports, codeFragment: KtCodeFragment, context: PsiElement?) {
         val project = codeFragment.project
         val debugProcess = getDebugProcess(project, context) ?: return
+
         DebugLabelPropertyDescriptorProvider(codeFragment, debugProcess).supplyDebugLabels()
+
+        val evaluator = debugProcess.session.xDebugSession?.currentStackFrame?.evaluator
+        if (evaluator is KotlinDebuggerEvaluator) {
+            codeFragment.putUserData(EVALUATION_TYPE, evaluator.getType(item))
+        }
     }
 
     private fun getDebugProcess(project: Project, context: PsiElement?): DebugProcessImpl? {
@@ -294,6 +300,8 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
         @get:TestOnly
         val DEBUG_CONTEXT_FOR_TESTS: Key<DebuggerContextImpl> = Key.create("DEBUG_CONTEXT_FOR_TESTS")
+
+        val EVALUATION_TYPE: Key<KotlinDebuggerEvaluator.EvaluationType> = Key.create("DEBUG_EVALUATION_TYPE")
 
         const val FAKE_JAVA_CONTEXT_FUNCTION_NAME = "_java_locals_debug_fun_"
         const val FAKE_JAVA_THIS_NAME = "\$this\$_java_locals_debug_fun_"
