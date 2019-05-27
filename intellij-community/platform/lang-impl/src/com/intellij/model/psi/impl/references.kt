@@ -10,6 +10,20 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.elementsAroundOffsetUp
+import com.intellij.psi.util.elementsAtOffsetUp
+
+/**
+ * @return collection of [references][PsiSymbolReferenceService.getReferences] to the right of given [offset]
+ */
+fun PsiFile.referencesAt(offset: Int): Iterable<PsiSymbolReference> {
+  for ((element, offsetInElement) in elementsAtOffsetUp(offset)) {
+    val references = referencesInElement(element, offsetInElement)
+    if (references.isNotEmpty()) {
+      return references
+    }
+  }
+  return emptyList()
+}
 
 /**
  * @return collection of [references][PsiSymbolReferenceService.getReferences]
@@ -26,8 +40,7 @@ fun PsiFile.allReferencesAround(offset: Int): Collection<PsiSymbolReference> {
 }
 
 fun allReferencesInElement(element: PsiElement, offsetInElement: Int): Collection<PsiSymbolReference> {
-  val hints = PsiSymbolReferenceHints.offsetHint(offsetInElement)
-  val references: Collection<PsiSymbolReference> = PsiSymbolReferenceService.getService().getReferences(element, hints)
+  val references: Collection<PsiSymbolReference> = referencesInElement(element, offsetInElement)
   if (references.isNotEmpty()) {
     return references
   }
@@ -36,6 +49,11 @@ fun allReferencesInElement(element: PsiElement, offsetInElement: Int): Collectio
     return listOf(implicitReference)
   }
   return emptyList()
+}
+
+private fun referencesInElement(element: PsiElement, offsetInElement: Int): Collection<PsiSymbolReference> {
+  val hints = PsiSymbolReferenceHints.offsetHint(offsetInElement)
+  return PsiSymbolReferenceService.getService().getReferences(element, hints)
 }
 
 private fun implicitReference(element: PsiElement): PsiSymbolReference? {
