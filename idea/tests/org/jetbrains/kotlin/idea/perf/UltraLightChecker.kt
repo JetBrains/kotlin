@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
-import org.jetbrains.kotlin.asJava.classes.isPrivateOrParameterInPrivateMethod
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
@@ -36,6 +36,36 @@ object UltraLightChecker {
 
     fun allClasses(file: KtFile): List<KtClassOrObject> =
         SyntaxTraverser.psiTraverser(file).filter(KtClassOrObject::class.java).toList()
+
+
+    fun checkFacadeEquivalence(
+        fqName: FqName,
+        searchScope: GlobalSearchScope,
+        project: Project
+    ): KtLightClassForFacade? {
+
+        val oldForceFlag = KtUltraLightSupport.forceUsingOldLightClasses
+        KtUltraLightSupport.forceUsingOldLightClasses = true
+        val gold = KtLightClassForFacade.createForFacadeNoCache(fqName, searchScope, project)
+        KtUltraLightSupport.forceUsingOldLightClasses = false
+        val ultraLightClass = KtLightClassForFacade.createForFacadeNoCache(fqName, searchScope, project) ?: return null
+        KtUltraLightSupport.forceUsingOldLightClasses = oldForceFlag
+
+        if (gold != null) {
+            Assert.assertFalse(gold.javaClass.name.contains("Ultra"))
+        }
+
+        val goldText = gold?.renderClass().orEmpty()
+        val ultraText = ultraLightClass.renderClass()
+
+        if (goldText != ultraText) {
+            Assert.assertEquals(
+                "// Classic implementation:\n$goldText",
+                "// Ultra-light implementation:\n$ultraText"
+            )
+        }
+        return ultraLightClass
+    }
 
     fun checkClassEquivalence(ktClass: KtClassOrObject): KtUltraLightClass? {
         val gold = KtLightClassForSourceDeclaration.createNoCache(ktClass, forceUsingOldLightClasses = true)
