@@ -76,7 +76,7 @@ model {
         clangstubs(NativeLibrarySpec) {
             sources {
                 c.source.srcDir 'prebuilt/nativeInteropStubs/c'
-		        cpp.source.srcDir 'prebuilt/nativeInteropStubs/cpp'
+                cpp.source.srcDir 'src/nativeInteropStubs/cpp'
             }
 
             binaries.all {

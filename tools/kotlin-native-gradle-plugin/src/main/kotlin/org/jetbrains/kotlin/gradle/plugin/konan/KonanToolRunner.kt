@@ -73,20 +73,7 @@ internal abstract class KonanCliRunner(
             "java.library.path" to "${project.konanHome}/konan/nativelib"
     )
 
-    override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1").apply {
-        // See https://docs.oracle.com/javase/10/vm/signal-chaining.htm
-        val jre = System.getProperty("java.home")
-        when (HostManager.host.family) {
-            Family.OSX -> {
-                put("DYLD_FORCE_FLAT_NAMESPACE", "0")
-                put("DYLD_INSERT_LIBRARIES", "$jre/lib/libjsig.dylib")
-            }
-            Family.LINUX -> {
-                put("LD_PRELOAD", "$jre/lib/amd64/libjsig.so")
-            }
-            else -> { /* No signal chaining required. */ }
-        }
-    }
+    override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
     private fun String.escapeQuotes() = replace("\"", "\\\"")
 
