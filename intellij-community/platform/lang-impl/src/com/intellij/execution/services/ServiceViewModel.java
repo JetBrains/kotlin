@@ -42,7 +42,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     List<? extends ServiceViewItem> roots = filterEmptyGroups(doGetRoots());
     if (!myShowContributorRoots && roots.stream().anyMatch(ContributorNode.class::isInstance)) {
       roots = roots.stream()
-        .flatMap(item -> item instanceof ContributorNode ? item.getChildren().stream() : Stream.of(item))
+        .flatMap(item -> item instanceof ContributorNode ? doGetChildren(item).stream() : Stream.of(item))
         .collect(Collectors.toList());
     }
     if (myFlat) {
