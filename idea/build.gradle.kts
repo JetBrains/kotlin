@@ -192,14 +192,6 @@ projectTest(taskName = "performanceTest") {
         "-XX:+UseCompressedOops",
         "-XX:+UseConcMarkSweepGC"
     )
-    jvmArgs("-XX:+UnlockCommercialFeatures", "-XX:+FlightRecorder")
-
-    if (hasProperty("perf.flight.recorder.override")) {
-        jvmArgs(property("perf.flight.recorder.override"))
-    } else {
-        val settings = if (hasProperty("perf.flight.recorder.settings")) ",settings=${property("perf.flight.recorder.settings")}" else ""
-        jvmArgs("-XX:StartFlightRecording=delay=15m,duration=5h,filename=perf.jfr$settings")
-    }
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
