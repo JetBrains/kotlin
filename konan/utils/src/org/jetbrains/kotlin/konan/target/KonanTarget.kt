@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.Named
+import java.io.Serializable
+import java.lang.Exception
 
-enum class Family(
-    val exeSuffix: String, val dynamicPrefix: String, val dynamicSuffix: String,
-    val staticPrefix: String, val staticSuffix: String
-) {
-    OSX("kexe", "lib", "dylib", "lib", "a"),
-    IOS("kexe", "lib", "dylib", "lib", "a"),
-    LINUX("kexe", "lib", "so", "lib", "a"),
-    MINGW("exe", "", "dll", "lib", "a"),
-    ANDROID("so", "lib", "so", "lib", "a"),
-    WASM("wasm", "", "wasm", "", "wasm"),
-    ZEPHYR("o", "lib", "a", "lib", "a")
+enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String,
+                  val staticPrefix: String, val staticSuffix: String) {
+    OSX     ("kexe", "lib", "dylib", "lib", "a"),
+    IOS     ("kexe", "lib", "dylib", "lib", "a"),
+    LINUX   ("kexe", "lib", "so"   , "lib", "a"),
+    MINGW   ("exe" , ""   , "dll"  , "lib", "a"),
+    ANDROID ("so"  , "lib", "so"   , "lib", "a"),
+    WASM    ("wasm", ""   , "wasm" , "",    "wasm"),
+    ZEPHYR  ("o"   , "lib", "a"    , "lib", "a")
 }
 
 enum class Architecture(val bitness: Int) {
@@ -32,42 +32,25 @@ enum class Architecture(val bitness: Int) {
 }
 
 sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named {
-    object ANDROID_ARM32 : KonanTarget("android_arm32", Family.ANDROID, Architecture.ARM32)
-    object ANDROID_ARM64 : KonanTarget("android_arm64", Family.ANDROID, Architecture.ARM64)
-    object IOS_ARM32 : KonanTarget("ios_arm32", Family.IOS, Architecture.ARM32)
-    object IOS_ARM64 : KonanTarget("ios_arm64", Family.IOS, Architecture.ARM64)
-    object IOS_X64 : KonanTarget("ios_x64", Family.IOS, Architecture.X64)
-    object LINUX_X64 : KonanTarget("linux_x64", Family.LINUX, Architecture.X64)
-    object MINGW_X64 : KonanTarget("mingw_x64", Family.MINGW, Architecture.X64)
-    object MINGW_X86 : KonanTarget("mingw_x86", Family.MINGW, Architecture.X86)
-    object MACOS_X64 : KonanTarget("macos_x64", Family.OSX, Architecture.X64)
-    object LINUX_ARM32_HFP : KonanTarget("linux_arm32_hfp", Family.LINUX, Architecture.ARM32)
-    object LINUX_MIPS32 : KonanTarget("linux_mips32", Family.LINUX, Architecture.MIPS32)
-    object LINUX_MIPSEL32 : KonanTarget("linux_mipsel32", Family.LINUX, Architecture.MIPSEL32)
-    object WASM32 : KonanTarget("wasm32", Family.WASM, Architecture.WASM32)
+    object ANDROID_ARM32 :  KonanTarget( "android_arm32",   Family.ANDROID, Architecture.ARM32)
+    object ANDROID_ARM64 :  KonanTarget( "android_arm64",   Family.ANDROID, Architecture.ARM64)
+    object IOS_ARM32 :      KonanTarget( "ios_arm32",       Family.IOS,     Architecture.ARM32)
+    object IOS_ARM64 :      KonanTarget( "ios_arm64",       Family.IOS,     Architecture.ARM64)
+    object IOS_X64 :        KonanTarget( "ios_x64",         Family.IOS,     Architecture.X64)
+    object LINUX_X64 :      KonanTarget( "linux_x64",       Family.LINUX,   Architecture.X64)
+    object MINGW_X86 :      KonanTarget( "mingw_x86",       Family.MINGW,   Architecture.X86)
+    object MINGW_X64 :      KonanTarget( "mingw_x64",       Family.MINGW,   Architecture.X64)
+    object MACOS_X64 :      KonanTarget( "macos_x64",       Family.OSX,     Architecture.X64)
+    object LINUX_ARM64 :    KonanTarget( "linux_arm64",     Family.LINUX,   Architecture.ARM64)
+    object LINUX_ARM32_HFP :KonanTarget( "linux_arm32_hfp", Family.LINUX,   Architecture.ARM32)
+    object LINUX_MIPS32 :   KonanTarget( "linux_mips32",    Family.LINUX,   Architecture.MIPS32)
+    object LINUX_MIPSEL32 : KonanTarget( "linux_mipsel32",  Family.LINUX,   Architecture.MIPSEL32)
+    object WASM32 :         KonanTarget( "wasm32",          Family.WASM,    Architecture.WASM32)
 
     // Tunable targets
-    class ZEPHYR(val subName: String, val genericName: String = "zephyr") :
-        KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32)
+    class ZEPHYR(val subName: String, val genericName: String = "zephyr") : KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32)
 
     override fun toString() = name
-}
-
-// TODO: need a better way to enumerated predefined targets.
-object PredefinedKonanTargets {
-
-    val ALL = listOf(
-        ANDROID_ARM32, ANDROID_ARM64,
-        IOS_ARM32, IOS_ARM64, IOS_X64,
-        LINUX_X64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32,
-        MINGW_X64, MINGW_X86,
-        MACOS_X64,
-        KonanTarget.WASM32
-    )
-
-    private val ALL_BY_NAME = ALL.associate { it.name to it }
-
-    fun getByName(name: String) = ALL_BY_NAME[name]
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
@@ -79,11 +62,11 @@ enum class CompilerOutputKind {
     },
     DYNAMIC {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"
-        override fun prefix(target: KonanTarget?) = target!!.family.dynamicPrefix
+        override fun prefix(target: KonanTarget?) = "${target!!.family.dynamicPrefix}"
     },
     STATIC {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.staticSuffix}"
-        override fun prefix(target: KonanTarget?) = target!!.family.staticPrefix
+        override fun prefix(target: KonanTarget?) = "${target!!.family.staticPrefix}"
     },
     FRAMEWORK {
         override fun suffix(target: KonanTarget?): String = ".framework"
@@ -101,21 +84,13 @@ enum class CompilerOutputKind {
 
 interface TargetManager {
     val target: KonanTarget
-    val targetName: String
-    fun list()
+    val targetName : String
+    fun list() : Unit
     val hostTargetSuffix: String
     val targetSuffix: String
 }
 
-interface SubTargetProvider {
-    fun availableSubTarget(genericName: String): List<String>
-}
-
-private class NoSubTargets : SubTargetProvider {
-    override fun availableSubTarget(genericName: String): List<String> = emptyList()
-}
-
-private class TargetManagerImpl(val userRequest: String?, val hostManager: HostManager) : TargetManager {
+private class TargetManagerImpl(val userRequest: String?, val hostManager: HostManager): TargetManager {
     override val target = determineCurrent()
     override val targetName
         get() = target.visibleName
@@ -141,19 +116,30 @@ private class TargetManagerImpl(val userRequest: String?, val hostManager: HostM
     override val targetSuffix get() = target.name
 }
 
-open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
+open class HostManager(protected val distribution: Distribution = Distribution(), experimental: Boolean = false) {
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
 
-    private val zephyrSubtargets = subtargetProvider.availableSubTarget("zephyr").map { ZEPHYR(it) }
+    // TODO: need a better way to enumerated predefined targets.
+    private val predefinedTargets = listOf(
+        ANDROID_ARM32, ANDROID_ARM64,
+        IOS_ARM32, IOS_ARM64, IOS_X64,
+        LINUX_X64, LINUX_ARM32_HFP, LINUX_ARM64, LINUX_MIPS32, LINUX_MIPSEL32,
+        MINGW_X64, MINGW_X86,
+        MACOS_X64,
+        WASM32)
+
+    private val zephyrSubtargets = distribution.availableSubTarget("zephyr").map { ZEPHYR(it) }
+
+    private val experimentalEnabled = experimental || distribution.experimentalEnabled
 
     private val configurableSubtargets = zephyrSubtargets
 
     val targetValues: List<KonanTarget> by lazy {
-        PredefinedKonanTargets.ALL + configurableSubtargets
+        predefinedTargets + configurableSubtargets
     }
 
-    val targets = targetValues.associate { it.visibleName to it }
+    val targets = targetValues.associate{ it.visibleName to it }
 
     fun toKonanTargets(names: Iterable<String>): List<KonanTarget> {
         return names.map {
@@ -171,43 +157,73 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
 
     fun targetByName(name: String): KonanTarget {
         if (name == "host") return host
-        return targets[resolveAlias(name)] ?: throw TargetSupportException("Unknown target name: $name")
+        val target = targets[resolveAlias(name)]
+        if (target == null) throw TargetSupportException("Unknown target name: $name")
+        return target
     }
 
-    val enabled: List<KonanTarget> by lazy {
-        enabledTargetsByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
-    }
-
-    val enabledTargetsByHost = mapOf(
-        KonanTarget.LINUX_X64 to setOf(
-            KonanTarget.LINUX_X64,
-            KonanTarget.LINUX_ARM32_HFP,
-            KonanTarget.LINUX_MIPS32,
-            KonanTarget.LINUX_MIPSEL32,
-            KonanTarget.ANDROID_ARM32,
-            KonanTarget.ANDROID_ARM64,
-            KonanTarget.WASM32
-        ) + zephyrSubtargets,
-        KonanTarget.MINGW_X64 to setOf(
-            KonanTarget.MINGW_X64,
-            KonanTarget.MINGW_X86,
-            KonanTarget.WASM32,
-            KonanTarget.LINUX_X64,
-            KonanTarget.LINUX_ARM32_HFP,
-            KonanTarget.ANDROID_ARM32
-        ) + zephyrSubtargets,
-        KonanTarget.MACOS_X64 to setOf(
-            KonanTarget.MACOS_X64,
-            KonanTarget.IOS_ARM32,
-            KonanTarget.IOS_ARM64,
-            KonanTarget.IOS_X64,
-            KonanTarget.LINUX_X64,
-            KonanTarget.LINUX_ARM32_HFP,
-            KonanTarget.ANDROID_ARM32,
-            KonanTarget.ANDROID_ARM64,
-            KonanTarget.WASM32
-        ) + zephyrSubtargets
+    val enabledRegularByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
+        LINUX_X64 to setOf(
+            LINUX_X64,
+            LINUX_ARM32_HFP,
+            LINUX_ARM64,
+            LINUX_MIPS32,
+            LINUX_MIPSEL32,
+            ANDROID_ARM32,
+            ANDROID_ARM64,
+            WASM32
+        ),
+        MINGW_X64 to setOf(
+            MINGW_X64,
+            MINGW_X86,
+            LINUX_X64,
+            LINUX_ARM32_HFP,
+            LINUX_ARM64,
+            ANDROID_ARM32,
+            // TODO: toolchain to be fixed for that to work.
+            // ANDROID_ARM64,
+            WASM32
+        ),
+        MACOS_X64 to setOf(
+            MACOS_X64,
+            IOS_ARM32,
+            IOS_ARM64,
+            IOS_X64,
+            LINUX_X64,
+            LINUX_ARM32_HFP,
+            LINUX_ARM64,
+            ANDROID_ARM32,
+            ANDROID_ARM64,
+            WASM32
+        )
     )
+
+    val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
+        LINUX_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
+        MACOS_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
+        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets
+    )
+
+    val enabledByHost: Map<KonanTarget, Set<KonanTarget>> by lazy {
+        val result = enabledRegularByHost.toMutableMap()
+        if (experimentalEnabled) {
+            enabledExperimentalByHost.forEach { (k, v) ->
+                result.merge(k, v) { old, new -> old + new }
+            }
+        }
+        result.toMap()
+    }
+
+    val enabledRegular: List<KonanTarget> by lazy {
+        enabledRegularByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
+    }
+
+    val enabledExperimental: List<KonanTarget> by lazy {
+        enabledExperimentalByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
+    }
+
+    val enabled : List<KonanTarget>
+        get() = if (experimentalEnabled) enabledRegular + enabledExperimental else enabledRegular
 
     fun isEnabled(target: KonanTarget) = enabled.contains(target)
 
@@ -218,7 +234,7 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
                 javaOsName == "Mac OS X" -> "osx"
                 javaOsName == "Linux" -> "linux"
                 javaOsName.startsWith("Windows") -> "windows"
-                else -> throw TargetSupportException("Unknown operating system: $javaOsName")
+                else -> throw TargetSupportException("Unknown operating system: ${javaOsName}")
             }
         }
 
@@ -229,10 +245,10 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
         }
 
         val jniHostPlatformIncludeDir: String
-            get() = when (host) {
+            get() = when(host) {
                 KonanTarget.MACOS_X64 -> "darwin"
                 KonanTarget.LINUX_X64 -> "linux"
-                KonanTarget.MINGW_X64 -> "win32"
+                KonanTarget.MINGW_X64 ->"win32"
                 else -> throw TargetSupportException("Unknown host: $host.")
             }
 
@@ -240,48 +256,51 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
             val javaArch = System.getProperty("os.arch")
             return when (javaArch) {
                 "x86_64" -> "x86_64"
-                "amd64" -> "x86_64"
-                "arm64" -> "arm64"
-                else -> throw TargetSupportException("Unknown hardware platform: $javaArch")
+                "amd64"  -> "x86_64"
+                "arm64"  -> "arm64"
+                else -> throw TargetSupportException("Unknown hardware platform: ${javaArch}")
             }
         }
 
         val host: KonanTarget = when (host_os()) {
-            "osx" -> KonanTarget.MACOS_X64
+            "osx"   -> KonanTarget.MACOS_X64
             "linux" -> KonanTarget.LINUX_X64
             "windows" -> KonanTarget.MINGW_X64
             else -> throw TargetSupportException("Unknown host target: ${host_os()} ${host_arch()}")
         }
 
-        val hostIsMac = (host == KonanTarget.MACOS_X64)
-        val hostIsLinux = (host == KonanTarget.LINUX_X64)
-        val hostIsMingw = (host == KonanTarget.MINGW_X64)
+        // Note Hotspot-specific VM option enforcing C1-only, critical for decent compilation speed.
+        val defaultJvmArgs = listOf("-XX:TieredStopAtLevel=1", "-ea", "-Dfile.encoding=UTF-8")
+        val regularJvmArgs = defaultJvmArgs + "-Xmx3G"
+
+        val hostIsMac   = (host.family == Family.OSX)
+        val hostIsLinux = (host.family == Family.LINUX)
+        val hostIsMingw = (host.family == Family.MINGW)
 
         val hostSuffix get() = host.name
         @JvmStatic
-        val hostName
-            get() = host.name
+        val hostName get() = host.name
 
         val knownTargetTemplates = listOf("zephyr")
 
         private val targetAliasResolutions = mapOf(
-            "linux" to "linux_x64",
-            "macbook" to "macos_x64",
-            "macos" to "macos_x64",
-            "imac" to "macos_x64",
+            "linux"       to "linux_x64",
+            "macbook"     to "macos_x64",
+            "macos"       to "macos_x64",
+            "imac"        to "macos_x64",
             "raspberrypi" to "linux_arm32_hfp",
-            "iphone32" to "ios_arm32",
-            "iphone" to "ios_arm64",
-            "ipad" to "ios_arm64",
-            "ios" to "ios_arm64",
-            "iphone_sim" to "ios_x64",
-            "mingw" to "mingw_x64"
+            "iphone32"    to "ios_arm32",
+            "iphone"      to "ios_arm64",
+            "ipad"        to "ios_arm64",
+            "ios"         to "ios_arm64",
+            "iphone_sim"  to "ios_x64",
+            "mingw"       to "mingw_x64"
         )
 
         private val targetAliases: Map<String, List<String>> by lazy {
             val result = mutableMapOf<String, MutableList<String>>()
             targetAliasResolutions.entries.forEach {
-                result.getOrPut(it.value, { mutableListOf() }).add(it.key)
+                result.getOrPut(it.value, { mutableListOf() } ).add(it.key)
             }
             result
         }
@@ -292,10 +311,13 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
     }
 }
 
+/**
+ * Name of a preset used in the 'kotlin-multiplatform' Gradle plugin to represent this target.
+ */
 val KonanTarget.presetName: String
     get() = when (this) {
-        KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
-        KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
+        ANDROID_ARM32 -> "androidNativeArm32"
+        ANDROID_ARM64 -> "androidNativeArm64"
         else -> evaluatePresetName(this.name)
     }
 
@@ -304,4 +326,4 @@ private fun evaluatePresetName(targetName: String): String {
     return nameParts.asSequence().drop(1).joinToString("", nameParts.firstOrNull().orEmpty(), transform = String::capitalize)
 }
 
-class TargetSupportException(message: String = "", cause: Throwable? = null) : Exception(message, cause)
+class TargetSupportException (message: String = "", cause: Throwable? = null) : Exception(message, cause)

@@ -95,7 +95,7 @@ class KotlinNativeTargetPreset(
 
         if (!konanTarget.enabledOnCurrentHost) {
             with(HostManager()) {
-                val supportedHosts = enabledTargetsByHost.filterValues { konanTarget in it }.keys
+                val supportedHosts = enabledByHost.filterValues { konanTarget in it }.keys
                 val supportedHostsString =
                     if (supportedHosts.size == 1)
                         "a ${supportedHosts.single()} host" else
