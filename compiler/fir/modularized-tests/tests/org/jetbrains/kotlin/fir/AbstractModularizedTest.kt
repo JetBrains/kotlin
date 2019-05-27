@@ -85,7 +85,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     protected fun runTestOnce(pass: Int) {
         beforePass()
-        val testDataPath = "/Users/jetbrains/jps"
+        val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
         val root = File(testDataPath)
 
         println("BASE PATH: ${root.absolutePath}")
