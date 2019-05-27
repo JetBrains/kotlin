@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-fun foo() {
-    val x = true
-    assert(!(x && false)) { "text" }
-}
