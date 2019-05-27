@@ -11,17 +11,15 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventId;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.EditorBundle;
-import com.intellij.openapi.ui.JBCheckboxMenuItem;
-import com.intellij.openapi.ui.JBMenuItem;
-import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ui.GraphicsUtil;
+import com.intellij.util.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class DaemonEditorPopup extends PopupHandler {
@@ -34,58 +32,64 @@ public class DaemonEditorPopup extends PopupHandler {
   @Override
   public void invokePopup(final Component comp, final int x, final int y) {
     if (ApplicationManager.getApplication() == null) return;
-    final JRadioButtonMenuItem errorsFirst = createRadioButtonMenuItem(EditorBundle.message("errors.panel.go.to.errors.first.radio"));
-    errorsFirst.addActionListener(
-      __ -> DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(errorsFirst.isSelected()));
-    final JPopupMenu popupMenu = new JBPopupMenu();
-    popupMenu.add(errorsFirst);
+    ActionManager actionManager = ActionManager.getInstance();
+    DefaultActionGroup actionGroup = new DefaultActionGroup();
+    DefaultActionGroup gotoGroup = new DefaultActionGroup("'Next Error' Action Goes Through", true);
+    gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.errors.first.radio")) {
+                    @Override
+                    public boolean isSelected(@NotNull AnActionEvent e) {
+                      return DaemonCodeAnalyzerSettings.getInstance().isNextErrorActionGoesToErrorsFirst();
+                    }
 
-    final JRadioButtonMenuItem next = createRadioButtonMenuItem(EditorBundle.message("errors.panel.go.to.next.error.warning.radio"));
-    next.addActionListener(__ -> DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(!next.isSelected()));
-    popupMenu.add(next);
+                    @Override
+                    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                      DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(state);
+                    }
+                  }
+    );
+    gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.next.error.warning.radio")) {
+                    @Override
+                    public boolean isSelected(@NotNull AnActionEvent e) {
+                      return !DaemonCodeAnalyzerSettings.getInstance().isNextErrorActionGoesToErrorsFirst();
+                    }
 
-    ButtonGroup group = new ButtonGroup();
-    group.add(errorsFirst);
-    group.add(next);
-
-    popupMenu.addSeparator();
-    final JMenuItem hLevel = new JBMenuItem(EditorBundle.message("customize.highlighting.level.menu.item"));
-    popupMenu.add(hLevel);
-
-    final boolean isErrorsFirst = DaemonCodeAnalyzerSettings.getInstance().isNextErrorActionGoesToErrorsFirst();
-    errorsFirst.setSelected(isErrorsFirst);
-    next.setSelected(!isErrorsFirst);
-    hLevel.addActionListener(__ -> {
-      final PsiFile psiFile = myPsiFile;
-      if (psiFile == null) return;
-      final HectorComponent component = new HectorComponent(psiFile);
-      final Dimension dimension = component.getPreferredSize();
-      Point point = new Point(x, y);
-      component.showComponent(new RelativePoint(comp, new Point(point.x - dimension.width, point.y)));
+                    @Override
+                    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                      DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(!state);
+                    }
+                  }
+    );
+    actionGroup.add(gotoGroup);
+    actionGroup.addSeparator();
+    actionGroup.add(new AnAction(EditorBundle.message("customize.highlighting.level.menu.item")) {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        PsiFile psiFile = myPsiFile;
+        if (psiFile == null) return;
+        final HectorComponent component = new HectorComponent(ObjectUtils.assertNotNull(psiFile));
+        final Dimension dimension = component.getPreferredSize();
+        Point point = new Point(x, y);
+        component.showComponent(new RelativePoint(comp, new Point(point.x - dimension.width, point.y)));
+      }
     });
+    actionGroup.addSeparator();
+    actionGroup.add(new ToggleAction(IdeBundle.message("checkbox.show.editor.preview.popup")) {
+      @Override
+      public boolean isSelected(@NotNull AnActionEvent e) {
+        return UISettings.getInstance().getShowEditorToolTip();
+      }
 
-    final JBCheckboxMenuItem previewCheckbox = new JBCheckboxMenuItem(IdeBundle.message("checkbox.show.editor.preview.popup"), UISettings.getInstance().getShowEditorToolTip());
-    popupMenu.addSeparator();
-    popupMenu.add(previewCheckbox);
-    previewCheckbox.addActionListener(__ -> {
-      UISettings.getInstance().setShowEditorToolTip(previewCheckbox.isSelected());
-      UISettings.getInstance().fireUISettingsChanged();
+      @Override
+      public void setSelected(@NotNull AnActionEvent e, boolean state) {
+        UISettings.getInstance().setShowEditorToolTip(state);
+        UISettings.getInstance().fireUISettingsChanged();
+      }
     });
-
+    ActionPopupMenu editorPopup = actionManager.createActionPopupMenu(ActionPlaces.RIGHT_EDITOR_GUTTER_POPUP, actionGroup);
     PsiFile file = myPsiFile;
     if (file != null && DaemonCodeAnalyzer.getInstance(myPsiFile.getProject()).isHighlightingAvailable(file)) {
       UIEventLogger.logUIEvent(UIEventId.DaemonEditorPopupInvoked);
-      popupMenu.show(comp, x, y);
+      editorPopup.getComponent().show(comp, x, y);
     }
-  }
-
-  private static JRadioButtonMenuItem createRadioButtonMenuItem(final String message) {
-    return new JRadioButtonMenuItem(message) {
-      @Override
-      public void paint(Graphics g) {
-        GraphicsUtil.setupAntialiasing(g);
-        super.paint(g);
-      }
-    };
   }
 }
