@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
 import org.jetbrains.kotlin.gradle.plugin.konan.konanExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 import org.jetbrains.kotlin.gradle.plugin.konan.konanVersion
-import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File

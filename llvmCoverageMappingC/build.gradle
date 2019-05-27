@@ -17,8 +17,16 @@
 apply plugin: "cpp"
 apply plugin: "c"
 
-apply from: "${rootProject.projectDir}/gradle/kotlinGradlePlugin.gradle"
+buildscript {
+  ext.rootBuildDirectory = file('..')
 
+  apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+  }
+}
 import org.jetbrains.kotlin.konan.target.ClangArgs
 
 model {

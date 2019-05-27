@@ -14,19 +14,5 @@
  * limitations under the License.
  */
 
-import java.util.*
-
 include(":plugins")
-
-// Read properties from the root gradle.properties to allow setting path to K/N shared there.
-// We cannot store these properties here so we have to read them once more during configuration of projects.
-val rootProperties = Properties().apply {
-    file("../gradle.properties").inputStream().use { load(it) }
-}
-
-// Property specified using a command line option.
-val sharedProjectPath: String? by settings
-
-if (sharedProjectPath != null || rootProperties.containsKey("sharedProjectPath")) {
-    include(":shared")
-}
+include(":shared")

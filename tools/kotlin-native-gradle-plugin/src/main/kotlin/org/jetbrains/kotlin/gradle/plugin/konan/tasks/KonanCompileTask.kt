@@ -25,8 +25,6 @@ import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -237,8 +235,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         val resolver = defaultResolver(
                 repos.map { it.absolutePath },
                 konanTarget,
-                Distribution(konanHomeOverride = project.konanHome),
-                listOf(KonanVersion.CURRENT)
+                Distribution(konanHomeOverride = project.konanHome)
         )
 
         return KonanModelArtifactImpl(

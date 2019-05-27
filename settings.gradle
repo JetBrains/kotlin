@@ -33,7 +33,7 @@ include ':utilities'
 //include ':tools:benchmarksAnalyzer'
 include ':platformLibs'
 
-includeBuild 'version'
+includeBuild 'shared'
 includeBuild 'extracted/konan.metadata'
 includeBuild 'extracted/konan.serializer'
 includeBuild 'tools/kotlin-native-gradle-plugin'

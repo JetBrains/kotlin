@@ -34,7 +34,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-compiler:$buildKotlinVersion"
     compile project(':Interop:Indexer')
-    compile kotlinNativeSharedModule
+    compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 }
 
 compileKotlin {

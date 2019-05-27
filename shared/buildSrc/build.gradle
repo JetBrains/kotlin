@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+buildscript {
+    ext.rootBuildDirectory = "$rootDir/../.."
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
-plugins {
-    kotlin("jvm")
 }
 
-val sharedProject = file(property("sharedProjectPath")!!).resolve("src")
 
-kotlin.sourceSets["main"].kotlin.srcDirs(sharedProject)
+apply plugin: 'kotlin'
+
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+    mavenCentral()
+}
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    compile gradleApi()
+    compile localGroovy()
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
 }

@@ -38,19 +38,10 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$buildKotlinVersion"
     compile group: 'com.ullink.slack', name: 'simpleslackapi', version: '0.6.0'
+    // An artifact from the included build 'shared' cannot be used here due to https://github.com/gradle/gradle/issues/3768
+    // TODO: Remove this hack when the bug is fixed
+    compile project(':shared')
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
-
-    // Support composite build against kotlin-native-shared.
-    // Gradle cannot substitute a dependency in buildSrc by an included build.
-    // See: https://github.com/gradle/gradle/issues/3768.
-    // Thus we have to compile sources of the included shared once more to use it in buildSrc.
-    if (project.hasProperty("sharedProjectPath")) {
-        compile project(':shared')
-    } else {
-        // If there is no composite build against shared, add a dependency on a published jar.
-        compile "org.jetbrains.kotlin:kotlin-native-shared:$sharedVersion"
-    }
-    
 }
 
 rootProject.dependencies {

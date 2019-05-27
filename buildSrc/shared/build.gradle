@@ -13,24 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-buildscript {
-    ext.rootBuildDirectory = "$rootDir/../.."
-    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
-    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
+buildscript {
+    ext {
+        gradleProperties = new Properties()
+        gradleProperties.load(new FileInputStream("$projectDir/../../gradle.properties"))
+        buildKotlinVersion = gradleProperties."buildKotlinVersion"
+        buildKotlinCompilerRepo = gradleProperties."buildKotlinCompilerRepo"
+    }
+
+    apply from: '../../gradle/kotlinGradlePlugin.gradle'
 }
 
 apply plugin: 'kotlin'
+
+// We reuse the source code from the Project in buildSrc.
+sourceSets.main.kotlin.srcDirs = ["$projectDir/../../shared/src/main/kotlin"]
 
 repositories {
     maven {
         url buildKotlinCompilerRepo
     }
-    mavenCentral()
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
 }
 
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+rootProject.dependencies {
+    runtime project(path)
 }

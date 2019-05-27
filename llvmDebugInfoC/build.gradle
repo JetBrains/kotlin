@@ -21,10 +21,10 @@ buildscript {
   ext.rootBuildDirectory = file('..')
 
   apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
-  apply from: "$rootBuildDirectory/gradle/kotlinNativeShared.gradle"
 
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
   }
 }
 import org.jetbrains.kotlin.konan.target.ClangArgs
