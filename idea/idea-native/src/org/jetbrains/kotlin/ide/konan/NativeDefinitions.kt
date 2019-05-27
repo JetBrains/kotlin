@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.konan.library.KDEFINITIONS_FILE_EXTENSION
 
 
-const val NATIVE_DEFINITIONS_NAME = "KND"
+const val NATIVE_DEFINITIONS_ID = "KND"
+const val NATIVE_DEFINITIONS_NAME = "Kotlin/Native Def"
 const val NATIVE_DEFINITIONS_DESCRIPTION = "Definitions file for Kotlin/Native C interop"
 
 object NativeDefinitionsFileType : LanguageFileType(NativeDefinitionsLanguage.INSTANCE) {
@@ -38,10 +39,12 @@ object NativeDefinitionsFileType : LanguageFileType(NativeDefinitionsLanguage.IN
     override fun getIcon(): Icon = KotlinIcons.NATIVE
 }
 
-class NativeDefinitionsLanguage private constructor() : Language(NATIVE_DEFINITIONS_NAME) {
+class NativeDefinitionsLanguage private constructor() : Language(NATIVE_DEFINITIONS_ID) {
     companion object {
         val INSTANCE = NativeDefinitionsLanguage()
     }
+
+    override fun getDisplayName(): String = NATIVE_DEFINITIONS_NAME
 }
 
 class NativeDefinitionsFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, NativeDefinitionsLanguage.INSTANCE) {
