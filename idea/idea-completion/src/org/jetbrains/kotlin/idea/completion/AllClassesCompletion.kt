@@ -21,10 +21,12 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiLiteral
+import com.intellij.psi.search.PsiShortNamesCache
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isJavaClassNotToBeUsedInKotlin
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -86,21 +88,29 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     }
 
     private fun addAdaptedJavaCompletion(collector: (PsiClass) -> Unit) {
-        AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
-            if (psiClass!! !is KtLightClass) { // Kotlin class should have already been added as kotlin element before
-                if (psiClass.isSyntheticKotlinClass()) return@processJavaClasses // filter out synthetic classes produced by Kotlin compiler
+        val shortNamesCache = PsiShortNamesCache.EP_NAME.getExtensions(parameters.editor.project).firstOrNull {
+            it is KotlinShortNamesCache
+        } as KotlinShortNamesCache?
+        shortNamesCache?.disableSearch?.set(true)
+        try {
+            AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true) { psiClass ->
+                if (psiClass!! !is KtLightClass) { // Kotlin class should have already been added as kotlin element before
+                    if (psiClass.isSyntheticKotlinClass()) return@processJavaClasses // filter out synthetic classes produced by Kotlin compiler
 
-                val kind = when {
-                    psiClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
-                    psiClass.isInterface -> ClassKind.INTERFACE
-                    psiClass.isEnum -> ClassKind.ENUM_CLASS
-                    else -> ClassKind.CLASS
-                }
-                if (kindFilter(kind) && !isNotToBeUsed(psiClass)) {
-                    collector(psiClass)
+                    val kind = when {
+                        psiClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
+                        psiClass.isInterface -> ClassKind.INTERFACE
+                        psiClass.isEnum -> ClassKind.ENUM_CLASS
+                        else -> ClassKind.CLASS
+                    }
+                    if (kindFilter(kind) && !isNotToBeUsed(psiClass)) {
+                        collector(psiClass)
+                    }
                 }
             }
-        })
+        } finally {
+            shortNamesCache?.disableSearch?.set(false)
+        }
     }
 
     private fun PsiClass.isSyntheticKotlinClass(): Boolean {
