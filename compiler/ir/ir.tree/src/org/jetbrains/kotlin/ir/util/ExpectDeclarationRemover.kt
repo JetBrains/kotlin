@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.lower
+package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -15,8 +13,6 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -25,18 +21,19 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
-/**
- * This pass removes all declarations with `isExpect == true`.
- */
-class ExpectDeclarationsRemoving(val context: BackendContext) : FileLoweringPass {
+// `doRemove` means should expect-declaration be removed from IR
+class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
 
-    override fun lower(irFile: IrFile) {
+    override fun visitFile(declaration: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
-        irFile.declarations.removeAll {
+        declaration.declarations.removeAll {
             val descriptor = it.descriptor
             if (descriptor is MemberDescriptor && descriptor.isExpect) {
                 copyDefaultArgumentsFromExpectToActual(it)
-                true
+                doRemove
             } else {
                 false
             }
@@ -83,10 +80,10 @@ class ExpectDeclarationsRemoving(val context: BackendContext) : FileLoweringPass
     }
 
     private fun IrFunction.findActualForExpected(): IrFunction =
-        context.ir.symbols.externalSymbolTable.referenceFunction(descriptor.findActualForExpect()).owner
+        symbolTable.referenceFunction(descriptor.findActualForExpect()).owner
 
     private fun IrClass.findActualForExpected(): IrClass =
-        context.ir.symbols.externalSymbolTable.referenceClass(descriptor.findActualForExpect()).owner
+        symbolTable.referenceClass(descriptor.findActualForExpect()).owner
 
     private inline fun <reified T : MemberDescriptor> T.findActualForExpect() = with(ExpectedActualResolver) {
         val descriptor = this@findActualForExpect

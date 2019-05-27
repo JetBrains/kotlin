@@ -282,6 +282,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 JsInvocation(
                     // Create scope for temporary variable holding dispatch receiver
                     // It is used both during method reference and passing `this` value to `apply` function.
+                    JsNameRef(
+                    "call",
                     JsFunction(
                         context.currentScope,
                         JsBlock(
@@ -297,7 +299,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                             )
                         ),
                         "VarargIIFE"
-                    )
+                    )),
+                    JsThisRef()
                 )
             } else {
                 JsInvocation(

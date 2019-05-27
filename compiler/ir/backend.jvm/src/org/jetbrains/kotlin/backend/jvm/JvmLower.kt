@@ -48,7 +48,7 @@ private val arrayConstructorPhase = makeIrFilePhase(
 )
 
 private val expectDeclarationsRemovingPhase = makeIrFilePhase(
-    ::ExpectDeclarationsRemoving,
+    ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )

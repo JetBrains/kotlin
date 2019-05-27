@@ -157,8 +157,10 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
             if (type !is IrSimpleType) return type
 
             val substitutedType = typeArguments?.get(type.classifier)
-            if (substitutedType != null) {
-                substitutedType as IrSimpleType
+
+            if (substitutedType is IrDynamicType) return substitutedType
+
+            if (substitutedType is IrSimpleType) {
                 return substitutedType.buildSimpleType {
                     kotlinType = null
                     hasQuestionMark = type.hasQuestionMark or substitutedType.isMarkedNullable()

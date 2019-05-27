@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.createJsK
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.name.Name
@@ -83,6 +85,9 @@ fun generateKLib(
     val moduleFragment = psi2IrContext.generateModuleFragment(files)
 
     val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
+
+    moduleFragment.acceptVoid(ExpectDeclarationRemover(psi2IrContext.symbolTable, false))
+
     serializeModuleIntoKlib(
         moduleName,
         configuration.metadataVersion,

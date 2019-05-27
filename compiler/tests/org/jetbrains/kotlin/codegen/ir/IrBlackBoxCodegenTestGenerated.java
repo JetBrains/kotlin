@@ -16155,6 +16155,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedClass.kt");
             }
 
+            @TestMetadata("inheritedFromExpectedFunction.kt")
+            public void testInheritedFromExpectedFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedFunction.kt");
+            }
+
             @TestMetadata("inheritedFromExpectedInterface.kt")
             public void testInheritedFromExpectedInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedInterface.kt");
