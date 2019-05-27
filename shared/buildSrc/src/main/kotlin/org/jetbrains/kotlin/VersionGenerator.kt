@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.kotlin
 
 import groovy.lang.Closure
@@ -11,7 +16,7 @@ open class VersionGenerator: DefaultTask() {
     @OutputDirectory
     val versionSourceDirectory = project.file("build/generated")
     @OutputFile
-    val versionFile:File = project.file("${versionSourceDirectory.path}/org/jetbrains/kotlin/konan/KonanVersion.kt")
+    val versionFile:File = project.file("${versionSourceDirectory.path}/org/jetbrains/kotlin/konan/KonanVersionGenerated.kt")
 
     val konanVersion: String
         @Input get() = project.properties["konanVersion"].toString()
@@ -44,66 +49,11 @@ open class VersionGenerator: DefaultTask() {
                 + """
                    |package org.jetbrains.kotlin.konan
                    |
-                   |import java.io.Serializable
+                   |internal val currentKonanVersion: KonanVersion =
+                   |    KonanVersionImpl($meta, $major, $minor, $maintenance, $build)
                    |
-                   |interface KonanVersion : Serializable {
-                   |    val meta: MetaVersion
-                   |    val major: Int
-                   |    val minor: Int
-                   |    val maintenance: Int
-                   |    val build: Int
-                   |
-                   |    fun toString(showMeta: Boolean, showBuild: Boolean): String
-                   |
-                   |    companion object {
-                   |        val CURRENT = KonanVersionImpl($meta, $major, $minor, $maintenance, $build)
-                   |    }
-                   |}
-                   |
-                   |data class KonanVersionImpl(
-                   |        override val meta: MetaVersion = MetaVersion.DEV,
-                   |        override val major: Int,
-                   |        override val minor: Int,
-                   |        override val maintenance: Int,
-                   |        override val build: Int
-                   |) : KonanVersion {
-                   |
-                   |    override fun toString(showMeta: Boolean, showBuild: Boolean) = buildString {
-                   |        append(major)
-                   |        append('.')
-                   |        append(minor)
-                   |        if (maintenance != 0) {
-                   |            append('.')
-                   |            append(maintenance)
-                   |        }
-                   |        if (showMeta) {
-                   |            append('-')
-                   |            append(meta.metaString)
-                   |        }
-                   |        if (showBuild && build != -1) {
-                   |            append('-')
-                   |            append(build)
-                   |        }
-                   |    }
-                   |
-                   |    private val isRelease: Boolean
-                   |        get() = meta == MetaVersion.RELEASE
-                   |
-                   |    private val versionString by lazy { toString(!isRelease, !isRelease) }
-                   |
-                   |    override fun toString() = versionString
-                   |}
-                   |fun String.parseKonanVersion(): KonanVersion {
-                   |    val (major, minor, maintenance, meta, build) =
-                   |       Regex(""${'"'}([0-9]+)\.([0-9]+)(?:\.([0-9]+))?(?:-(\p{Alpha}\p{Alnum}*))?(?:-([0-9]+))?""${'"'})
-                   |         .matchEntire(this)!!.destructured
-                   |    return KonanVersionImpl(
-                   |      MetaVersion.findAppropriate(meta),
-                   |      major.toInt(),
-                   |      minor.toInt(),
-                   |      maintenance.toIntOrNull() ?: 0,
-                   |      build.toIntOrNull() ?: -1)
-                   |}
+                   |val KonanVersion.Companion.CURRENT: KonanVersion
+                   |    get() = currentKonanVersion
                 """.trimMargin()
             }
             versionFile.printWriter().use {
