@@ -5830,69 +5830,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertNegatedBooleanSequence")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertNegatedBooleanSequence extends AbstractIntentionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInConvertNegatedBooleanSequence() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertNegatedBooleanSequence"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("complexNegatedSequence.kt")
-        public void testComplexNegatedSequence() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/complexNegatedSequence.kt");
-        }
-
-        @TestMetadata("conjunctionOfThreeNegations.kt")
-        public void testConjunctionOfThreeNegations() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/conjunctionOfThreeNegations.kt");
-        }
-
-        @TestMetadata("conjunctionOfTwoNegations.kt")
-        public void testConjunctionOfTwoNegations() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/conjunctionOfTwoNegations.kt");
-        }
-
-        @TestMetadata("disjunctionOfTwoNegations.kt")
-        public void testDisjunctionOfTwoNegations() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/disjunctionOfTwoNegations.kt");
-        }
-
-        @TestMetadata("doubleParenthesizedExpression.kt")
-        public void testDoubleParenthesizedExpression() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/doubleParenthesizedExpression.kt");
-        }
-
-        @TestMetadata("inapplicableMixedOperators.kt")
-        public void testInapplicableMixedOperators() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/inapplicableMixedOperators.kt");
-        }
-
-        @TestMetadata("inapplicableMixedSequence.kt")
-        public void testInapplicableMixedSequence() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/inapplicableMixedSequence.kt");
-        }
-
-        @TestMetadata("inapplicableSingleExpression.kt")
-        public void testInapplicableSingleExpression() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/inapplicableSingleExpression.kt");
-        }
-
-        @TestMetadata("negatedFunction.kt")
-        public void testNegatedFunction() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/negatedFunction.kt");
-        }
-
-        @TestMetadata("parenthesizedConjunctionOfTwoNegations.kt")
-        public void testParenthesizedConjunctionOfTwoNegations() throws Exception {
-            runTest("idea/testData/intentions/convertNegatedBooleanSequence/parenthesizedConjunctionOfTwoNegations.kt");
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/convertNullablePropertyToLateinit")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
