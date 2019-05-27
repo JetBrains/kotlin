@@ -1,10 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints.presentation
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.EditorMouseEvent
 import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.editor.event.EditorMouseMotionListener
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupActivity
 import java.awt.Component
 import java.awt.Point
 import java.awt.event.MouseEvent
@@ -12,7 +15,13 @@ import java.awt.event.MouseEvent
 /**
  * Global mouse listener, that provide events to inlay hints at mouse coordinates.
  */
-class PresentationMouseHandler(val editorFactory: EditorFactory) {
+class PresentationMouseHandler : StartupActivity {
+  override fun runActivity(project: Project) {
+    val editorFactory = ApplicationManager.getApplication().getComponent(EditorFactory::class.java)
+    val multicaster = editorFactory.eventMulticaster
+    multicaster.addEditorMouseListener(mouseListener)
+    multicaster.addEditorMouseMotionListener(mouseMotionListener)
+  }
 
   private var activePresentation : InlayPresentation? = null
 
@@ -60,11 +69,5 @@ class PresentationMouseHandler(val editorFactory: EditorFactory) {
         }
       }
     }
-  }
-
-  init {
-    val multicaster = editorFactory.eventMulticaster
-    multicaster.addEditorMouseListener(mouseListener)
-    multicaster.addEditorMouseMotionListener(mouseMotionListener)
   }
 }

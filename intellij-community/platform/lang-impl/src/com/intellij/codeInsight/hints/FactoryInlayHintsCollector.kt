@@ -5,6 +5,6 @@ import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.impl.EditorImpl
 
-abstract class FactoryInlayHintsCollector<T : Any>(editor: Editor, override val key: SettingsKey<T>) : InlayHintsCollector<T> {
+abstract class FactoryInlayHintsCollector(editor: Editor) : InlayHintsCollector {
   val factory = PresentationFactory(editor as EditorImpl)
 }

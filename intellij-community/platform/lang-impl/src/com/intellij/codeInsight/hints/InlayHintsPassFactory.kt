@@ -56,7 +56,7 @@ class InlayHintsPassFactory : TextEditorHighlightingPassFactory, TextEditorHighl
       val language = file.language
       val collectors = HintUtils.getHintProvidersForLanguage(language, file.project)
         .mapNotNull { it.getCollectorWrapperFor(file, editor, language) }
-      return InlayHintsPass(file, collectors, editor, settings)
+      return InlayHintsPass(file, collectors.filter { settings.hintsEnabled(it.key, language) }, editor)
     }
   }
 }

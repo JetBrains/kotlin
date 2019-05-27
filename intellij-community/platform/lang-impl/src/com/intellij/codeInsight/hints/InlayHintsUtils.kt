@@ -34,7 +34,7 @@ class ProviderWithSettings<T : Any>(
     val key = provider.key
     val sink = InlayHintsSinkImpl(key)
     val collector = provider.getCollectorFor(file, editor, settings, sink) ?: return null
-    return CollectorWithSettings(collector, settings, key, language, sink)
+    return CollectorWithSettings(collector, key, language, sink)
   }
 }
 
@@ -57,14 +57,13 @@ internal fun <T: Any> copySettings(from: T, provider: InlayHintsProvider<T>): T 
 }
 
 class CollectorWithSettings<T : Any>(
-  val collector: InlayHintsCollector<T>,
-  val settings: T,
+  val collector: InlayHintsCollector,
   val key: SettingsKey<T>,
   val language: Language,
   val sink: InlayHintsSinkImpl<T>
 ) {
-  fun collectHints(element: PsiElement, isEnabled: Boolean, editor: Editor) {
-    collector.collect(element, editor, settings, isEnabled, sink)
+  fun collectHints(element: PsiElement, editor: Editor) {
+    collector.collect(element, editor, sink)
   }
 
   fun applyToEditor(

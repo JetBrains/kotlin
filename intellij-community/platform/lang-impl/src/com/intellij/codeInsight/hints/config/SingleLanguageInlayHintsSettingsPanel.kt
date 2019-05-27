@@ -107,7 +107,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val settingsWrapper = settingsWrappers.find { it.providerWithSettings.provider === selectedProvider.provider }!!
     val collector = settingsWrapper.providerWithSettings.getCollectorWrapperFor(file, editor, settingsWrapper.language) ?: return
     traverse(file) {
-      collector.collectHints(it, true, editor) // Always render hints in settings preview
+      collector.collectHints(it, editor)
     }
     val model = editor.inlayModel
     val startOffset = file.textOffset
