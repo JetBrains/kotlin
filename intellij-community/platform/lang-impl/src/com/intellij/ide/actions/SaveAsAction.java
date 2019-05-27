@@ -1,5 +1,6 @@
 package com.intellij.ide.actions;
 
+import com.intellij.notebook.editor.BackedVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -23,6 +24,9 @@ public class SaveAsAction extends DumbAwareAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
+    if (virtualFile instanceof BackedVirtualFile) {
+      virtualFile = ((BackedVirtualFile)virtualFile).getOriginFile();
+    }
     if (project == null || virtualFile == null) return;
     PsiElement element = PsiManager.getInstance(project).findFile(virtualFile);
     if (element == null) return;
