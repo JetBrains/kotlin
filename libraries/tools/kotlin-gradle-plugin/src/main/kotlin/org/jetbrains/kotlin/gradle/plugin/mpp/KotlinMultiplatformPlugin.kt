@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 
 class KotlinMultiplatformPlugin(
@@ -137,7 +138,7 @@ class KotlinMultiplatformPlugin(
             add(KotlinJsTargetPreset(project, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
-            project.hostManager.targets.forEach { _, target ->
+            HostManager().targets.forEach { _, target ->
                 add(KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion))
             }
         }

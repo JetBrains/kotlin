@@ -44,7 +44,7 @@ class KotlinNativeTarget(
         get() = disambiguateName("binaries")
 
     override val publishable: Boolean
-        get() = enabledOnCurrentHost
+        get() = konanTarget.enabledOnCurrentHost
 
     // User-visible constants
     val DEBUG = NativeBuildType.DEBUG

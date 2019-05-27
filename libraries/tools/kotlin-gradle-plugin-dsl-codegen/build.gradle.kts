@@ -11,7 +11,7 @@ repositories {
 dependencies {
     compile(gradleApi())
     compile(project(":kotlin-gradle-plugin-api"))
-    compile(commonDep("org.jetbrains.kotlin:kotlin-native-shared")) { isTransitive = false }
+    compile(project(":kotlin-native:kotlin-native-utils"))
 }
 
 val generateMppTargetContainerWithPresets by generator(

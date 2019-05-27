@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 
 class NativeCompilerDownloader(
@@ -34,7 +34,7 @@ class NativeCompilerDownloader(
     }
 
     val compilerDirectory: File
-        get() = DependencyProcessor.localKonanDir.resolve(dependencyNameWithVersion)
+        get() = DependencyDirectories.localKonanDir.resolve(dependencyNameWithVersion)
 
     private val logger: Logger
         get() = project.logger
@@ -119,7 +119,7 @@ class NativeCompilerDownloader(
         logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
             project.copy {
                 it.from(archiveFileTree(archive))
-                it.into(DependencyProcessor.localKonanDir)
+                it.into(DependencyDirectories.localKonanDir)
             }
         }
 
