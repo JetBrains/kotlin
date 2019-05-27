@@ -116,8 +116,7 @@ tasks {
     named<ProcessResources>("processResources") {
         val propertiesToExpand = mapOf(
             "projectVersion" to project.version,
-            "kotlinNativeVersion" to project.kotlinNativeVersion,
-            "kotlinNativeSharedVersion" to project.kotlinNativeSharedVersion
+            "kotlinNativeVersion" to project.kotlinNativeVersion
         )
         for ((name, value) in propertiesToExpand) {
             inputs.property(name, value)
