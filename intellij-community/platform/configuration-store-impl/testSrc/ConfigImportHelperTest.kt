@@ -7,12 +7,10 @@ import com.intellij.openapi.application.ConfigImportHelper
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.components.stateStore
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.rules.InMemoryFsRule
-import com.intellij.util.io.createDirectories
-import com.intellij.util.io.directoryStreamIfExists
-import com.intellij.util.io.exists
-import com.intellij.util.io.write
+import com.intellij.util.io.*
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.description.Description
@@ -22,6 +20,8 @@ import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.FileTime
+
+private val LOG = logger<ConfigImportHelperTest>()
 
 class ConfigImportHelperTest {
   companion object {
@@ -154,6 +154,39 @@ class ConfigImportHelperTest {
         2016.1
         2016.2
         10""".trimIndent())
+  }
+
+  @Test
+  fun `set keymap - old version`() {
+    doKeyMapTest("2016.4", isMigrationExpected = true)
+    doKeyMapTest("2019.1", isMigrationExpected = true)
+  }
+
+  @Test
+  fun `set keymap - new version`() {
+    doKeyMapTest("2019.2", isMigrationExpected = false)
+    doKeyMapTest("2019.3", isMigrationExpected = false)
+  }
+
+  private fun doKeyMapTest(version: String, isMigrationExpected: Boolean) {
+    val oldConfigDir = fsRule.fs.getPath("/data/" + (constructConfigPath(version, true, "DataGrip")))
+    oldConfigDir.createDirectories()
+    val newConfigDir = fsRule.fs.getPath("/data/" + (constructConfigPath("2019.2", true, "DataGrip")))
+    ConfigImportHelper.setKeymapIfNeeded(oldConfigDir, newConfigDir, LOG)
+
+    val optionFile = newConfigDir.resolve("options/keymap.xml")
+    if (isMigrationExpected) {
+      assertThat(optionFile.readText()).isEqualTo("""
+        <application>
+          <component name="KeymapManager">
+            <active_keymap name="Mac OS X" />
+          </component>
+        </application>
+      """.trimIndent())
+    }
+    else {
+      assertThat(optionFile).doesNotExist()
+    }
   }
 
   private fun writeStorageFile(version: String, lastModified: Long, isMacOs: Boolean) {
