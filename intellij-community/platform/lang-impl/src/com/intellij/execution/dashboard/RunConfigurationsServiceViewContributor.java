@@ -45,7 +45,7 @@ import static com.intellij.openapi.actionSystem.ActionPlaces.RUN_DASHBOARD_POPUP
 public class RunConfigurationsServiceViewContributor
   implements ServiceViewGroupingContributor<RunConfigurationsServiceViewContributor.RunConfigurationContributor, RunDashboardGroup> {
   private static final ServiceViewDescriptor CONTRIBUTOR_DESCRIPTOR =
-    new SimpleServiceViewDescriptor("Run Configurations", AllIcons.RunConfigurations.Application) {
+    new SimpleServiceViewDescriptor("Run Dashboard", AllIcons.Actions.Execute) {
       @Override
       public ActionGroup getToolbarActions() {
         return RunConfigurationsServiceViewContributor.getToolbarActions(null);
