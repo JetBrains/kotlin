@@ -1,9 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 
-// TODO: consider adding dx sources (the only jar used on the compile time so far)
-// e.g. from "https://android.googlesource.com/platform/dalvik/+archive/android-5.0.0_r2/dx.tar.gz"
-
 repositories {
     ivy {
         url = URI("https://dl.google.com/android/repository")
@@ -18,7 +15,6 @@ repositories {
 val androidSdk by configurations.creating
 val androidJar by configurations.creating
 val androidPlatform by configurations.creating
-val dxSources by configurations.creating
 val buildTools by configurations.creating
 
 val libsDestDir = File(buildDir, "libs")
