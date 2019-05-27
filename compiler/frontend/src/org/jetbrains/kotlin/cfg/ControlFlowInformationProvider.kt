@@ -508,7 +508,7 @@ class ControlFlowInformationProvider private constructor(
                     }
                 }
                 if (descriptor == null) {
-                    val descriptors = trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, operationReference) ?: emptyList()
+                    val descriptors = trace.get(AMBIGUOUS_REFERENCE_TARGET, operationReference) ?: emptyList<DeclarationDescriptor>()
                     for (referenceDescriptor in descriptors) {
                         if ((referenceDescriptor as? FunctionDescriptor)?.returnType?.let { KotlinBuiltIns.isUnit(it) } == true) {
                             hasReassignMethodReturningUnit = true
