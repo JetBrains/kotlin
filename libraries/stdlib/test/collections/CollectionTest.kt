@@ -521,6 +521,7 @@ class CollectionTest {
         val coll = listOf("foo", "bar", "abc")
         assertEquals(listOf("bar", "abc"), coll.drop(1))
         assertEquals(listOf("abc"), coll.drop(2))
+        assertEquals(listOf(2147483647L, 2147483648), (0L..2147483648).drop(2147483647))
     }
 
     @Test fun dropWhile() {
