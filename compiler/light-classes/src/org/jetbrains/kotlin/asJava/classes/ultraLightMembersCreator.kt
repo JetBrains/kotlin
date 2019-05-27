@@ -35,6 +35,7 @@ internal class UltraLightMembersCreator(
     private val containingClass: KtLightClass,
     private val containingClassIsNamedObject: Boolean,
     private val containingClassIsSealed: Boolean,
+    private val mangleInternalFunctions: Boolean,
     private val support: KtUltraLightSupport
 ) {
 
@@ -276,8 +277,9 @@ internal class UltraLightMembersCreator(
         val computedName = tryCompute(declaration, type)
         if (computedName !== null) return computedName
 
-        if (isInternalNonPublishedApi(declaration)) return KotlinTypeMapper.InternalNameMapper.mangleInternalName(name, support.moduleName)
-        return name
+        return if (mangleInternalFunctions && isInternalNonPublishedApi(declaration))
+            KotlinTypeMapper.InternalNameMapper.mangleInternalName(name, support.moduleName)
+        else name
     }
 
     private tailrec fun isInternalNonPublishedApi(declaration: KtDeclaration): Boolean {

@@ -31,33 +31,10 @@ private data class ValueWrapper(val value: KtLightClassForFacade?) {
 class FacadeCache(private val project: Project) {
     private inner class FacadeCacheData {
         val cache = object : SLRUCache<StubCacheKey, ValueWrapper>(20, 30) {
-            override fun createValue(key: StubCacheKey): ValueWrapper {
-
-                val (fqName, searchScope) = key
-
-                val sources = KotlinAsJavaSupport.getInstance(project).findFilesForFacade(key.fqName, key.searchScope)
-                    .filterNot { it.isCompiled }
-
-                if (sources.isEmpty()) return ValueWrapper.Null
-
-                val ultraLightEnabled =
-                    !KtUltraLightSupport.forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)
-
-                val stubProvider = LightClassDataProviderForFileFacade.ByProjectSource(project, fqName, searchScope)
-                val stubValue = CachedValuesManager.getManager(project)
-                    .createCachedValue(stubProvider, false)
-
-                val manager = PsiManager.getInstance(project)
-
-                val ultraLightClass = if (ultraLightEnabled)
-                    LightClassGenerationSupport.getInstance(project)
-                        .createUltraLightClassForFacade(manager, fqName, stubValue, sources)
-                else null
-
-                val result = ultraLightClass ?: KtLightClassForFacade(manager, fqName, stubValue, sources)
-
-                return ValueWrapper(result)
-            }
+            override fun createValue(key: StubCacheKey): ValueWrapper =
+                KtLightClassForFacade.createForFacadeNoCache(key.fqName, key.searchScope, project)
+                    ?.let { ValueWrapper(it) }
+                    ?: ValueWrapper.Null
         }
     }
 

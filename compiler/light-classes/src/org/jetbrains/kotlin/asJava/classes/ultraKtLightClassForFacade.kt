@@ -11,7 +11,6 @@ import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -22,7 +21,7 @@ class KtUltraLightClassForFacade(
     facadeClassFqName: FqName,
     lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
     files: Collection<KtFile>,
-    private val filesToSupports: Collection<Pair<KtFile, KtUltraLightSupport>>
+    private val filesWithSupports: Collection<Pair<KtFile, KtUltraLightSupport>>
 ) : KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files) {
 
     private inline fun <T> forTooComplex(getter: () -> T): T {
@@ -43,38 +42,61 @@ class KtUltraLightClassForFacade(
     override fun getScope(): PsiElement? = if (!tooComplex) parent else super.getScope()
 
     private val tooComplex: Boolean by lazyPub {
-        filesToSupports.any { (file, support) ->
+        filesWithSupports.any { (file, support) ->
             file.declarations.any { support.isTooComplexForUltraLightGeneration(it) }
         }
     }
 
-    private val filesToSupportsToMemberCreators by lazyPub {
-        filesToSupports.map { (file, support) ->
-            Triple(file, support, UltraLightMembersCreator(this, false, true, support))
+    private val filesWithSupportsWithCreators by lazyPub {
+        filesWithSupports.map { (file, support) ->
+            Triple(
+                file,
+                support,
+                UltraLightMembersCreator(
+                    containingClass = this,
+                    containingClassIsNamedObject = false,
+                    containingClassIsSealed = true,
+                    mangleInternalFunctions = false,
+                    support = support
+                )
+            )
+        }
+    }
+
+    private fun loadMethodsFromFile(
+        file: KtFile,
+        support: KtUltraLightSupport,
+        creator: UltraLightMembersCreator,
+        result: MutableList<KtLightMethod>
+    ) {
+        for (declaration in file.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
+            when (declaration) {
+                is KtNamedFunction -> result.addAll(creator.createMethods(declaration, true))
+                is KtProperty -> {
+                    result.addAll(
+                        creator.propertyAccessors(
+                            declaration, declaration.isVar,
+                            forceStatic = true,
+                            onlyJvmStatic = false
+                        )
+                    )
+
+                }
+            }
         }
     }
 
     private val ownMethodsForNotTooComplex: List<KtLightMethod> by lazyPub {
-
-        val result = arrayListOf<KtLightMethod>()
-
-        for ((file, support, creator) in filesToSupportsToMemberCreators) {
-
-            for (declaration in file.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
-                if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
-                when (declaration) {
-                    is KtNamedFunction -> result.addAll(creator.createMethods(declaration, true))
-                    is KtProperty -> result.addAll(creator.propertyAccessors(declaration, declaration.isVar, true, false))
-                }
+        mutableListOf<KtLightMethod>().also { result ->
+            for ((file, support, creator) in filesWithSupportsWithCreators) {
+                loadMethodsFromFile(file, support, creator, result)
             }
         }
-
-        result
     }
 
     private val ownFieldsForNotTooComplex: List<KtLightField> by lazyPub {
         hashSetOf<String>().let { nameCache ->
-            filesToSupportsToMemberCreators.flatMap { (file, _, creator) ->
+            filesWithSupportsWithCreators.flatMap { (file, _, creator) ->
                 file.declarations.filterIsInstance<KtProperty>().mapNotNull {
                     creator.createPropertyField(it, nameCache, forceStatic = true)
                 }
@@ -89,5 +111,5 @@ class KtUltraLightClassForFacade(
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 
     override fun copy(): KtLightClassForFacade =
-        KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesToSupports)
+        KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesWithSupports)
 }

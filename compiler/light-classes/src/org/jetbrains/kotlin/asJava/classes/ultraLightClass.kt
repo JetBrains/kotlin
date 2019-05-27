@@ -40,7 +40,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     KtLightClassImpl(classOrObject) {
 
     private val membersBuilder by lazyPub {
-        UltraLightMembersCreator(this, isNamedObject(), classOrObject.hasModifier(SEALED_KEYWORD), support)
+        UltraLightMembersCreator(this, isNamedObject(), classOrObject.hasModifier(SEALED_KEYWORD), true, support)
     }
 
     private val tooComplex: Boolean by lazyPub { support.isTooComplexForUltraLightGeneration(classOrObject) }

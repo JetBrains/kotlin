@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
@@ -25,6 +28,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -44,9 +49,25 @@ import javax.swing.Icon
 open class KtLightClassForFacade constructor(
     manager: PsiManager,
     protected val facadeClassFqName: FqName,
-    protected open val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
+    myLightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
     files: Collection<KtFile>
 ) : KtLazyLightClass(manager) {
+
+    @Volatile
+    @VisibleForTesting
+    var isClsDelegateLoaded = false
+
+    override val clsDelegate: PsiClass
+        get() {
+            isClsDelegateLoaded = true
+            return super.clsDelegate
+        }
+
+    protected open val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade> = myLightClassDataCache
+        get() {
+            isClsDelegateLoaded = true
+            return field
+        }
 
     val files: Collection<KtFile> = files.toSet()
 
@@ -240,12 +261,37 @@ open class KtLightClassForFacade constructor(
     override fun isWritable() = firstFileInFacade.isWritable
 
     companion object {
+
+        fun createForFacadeNoCache(fqName: FqName, searchScope: GlobalSearchScope, project: Project): KtLightClassForFacade? {
+
+            val sources = KotlinAsJavaSupport.getInstance(project).findFilesForFacade(fqName, searchScope)
+                .filterNot { it.isCompiled }
+
+            if (sources.isEmpty()) return null
+
+            val ultraLightEnabled =
+                !KtUltraLightSupport.forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)
+
+            val stubProvider = LightClassDataProviderForFileFacade.ByProjectSource(project, fqName, searchScope)
+            val stubValue = CachedValuesManager.getManager(project)
+                .createCachedValue(stubProvider, false)
+
+            val manager = PsiManager.getInstance(project)
+
+            val ultraLightClass = if (ultraLightEnabled)
+                LightClassGenerationSupport.getInstance(project)
+                    .createUltraLightClassForFacade(manager, fqName, stubValue, sources)
+            else null
+
+            return ultraLightClass ?: KtLightClassForFacade(manager, fqName, stubValue, sources)
+        }
+
         fun createForFacade(
             manager: PsiManager,
             facadeClassFqName: FqName,
             searchScope: GlobalSearchScope
         ): KtLightClassForFacade? {
-            return FacadeCache.getInstance(manager.project).get(facadeClassFqName, searchScope)
+            return FacadeCache.getInstance(manager.project)[facadeClassFqName, searchScope]
         }
 
         fun createForSyntheticFile(
