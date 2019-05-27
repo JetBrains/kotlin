@@ -376,7 +376,7 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
 
         @Override
         public String getText() {
-          return Executor.shortenNameIfNeed(getValue().getName()) + getValue().getConfiguration().getPresentableType();
+          return Executor.shortenNameIfNeeded(getValue().getName()) + getValue().getConfiguration().getPresentableType();
         }
 
         @Override
@@ -535,7 +535,7 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
     }
 
     public String getName() {
-      return Executor.shortenNameIfNeed(mySettings.getName());
+      return Executor.shortenNameIfNeeded(mySettings.getName());
     }
 
     public Icon getIcon() {
@@ -1197,7 +1197,7 @@ public class ChooseRunConfigurationPopup implements ExecutorProvider {
 
           @Override
           public String getText() {
-            return Executor.shortenNameIfNeed(configuration.getName()) + configuration.getConfiguration().getPresentableType();
+            return Executor.shortenNameIfNeeded(configuration.getName()) + configuration.getConfiguration().getPresentableType();
           }
 
           @Override
