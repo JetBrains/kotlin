@@ -114,7 +114,7 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
           }
           executeOnBuildThread(() -> {
             if (isUpToDate) {
-              openReaderIfNeed(IndexOpenReason.UP_TO_DATE_CACHE);
+              openReaderIfNeeded(IndexOpenReason.UP_TO_DATE_CACHE);
             } else {
               markAsOutdated(validIndexExists);
             }
@@ -122,7 +122,7 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
         });
       }
 
-      Disposer.register(myProject, () -> closeReaderIfNeed(IndexCloseReason.PROJECT_CLOSED));
+      Disposer.register(myProject, () -> closeReaderIfNeeded(IndexCloseReason.PROJECT_CLOSED));
     }
   }
 
@@ -386,7 +386,7 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
     }
   }
 
-  protected void closeReaderIfNeed(IndexCloseReason reason) {
+  protected void closeReaderIfNeeded(IndexCloseReason reason) {
     myOpenCloseLock.lock();
     try {
       if (reason == IndexCloseReason.COMPILATION_STARTED) {
@@ -402,7 +402,7 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
     }
   }
 
-  protected void openReaderIfNeed(IndexOpenReason reason) {
+  protected void openReaderIfNeeded(IndexOpenReason reason) {
     myCompilationCount.increment();
     myOpenCloseLock.lock();
     try {
@@ -606,7 +606,7 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
     LOG.error("an exception during " + actionName + " calculation", e);
     Throwable unwrapped = e instanceof RuntimeException ? e.getCause() : e;
     if (requireIndexRebuild(unwrapped)) {
-      closeReaderIfNeed(IndexCloseReason.AN_EXCEPTION);
+      closeReaderIfNeeded(IndexCloseReason.AN_EXCEPTION);
     }
     return null;
   }

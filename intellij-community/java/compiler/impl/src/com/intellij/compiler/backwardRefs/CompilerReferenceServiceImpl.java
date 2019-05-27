@@ -55,7 +55,7 @@ public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<B
         @Override
         public void buildStarted(@NotNull Project project, @NotNull UUID sessionId, boolean isAutomake) {
           if (project == myProject) {
-            closeReaderIfNeed(IndexCloseReason.COMPILATION_STARTED);
+            closeReaderIfNeeded(IndexCloseReason.COMPILATION_STARTED);
           }
         }
       });
@@ -79,7 +79,7 @@ public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<B
                 return context.getCompileScope().getAffectedModules();
               });
               if (compilationModules == null) return;
-              openReaderIfNeed(IndexOpenReason.COMPILATION_FINISHED);
+              openReaderIfNeeded(IndexOpenReason.COMPILATION_FINISHED);
             };
             executeOnBuildThread(compilationFinished);
           }
