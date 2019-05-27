@@ -2,6 +2,8 @@
 
 package com.intellij.codeInsight.highlighting;
 
+import com.intellij.ide.highlighter.custom.SyntaxTable;
+import com.intellij.ide.highlighter.custom.impl.CustomFileTypeBraceMatcher;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageBraceMatching;
 import com.intellij.lang.PairedBraceMatcher;
@@ -10,8 +12,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeExtensionPoint;
+import com.intellij.openapi.fileTypes.FileTypeExtension;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.fileTypes.impl.AbstractFileType;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
@@ -19,9 +22,6 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BraceMatchingUtil {
   public static final int UNDEFINED_TOKEN_GROUP = -1;
@@ -39,12 +39,6 @@ public class BraceMatchingUtil {
       // Do nothing
     }
     return true;
-  }
-
-  private static final Map<FileType, BraceMatcher> BRACE_MATCHERS = new HashMap<>();
-
-  public static void registerBraceMatcher(@NotNull FileType fileType, @NotNull BraceMatcher braceMatcher) {
-    BRACE_MATCHERS.put(fileType, braceMatcher);
   }
 
   @TestOnly
@@ -395,20 +389,20 @@ public class BraceMatchingUtil {
     return BraceMatcherHolder.ourDefaultBraceMatcher;
   }
 
+  private static final FileTypeExtension<BraceMatcher> ourMatchers = new FileTypeExtension<>(BraceMatcher.EP_NAME.getName());
+
   @Nullable
   private static BraceMatcher getBraceMatcherByFileType(@NotNull FileType fileType) {
-    BraceMatcher braceMatcher = BRACE_MATCHERS.get(fileType);
-    if (braceMatcher == BraceMatcherHolder.nullBraceMatcher) return null;
-    if (braceMatcher != null) return braceMatcher;
+    BraceMatcher matcher = ourMatchers.forFileType(fileType);
+    if (matcher != null) return matcher;
 
-    for (FileTypeExtensionPoint<BraceMatcher> ext : BraceMatcher.EP_NAME.getExtensionList()) {
-      if (fileType.getName().equals(ext.filetype)) {
-        braceMatcher = ext.getInstance();
-        BRACE_MATCHERS.put(fileType, braceMatcher);
-        return braceMatcher;
+    if (fileType instanceof AbstractFileType) {
+      SyntaxTable table = ((AbstractFileType)fileType).getSyntaxTable();
+      if (table.isHasBraces() || table.isHasBrackets() || table.isHasParens()) {
+        return CustomFileTypeBraceMatcher.INSTANCE;
       }
     }
-    BRACE_MATCHERS.put(fileType, BraceMatcherHolder.nullBraceMatcher);
+
     return null;
   }
 
