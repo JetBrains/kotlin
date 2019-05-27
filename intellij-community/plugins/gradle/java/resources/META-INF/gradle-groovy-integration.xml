@@ -47,6 +47,14 @@
                               implementationClass="org.jetbrains.plugins.gradle.execution.GradleGroovyRunLineMarkerProvider"/>
 
     <fileTypeUsageSchemaDescriptor schema="Gradle" implementationClass="org.jetbrains.plugins.gradle.config.GradleScriptTypeDetector"/>
+    <psi.symbolReferenceProvider hostLanguage="Groovy"
+                                 hostElementClass="org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral"
+                                 targetClass="org.jetbrains.plugins.gradle.service.resolve.GradleProjectSymbol"
+                                 implementationClass="org.jetbrains.plugins.gradle.service.resolve.GradleProjectReferenceProvider"/>
+    <searcher forClass="com.intellij.model.search.PsiSymbolReferenceSearchParameters"
+              implementationClass="org.jetbrains.plugins.gradle.service.resolve.GradleProjectReferenceSearcher"/>
+    <lang.symbolTextSearcher forClass="org.jetbrains.plugins.gradle.service.resolve.GradleProjectSymbol"
+                             implementationClass="org.jetbrains.plugins.gradle.service.resolve.GradleProjectTextSearcher"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.groovy">
