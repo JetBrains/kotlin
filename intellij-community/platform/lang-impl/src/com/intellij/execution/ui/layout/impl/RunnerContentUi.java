@@ -300,10 +300,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
         dockManager.register(this);
       }
     }
-    if (myMinimizeActionEnabled) {
-      myViewActions.addAction(new Separator()).setAsSecondary(true);
-      myViewActions.addAction(ActionManager.getInstance().getAction("Runner.RestoreLayout")).setAsSecondary(true);
-    }
+    updateRestoreLayoutActionVisibility();
   }
 
   private void rebuildTabPopup() {
@@ -916,7 +913,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
   private boolean rebuildMinimizedActions() {
     for (Map.Entry<GridImpl, Wrapper> entry : myMinimizedButtonsPlaceholder.entrySet()) {
       Wrapper eachPlaceholder = entry.getValue();
-      ActionToolbar tb = myActionManager.createActionToolbar(ActionPlaces.DEBUGGER_TOOLBAR, myViewActions, true);
+      ActionToolbar tb = myActionManager.createActionToolbar(ActionPlaces.RUNNER_LAYOUT_BUTTON_TOOLBAR, myViewActions, true);
       tb.setSecondaryActionsIcon(AllIcons.Debugger.RestoreLayout);
       tb.setTargetComponent(myComponent);
       tb.getComponent().setBorder(null);
@@ -1248,10 +1245,31 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
   void setMinimizeActionEnabled(final boolean enabled) {
     myMinimizeActionEnabled = enabled;
+    updateRestoreLayoutActionVisibility();
+  }
+
+  private void updateRestoreLayoutActionVisibility() {
+    List<AnAction> specialActions = new ArrayList<>();
+    for (AnAction action : myViewActions.getChildren(null)) {
+      if (!(action instanceof RestoreViewAction)) specialActions.add(action);
+    }
+    if (myMinimizeActionEnabled) {
+      if (specialActions.isEmpty()) {
+          myViewActions.addAction(new Separator()).setAsSecondary(true);
+          myViewActions.addAction(ActionManager.getInstance().getAction("Runner.RestoreLayout")).setAsSecondary(true);
+      }
+    } else {
+      for (AnAction action : specialActions) {
+        myViewActions.remove(action);
+      }
+    }
   }
 
   void setMovetoGridActionEnabled(final boolean enabled) {
     myMoveToGridActionEnabled = enabled;
+    if (myTabs != null) {
+      myTabs.getPresentation().setTabDraggingEnabled(enabled);
+    }
   }
 
   @Override
