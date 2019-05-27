@@ -32,7 +32,7 @@ class KotlinValueArgumentListFixer : SmartEnterProcessorWithFixers.Fixer<KotlinS
                 editor.caretModel.moveToOffset(offset + 1)
             }
         } else {
-            val offset = element.endOffset
+            val offset = lastArgument?.endOffset ?: element.endOffset
             editor.document.insertString(offset, ")")
             editor.caretModel.moveToOffset(offset + 1)
         }
