@@ -1553,6 +1553,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("kt18292_ni.kt")
+        public void testKt18292_ni() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292_ni.kt");
+        }
+
         @TestMetadata("kt28658.kt")
         public void testKt28658() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt28658.kt");
