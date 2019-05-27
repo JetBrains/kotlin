@@ -74,7 +74,7 @@ class StaticMemberAccessConversion(private val context: NewJ2kConverterContext) 
 
             is JKTreeElement ->
                 target.parentOfType<JKClass>()?.let { klass ->
-                    if (klass.classKind == JKClass.ClassKind.COMPANION) klass.parentOfType()
+                    if (klass.classKind == JKClass.ClassKind.COMPANION) klass.parentOfType<JKClass>()
                     else klass
                 }?.let { context.symbolProvider.provideUniverseSymbol(it) }
             else -> error("bad isStaticMember")
