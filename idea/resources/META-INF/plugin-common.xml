@@ -1679,11 +1679,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertTrimMarginToTrimIndentIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyGetterToInitializerIntention</className>
       <category>Kotlin</category>
     </intentionAction>

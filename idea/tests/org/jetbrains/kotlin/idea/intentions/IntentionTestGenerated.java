@@ -8132,64 +8132,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertTrimMarginToTrimIndent")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertTrimMarginToTrimIndent extends AbstractIntentionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInConvertTrimMarginToTrimIndent() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertTrimMarginToTrimIndent"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("differentIndent.kt")
-        public void testDifferentIndent() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/differentIndent.kt");
-        }
-
-        @TestMetadata("escapedMarginPrefixArgument.kt")
-        public void testEscapedMarginPrefixArgument() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/escapedMarginPrefixArgument.kt");
-        }
-
-        @TestMetadata("noMarginPrefix.kt")
-        public void testNoMarginPrefix() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/noMarginPrefix.kt");
-        }
-
-        @TestMetadata("notBlankFirst.kt")
-        public void testNotBlankFirst() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/notBlankFirst.kt");
-        }
-
-        @TestMetadata("notBlankLast.kt")
-        public void testNotBlankLast() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/notBlankLast.kt");
-        }
-
-        @TestMetadata("notRawString.kt")
-        public void testNotRawString() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/notRawString.kt");
-        }
-
-        @TestMetadata("referenceMarginPrefixArgument.kt")
-        public void testReferenceMarginPrefixArgument() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/referenceMarginPrefixArgument.kt");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/simple.kt");
-        }
-
-        @TestMetadata("simple2.kt")
-        public void testSimple2() throws Exception {
-            runTest("idea/testData/intentions/convertTrimMarginToTrimIndent/simple2.kt");
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/convertTryFinallyToUseCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
