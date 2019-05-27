@@ -70,7 +70,8 @@ internal class RunDashboardTypesPanel(private val myProject: Project) : JPanel(B
     listPanel.add(toolbarDecorator.createPanel(), BorderLayout.CENTER)
 
     val hideableDecorator = object : HideableDecorator(this,
-                                                       ExecutionBundle.message("run.dashboard.configurable.types.panel.title"),
+                                                       ExecutionBundle.message("run.dashboard.configurable.types.panel.title",
+                                                                               RunDashboardManager.getInstance(myProject).toolWindowId),
                                                        false) {
       override fun on() {
         super.on()
