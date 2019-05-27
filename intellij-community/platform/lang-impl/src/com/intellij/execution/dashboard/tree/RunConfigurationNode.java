@@ -112,6 +112,9 @@ public class RunConfigurationNode extends AbstractTreeNode<RunDashboardService>
     for (RunDashboardCustomizer customizer : myCustomizers) {
       Collection<? extends AbstractTreeNode> children = customizer.getChildren(this);
       if (children != null) {
+        for (AbstractTreeNode child : children) {
+          child.setParent(this);
+        }
         return children;
       }
     }

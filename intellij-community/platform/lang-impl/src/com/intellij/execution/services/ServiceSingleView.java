@@ -102,4 +102,9 @@ class ServiceSingleView extends ServiceView {
       myUi.setDetailsComponent(descriptor.getContentComponent());
     }
   }
+
+  @Override
+  List<Object> getChildrenSafe(@NotNull Object value) {
+    return Collections.emptyList();
+  }
 }

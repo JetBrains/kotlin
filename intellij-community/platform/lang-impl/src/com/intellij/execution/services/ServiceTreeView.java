@@ -151,6 +151,22 @@ class ServiceTreeView extends ServiceView {
     }, myProject.getDisposed());
   }
 
+  @Override
+  List<Object> getChildrenSafe(@NotNull Object value) {
+    int count = myTree.getRowCount();
+    for (int i = 0; i < count; i++) {
+      TreePath path = myTree.getPathForRow(i);
+      Object node = path.getLastPathComponent();
+      if (!(node instanceof ServiceViewItem)) continue;
+
+      ServiceViewItem item = (ServiceViewItem)node;
+      if (!value.equals(item.getValue())) continue;
+
+      return ContainerUtil.map(getModel().getChildren(item), ServiceViewItem::getValue);
+    }
+    return Collections.emptyList();
+  }
+
   private static class PathSelectionVisitor implements TreeVisitor {
     private final Queue<Object> myPath;
 

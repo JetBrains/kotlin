@@ -65,6 +65,8 @@ abstract class ServiceView extends JPanel implements Disposable {
     myModel.setGroupByType(value);
   }
 
+  abstract List<Object> getChildrenSafe(@NotNull Object value);
+
   static ServiceView createView(@NotNull Project project, @NotNull ServiceViewModel viewModel, @NotNull ServiceViewState viewState) {
     ServiceView serviceView = viewModel instanceof ServiceViewModel.SingeServiceModel ?
                               createSingleView(project, viewModel) :
