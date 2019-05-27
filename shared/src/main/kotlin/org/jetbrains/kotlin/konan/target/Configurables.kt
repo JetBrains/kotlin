@@ -26,13 +26,6 @@ interface ClangFlags : TargetableExternalStorage {
     val clangDynamicFlags get() = targetList("clangDynamicFlags")
 }
 
-interface LlvmLtoFlags : TargetableExternalStorage {
-    val llvmLtoNooptFlags get()     = targetList("llvmLtoNooptFlags")
-    val llvmLtoOptFlags get()       = targetList("llvmLtoOptFlags")
-    val llvmLtoFlags get()          = targetList("llvmLtoFlags")
-    val llvmLtoDynamicFlags get()   = targetList("llvmLtoDynamicFlags")
-}
-
 interface LlcFlags : TargetableExternalStorage {
     val llcFlags get()      = targetList("llcFlags")
     val llcNooptFlags get() = targetList("llcNooptFlags")
@@ -89,9 +82,9 @@ interface AppleConfigurables : Configurables, ClangFlags {
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)
 }
 
-interface MingwConfigurables : TargetableConfigurables, LlvmLtoFlags
+interface MingwConfigurables : TargetableConfigurables, ClangFlags
 
-interface LinuxBasedConfigurables : TargetableConfigurables, LlvmLtoFlags {
+interface LinuxBasedConfigurables : TargetableConfigurables, ClangFlags {
     val gccToolchain get() = hostString("gccToolchain")
     val absoluteGccToolchain get() = absolute(gccToolchain)
 
@@ -104,7 +97,7 @@ interface LinuxBasedConfigurables : TargetableConfigurables, LlvmLtoFlags {
 interface LinuxConfigurables : LinuxBasedConfigurables
 interface LinuxMIPSConfigurables : LinuxBasedConfigurables
 interface RaspberryPiConfigurables : LinuxBasedConfigurables
-interface AndroidConfigurables : TargetableConfigurables, LlvmLtoFlags
+interface AndroidConfigurables : TargetableConfigurables, ClangFlags
 
 interface WasmConfigurables : TargetableConfigurables, OptFlags, LlcFlags, LldFlags
 
