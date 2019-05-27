@@ -1589,11 +1589,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertClassToSealedClassIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddPropertyAccessorsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
