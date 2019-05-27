@@ -954,11 +954,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToDoubleBangIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.ElvisToIfThenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
