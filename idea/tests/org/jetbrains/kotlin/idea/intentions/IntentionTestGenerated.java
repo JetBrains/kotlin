@@ -8132,44 +8132,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertTrimIndentToTrimMargin")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertTrimIndentToTrimMargin extends AbstractIntentionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInConvertTrimIndentToTrimMargin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertTrimIndentToTrimMargin"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("differentIndent.kt")
-        public void testDifferentIndent() throws Exception {
-            runTest("idea/testData/intentions/convertTrimIndentToTrimMargin/differentIndent.kt");
-        }
-
-        @TestMetadata("notBlankFirst.kt")
-        public void testNotBlankFirst() throws Exception {
-            runTest("idea/testData/intentions/convertTrimIndentToTrimMargin/notBlankFirst.kt");
-        }
-
-        @TestMetadata("notBlankLast.kt")
-        public void testNotBlankLast() throws Exception {
-            runTest("idea/testData/intentions/convertTrimIndentToTrimMargin/notBlankLast.kt");
-        }
-
-        @TestMetadata("notRawString.kt")
-        public void testNotRawString() throws Exception {
-            runTest("idea/testData/intentions/convertTrimIndentToTrimMargin/notRawString.kt");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("idea/testData/intentions/convertTrimIndentToTrimMargin/simple.kt");
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/convertTrimMarginToTrimIndent")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
