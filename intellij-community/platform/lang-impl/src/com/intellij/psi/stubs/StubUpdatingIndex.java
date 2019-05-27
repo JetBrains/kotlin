@@ -101,11 +101,6 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     return INDEX_ID;
   }
 
-  @Override
-  public int getCacheSize() {
-    return 5; // no need to cache many serialized trees
-  }
-
   @NotNull
   @Override
   public SingleEntryIndexer<SerializedStubTree> getIndexer() {
