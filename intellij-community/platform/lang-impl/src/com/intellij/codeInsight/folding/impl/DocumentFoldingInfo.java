@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.folding.impl;
 
@@ -9,7 +7,6 @@ import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.lang.folding.LanguageFolding;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -57,7 +54,7 @@ class DocumentFoldingInfo implements CodeFoldingState {
   }
 
   void loadFromEditor(@NotNull Editor editor) {
-    assertDispatchThread();
+    ApplicationManager.getApplication().assertIsDispatchThread();
     LOG.assertTrue(!editor.isDisposed());
     clear();
 
@@ -83,13 +80,9 @@ class DocumentFoldingInfo implements CodeFoldingState {
     }
   }
 
-  private static void assertDispatchThread() {
-    ApplicationManagerEx.getApplicationEx().assertIsDispatchThread();
-  }
-
   @Override
   public void setToEditor(@NotNull final Editor editor) {
-    assertDispatchThread();
+    ApplicationManager.getApplication().assertIsDispatchThread();
     final PsiManager psiManager = PsiManager.getInstance(myProject);
     if (psiManager.isDisposed()) return;
 

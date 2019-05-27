@@ -3,7 +3,7 @@ package com.intellij.internal.statistic.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -33,6 +33,6 @@ public class TestParseEventLogWhitelistAction extends DumbAwareAction {
   }
 
   private static boolean isEnabled(@Nullable Project project) {
-    return project != null && ApplicationManagerEx.getApplicationEx().isInternal();
+    return project != null && ApplicationManager.getApplication().isInternal();
   }
 }

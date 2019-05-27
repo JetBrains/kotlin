@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.highlighting;
 
@@ -7,10 +7,11 @@ import com.intellij.codeInsight.hint.EditorFragmentComponent;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
+import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.application.impl.ApplicationImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -83,7 +84,8 @@ public class BraceHighlightingHandler {
   static void lookForInjectedAndMatchBracesInOtherThread(@NotNull final Editor editor,
                                                          @NotNull final Alarm alarm,
                                                          @NotNull final Processor<? super BraceHighlightingHandler> processor) {
-    ApplicationManagerEx.getApplicationEx().assertIsDispatchThread();
+    Application app = ApplicationManager.getApplication();
+    app.assertIsDispatchThread();
     if (!isValidEditor(editor)) return;
     if (editor.getUserData(PROCESSED) != null) return;
     editor.putUserData(PROCESSED, Boolean.TRUE);
@@ -92,10 +94,10 @@ public class BraceHighlightingHandler {
 
     final int offset = editor.getCaretModel().getOffset();
 
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      boolean success = ApplicationManagerEx.getApplicationEx().tryRunReadAction(() -> {
+    app.executeOnPooledThread(() -> {
+      boolean success = ((ApplicationEx)app).tryRunReadAction(() -> {
         try {
-          ((ApplicationImpl)ApplicationManager.getApplication()).executeByImpatientReader(() -> {
+          ((ApplicationImpl)app).executeByImpatientReader(() -> {
             if (!ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(() -> {
               if (!isValidEditor(editor)) {
                 removeFromProcessedLater(editor);
@@ -108,7 +110,7 @@ public class BraceHighlightingHandler {
               PsiFile injected = psiFile instanceof PsiBinaryFile || !isValidFile(psiFile)
                                  ? null
                                  : getInjectedFileIfAny(editor, project, offset, psiFile, alarm);
-              ApplicationManager.getApplication().invokeLater(() -> {
+              app.invokeLater(() -> {
                 try {
                   if (isValidEditor(editor) && isValidFile(injected)) {
                     EditorEx newEditor = (EditorEx)InjectedLanguageUtil.getInjectedEditorForInjectedFile(editor, injected);

@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.util.Pass;
@@ -114,8 +113,8 @@ public abstract class SelectionBasedPsiElementInternalAction<T extends PsiElemen
 
   @Override
   public final void update(@NotNull AnActionEvent e) {
-    final Presentation presentation = e.getPresentation();
-    boolean enabled = ApplicationManagerEx.getApplicationEx().isInternal() && getEditor(e) != null && myFileClass.isInstance(getPsiFile(e));
+    Presentation presentation = e.getPresentation();
+    boolean enabled = ApplicationManager.getApplication().isInternal() && getEditor(e) != null && myFileClass.isInstance(getPsiFile(e));
     presentation.setEnabledAndVisible(enabled);
   }
 
