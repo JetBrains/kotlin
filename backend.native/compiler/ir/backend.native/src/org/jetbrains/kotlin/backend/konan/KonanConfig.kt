@@ -14,18 +14,15 @@ import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.KonanAbiVersion
-import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.konan.parseKonanVersion
 import org.jetbrains.kotlin.konan.util.Logger
 import kotlin.system.exitProcess
 

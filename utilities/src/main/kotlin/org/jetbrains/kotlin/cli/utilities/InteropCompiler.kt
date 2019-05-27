@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kliopt.ArgParser
+import org.jetbrains.kotlin.konan.CURRENT
+import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.native.interop.tool.*
 
 // TODO: this function should eventually be eliminated from 'utilities'. 
@@ -48,7 +50,8 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
                 repos,
                 libraries.filter { it.contains(File.separator) },
                 target,
-                Distribution()
+                Distribution(),
+                listOf(KonanVersion.CURRENT)
         ).libraryResolver()
         val allLibraries = resolver.resolveWithDependencies(
                 libraries.toUnresolvedLibraries, noStdLib = true, noDefaultLibs = noDefaultLibs
