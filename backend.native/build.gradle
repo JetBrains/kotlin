@@ -112,6 +112,7 @@ configurations {
     kotlin_stdlib_jar
     kotlin_reflect_jar
     kotlin_script_runtime_jar
+    kotlin_native_utils_jar
     trove4j_jar
     kotlinCommonSources
 
@@ -131,6 +132,7 @@ dependencies {
     kotlin_stdlib_jar "$kotlinStdLibModule@jar"
     kotlin_reflect_jar "$kotlinReflectModule@jar"
     kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
+    kotlin_native_utils_jar "$kotlinNativeUtilsModule@jar"
 
     [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
         kotlinCommonSources(it) { transitive = false }
@@ -232,7 +234,7 @@ jar {
     dependsOn ':runtime:hostRuntime', 'external_jars'
 }
 
-def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime']
+def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime', 'native_utils']
 
 task trove4jCopy(type: Copy) {
     from configurations.getByName("trove4j_jar") {
