@@ -34,7 +34,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         val config = context.config
         val moduleName = Name.special("<${config.moduleId}>") 
 
-        val projectContext = ProjectContext(config.project)
+        val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
         val module = DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
                 moduleName, projectContext.storageManager, origin = CurrentKonanModuleOrigin)

@@ -5,16 +5,17 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 
 fun createTopDownAnalyzerProviderForKonan(
         moduleContext: ModuleContext,
@@ -23,15 +24,15 @@ fun createTopDownAnalyzerProviderForKonan(
         languageVersionSettings: LanguageVersionSettings,
         initContainer: StorageComponentContainer.() -> Unit
 ): ComponentProvider {
-    return createContainer("TopDownAnalyzerForKonan", KonanPlatform) {
-        configureModule(moduleContext, KonanPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
+    return createContainer("TopDownAnalyzerForKonan", NativePlatformAnalyzerServices) {
+        configureModule(moduleContext, KonanPlatforms.defaultKonanPlatform, NativePlatformAnalyzerServices, bindingTrace, languageVersionSettings)
 
         useInstance(declarationProviderFactory)
         useImpl<AnnotationResolverImpl>()
 
         CompilerEnvironment.configure(this)
 
-        useInstance(languageVersionSettings)
+        useImpl<SubstitutingScopeProviderImpl>()
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
 
