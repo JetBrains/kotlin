@@ -16,7 +16,7 @@ class TemplateConfigurable extends BaseRCSettingsConfigurable {
   }
 
   @Override
-  void patchElementsIfNeed(Element originalElement, Element snapshotElement) {
+  void patchElementsIfNeeded(Element originalElement, Element snapshotElement) {
     snapshotElement.setAttribute(RunnerAndConfigurationSettingsImplKt.TEMPLATE_FLAG_ATTRIBUTE, "true");
   }
 

@@ -43,7 +43,7 @@ abstract class BaseRCSettingsConfigurable extends SettingsEditorConfigurable<Run
         Element snapshotElement = new Element("config");
         ((JDOMExternalizable)original).writeExternal(originalElement);
         ((JDOMExternalizable)snapshot).writeExternal(snapshotElement);
-        patchElementsIfNeed(originalElement, snapshotElement);
+        patchElementsIfNeeded(originalElement, snapshotElement);
         boolean result = !JDOMUtil.areElementsEqual(originalElement, snapshotElement, true);
         if (!result) {
           super.setModified(false);
@@ -63,5 +63,5 @@ abstract class BaseRCSettingsConfigurable extends SettingsEditorConfigurable<Run
     return false;
   }
 
-  void patchElementsIfNeed(Element originalElement, Element snapshotElement) {}
+  void patchElementsIfNeeded(Element originalElement, Element snapshotElement) {}
 }
