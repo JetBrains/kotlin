@@ -132,17 +132,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
     private val builtInsModuleInfo = BuiltInModuleInfo(Name.special("<built-ins>"))
 
     protected open fun createModule(moduleName: String): TestModuleInfo {
-        val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
-        @Suppress("UNUSED_VARIABLE")
-        val platform =
-            when {
-                nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
-                nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
-                nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
-                nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
-                nameSuffix == "NATIVE" -> KonanPlatforms.defaultKonanPlatform
-                else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
-            }
+        parseModulePlatformByName(moduleName)
         return TestModuleInfo(Name.special("<$moduleName>"))
     }
 

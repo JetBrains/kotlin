@@ -589,16 +589,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         emptyList()
 
     protected open fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl {
-        val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
-        val platform =
-            when {
-                nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
-                nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
-                nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
-                nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
-                nameSuffix == "NATIVE" -> KonanPlatforms.defaultKonanPlatform
-                else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
-            }
+        val platform = parseModulePlatformByName(moduleName)
         val builtIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, builtIns, platform)
     }
