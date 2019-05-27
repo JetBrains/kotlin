@@ -94,20 +94,11 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return data.compose()
     }
 
-    override fun transformFunction(function: FirFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
-        return withScopeCleanup(localScopes) {
-            localScopes += FirLocalScope()
-            super.transformFunction(function, data)
-        }
-    }
-
-
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): CompositeTransformResult<FirDeclaration> {
         localScopes.lastOrNull()?.storeDeclaration(valueParameter)
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) return valueParameter.compose() // TODO
         return super.transformValueParameter(valueParameter, valueParameter.returnTypeRef)
     }
-
 
     private inline fun <T> withLabelAndReceiverType(labelName: Name, owner: FirElement, type: ConeKotlinType, block: () -> T): T {
         labels.put(labelName, type)
@@ -871,34 +862,69 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return (annotationCall.transformChildren(this, data) as FirStatement).compose()
     }
 
+    override fun transformFunction(function: FirFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
+        return withScopeCleanup(localScopes) {
+            localScopes += FirLocalScope()
+            super.transformFunction(function, data)
+        }
+    }
+
+    private fun transformFunctionWithGivenSignature(
+        function: FirFunction,
+        returnTypeRef: FirTypeRef,
+        receiverTypeRef: FirTypeRef? = null
+    ): CompositeTransformResult<FirDeclaration> {
+        if (function is FirNamedFunction) {
+            localScopes.lastOrNull()?.storeDeclaration(function)
+        }
+        return withScopeCleanup(scopes) {
+            scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session, scopeSession))
+
+            val result = transformFunction(function, returnTypeRef).single as FirFunction
+            val body = result.body
+            if (result is FirTypedDeclaration && result.returnTypeRef is FirImplicitTypeRef && body != null) {
+                result.transformReturnTypeRef(this, body.resultType)
+                result
+            } else {
+                result
+            }.compose()
+        }
+    }
+
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
-        if (namedFunction.returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return namedFunction.compose()
-        if (namedFunction.returnTypeRef is FirImplicitTypeRef) {
+        val returnTypeRef = namedFunction.returnTypeRef
+        if ((returnTypeRef !is FirImplicitTypeRef || returnTypeRef is FirResolvedTypeRef) && implicitTypeOnly) {
+            return namedFunction.compose()
+        }
+        if (returnTypeRef is FirImplicitTypeRef && returnTypeRef !is FirResolvedTypeRef) {
             namedFunction.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
         }
 
         val receiverTypeRef = namedFunction.receiverTypeRef
-        fun transform(): CompositeTransformResult<FirDeclaration> {
-            localScopes.lastOrNull()?.storeDeclaration(namedFunction)
-            return withScopeCleanup(scopes) {
-                scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session, scopeSession))
-
-
-                val result = super.transformNamedFunction(namedFunction, namedFunction.returnTypeRef).single as FirNamedFunction
-                val body = result.body
-                if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
-                    result.transformReturnTypeRef(this, body.resultType)
-                    result
-                } else {
-                    result
-                }.compose()
-            }
-        }
-
         return if (receiverTypeRef != null) {
-            withLabelAndReceiverType(namedFunction.name, namedFunction, receiverTypeRef.coneTypeUnsafe()) { transform() }
+            withLabelAndReceiverType(namedFunction.name, namedFunction, receiverTypeRef.coneTypeUnsafe()) {
+                transformFunctionWithGivenSignature(namedFunction, returnTypeRef, receiverTypeRef)
+            }
         } else {
-            transform()
+            transformFunctionWithGivenSignature(namedFunction, returnTypeRef)
+        }
+    }
+
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Any?): CompositeTransformResult<FirDeclaration> {
+        if (propertyAccessor is FirDefaultPropertyAccessor || propertyAccessor.body == null) {
+            return super.transformPropertyAccessor(propertyAccessor, data)
+        }
+        val returnTypeRef = propertyAccessor.returnTypeRef
+        if ((returnTypeRef !is FirImplicitTypeRef || returnTypeRef is FirResolvedTypeRef) && implicitTypeOnly) {
+            return propertyAccessor.compose()
+        }
+        if (returnTypeRef is FirImplicitTypeRef && returnTypeRef !is FirResolvedTypeRef && data !is FirResolvedTypeRef) {
+            propertyAccessor.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
+        }
+        return if (data is FirResolvedTypeRef && returnTypeRef !is FirResolvedTypeRef) {
+            transformFunctionWithGivenSignature(propertyAccessor, data)
+        } else {
+            transformFunctionWithGivenSignature(propertyAccessor, returnTypeRef)
         }
     }
 
@@ -933,17 +959,22 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                         )
                     )
                 }
-                else -> {
+                variable is FirProperty && variable.getter !is FirDefaultPropertyAccessor -> {
                     variable.transformReturnTypeRef(
                         this,
-                        FirErrorTypeRefImpl(
-                            session, null,
-                            if (variable is FirProperty && variable.getter !is FirDefaultPropertyAccessor)  {
-                                "Not supported: type from property getter"
-                            } else {
-                                "Cannot infer variable type without initializer / getter / delegate"
-                            }
-                        )
+                        when (val resultType = variable.getter.returnTypeRef) {
+                            is FirImplicitTypeRef -> FirErrorTypeRefImpl(
+                                session,
+                                null,
+                                "No result type for getter"
+                            )
+                            else -> resultType
+                        }
+                    )
+                }
+                else -> {
+                    variable.transformReturnTypeRef(
+                        this, FirErrorTypeRefImpl(session, null, "Cannot infer variable type without initializer / getter / delegate")
                     )
                 }
             }
@@ -966,13 +997,19 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             localScopes.addIfNotNull(primaryConstructorParametersScope)
             withContainer(property) {
                 property.transformChildrenWithoutAccessors(this, returnTypeRef)
-                storeVariableReturnType(property)
+                if (property.returnTypeRef is FirImplicitTypeRef && property.initializer != null) {
+                    storeVariableReturnType(property)
+                }
                 withScopeCleanup(localScopes) {
                     localScopes.add(FirLocalScope().apply {
                         storeBackingField(property)
                     })
-                    val enhancedTypeRef = property.returnTypeRef
+                    var enhancedTypeRef = property.returnTypeRef
                     property.getter.transform<FirDeclaration, Any?>(this, enhancedTypeRef)
+                    if (property.returnTypeRef is FirImplicitTypeRef) {
+                        storeVariableReturnType(property)
+                        enhancedTypeRef = property.returnTypeRef
+                    }
                     property.setter?.let {
                         it.transform<FirDeclaration, Any?>(this, enhancedTypeRef)
                         it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)

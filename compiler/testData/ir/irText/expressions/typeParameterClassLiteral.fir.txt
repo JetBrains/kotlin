@@ -12,10 +12,10 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
         GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
           ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
   PROPERTY name:classRefExtVal visibility:public modality:FINAL [val] 
-    FUN name:<get-classRefExtVal> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FUN name:<get-classRefExtVal> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<IrErrorType>
       correspondingProperty: PROPERTY name:classRefExtVal visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-classRefExtVal> (): IrErrorType declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-classRefExtVal> (): kotlin.reflect.KClass<IrErrorType> declared in <root>'
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
             ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
@@ -39,11 +39,11 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
             ERROR_CALL 'Unresolved reference: <Unresolved name: TF>#' type=IrErrorType
     PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val] 
-      FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
+      FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.reflect.KClass<IrErrorType>
         correspondingProperty: PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-classRefGenericMemberExtVal> (): IrErrorType declared in <root>.Host'
+          RETURN type=kotlin.Nothing from='public final fun <get-classRefGenericMemberExtVal> (): kotlin.reflect.KClass<IrErrorType> declared in <root>.Host'
             GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
               ERROR_CALL 'Unresolved reference: <Unresolved name: TV>#' type=IrErrorType
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 

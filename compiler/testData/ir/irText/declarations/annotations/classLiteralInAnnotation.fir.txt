@@ -63,10 +63,10 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test2.<no name provided>' type=<root>.test2.<no name provided> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [var] 
-    FUN name:<get-test3> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FUN name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Any
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Any declared in <root>'
           BLOCK type=<root>.<get-test3>.<no name provided> origin=OBJECT_LITERAL
             CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               annotations:
@@ -77,9 +77,9 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
             CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.<get-test3>.<no name provided>' type=<root>.<get-test3>.<no name provided> origin=null
-    FUN name:<set-test3> visibility:public modality:FINAL <> (v:IrErrorType) returnType:kotlin.Unit 
+    FUN name:<set-test3> visibility:public modality:FINAL <> (v:kotlin.Any) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
-      VALUE_PARAMETER name:v index:0 type:IrErrorType 
+      VALUE_PARAMETER name:v index:0 type:kotlin.Any
       BLOCK_BODY
         BLOCK type=<root>.<set-test3>.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]

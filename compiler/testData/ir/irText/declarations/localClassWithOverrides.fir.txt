@@ -34,22 +34,22 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
           FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:public [final] 
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=1
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:FINAL <> ($this:<root>.outer.Local) returnType:IrErrorType 
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:FINAL <> ($this:<root>.outer.Local) returnType:kotlin.Int
             correspondingProperty: PROPERTY name:aval visibility:public modality:FINAL [val] 
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='public final fun <get-aval> (): IrErrorType declared in <root>.outer.Local'
+              RETURN type=kotlin.Nothing from='public final fun <get-aval> (): kotlin.Int declared in <root>.outer.Local'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-aval>' type=<root>.outer.Local origin=null
         PROPERTY name:avar visibility:public modality:FINAL [var] 
           FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:public 
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=2
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:FINAL <> ($this:<root>.outer.Local) returnType:IrErrorType 
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:FINAL <> ($this:<root>.outer.Local) returnType:kotlin.Int
             correspondingProperty: PROPERTY name:avar visibility:public modality:FINAL [var] 
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local 
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='public final fun <get-avar> (): IrErrorType declared in <root>.outer.Local'
+              RETURN type=kotlin.Nothing from='public final fun <get-avar> (): kotlin.Int declared in <root>.outer.Local'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-avar>' type=<root>.outer.Local origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:FINAL <> ($this:<root>.outer.Local, <set-?>:kotlin.Int) returnType:kotlin.Unit 

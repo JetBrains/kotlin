@@ -13,10 +13,10 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         TYPE_OP type=T of <root>.castExtFun origin=CAST typeOperand=T of <root>.castExtFun
           ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
   PROPERTY name:castExtVal visibility:public modality:FINAL [val] 
-    FUN name:<get-castExtVal> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FUN name:<get-castExtVal> visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>
       correspondingProperty: PROPERTY name:castExtVal visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-castExtVal> (): IrErrorType declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-castExtVal> (): T of <uninitialized parent> declared in <root>'
           TYPE_OP type=T of <uninitialized parent> origin=CAST typeOperand=T of <uninitialized parent>
             ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
@@ -55,19 +55,19 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
           TYPE_OP type=TF of <root>.Host.castGenericMemberExtFun origin=CAST typeOperand=TF of <root>.Host.castGenericMemberExtFun
             ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
     PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val] 
-      FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
+      FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:T of <root>.Host
         correspondingProperty: PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-castMemberExtVal> (): IrErrorType declared in <root>.Host'
+          RETURN type=kotlin.Nothing from='public final fun <get-castMemberExtVal> (): T of <root>.Host declared in <root>.Host'
             TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
               ERROR_CALL 'Unresolved reference: this#' type=<root>.Host<T of <root>.Host>
     PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val] 
-      FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
+      FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:TV of <uninitialized parent>
         correspondingProperty: PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> (): IrErrorType declared in <root>.Host'
+          RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> (): TV of <uninitialized parent> declared in <root>.Host'
             TYPE_OP type=TV of <uninitialized parent> origin=CAST typeOperand=TV of <uninitialized parent>
               ERROR_CALL 'Unresolved reference: this#' type=<root>.Host<T of <root>.Host>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
