@@ -84,7 +84,7 @@ object Filtering : TemplateGroupBase() {
             }
             var count = 0
             for (item in this) {
-                if (count++ >= n) list.add(item)
+                if (count >= n) list.add(item) else ++count
             }
             return list.optimizeReadOnlyList()
             """

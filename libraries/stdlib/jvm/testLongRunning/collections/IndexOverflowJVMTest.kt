@@ -156,4 +156,10 @@ class IndexOverflowJVMTest {
         assertEquals(expectedEnd, dropTake.last())
     }
 
+    @Test
+    fun dropMaxValue() {
+        val range = 0L..Int.MAX_VALUE + 1L
+        assertEquals(listOf(Int.MAX_VALUE.toLong(), Int.MAX_VALUE + 1L), range.drop(Int.MAX_VALUE))
+    }
+
 }
