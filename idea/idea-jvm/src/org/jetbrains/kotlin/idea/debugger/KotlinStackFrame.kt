@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.DebuggerContext
 import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.JavaValue
@@ -48,12 +49,20 @@ import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
 import org.jetbrains.kotlin.idea.debugger.evaluate.variables.VariableFinder
 import org.jetbrains.kotlin.utils.getSafe
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerEvaluator
 import java.lang.reflect.Modifier
 import java.util.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.LOG as DebuggerLog
 
 class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDescriptorImpl(frame, MethodsTracker()), true) {
     private val kotlinVariableViewService = ToggleKotlinVariablesState.getService()
+
+    private val kotlinEvaluator by lazy {
+        val debugProcess = descriptor.debugProcess as DebugProcessImpl // Cast as in JavaStackFrame
+        KotlinDebuggerEvaluator(debugProcess, this@KotlinStackFrame)
+    }
+
+    override fun getEvaluator() = kotlinEvaluator
 
     override fun superBuildVariables(evaluationContext: EvaluationContextImpl, children: XValueChildrenList) {
         if (!kotlinVariableViewService.kotlinVariableView) {
