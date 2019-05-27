@@ -30,23 +30,24 @@ interface SearchPathResolverWithTarget: SearchPathResolver {
 fun defaultResolver(
         repositories: List<String>,
         target: KonanTarget,
-        distribution: Distribution = Distribution()
-): SearchPathResolverWithTarget = defaultResolver(repositories, emptyList(), target, distribution)
+        distribution: Distribution = Distribution(),
+        compatibleCompilerVersions: List<KonanVersion>
+): SearchPathResolverWithTarget = defaultResolver(repositories, emptyList(), target, distribution, compatibleCompilerVersions)
 
 fun defaultResolver(
         repositories: List<String>,
         directLibs: List<String>,
         target: KonanTarget,
         distribution: Distribution,
+        compatibleCompilerVersions: List<KonanVersion>,
         logger: Logger = ::dummyLogger,
-        skipCurrentDir: Boolean = false,
-        compatibleCompilerVersions: List<KonanVersion> = emptyList()
+        skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget = KonanLibraryProperResolver(
         repositories,
         directLibs,
         target,
         listOf(KonanAbiVersion.CURRENT),
-        listOf(KonanVersion.CURRENT) + compatibleCompilerVersions,
+        compatibleCompilerVersions,
         distribution.klib,
         distribution.localKonanDir.absolutePath,
         skipCurrentDir,
