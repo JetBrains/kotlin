@@ -27,7 +27,7 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
         get() = GradleVersionRequired.AtLeast("4.6")
 
     @Test
-    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
+    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
 
@@ -212,7 +212,7 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     }
 
     @Test
-    fun testCustomAttributesInAndroidTargets() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
+    fun testCustomAttributesInAndroidTargets() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
         // Test the fix for KT-27714
 
         setupWorkingDir()
