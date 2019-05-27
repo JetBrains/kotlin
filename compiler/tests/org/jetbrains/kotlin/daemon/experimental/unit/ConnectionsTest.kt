@@ -17,11 +17,15 @@ import org.jetbrains.kotlin.daemon.CompilerSelector
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.experimental.BasicCompilerServicesWithResultsFacadeServerServerSide
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.DaemonWithMetadataAsync
+import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
+import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
+import org.jetbrains.kotlin.daemon.common.experimental.walkDaemonsAsync
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Ignore
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -31,6 +35,7 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
 
+@Ignore
 class ConnectionsTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClient = KotlinCompilerDaemonClient.instantiate(DaemonProtocolVariant.SOCKETS)

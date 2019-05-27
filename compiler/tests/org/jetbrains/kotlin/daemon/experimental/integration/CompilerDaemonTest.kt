@@ -19,10 +19,14 @@ import org.jetbrains.kotlin.daemon.*
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClientInstance
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
+import org.jetbrains.kotlin.daemon.client.experimental.CompilerCallbackServicesFacadeServerServerSide
+import org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -47,15 +51,14 @@ import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResul
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
 import kotlin.script.templates.ScriptTemplateDefinition
+import kotlin.test.Ignore
 import kotlin.test.fail
-import org.jetbrains.kotlin.daemon.client.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.utils.KotlinPaths
 
 val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 
 // TODO: remove ignore annotation from tests.
 
+@Ignore
 class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClientInstance = KotlinCompilerDaemonClient.instantiate(DaemonProtocolVariant.SOCKETS)

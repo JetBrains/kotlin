@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
+import org.junit.Ignore
 import java.io.File
 import java.net.URLClassLoader
 import java.util.logging.LogManager
@@ -33,6 +34,7 @@ private val logFiles = arrayListOf<String>()
 
 // TODO: remove ignore annotation from tests.
 
+@Ignore
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClient = KotlinCompilerDaemonClient

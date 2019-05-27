@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.experimental.unit
 
-import io.ktor.network.selector.ActorSelectorManager
-import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterfaceKtor.selectorMgr
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.open
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
 import org.jetbrains.kotlin.daemon.common.toRMI
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
+import org.junit.Ignore
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.InetSocketAddress
@@ -38,6 +39,7 @@ class TestServer(val serverPort: Int = 6999) {
 
 val testServer = TestServer()
 
+@Ignore
 @Suppress("UNCHECKED_CAST")
 class ClientSerializationTest : KotlinIntegrationTestBase() {
 
