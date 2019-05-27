@@ -92,7 +92,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     override fun getFramework(namePrefix: String, buildType: NativeBuildType): Framework =
         getBinary(namePrefix, buildType, NativeOutputKind.FRAMEWORK)
 
-    override fun getTest(namePrefix: String, buildType: NativeBuildType): Test =
+    override fun getTest(namePrefix: String, buildType: NativeBuildType): TestExecutable =
         getBinary(namePrefix, buildType, NativeOutputKind.TEST)
 
     override fun findExecutable(namePrefix: String, buildType: NativeBuildType): Executable? {
@@ -109,7 +109,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
     override fun findFramework(namePrefix: String, buildType: NativeBuildType): Framework? =
         findBinary(namePrefix, buildType, NativeOutputKind.FRAMEWORK)
 
-    override fun findTest(namePrefix: String, buildType: NativeBuildType): Test? =
+    override fun findTest(namePrefix: String, buildType: NativeBuildType): TestExecutable? =
         findBinary(namePrefix, buildType, NativeOutputKind.TEST)
     // endregion.
 

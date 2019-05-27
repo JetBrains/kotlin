@@ -127,7 +127,7 @@ fun generateAbstractKotlinNativeBinaryContainer() {
         binaryType("an Objective-C framework","Framework", "FRAMEWORK", "framework"),
         binaryType(
             "a test executable",
-            "Test",
+            "TestExecutable",
             "TEST",
             "test",
             defaultBaseName = "\"test\""

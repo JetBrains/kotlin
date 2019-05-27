@@ -4,6 +4,10 @@ plugins {
     kotlin("jvm")
 }
 
+repositories {
+    maven(kotlinNativeRepo)
+}
+
 dependencies {
     compile(gradleApi())
     compile(project(":kotlin-gradle-plugin-api"))

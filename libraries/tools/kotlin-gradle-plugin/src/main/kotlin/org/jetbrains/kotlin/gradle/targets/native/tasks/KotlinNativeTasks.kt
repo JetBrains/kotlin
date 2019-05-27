@@ -364,7 +364,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile() {
 
     @get:Input
     val processTests: Boolean
-        get() = binary is Test
+        get() = binary is TestExecutable
 
     @get:InputFiles
     val exportLibraries: FileCollection
