@@ -1,0 +1,36 @@
+package
+
+public fun test(): kotlin.Unit
+public fun </*0*/ K> withLock(/*0*/ g: () -> K): K
+public fun </*0*/ R> Inv<R>.asOut(): Out<R>
+
+public final class Inv</*0*/ S> {
+    public constructor Inv</*0*/ S>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JSam</*0*/ V : kotlin.Any!> {
+    public abstract fun call(): V!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out P> {
+    public constructor Out</*0*/ out P>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Tasks {
+    public constructor Tasks()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> call(/*0*/ f: JSam<T!>!): Inv<T!>!
+}

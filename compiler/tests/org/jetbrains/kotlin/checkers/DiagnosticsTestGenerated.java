@@ -10226,6 +10226,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 public void testNothingWithCallableReference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/nothingWithCallableReference.kt");
                 }
+
+                @TestMetadata("platformNothingAsUsefulConstraint.kt")
+                public void testPlatformNothingAsUsefulConstraint() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/platformNothingAsUsefulConstraint.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveCalls")

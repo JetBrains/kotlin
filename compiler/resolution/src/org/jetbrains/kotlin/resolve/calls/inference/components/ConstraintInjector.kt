@@ -101,12 +101,10 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
             return true // T <: T(?!)
         }
 
-        if (constraintType.isSimpleType()) {
-            if (constraint.position.from is DeclaredUpperBoundConstraintPosition &&
-                constraint.kind == UPPER && constraintType.isNullableAny()
-            ) {
-                return true // T <: Any?
-            }
+        if (constraint.position.from is DeclaredUpperBoundConstraintPosition &&
+            constraint.kind == UPPER && constraintType.isNullableAny()
+        ) {
+            return true // T <: Any?
         }
 
         return false
