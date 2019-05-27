@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-fun foo() {
-    if (!bar()) {
-        throw AssertionError("text")
-    }
-}
-
-fun bar(): Boolean = true
