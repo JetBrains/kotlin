@@ -160,11 +160,11 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
     KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs) {
     init {
         if (HostManager.host == KonanTarget.MINGW_X64) {
-            // TODO: Read it from KonanDistribution when it is accessible.
+            // TODO: Read it from Platform properties when it is accessible.
             val konanProperties = Properties().apply {
                 project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
             }
-            val toolchainDir = konanProperties.getProperty("targetToolchain.mingw_x64")
+            val toolchainDir = konanProperties.getProperty("llvmHome.mingw_x64")
             if (toolchainDir != null) {
                 environment.put(
                     "PATH",
