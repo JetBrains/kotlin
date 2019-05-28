@@ -119,7 +119,7 @@ class PresentationFactory(private val editor: EditorImpl) {
     }, second = { expanded() }, initialState = startWithPlaceholder)
     presentationToChange = content
     val listener = object: InputHandler {
-      override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
+      override fun mouseClicked(event: MouseEvent, translated: Point) {
         content.flipState()
       }
     }

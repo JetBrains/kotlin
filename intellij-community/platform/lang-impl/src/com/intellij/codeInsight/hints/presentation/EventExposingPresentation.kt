@@ -11,17 +11,17 @@ class EventExposingPresentation(val base: InlayPresentation) : StaticDelegatePre
     listeners.add(listener)
   }
 
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
-    super.mouseClicked(e, editorPoint)
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
+    super.mouseClicked(event, translated)
     for (listener in listeners) {
-      listener.mouseClicked(e, editorPoint)
+      listener.mouseClicked(event, translated)
     }
   }
 
-  override fun mouseMoved(e: MouseEvent) {
-    super.mouseMoved(e)
+  override fun mouseMoved(event: MouseEvent, translated: Point) {
+    super.mouseMoved(event, translated)
     for (listener in listeners) {
-      listener.mouseMoved(e)
+      listener.mouseMoved(event, translated)
     }
   }
 

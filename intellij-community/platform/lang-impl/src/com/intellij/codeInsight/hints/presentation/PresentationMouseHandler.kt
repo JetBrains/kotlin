@@ -36,9 +36,8 @@ class PresentationMouseHandler : StartupActivity {
         val renderer = inlay.renderer
         if (renderer !is PresentationRenderer) return
 
-        val copy = inlayPoint.clone() as Point
-        val inPresentationCoordinatesEvent = translate(event, -inlayPoint.x, -inlayPoint.y)
-        renderer.presentation.mouseClicked(inPresentationCoordinatesEvent, copy)
+        val translated = Point(event.x - inlayPoint.x, event.y - inlayPoint.y)
+        renderer.presentation.mouseClicked(event, translated)
       }
     }
 
@@ -62,10 +61,9 @@ class PresentationMouseHandler : StartupActivity {
           activePresentation = presentation
         }
         if (presentation != null) {
-          val point = editor.visualPositionToXY(inlay.visualPosition)
-          event.withTranslated(-point.x, -point.y) {
-            presentation.mouseMoved(event)
-          }
+          val inlayPoint = editor.visualPositionToXY(inlay.visualPosition)
+          val translated = Point(event.x - inlayPoint.x, event.y - inlayPoint.y)
+          presentation.mouseMoved(event, translated)
         }
       }
     }

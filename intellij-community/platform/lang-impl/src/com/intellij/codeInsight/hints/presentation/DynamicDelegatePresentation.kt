@@ -50,9 +50,9 @@ open class DynamicDelegatePresentation(delegate: InlayPresentation) : BasePresen
 
   override fun paint(g: Graphics2D, attributes: TextAttributes) = delegate.paint(g, attributes)
 
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) = delegate.mouseClicked(e, editorPoint)
+  override fun mouseClicked(event: MouseEvent, translated: Point) = delegate.mouseClicked(event, translated)
 
-  override fun mouseMoved(e: MouseEvent) = delegate.mouseMoved(e)
+  override fun mouseMoved(event: MouseEvent, translated: Point) = delegate.mouseMoved(event, translated)
 
   override fun mouseExited() = delegate.mouseExited()
 

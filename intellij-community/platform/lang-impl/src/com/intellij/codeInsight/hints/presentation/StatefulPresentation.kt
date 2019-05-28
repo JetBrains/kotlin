@@ -92,12 +92,12 @@ abstract class StatefulPresentation<S: Any?>(
     currentPresentation.paint(g, attributes)
   }
 
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
-    currentPresentation.mouseClicked(e, editorPoint)
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
+    currentPresentation.mouseClicked(event, translated)
   }
 
-  override fun mouseMoved(e: MouseEvent) {
-    currentPresentation.mouseMoved(e)
+  override fun mouseMoved(event: MouseEvent, translated: Point) {
+    currentPresentation.mouseMoved(event, translated)
   }
 
   override fun mouseExited() {

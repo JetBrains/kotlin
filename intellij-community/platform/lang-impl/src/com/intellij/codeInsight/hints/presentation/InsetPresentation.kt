@@ -30,9 +30,9 @@ class InsetPresentation(
     }
   }
 
-  private fun handleMouse(e: MouseEvent, action: (InlayPresentation) -> Unit) {
-    val x = e.x
-    val y = e.y
+  private fun handleMouse(e: MouseEvent, original: Point, action: (InlayPresentation, Point) -> Unit) {
+    val x = original.x
+    val y = original.y
     if (x < left || x >= left + presentation.width || y < top || y >= top + presentation.height) {
       if (presentationUnderCursor != null) {
         presentationUnderCursor?.mouseExited()
@@ -40,24 +40,23 @@ class InsetPresentation(
         return
       }
     }
-    e.withTranslated(-left, -top) {
-      action(presentation)
+    val translated = original.translateNew(-left, -top)
+    action(presentation, translated)
+  }
+
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
+    handleMouse(event, translated) { presentation, point  ->
+      presentation.mouseClicked(event, point)
     }
   }
 
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
-    handleMouse(e) {
-      it.mouseClicked(e, editorPoint)
-    }
-  }
-
-  override fun mouseMoved(e: MouseEvent) {
-    handleMouse(e) {
-      if (it != presentationUnderCursor) {
+  override fun mouseMoved(event: MouseEvent, translated: Point) {
+    handleMouse(event, translated) { presentation, point  ->
+      if (presentation != presentationUnderCursor) {
         presentationUnderCursor?.mouseExited()
-        presentationUnderCursor = it
+        presentationUnderCursor = presentation
       }
-      it.mouseMoved(e)
+      presentation.mouseMoved(event, point)
     }
   }
 

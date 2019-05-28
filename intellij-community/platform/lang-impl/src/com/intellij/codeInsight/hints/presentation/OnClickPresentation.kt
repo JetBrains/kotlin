@@ -11,8 +11,8 @@ class OnClickPresentation(
   presentation: InlayPresentation,
   val onClickAction: (MouseEvent, Point) -> Unit
 ) : StaticDelegatePresentation(presentation) {
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
-    super.mouseClicked(e, editorPoint)
-    onClickAction(e, editorPoint)
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
+    super.mouseClicked(event, translated)
+    onClickAction(event, translated)
   }
 }

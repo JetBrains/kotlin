@@ -34,9 +34,9 @@ class ChangeOnClickPresentation(
 
   data class State(val clicked: Boolean)
 
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
     if (state.clicked) {
-      super.mouseClicked(e, editorPoint)
+      super.mouseClicked(event, translated)
     } else {
       state = State(true)
     }

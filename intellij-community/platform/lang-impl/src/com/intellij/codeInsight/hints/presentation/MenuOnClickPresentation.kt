@@ -17,14 +17,14 @@ class MenuOnClickPresentation(
   val project: Project,
   val actionsSupplier: () -> List<AnAction>
 ) : StaticDelegatePresentation(presentation) {
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
-    super.mouseClicked(e, editorPoint)
-    if (SwingUtilities.isRightMouseButton(e) && !SwingUtilities.isLeftMouseButton(e)) {
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
+    super.mouseClicked(event, translated)
+    if (SwingUtilities.isRightMouseButton(event) && !SwingUtilities.isLeftMouseButton(event)) {
       val manager = project.getComponent(ActionManager::class.java)
       val actions = actionsSupplier()
       if (actions.isEmpty()) return
       val popupMenu = manager.createActionPopupMenu("InlayMenu", DefaultActionGroup(actions))
-      popupMenu.component.show(e.component, editorPoint.x, editorPoint.y)
+      popupMenu.component.show(event.component, translated.x, translated.y)
     }
   }
 }

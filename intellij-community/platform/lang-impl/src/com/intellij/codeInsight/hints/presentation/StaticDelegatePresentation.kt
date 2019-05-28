@@ -47,12 +47,12 @@ abstract class StaticDelegatePresentation(val presentation: InlayPresentation) :
     return presentation.toString()
   }
 
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
-    presentation.mouseClicked(e, editorPoint)
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
+    presentation.mouseClicked(event, translated)
   }
 
-  override fun mouseMoved(e: MouseEvent) {
-    presentation.mouseMoved(e)
+  override fun mouseMoved(event: MouseEvent, translated: Point) {
+    presentation.mouseMoved(event, translated)
   }
 
   override fun mouseExited() {

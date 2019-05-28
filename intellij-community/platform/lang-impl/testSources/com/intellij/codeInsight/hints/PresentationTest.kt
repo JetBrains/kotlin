@@ -106,15 +106,15 @@ class PresentationTest : TestCase() {
   ): InlayPresentation by presentation {
 
 
-    override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
+    override fun mouseClicked(event: MouseEvent, translated: Point) {
       val expectedClickVal = expectedClick
       if (expectedClickVal == null) {
         fail("No clicks expected")
         return
       }
-      assertEquals(expectedClickVal.first, e.x)
-      assertEquals(expectedClickVal.second, e.y)
-      super.mouseClicked(e, editorPoint)
+      assertEquals(expectedClickVal.first, event.x)
+      assertEquals(expectedClickVal.second, event.y)
+      super.mouseClicked(event, translated)
     }
   }
 }

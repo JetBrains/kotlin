@@ -43,36 +43,35 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
     }
   }
 
-  private fun handleMouse(e: MouseEvent, action: (InlayPresentation) -> Unit) {
-    val x = e.x
-    val y = e.y
+  private fun handleMouse(e: MouseEvent, original: Point, action: (InlayPresentation, Point) -> Unit) {
+    val x = original.x
+    val y = original.y
     if (x < 0 || x >= width || y < 0 || y >= height) return
     var xOffset = 0
     for (presentation in presentations) {
       val presentationWidth = presentation.width
       if (x < xOffset + presentationWidth) {
-        e.withTranslated(-xOffset, 0) {
-          action(presentation)
-        }
+        val translated = original.translateNew(-xOffset, 0)
+        action(presentation, translated)
         return
       }
       xOffset += presentationWidth
     }
   }
 
-  override fun mouseClicked(e: MouseEvent, editorPoint: Point) {
-    handleMouse(e) {
-      it.mouseClicked(e, editorPoint)
+  override fun mouseClicked(event: MouseEvent, translated: Point) {
+    handleMouse(event, translated) { presentation, point ->
+      presentation.mouseClicked(event, point)
     }
   }
 
-  override fun mouseMoved(e: MouseEvent) {
-    handleMouse(e) {
-      if (it != presentationUnderCursor) {
+  override fun mouseMoved(event: MouseEvent, translated: Point) {
+    handleMouse(event, translated) { presentation, point ->
+      if (presentation != presentationUnderCursor) {
         presentationUnderCursor?.mouseExited()
-        presentationUnderCursor = it
+        presentationUnderCursor = presentation
       }
-      it.mouseMoved(e)
+      presentation.mouseMoved(event, point)
     }
   }
 
