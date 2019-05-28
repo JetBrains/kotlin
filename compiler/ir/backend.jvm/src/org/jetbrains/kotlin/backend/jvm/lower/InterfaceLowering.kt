@@ -93,6 +93,8 @@ internal fun createStaticFunctionWithReceivers(
 
         copyTypeParametersFrom(oldFunction)
 
+        annotations.addAll(oldFunction.annotations)
+
         var offset = 0
         val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
             this,
