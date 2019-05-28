@@ -371,5 +371,9 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         return super.isInheritorDeep(baseClass, classToByPass)
     }
 
+    private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
+
+    override fun isDeprecated(): Boolean = _deprecated
+
     override fun copy(): KtLightClassImpl = KtUltraLightClass(classOrObject.copy() as KtClassOrObject, support)
 }

@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.util.registry.Registry
+import com.google.common.collect.Lists
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.impl.light.*
+import com.intellij.psi.impl.light.LightMethodBuilder
+import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.util.BitUtil.isSet
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -25,24 +28,15 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
-import org.jetbrains.kotlin.resolve.inline.isInlineOnly
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -302,8 +296,11 @@ private fun packMethodFlags(access: Int, isInterface: Boolean): Int {
     return flags
 }
 
-internal fun KtDeclaration.isHiddenByDeprecation(support: KtUltraLightSupport): Boolean {
-    val deprecated = support.findAnnotation(this, FqName("kotlin.Deprecated"))?.second
+internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupport): Boolean {
+    val jetModifierList = this.modifierList ?: return false
+    if (jetModifierList.annotationEntries.isEmpty()) return false
+
+    val deprecated = support.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated)?.second
     return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
 }
 
@@ -313,4 +310,40 @@ internal fun KtDeclaration.simpleVisibility(): String = when {
     hasModifier(KtTokens.PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
     hasModifier(KtTokens.PROTECTED_KEYWORD) -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
+}
+
+internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = null): Boolean {
+    val jetModifierList = this.modifierList ?: return false
+    if (jetModifierList.annotationEntries.isEmpty()) return false
+
+    val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
+    val deprecatedName = deprecatedFqName.shortName().asString()
+
+    for (annotationEntry in jetModifierList.annotationEntries) {
+        val typeReference = annotationEntry.typeReference ?: continue
+
+        val typeElement = typeReference.typeElement as? KtUserType ?: continue
+        // If it's not a user type, it's definitely not a ref to deprecated
+
+        val fqName = toQualifiedName(typeElement) ?: continue
+
+        if (deprecatedFqName == fqName) return true
+        if (deprecatedName == fqName.asString()) return true
+    }
+
+    return support?.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated) !== null
+}
+
+private fun toQualifiedName(userType: KtUserType): FqName? {
+    val reversedNames = Lists.newArrayList<String>()
+
+    var current: KtUserType? = userType
+    while (current != null) {
+        val name = current.referencedName ?: return null
+
+        reversedNames.add(name)
+        current = current.qualifier
+    }
+
+    return FqName.fromSegments(ContainerUtil.reverse(reversedNames))
 }

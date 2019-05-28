@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.google.common.collect.Lists
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -28,7 +27,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
@@ -38,14 +36,15 @@ import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForClassOrObject
-import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
+import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -76,6 +75,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     private val _extendsList by lazyPub { createExtendsList() }
     private val _implementsList by lazyPub { createImplementsList() }
+    private val _deprecated by lazyPub { classOrObject.isDeprecated() }
 
     protected open fun createExtendsList(): PsiReferenceList? = super.getExtendsList()?.let { KtLightPsiReferenceList(it, this) }
     protected open fun createImplementsList(): PsiReferenceList? = super.getImplementsList()?.let { KtLightPsiReferenceList(it, this) }
@@ -227,39 +227,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    override fun isDeprecated(): Boolean {
-        val jetModifierList = classOrObject.modifierList ?: return false
-
-        val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
-        val deprecatedName = deprecatedFqName.shortName().asString()
-
-        for (annotationEntry in jetModifierList.annotationEntries) {
-            val typeReference = annotationEntry.typeReference ?: continue
-
-            val typeElement = typeReference.typeElement
-            if (typeElement !is KtUserType) continue // If it's not a user type, it's definitely not a ref to deprecated
-
-            val fqName = toQualifiedName(typeElement) ?: continue
-
-            if (deprecatedFqName == fqName) return true
-            if (deprecatedName == fqName.asString()) return true
-        }
-        return false
-    }
-
-    private fun toQualifiedName(userType: KtUserType): FqName? {
-        val reversedNames = Lists.newArrayList<String>()
-
-        var current: KtUserType? = userType
-        while (current != null) {
-            val name = current.referencedName ?: return null
-
-            reversedNames.add(name)
-            current = current.qualifier
-        }
-
-        return FqName.fromSegments(ContainerUtil.reverse(reversedNames))
-    }
+    override fun isDeprecated(): Boolean = _deprecated
 
     override fun isInterface(): Boolean {
         if (classOrObject !is KtClass) return false
