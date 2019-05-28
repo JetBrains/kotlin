@@ -214,7 +214,7 @@ class KotlinCallCompleter(
 
             val constraints = variableWithConstraints.constraints
             val onlyProperEqualConstraints =
-                constraints.isNotEmpty() && constraints.all { it.kind.isEqual() && csBuilder.isProperType(it.type) }
+                constraints.isNotEmpty() && constraints.any { it.kind.isEqual() && csBuilder.isProperType(it.type) }
 
             if (!onlyProperEqualConstraints) return false
         }
@@ -229,7 +229,7 @@ class KotlinCallCompleter(
         val constructor = typeVariable.constructor
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
         val constraints = variableWithConstraints.constraints
-        return constraints.isNotEmpty() && constraints.all {
+        return constraints.isNotEmpty() && constraints.any {
             !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
                     (it.kind.isLower() || it.kind.isEqual()) &&
                     csBuilder.isProperType(it.type)

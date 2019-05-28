@@ -18,7 +18,7 @@ fun test(b: Boolean): String {
         }
 
         if (b) {
-            create()
+            create<String>()
         } else {
             null
         }

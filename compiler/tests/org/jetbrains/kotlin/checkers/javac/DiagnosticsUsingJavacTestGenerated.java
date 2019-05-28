@@ -10026,6 +10026,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/constraintOnFunctionLiteral.kt");
                 }
 
+                @TestMetadata("earlyCompletionForCalls.kt")
+                public void testEarlyCompletionForCalls() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/earlyCompletionForCalls.kt");
+                }
+
                 @TestMetadata("equalityConstraintOnNullableType.kt")
                 public void testEqualityConstraintOnNullableType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/equalityConstraintOnNullableType.kt");
@@ -10039,6 +10044,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("ignoreConstraintFromImplicitInNothing.kt")
                 public void testIgnoreConstraintFromImplicitInNothing() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/ignoreConstraintFromImplicitInNothing.kt");
+                }
+
+                @TestMetadata("inferTypeFromCapturedStarProjection.kt")
+                public void testInferTypeFromCapturedStarProjection() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/inferTypeFromCapturedStarProjection.kt");
                 }
 
                 @TestMetadata("kt6320.kt")

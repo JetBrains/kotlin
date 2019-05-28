@@ -1,0 +1,11 @@
+package
+
+public fun f(): Box<kotlin.Any?>?
+public fun list(): kotlin.collections.List<Box<*>>
+public fun </*0*/ R> kotlin.collections.List<Box<R>>.choose(): Box<R>?
+
+public interface Box</*0*/ out R> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
