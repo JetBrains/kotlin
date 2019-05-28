@@ -34,13 +34,7 @@ class GradleKonanWorkspace(val project: Project) : ProjectComponent {
         private const val LOADING_GRADLE_KONAN_PROJECT = "Loading Gradle Kotlin/Native Project..."
 
         @JvmStatic
-        fun getInstance(project: Project): GradleKonanWorkspace? {
-            return if (project.hasComponent(GradleKonanWorkspace::class.java)) {
-                project.getComponent(GradleKonanWorkspace::class.java)
-            } else {
-                null
-            }
-        }
+        fun getInstance(project: Project): GradleKonanWorkspace = project.getComponent(GradleKonanWorkspace::class.java)
     }
 
     private val reloadsQueue = BackgroundTaskQueue(project, LOADING_GRADLE_KONAN_PROJECT)

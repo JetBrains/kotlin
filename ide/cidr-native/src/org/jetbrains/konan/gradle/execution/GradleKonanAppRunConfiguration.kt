@@ -65,7 +65,7 @@ class GradleKonanAppRunConfiguration(
     override fun canRunOn(target: ExecutionTarget) = target is GradleKonanBuildProfileExecutionTarget
 
     override fun getResolveConfiguration(target: ExecutionTarget) = getBuildAndRunConfigurations(target)?.let {
-        GradleKonanWorkspace.getInstance(project)?.getResolveConfigurationFor(it.buildConfiguration)
+        GradleKonanWorkspace.getInstance(project).getResolveConfigurationFor(it.buildConfiguration)
     }
 
     @Throws(RuntimeConfigurationException::class)
