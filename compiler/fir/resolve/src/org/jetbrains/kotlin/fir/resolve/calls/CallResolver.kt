@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -29,12 +30,15 @@ import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
@@ -544,14 +548,34 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                             dispatchReceiverValue: ClassDispatchReceiverValue?,
                             implicitExtensionReceiverValue: ImplicitReceiverValue?
                         ): ProcessorAction {
+                            val explicitReceiverType = explicitReceiver.type
+                            if (dispatchReceiverValue == null && explicitReceiverType is ConeClassType) {
+                                val declarationReceiverTypeRef = (symbol as? FirCallableSymbol)?.fir?.receiverTypeRef as? FirResolvedTypeRef
+                                val declarationReceiverType = declarationReceiverTypeRef?.type
+                                if (declarationReceiverType is ConeClassType) {
+                                    if (!AbstractTypeChecker.isSubtypeOf(
+                                            candidateFactory.inferenceComponents.ctx,
+                                            explicitReceiverType,
+                                            declarationReceiverType.lookupTag.constructClassType(
+                                                declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
+                                                isNullable = true
+                                            )
+                                        )
+                                    ) {
+                                        return ProcessorAction.NEXT
+                                    }
+                                }
+                            }
+                            val candidate = candidateFactory.createCandidate(
+                                symbol,
+                                dispatchReceiverValue,
+                                implicitExtensionReceiverValue,
+                                ExplicitReceiverKind.EXTENSION_RECEIVER
+                            )
+
                             resultCollector.consumeCandidate(
                                 group,
-                                candidateFactory.createCandidate(
-                                    symbol,
-                                    dispatchReceiverValue,
-                                    implicitExtensionReceiverValue,
-                                    ExplicitReceiverKind.EXTENSION_RECEIVER
-                                )
+                                candidate
                             )
                             return ProcessorAction.NEXT
                         }
@@ -689,9 +713,6 @@ enum class CandidateApplicability {
     SYNTHETIC_RESOLVED,
     RESOLVED
 }
-
-
-var ID = ""
 
 class CandidateCollector(val callInfo: CallInfo, val components: InferenceComponents) {
 
