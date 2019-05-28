@@ -72,7 +72,6 @@ public class RunDashboardContent extends JPanel implements TreeContent, Disposab
   @NonNls static final String RUN_DASHBOARD_CONTENT_TOOLBAR = "RunDashboardContentToolbar";
   @NonNls static final String RUN_DASHBOARD_TREE_TOOLBAR = "RunDashboardTreeToolbar";
   @NonNls private static final String RUN_DASHBOARD_POPUP = "RunDashboardPopup";
-  @NonNls private static final String RUN_DASHBOARD_STOP_ACTION_ID = "RunDashboard.Stop";
 
   private static final String MESSAGE_CARD = "message";
   private static final String CONTENT_CARD = "content";
@@ -388,15 +387,6 @@ public class RunDashboardContent extends JPanel implements TreeContent, Disposab
 
     ActionManager actionManager = ActionManager.getInstance();
     AnAction registeredActions = actionManager.getAction(RUN_DASHBOARD_CONTENT_TOOLBAR);
-    if (registeredActions instanceof DefaultActionGroup) {
-      for (AnAction action : ((DefaultActionGroup)registeredActions).getChildren(null)) {
-        if (RUN_DASHBOARD_STOP_ACTION_ID.equals(actionManager.getId(action))) {
-          // Register shortcut set on the component in order to override global stop action.
-          action.registerCustomShortcutSet(this, null);
-          break;
-        }
-      }
-    }
     myDashboardContentActions.add(registeredActions);
     myContentActionGroup.add(myDashboardContentActions);
     ActionToolbar contentActionsToolBar = actionManager.createActionToolbar(PLACE_TOOLBAR, myContentActionGroup, false);
