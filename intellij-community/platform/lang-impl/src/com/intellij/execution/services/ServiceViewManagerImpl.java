@@ -77,7 +77,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     myModel = new ServiceModel(myProject);
     myModelFilter = new ServiceModelFilter();
     myProject.getMessageBus().connect(myModel).subscribe(ServiceEventListener.TOPIC, e -> myModel.refresh(e).onSuccess(o -> {
-      updateToolWindow(!myModel.getRoots().isEmpty());
+      updateToolWindow(!myModel.getRoots().isEmpty(), true);
       ServiceView allServicesView = myAllServicesView;
       if (allServicesView != null) {
         allServicesView.getModel().eventProcessed(e);
@@ -86,7 +86,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         serviceView.getModel().eventProcessed(e);
       }
     }));
-    myModel.initRoots().onSuccess(o -> updateToolWindow(!myModel.getRoots().isEmpty()));
+    myModel.initRoots().onSuccess(o -> updateToolWindow(!myModel.getRoots().isEmpty(), false));
   }
 
   void createToolWindowContent(@NotNull ToolWindow toolWindow) {
@@ -335,25 +335,24 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       });
   }
 
-  private void updateToolWindow(boolean available) {
+  private void updateToolWindow(boolean available, boolean show) {
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
     if (toolWindowManager == null) return;
 
     toolWindowManager.invokeLater(() -> {
-      if (myProject.isDisposed()) {
-        return;
-      }
+      if (myProject.isDisposed()) return;
 
+      boolean doShow = available && (show || myContentManager != null);
       ToolWindow toolWindow = toolWindowManager.getToolWindow(ToolWindowId.SERVICES);
       if (toolWindow == null) {
         toolWindow = createToolWindow(toolWindowManager, available);
-        if (available) {
+        if (doShow) {
           toolWindow.show(null);
         }
         return;
       }
 
-      boolean doShow = !toolWindow.isAvailable() && available;
+      doShow = !toolWindow.isAvailable() && doShow;
       toolWindow.setAvailable(available, null);
       if (doShow) {
         toolWindow.show(null);
