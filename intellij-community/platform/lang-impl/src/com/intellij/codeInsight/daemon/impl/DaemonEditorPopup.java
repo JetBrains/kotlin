@@ -14,6 +14,9 @@ import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.EditorBundle;
+import com.intellij.openapi.keymap.Keymap;
+import com.intellij.openapi.keymap.KeymapManager;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.awt.RelativePoint;
@@ -34,7 +37,10 @@ public class DaemonEditorPopup extends PopupHandler {
     if (ApplicationManager.getApplication() == null) return;
     ActionManager actionManager = ActionManager.getInstance();
     DefaultActionGroup actionGroup = new DefaultActionGroup();
-    DefaultActionGroup gotoGroup = new DefaultActionGroup("'Next Error' Action Goes Through", true);
+    Keymap keymap = KeymapManager.getInstance().getActiveKeymap();
+    Shortcut[] shortcuts = keymap.getShortcuts("GotoNextError");
+    String shortcutText = shortcuts.length > 0 ? " (" + KeymapUtil.getShortcutText(shortcuts[0]) + ")" : "";
+    DefaultActionGroup gotoGroup = new DefaultActionGroup("'Next Error' Action" + shortcutText + " Goes Through", true);
     gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.errors.first.radio")) {
                     @Override
                     public boolean isSelected(@NotNull AnActionEvent e) {
