@@ -323,7 +323,7 @@ fun KtElement.isFirstStatement(): Boolean {
         element = parent
         parent = parent.parent
     }
-    return parent is KtBlockExpression && parent.children.first { it is KtElement } == element
+    return parent is KtBlockExpression && parent.firstStatement == element
 }
 
 

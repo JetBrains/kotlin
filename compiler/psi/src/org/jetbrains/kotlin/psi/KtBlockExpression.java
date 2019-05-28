@@ -123,6 +123,11 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
         return substitute != null ? substitute : super.getParent();
     }
 
+    @Nullable
+    public KtExpression getFirstStatement() {
+        return findChildByClass(KtExpression.class);
+    }
+
     @ReadOnly
     @NotNull
     public List<KtExpression> getStatements() {
