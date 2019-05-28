@@ -11,6 +11,7 @@ import com.intellij.build.output.BuildOutputParser
 import com.intellij.build.output.LineProcessor
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputDispatcherFactory
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputMessageDispatcher
+import org.apache.commons.lang.ClassUtils
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.lang.reflect.InvocationHandler
@@ -163,7 +164,9 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
       companion object {
         fun wrap(buildEvent: BuildEvent, parentEventId: Any): BuildEvent {
           val classLoader = buildEvent.javaClass.classLoader
-          val interfaces = buildEvent.javaClass.interfaces
+          val interfaces = ClassUtils.getAllInterfaces(buildEvent.javaClass)
+            .filterIsInstance(Class::class.java)
+            .toTypedArray()
           val invocationHandler = BuildEventInvocationHandler(buildEvent, parentEventId)
           return Proxy.newProxyInstance(classLoader, interfaces, invocationHandler) as BuildEvent
         }
