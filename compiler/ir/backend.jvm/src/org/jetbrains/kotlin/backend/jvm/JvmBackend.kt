@@ -20,18 +20,20 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
-import java.lang.AssertionError
 
 class JvmBackend(val context: JvmBackendContext) {
     private val lower = JvmLower(context)
     private val codegen = JvmCodegen(context)
 
-    fun generateFile(irFile: IrFile) {
-        val extensions = IrGenerationExtension.getInstances(context.state.project)
-        extensions.forEach { it.generate(irFile, context, context.state.bindingContext) }
+    fun lowerFile(irFile: IrFile) {
+        for (extension in IrGenerationExtension.getInstances(context.state.project)) {
+            extension.generate(irFile, context, context.state.bindingContext)
+        }
 
         lower.lower(irFile)
+    }
 
+    fun generateLoweredFile(irFile: IrFile) {
         for (loweredClass in irFile.declarations) {
             if (loweredClass !is IrClass) {
                 throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())

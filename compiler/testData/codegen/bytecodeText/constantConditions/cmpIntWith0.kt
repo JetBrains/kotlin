@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: util.kt
 
 inline fun ieq(x: Int, y: Int) = x == y

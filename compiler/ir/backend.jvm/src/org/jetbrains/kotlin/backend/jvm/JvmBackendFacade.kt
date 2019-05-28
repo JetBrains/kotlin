@@ -66,10 +66,18 @@ object JvmBackendFacade {
 
         for (irFile in irModuleFragment.files) {
             try {
-                jvmBackend.generateFile(irFile)
-                state.afterIndependentPart()
+                jvmBackend.lowerFile(irFile)
             } catch (e: Throwable) {
                 errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+            }
+        }
+
+        for (irFile in irModuleFragment.files) {
+            try {
+                jvmBackend.generateLoweredFile(irFile)
+                state.afterIndependentPart()
+            } catch (e: Throwable) {
+                errorHandler.reportException(e, null)
             }
         }
     }
