@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.SubstitutingScopeProvider
 import org.jetbrains.kotlin.utils.Jsr305State
 
 class RuntimeModuleData private constructor(
@@ -71,7 +70,7 @@ class RuntimeModuleData private constructor(
                 singleModuleClassResolver, PackagePartProvider.Empty, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
                 ReflectionTypes(module, notFoundClasses), annotationTypeQualifierResolver,
                 SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED),
-                JavaClassesTracker.Default, JavaResolverSettings.Default, SubstitutingScopeProvider.DEFAULT
+                JavaClassesTracker.Default, JavaResolverSettings.Default
             )
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(javaResolverComponents)

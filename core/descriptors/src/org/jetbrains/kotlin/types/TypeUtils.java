@@ -55,11 +55,6 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
-        @Override
-        public boolean isMarkedNullable() {
-            return false;
-        }
-
         @NotNull
         @Override
         public String toString() {

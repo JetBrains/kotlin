@@ -28,12 +28,10 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     private List<TypeParameterDescriptor> typeConstructorParameters;
     private List<TypeParameterDescriptor> declaredTypeParameters;
     private TypeConstructor typeConstructor;
-    private final SubstitutingScopeProvider substitutingScopeProvider;
 
-    public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor, SubstitutingScopeProvider substitutingScopeProvider) {
+    public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
         this.original = descriptor;
         this.originalSubstitutor = substitutor;
-        this.substitutingScopeProvider = substitutingScopeProvider;
     }
 
     private TypeSubstitutor getSubstitutor() {
@@ -89,7 +87,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
-        return substitutingScopeProvider.createSubstitutingScope(memberScope, getSubstitutor());
+        return new SubstitutingScope(memberScope, getSubstitutor());
     }
 
     @NotNull
@@ -99,7 +97,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
-        return substitutingScopeProvider.createSubstitutingScope(memberScope, getSubstitutor());
+        return new SubstitutingScope(memberScope, getSubstitutor());
     }
 
     @NotNull
@@ -109,7 +107,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
-        return substitutingScopeProvider.createSubstitutingScope(memberScope, getSubstitutor());
+        return new SubstitutingScope(memberScope, getSubstitutor());
     }
 
     @NotNull
@@ -177,7 +175,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         if (substitutor.isEmpty()) return this;
-        return new LazySubstitutingClassDescriptor(this, TypeSubstitutor.createChainedSubstitutor(substitutor.getSubstitution(), getSubstitutor().getSubstitution()), substitutingScopeProvider);
+        return new LazySubstitutingClassDescriptor(this, TypeSubstitutor.createChainedSubstitutor(substitutor.getSubstitution(), getSubstitutor().getSubstitution()));
     }
 
     @Override

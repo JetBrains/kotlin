@@ -382,7 +382,6 @@ class PSICallResolver(
 
             return cache.getOrPut(implicitReceiver) {
                 context.transformToReceiverWithSmartCastInfo(implicitReceiver.value)
-                    .prepareReceiverRegardingCaptureTypes()
             }
         }
     }

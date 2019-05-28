@@ -324,21 +324,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
-    @Nullable
     public FunctionDescriptor substitute(@NotNull TypeSubstitutor originalSubstitutor) {
-        return substitute(originalSubstitutor, SubstitutingScopeProvider.Companion.getDEFAULT());
-    }
-
-    @Nullable
-    public FunctionDescriptor substitute(@NotNull TypeSubstitutor originalSubstitutor, SubstitutingScopeProvider substitutingScopeProvider) {
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return newCopyBuilder(originalSubstitutor)
-                .setOriginal(getOriginal())
-                .setJustForTypeSubstitution(true)
-                .setSubstitutingScopeProvider(substitutingScopeProvider)
-                .build();
+        return newCopyBuilder(originalSubstitutor).setOriginal(getOriginal()).setJustForTypeSubstitution(true).build();
     }
 
     @Nullable
@@ -375,7 +365,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
         protected boolean justForTypeSubstitution = false;
-        protected @NotNull SubstitutingScopeProvider substitutingScopeProvider;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -397,7 +386,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newExtensionReceiverParameter = newExtensionReceiverParameter;
             this.newReturnType = newReturnType;
             this.name = name;
-            substitutingScopeProvider = SubstitutingScopeProvider.Companion.getDEFAULT();
         }
 
         @Override
@@ -566,12 +554,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             justForTypeSubstitution = value;
             return this;
         }
-
-        @NotNull
-        public CopyConfiguration setSubstitutingScopeProvider(@NotNull SubstitutingScopeProvider substitutingScopeProvider) {
-            this.substitutingScopeProvider = substitutingScopeProvider;
-            return this;
-        }
     }
 
     @Override
@@ -609,8 +591,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         List<TypeParameterDescriptor> substitutedTypeParameters =
                 new ArrayList<TypeParameterDescriptor>(unsubstitutedTypeParameters.size());
         final TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
-                unsubstitutedTypeParameters, configuration.substitution, substitutedDescriptor, substitutedTypeParameters,
-                wereChanges, configuration.substitutingScopeProvider
+                unsubstitutedTypeParameters, configuration.substitution, substitutedDescriptor, substitutedTypeParameters, wereChanges
         );
         if (substitutor == null) return null;
 

@@ -47,8 +47,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final boolean isExternal;
     private final boolean isDelegated;
 
-    private final SubstitutingScopeProvider substitutingScopeProvider;
-
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private ReceiverParameterDescriptor extensionReceiverParameter;
     private List<TypeParameterDescriptor> typeParameters;
@@ -75,28 +73,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean isExternal,
             boolean isDelegated
     ) {
-        this(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
-             lateInit, isConst, isExpect, isActual, isExternal, isDelegated, SubstitutingScopeProvider.Companion.getDEFAULT());
-    }
-
-    protected PropertyDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable PropertyDescriptor original,
-            @NotNull Annotations annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean isVar,
-            @NotNull Name name,
-            @NotNull Kind kind,
-            @NotNull SourceElement source,
-            boolean lateInit,
-            boolean isConst,
-            boolean isExpect,
-            boolean isActual,
-            boolean isExternal,
-            boolean isDelegated,
-            @NotNull SubstitutingScopeProvider substitutingScopeProvider
-    ) {
         super(containingDeclaration, annotations, name, null, isVar, source);
         this.modality = modality;
         this.visibility = visibility;
@@ -108,7 +84,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.isActual = isActual;
         this.isExternal = isExternal;
         this.isDelegated = isDelegated;
-        this.substitutingScopeProvider = substitutingScopeProvider;
     }
 
     @NotNull
@@ -128,38 +103,9 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             boolean isExternal,
             boolean isDelegated
     ) {
-        return create(containingDeclaration, annotations, modality, visibility, isVar, name, kind, source,
-                      lateInit, isConst, isExpect, isActual, isExternal, isDelegated, SubstitutingScopeProvider.Companion.getDEFAULT());
-    }
-
-    @NotNull
-    public static PropertyDescriptorImpl create(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull Annotations annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean isVar,
-            @NotNull Name name,
-            @NotNull Kind kind,
-            @NotNull SourceElement source,
-            boolean lateInit,
-            boolean isConst,
-            boolean isExpect,
-            boolean isActual,
-            boolean isExternal,
-            boolean isDelegated,
-            @NotNull SubstitutingScopeProvider substitutingScopeProvider
-    ) {
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
                                           modality, visibility, isVar, name, kind, source, lateInit, isConst,
-                                          isExpect, isActual, isExternal, isDelegated, substitutingScopeProvider);
-    }
-
-    @NotNull
-    public PropertyDescriptorImpl getCopy() {
-        return new PropertyDescriptorImpl(getContainingDeclaration(), original, getAnnotations(),
-                                          modality, visibility, isVar(), getName(), kind, getSource(), lateInit, isConst,
-                                          isExpect, isActual, isExternal, isDelegated, substitutingScopeProvider);
+                                          isExpect, isActual, isExternal, isDelegated);
     }
 
     public void setType(
@@ -312,7 +258,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         private ReceiverParameterDescriptor dispatchReceiverParameter = PropertyDescriptorImpl.this.dispatchReceiverParameter;
         private List<TypeParameterDescriptor> newTypeParameters = null;
         private Name name = getName();
-        private boolean setterProjectedOut = PropertyDescriptorImpl.this.setterProjectedOut;
 
         @NotNull
         @Override
@@ -419,7 +364,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
                 originalTypeParameters, copyConfiguration.substitution, substitutedDescriptor, substitutedTypeParameters
         );
-        substitutor.setSubstitutingScopeProvider(substitutingScopeProvider);
 
         KotlinType originalOutType = getType();
         KotlinType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
@@ -516,8 +460,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             substitutedDescriptor.setCompileTimeInitializer(compileTimeInitializer);
         }
 
-        substitutedDescriptor.setterProjectedOut = copyConfiguration.setterProjectedOut;
-
         return substitutedDescriptor;
     }
 
@@ -528,7 +470,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         return prev;
     }
 
-    public static FunctionDescriptor getSubstitutedInitialSignatureDescriptor(
+    private static FunctionDescriptor getSubstitutedInitialSignatureDescriptor(
             @NotNull TypeSubstitutor substitutor,
             @NotNull PropertyAccessorDescriptor accessorDescriptor
     ) {
@@ -548,7 +490,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     ) {
         return new PropertyDescriptorImpl(
                 newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), newName, kind, SourceElement.NO_SOURCE,
-                isLateInit(), isConst(), isExpect(), isActual(), isExternal(), isDelegated(), substitutingScopeProvider
+                isLateInit(), isConst(), isExpect(), isActual(), isExternal(), isDelegated()
         );
     }
 
@@ -621,10 +563,5 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     @Override
     public <V> V getUserData(UserDataKey<V> key) {
         return null;
-    }
-
-    @NotNull
-    public SubstitutingScopeProvider getSubstitutingScopeProvider() {
-        return substitutingScopeProvider;
     }
 }

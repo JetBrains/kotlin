@@ -100,25 +100,16 @@ class CapturedType(
         CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations)
 }
 
-object OldCapturedTypeCreator : CapturedTypeCreator {
-    override fun createCapturedType(typeProjection: TypeProjection): TypeProjection {
-        return TypeProjectionImpl(CapturedType(typeProjection))
-    }
-}
-
 fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)
 
 fun KotlinType.isCaptured(): Boolean = constructor is CapturedTypeConstructor
 
-fun TypeSubstitution.wrapWithCapturingSubstitution(
-    capturedTypeCreator: CapturedTypeCreator = OldCapturedTypeCreator,
-    needApproximation: Boolean = true
-): TypeSubstitution =
+fun TypeSubstitution.wrapWithCapturingSubstitution(needApproximation: Boolean = true): TypeSubstitution =
     if (this is IndexedParametersSubstitution)
         IndexedParametersSubstitution(
             this.parameters,
             this.arguments.zip(this.parameters).map {
-                it.first.createCapturedIfNeeded(it.second, capturedTypeCreator)
+                it.first.createCapturedIfNeeded(it.second)
             }.toTypedArray(),
             approximateCapturedTypes = needApproximation
         )
@@ -126,16 +117,10 @@ fun TypeSubstitution.wrapWithCapturingSubstitution(
         object : DelegatedTypeSubstitution(this@wrapWithCapturingSubstitution) {
             override fun approximateContravariantCapturedTypes() = needApproximation
             override fun get(key: KotlinType) =
-                super.get(key)?.createCapturedIfNeeded(
-                    key.constructor.declarationDescriptor as? TypeParameterDescriptor,
-                    capturedTypeCreator
-                )
+                super.get(key)?.createCapturedIfNeeded(key.constructor.declarationDescriptor as? TypeParameterDescriptor)
         }
 
-private fun TypeProjection.createCapturedIfNeeded(
-    typeParameterDescriptor: TypeParameterDescriptor?,
-    capturedTypeCreator: CapturedTypeCreator
-): TypeProjection {
+private fun TypeProjection.createCapturedIfNeeded(typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection {
     if (typeParameterDescriptor == null || projectionKind == Variance.INVARIANT) return this
 
     // Treat consistent projections as invariant
@@ -149,5 +134,5 @@ private fun TypeProjection.createCapturedIfNeeded(
             TypeProjectionImpl(this@createCapturedIfNeeded.type)
     }
 
-    return capturedTypeCreator.createCapturedType(this)
+    return TypeProjectionImpl(createCapturedType(this))
 }

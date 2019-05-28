@@ -5,6 +5,6 @@ interface Tr<T> {
 }
 
 fun test(t: Tr<*>) {
-    <!SETTER_PROJECTED_OUT!>t.v<!> = <!NI;TYPE_MISMATCH!>t<!>
+    <!SETTER_PROJECTED_OUT!>t.v<!> = t
     t.v checkType { _<Tr<*>>() }
 }
