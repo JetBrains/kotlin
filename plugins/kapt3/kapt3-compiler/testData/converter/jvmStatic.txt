@@ -20,7 +20,7 @@ public final class JvmStaticTest {
     @kotlin.Metadata()
     public static final class Companion {
 
-        public static void getOne$annotations() {
+        public static void one$annotations() {
         }
 
         public final int getOne() {

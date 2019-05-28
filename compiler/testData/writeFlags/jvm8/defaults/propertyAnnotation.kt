@@ -15,9 +15,9 @@ interface Test {
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Test, getTest$annotations
+// TESTED_OBJECTS: Test, test$annotations
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Test$DefaultImpls, getTest$annotations
+// TESTED_OBJECTS: Test$DefaultImpls, test$annotations
 // FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC, ACC_DEPRECATED

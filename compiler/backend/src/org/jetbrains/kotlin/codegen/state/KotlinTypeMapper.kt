@@ -1157,7 +1157,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
     fun mapSyntheticMethodForPropertyAnnotations(descriptor: PropertyDescriptor): Method {
         val receiver = descriptor.extensionReceiverParameter
-        val name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(mapFunctionName(descriptor.getter!!, OwnerKind.IMPLEMENTATION))
+        val baseName = if (languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
+            mapFunctionName(descriptor.getter!!, OwnerKind.IMPLEMENTATION)
+        } else descriptor.name.asString()
+        val name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(baseName)
         val desc = if (receiver == null) "()V" else "(${mapType(receiver.type)})V"
         return Method(name, desc)
     }
