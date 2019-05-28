@@ -189,7 +189,7 @@ class KotlinFacetSettings {
             compilerArguments!!.apiVersion = value?.versionString
         }
 
-    val platform: TargetPlatform?
+    val targetPlatform: TargetPlatform?
         get() {
             val compilerArguments = this.compilerArguments ?: return null
             return IdePlatformKind.platformByCompilerArguments(compilerArguments)
@@ -202,7 +202,7 @@ class KotlinFacetSettings {
         level = DeprecationLevel.ERROR
     )
     fun getPlatform(): org.jetbrains.kotlin.platform.IdePlatform<*, *>? {
-        return platform?.toIdePlatform()
+        return targetPlatform?.toIdePlatform()
     }
 
     var coroutineSupport: LanguageFeature.State?

@@ -469,7 +469,7 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun configureRequiredLibraries() {
         myProject.modules.forEach { module ->
-            val platformKind = module.kotlinFacet?.settings?.platform?.idePlatformKind.orDefault()
+            val platformKind = module.kotlinFacet?.settings?.targetPlatform?.idePlatformKind.orDefault()
 
             when {
                 platformKind.isJvm -> {

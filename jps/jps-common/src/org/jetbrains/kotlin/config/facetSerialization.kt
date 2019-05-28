@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.konan.KonanPlatform
 import org.jetbrains.kotlin.platform.oldFashionedDescription
 import org.jetbrains.kotlin.platform.orDefault
-import org.jetbrains.kotlin.resolve.*
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -288,7 +287,7 @@ private fun buildChildElement(element: Element, tag: String, bean: Any, filter: 
 private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
-    platform?.let {
+    targetPlatform?.let {
         element.setAttribute("platform", it.oldFashionedDescription)
     }
     if (!useProjectSettings) {

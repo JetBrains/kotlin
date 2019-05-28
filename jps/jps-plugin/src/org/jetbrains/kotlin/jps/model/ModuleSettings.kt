@@ -17,7 +17,7 @@ val JpsModule.kotlinFacet: JpsKotlinFacetModuleExtension?
     get() = container.getChild(JpsKotlinFacetModuleExtension.KIND)
 
 val JpsModule.platform: TargetPlatform?
-    get() = kotlinFacet?.settings?.platform
+    get() = kotlinFacet?.settings?.targetPlatform
 
 val JpsModule.kotlinKind: KotlinModuleKind
     get() = kotlinFacet?.settings?.kind ?: KotlinModuleKind.DEFAULT
