@@ -99,7 +99,7 @@ class GradleKonanProjectTaskRunner : ProjectTaskRunner() {
             }
 
     private fun isNativeModule(module: Module): Boolean =
-            KotlinFacet.get(module)?.configuration?.settings?.platform?.isNative() == true
+            KotlinFacet.get(module)?.configuration?.settings?.targetPlatform?.isNative() == true
 
     private fun ModuleBuildTask.collectGradleTasks(buildTasksMap: GradleBuildTasksMap) {
         val linkedExternalProjectPath = module.externalProjectPath ?: return
