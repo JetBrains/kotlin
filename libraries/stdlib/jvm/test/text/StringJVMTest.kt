@@ -68,7 +68,6 @@ class StringJVMTest {
         assertEquals("UTF-32BE", Charsets.UTF_32BE.name())
     }
 
-    @ExperimentalStdlibApi
     @Test fun capitalizeLocale() {
         assertEquals("ABC", "ABC".capitalize(Locale.US))
         assertEquals("Abc", "Abc".capitalize(Locale.US))
@@ -83,9 +82,9 @@ class StringJVMTest {
 
         // Case mapping where title case is different than uppercase and so Character.toTitleCase is preferred.
         assertEquals("ǲǳǳ", "ǳǳǳ".capitalize(Locale.US))
+        assertEquals("ǱǱǱ", "ǱǱǱ".capitalize(Locale.US))
     }
 
-    @ExperimentalStdlibApi
     @Test fun decapitalizeLocale() {
         assertEquals("aBC", "ABC".decapitalize(Locale.US))
         assertEquals("abc", "Abc".decapitalize(Locale.US))
