@@ -22,6 +22,8 @@ class ReturnHintLinePainter : EditorLinePainter() {
     }
 
     override fun getLineExtensions(project: Project, file: VirtualFile, lineNumber: Int): List<LineExtensionInfo>? {
+        if (!file.isValid) return null
+
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
         if (psiFile.language != KotlinLanguage.INSTANCE) {
             return null
