@@ -33,10 +33,6 @@ public class FormatterStarter implements ApplicationStarter {
   }
 
   @Override
-  public void premain(String[] args) {
-  }
-
-  @Override
   public void main(String[] args) {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     MessageOutput messageOutput = new MessageOutput(
