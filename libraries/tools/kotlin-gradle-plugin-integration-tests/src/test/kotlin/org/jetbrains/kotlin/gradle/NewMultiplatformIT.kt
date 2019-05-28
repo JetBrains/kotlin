@@ -295,7 +295,9 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             gradleBuildScript().modify {
                 if (testJavaSupportInJvmTargets) {
-                    it + "\nkotlin.jvm(\"jvm6\").${KotlinJvmTarget::withJava.name}()"
+                    it + "\nkotlin.jvm(\"jvm6\") { " +
+                            "${KotlinJvmTarget::withJava.name.plus("();").repeat(2)} " + // also check that the function is idempotent
+                            "}"
                 } else {
                     it.replace("presets.jvm", "presets.jvmWithJava").replace("jvm(", "targetFromPreset(presets.jvmWithJava, ")
                 }.plus(
