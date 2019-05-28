@@ -14,33 +14,37 @@ import com.intellij.psi.PsiFile
 import java.awt.Dimension
 import java.awt.Rectangle
 
-class ProviderWithSettings<T : Any>(
-  val provider: InlayHintsProvider<T>,
-  val settings: T,
-  val language: Language
+class ProviderWithSettings<T: Any>(
+  val info: ProviderInfo<T>,
+  val settings: T
 ) {
   val configurable by lazy { provider.createConfigurable(settings) }
 
-  fun withSettingsCopy(): ProviderWithSettings<T> {
-    val settingsCopy = copySettings(settings, provider)
-    return ProviderWithSettings(provider, settingsCopy, language)
-  }
+  val provider: InlayHintsProvider<T>
+  get() = info.provider
+  val language: Language
+  get() = info.language
+}
 
-  internal fun toSettingsWrapper(config: InlayHintsSettings, language: Language) : SettingsWrapper<T> {
-    return SettingsWrapper(this, config, language)
-  }
+fun <T : Any> ProviderWithSettings<T>.withSettingsCopy(): ProviderWithSettings<T> {
+  val settingsCopy = copySettings(settings, provider)
+  return ProviderWithSettings(info, settingsCopy)
+}
 
-  fun getCollectorWrapperFor(file: PsiFile, editor: Editor, language: Language): CollectorWithSettings<T>? {
-    val key = provider.key
-    val sink = InlayHintsSinkImpl(key)
-    val collector = provider.getCollectorFor(file, editor, settings, sink) ?: return null
-    return CollectorWithSettings(collector, key, language, sink)
-  }
+internal fun <T : Any> ProviderWithSettings<T>.toSettingsWrapper(config: InlayHintsSettings, language: Language) : SettingsWrapper<T> {
+  return SettingsWrapper(this, config, language)
+}
+
+fun <T : Any> ProviderWithSettings<T>.getCollectorWrapperFor(file: PsiFile, editor: Editor, language: Language): CollectorWithSettings<T>? {
+  val key = provider.key
+  val sink = InlayHintsSinkImpl(key)
+  val collector = provider.getCollectorFor(file, editor, settings, sink) ?: return null
+  return CollectorWithSettings(collector, key, language, sink)
 }
 
 internal fun <T : Any> InlayHintsProvider<T>.withSettings(language: Language, config: InlayHintsSettings): ProviderWithSettings<T> {
   val settings = getActualSettings(config, language)
-  return ProviderWithSettings(this, settings, language)
+  return ProviderWithSettings(ProviderInfo(language, this), settings)
 }
 
 internal fun <T : Any> InlayHintsProvider<T>.getActualSettings(config: InlayHintsSettings, language: Language): T {

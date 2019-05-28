@@ -2,21 +2,9 @@
 package com.intellij.codeInsight.hints
 
 import com.intellij.lang.Language
-import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 
-
-/**
- * Factory for [InlayHintsProvider], can be used to support multiple languages with a single type of inlay hints.
- */
-interface InlayHintsProviderFactory {
-  fun getProvidersInfo(project: Project): List<ProviderWithSettings<*>>
-
-  companion object {
-    @JvmStatic
-    val EP = ExtensionPointName<InlayHintsProviderFactory>("com.intellij.codeInsight.inlayProviderFactory")
-  }
-}
 
 object HintUtils {
   private fun getAllMetaProviders() : List<InlayHintsProviderFactory> {
@@ -30,9 +18,11 @@ object HintUtils {
   }
 
   fun getHintProvidersForLanguage(language: Language, project: Project): List<ProviderWithSettings<out Any>> {
+    val config = ServiceManager.getService(InlayHintsSettings::class.java)
     return getAllMetaProviders()
       .flatMap { it.getProvidersInfo(project) }
       .filter { it.language == language }
+      .map { it.provider.withSettings(language, config) }
   }
 }
 
