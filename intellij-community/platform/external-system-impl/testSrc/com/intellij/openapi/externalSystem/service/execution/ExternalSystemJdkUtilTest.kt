@@ -47,7 +47,7 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
     RunAll(
       ThrowableRunnable { testFixture.tearDown() },
       ThrowableRunnable { super.tearDown() }
-    )
+    ).run()
   }
 
   @Test
@@ -68,7 +68,7 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
 
     val sdk = IdeaTestUtil.getMockJdk9()
     WriteAction.run<Throwable> {
-      ProjectJdkTable.getInstance().addJdk(sdk, testRootDisposable)
+      ProjectJdkTable.getInstance().addJdk(sdk, testFixture.testRootDisposable)
       ProjectRootManager.getInstance(project).projectSdk = sdk
     }
 
@@ -107,8 +107,8 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
     val sdk9 = createMockJdk(JavaVersion.compose(9))
 
     WriteAction.run<Throwable> {
-      ProjectJdkTable.getInstance().addJdk(sdk8, testRootDisposable)
-      ProjectJdkTable.getInstance().addJdk(sdk9, testRootDisposable)
+      ProjectJdkTable.getInstance().addJdk(sdk8, testFixture.testRootDisposable)
+      ProjectJdkTable.getInstance().addJdk(sdk9, testFixture.testRootDisposable)
     }
 
     assertThat(getAvailableJdk(project).second).isEqualTo(sdk9)
@@ -123,9 +123,9 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
 
     WriteAction.run<Throwable> {
       with(ProjectJdkTable.getInstance()) {
-        addJdk(sdk8, testRootDisposable)
-        addJdk(sdk9, testRootDisposable)
-        addJdk(dependentSDK, testRootDisposable)
+        addJdk(sdk8, testFixture.testRootDisposable)
+        addJdk(sdk9, testFixture.testRootDisposable)
+        addJdk(dependentSDK, testFixture.testRootDisposable)
       }
       ProjectRootManager.getInstance(project).projectSdk = dependentSDK
     }
