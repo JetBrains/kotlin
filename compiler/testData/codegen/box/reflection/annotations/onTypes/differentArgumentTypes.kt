@@ -30,7 +30,7 @@ annotation class Anno(
     val e: AnnotationTarget,
     val a: Nested,
     val stra: Array<String>,
-    // val ka: Array<KClass<*>>,  // Arrays of class literals are not supported yet in AnnotationDeserializer
+    val ka: Array<KClass<*>>,
     val ea: Array<AnnotationTarget>,
     val aa: Array<Nested>
 )
@@ -58,7 +58,7 @@ fun f(): @Anno(
     AnnotationTarget.EXPRESSION,
     Nested("1"),
     ["lmao"],
-    // [Double::class, Unit::class, LongArray::class],
+    [Double::class, Unit::class, LongArray::class],
     [AnnotationTarget.TYPEALIAS, AnnotationTarget.FIELD],
     [Nested("2"), Nested("3")]
 ) Unit {}
@@ -68,7 +68,8 @@ fun box(): String {
         "[@Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
                 "ba=[-1], ca=[y], da=[-3.14159], fa=[2.7218], ia=[424242], ja=[239239239239], sa=[-43], za=[false, true], " +
                 "str=lol, k=class java.lang.Number, k2=class [I, e=EXPRESSION, a=@Nested(value=1), " +
-                "stra=[lmao], ea=[TYPEALIAS, FIELD], aa=[@Nested(value=2), @Nested(value=3)])]",
+                "stra=[lmao], ka=[class java.lang.Double, class kotlin.Unit, class [J], ea=[TYPEALIAS, FIELD], " +
+                "aa=[@Nested(value=2), @Nested(value=3)])]",
         ::f.returnType.annotations.toString()
     )
 

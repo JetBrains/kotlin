@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
@@ -30,10 +31,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class AnnotationDeserializer(private val module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
@@ -141,7 +139,9 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
                 Type.DOUBLE -> doubleType
                 Type.BOOLEAN -> booleanType
                 Type.STRING -> stringType
-                Type.CLASS -> error("Arrays of class literals are not supported yet") // TODO: support arrays of class literals
+                Type.CLASS -> KotlinTypeFactory.simpleNotNullType(
+                    Annotations.EMPTY, kClass, listOf(StarProjectionImpl(kClass.declaredTypeParameters.single()))
+                )
                 Type.ENUM -> resolveClass(nameResolver.getClassId(value.classId)).defaultType
                 Type.ANNOTATION -> resolveClass(nameResolver.getClassId(value.annotation.id)).defaultType
                 Type.ARRAY -> error("Array of arrays is impossible")
