@@ -72,13 +72,15 @@ public class DefaultLookupItemRenderer extends LookupElementRenderer<LookupItem>
       return EmptyIcon.create(PlatformIcons.CLASS_ICON.getIconWidth() * count, PlatformIcons.CLASS_ICON.getIconHeight());
     }
 
-    if (o instanceof Iconable && !(o instanceof PsiElement)) {
-      return ((Iconable)o).getIcon(Iconable.ICON_FLAG_VISIBILITY);
-    }
+    if (Registry.is("ide.completion.show.visibility.icon")) {
+      if (o instanceof Iconable && !(o instanceof PsiElement)) {
+        return ((Iconable)o).getIcon(Iconable.ICON_FLAG_VISIBILITY);
+      }
 
-    final PsiElement element = item.getPsiElement();
-    if (element != null && element.isValid()) {
-      return element.getIcon(Iconable.ICON_FLAG_VISIBILITY);
+      final PsiElement element = item.getPsiElement();
+      if (element != null && element.isValid()) {
+        return element.getIcon(Iconable.ICON_FLAG_VISIBILITY);
+      }
     }
     return null;
   }
