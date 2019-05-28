@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -59,11 +59,11 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
       if (names == null) groups.put(group, (names = ContainerUtil.newTreeSet()));
       names.add(toolWrapper.getShortName());
 
-      final URL url = getDescriptionUrl(toolWrapper);
-      if (url != null) {
+      final InputStream stream = getDescriptionStream(toolWrapper);
+      if (stream != null) {
         doDump(new File(descDirectory, toolWrapper.getShortName() + ".html"), new Processor() {
           @Override public void process(BufferedWriter writer) throws Exception {
-            writer.write(ResourceUtil.loadText(url));
+            writer.write(ResourceUtil.loadText(stream));
           }
         });
       }
@@ -112,9 +112,9 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
     return StringUtil.isEmptyOrSpaces(name) ? "General" : name;
   }
 
-  private static URL getDescriptionUrl(final InspectionToolWrapper toolWrapper) {
+  private static InputStream getDescriptionStream(final InspectionToolWrapper toolWrapper) {
     final Class aClass = getInspectionClass(toolWrapper);
-    return ResourceUtil.getResource(aClass, "/inspectionDescriptions", toolWrapper.getShortName() + ".html");
+    return ResourceUtil.getResourceAsStream(aClass, "/inspectionDescriptions", toolWrapper.getShortName() + ".html");
   }
 
   private interface Processor {
