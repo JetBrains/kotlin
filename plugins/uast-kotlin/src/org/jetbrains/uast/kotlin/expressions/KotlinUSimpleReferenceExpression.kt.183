@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -226,7 +227,7 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
         get() = (resolved as? PsiNamedElement)?.name
 
     private val resolved by lazy {
-        when (val resultingDescriptor = sourcePsi.getResolvedCall(sourcePsi.analyze())?.resultingDescriptor) {
+        when (val resultingDescriptor = sourcePsi.getResolvedCall(sourcePsi.analyze())?.descriptorForResolveViaConstructor()) {
             is ConstructorDescriptor -> {
                 resultingDescriptor.constructedClass.toSource()?.getMaybeLightElement()
                     ?: (resultingDescriptor as? DeserializedCallableMemberDescriptor)?.let { resolveContainingDeserializedClass(sourcePsi, it) }
@@ -240,6 +241,11 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
     override fun resolve(): PsiElement? = resolved
 
     override fun asLogString(): String = log<USimpleNameReferenceExpression>("identifier = $identifier, resolvesTo = $resolvedName")
+
+    // In new inference, SAM constructor is substituted with a function descriptor, so we use candidate descriptor to preserve behavior
+    private fun ResolvedCall<*>.descriptorForResolveViaConstructor(): CallableDescriptor? {
+        return if (this is NewResolvedCallImpl) candidateDescriptor else resultingDescriptor
+    }
 }
 
 class KotlinStringUSimpleReferenceExpression(
