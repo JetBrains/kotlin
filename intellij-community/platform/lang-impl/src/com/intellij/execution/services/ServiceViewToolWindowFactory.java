@@ -16,7 +16,9 @@ public class ServiceViewToolWindowFactory implements ToolWindowFactory, Conditio
 
   @Override
   public boolean shouldBeAvailable(@NotNull Project project) {
-    return value(project) && ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).hasServices();
+    // Init manager to check availability on background thread.
+    ServiceViewManager.getInstance(project);
+    return false;
   }
 
   @Override

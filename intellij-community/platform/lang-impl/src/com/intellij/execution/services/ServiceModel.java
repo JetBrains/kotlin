@@ -26,7 +26,6 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
   ServiceModel(@NotNull Project project) {
     myProject = project;
-    initRoots();
   }
 
   @Override
@@ -44,10 +43,12 @@ class ServiceModel implements Disposable, InvokerSupplier {
     return myRootsInitialized ? myRoots : Collections.emptyList();
   }
 
-  private void initRoots() {
-    myInvoker.invokeLater(() -> {
-      myRoots.addAll(doGetRoots());
-      myRootsInitialized = true;
+  CancellablePromise<?> initRoots() {
+    return getInvoker().runOrInvokeLater(() -> {
+      if (!myRootsInitialized) {
+        myRoots.addAll(doGetRoots());
+        myRootsInitialized = true;
+      }
     });
   }
 
