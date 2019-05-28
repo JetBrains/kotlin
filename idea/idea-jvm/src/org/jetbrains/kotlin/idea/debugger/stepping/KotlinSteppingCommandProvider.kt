@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.keysToMap
@@ -220,7 +220,7 @@ private fun getInlineArgumentsCallsIfAny(
     }
 
     fun isCallOfArgument(ktCallExpression: KtCallExpression): Boolean {
-        val resolvedCall = ktCallExpression.resolveToCall() as? VariableAsFunctionResolvedCallImpl ?: return false
+        val resolvedCall = ktCallExpression.resolveToCall() as? VariableAsFunctionResolvedCall ?: return false
 
         val candidateDescriptor = resolvedCall.variableCall.candidateDescriptor
 
