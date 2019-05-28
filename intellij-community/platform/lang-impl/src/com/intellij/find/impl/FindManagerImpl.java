@@ -951,33 +951,41 @@ public class FindManagerImpl extends FindManager {
 
   @Override
   public boolean findNextUsageInEditor(@NotNull FileEditor fileEditor) {
-    return findNextUsageInFile(fileEditor, SearchResults.Direction.DOWN);
+    if (!(fileEditor instanceof TextEditor)) return false;
+    return findNextUsageInFile(((TextEditor) fileEditor).getEditor(), SearchResults.Direction.DOWN);
   }
 
-  private boolean findNextUsageInFile(@NotNull FileEditor fileEditor, @NotNull SearchResults.Direction direction) {
-    if (fileEditor instanceof TextEditor) {
-      TextEditor textEditor = (TextEditor)fileEditor;
-      Editor editor = textEditor.getEditor();
-      editor.getCaretModel().removeSecondaryCarets();
-      if (tryToFindNextUsageViaEditorSearchComponent(editor, direction)) {
-        return true;
-      }
+  @Override
+  public boolean findNextUsageInEditor(@NotNull Editor editor) {
+    return findNextUsageInFile(editor, SearchResults.Direction.DOWN);
+  }
 
-      RangeHighlighter[] highlighters = ((HighlightManagerImpl)HighlightManager.getInstance(myProject)).getHighlighters(editor);
-      if (highlighters.length > 0) {
-        return highlightNextHighlighter(highlighters, editor, editor.getCaretModel().getOffset(), direction == SearchResults.Direction.DOWN, false);
-      }
+  @Override
+  public boolean findPreviousUsageInEditor(@NotNull Editor editor) {
+    return findNextUsageInFile(editor, SearchResults.Direction.UP);
+  }
+
+  private boolean findNextUsageInFile(@NotNull Editor editor, @NotNull SearchResults.Direction direction) {
+    editor.getCaretModel().removeSecondaryCarets();
+    if (tryToFindNextUsageViaEditorSearchComponent(editor, direction)) {
+      return true;
+    }
+
+    RangeHighlighter[] highlighters = ((HighlightManagerImpl)HighlightManager.getInstance(myProject)).getHighlighters(editor);
+    if (highlighters.length > 0) {
+      return highlightNextHighlighter(highlighters, editor, editor.getCaretModel().getOffset(), direction == SearchResults.Direction.DOWN, false);
     }
 
     if (direction == SearchResults.Direction.DOWN) {
-      return myFindUsagesManager.findNextUsageInFile(fileEditor);
+      return myFindUsagesManager.findNextUsageInFile(editor);
     }
-    return myFindUsagesManager.findPreviousUsageInFile(fileEditor);
+    return myFindUsagesManager.findPreviousUsageInFile(editor);
   }
 
   @Override
   public boolean findPreviousUsageInEditor(@NotNull FileEditor fileEditor) {
-    return findNextUsageInFile(fileEditor, SearchResults.Direction.UP);
+    if (!(fileEditor instanceof TextEditor)) return false;
+    return findNextUsageInFile(((TextEditor) fileEditor).getEditor(), SearchResults.Direction.UP);
   }
 
   private static boolean highlightNextHighlighter(RangeHighlighter[] highlighters, Editor editor, int offset, boolean isForward, boolean secondPass) {
