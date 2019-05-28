@@ -1,4 +1,3 @@
-.idea/
 *.ipr
 *.iml
 
@@ -37,6 +36,7 @@ hs_err_pid*
 .idea/vcs.xml
 .idea/shelf
 .idea/jsLibraryMappings.xml
+.idea/modules.xml
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
