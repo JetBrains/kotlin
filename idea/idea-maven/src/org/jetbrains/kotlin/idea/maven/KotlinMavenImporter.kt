@@ -257,7 +257,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
         kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, platform, modifiableModelsProvider)
         val facetSettings = kotlinFacet.configuration.settings
-        val configuredPlatform = kotlinFacet.configuration.settings.platform!!
+        val configuredPlatform = kotlinFacet.configuration.settings.targetPlatform!!
         val configuration = mavenPlugin.configurationElement
         val sharedArguments = getCompilerArgumentsByConfigurationElement(mavenProject, configuration, configuredPlatform)
         val executionArguments = mavenPlugin.executions
@@ -370,7 +370,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         }.distinct()
 
     private fun setImplementedModuleName(kotlinFacet: KotlinFacet, mavenProject: MavenProject, module: Module) {
-        if (kotlinFacet.configuration.settings.platform.isCommon()) {
+        if (kotlinFacet.configuration.settings.targetPlatform.isCommon()) {
             kotlinFacet.configuration.settings.implementedModuleNames = emptyList()
         } else {
             val manager = MavenProjectsManager.getInstance(module.project)

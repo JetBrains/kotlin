@@ -31,9 +31,6 @@ import org.jetbrains.kotlin.idea.compiler.configuration.*
 import org.jetbrains.kotlin.idea.util.onTextChange
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.platform.impl.isCommon
-import org.jetbrains.kotlin.platform.impl.isJavaScript
-import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
@@ -288,7 +285,7 @@ class KotlinFacetEditorGeneralTab(
     override fun isModified(): Boolean {
         if (!isInitialized) return false
         if (editor.useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
-        if (editor.chosenPlatform != configuration.settings.platform) return true
+        if (editor.chosenPlatform != configuration.settings.targetPlatform) return true
         return !editor.useProjectSettingsCheckBox.isSelected && editor.compilerConfigurable.isModified
     }
 
@@ -296,7 +293,7 @@ class KotlinFacetEditorGeneralTab(
         if (!isInitialized) return
         validateOnce {
             editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
-            editor.targetPlatformComboBox.selectedItem = configuration.settings.platform
+            editor.targetPlatformComboBox.selectedItem = configuration.settings.targetPlatform
             editor.compilerConfigurable.reset()
             editor.updateCompilerConfigurable()
         }
@@ -309,7 +306,7 @@ class KotlinFacetEditorGeneralTab(
             with(configuration.settings) {
                 useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
                 editor.chosenPlatform?.let {
-                    if (it != platform) {
+                    if (it != targetPlatform) {
                         val platformArguments = when {
                             it.isJvm() -> editor.compilerConfigurable.k2jvmCompilerArguments
                             it.isJs() -> editor.compilerConfigurable.k2jsCompilerArguments

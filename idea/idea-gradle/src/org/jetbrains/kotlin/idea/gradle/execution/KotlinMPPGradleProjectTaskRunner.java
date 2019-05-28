@@ -303,7 +303,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacet kotlinFacet = KotlinFacet.Companion.get(module);
         if (kotlinFacet == null) return false;
 
-        final TargetPlatform platform = kotlinFacet.getConfiguration().getSettings().getPlatform();
+        final TargetPlatform platform = kotlinFacet.getConfiguration().getSettings().getTargetPlatform();
         if (platform == null) return false;
 
         return KonanPlatformKt.isNative(platform);
@@ -316,7 +316,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacetSettings facetSettings = kotlinFacet.getConfiguration().getSettings();
         if (facetSettings.isTestModule()) return false;
 
-        final TargetPlatform platform = facetSettings.getPlatform();
+        final TargetPlatform platform = facetSettings.getTargetPlatform();
         if (platform == null) return false;
 
         return TargetPlatformKt.isCommon(platform);

@@ -24,7 +24,6 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -65,7 +64,7 @@ var KtFile.forcedTargetPlatform: TargetPlatform? by UserDataProperty(Key.create(
 
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-    val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.platform?.idePlatformKind)
+    val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.targetPlatform?.idePlatformKind)
 
     // Preserve inferred version in facet/project settings
     if (facetSettings.useProjectSettings) {
@@ -197,7 +196,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
 
     val languageFeatures = facetSettings.mergedCompilerArguments?.configureLanguageFeatures(MessageCollector.NONE)?.apply {
         configureCoroutinesSupport(facetSettings.coroutineSupport, languageVersion)
-        configureMultiplatformSupport(facetSettings.platform?.idePlatformKind, this@computeLanguageVersionSettings)
+        configureMultiplatformSupport(facetSettings.targetPlatform?.idePlatformKind, this@computeLanguageVersionSettings)
         configureNewInferenceSupportInIDE(project)
     }.orEmpty()
 
@@ -212,7 +211,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
 }
 
 val Module.platform: TargetPlatform?
-    get() = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).platform ?: project.platform
+    get() = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).targetPlatform ?: project.platform
 
 // FIXME(dsavvinov): this logic is clearly wrong in MPP environment; review and fix
 val Project.platform: TargetPlatform?

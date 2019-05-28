@@ -208,7 +208,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
@@ -223,7 +223,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getPlatform());
+        assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, CoroutineSupport.byCompilerArguments(arguments));
@@ -238,7 +238,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
@@ -253,7 +253,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getPlatform());
+        assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED_WITH_ERROR, CoroutineSupport.byCompilerArguments(arguments));
@@ -268,7 +268,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(false, settings.getUseProjectSettings());
         assertEquals("1.1", settings.getLanguageLevel().getDescription());
         assertEquals("1.0", settings.getApiLevel().getDescription());
-        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
         assertEquals(LanguageFeature.State.ENABLED, CoroutineSupport.byCompilerArguments(arguments));
@@ -278,7 +278,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
     public void testJvmProjectWithJvmTarget11() {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
-        assertEquals(JvmPlatforms.INSTANCE.jvmPlatformByTargetVersion(JvmTarget.JVM_11), settings.getPlatform());
+        assertEquals(JvmPlatforms.INSTANCE.jvmPlatformByTargetVersion(JvmTarget.JVM_11), settings.getTargetPlatform());
     }
 
     public void testImplementsDependency() {
@@ -352,7 +352,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
                     platform,
                     modelsProvider
             );
-            assertEquals(platform, facet.getConfiguration().getSettings().getPlatform());
+            assertEquals(platform, facet.getConfiguration().getSettings().getTargetPlatform());
             assertEquals(jvmTarget.getDescription(),
                          ((K2JVMCompilerArguments) facet.getConfiguration().getSettings().getCompilerArguments()).getJvmTarget());
         }

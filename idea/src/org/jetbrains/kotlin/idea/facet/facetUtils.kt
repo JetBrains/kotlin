@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.compat.toNewPlatform
-import org.jetbrains.kotlin.platform.compat.toOldPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -106,7 +105,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
                 getLibraryLanguageLevel(
                     module,
                     rootModel,
-                    this.platform?.idePlatformKind,
+                    this.targetPlatform?.idePlatformKind,
                     coerceRuntimeLibraryVersionToReleased = compilerVersion == null
                 )
             )

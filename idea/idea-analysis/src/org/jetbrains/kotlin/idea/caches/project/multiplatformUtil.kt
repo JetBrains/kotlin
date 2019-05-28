@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.rootManager
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 
@@ -40,7 +38,7 @@ val Module.sourceType: SourceType?
 val Module.isMPPModule: Boolean
     get() {
         val settings = facetSettings ?: return false
-        return settings.platform.isCommon() ||
+        return settings.targetPlatform.isCommon() ||
                 settings.implementedModuleNames.isNotEmpty() ||
                 settings.kind.isNewMPP
     }
