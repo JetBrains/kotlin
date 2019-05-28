@@ -13,10 +13,6 @@ pill {
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.getByName("test")
 
-repositories {
-    maven(kotlinNativeRepo)
-}
-
 dependencies {
     testCompile(project(":kotlin-gradle-plugin"))
     testCompile(kotlinGradlePluginTest.output)
