@@ -599,6 +599,7 @@ task array_to_any(type: RunKonanTest) {
 }
 
 task runtime_basic_init(type: RunStandaloneKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // -g not yet properly works for WASM.
     source = "runtime/basic/init.kt"
     flags = ['-g']
     expectedExitStatus = 0
