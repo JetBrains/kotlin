@@ -26,7 +26,7 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
     private val subjectWithOrdinalStack = mutableListOf<Pair<IrVariable, Lazy<IrVariable>>>()
 
     protected open fun mapConstEnumEntry(entry: IrEnumEntry): Int =
-        entry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(this).also {
+        entry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(this as IrEnumEntry).also {
             assert(it >= 0) { "enum entry ${entry.dump()} not in parent class" }
         }
 

@@ -427,7 +427,7 @@ class StateMachineBuilder(
 
     private fun transformArguments(arguments: Array<IrExpression?>): Array<IrExpression?> {
 
-        var suspendableCount = arguments.fold(0) { r, n -> if (n in suspendableNodes) r + 1 else r }
+        var suspendableCount = arguments.fold(0) { r, n -> if (n != null && n in suspendableNodes) r + 1 else r }
 
         val newArguments = arrayOfNulls<IrExpression>(arguments.size)
 
