@@ -471,6 +471,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             setUp()
         }
     }
+
     override fun setUp() {
         isSetup = true
         if (disableIrAndKtx) {
@@ -511,6 +512,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
 fun OutputFile.writeToDir(directory: File) =
     FileUtil.writeToFile(File(directory, relativePath), asByteArray())
+
 fun Collection<OutputFile>.writeToDir(directory: File) = forEach { it.writeToDir(directory) }
 
 private fun composeMulti(composable: () -> Unit, advance: () -> Unit) =
@@ -550,8 +552,8 @@ class MultiCompositionTest(val composable: () -> Unit, val advance: () -> Unit) 
         val root = activity.root
         val component = MultiRoot()
         val cc = Compose.createCompositionContext(root.context, root, component, null)
-        cc.runWithCurrent {
-            val composer = composer.composer
+        cc.composer.runWithCurrent {
+            val composer = cc.composer
             composer.startRoot()
             composable()
             composer.endRoot()
