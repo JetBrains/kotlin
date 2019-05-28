@@ -105,7 +105,7 @@ internal fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it 
 
 internal fun List<SourceCode>?.toFilesOrEmpty() = this?.map {
     val externalSource = it as? ExternalSourceCode
-    externalSource?.externalLocation?.toFile()
+    externalSource?.externalLocation?.toFileOrNull()
         ?: throw RuntimeException("Unsupported source in requireSources parameter - only local files are supported now (${externalSource?.externalLocation})")
 } ?: emptyList()
 

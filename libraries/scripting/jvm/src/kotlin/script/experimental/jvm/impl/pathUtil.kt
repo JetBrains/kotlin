@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvm.impl
 
 import java.io.File
+import java.net.JarURLConnection
 import java.net.URL
 
 // Based on an implementation in com.intellij.openapi.application.PathManager.getResourceRoot
@@ -29,7 +30,7 @@ private fun extractRoot(resourceURL: URL, resourcePath: String): String? {
     var resultPath: String? = null
     val protocol = resourceURL.protocol
     if (protocol == FILE_PROTOCOL) {
-        val path = resourceURL.toFile()!!.path
+        val path = resourceURL.toFileOrNull()!!.path
         val testPath = path.replace('\\', '/')
         val testResourcePath = resourcePath.replace('\\', '/')
         if (testPath.endsWith(testResourcePath, ignoreCase = true)) {
@@ -57,7 +58,7 @@ private fun splitJarUrl(url: String): Pair<String, String>? {
 
     if (jarPath.startsWith(FILE_PROTOCOL)) {
         try {
-            jarPath = URL(jarPath).toFile()!!.path.replace('\\', '/')
+            jarPath = URL(jarPath).toFileOrNull()!!.path.replace('\\', '/')
         } catch (e: Exception) {
             jarPath = jarPath.substring(FILE_PROTOCOL.length)
             if (jarPath.startsWith(SCHEME_SEPARATOR)) {
@@ -91,11 +92,15 @@ fun tryGetResourcePathForClassByName(name: String, classLoader: ClassLoader): Fi
         null
     }
 
-internal fun URL.toFile() =
+internal fun URL.toFileOrNull() =
     try {
-        File(toURI().schemeSpecificPart)
+        File(toURI().schemeSpecificPart).canonicalFile
     } catch (e: java.net.URISyntaxException) {
         if (protocol != "file") null
-        else File(file)
+        else File(file).canonicalFile
     }
 
+internal fun URL.toContainingFileOrNull(): File? =
+    if (protocol == "jar") {
+        (openConnection() as? JarURLConnection)?.jarFileURL?.toFileOrNull()
+    } else toFileOrNull()
