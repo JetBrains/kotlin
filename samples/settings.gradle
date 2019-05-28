@@ -45,7 +45,6 @@ if (MPPTools.isMacos() || MPPTools.isLinux()) {
 if (MPPTools.isMacos()) {
     include ':objc'
     include ':opengl'
-    include ':symbolication'
     include ':uikit'
     include ':coverage'
 }
