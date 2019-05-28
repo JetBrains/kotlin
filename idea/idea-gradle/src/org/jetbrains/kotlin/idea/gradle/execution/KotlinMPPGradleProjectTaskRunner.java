@@ -36,22 +36,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.KotlinFacetSettings;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
-import org.jetbrains.kotlin.konan.target.KonanTargetKt;
-import org.jetbrains.kotlin.platform.IdePlatformKindUtil;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformUtil;
-import org.jetbrains.kotlin.platform.impl.NativeIdePlatformUtil;
 import org.jetbrains.kotlin.platform.TargetPlatform;
-import org.jetbrains.kotlin.platform.PlatformUtilKt;
 import org.jetbrains.kotlin.platform.konan.KonanPlatformKt;
 import org.jetbrains.plugins.gradle.execution.build.CachedModuleDataFinder;
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
-import org.jetbrains.plugins.gradle.service.settings.GradleSettingsService;
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
-import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
@@ -62,6 +55,7 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
 import static com.intellij.openapi.util.text.StringUtil.*;
+import static org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunnerUtilKt.isDelegatedBuild;
 import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.resolveProjectPath;
 
 /**
@@ -182,9 +176,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             final ModuleBuildTask moduleBuildTask = (ModuleBuildTask) projectTask;
             final Module module = moduleBuildTask.getModule();
 
-            String projectUrl = module.getProject().getPresentableUrl();
-            if (projectUrl == null ||
-                !GradleSettingsService.getInstance(module.getProject()).isDelegatedBuildEnabled(toCanonicalPath(projectUrl))) {
+            if (! isDelegatedBuild(module)) {
                 return false;
             }
 
