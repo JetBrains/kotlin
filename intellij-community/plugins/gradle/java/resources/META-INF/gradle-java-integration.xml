@@ -1,9 +1,11 @@
 <idea-plugin>
+
   <module value="org.jetbrains.plugins.gradle.java"/>
   <module value="com.intellij.modules.gradle.java"/>
 
   <depends>com.intellij.modules.java</depends>
 
+  <depends optional="true" config-file="gradle-maven-integration.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="gradle-coverage-integration.xml">Coverage</depends>
   <depends optional="true" config-file="gradle-groovy-integration.xml">org.intellij.groovy</depends>
 

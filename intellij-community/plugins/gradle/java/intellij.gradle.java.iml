@@ -32,5 +32,6 @@
     <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="module" module-name="intellij.groovy.psi" />
     <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.maven" />
   </component>
 </module>
