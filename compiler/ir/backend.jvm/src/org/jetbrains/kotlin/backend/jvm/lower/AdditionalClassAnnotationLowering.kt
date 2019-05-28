@@ -157,7 +157,11 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     private fun generateRetentionAnnotation(irClass: IrClass) {
         if (irClass.hasAnnotation(FqName("java.lang.annotation.Retention"))) return
         val kotlinRetentionPolicy = irClass.getAnnotation(FqName("kotlin.annotation.Retention"))
-        val javaRetentionPolicy = annotationRetentionMap[kotlinRetentionPolicy] ?: rpRuntime
+        val javaRetentionPolicy = if (kotlinRetentionPolicy is KotlinRetention) {
+            annotationRetentionMap[kotlinRetentionPolicy] ?: rpRuntime
+        } else {
+            rpRuntime
+        }
 
         irClass.annotations.add(
             IrConstructorCallImpl.fromSymbolOwner(
