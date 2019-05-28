@@ -34,10 +34,8 @@ import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -60,6 +58,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
      */
     private val packagesWithTypeAliases = mutableListOf<String>()
     private var forceAmbiguity: Boolean = false
+    private var forceAmbiguityForInnerAnnotations: Boolean = false
     private var forceAmbiguityForNonAnnotations: Boolean = false
 
     companion object {
@@ -108,7 +107,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
             // An inner class can be referenced by short name in subclasses without an explicit import
             if (candidate.containingClass != null && !candidate.hasModifierProperty(PsiModifier.PRIVATE)) {
                 if (candidate.isAnnotationType) {
-                    forceAmbiguity = true
+                    forceAmbiguityForInnerAnnotations = true
                 } else {
                     forceAmbiguityForNonAnnotations = true
                 }
@@ -161,23 +160,20 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         // Names in expressions can conflict with local declarations and methods of implicit receivers,
         // so we can't find out what they refer to without a full resolve.
         val userType = ref.getStrictParentOfType<KtUserType>() ?: return UNSURE
-        if (forceAmbiguityForNonAnnotations && userType.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference } == null) {
-            return UNSURE
-        }
+        val parentAnnotation = userType.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference }
+        if (forceAmbiguityForNonAnnotations && parentAnnotation == null) return UNSURE
 
-        if (forceAmbiguity) {
-            return UNSURE
-        }
+        //For toplevel declarations it's fine to resolve by imports
+        val declaration = parentAnnotation?.getParentOfType<KtDeclaration>(true)
+        if (forceAmbiguityForInnerAnnotations && declaration?.parent !is KtFile) return UNSURE
+        if (forceAmbiguity) return UNSURE
 
         val qualifiedCheckResult = checkQualifiedReferenceToTarget(ref)
-        if (qualifiedCheckResult != null) {
-            return qualifiedCheckResult.returnValue
-        }
+        if (qualifiedCheckResult != null) return qualifiedCheckResult.returnValue
 
         val file = ref.containingKtFile
         var result: Result = Result.NothingFound
-        val filePackage = file.packageFqName.asString()
-        when (filePackage) {
+        when (file.packageFqName.asString()) {
             targetPackage -> result = result.changeTo(Result.Found)
             in conflictingPackages -> result = result.changeTo(Result.FoundOther)
             in packagesWithTypeAliases -> return UNSURE
