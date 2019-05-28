@@ -16,7 +16,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.intellij.ui.SimpleTextAttributes.STYLE_PLAIN;
 import static com.intellij.ui.SimpleTextAttributes.STYLE_SMALLER;
+import static com.intellij.util.ui.UIUtil.getListSelectionForeground;
 
 public class RunAnythingItemBase extends RunAnythingItem {
   @NotNull private final String myCommand;
@@ -98,6 +100,6 @@ public class RunAnythingItemBase extends RunAnythingItem {
 
   @NotNull
   protected static SimpleTextAttributes getDescriptionAttributes(boolean isSelected) {
-    return new SimpleTextAttributes(STYLE_SMALLER, UIUtil.getListForeground(isSelected, true));
+    return new SimpleTextAttributes(STYLE_PLAIN, isSelected ? getListSelectionForeground(true) : UIUtil.getInactiveTextColor());
   }
 }
