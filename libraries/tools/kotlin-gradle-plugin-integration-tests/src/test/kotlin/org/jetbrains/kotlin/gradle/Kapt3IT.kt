@@ -612,4 +612,33 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertTasksExecuted(":dac:jdk:kaptGenerateStubsKotlin", ":dac:jdk:compileKotlin")
         }
     }
+
+    /** Regression test for KT-31127. */
+    @Test
+    fun testKotlinProcessorUsingFiler() {
+        val project = Project("kotlinProject").apply {
+            setupWorkingDir()
+            gradleBuildScript().appendText("""
+                apply plugin: 'kotlin-kapt'
+
+                dependencies {
+                   kapt "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                   implementation "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                }
+            """.trimIndent())
+
+            // The test must not contain any java sources in order to detect the issue.
+            Assert.assertEquals(emptyList<File>(), projectDir.allJavaFiles().toList())
+            projectDir.getFileByName("Dummy.kt").modify {
+                it.replace("class Dummy", "@example.KotlinFilerGenerated class Dummy")
+            }
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/kapt/main/demo/DummyGenerated.kt")
+            assertTasksExecuted(":compileKotlin")
+            assertTasksSkipped(":compileJava")
+        }
+    }
 }

@@ -18,3 +18,5 @@ annotation class ExampleBinaryAnnotation
 annotation class ExampleRuntimeAnnotation
 
 annotation class GenError
+
+annotation class KotlinFilerGenerated
