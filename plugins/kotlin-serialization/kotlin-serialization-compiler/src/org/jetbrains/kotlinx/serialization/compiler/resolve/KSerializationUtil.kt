@@ -160,21 +160,11 @@ internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
 
 internal fun ClassDescriptor.isSerializerWhichRequiersKClass() = classId in setOf(enumSerializerId, contextSerializerId, polymorphicSerializerId)
 
-internal fun checkSerializerNullability(classType: KotlinType, serializerType: KotlinType): KotlinType {
-    val castedToKSerial = requireNotNull(
-        serializerType.supertypes().find { isKSerializer(it) },
-        { "${KSERIALIZER_CLASS} is not a supertype of $serializerType" }
-    )
-    if (!classType.isMarkedNullable && castedToKSerial.arguments.first().type.isMarkedNullable)
-        throw IllegalStateException("Can't serialize non-nullable field of type ${classType} with nullable serializer ${serializerType}")
-    return serializerType
-}
-
 // returns only user-overriden Serializer
 internal val KotlinType.overridenSerializer: KotlinType?
     get() {
         val desc = this.toClassDescriptor ?: return null
-        (desc.serializableWith)?.let { return checkSerializerNullability(this, it) }
+        desc.serializableWith?.let { return it }
         if (desc.annotations.hasAnnotation(SerializationAnnotations.polymorphicFqName))
             return desc.module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer).defaultType
         return null

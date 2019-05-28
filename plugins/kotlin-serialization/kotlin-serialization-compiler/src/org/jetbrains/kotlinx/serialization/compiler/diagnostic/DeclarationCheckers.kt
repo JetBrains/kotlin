@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
@@ -79,6 +80,7 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
             val ktType = (it.descriptor.findPsi() as? KtCallableDeclaration)?.typeReference ?: return@forEach
             if (serializer != null) {
                 val element = ktType.typeElement ?: return
+                checkSerializerNullability(it.type, serializer.defaultType, element, trace)
                 generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace)
                 trace.record(SERIALIZER_FOR_PROPERTY, it.descriptor, serializer)
             } else {
@@ -104,8 +106,9 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
     ) {
         if (type.genericIndex != null) return
         val element = ktType.typeElement ?: return
-        val serializerForType = findTypeSerializerOrContext(module, type)
-        if (serializerForType != null) {
+        val serializer = findTypeSerializerOrContext(module, type)
+        if (serializer != null) {
+            checkSerializerNullability(type, serializer.defaultType, element, trace)
             checkTypeArguments(module, type, element, trace)
         } else {
             trace.reportFromPlugin(
@@ -113,6 +116,22 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
                 SerializationPluginErrorsRendering
             )
         }
+    }
+
+    private fun checkSerializerNullability(
+        classType: KotlinType,
+        serializerType: KotlinType,
+        element: KtTypeElement,
+        trace: BindingTrace
+    ) {
+        // @Serializable annotation has proper signature so this error would be caught in type checker
+        val castedToKSerial = serializerType.supertypes().find { isKSerializer(it) } ?: return
+
+        if (!classType.isMarkedNullable && castedToKSerial.arguments.first().type.isMarkedNullable)
+            trace.reportFromPlugin(
+                SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE.on(element, serializerType),
+                SerializationPluginErrorsRendering
+            )
     }
 
     private inline fun ClassDescriptor.safeReport(report: (KtAnnotationEntry) -> Unit) {

@@ -33,5 +33,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Serializer has not been found for type of this property. " +
                     "To use context serializer as fallback, explicitly annotate element with @ContextualSerialization"
         )
+        MAP.put(
+            SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE,
+            "This type is not-nullable and therefore can not be serialized with serializer for nullable type ''{0}''",
+            Renderers.RENDER_TYPE
+        )
     }
 }
