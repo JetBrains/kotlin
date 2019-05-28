@@ -324,14 +324,6 @@ public class FindUtil {
     });
   }
 
-  public static void searchBack(Project project, FileEditor fileEditor, @Nullable DataContext dataContext) {
-    if (!(fileEditor instanceof TextEditor)) return;
-    TextEditor textEditor = (TextEditor)fileEditor;
-    Editor editor = textEditor.getEditor();
-
-    searchBack(project, editor, dataContext);
-  }
-
   public static void searchBack(final Project project, final Editor editor, @Nullable DataContext context) {
     FindManager findManager = FindManager.getInstance(project);
     if (!findManager.findWasPerformed() && !findManager.selectNextOccurrenceWasPerformed()) {
@@ -366,15 +358,7 @@ public class FindUtil {
     searchAgain(project, editor, offset, model);
   }
 
-  public static boolean searchAgain(Project project, FileEditor fileEditor, @Nullable DataContext context) {
-    if (!(fileEditor instanceof TextEditor)) return false;
-    TextEditor textEditor = (TextEditor)fileEditor;
-    Editor editor = textEditor.getEditor();
-
-    return searchAgain(project, editor, context);
-  }
-
-  private static boolean searchAgain(final Project project, final Editor editor, @Nullable DataContext context) {
+  public static boolean searchAgain(final Project project, final Editor editor, @Nullable DataContext context) {
     FindManager findManager = FindManager.getInstance(project);
     if (!findManager.findWasPerformed() && !findManager.selectNextOccurrenceWasPerformed()) {
       new IncrementalFindAction().getHandler().execute(editor, context);

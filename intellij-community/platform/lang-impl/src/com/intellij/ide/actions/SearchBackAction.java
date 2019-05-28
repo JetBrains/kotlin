@@ -21,51 +21,46 @@ import com.intellij.find.FindUtil;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.actionSystem.EditorAction;
+import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.openapi.editor.actions.IncrementalFindAction.SEARCH_DISABLED;
 
-public class SearchBackAction extends AnAction implements DumbAware {
+public class SearchBackAction extends EditorAction implements DumbAware {
   public SearchBackAction() {
+    super(new Handler());
     setEnabledInModalContext(true);
   }
 
-  @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
-    final Project project = e.getData(CommonDataKeys.PROJECT);
-    final FileEditor editor = e.getData(PlatformDataKeys.FILE_EDITOR);
-    CommandProcessor commandProcessor = CommandProcessor.getInstance();
-    commandProcessor.executeCommand(
-      project, () -> {
-        PsiDocumentManager.getInstance(project).commitAllDocuments();
-        FindManager findManager = FindManager.getInstance(project);
-        if(!findManager.selectNextOccurrenceWasPerformed() && findManager.findPreviousUsageInEditor(editor)) {
-          return;
-        }
-        FindUtil.searchBack(project, editor, e.getDataContext());
-      },
-      IdeBundle.message("command.find.previous"),
-      null
-    );
-  }
-
-  @Override
-  public void update(@NotNull AnActionEvent event){
-    Presentation presentation = event.getPresentation();
-    Project project = event.getData(CommonDataKeys.PROJECT);
-    if (project == null) {
-      presentation.setEnabled(false);
-      return;
+  private static class Handler extends EditorActionHandler {
+    @Override
+    protected void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
+      final Project project = dataContext.getData(CommonDataKeys.PROJECT);
+      if (project == null) return;
+      PsiDocumentManager.getInstance(project).commitAllDocuments();
+      FindManager findManager = FindManager.getInstance(project);
+      if(!findManager.selectNextOccurrenceWasPerformed() && findManager.findPreviousUsageInEditor(editor)) {
+        return;
+      }
+      FindUtil.searchBack(project, editor, dataContext);
     }
-    FileEditor fileEditor = event.getData(PlatformDataKeys.FILE_EDITOR);
-    Editor editor = event.getData(CommonDataKeys.EDITOR);
-    presentation.setEnabled(fileEditor instanceof TextEditor
-                            && !SEARCH_DISABLED.get(editor, false));
+
+    @Override
+    protected boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
+      Project project = dataContext.getData(CommonDataKeys.PROJECT);
+      if (project == null) {
+        return false;
+      }
+      return !editor.isOneLineMode() && !SEARCH_DISABLED.get(editor, false);
+    }
   }
 }
