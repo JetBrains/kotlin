@@ -204,10 +204,7 @@ class OptimizedImportsBuilder(
                     if (!areTargetsEqual(oldTargets, newTargets)) {
                         testLog?.append("Changed resolve of $ref\n")
                         (oldTargets + newTargets).forEach {
-                            lockImportForDescriptor(
-                                it,
-                                data.namesToImport.getOrElse(it.importableFqName!!) { listOf(it.name) }.intersect(names)
-                            )
+                            lockImportForDescriptor(it, names)
                         }
                     }
                 }
@@ -217,8 +214,10 @@ class OptimizedImportsBuilder(
         return sortedImportsToGenerate
     }
 
-    private fun lockImportForDescriptor(descriptor: DeclarationDescriptor, names: Collection<Name>) {
+    private fun lockImportForDescriptor(descriptor: DeclarationDescriptor, existingNames: Collection<Name>) {
         val fqName = descriptor.importableFqName ?: return
+        val names = data.namesToImport.getOrElse(fqName) { listOf(descriptor.name) }.intersect(existingNames)
+
         val starImportPath = ImportPath(fqName.parent(), true)
         val importPaths = file.importDirectives.map { it.importPath }
 
