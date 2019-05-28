@@ -115,6 +115,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     typeProvider = callInfo.typeProvider,
                     acceptLambdaAtoms = { candidate.postponedAtoms += it }
                 )
+                sink.yield()
             } else {
                 val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
                 if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeResolvedAsImplicit()) {
@@ -126,6 +127,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                         isReceiver = true,
                         isSafeCall = callInfo.isSafeCall
                     )
+                    sink.yield()
                 }
             }
         }
