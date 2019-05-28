@@ -22,10 +22,7 @@ object ServiceLocator {
         descriptor: ServiceDescriptor
     ): T {
         val loadedClass = javaClass.classLoader.loadClass(descriptor.className)
-        val constructor = loadedClass.constructors
-            .filter { it.parameterTypes.isEmpty() }
-            .firstOrNull()
-                ?: throw ServiceLookupException("Class ${descriptor.className} has no corresponding constructor")
+        val constructor = loadedClass.constructors.firstOrNull { it.parameterTypes.isEmpty() } ?: throw ServiceLookupException("Class ${descriptor.className} has no corresponding constructor")
 
         val implementationRawType: Any =
             if (constructor.parameterTypes.isEmpty()) constructor.newInstance() else constructor.newInstance(constructor)
