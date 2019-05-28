@@ -40,10 +40,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         return StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), false)
     }
 
-    override fun anyType(): SimpleTypeMarker {
-        return StandardClassIds.Any(symbolProvider).constructType(emptyArray(), false)
-    }
-
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
         require(lowerBound is ConeKotlinType)
         require(upperBound is ConeKotlinType)

@@ -40,8 +40,6 @@ interface ConstraintSystemOperation {
     fun isPostponedTypeVariable(typeVariable: TypeVariableMarker): Boolean
 
     fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker>
-
-    fun addNotNullUpperConstraint(type: KotlinTypeMarker, position: ConstraintPosition)
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {

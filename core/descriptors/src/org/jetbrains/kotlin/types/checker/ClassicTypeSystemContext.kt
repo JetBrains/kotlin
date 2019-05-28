@@ -333,10 +333,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return builtIns.nothingType
     }
 
-    override fun anyType(): SimpleTypeMarker {
-        return builtIns.anyType
-    }
-
     val builtIns: KotlinBuiltIns get() = throw UnsupportedOperationException("Not supported")
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
