@@ -734,9 +734,19 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/callableReference/constructor.kt");
         }
 
+        @TestMetadata("innerGenericConstuctor.kt")
+        public void testInnerGenericConstuctor() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/innerGenericConstuctor.kt");
+        }
+
         @TestMetadata("intrinsic.kt")
         public void testIntrinsic() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/intrinsic.kt");
+        }
+
+        @TestMetadata("jvmFieldProperty.kt")
+        public void testJvmFieldProperty() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/jvmFieldProperty.kt");
         }
 
         @TestMetadata("kt15449.kt")
@@ -801,6 +811,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsFunction.kt");
             }
 
+            @TestMetadata("emptyLhsProperty.kt")
+            public void testEmptyLhsProperty() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsProperty.kt");
+            }
+
             @TestMetadata("expression.kt")
             public void testExpression() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/expression.kt");
@@ -816,9 +831,19 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/filter.kt");
             }
 
+            @TestMetadata("innerGenericConstuctor.kt")
+            public void testInnerGenericConstuctor() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/innerGenericConstuctor.kt");
+            }
+
             @TestMetadata("intrinsic.kt")
             public void testIntrinsic() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/intrinsic.kt");
+            }
+
+            @TestMetadata("jvmFieldProperty.kt")
+            public void testJvmFieldProperty() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/jvmFieldProperty.kt");
             }
 
             @TestMetadata("kt18728.kt")
@@ -861,9 +886,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/propertyImportedFromObject.kt");
             }
 
+            @TestMetadata("sideEffect.kt")
+            public void testSideEffect() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/sideEffect.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/simple.kt");
+            }
+
+            @TestMetadata("simpleVal.kt")
+            public void testSimpleVal() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/simpleVal.kt");
+            }
+
+            @TestMetadata("simpleVal2.kt")
+            public void testSimpleVal2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/simpleVal2.kt");
             }
 
             @TestMetadata("topLevelExtensionProperty.kt")

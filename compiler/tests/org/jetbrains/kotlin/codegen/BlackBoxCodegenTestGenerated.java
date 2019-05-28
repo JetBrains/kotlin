@@ -1869,6 +1869,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/callableReference/bound/genericValOnLHS.kt");
             }
 
+            @TestMetadata("javaField.kt")
+            public void testJavaField() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/javaField.kt");
+            }
+
             @TestMetadata("kCallableNameIntrinsic.kt")
             public void testKCallableNameIntrinsic() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/kCallableNameIntrinsic.kt");
@@ -1959,34 +1964,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("reflectionReference.kt")
                 public void testReflectionReference() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/bound/equals/reflectionReference.kt");
-                }
-            }
-
-            @TestMetadata("compiler/testData/codegen/box/callableReference/bound/inline")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Inline extends AbstractBlackBoxCodegenTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInInline() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
-                }
-
-                @TestMetadata("emptyLhsProperty.kt")
-                public void testEmptyLhsProperty() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/bound/inline/emptyLhsProperty.kt");
-                }
-
-                @TestMetadata("simple.kt")
-                public void testSimple() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/bound/inline/simple.kt");
-                }
-
-                @TestMetadata("simpleVal.kt")
-                public void testSimpleVal() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/bound/inline/simpleVal.kt");
                 }
             }
         }
