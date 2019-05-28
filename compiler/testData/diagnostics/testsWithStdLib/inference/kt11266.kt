@@ -1,4 +1,4 @@
 // !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
-fun foo(first: Array<Any?>, second: Array<Any?>) = Pair(first.toCollection(<!NO_VALUE_FOR_PARAMETER!>)<!>, second.toCollection(<!NO_VALUE_FOR_PARAMETER!>)<!>)
+fun foo(first: Array<Any?>, second: Array<Any?>) = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Pair<!>(first.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>toCollection<!>(<!NO_VALUE_FOR_PARAMETER!>)<!>, second.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>toCollection<!>(<!NO_VALUE_FOR_PARAMETER!>)<!>)

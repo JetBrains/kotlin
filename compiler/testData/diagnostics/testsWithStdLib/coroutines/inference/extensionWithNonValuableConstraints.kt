@@ -53,7 +53,7 @@ val test6 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
 }
 
 val test7 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    yield(<!NI;TYPE_MISMATCH!>"baz"<!>)
+    yield("baz")
     genericExtension<Int>()
 }
 

@@ -1,11 +1,15 @@
 package
 
 public val test1: kotlin.String
-public val test2: kotlin.Any?
+public val test2: [ERROR : Type for generate {
+    starBase()
+}]
 public val test3: kotlin.String
 public val test4: kotlin.Int
 public val test5: kotlin.Int
-public val test6: kotlin.Any?
+public val test6: [ERROR : Type for generateSpecific {
+    stringBase()
+}]
 public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
 public fun </*0*/ S> generateSpecific(/*0*/ @kotlin.BuilderInference g: suspend SpecificController<S>.() -> kotlin.Unit): S
 public fun Base<*>.starBase(): kotlin.Unit

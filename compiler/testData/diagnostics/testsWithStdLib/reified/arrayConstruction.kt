@@ -5,7 +5,7 @@ fun <T> ok1(block: () -> Array<T>): Array<T> = block()
 inline fun <reified T> ok2(): Array<T> = Array(1) { null!! }
 
 
-fun <T> fail2(): Array<T> = ok1 { Array<<!NI;TYPE_PARAMETER_AS_REIFIED, TYPE_PARAMETER_AS_REIFIED!>T<!>>(1) {  null!! } }
+fun <T> fail2(): Array<T> = ok1 { Array<<!TYPE_PARAMETER_AS_REIFIED!>T<!>>(1) {  null!! } }
 fun <T> ok3(block: () -> Array<T>): Array<T> = ok1 { block() }
 inline fun <reified T> ok4(): Array<T> = ok1 { Array<T>(1) { null!! } }
 

@@ -10,7 +10,7 @@ fun main() {
     val pi = 4.0.toDouble() * delta <!OI;OVERLOAD_RESOLUTION_AMBIGUITY!>*<!> (1..n).<!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>reduce<!>(
             {t, i ->
                 val x = (i - 0.5) * delta
-                <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>t + 1.0 / (1.0 + x * x)<!>
+                <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>t + 1.0 / (1.0 + x * x)<!>
 
             })
     // !!! pi has error type here

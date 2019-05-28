@@ -1,7 +1,9 @@
 package
 
 public val test1: kotlin.String
-public val test2: kotlin.Any?
+public val test2: [ERROR : Type for generate {
+    baseExtension()
+}]
 public val test3: kotlin.Int
 public val test4: kotlin.Any?
 public val test5: kotlin.Int

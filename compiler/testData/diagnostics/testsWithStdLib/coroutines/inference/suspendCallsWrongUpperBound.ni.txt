@@ -1,6 +1,8 @@
 package
 
-public val test: ???
+public val test: [ERROR : Type for generate {
+    yield("foo")
+}]
 public fun </*0*/ S : kotlin.Number> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
 
 public final class Controller</*0*/ T : kotlin.Number> {

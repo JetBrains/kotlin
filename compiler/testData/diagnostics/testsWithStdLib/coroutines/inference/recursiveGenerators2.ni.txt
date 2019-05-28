@@ -1,6 +1,11 @@
 package
 
-public val test1: kotlin.collections.List<kotlin.collections.List<???>>
+public val test1: [ERROR : Type for generate {
+    // TODO: KT-15185
+    yieldGenerate {
+        yield(4)
+    }
+}]
 public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.collections.List<S>
 @kotlin.BuilderInference public suspend fun </*0*/ S> GenericController<kotlin.collections.List<S>>.yieldGenerate(/*0*/ g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.Unit
 

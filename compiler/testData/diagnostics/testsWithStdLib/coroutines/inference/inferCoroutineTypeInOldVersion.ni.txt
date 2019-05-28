@@ -2,7 +2,9 @@ package
 
 public val extension: kotlin.collections.List<kotlin.String>
 public val member: kotlin.collections.List<kotlin.Int>
-public val memberWithoutAnn: kotlin.collections.List<???>
+public val memberWithoutAnn: [ERROR : Type for wrongBuild {
+    add(42)
+}]
 public val safeExtension: kotlin.collections.List<kotlin.String>
 public fun </*0*/ S> build(/*0*/ g: suspend Builder<S>.() -> kotlin.Unit): kotlin.collections.List<S>
 public fun </*0*/ S> wrongBuild(/*0*/ g: Builder<S>.() -> kotlin.Unit): kotlin.collections.List<S>

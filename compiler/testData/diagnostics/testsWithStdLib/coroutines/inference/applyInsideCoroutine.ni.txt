@@ -1,8 +1,25 @@
 package
 
-public val test1: ???
-public val test2: ???
-public val test3: ???
+public val test1: [ERROR : Type for generate {
+    apply {
+        yield(4)
+    }
+}]
+public val test2: [ERROR : Type for generate {
+    yield(B)
+    apply {
+        yield(C)
+    }
+}]
+public val test3: [ERROR : Type for generate {
+    this.let {
+        yield(B)
+    }
+
+    apply {
+        yield(C)
+    }
+}]
 public fun </*0*/ S> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
 
 public interface A {
