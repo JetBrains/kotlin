@@ -888,7 +888,13 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       int minWidth = JBUI.scale(300);
       int maxWidth = getPopupAnchor() != null ? JBUI.scale(435) : MAX_DEFAULT.width;
 
-      int width = Math.max(definitionPreferredWidth(), myEditorPane.getMinimumSize().width);
+      int width = definitionPreferredWidth();
+      if (width < 0) { // no definition found
+        width = myEditorPane.getPreferredSize().width;
+      }
+      else {
+        width = Math.max(width, myEditorPane.getMinimumSize().width);
+      }
       width = Math.min(maxWidth, Math.max(minWidth, width));
 
       myEditorPane.setBounds(0, 0, width, MAX_DEFAULT.height);

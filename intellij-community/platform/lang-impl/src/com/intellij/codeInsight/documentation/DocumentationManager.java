@@ -766,7 +766,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     ActionCallback callback = new ActionCallback();
     myLastAction = callback;
     if (myPrecalculatedDocumentation != null) {
-      LOG.debug("Setting precalculated documentation");
+      LOG.debug("Setting precalculated documentation:\n", myPrecalculatedDocumentation);
       PsiElement element = collector.element;
       PsiElement originalElement = collector instanceof MyCollector ? ((MyCollector)collector).originalElement : element;
       DocumentationProvider provider = ReadAction.compute(() -> getProviderFromElement(element, originalElement));
