@@ -3,22 +3,21 @@ package com.intellij.internal.statistic.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.CodeInsightWorkspaceSettings;
-import com.intellij.internal.statistic.beans.UsageDescriptor;
+import com.intellij.internal.statistic.beans.MetricEvent;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.editor.richcopy.settings.RichCopySettings;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.intellij.internal.statistic.utils.StatisticsUtilKt.addIfDiffers;
+import static com.intellij.internal.statistic.beans.MetricEventUtilKt.addBoolIfDiffers;
+import static com.intellij.internal.statistic.beans.MetricEventUtilKt.addIfDiffers;
 
 class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
   @NotNull
@@ -27,11 +26,16 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     return "editor.settings.ide";
   }
 
+  @Override
+  public int getVersion() {
+    return 2;
+  }
+
   @NotNull
   @Override
-  public Set<UsageDescriptor> getUsages() {
-    Set<UsageDescriptor> set = new HashSet<>();
-    
+  public Set<MetricEvent> getMetrics() {
+    Set<MetricEvent> set = new HashSet<>();
+
     EditorSettingsExternalizable es = EditorSettingsExternalizable.getInstance();
     EditorSettingsExternalizable esDefault = new EditorSettingsExternalizable();
     addBoolIfDiffers(set, es, esDefault, s -> s.isVirtualSpace(), "caretAfterLineEnd");
@@ -68,9 +72,14 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     addBoolIfDiffers(set, es, esDefault, s -> s.isSmartHome(), "smartHome");
     addBoolIfDiffers(set, es, esDefault, s -> s.isCamelWords(), "camelWords");
     addBoolIfDiffers(set, es, esDefault, s -> s.isShowParameterNameHints(), "editor.inlay.parameter.hints");
-    addBoolIfDiffers(set, es, esDefault, s -> s.isBreadcrumbsAbove(), "noBreadcrumbsBelow");
-    addBoolIfDiffers(set, es, esDefault, s -> s.isBreadcrumbsShown(), "breadcrumbs");
+    addBoolIfDiffers(set, es, esDefault, s -> s.isBreadcrumbsAbove(), "breadcrumbsAbove");
+    addBoolIfDiffers(set, es, esDefault, s -> s.isBreadcrumbsShown(), "all.breadcrumbs");
     addBoolIfDiffers(set, es, esDefault, s -> s.isShowIntentionBulb(), "intentionBulb");
+
+    for (String language : es.getOptions().getLanguageBreadcrumbsMap().keySet()) {
+      final FeatureUsageData data = new FeatureUsageData().addLanguage(language);
+      addBoolIfDiffers(set, es, esDefault, s -> s.isBreadcrumbsShownFor(language), "breadcrumbs", data);
+    }
 
     RichCopySettings rcs = RichCopySettings.getInstance();
     RichCopySettings rcsDefault = new RichCopySettings();
@@ -110,11 +119,6 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     return set;
   }
 
-  private static <T> void addBoolIfDiffers(Set<? super UsageDescriptor> set, T settingsBean, T defaultSettingsBean,
-                                           Function1<? super T, Boolean> valueFunction, String featureId) {
-    addIfDiffers(set, settingsBean, defaultSettingsBean, valueFunction, (it) -> it ? featureId : "no" + StringUtil.capitalize(featureId));
-  }
-
   public static class ProjectUsages extends ProjectUsagesCollector {
     @NotNull
     @Override
@@ -122,15 +126,19 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
       return "editor.settings.project";
     }
 
+    @Override
+    public int getVersion() {
+      return 2;
+    }
+
     @NotNull
     @Override
-    public Set<UsageDescriptor> getUsages(@NotNull Project project) {
-      Set<UsageDescriptor> set = new HashSet<>();
+    public Set<MetricEvent> getMetrics(@NotNull Project project) {
+      Set<MetricEvent> set = new HashSet<>();
       CodeInsightWorkspaceSettings ciws = CodeInsightWorkspaceSettings.getInstance(project);
       CodeInsightWorkspaceSettings ciwsDefault = new CodeInsightWorkspaceSettings();
       addBoolIfDiffers(set, ciws, ciwsDefault, s -> s.optimizeImportsOnTheFly, "autoOptimizeImports");
       return set;
     }
   }
-
 }
