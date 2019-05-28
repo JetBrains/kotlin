@@ -26,7 +26,8 @@ object JvmPlatforms {
     // as previously some clients used TargetPlatform just as platform-marker
     // and didn't care about particular jvmTarget.
     // TODO(dsavvinov): review all usages and choose proper JvmTarget
-    val unspecifiedJvmPlatform: TargetPlatform = CompatJvmPlatform
+    val unspecifiedJvmPlatform: TargetPlatform
+        get() = CompatJvmPlatform
 
     val defaultJvmPlatform: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.DEFAULT]!!
 
