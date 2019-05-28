@@ -21,6 +21,7 @@ fun main() {
 
 // PRINT_FRAME
 // SHOW_KOTLIN_VARIABLES
+// RENDER_DELEGATED_PROPERTIES
 
 // EXPRESSION: this
 // RESULT: "abc": Ljava/lang/String;

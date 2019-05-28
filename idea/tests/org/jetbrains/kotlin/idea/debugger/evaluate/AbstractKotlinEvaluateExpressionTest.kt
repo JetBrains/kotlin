@@ -40,11 +40,8 @@ import org.jetbrains.eval4j.ObjectValue
 import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
-import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
-import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest.PrinterConfig.DescriptorViewOptions
-import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
 import org.junit.Assert
@@ -60,6 +57,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private var oldLogLevel: Level? = null
     private var oldShowKotlinVariables: Boolean = false
     private var oldShowFqTypeNames = false
+    private var oldRenderDelegatedPropertiesState = false
 
     override fun setUp() {
         super.setUp()
@@ -69,6 +67,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         classRenderer.SHOW_FQ_TYPE_NAMES = true
 
         oldShowKotlinVariables = ToggleKotlinVariablesState.getService().kotlinVariableView
+
+        oldRenderDelegatedPropertiesState = KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES
 
         oldLogLevel = logger.level
         logger.level = Level.DEBUG
@@ -87,6 +87,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
     override fun tearDown() {
         ToggleKotlinVariablesState.getService().kotlinVariableView = oldShowKotlinVariables
+
+        KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES = oldRenderDelegatedPropertiesState
 
         logger.level = oldLogLevel
         logger.removeAppender(appender)
@@ -196,6 +198,9 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             oldKotlinVariablesState = kotlinVariablesState.kotlinVariableView
 
             kotlinVariablesState.kotlinVariableView = isDirectiveDefined(fileText, "// SHOW_KOTLIN_VARIABLES")
+
+            KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES =
+                isDirectiveDefined(fileText, "// RENDER_DELEGATED_PROPERTIES")
         }
 
         fun trigger(suspendContext: SuspendContextImpl) {
