@@ -40,7 +40,18 @@ internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> 
     override fun toString(): String {
         return "class " + (qualifiedName ?: simpleName ?: "<anonymous>")
     }
+
+    internal fun findAssociatedObjectImpl(key: KClassImpl<*>): Any? =
+            findAssociatedObjectImpl(this.typeInfo, key.typeInfo)
 }
+
+@PublishedApi
+internal fun KClass<*>.findAssociatedObject(key: KClass<*>): Any? =
+        if (this is KClassImpl<*> && key is KClassImpl<*>) {
+            this.findAssociatedObjectImpl(key)
+        } else {
+            null
+        }
 
 @PublishedApi
 internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> {
@@ -56,6 +67,9 @@ internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> 
 
     override fun toString(): String = "unreflected class ($message)"
 }
+
+@SymbolName("Kotlin_TypeInfo_findAssociatedObject")
+private external fun findAssociatedObjectImpl(typeInfo: NativePtr, key: NativePtr): Any?
 
 @ExportForCompiler
 @SymbolName("Kotlin_Any_getTypeInfo")

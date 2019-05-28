@@ -24,14 +24,16 @@ internal fun CommonBackendContext.reportCompilationWarning(message: String) {
     report(null, null, message, false)
 }
 
-internal fun error(irFile: IrFile, element: IrElement?, message: String): Nothing {
+internal fun error(irFile: IrFile?, element: IrElement?, message: String): Nothing {
     error(buildString {
         append("Internal compiler error: $message\n")
         if (element == null) {
             append("(IR element is null)")
         } else {
-            val location = element.getCompilerMessageLocation(irFile)
-            append("at $location\n")
+            if (irFile != null) {
+                val location = element.getCompilerMessageLocation(irFile)
+                append("at $location\n")
+            }
 
             val renderedElement = try {
                 element.render()

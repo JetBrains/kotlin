@@ -1438,6 +1438,10 @@ task kclassEnumArgument(type: RunKonanTest) {
     source = "codegen/kclass/kClassEnumArgument.kt"
 }
 
+task associatedObjects1(type: RunKonanTest) {
+    source = "codegen/associatedObjects/associatedObjects1.kt"
+}
+
 task coroutines_simple(type: RunKonanTest) {
     goldValue = "42\n"
     source = "codegen/coroutines/simple.kt"

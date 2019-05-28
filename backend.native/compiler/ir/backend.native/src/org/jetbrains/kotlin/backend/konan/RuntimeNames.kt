@@ -11,4 +11,5 @@ object RuntimeNames {
     val independent = FqName("kotlin.native.internal.Independent")
     val filterExceptions = FqName("kotlin.native.internal.FilterExceptions")
     val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
+    val associatedObjectKey = FqName("kotlin.reflect.AssociatedObjectKey")
 }

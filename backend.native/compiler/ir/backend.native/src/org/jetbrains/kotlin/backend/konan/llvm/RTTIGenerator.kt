@@ -6,19 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.isAnonymousObject
+import org.jetbrains.kotlin.backend.konan.ir.isLocal
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.fqNameSafe
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.KonanAbiVersion
 import org.jetbrains.kotlin.name.FqName
 
@@ -85,7 +83,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             packageName: String?,
             relativeName: String?,
             flags: Int,
-            writableTypeInfo: ConstPointer?) :
+            writableTypeInfo: ConstPointer?,
+            associatedObjects: ConstPointer?) :
 
             Struct(
                     runtime.typeInfoType,
@@ -114,7 +113,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
                     Int32(flags),
 
-                    *listOfNotNull(writableTypeInfo).toTypedArray()
+                    *listOfNotNull(writableTypeInfo).toTypedArray(),
+
+                    associatedObjects
             )
 
     private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
@@ -219,7 +220,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 reflectionInfo.packageName,
                 reflectionInfo.relativeName,
                 flagsFromClass(irClass),
-                llvmDeclarations.writableTypeInfoGlobal?.pointer
+                llvmDeclarations.writableTypeInfoGlobal?.pointer,
+                associatedObjects = genAssociatedObjects(irClass)
         )
 
         val typeInfoGlobalValue = if (!irClass.typeInfoHasVtableAttached) {
@@ -312,6 +314,31 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return result.pointer
     }
 
+    private fun genAssociatedObjects(irClass: IrClass): ConstPointer? {
+        val associatedObjects = getAssociatedObjects(irClass)
+        if (associatedObjects.isEmpty()) {
+            return null
+        }
+
+        val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
+            val associatedObjectGetter = generateFunction(
+                    CodeGenerator(context),
+                    functionType(kObjHeaderPtr, false, kObjHeaderPtrPtr),
+                    ""
+            ) {
+                ret(getObjectValue(value, ExceptionHandler.Caller, locationInfo = null))
+            }
+
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, constPointer(associatedObjectGetter))
+        }
+
+        return staticData.placeGlobalConstArray(
+                name = "kassociatedobjects:${irClass.fqNameSafe}",
+                elemType = runtime.associatedObjectTableRecordType,
+                elements = associatedObjectTableRecords + Struct(runtime.associatedObjectTableRecordType, null, null)
+        )
+    }
+
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
@@ -370,7 +397,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 packageName = reflectionInfo.packageName,
                 relativeName = reflectionInfo.relativeName,
                 flags = flagsFromClass(irClass) or (if (immutable) TF_IMMUTABLE else 0),
-                writableTypeInfo = writableTypeInfo
+                writableTypeInfo = writableTypeInfo,
+                associatedObjects = null
               ), vtable)
 
         typeInfoWithVtableGlobal.setInitializer(typeInfoWithVtable)
@@ -395,6 +423,42 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                         .joinToString(".") { it.name.asString() }
         )
     }
+}
+
+private fun getAssociatedObjects(irClass: IrClass): Map<IrClass, IrClass> {
+    val result = mutableMapOf<IrClass, IrClass>()
+
+    irClass.annotations.forEach {
+        val irFile = irClass.getContainingFile()
+
+        val annotationClass = (it.symbol.owner as? IrConstructor)?.constructedClass
+                ?: error(irFile, it, "unexpected annotation")
+
+        if (annotationClass.hasAnnotation(RuntimeNames.associatedObjectKey)) {
+            val argument = it.getValueArgument(0)
+
+            val irClassReference = argument as? IrClassReference
+                    ?: error(irFile, argument, "unexpected annotation argument")
+
+            val associatedObject = irClassReference.symbol.owner
+
+            if (associatedObject !is IrClass || !associatedObject.isObject) {
+                error(irFile, irClassReference, "argument is not a singleton")
+            }
+
+            if (annotationClass in result) {
+                error(
+                        irFile,
+                        it,
+                        "duplicate value for ${annotationClass.name}, previous was ${result[annotationClass]?.name}"
+                )
+            }
+
+            result[annotationClass] = associatedObject
+        }
+    }
+
+    return result
 }
 
 // Keep in sync with Konan_TypeFlags in TypeInfo.h.
