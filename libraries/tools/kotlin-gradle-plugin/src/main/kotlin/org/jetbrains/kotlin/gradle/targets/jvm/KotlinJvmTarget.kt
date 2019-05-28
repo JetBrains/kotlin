@@ -31,6 +31,9 @@ class KotlinJvmTarget(
 
     @Suppress("unused") // user DSL
     fun withJava() {
+        if (withJavaEnabled)
+            return
+
         project.multiplatformExtension.targets.find { it is KotlinJvmTarget && it.withJavaEnabled }
             ?.let { existingJavaTarget ->
                 throw InvalidUserCodeException(
