@@ -13,8 +13,8 @@ kotlin {
             executable() {
                 entryPoint = 'sample.tensorflow.main'
                 linkerOpts += ["-L$tensorflowHome/lib".toString(), '-ltensorflow']
-                runTask.environment('LD_LIBRARY_PATH', "$tensorflowHome/lib".toString())
-                runTask.environment('DYLD_LIBRARY_PATH', "$tensorflowHome/lib".toString())
+                runTask?.environment('LD_LIBRARY_PATH', "$tensorflowHome/lib".toString())
+                runTask?.environment('DYLD_LIBRARY_PATH', "$tensorflowHome/lib".toString())
             }
         }
         compilations.main.cinterops {

@@ -37,7 +37,7 @@ kotlin {
                         linkerOpts += ['-lSDL2']
                         break
                 }
-                runTask.workingDir(project.provider {
+                runTask?.workingDir(project.provider {
                     kotlin.targets.tetris.binaries.getExecutable(buildType).outputDirectory
                 })
             }

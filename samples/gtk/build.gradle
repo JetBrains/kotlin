@@ -12,7 +12,7 @@ kotlin {
                 entryPoint = 'sample.gtk.main'
                 if (presets.mingwX64 == hostPreset) {
                     linkerOpts += ["-L${MPPTools.mingwPath()}/lib".toString()]
-                    runTask.environment('PATH', "${MPPTools.mingwPath()}/bin".toString())
+                    runTask?.environment('PATH', "${MPPTools.mingwPath()}/bin".toString())
                 }
             }
         }

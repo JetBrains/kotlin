@@ -10,7 +10,7 @@ kotlin {
         binaries {
             executable() {
                 entryPoint = 'sample.csvparser.main'
-                runTask.args './European_Mammals_Red_List_Nov_2009.csv', 4, 100
+                runTask?.args './European_Mammals_Red_List_Nov_2009.csv', 4, 100
             }
         }
     }

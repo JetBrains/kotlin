@@ -13,9 +13,9 @@ kotlin {
             executable() {
                 entryPoint = 'sample.torch.main'
                 linkerOpts += ["-L$torchHome/lib".toString(), '-lATen']
-                runTask.dependsOn 'downloadMNIST'
-                runTask.environment('LD_LIBRARY_PATH', "$torchHome/lib".toString())
-                runTask.environment('DYLD_LIBRARY_PATH', "$torchHome/lib".toString())
+                runTask?.dependsOn 'downloadMNIST'
+                runTask?.environment('LD_LIBRARY_PATH', "$torchHome/lib".toString())
+                runTask?.environment('DYLD_LIBRARY_PATH', "$torchHome/lib".toString())
             }
         }
         compilations.main.cinterops {

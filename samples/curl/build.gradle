@@ -19,9 +19,9 @@ kotlin {
                 if (presets.mingwX64 == hostPreset) {
                     // Add lib path to `libcurl` and its dependencies:
                     linkerOpts += ["-L${MPPTools.mingwPath()}/lib".toString()]
-                    runTask.environment('PATH': "${MPPTools.mingwPath()}/bin".toString())
+                    runTask?.environment('PATH': "${MPPTools.mingwPath()}/bin".toString())
                 }
-                runTask.args('https://www.jetbrains.com/')
+                runTask?.args('https://www.jetbrains.com/')
             }
         }
     }
