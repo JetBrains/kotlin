@@ -517,6 +517,12 @@ abstract class BaseGradleIT {
         assertTasksNotRealized(*tasks)
     }
 
+    fun CompiledProject.assertTasksSkipped(vararg tasks: String) {
+        for (task in tasks) {
+            assertContains("Skipping task '$task'")
+        }
+    }
+
     fun CompiledProject.getOutputForTask(taskName: String): String {
         val taskOutputRegex = ("(?:\\[LIFECYCLE] \\[class org\\.gradle(?:\\.internal\\.buildevents)?\\.TaskExecutionLogger] :$taskName|" +
                 "\\[org\\.gradle\\.execution\\.plan\\.DefaultPlanExecutor\\] :$taskName.*?started)" +

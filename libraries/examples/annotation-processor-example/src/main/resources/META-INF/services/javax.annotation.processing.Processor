@@ -1,1 +1,2 @@
 example.ExampleAnnotationProcessor
+example.KotlinFilerGeneratingProcessor
