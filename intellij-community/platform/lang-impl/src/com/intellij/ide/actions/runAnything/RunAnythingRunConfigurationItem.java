@@ -4,12 +4,10 @@ package com.intellij.ide.actions.runAnything;
 import com.intellij.execution.actions.ChooseRunConfigurationPopup;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItemBase;
-import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class RunAnythingRunConfigurationItem extends RunAnythingItemBase {
   public static final String RUN_CONFIGURATION_AD_TEXT = RunAnythingUtil.AD_CONTEXT_TEXT + ", " + RunAnythingUtil.AD_DEBUG_TEXT;
@@ -20,25 +18,10 @@ public class RunAnythingRunConfigurationItem extends RunAnythingItemBase {
     myWrapper = wrapper;
   }
 
-  @NotNull
+  @Nullable
   @Override
-  public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
-    JPanel component = (JPanel)super.createComponent(pattern, groupIcon, isSelected, hasFocus);
-
+  public String getDescription() {
     ConfigurationType type = myWrapper.getType();
-    if (type == null) {
-      return component;
-    }
-
-    String description = type.getConfigurationTypeDescription();
-    if (description == null) {
-      return component;
-    }
-
-    SimpleColoredComponent descriptionComponent = new SimpleColoredComponent();
-    descriptionComponent.append(description, getDescriptionAttributes(isSelected));
-    component.add(descriptionComponent, BorderLayout.EAST);
-
-    return component;
+    return type == null ? null : type.getConfigurationTypeDescription();
   }
 }

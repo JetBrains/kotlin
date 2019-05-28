@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.intellij.ui.SimpleTextAttributes.STYLE_PLAIN;
-import static com.intellij.ui.SimpleTextAttributes.STYLE_SMALLER;
+import static com.intellij.openapi.util.text.StringUtil.shortenTextWithEllipsis;
+import static com.intellij.ui.SimpleTextAttributes.*;
 import static com.intellij.util.ui.UIUtil.getListSelectionForeground;
 
 public class RunAnythingItemBase extends RunAnythingItem {
@@ -35,6 +35,11 @@ public class RunAnythingItemBase extends RunAnythingItem {
     return myCommand;
   }
 
+  @Nullable
+  public String getDescription() {
+    return null;
+  }
+
   @NotNull
   @Override
   public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
@@ -50,7 +55,7 @@ public class RunAnythingItemBase extends RunAnythingItem {
     SimpleColoredComponent textComponent = new SimpleColoredComponent();
     SpeedSearchUtil.appendColoredFragmentForMatcher(StringUtil.notNullize(getCommand()),
                                                     textComponent,
-                                                    SimpleTextAttributes.REGULAR_ATTRIBUTES,
+                                                    REGULAR_ATTRIBUTES,
                                                     RunAnythingGroup.RUN_ANYTHING_MATCHER_BUILDER.fun(pattern).build(),
                                                     background,
                                                     isSelected);
@@ -63,6 +68,13 @@ public class RunAnythingItemBase extends RunAnythingItem {
     JLabel iconLabel = new JLabel(icon);
     iconLabel.setBorder(JBUI.Borders.emptyLeft(3));
     component.add(iconLabel, BorderLayout.WEST);
+
+    String description = getDescription();
+    if (description != null) {
+      SimpleColoredComponent descriptionComponent = new SimpleColoredComponent();
+      descriptionComponent.append(" " + shortenTextWithEllipsis(description, 200, 0), getDescriptionAttributes(isSelected));
+      component.add(descriptionComponent, BorderLayout.EAST);
+    }
 
     return component;
   }
@@ -99,7 +111,7 @@ public class RunAnythingItemBase extends RunAnythingItem {
   }
 
   @NotNull
-  protected static SimpleTextAttributes getDescriptionAttributes(boolean isSelected) {
+  private static SimpleTextAttributes getDescriptionAttributes(boolean isSelected) {
     return new SimpleTextAttributes(STYLE_PLAIN, isSelected ? getListSelectionForeground(true) : UIUtil.getInactiveTextColor());
   }
 }
