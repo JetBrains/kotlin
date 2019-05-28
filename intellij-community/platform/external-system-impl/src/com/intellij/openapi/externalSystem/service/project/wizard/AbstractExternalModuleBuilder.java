@@ -36,8 +36,7 @@ public abstract class AbstractExternalModuleBuilder<S extends ExternalProjectSet
   @Nullable
   @Override
   public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
-    ExternalProjectsManagerImpl projectsManager = ExternalProjectsManagerImpl.getInstance(project);
-    projectsManager.getExternalProjectsWatcher().disableAutoUpdate();
+    ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project);
     return super.commitModule(project, model);
   }
 

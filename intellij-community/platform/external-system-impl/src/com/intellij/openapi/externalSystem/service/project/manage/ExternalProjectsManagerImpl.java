@@ -13,6 +13,7 @@ import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
+import com.intellij.openapi.externalSystem.service.project.autoimport.ExternalSystemProjectsWatcher;
 import com.intellij.openapi.externalSystem.service.project.autoimport.ExternalSystemProjectsWatcherImpl;
 import com.intellij.openapi.externalSystem.util.CompositeRunnable;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -118,7 +119,7 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
   }
 
   @Override
-  public ExternalSystemProjectsWatcherImpl getExternalProjectsWatcher() {
+  public ExternalSystemProjectsWatcher getExternalProjectsWatcher() {
     return myWatcher;
   }
 
@@ -330,5 +331,10 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
     TaskActivationState getTasksActivation(@NotNull ProjectSystemId systemId, @NotNull String projectPath);
 
     Map<String, TaskActivationState> getProjectsTasksActivationMap(@NotNull ProjectSystemId systemId);
+  }
+
+  public static void disableProjectWatcherAutoUpdate(@NotNull Project project) {
+    ExternalProjectsManagerImpl projectsManager = getInstance(project);
+    projectsManager.myWatcher.disableAutoUpdate();
   }
 }

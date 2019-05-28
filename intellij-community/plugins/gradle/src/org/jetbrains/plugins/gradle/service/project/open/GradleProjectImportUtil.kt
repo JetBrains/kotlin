@@ -117,6 +117,7 @@ fun attachGradleProjectAndRefresh(settings: ExternalProjectSettings, project: Pr
       ExternalSystemUtil.ensureToolWindowInitialized(project, SYSTEM_ID)
     }
   }
+  ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project)
   ExternalSystemApiUtil.getSettings(project, SYSTEM_ID).linkProject(settings)
   ExternalSystemUtil.refreshProject(project, SYSTEM_ID, externalProjectPath, true, MODAL_SYNC)
   ExternalSystemUtil.refreshProject(project, SYSTEM_ID, externalProjectPath, false, IN_BACKGROUND_ASYNC)

@@ -2,51 +2,54 @@
 package com.intellij.openapi.externalSystem.util
 
 import com.intellij.util.LocalTimeCounter
-import java.util.concurrent.CopyOnWriteArrayList
 
-class CompoundParallelOperationTrace<Id : Any> {
+class CompoundParallelOperationTrace<Id> {
 
-  private val finishListeners = CopyOnWriteArrayList<Listener>()
-  private val tracedUpdates = LinkedHashMap<Id, Long>()
+  private val finishListeners = ArrayList<() -> Unit>()
+  private val traces = LinkedHashMap<Id, Long>()
   private var startTime: Long? = null
 
   fun startOperation() {
     synchronized(this) {
-      if (startTime == null) {
-        startTime = LocalTimeCounter.currentTime()
-      }
+      startTime = LocalTimeCounter.currentTime()
     }
   }
 
-  fun isCompleteOperation(): Boolean {
-    return startTime == null
+  fun isOperationCompleted(): Boolean {
+    synchronized(this) {
+      return startTime == null
+    }
   }
 
-  fun onCompleteOperation(listener: Listener) {
-    finishListeners.add(listener)
+  fun onOperationCompleted(listener: Listener) {
+    onOperationCompleted(listener::listen)
+  }
+
+  fun onOperationCompleted(listener: () -> Unit) {
+    synchronized(this) {
+      finishListeners.add(listener)
+    }
   }
 
   fun startTask(taskId: Id) {
     synchronized(this) {
-      tracedUpdates[taskId] = LocalTimeCounter.currentTime()
+      traces[taskId] = LocalTimeCounter.currentTime()
     }
   }
 
   fun finishTask(taskId: Id) {
     synchronized(this) {
-      val taskStartTime = tracedUpdates.remove(taskId) ?: return
+      val taskStartTime = traces.remove(taskId) ?: return
       val operationStartTime = startTime ?: return
       if (taskStartTime < operationStartTime) return
-      if (tracedUpdates.isEmpty()) {
+      if (traces.isEmpty()) {
         startTime = null
+        finishListeners.forEach { it() }
       }
-    }
-    if (isCompleteOperation()) {
-      finishListeners.forEach(Listener::onComplete)
     }
   }
 
   interface Listener {
-    fun onComplete()
+    fun listen()
   }
 }

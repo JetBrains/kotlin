@@ -105,7 +105,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   private final CompoundParallelOperationTrace<ExternalSystemTaskId> syncTrace = new CompoundParallelOperationTrace<>();
 
   public ExternalSystemProjectsWatcherImpl(Project project) {
-    syncTrace.onCompleteOperation(() -> debug("Auto update enabled"));
+    syncTrace.onOperationCompleted(() -> debug("Auto update enabled"));
 
     myProject = project;
     myChangedDocumentsQueue = new MergingUpdateQueue("ExternalSystemProjectsWatcher: Document changes queue",
@@ -253,7 +253,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   }
 
   private boolean isEnabledAutoUpdate() {
-    return syncTrace.isCompleteOperation();
+    return syncTrace.isOperationCompleted();
   }
 
   @Override
