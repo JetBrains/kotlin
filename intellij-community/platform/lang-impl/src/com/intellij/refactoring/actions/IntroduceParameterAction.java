@@ -22,6 +22,10 @@ import com.intellij.refactoring.RefactoringActionHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class IntroduceParameterAction extends BasePlatformRefactoringAction {
+  public IntroduceParameterAction() {
+    setInjectedContext(true);
+  }
+
   @Override
   protected boolean isAvailableInEditorOnly() {
     return true;
