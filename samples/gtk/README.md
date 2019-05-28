@@ -7,7 +7,7 @@ To build use `../gradlew assemble`.
 
 Do not forget to install GTK3. See bellow.
 
-To run on Mac also install XQuartz X server (https://www.xquartz.org/), and then `../gradlew runProgram` or execute the program directly:
+To run on Mac also install XQuartz X server (https://www.xquartz.org/), and then `../gradlew runReleaseExecutableGtk` or execute the program directly:
 
     ./build/bin/gtk/main/release/executable/gtk.kexe
 

@@ -35,7 +35,7 @@ will download and unzip the [MNIST dataset](https://en.wikipedia.org/wiki/MNIST_
 
 Then run
 
-    ../gradlew runProgram
+    ../gradlew runReleaseExecutableTorch
 
 Alternatively you can run the artifact directly through
 

@@ -38,6 +38,6 @@ computation results. Afterwards, worker execution termination is requested with 
 
 To build use `../gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `../gradlew runReleaseExecutableWorkers` or execute the program directly:
 
     ./build/bin/workers/main/release/executable/workers.kexe

@@ -9,10 +9,12 @@ def hostPreset = MPPTools.defaultHostPreset(project)
 def raspberryPiPresets = [kotlin.presets.linuxArm32Hfp, kotlin.presets.linuxArm64]
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'echoServer') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.echoserver.main'
+    targetFromPreset(hostPreset, 'echoServer') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.echoserver.main'
+                runTask.args(3000)
+            }
         }
 
         raspberryPiPresets.each { preset ->
@@ -30,8 +32,4 @@ kotlin {
             getByName(mainSourceSetName) dependsOn echoServerMain
         }
     }
-}
-
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.echoServer) {
-    args 3000
 }

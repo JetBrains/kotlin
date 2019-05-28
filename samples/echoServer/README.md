@@ -2,7 +2,7 @@
 
 To build use `../gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `../gradlew runReleaseExecutableEchoServer` or execute the program directly:
 
     ./build/bin/echoServer/main/release/executable/echoServer.kexe 3000 &
 

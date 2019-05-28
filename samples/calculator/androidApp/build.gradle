@@ -20,7 +20,5 @@ dependencies {
 }
 
 kotlin {
-    targets {
-        fromPreset(presets.android, 'android')
-    }
+    android()
 }

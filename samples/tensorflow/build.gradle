@@ -8,15 +8,18 @@ def tensorflowHome = "${MPPTools.kotlinNativeDataPath()}/third-party/tensorflow"
 def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'tensorflow') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.tensorflow.main'
-            compilations.main.linkerOpts "-L$tensorflowHome/lib", '-ltensorflow'
-            compilations.main.cinterops {
-                tensorflow {
-                    includeDirs "$tensorflowHome/include"
-                }
+    targetFromPreset(hostPreset, 'tensorflow') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.tensorflow.main'
+                linkerOpts += ["-L$tensorflowHome/lib".toString(), '-ltensorflow']
+                runTask.environment('LD_LIBRARY_PATH', "$tensorflowHome/lib".toString())
+                runTask.environment('DYLD_LIBRARY_PATH', "$tensorflowHome/lib".toString())
+            }
+        }
+        compilations.main.cinterops {
+            tensorflow {
+                includeDirs "$tensorflowHome/include"
             }
         }
     }
@@ -27,9 +30,3 @@ task downloadTensorflow(type: Exec) {
     commandLine './downloadTensorflow.sh'
 }
 tasks[kotlin.targets.tensorflow.compilations.main.cinterops.tensorflow.interopProcessingTaskName].dependsOn downloadTensorflow
-
-
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.tensorflow) {
-    environment 'LD_LIBRARY_PATH': "$tensorflowHome/lib"
-    environment 'DYLD_LIBRARY_PATH': "$tensorflowHome/lib"
-}

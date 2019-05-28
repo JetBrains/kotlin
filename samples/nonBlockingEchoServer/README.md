@@ -9,7 +9,7 @@ each individual connection handler is written in simple linear manner.
 
 To build use `../gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `../gradlew runReleaseExecutableNonBlockingEchoServer` or execute the program directly:
 
     ./build/bin/nonBlockingEchoServer/main/release/executable/nonBlockingEchoServer.kexe 3000 &
 

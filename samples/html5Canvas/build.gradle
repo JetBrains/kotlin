@@ -16,13 +16,14 @@ String packageName = 'kotlinx.interop.wasm.dom'
 String jsinteropKlibFileName = Paths.get(buildDir.toString(), 'klib', "$packageName-jsinterop.klib").toString()
 
 kotlin {
-    targets {
-        fromPreset(presets.wasm32, 'html5Canvas') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.html5canvas.main'
+    targetFromPreset(presets.wasm32, 'html5Canvas') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.html5canvas.main'
+            }
         }
-        fromPreset(presets.jvm, 'httpServer')
     }
+    jvm('httpServer')
     sourceSets {
         html5CanvasMain {
             dependencies {

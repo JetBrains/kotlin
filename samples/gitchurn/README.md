@@ -9,7 +9,7 @@ not have MSYS2-MinGW64 installed - install it first as described in http://www.m
 
 To build use `../gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `../gradlew runReleaseExecutableGitChurn` or execute the program directly:
 
     ./build/bin/gitChurn/main/release/executable/gitchurn.kexe ../../
 

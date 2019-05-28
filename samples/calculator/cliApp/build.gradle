@@ -2,7 +2,7 @@ apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 kotlin {
     targets {
-        fromPreset(presets.jvm, 'jvm')
+        jvm()
     }
 
     sourceSets {

@@ -6,7 +6,7 @@ built by [libcurl sample](../libcurl) so you need to run it first.
 
 To build use `../gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `../gradlew runReleaseExecutableCurl` or execute the program directly:
 
     ./build/bin/curl/main/release/executable/curl.kexe 'https://www.jetbrains.com/'
 

@@ -2,6 +2,6 @@
 
 To build use `..\gradlew assemble`.
 
-To run use `..\gradlew runProgram` or execute the program directly:
+To run use `..\gradlew runReleaseExecutableWin32` or execute the program directly:
 
     `.\build\exe\main\release\MessageBox.exe`.

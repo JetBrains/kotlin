@@ -8,7 +8,7 @@
 import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -64,17 +64,4 @@ fun defaultHostPreset(
         presetCandidate
     else
         throw Exception("Host OS '$hostOs' is not supported in Kotlin/Native ${subproject.displayName}.")
-}
-
-// A short-cut to add a Kotlin/Native run task.
-@JvmOverloads
-fun createRunTask(
-        subproject: Project,
-        name: String,
-        target: KotlinTarget,
-        configureClosure: Closure<Any>? = null
-): Task {
-    val task = subproject.tasks.create(name, RunKotlinNativeTask::class.java, target)
-    task.configure(configureClosure ?: task.emptyConfigureClosure())
-    return task
 }

@@ -6,14 +6,12 @@ plugins {
 def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'nonBlockingEchoServer') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.nbechoserver.main'
+    targetFromPreset(hostPreset, 'nonBlockingEchoServer') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.nbechoserver.main'
+                runTask.args(3000)
+            }
         }
     }
-}
-
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.nonBlockingEchoServer) {
-    args 3000
 }

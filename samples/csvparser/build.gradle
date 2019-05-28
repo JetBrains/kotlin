@@ -6,14 +6,12 @@ plugins {
 def hostPreset = MPPTools.defaultHostPreset(project)
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'csvParser') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.csvparser.main'
+    targetFromPreset(hostPreset, 'csvParser') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.csvparser.main'
+                runTask.args './European_Mammals_Red_List_Nov_2009.csv', 4, 100
+            }
         }
     }
-}
-
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.csvParser) {
-    args './European_Mammals_Red_List_Nov_2009.csv', 4, 100
 }

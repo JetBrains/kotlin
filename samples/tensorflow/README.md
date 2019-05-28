@@ -20,7 +20,7 @@ To build use `../gradlew assemble`.
 
 Then run
 
-    ../gradlew runProgram
+    ../gradlew runReleaseExecutableTensorflow
 
 Alternatively you can run the artifact directly through
 

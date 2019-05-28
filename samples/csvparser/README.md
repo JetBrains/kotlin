@@ -6,7 +6,7 @@ from EU is being used.
 
 To build use `../gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `../gradlew runReleaseExecutableCsvParser` or execute the program directly:
 
     ./build/bin/csvParser/main/release/executable/csvparser.kexe ./European_Mammals_Red_List_Nov_2009.csv 4 100
 

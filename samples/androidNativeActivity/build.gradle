@@ -53,13 +53,13 @@ android {
 }
 
 kotlin {
-    targets {
-        fromPreset(presets.androidNativeArm32, 'arm32')
-        fromPreset(presets.androidNativeArm64, 'arm64')
-
-        configure([arm32, arm64]) {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.androidnative.main'
+    [new Tuple(presets.androidNativeArm32, 'arm32'), new Tuple(presets.androidNativeArm64, 'arm64')].each {
+        targetFromPreset(it[0], it[1]) {
+            binaries {
+                executable() {
+                    entryPoint = 'sample.androidnative.main'
+                }
+            }
             compilations.main.cinterops {
                 bmpformat
             }
@@ -77,24 +77,22 @@ tasks.compileKotlinMetadata.enabled = false
 afterEvaluate {
     kotlin.targets { targets ->
         [arm32, arm64].collect { target ->
-            target.compilations.main { mainCompilation ->
-                String buildType = 'RELEASE' // Change to 'DEBUG' to include debug symbols.
-                Object linkTask = mainCompilation.getLinkTask('EXECUTABLE', buildType)
+            String buildType = 'RELEASE' // Change to 'DEBUG' to include debug symbols.
+            Object linkTask = binaries.getExecutable(buildType).linkTask
 
-                // Rename binary files to 'libpoly.so' and put them to the appropriate location.
-                File binaryFile = linkTask.outputFile.get()
-                linkTask.doLast {
-                    copy {
-                        from binaryFile
-                        into libsDirMapping[target.targetName]
-                        rename {
-                            'libpoly.so'
-                        }
+            // Rename binary files to 'libpoly.so' and put them to the appropriate location.
+            File binaryFile = binaries.getExecutable(buildType).outputFile
+            linkTask.doLast {
+                copy {
+                    from binaryFile
+                    into libsDirMapping[target.targetName]
+                    rename {
+                        'libpoly.so'
                     }
                 }
-
-                tasks.preBuild.dependsOn linkTask
             }
+
+            tasks.preBuild.dependsOn linkTask
         }
     }
 }

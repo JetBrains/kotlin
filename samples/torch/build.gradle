@@ -8,15 +8,19 @@ def torchHome = "${MPPTools.kotlinNativeDataPath()}/third-party/torch"
 def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'torch') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.torch.main'
-            compilations.main.linkerOpts "-L$torchHome/lib", '-lATen'
-            compilations.main.cinterops {
-                torch {
-                    includeDirs "$torchHome/include", "$torchHome/include/TH"
-                }
+    targetFromPreset(hostPreset, 'torch') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.torch.main'
+                linkerOpts += ["-L$torchHome/lib".toString(), '-lATen']
+                runTask.dependsOn 'downloadMNIST'
+                runTask.environment('LD_LIBRARY_PATH', "$torchHome/lib".toString())
+                runTask.environment('DYLD_LIBRARY_PATH', "$torchHome/lib".toString())
+            }
+        }
+        compilations.main.cinterops {
+            torch {
+                includeDirs "$torchHome/include", "$torchHome/include/TH"
             }
         }
     }
@@ -31,10 +35,4 @@ tasks[kotlin.targets.torch.compilations.main.cinterops.torch.interopProcessingTa
 task downloadMNIST(type: Exec) {
     workingDir projectDir
     commandLine './downloadMNIST.sh'
-}
-
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.torch) {
-    dependsOn downloadMNIST
-    environment 'LD_LIBRARY_PATH': "$torchHome/lib"
-    environment 'DYLD_LIBRARY_PATH': "$torchHome/lib"
 }

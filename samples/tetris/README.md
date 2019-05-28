@@ -15,7 +15,7 @@ To build Tetris application for your host platform use `../gradlew assemble`.
 
 Note that SDL2 must be installed on the host.
 
-Now you can run the game using `../gradlew runProgram` or directly with
+Now you can run the game using `../gradlew runReleaseExecutableTetris` or directly with
 
      ./build/bin/tetris/main/release/executable/tetris.kexe
 

@@ -5,7 +5,7 @@ MacOS shall work as is.
 
 To build use `../gradlew assemble`.
 
-To run use `../gradlew runProgram` or execute the program directly:
+To run use `../gradlew runReleaseExecutableOpengl` or execute the program directly:
 
     ./build/bin/opengl/main/release/executable/opengl.kexe
 

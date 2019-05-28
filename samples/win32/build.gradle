@@ -6,13 +6,12 @@ plugins {
 def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.mingwX64])
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'win32') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.win32.main'
-            compilations.main.linkerOpts '-Wl,--subsystem,windows'
+    targetFromPreset(hostPreset, 'win32') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.win32.main'
+                linkerOpts += ['-Wl,--subsystem,windows']
+            }
         }
     }
 }
-
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.win32)

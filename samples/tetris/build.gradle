@@ -6,56 +6,59 @@ File winCompiledResourceFile = file("$buildDir/compiledWindowsResources/Tetris.r
 def hostPreset = determinePreset()
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'tetris') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.tetris.main'
-
-            switch (hostPreset) {
-                case presets.macosX64:
-                    compilations.main.linkerOpts '-L/opt/local/lib', '-L/usr/local/lib', '-lSDL2'
-                    break
-                case presets.linuxX64:
-                    compilations.main.linkerOpts '-L/usr/lib64', '-L/usr/lib/x86_64-linux-gnu', '-lSDL2'
-                    break
-                case presets.mingwX86:
-                case presets.mingwX64:
-                    compilations.main.linkerOpts winCompiledResourceFile.path,
-                            "-L${MPPTools.mingwPath(hostPreset)}/lib",
-                            '-Wl,-Bstatic',
-                            '-lstdc++',
-                            '-static',
-                            '-lSDL2',
-                            '-limm32',
-                            '-lole32',
-                            '-loleaut32',
-                            '-lversion',
-                            '-lwinmm',
-                            '-lsetupapi',
-                            '-mwindows'
-                    break
-                case presets.linuxArm32Hfp:
-                    compilations.main.linkerOpts '-lSDL2'
-                    break
+    targetFromPreset(hostPreset, 'tetris') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.tetris.main'
+                switch (hostPreset) {
+                    case presets.macosX64:
+                        linkerOpts += ['-L/opt/local/lib', '-L/usr/local/lib', '-lSDL2']
+                        break
+                    case presets.linuxX64:
+                        linkerOpts += ['-L/usr/lib64', '-L/usr/lib/x86_64-linux-gnu', '-lSDL2']
+                        break
+                    case presets.mingwX86:
+                    case presets.mingwX64:
+                        linkerOpts += [winCompiledResourceFile.path,
+                                "-L${MPPTools.mingwPath(hostPreset)}/lib".toString(),
+                                '-Wl,-Bstatic',
+                                '-lstdc++',
+                                '-static',
+                                '-lSDL2',
+                                '-limm32',
+                                '-lole32',
+                                '-loleaut32',
+                                '-lversion',
+                                '-lwinmm',
+                                '-lsetupapi',
+                                '-mwindows']
+                        break
+                    case presets.linuxArm32Hfp:
+                        linkerOpts += ['-lSDL2']
+                        break
+                }
+                runTask.workingDir(project.provider {
+                    kotlin.targets.tetris.binaries.getExecutable(buildType).outputDirectory
+                })
             }
-
-            compilations.main.cinterops {
-                sdl {
-                    switch (hostPreset) {
-                        case presets.macosX64:
-                            includeDirs '/opt/local/include/SDL2', '/usr/local/include/SDL2'
-                            break
-                        case presets.linuxX64:
-                            includeDirs '/usr/include/SDL2'
-                            break
-                        case presets.mingwX86:
-                        case presets.mingwX64:
-                            includeDirs "${MPPTools.mingwPath(hostPreset)}/include/SDL2"
-                            break
-                        case presets.linuxArm32Hfp:
-                            includeDirs "${MPPTools.kotlinNativeDataPath()}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
-                            break
-                    }
+        }
+        
+        compilations.main.cinterops {
+            sdl {
+                switch (hostPreset) {
+                    case presets.macosX64:
+                        includeDirs '/opt/local/include/SDL2', '/usr/local/include/SDL2'
+                        break
+                    case presets.linuxX64:
+                        includeDirs '/usr/include/SDL2'
+                        break
+                    case presets.mingwX86:
+                    case presets.mingwX64:
+                        includeDirs "${MPPTools.mingwPath(hostPreset)}/include/SDL2"
+                        break
+                    case presets.linuxArm32Hfp:
+                        includeDirs "${MPPTools.kotlinNativeDataPath()}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
+                        break
                 }
             }
         }
@@ -82,16 +85,10 @@ if ((hostPreset == kotlin.presets.mingwX86) || (hostPreset == kotlin.presets.min
     }
 }
 
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.tetris) {
-    workingDir = project.provider {
-        kotlin.targets.tetris.compilations.main.getBinary('EXECUTABLE', buildType).parentFile
-    }
-}
-
 afterEvaluate {
     kotlin.targets.tetris.compilations.main { mainCompilation ->
         def linkTasks = ['RELEASE', 'DEBUG']
-                .collect { mainCompilation.findLinkTask('EXECUTABLE', it) }
+                .collect { kotlin.targets.tetris.binaries.getExecutable(it).linkTask }
                 .findAll { it != null }
 
         def compileWindowsResourcesTask = tasks.findByName('compileWindowsResources')

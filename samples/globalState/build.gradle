@@ -6,15 +6,14 @@ plugins {
 def hostPreset = MPPTools.defaultHostPreset(project)
 
 kotlin {
-    targets {
-        fromPreset(hostPreset, 'globalState') {
-            compilations.main.outputKinds 'EXECUTABLE'
-            compilations.main.entryPoint 'sample.globalstate.main'
-            compilations.main.cinterops {
-                global
+    targetFromPreset(hostPreset, 'globalState') {
+        binaries {
+            executable() {
+                entryPoint = 'sample.globalstate.main'
             }
+        }
+        compilations.main.cinterops {
+            global
         }
     }
 }
-
-MPPTools.createRunTask(project, 'runProgram', kotlin.targets.globalState)
