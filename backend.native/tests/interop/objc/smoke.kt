@@ -144,6 +144,13 @@ fun testTypeOps() {
     assertTrue(NSValue.asAny() is NSObjectProtocolMeta)
     assertFalse(NSValue.asAny() is NSObjectProtocol) // Must be true, but not implemented properly yet.
 
+    assertFalse(Any() is ObjCClass)
+    assertFalse(Any() is ObjCClassOf<*>)
+    assertFalse(NSObject().asAny() is ObjCClass)
+    assertFalse(NSObject().asAny() is ObjCClassOf<*>)
+    assertTrue(NSObject.asAny() is ObjCClass)
+    assertTrue(NSObject.asAny() is ObjCClassOf<*>)
+
     assertEquals(3u, ("foo" as NSString).length())
     assertEquals(4u, ((1..4).joinToString("") as NSString).length())
     assertEquals(2u, (listOf(0, 1) as NSArray).count())
