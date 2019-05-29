@@ -32,7 +32,7 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
                 (receiver.leftNonCodeElements +
                         receiver.rightNonCodeElements +
                         selector.leftNonCodeElements +
-                        selector.rightNonCodeElements).dropSpaceesAtBegining()
+                        selector.rightNonCodeElements).dropSpacesAtBegining()
         }
 
         return when (conversion.replaceType) {

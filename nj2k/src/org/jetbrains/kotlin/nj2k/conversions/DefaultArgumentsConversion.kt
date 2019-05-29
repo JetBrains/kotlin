@@ -102,10 +102,10 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
 
                     return applyRecursive(on, ::remapParameterSymbol)
                 }
-
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
             }
             element.declarations -= method
+            calledMethod.appendNonCodeElementsFrom(method)
         }
 
         for (method in element.declarations) {

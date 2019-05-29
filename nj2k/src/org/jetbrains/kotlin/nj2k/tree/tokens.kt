@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.nj2k.tree
 interface JKNonCodeElement {
     val text: String
 }
+
 interface JKSpaceElement : JKNonCodeElement
 
 interface JKCommentElement : JKNonCodeElement
@@ -29,6 +30,15 @@ fun JKNonCodeElementsListOwner.takeNonCodeElementsFrom(other: JKNonCodeElementsL
     leftNonCodeElements = other.leftNonCodeElements
     rightNonCodeElements = other.rightNonCodeElements
 }
+
+
+fun JKNonCodeElementsListOwner.appendNonCodeElementsFrom(other: JKNonCodeElementsListOwner) {
+    leftNonCodeElements = other.leftNonCodeElements + leftNonCodeElements
+    rightNonCodeElements = rightNonCodeElements + other.rightNonCodeElements
+}
+
+fun List<JKNonCodeElement>.dropSpacesAtBegining() =
+    dropWhile { it is JKSpaceElement }
 
 fun JKTreeElement.commentsFromInside(): List<JKCommentElement> {
     val comments = mutableListOf<JKCommentElement>()
