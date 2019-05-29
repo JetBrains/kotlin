@@ -133,7 +133,7 @@ private val processings: List<GeneralPostProcessing> = listOf(
         intentionBasedProcessing(
             RemoveRedundantCallsOfConversionMethodsIntention()
         ),
-        generalInspectionBasedProcessing(LiftReturnOrAssignmentInspection()),
+        generalInspectionBasedProcessing(LiftReturnOrAssignmentInspection(skipLongExpressions = false)),
         generalInspectionBasedProcessing(MayBeConstantInspection()),
         intentionBasedProcessing(RemoveEmptyPrimaryConstructorIntention()),
         diagnosticBasedProcessing(Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { element: KtDotQualifiedExpression, _ ->
