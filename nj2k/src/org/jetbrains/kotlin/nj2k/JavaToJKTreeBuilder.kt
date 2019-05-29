@@ -235,16 +235,7 @@ class JavaToJKTreeBuilder constructor(
         fun IElementType.toJK(): JKOperator = JKJavaOperatorImpl.tokenToOperator[this] ?: error("Unsupported token-type: $this")
 
         fun PsiPrefixExpression.toJK(): JKExpression {
-            return JKPrefixExpressionImpl(operand.toJK(), operationSign.tokenType.toJK()).let {
-                if (it.operator.token in listOf(JavaTokenType.PLUS, JavaTokenType.MINUS)
-                    && it.expression is JKLiteralExpression
-                ) {
-                    JKJavaLiteralExpressionImpl(
-                        it.operator.token.text + (it.expression as JKLiteralExpression).literal,
-                        (it.expression as JKLiteralExpression).type
-                    )
-                } else it
-            }.also {
+            return JKPrefixExpressionImpl(operand.toJK(), operationSign.tokenType.toJK()).also {
                 it.assignNonCodeElements(this)
             }
         }

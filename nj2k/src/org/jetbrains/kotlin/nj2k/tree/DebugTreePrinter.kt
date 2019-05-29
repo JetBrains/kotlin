@@ -93,8 +93,9 @@ private class DebugTreePrinter : JKVisitorVoid {
     }
 
     fun printSymbol(symbol: JKSymbol) {
-        if (symbol is JKUniverseSymbol<*>) {
-            printer.printWithNoIndent(symbol.target.describe())
+        val target = symbol.target
+        if (target is JKTreeElement) {
+            printer.printWithNoIndent(target.describe())
         } else {
             printer.printWithNoIndent("Psi")
         }
