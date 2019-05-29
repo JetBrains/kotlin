@@ -233,6 +233,7 @@ public abstract class AbstractExternalSystemConfigurable<
       List<ProjectSettings> projectSettings = new ArrayList<>();
       for (ExternalSystemSettingsControl<ProjectSettings> control : myProjectSettingsControls) {
         ProjectSettings s = newProjectSettings();
+        s.setupNewProjectDefault();
         control.apply(s);
         projectSettings.add(s);
       }
