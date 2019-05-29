@@ -51,10 +51,7 @@ import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.*;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -1052,6 +1049,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
             }
           })
         );
+      }
+      catch (IndexNotReadyException ignore) {
       }
       finally {
         if (myHeavyAlarm.getActiveRequestCount() <= 1) { // only the current request
