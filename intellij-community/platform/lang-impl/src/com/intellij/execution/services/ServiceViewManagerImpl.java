@@ -75,6 +75,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   public ServiceViewManagerImpl(@NotNull Project project) {
     myProject = project;
     myModel = new ServiceModel(myProject);
+    Disposer.register(myProject, myModel);
     myModelFilter = new ServiceModelFilter();
     myProject.getMessageBus().connect(myModel).subscribe(ServiceEventListener.TOPIC, e -> myModel.refresh(e).onSuccess(o -> {
       updateToolWindow(!myModel.getRoots().isEmpty(), true);
@@ -110,7 +111,6 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     myAllServicesContent.setHelpId(getToolWindowContextHelpId());
     myAllServicesContent.setCloseable(false);
 
-    Disposer.register(myAllServicesContent, myModel);
     Disposer.register(myAllServicesContent, myAllServicesView);
     Disposer.register(myAllServicesContent, myAllServicesView.getModel());
     Disposer.register(myAllServicesContent, () -> {
