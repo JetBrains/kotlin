@@ -561,7 +561,6 @@ public class PsiVFSListener implements BulkFileListener {
   }
 
   private class MyModuleRootListener implements ModuleRootListener {
-    private VirtualFile[] myOldContentRoots;
     private int depthCounter; // accessed from within write action only
     @Override
     public void beforeRootsChange(@NotNull final ModuleRootEvent event) {
@@ -573,10 +572,6 @@ public class PsiVFSListener implements BulkFileListener {
 
           PsiTreeChangeEventImpl treeEvent = new PsiTreeChangeEventImpl(myManager);
           treeEvent.setPropertyName(PsiTreeChangeEvent.PROP_ROOTS);
-          final VirtualFile[] contentRoots = myProjectRootManager.getContentRoots();
-          LOG.assertTrue(myOldContentRoots == null);
-          myOldContentRoots = contentRoots;
-          treeEvent.setOldValue(contentRoots);
           myManager.beforePropertyChange(treeEvent);
         }
       );
@@ -597,11 +592,6 @@ public class PsiVFSListener implements BulkFileListener {
 
           PsiTreeChangeEventImpl treeEvent = new PsiTreeChangeEventImpl(myManager);
           treeEvent.setPropertyName(PsiTreeChangeEvent.PROP_ROOTS);
-          final VirtualFile[] contentRoots = myProjectRootManager.getContentRoots();
-          treeEvent.setNewValue(contentRoots);
-          LOG.assertTrue(myOldContentRoots != null);
-          treeEvent.setOldValue(myOldContentRoots);
-          myOldContentRoots = null;
           myManager.propertyChanged(treeEvent);
         }
       );
