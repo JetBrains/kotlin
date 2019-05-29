@@ -64,7 +64,7 @@ class LookupUi {
   private int myMaximumHeight = Integer.MAX_VALUE;
   private Boolean myPositionedAbove = null;
 
-  LookupUi(@NotNull LookupImpl lookup, Advertiser advertiser, JBList list/*, Project project*/) {
+  LookupUi(@NotNull LookupImpl lookup, Advertiser advertiser, JBList list) {
     myLookup = lookup;
     myAdvertiser = advertiser;
     myList = list;

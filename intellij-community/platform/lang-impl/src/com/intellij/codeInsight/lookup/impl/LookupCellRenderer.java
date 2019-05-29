@@ -50,7 +50,6 @@ import static com.intellij.codeInsight.documentation.DocumentationComponent.COLO
 public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupCellRenderer");
 
-  //TODO[kb]: move all these awesome constants to Editor's Fonts & Colors settings
   private Icon myEmptyIcon = JBUI.scale(EmptyIcon.create(5));
   private final Font myNormalFont;
   private final Font myBoldFont;
