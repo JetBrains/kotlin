@@ -10,7 +10,8 @@ buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
 
     // when updating please also update JPS artifacts configuration: https://jetbrains.quip.com/zzGUAYSJ6gv3/JPS-Build-update-bootstrap
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.40-dev-431", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.Local(project.property("bootstrap.compiler.version").toString(), localPath=project.property("bootstrap.compiler.repository").toString()))
+
 
     repositories.withRedirector(project) {
         bootstrapKotlinRepo?.let(::maven)
@@ -742,4 +743,9 @@ allprojects {
             repositories.redirect()
         }
     }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.freeCompilerArgs += "-Xdump-model=" + project.property("dump.model.output").toString()
+    }
 }
+
