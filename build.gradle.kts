@@ -922,6 +922,10 @@ tasks.register("findShadowJarsInClasspath") {
             }
         }
     }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.freeCompilerArgs += "-Xdump-model=" + project.property("dump.model.output").toString()
+    }
 }
 
 val Jar.outputFile: File
