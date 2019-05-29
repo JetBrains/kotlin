@@ -1,11 +1,10 @@
 package org.jetbrains.kotlin.backend.konan.lower.matchers
 
-import org.jetbrains.kotlin.backend.konan.ir.fqNameSafe
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.name.FqName
 
 internal interface IrFunctionMatcher : (IrFunction) -> Boolean
@@ -53,7 +52,7 @@ internal class FqNameMatcher(
 ) : IrFunctionMatcher {
 
     override fun invoke(function: IrFunction): Boolean {
-        return restriction(function.fqNameSafe)
+        return restriction(function.fqNameForIrSerialization)
     }
 }
 

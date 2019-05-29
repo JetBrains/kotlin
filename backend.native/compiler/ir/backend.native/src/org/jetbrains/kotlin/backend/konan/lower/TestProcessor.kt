@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.fqNameSafe
 import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.ir.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -236,7 +235,7 @@ internal class TestProcessor (val context: Context) {
                                 warn("Annotation $annotation is not allowed for methods of a companion object")
 
                             constructors.none { it.valueParameters.size == 0 } ->
-                                warn("Test class has no default constructor: $fqNameSafe")
+                                warn("Test class has no default constructor: $fqNameForIrSerialization")
 
                             else ->
                                 testClasses.getTestClass(irClass).registerFunction(function, kind, ignored)
@@ -267,12 +266,12 @@ internal class TestProcessor (val context: Context) {
             // Test runner requires test functions to have the following signature: () -> Unit.
             if (!returnType.isUnit()) {
                 context.reportCompilationError(
-                        "Test function must return Unit: $fqNameSafe", irFile, this
+                        "Test function must return Unit: $fqNameForIrSerialization", irFile, this
                 )
             }
             if (valueParameters.isNotEmpty()) {
                 context.reportCompilationError(
-                        "Test function must have no arguments: $fqNameSafe", irFile, this
+                        "Test function must have no arguments: $fqNameForIrSerialization", irFile, this
                 )
             }
         }
@@ -498,7 +497,7 @@ internal class TestProcessor (val context: Context) {
             }
 
             val constructor = buildClassSuiteConstructor(
-                    testClass.fqNameSafe.toString(), testClassType, testCompanionType,
+                    testClass.fqNameForIrSerialization.toString(), testClassType, testCompanionType,
                     symbol, this, functions, testClass.ignored
             )
 

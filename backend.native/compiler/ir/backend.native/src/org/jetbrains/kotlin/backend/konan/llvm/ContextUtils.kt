@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
@@ -157,7 +157,7 @@ internal interface ContextUtils : RuntimeAware {
      * It may be declared as external function prototype.
      */
     val IrFunction.llvmFunction: LLVMValueRef
-    get() = llvmFunctionOrNull ?: error("$name in $file/${parent.fqNameSafe}")
+    get() = llvmFunctionOrNull ?: error("$name in $file/${parent.fqNameForIrSerialization}")
 
     val IrFunction.llvmFunctionOrNull: LLVMValueRef?
         get() {

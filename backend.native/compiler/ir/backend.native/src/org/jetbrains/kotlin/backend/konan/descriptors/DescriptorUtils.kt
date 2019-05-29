@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.types.SimpleType
@@ -97,7 +97,7 @@ internal val arrayTypes = setOf(
 
 
 internal val IrClass.isArray: Boolean
-    get() = this.fqNameSafe.asString() in arrayTypes
+    get() = this.fqNameForIrSerialization.asString() in arrayTypes
 
 
 fun IrClass.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT

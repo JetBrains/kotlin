@@ -39,7 +39,7 @@ private fun KonanSymbols.getTypeConversionImpl(
         actualInlinedClass == null && expectedInlinedClass == null -> null
         actualInlinedClass != null && expectedInlinedClass == null -> context.getBoxFunction(actualInlinedClass)
         actualInlinedClass == null && expectedInlinedClass != null -> context.getUnboxFunction(expectedInlinedClass)
-        else -> error("actual type is ${actualInlinedClass?.fqNameSafe}, expected ${expectedInlinedClass?.fqNameSafe}")
+        else -> error("actual type is ${actualInlinedClass?.fqNameForIrSerialization}, expected ${expectedInlinedClass?.fqNameForIrSerialization}")
     }?.symbol
 }
 

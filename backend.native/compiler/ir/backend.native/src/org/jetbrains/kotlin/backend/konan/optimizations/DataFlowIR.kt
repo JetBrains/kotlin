@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -508,7 +508,7 @@ internal object DataFlowIR {
 
             val isFinal = irClass.isFinal()
             val isAbstract = irClass.isAbstract()
-            val name = irClass.fqNameSafe.asString()
+            val name = irClass.fqNameForIrSerialization.asString()
 
             classMap[irClass]?.let { return it }
 
@@ -569,7 +569,7 @@ internal object DataFlowIR {
 
         // TODO: use from LlvmDeclarations.
         private fun getFqName(declaration: IrDeclaration): FqName =
-                declaration.parent.fqNameSafe.child(declaration.name)
+                declaration.parent.fqNameForIrSerialization.child(declaration.name)
 
         private val IrFunction.internalName get() = getFqName(this).asString() + "#internal"
 

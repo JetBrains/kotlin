@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -44,7 +44,7 @@ internal class LlvmDeclarations(
     private val fields: Map<IrField, FieldLlvmDeclarations>,
     private val staticFields: Map<IrField, StaticFieldLlvmDeclarations>,
     private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
-    fun forFunction(function: IrFunction) = forFunctionOrNull(function) ?: with(function){error("$name in $file/${parent.fqNameSafe}")}
+    fun forFunction(function: IrFunction) = forFunctionOrNull(function) ?: with(function){error("$name in $file/${parent.fqNameForIrSerialization}")}
     fun forFunctionOrNull(function: IrFunction) = functions[function]
 
     fun forClass(irClass: IrClass) = classes[irClass] ?:
@@ -131,7 +131,7 @@ private fun Context.getDeclaredFields(irClass: IrClass): List<IrField> {
         return fields
 
     return fields.sortedBy {
-        it.fqNameSafe.localHash.value
+        it.fqNameForIrSerialization.localHash.value
     }
 }
 

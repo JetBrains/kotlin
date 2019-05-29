@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -47,8 +47,8 @@ fun KotlinType.isObjCObjectType(): Boolean =
 private fun IrClass.getAllSuperClassifiers(): List<IrClass> =
         listOf(this) + this.superTypes.flatMap { (it.classifierOrFail.owner as IrClass).getAllSuperClassifiers() }
 
-internal fun IrClass.isObjCClass() = this.getAllSuperClassifiers().any { it.fqNameSafe == objCObjectFqName } &&
-        this.parent.fqNameSafe != interopPackageName
+internal fun IrClass.isObjCClass() = this.getAllSuperClassifiers().any { it.fqNameForIrSerialization == objCObjectFqName } &&
+        this.parent.fqNameForIrSerialization != interopPackageName
 
 @Deprecated("Use IR version rather than descriptor version")
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&

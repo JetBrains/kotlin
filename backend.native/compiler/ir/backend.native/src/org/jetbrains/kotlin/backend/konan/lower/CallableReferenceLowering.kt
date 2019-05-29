@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.ir.fqNameSafe
+import org.jetbrains.kotlin.backend.konan.ir.fqNameForIrSerialization
 import org.jetbrains.kotlin.backend.konan.ir.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.descriptors.*
@@ -278,7 +278,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
         }
 
         private val IrFunction.fullName: String
-            get() = parent.fqNameSafe.child(Name.identifier(functionName)).asString()
+            get() = parent.fqNameForIrSerialization.child(Name.identifier(functionName)).asString()
 
         private fun buildInvokeMethod(superFunction: IrSimpleFunction) = WrappedSimpleFunctionDescriptor().let {
             IrFunctionImpl(

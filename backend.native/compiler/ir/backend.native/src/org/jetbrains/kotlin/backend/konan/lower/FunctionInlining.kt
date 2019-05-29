@@ -150,7 +150,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                     val oldThis = constructedClass.thisReceiver!!
                     val newThis = currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
                             irExpression = constructorCall,
-                            nameHint = constructedClass.fqNameSafe.toString() + ".this"
+                            nameHint = constructedClass.fqNameForIrSerialization.toString() + ".this"
                     )
                     statements[0] = newThis
                     substituteMap[oldThis] = irGet(newThis)

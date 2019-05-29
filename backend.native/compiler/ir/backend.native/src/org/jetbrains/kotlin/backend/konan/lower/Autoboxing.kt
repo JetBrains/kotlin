@@ -218,7 +218,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
         if (declaration.isInlined()) {
             if (declaration.isUsedAsBoxClass()) {
-                if (KonanPrimitiveType.byFqName[declaration.fqNameSafe.toUnsafe()] != null) {
+                if (KonanPrimitiveType.byFqName[declaration.fqNameForIrSerialization.toUnsafe()] != null) {
                     buildBoxField(declaration)
                 }
 

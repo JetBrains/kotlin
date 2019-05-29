@@ -39,7 +39,7 @@ val IrDeclaration.name: Name
 
 private val SPECIAL_INIT_NAME = Name.special("<init>")
 
-val IrField.fqNameSafe: FqName get() = this.parent.fqNameSafe.child(this.name)
+val IrField.fqNameForIrSerialization: FqName get() = this.parent.fqNameForIrSerialization.child(this.name)
 
 /**
  * @return naturally-ordered list of all parameters available inside the function body.
@@ -53,15 +53,15 @@ val IrFunction.allParameters: List<IrValueParameter>
         explicitParameters
     }
 
-fun IrClass.isUnit() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.unit.toSafe()
+fun IrClass.isUnit() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.unit.toSafe()
 
-fun IrClass.isKotlinArray() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.array.toSafe()
+fun IrClass.isKotlinArray() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.array.toSafe()
 
 val IrClass.superClasses get() = this.superTypes.map { it.classifierOrFail as IrClassSymbol }
 fun IrClass.getSuperClassNotAny() = this.superClasses.map { it.owner }.atMostOne { !it.isInterface && !it.isAny() }
 
-fun IrClass.isAny() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.any.toSafe()
-fun IrClass.isNothing() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.nothing.toSafe()
+fun IrClass.isAny() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.any.toSafe()
+fun IrClass.isNothing() = this.fqNameForIrSerialization == KotlinBuiltIns.FQ_NAMES.nothing.toSafe()
 
 fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { it.isInterface }
 

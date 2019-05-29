@@ -586,7 +586,7 @@ private fun IrType.isCEnumType(): Boolean {
     if (!enumClass.isEnumClass) return false
 
     return enumClass.superTypes
-            .any { (it.classifierOrNull?.owner as? IrClass)?.fqNameSafe == FqName("kotlinx.cinterop.CEnum") }
+            .any { (it.classifierOrNull?.owner as? IrClass)?.fqNameForIrSerialization == FqName("kotlinx.cinterop.CEnum") }
 }
 
 // TODO: get rid of consulting descriptors for annotations.

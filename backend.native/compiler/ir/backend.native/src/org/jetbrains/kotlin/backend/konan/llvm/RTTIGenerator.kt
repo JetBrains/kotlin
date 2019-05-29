@@ -173,7 +173,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     fun generate(irClass: IrClass) {
 
-        val className = irClass.fqNameSafe
+        val className = irClass.fqNameForIrSerialization
 
         val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
 
@@ -283,7 +283,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         if (context.shouldOptimize())
             return NullPointer(runtime.extendedTypeInfoType)
 
-        val className = irClass.fqNameSafe.toString()
+        val className = irClass.fqNameForIrSerialization.toString()
         val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
         val bodyType = llvmDeclarations.bodyType
         val elementType = arrayClasses[className]
@@ -333,7 +333,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         }
 
         return staticData.placeGlobalConstArray(
-                name = "kassociatedobjects:${irClass.fqNameSafe}",
+                name = "kassociatedobjects:${irClass.fqNameForIrSerialization}",
                 elemType = runtime.associatedObjectTableRecordType,
                 elements = associatedObjectTableRecords + Struct(runtime.associatedObjectTableRecordType, null, null)
         )
@@ -417,7 +417,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         irClass.isLocal -> ReflectionInfo(packageName = null, relativeName = irClass.name.asString())
 
         else -> ReflectionInfo(
-                packageName = irClass.findPackage().fqName.asString(),
+                packageName = irClass.findPackage().fqNameForIrSerialization.asString(),
                 relativeName = generateSequence(irClass) { it.parent as? IrClass }
                         .toList().reversed()
                         .joinToString(".") { it.name.asString() }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.konan.library.uniqueName
@@ -131,7 +131,7 @@ object KonanMangler : KotlinManglerImpl() {
 
             val parent = this.parent
 
-            val containingDeclarationPart = parent.fqNameSafe.let {
+            val containingDeclarationPart = parent.fqNameForIrSerialization.let {
                 if (it.isRoot) "" else "$it."
             }
             return "kfun:$containingDeclarationPart$functionName"
@@ -141,7 +141,7 @@ object KonanMangler : KotlinManglerImpl() {
 internal val IrClass.writableTypeInfoSymbolName: String
     get() {
         assert (this.isExported())
-        return "ktypew:" + this.fqNameSafe.toString()
+        return "ktypew:" + this.fqNameForIrSerialization.toString()
     }
 
 internal val theUnitInstanceName = "kobj:kotlin.Unit"
@@ -152,7 +152,7 @@ internal val IrClass.objectInstanceFieldSymbolName: String
         assert (this.kind.isSingleton)
         assert (!this.isUnit())
 
-        return "kobjref:$fqNameSafe"
+        return "kobjref:$fqNameForIrSerialization"
     }
 
 internal val IrClass.objectInstanceShadowFieldSymbolName: String
@@ -162,7 +162,7 @@ internal val IrClass.objectInstanceShadowFieldSymbolName: String
         assert (!this.isUnit())
         assert (this.objectIsShared)
 
-        return "kshadowobjref:$fqNameSafe"
+        return "kshadowobjref:$fqNameForIrSerialization"
     }
 
 val IrFunction.functionName get() = with(KonanMangler) { functionName }

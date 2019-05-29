@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.fqNameSafe
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
@@ -97,7 +97,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
             ?: if (irClass.annotations.hasAnnotation(exportObjCClassAnnotation))
                 irClass.name.asString()
             else if (irClass.isExported()) {
-                irClass.fqNameSafe.asString()
+                irClass.fqNameForIrSerialization.asString()
             } else {
                 null // Generate as anonymous.
             }
