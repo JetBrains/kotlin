@@ -142,29 +142,7 @@ abstract class AbstractAnnotationDeserializer(
                 )
             }
 //            ARRAY -> {
-//                val expectedIsArray = KotlinBuiltIns.isArray(expectedType) || KotlinBuiltIns.isPrimitiveArray(expectedType)
-//                val arrayElements = value.arrayElementList
-//
-//                val actualArrayType =
-//                    if (arrayElements.isNotEmpty()) {
-//                        val actualElementType = resolveArrayElementType(arrayElements.first(), nameResolver)
-//                        builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(actualElementType)
-//                            ?: builtIns.getArrayType(Variance.INVARIANT, actualElementType)
-//                    } else {
-//                        // In the case of empty array, no element has the element type, so we fall back to the expected type, if any.
-//                        // This is not very accurate when annotation class has been changed without recompiling clients,
-//                        // but should not in fact matter because the value is empty anyway
-//                        if (expectedIsArray) expectedType else builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType)
-//                    }
-//
-//                val expectedElementType = builtIns.getArrayElementType(if (expectedIsArray) expectedType else actualArrayType)
-//
-//                ConstantValueFactory.createArrayValue(
-//                    arrayElements.map {
-//                        resolveValue(expectedElementType, it, nameResolver)
-//                    },
-//                    actualArrayType
-//                )
+//                TODO: see AnnotationDeserializer
 //            }
 //            else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
             else -> return null
