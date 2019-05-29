@@ -1399,6 +1399,66 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testClassBodyHasInitializedSuperType() = doFileTest(
+        """
+            open class A
+            class B : A()<caret>
+        """
+        ,
+        """
+            open class A
+            class B : A() {
+                <caret>
+            }
+        """
+    )
+
+    fun testClassBodyHasNotInitializedSuperType() = doFileTest(
+        """
+            open class A
+            class B : A<caret>
+        """
+        ,
+        """
+            open class A
+            class B : A() {
+                <caret>
+            }
+        """
+    )
+
+    fun testClassBodyHasNotInitializedSuperType2() = doFileTest(
+        """
+            sealed class A(val s: String)
+            class B : A<caret>
+        """
+        ,
+        """
+            sealed class A(val s: String)
+            class B : A() {
+                <caret>
+            }
+        """
+    )
+
+    fun testClassBodyHasNotInitializedSuperType3() = doFileTest(
+        """
+            interface I
+            interface J
+            abstract class A
+            class B : I, A, J<caret>
+        """
+        ,
+        """
+            interface I
+            interface J
+            abstract class A
+            class B : I, A(), J {
+                <caret>
+            }
+        """
+    )
+
     fun testEmptyLine() = doFileTest(
         """fun foo() {}
 <caret>""",

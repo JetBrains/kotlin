@@ -19,8 +19,12 @@ package org.jetbrains.kotlin.idea.editor.fixers
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInDispatchThread
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 
@@ -28,7 +32,7 @@ class KotlinClassBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnte
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtClassOrObject) return
 
-        val body = psiElement.getBody()
+        val body = psiElement.body
         if (!body?.text.isNullOrBlank()) return
 
         var endOffset = psiElement.range.end
@@ -37,6 +41,17 @@ class KotlinClassBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnte
             body.getPrevSiblingIgnoringWhitespaceAndComments()?.let {
                 endOffset = it.endOffset
             }
+        }
+
+        val notInitializedSuperType = allowResolveInDispatchThread {
+            psiElement.superTypeListEntries.firstOrNull {
+                if (it is KtSuperTypeCallEntry) return@firstOrNull false
+                (it.typeAsUserType?.referenceExpression?.mainReference?.resolve() as? KtClass)?.isInterface() != true
+            }            
+        }
+        if (notInitializedSuperType != null) {
+            editor.document.insertString(notInitializedSuperType.endOffset, "()")
+            endOffset += 2
         }
 
         editor.caretModel.moveToOffset(endOffset - 1)
