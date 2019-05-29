@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.nj2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+    private fun JKMethod.canBeGetterOrSetter() =
+        name.value.asGetterName() != null
+                || name.value.asSetterName() != null
+
 
     private fun JKMethod.canNotBeMerged(): Boolean =
         modality == Modality.ABSTRACT
@@ -23,6 +27,7 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
                 || hasExtraModifier(ExtraModifier.SYNCHRONIZED)
                 || context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi()!!)
                 || annotationList.annotations.isNotEmpty()
+                || canBeGetterOrSetter()
 
 
     override fun applyToElement(element: JKTreeElement): JKTreeElement {

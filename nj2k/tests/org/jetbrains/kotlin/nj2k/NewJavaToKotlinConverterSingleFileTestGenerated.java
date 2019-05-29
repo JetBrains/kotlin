@@ -1376,6 +1376,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/detectProperties/Comments.java");
         }
 
+        @TestMetadata("CyclicInheritance.java")
+        public void testCyclicInheritance() throws Exception {
+            runTest("nj2k/testData/newJ2k/detectProperties/CyclicInheritance.java");
+        }
+
         @TestMetadata("DataClass.java")
         public void testDataClass() throws Exception {
             runTest("nj2k/testData/newJ2k/detectProperties/DataClass.java");
@@ -1509,6 +1514,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("KeywordPropertyName.java")
         public void testKeywordPropertyName() throws Exception {
             runTest("nj2k/testData/newJ2k/detectProperties/KeywordPropertyName.java");
+        }
+
+        @TestMetadata("kt-31700.java")
+        public void testKt_31700() throws Exception {
+            runTest("nj2k/testData/newJ2k/detectProperties/kt-31700.java");
         }
 
         @TestMetadata("Overrides.java")

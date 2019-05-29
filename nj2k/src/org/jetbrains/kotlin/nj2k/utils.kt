@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.nj2k
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtFunction
 
 fun <T> List<T>.replace(element: T, replacer: T): List<T> {
     val mutableList = toMutableList()
@@ -21,3 +25,24 @@ inline fun <reified T : PsiElement> PsiElement.parentOfType(): T? =
 
 inline fun <reified T : PsiElement> PsiElement.parentsOfType(): Sequence<T> = parentsOfType(T::class.java)
 
+fun String.asGetterName() =
+    takeIf { JvmAbi.isGetterName(it) }
+        ?.removePrefix("get")
+        ?.takeIf {
+            it.isNotEmpty() && it.first().isUpperCase()
+                    || it.startsWith("is") && it.length > 2 && it[2].isUpperCase()
+        }?.decapitalize()
+        ?.escaped()
+
+fun String.asSetterName() =
+    takeIf { JvmAbi.isSetterName(it) }
+        ?.removePrefix("set")
+        ?.takeIf { it.isNotEmpty() && it.first().isUpperCase() }
+        ?.decapitalize()
+        ?.escaped()
+
+private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
+
+fun String.escaped() =
+    if (this in KEYWORDS || '$' in this) "`$this`"
+    else this

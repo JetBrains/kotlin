@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.nj2k.conversions.parentOfType
@@ -996,13 +994,6 @@ private fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKType): Boo
         else -> false
     }
 }
-
-private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
-
-private fun String.escaped() =
-    if (this in KEYWORDS || '$' in this) "`$this`"
-    else this
-
 
 private val mappedToKotlinFqNames =
     setOf(
