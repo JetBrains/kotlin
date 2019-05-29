@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.idea.caches.trackers
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.PomManager
 import com.intellij.pom.PomModelAspect
@@ -21,10 +18,7 @@ import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.idea.caches.project.cached
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -172,37 +166,3 @@ private val FILE_OUT_OF_BLOCK_MODIFICATION_COUNT = Key<Long>("FILE_OUT_OF_BLOCK_
 val KtFile.outOfBlockModificationCount: Long
     get() = getUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT) ?: 0
 
-class KotlinModuleModificationTracker(val module: Module) : ModificationTracker {
-    private val kotlinModCountListener =
-        KotlinCodeBlockModificationListener.getInstance(module.project)
-    private val psiModificationTracker = PsiModificationTracker.SERVICE.getInstance(module.project)
-    private val dependencies by lazy {
-        module.cached(CachedValueProvider {
-            CachedValueProvider.Result.create(
-                HashSet<Module>().apply {
-                    ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
-                        CommonProcessors.CollectProcessor(this)
-                    )
-                },
-                ProjectRootModificationTracker.getInstance(module.project)
-            )
-        })
-    }
-
-    override fun getModificationCount(): Long {
-        val currentGlobalCount = psiModificationTracker.outOfCodeBlockModificationCount
-
-        if (kotlinModCountListener.hasPerModuleModificationCounts()) {
-            val selfCount = kotlinModCountListener.getModificationCount(module)
-            if (selfCount == currentGlobalCount) return selfCount
-            var maxCount = selfCount
-            for (dependency in dependencies) {
-                val depCount = kotlinModCountListener.getModificationCount(dependency)
-                if (depCount == currentGlobalCount) return currentGlobalCount
-                if (depCount > maxCount) maxCount = depCount
-            }
-            return maxCount
-        }
-        return currentGlobalCount
-    }
-}
