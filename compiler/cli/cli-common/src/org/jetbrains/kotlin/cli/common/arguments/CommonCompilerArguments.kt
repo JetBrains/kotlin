@@ -645,6 +645,12 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         }
 
     @Argument(
+        value = "-Xdump-model",
+        description = "Don't even try to use it"
+    )
+    var dumpArgumentsDir: String? by FreezableVar(null)
+
+    @Argument(
         value = "-Xconsistent-data-class-copy-visibility",
         description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. " +
                 "See https://youtrack.jetbrains.com/issue/KT-11914"

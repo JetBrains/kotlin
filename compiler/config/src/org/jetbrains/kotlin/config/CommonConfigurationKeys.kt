@@ -54,6 +54,9 @@ object CommonConfigurationKeys {
     val METADATA_KLIB = CompilerConfigurationKey.create<Boolean>("Produce metadata klib")
 
     @JvmField
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
+
+    @JvmField
     val USE_FIR_EXTRA_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extra checkers")
 
     @JvmField

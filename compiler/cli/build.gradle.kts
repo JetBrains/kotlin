@@ -34,6 +34,8 @@ dependencies {
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom:2.0.6"))
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
