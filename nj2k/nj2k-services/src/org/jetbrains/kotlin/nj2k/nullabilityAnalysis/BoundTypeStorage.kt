@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.nj2k.postProcessing.resolve
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
@@ -97,8 +98,24 @@ internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisCon
                 analysisAnalysisContext.declarationToTypeVariable[it]
             } ?: KtPsiUtil.deparenthesize(this)?.let { analysisAnalysisContext.declarationToTypeVariable[it] }
 
-    private fun KtExpression.toBoundTypeAsTypeVariable(): BoundType? =
-        resolveToTypeVariable()?.let { TypeVariableBoundType(it, getForcedNullability()) }
+    private fun KtExpression.toBoundTypeAsTypeVariable(): BoundType? {
+        val typeVariableBoundType = resolveToTypeVariable()?.let {
+            TypeVariableBoundType(it, null)
+        } ?: return null
+        val asReferenceToVarArgParameter =
+            safeAs<KtNameReferenceExpression>()
+                ?.mainReference
+                ?.resolve()
+                ?.safeAs<KtParameter>()
+                ?.takeIf { it.isVarArg }
+        return if (asReferenceToVarArgParameter != null) {
+            GenericBoundType(
+                UnknownClassReference("Array"),//TODO
+                listOf(BoundTypeTypeParameter(typeVariableBoundType, Variance.INVARIANT)),
+                isNull = false
+            )
+        } else typeVariableBoundType
+    }
 
     private fun KtExpression.toBoundTypeAsCallExpression(contextBoundType: BoundType?): BoundType? {
         val typeElement = getCalleeExpressionIfAny()
@@ -135,12 +152,9 @@ internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisCon
     }
 
     private fun KtExpression.toBoundType(contextBoundType: BoundType?): BoundType? =
-        run {
-            toBoundTypeAsTypeVariable()?.also { return@run it }
-            toBoundTypeAsCallExpression(contextBoundType)?.also { return@run it }
-            toBoundTypeAsCastExpression()?.also { return@run it }
-            return@run null
-        }?.withForcedNullability(getForcedNullability())
+        toBoundTypeAsTypeVariable()
+            ?: toBoundTypeAsCallExpression(contextBoundType)
+            ?: toBoundTypeAsCastExpression()
 
     private fun KotlinType.toBoundType(
         contextBoundType: BoundType?,

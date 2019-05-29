@@ -20,7 +20,6 @@ internal class ConstraintBuilder(val boundTypeStorage: BoundTypeStorage) {
 
     fun KtExpression.addEqualsNullabilityConstraint(nullability: Nullability, cameFrom: ConstraintCameFrom) {
         val boundType = boundTypeStorage.boundTypeFor(this).safeAs<TypeVariableBoundType>()
-            ?.withForcedNullability(getForcedNullability())
             ?: return
         constraints += EqualConstraint(boundType.bound, LiteralBound(nullability), cameFrom)
     }
@@ -35,7 +34,6 @@ internal class ConstraintBuilder(val boundTypeStorage: BoundTypeStorage) {
 
     fun KtExpression.addSubtypeNullabilityConstraint(upperBoundType: BoundType, cameFrom: ConstraintCameFrom) {
         boundTypeStorage.boundTypeFor(this)
-            .withForcedNullability(getForcedNullability())
             .subtypeOf(upperBoundType, cameFrom)
     }
 
