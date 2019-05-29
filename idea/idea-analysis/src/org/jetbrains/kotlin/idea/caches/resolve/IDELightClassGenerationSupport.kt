@@ -67,7 +67,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     private inner class KtUltraLightSupportImpl(private val element: KtElement, private val module: Module) : KtUltraLightSupport {
 
-        fun KtDeclaration.forLogString(): String? = when (this) {
+        private fun KtDeclaration.forLogString(): String? = when (this) {
             is KtClassOrObject -> this.fqName?.asString()
             is KtFile -> this.packageFqNameByTree.asString()
             else -> this.text

@@ -51,19 +51,8 @@ object UltraLightChecker {
         val ultraLightClass = KtLightClassForFacade.createForFacadeNoCache(fqName, searchScope, project) ?: return null
         KtUltraLightSupport.forceUsingOldLightClasses = oldForceFlag
 
-        if (gold != null) {
-            Assert.assertFalse(gold.javaClass.name.contains("Ultra"))
-        }
+        checkClassEquivalenceByRendering(gold, ultraLightClass)
 
-        val goldText = gold?.renderClass().orEmpty()
-        val ultraText = ultraLightClass.renderClass()
-
-        if (goldText != ultraText) {
-            Assert.assertEquals(
-                "// Classic implementation:\n$goldText",
-                "// Ultra-light implementation:\n$ultraText"
-            )
-        }
         return ultraLightClass
     }
 
@@ -71,6 +60,12 @@ object UltraLightChecker {
         val gold = KtLightClassForSourceDeclaration.createNoCache(ktClass, forceUsingOldLightClasses = true)
         val ultraLightClass = LightClassGenerationSupport.getInstance(ktClass.project).createUltraLightClass(ktClass) ?: return null
 
+        checkClassEquivalenceByRendering(gold, ultraLightClass)
+
+        return ultraLightClass
+    }
+
+    private fun checkClassEquivalenceByRendering(gold: PsiClass?, ultraLightClass: PsiClass) {
         if (gold != null) {
             Assert.assertFalse(gold.javaClass.name.contains("Ultra"))
         }
@@ -84,7 +79,6 @@ object UltraLightChecker {
                 "// Ultra-light implementation:\n$ultraText"
             )
         }
-        return ultraLightClass
     }
 
     private fun PsiAnnotation.renderAnnotation() =

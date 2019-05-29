@@ -174,7 +174,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     private val _typeParameterList: PsiTypeParameterList by lazyPub { buildTypeParameterList() }
 
-    open protected fun buildTypeParameterList() = LightClassUtil.buildLightTypeParameterList(this, classOrObject)
+    protected open fun buildTypeParameterList() = LightClassUtil.buildLightTypeParameterList(this, classOrObject)
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
 
@@ -459,10 +459,8 @@ fun KtLightClassForSourceDeclaration.isPossiblyAffectedByAllOpen() =
     !isAnnotationType && !isInterface && kotlinOrigin.annotationEntries.isNotEmpty()
 
 fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
-    val outermostClass = KtPsiUtil.getOutermostClassOrObject(classOrObject)
+    return KtPsiUtil.getOutermostClassOrObject(classOrObject)
         ?: throw IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.text)
-
-    return outermostClass
 }
 
 interface LightClassInheritanceHelper {

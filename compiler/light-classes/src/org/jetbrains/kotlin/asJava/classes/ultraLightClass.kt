@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.psi.*
+import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightMethodBuilder
@@ -40,10 +41,18 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     KtLightClassImpl(classOrObject) {
 
     private val membersBuilder by lazyPub {
-        UltraLightMembersCreator(this, isNamedObject(), classOrObject.hasModifier(SEALED_KEYWORD), true, support)
+        UltraLightMembersCreator(
+            this,
+            isNamedObject(),
+            classOrObject.hasModifier(SEALED_KEYWORD),
+            mangleInternalFunctions = true,
+            support = support
+        )
     }
 
     private val tooComplex: Boolean by lazyPub { support.isTooComplexForUltraLightGeneration(classOrObject) }
+
+    private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
 
     override fun isFinal(isFinalByPsi: Boolean) = if (tooComplex) super.isFinal(isFinalByPsi) else isFinalByPsi
 
@@ -205,13 +214,17 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         for (declaration in this.classOrObject.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
             when (declaration) {
-                is KtNamedFunction -> result.addAll(membersBuilder.createMethods(declaration, false))
-                is KtProperty -> result.addAll(membersBuilder.propertyAccessors(declaration, declaration.isVar, false, false))
+                is KtNamedFunction -> result.addAll(membersBuilder.createMethods(declaration, forceStatic = false))
+                is KtProperty -> result.addAll(
+                    membersBuilder.propertyAccessors(declaration, declaration.isVar, forceStatic = false, onlyJvmStatic = false)
+                )
             }
         }
 
         for (parameter in propertyParameters()) {
-            result.addAll(membersBuilder.propertyAccessors(parameter, parameter.isMutable, false, false))
+            result.addAll(
+                membersBuilder.propertyAccessors(parameter, parameter.isMutable, forceStatic = false, onlyJvmStatic = false)
+            )
         }
 
         if (!isInterface) {
@@ -366,12 +379,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun getScope(): PsiElement? = if (tooComplex) super.getScope() else parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean {
-        //TODO: Implement inheritor deep to avoid access to clsDelegate
-        return super.isInheritorDeep(baseClass, classToByPass)
-    }
-
-    private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
+    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
+        baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false
 
     override fun isDeprecated(): Boolean = _deprecated
 
