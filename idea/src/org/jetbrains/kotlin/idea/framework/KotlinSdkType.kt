@@ -30,10 +30,12 @@ class KotlinSdkType : SdkType("KotlinSDK") {
         val defaultHomePath: String
             get() = PathUtil.kotlinPathsForIdeaPlugin.homePath.absolutePath
 
-        fun setUpIfNeeded() {
+        @JvmOverloads
+        fun setUpIfNeeded(checkIfNeeded: () -> Boolean = { true }) {
             with(ProjectSdksModel()) {
                 reset(null)
                 if (sdks.any { it.sdkType is KotlinSdkType }) return
+                if (!checkIfNeeded()) return //do not create Kotlin SDK
                 addSdk(INSTANCE, defaultHomePath, null)
                 ApplicationManager.getApplication().invokeAndWait {
                     runWriteAction { apply(null, true) }

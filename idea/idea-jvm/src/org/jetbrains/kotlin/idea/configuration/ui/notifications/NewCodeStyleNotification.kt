@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration.ui.notifications
 
+import com.intellij.facet.ProjectFacetManager
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -13,6 +14,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.formatter.*
 import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
 
@@ -20,6 +22,8 @@ private const val KOTLIN_UPDATE_CODE_STYLE_GROUP_ID = "Update Kotlin code style"
 private const val KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME = "update.kotlin.code.style.notified"
 
 fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
+    val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
+    if (modulesWithFacet.isEmpty()) return
     if (!isDefaultOfficialCodeStyle) return
 
     val isProjectSettings = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS

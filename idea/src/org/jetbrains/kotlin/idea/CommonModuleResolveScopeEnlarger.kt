@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.facet.ProjectFacetManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -16,6 +17,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
+import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.platform.isCommon
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
     override fun getAdditionalResolveScope(file: VirtualFile, project: Project): SearchScope? {
+        val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
+        if (modulesWithFacet.isEmpty()) return null
         val module = ProjectFileIndex.getInstance(project).getModuleForFile(file) ?: return null
         if (!module.platform.isCommon()) return null
 

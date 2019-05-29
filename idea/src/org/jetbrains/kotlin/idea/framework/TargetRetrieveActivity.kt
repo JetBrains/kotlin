@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.facet.ProjectFacetManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
+import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
@@ -21,27 +23,32 @@ import org.jetbrains.kotlin.platform.konan.isNative
 class TargetRetrieveActivity : StartupActivity {
 
     override fun runActivity(project: Project) {
-        project.allModules().forEach {
-            val buildSystem = it.getBuildSystemType()
-            // TODO(dsavvinov): review that
-            val platform = when {
-                it.platform.isJvm() -> "jvm"
-                it.platform.isJs() -> "js"
-                it.platform.isCommon() -> "common"
-                it.platform.isNative() -> "native"
-                else -> "unknown"
-            }
-            when {
-                buildSystem == BuildSystemType.JPS ->
-                    KotlinFUSLogger.log(
-                        FUSEventGroups.JPSTarget,
-                        platform
-                    )
-                buildSystem.toString().toLowerCase().contains("maven") ->
-                    KotlinFUSLogger.log(
-                        FUSEventGroups.MavenTarget,
-                        platform
-                    )
+        //todo: log later to avoid loading during startup
+
+        val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
+        if (modulesWithFacet.isNotEmpty()) {
+            modulesWithFacet.forEach {
+                val buildSystem = it.getBuildSystemType()
+                // TODO(dsavvinov): review that
+                val platform = when {
+                    it.platform.isJvm() -> "jvm"
+                    it.platform.isJs() -> "js"
+                    it.platform.isCommon() -> "common"
+                    it.platform.isNative() -> "native"
+                    else -> "unknown"
+                }
+                when {
+                    buildSystem == BuildSystemType.JPS ->
+                        KotlinFUSLogger.log(
+                            FUSEventGroups.JPSTarget,
+                            platform
+                        )
+                    buildSystem.toString().toLowerCase().contains("maven") ->
+                        KotlinFUSLogger.log(
+                            FUSEventGroups.MavenTarget,
+                            platform
+                        )
+                }
             }
         }
     }
