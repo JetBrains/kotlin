@@ -18,16 +18,101 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
+import org.jdom.Attribute
+import org.jdom.Document
+import org.jdom.Element
+import org.jdom.output.Format
+import org.jdom.output.XMLOutputter
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.config.*
 import java.io.File
+
+
+fun dumpModel(dir: String, chunk: List<Module>, configuration: CompilerConfiguration) {
+
+    val modules = Element("modules").apply {
+        for (module in chunk) {
+            addContent(Element("module").apply {
+                attributes.add(
+                    Attribute("timestamp", System.currentTimeMillis().toString())
+                )
+
+                attributes.add(
+                    Attribute("name", module.getModuleName())
+                )
+                attributes.add(
+                    Attribute("type", module.getModuleType())
+                )
+                attributes.add(
+                    Attribute("outputDir", module.getOutputDirectory())
+                )
+
+                for (friendDir in module.getFriendPaths()) {
+                    addContent(Element("friendDir").setAttribute("path", friendDir))
+                }
+                for (source in module.getSourceFiles()) {
+                    addContent(Element("sources").setAttribute("path", source))
+                }
+                for (javaSourceRoots in module.getJavaSourceRoots()) {
+                    addContent(
+                        Element("javaSourceRoots").apply {
+                            setAttribute("path", javaSourceRoots.path)
+                            javaSourceRoots.packagePrefix?.let { setAttribute("packagePrefix", it) }
+                        }
+                    )
+                }
+                for (classpath in configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()) {
+                    if (classpath is JvmClasspathRoot) {
+                        addContent(Element("classpath").setAttribute("path", classpath.file.absolutePath))
+                    } else if (classpath is JvmModulePathRoot) {
+                        addContent(Element("modulepath").setAttribute("path", classpath.file.absolutePath))
+                    }
+                }
+                for (commonSources in module.getCommonSourceFiles()) {
+                    addContent(Element("commonSources").setAttribute("path", commonSources))
+                }
+                module.modularJdkRoot?.let {
+                    addContent(Element("modularJdkRoot").setAttribute("path", module.modularJdkRoot))
+                }
+                attributes.add(
+                    Attribute("jdkHome", configuration.get(JVMConfigurationKeys.JDK_HOME)?.absolutePath)
+                )
+                for (optInAnnotation in configuration.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)) {
+                    addContent(Element("useOptIn").setAttribute("annotation", optInAnnotation))
+                }
+            })
+        }
+    }
+    val document = Document(modules)
+    val outputter = XMLOutputter(Format.getPrettyFormat())
+    val dirFile = File(dir)
+    if (!dirFile.exists()) {
+        dirFile.mkdirs()
+    }
+    val fileName = "model-${chunk.first().getModuleName()}"
+    var counter = 0
+    fun file(): File {
+        val postfix = if (counter != 0) ".$counter" else ""
+        return File(dirFile, "$fileName$postfix.xml")
+    }
+
+    var outputFile: File
+    do {
+        outputFile = file()
+        counter++
+    } while (outputFile.exists())
+    outputFile.bufferedWriter().use {
+        outputter.output(document, it)
+    }
+
+}
 
 fun Module.getSourceFiles(
     allSourceFiles: List<KtFile>,

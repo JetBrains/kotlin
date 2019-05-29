@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
-import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -165,6 +162,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 messageCollector.report(ERROR, "No source files")
                 return COMPILATION_ERROR
+            }
+
+            val dumpModelDir = environment.configuration.get(CommonConfigurationKeys.DUMP_MODEL)
+            if (dumpModelDir != null) {
+                dumpModel(dumpModelDir, chunk, environment.configuration)
             }
 
             KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
