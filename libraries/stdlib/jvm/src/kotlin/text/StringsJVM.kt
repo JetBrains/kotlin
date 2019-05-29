@@ -609,7 +609,7 @@ public actual fun String.decapitalize(): String {
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public fun String.decapitalize(locale: Locale): String {
-    return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase(locale) + substring(1) else this
+    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase(locale) + substring(1) else this
 }
 
 /**
