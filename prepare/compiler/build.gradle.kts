@@ -68,13 +68,25 @@ dependencies {
     fatJarContents(commonDep("io.javaslang", "javaslang"))
     fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
-    fatJarContents(intellijCoreDep()) { includeJars("intellij-core", "java-compatibility-1.0.1") }
+    fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
+    fatJarContents(intellijDep()) { includeJars("jna-platform") }
+
+    if (Platform.P192.orHigher()) {
+        fatJarContents(intellijDep()) { includeJars("lz4-java-1.6.0") }
+    } else {
+        fatJarContents(intellijDep()) { includeJars("lz4-1.3.0") }
+    }
+    
+    if (Platform.P183.orHigher()) {
+        fatJarContents(intellijCoreDep()) { includeJars("java-compatibility-1.0.1") }
+    }
+
     fatJarContents(intellijDep()) {
         includeIntellijCoreJarDependencies(project) {
             !(it.startsWith("jdom") || it.startsWith("log4j") || it.startsWith("trove4j"))
         }
     }
-    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
+
     fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
 }
