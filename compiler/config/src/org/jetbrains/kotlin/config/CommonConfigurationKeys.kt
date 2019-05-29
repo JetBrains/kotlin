@@ -64,6 +64,9 @@ object CommonConfigurationKeys {
         CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
 
     @JvmField
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
+
+    @JvmField
     val KLIB_RELATIVE_PATH_BASES =
         CompilerConfigurationKey.create<Collection<String>>("Provides a path from which relative paths in klib are being computed")
 

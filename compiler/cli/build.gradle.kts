@@ -38,6 +38,7 @@ dependencies {
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))

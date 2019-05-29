@@ -23,6 +23,11 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import org.jdom.Attribute
+import org.jdom.Document
+import org.jdom.Element
+import org.jdom.output.Format
+import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
@@ -51,6 +56,66 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
+    private fun dumpModel(dir: String, chunk: List<Module>) {
+
+        val modules = Element("modules").apply {
+
+            for (module in chunk) {
+                addContent(Element("module").apply {
+
+                    attributes.add(
+                        Attribute("name", module.getModuleName())
+                    )
+                    attributes.add(
+                        Attribute("type", module.getModuleType())
+                    )
+                    attributes.add(
+                        Attribute("outputDir", module.getOutputDirectory())
+                    )
+
+                    for (friendDir in module.getFriendPaths()) {
+                        addContent(Element("friendDir").setAttribute("path", friendDir))
+                    }
+                    for (source in module.getSourceFiles()) {
+                        addContent(Element("sources").setAttribute("path", source))
+                    }
+                    for (javaSourceRoots in module.getJavaSourceRoots()) {
+                        addContent(Element("javaSourceRoots").setAttribute("path", javaSourceRoots.path))
+                    }
+                    for (classpath in module.getClasspathRoots()) {
+                        addContent(Element("classpath").setAttribute("path", classpath))
+                    }
+                    for (commonSources in module.getCommonSourceFiles()) {
+                        addContent(Element("commonSources").setAttribute("path", commonSources))
+                    }
+
+                })
+            }
+        }
+        val document = Document(modules)
+        val outputter = XMLOutputter(Format.getPrettyFormat())
+        val dirFile = File(dir)
+        if (!dirFile.exists()) {
+            dirFile.mkdirs()
+        }
+        val fileName = "model-${chunk.first().getModuleName()}"
+        var counter = 0
+        fun file(): File {
+            val postfix = if (counter != 0) ".$counter" else ""
+            return File(dirFile, "$fileName$postfix.xml")
+        }
+
+        var outputFile: File
+        do {
+            outputFile = file()
+            counter++
+        } while (outputFile.exists())
+        outputFile.bufferedWriter().use {
+            outputter.output(document, it)
+        }
+
+    }
+
     internal fun compileModules(
         environment: KotlinCoreEnvironment,
         buildFile: File?,
@@ -77,6 +142,11 @@ object KotlinToJVMBytecodeCompiler {
         val friendPaths = environment.configuration.getList(JVMConfigurationKeys.FRIEND_PATHS)
         for (path in friendPaths) {
             moduleVisibilityManager.addFriendPath(path)
+        }
+
+        val dumpModelDir = environment.configuration.get(CommonConfigurationKeys.DUMP_MODEL)
+        if (dumpModelDir != null) {
+            dumpModel(dumpModelDir, chunk)
         }
 
         val projectConfiguration = environment.configuration
