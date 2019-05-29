@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
-import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -618,7 +615,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         override fun shortenElement(element: KtDotQualifiedExpression, options: Options): KtElement {
             val parens = element.parent as? KtParenthesizedExpression
             val requiredParens = parens != null && !KtPsiUtil.areParenthesesUseless(parens)
+            val commentSaver = CommentSaver(element)
             val shortenedElement = element.replace(element.selectorExpression!!) as KtElement
+            commentSaver.restore(shortenedElement)
             val newParent = shortenedElement.parent
             if (requiredParens) return newParent.replaced(shortenedElement)
             if (options.dropBracesInStringTemplates && newParent is KtBlockStringTemplateEntry && newParent.canDropBraces()) {
