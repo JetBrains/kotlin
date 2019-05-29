@@ -1,1 +1,3 @@
+// REPL_MODE: false
+
 println("hello")    // OUTPUT: hello

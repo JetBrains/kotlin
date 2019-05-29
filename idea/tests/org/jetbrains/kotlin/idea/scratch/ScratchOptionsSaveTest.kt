@@ -17,8 +17,7 @@ import kotlin.reflect.full.declaredMemberProperties
 class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
 
     fun testOptionsSaveOnClosingFile() {
-        val scratchFile = createScratchFile("scratch_1.kts", "val a = 1")
-        val (_, scratchPanelBeforeClosingFile) = getEditorWithScratchPanel(myManager, scratchFile) ?: error("Couldn't find scratch panel")
+        val scratchPanelBeforeClosingFile = configureScratchByText("scratch_1.kts", testScratchText())
 
         Assert.assertEquals(
             "This test checks that checkbox options are restored after file closing. Not all checkboxes are checked in this test",
@@ -34,10 +33,10 @@ class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
         scratchPanelBeforeClosingFile.setMakeBeforeRun(newIsMakeBeforeRunValue)
         scratchPanelBeforeClosingFile.setInteractiveMode(newIsInteractiveModeValue)
 
-        myManager.closeFile(scratchFile)
-        myManager.openFile(scratchFile, true)
+        myManager.closeFile(myFixture.file.virtualFile)
+        myManager.openFile(myFixture.file.virtualFile, true)
 
-        val (_, scratchPanelAfterClosingFile) = getEditorWithScratchPanel(myManager, scratchFile) ?: error("Couldn't find scratch panel")
+        val (_, scratchPanelAfterClosingFile) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile) ?: error("Couldn't find scratch panel")
 
         Assert.assertEquals("Wrong value for isRepl checkbox", newIsReplValue, scratchPanelAfterClosingFile.scratchFile.options.isRepl)
         Assert.assertEquals(

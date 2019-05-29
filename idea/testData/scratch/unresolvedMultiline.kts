@@ -1,3 +1,5 @@
+// REPL_MODE: ~REPL_MODE~
+
 foo.forEach {
     1 + 1
 }

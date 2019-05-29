@@ -1,3 +1,5 @@
+// REPL_MODE: ~REPL_MODE~
+
 class MyClass {
     fun foo() = 1
 }

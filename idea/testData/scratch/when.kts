@@ -1,3 +1,5 @@
+// REPL_MODE: ~REPL_MODE~
+
 val a = 1
 when(a) {
     1 -> println("1")

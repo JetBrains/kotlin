@@ -1,3 +1,5 @@
+// REPL_MODE: true
+
 class GClass<T> {
     fun foo(t: T): T {
         return t

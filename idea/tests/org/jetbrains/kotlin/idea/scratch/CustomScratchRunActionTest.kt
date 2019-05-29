@@ -9,7 +9,6 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.idea.run.createLibraryWithLongPaths
-import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
@@ -26,22 +25,13 @@ class CustomScratchRunActionTest : AbstractScratchRunActionTest() {
     }
 
     private fun getOutput(isRepl: Boolean): String {
-        val fileText = "1"
-        val scratchFile = createScratchFile("scratch_1.kts", fileText)
+        val fileText = testScratchText().inlinePropertiesValues(isRepl)
+        configureScratchByText("scratch_1.kts", fileText)
 
-        val (editor, scratchPanel) = getEditorWithScratchPanel(myManager, scratchFile) ?: error("Couldn't find scratch panel")
-        scratchPanel.scratchFile.saveOptions {
-            copy(isRepl = isRepl, isInteractiveMode = false)
-        }
+        launchScratch()
+        waitUntilScratchFinishes()
 
-        scratchPanel.setModule(myFixture.module)
-
-        launchScratch(scratchFile)
-
-        return editor.editor.inlayModel.getInlineElementsInRange(0, fileText.length)
-            .map { it.renderer }
-            .filterIsInstance<InlayScratchFileRenderer>()
-            .joinToString().trim()
+        return getInlays().joinToString().trim()
     }
 
     private val library: Library by lazy {

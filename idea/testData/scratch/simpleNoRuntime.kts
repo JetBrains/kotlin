@@ -1,3 +1,4 @@
-arrayListOf(1, 2).size
+// REPL_MODE: ~REPL_MODE~
+// NO_MODULE
 
-//NO_MODULE
+arrayListOf(1, 2).size
