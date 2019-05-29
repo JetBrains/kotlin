@@ -5741,6 +5741,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testOnlyReturnFieldBody() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantGetter/onlyReturnFieldBody.kt");
         }
+
+        @TestMetadata("withAnnotaionAndNonTrivialBlockBody.kt")
+        public void testWithAnnotaionAndNonTrivialBlockBody() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantGetter/withAnnotaionAndNonTrivialBlockBody.kt");
+        }
+
+        @TestMetadata("withAnnotaionAndTrivialBlockBody.kt")
+        public void testWithAnnotaionAndTrivialBlockBody() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantGetter/withAnnotaionAndTrivialBlockBody.kt");
+        }
+
+        @TestMetadata("withAnnotaionAndTrivialExpressionBody.kt")
+        public void testWithAnnotaionAndTrivialExpressionBody() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantGetter/withAnnotaionAndTrivialExpressionBody.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantLambdaArrow")
@@ -6369,6 +6384,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("sameVisibility3.kt")
         public void testSameVisibility3() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSetter/sameVisibility3.kt");
+        }
+
+        @TestMetadata("withAnnotaionAndNonTrivialBlockBody.kt")
+        public void testWithAnnotaionAndNonTrivialBlockBody() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSetter/withAnnotaionAndNonTrivialBlockBody.kt");
+        }
+
+        @TestMetadata("withAnnotaionAndTrivialBlockBody.kt")
+        public void testWithAnnotaionAndTrivialBlockBody() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSetter/withAnnotaionAndTrivialBlockBody.kt");
         }
     }
 

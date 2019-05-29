@@ -157,8 +157,13 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     }
 
     @Nullable
-    public ASTNode getRightParenthesis() {
-        return getNode().findChildByType(KtTokens.RPAR);
+    public PsiElement getRightParenthesis() {
+        return findChildByType(KtTokens.RPAR);
+    }
+
+    @Nullable
+    public PsiElement getLeftParenthesis() {
+        return findChildByType(KtTokens.LPAR);
     }
 
     @Nullable

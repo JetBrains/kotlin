@@ -32,35 +32,18 @@ class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
 
 private fun KtPropertyAccessor.isRedundantSetter(): Boolean {
     if (!isSetter) return false
-    if (annotationEntries.isNotEmpty()) return false
-    if (hasLowerVisibilityThanProperty()) return false
-    val expression = bodyExpression ?: return true
+    val expression = bodyExpression ?: return canBeCompletelyDeleted()
     if (expression is KtBlockExpression) {
-        val statement = expression.statements.takeIf { it.size == 1 }?.firstOrNull() ?: return false
-        val parameter = valueParameters.takeIf { it.size == 1 }?.firstOrNull() ?: return false
+        val statement = expression.statements.singleOrNull() ?: return false
+        val parameter = valueParameters.singleOrNull() ?: return false
         val binaryExpression = statement as? KtBinaryExpression ?: return false
         return binaryExpression.operationToken == KtTokens.EQ
-                && binaryExpression.left?.isFieldText() == true
+                && binaryExpression.left?.isBackingFieldReferenceTo(property) == true
                 && binaryExpression.right?.mainReference?.resolve() == parameter
     }
     return false
 }
 
-private fun KtPropertyAccessor.hasLowerVisibilityThanProperty(): Boolean {
-    val p = property
-    return when {
-        p.hasModifier(KtTokens.PRIVATE_KEYWORD) ->
-            false
-        p.hasModifier(KtTokens.PROTECTED_KEYWORD) ->
-            hasModifier(KtTokens.PRIVATE_KEYWORD)
-        p.hasModifier(KtTokens.INTERNAL_KEYWORD) ->
-            hasModifier(KtTokens.PRIVATE_KEYWORD) || hasModifier(KtTokens.PROTECTED_KEYWORD)
-        else ->
-            hasModifier(KtTokens.PRIVATE_KEYWORD) || hasModifier(KtTokens.PROTECTED_KEYWORD) || hasModifier(KtTokens.INTERNAL_KEYWORD)
-    }
-}
-
-private fun KtExpression.isFieldText(): Boolean = this.textMatches("field")
 
 private class RemoveRedundantSetterFix : LocalQuickFix {
     override fun getName() = "Remove redundant setter"
@@ -69,6 +52,11 @@ private class RemoveRedundantSetterFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val accessor = descriptor.psiElement as? KtPropertyAccessor ?: return
-        accessor.delete()
+
+        if (accessor.canBeCompletelyDeleted()) {
+            accessor.delete()
+        } else {
+            accessor.deleteBody()
+        }
     }
 }
