@@ -16,12 +16,16 @@ kotlin {
                 runTask?.args(3000)
             }
         }
+    }
 
-        raspberryPiPresets.each { preset ->
-            def targetName = 'echoServer' + preset.name.capitalize()
-            fromPreset(preset, targetName) {
-                compilations.main.outputKinds 'EXECUTABLE'
-                compilations.main.entryPoint 'sample.echoserver.main'
+    raspberryPiPresets.each { preset ->
+        def targetName = 'echoServer' + preset.name.capitalize()
+        targetFromPreset(preset, targetName) {
+            binaries {
+                executable() {
+                    entryPoint = 'sample.echoserver.main'
+                    runTask?.args(3000)
+                }
             }
         }
     }
