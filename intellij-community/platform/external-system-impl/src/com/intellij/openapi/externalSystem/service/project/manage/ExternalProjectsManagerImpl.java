@@ -89,7 +89,11 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
   }
 
   public void setStoreExternally(boolean value) {
-    ExternalStorageConfigurationManager.getInstance(myProject).setEnabled(value);
+    ExternalStorageConfigurationManager externalStorageConfigurationManager =
+      ExternalStorageConfigurationManager.getInstance(myProject);
+    if (externalStorageConfigurationManager.isEnabled() == value) return;
+    externalStorageConfigurationManager.setEnabled(value);
+
     // force re-save
     try {
       for (Module module : ModuleManager.getInstance(myProject).getModules()) {
