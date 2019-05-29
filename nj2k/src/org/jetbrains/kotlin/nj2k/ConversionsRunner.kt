@@ -81,6 +81,7 @@ object ConversionsRunner {
             +MethodReferenceToLambdaConversion(context)
             +BuiltinMembersConversion(context)
             +ImplicitCastsConversion(context)
+            +LiteralConversion()
 
             +CollectImportsConversion(context)
             +SortClassMembersConversion()

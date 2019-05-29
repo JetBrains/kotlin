@@ -92,7 +92,6 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
         }
     }
 
-
     private fun JKExpression.castStringToRegex(toType: JKType): JKExpression? {
         if (toType.safeAs<JKClassType>()?.classReference?.fqName != "java.util.regex.Pattern") return null
         val expressionType = type(context.symbolProvider) ?: return null
@@ -133,7 +132,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
                 return JKJavaLiteralExpressionImpl(
                     literal,
                     expectedType
-                ).fixLiteral(expectedType)
+                )
             }
         }
 
