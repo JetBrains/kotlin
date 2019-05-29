@@ -1,10 +1,10 @@
 fun test() {
-    when (val a = create()) {
+    when<caret> (val a = create()) {
         else -> {
             use("")
             foo()
         }
-    }<caret>
+    }
 }
 
 fun create(): String = ""

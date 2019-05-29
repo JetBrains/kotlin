@@ -1,10 +1,10 @@
 // WITH_RUNTIME
 fun test() {
-    val x = when (val a = create()) {
+    val x = when<caret> (val a = create()) {
         else -> {
             use(a)
         }
-    }<caret>
+    }
 }
 
 fun create(): String = ""

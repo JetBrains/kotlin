@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.whenExpressionVisitor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
@@ -24,15 +25,17 @@ class WhenWithOnlyElseInspection : AbstractKotlinInspection() {
 
             val usedAsExpression = expression.isUsedAsExpression(expression.analyze())
 
-            holder.registerProblem(expression,
-                                   "'when' has only 'else' branch and should be simplified",
-                                   SimplifyFix(usedAsExpression)
+            holder.registerProblem(
+                expression,
+                expression.whenKeyword.textRange.shiftLeft(expression.startOffset),
+                "'when' has only 'else' branch and should be simplified",
+                SimplifyFix(usedAsExpression)
             )
         }
     }
 
     private class SimplifyFix(
-            private val isUsedAsExpression: Boolean
+        private val isUsedAsExpression: Boolean
     ) : LocalQuickFix {
         override fun getFamilyName() = name
 
