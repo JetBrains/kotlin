@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
@@ -14,6 +15,8 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.utils.sure
 
 abstract class AbstractNavigateFromLibrarySourcesTest : LightCodeInsightFixtureTestCase() {
+    val module: Module get() = myModule
+
     protected fun navigationElementForReferenceInLibrarySource(filePath: String, referenceText: String): PsiElement {
         val libraryOrderEntry = ModuleRootManager.getInstance(module!!).orderEntries.first { it is LibraryOrderEntry }
         val libSourcesRoot = libraryOrderEntry.getUrls(OrderRootType.SOURCES)[0]

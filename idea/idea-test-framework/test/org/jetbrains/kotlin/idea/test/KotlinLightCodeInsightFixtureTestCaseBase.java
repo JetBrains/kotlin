@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -41,6 +42,10 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
     @Override
     public Project getProject() {
         return super.getProject();
+    }
+
+    public Module getModule() {
+        return myModule;
     }
 
     @NotNull
