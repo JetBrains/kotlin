@@ -1,7 +1,7 @@
 fun hasAnnotation() {
-    when (@Bar val a = create()) {
+    <caret>when (@Bar val a = create()) {
         else -> use(a)
-    }<caret>
+    }
 }
 
 fun create(): String = ""

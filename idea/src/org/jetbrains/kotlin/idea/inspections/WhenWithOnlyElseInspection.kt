@@ -24,22 +24,21 @@ class WhenWithOnlyElseInspection : AbstractKotlinInspection() {
 
             val usedAsExpression = expression.isUsedAsExpression(expression.analyze())
 
-            holder.registerProblem(expression,
-                                   "'when' has only 'else' branch and should be simplified",
-                                   SimplifyFix(usedAsExpression)
+            holder.registerProblem(
+                expression.whenKeyword,
+                "'when' has only 'else' branch and should be simplified",
+                SimplifyFix(usedAsExpression)
             )
         }
     }
 
-    private class SimplifyFix(
-            private val isUsedAsExpression: Boolean
-    ) : LocalQuickFix {
+    private class SimplifyFix(private val isUsedAsExpression: Boolean) : LocalQuickFix {
         override fun getFamilyName() = name
 
         override fun getName() = "Simplify expression"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val whenExpression = descriptor.psiElement as? KtWhenExpression ?: return
+            val whenExpression = descriptor.psiElement.parent as? KtWhenExpression ?: return
             FileModificationService.getInstance().preparePsiElementForWrite(whenExpression)
 
             whenExpression.replaceWithBranch(whenExpression.elseExpression ?: return, isUsedAsExpression)

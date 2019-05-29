@@ -1,7 +1,7 @@
 fun test() {
-    when (val a = create()) {
+    <caret>when (val a = create()) {
         else -> use("")
-    }<caret>
+    }
 }
 
 fun create(): String = ""
