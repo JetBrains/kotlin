@@ -367,6 +367,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var extendedCompilerChecks: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xdump-model",
+        description = "Don't even try to use it"
+    )
+    var dumpArgumentsDir: String? by FreezableVar(null)
+
+    @Argument(
         value = "-Xbuiltins-from-sources",
         description = "Compile builtIns from sources"
     )
