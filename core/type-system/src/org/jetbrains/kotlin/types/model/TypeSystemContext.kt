@@ -49,6 +49,7 @@ interface TypeSystemBuiltInsContext {
     fun nullableNothingType(): SimpleTypeMarker
     fun nullableAnyType(): SimpleTypeMarker
     fun nothingType(): SimpleTypeMarker
+    fun anyType(): SimpleTypeMarker
 }
 
 interface TypeSystemTypeFactoryContext {

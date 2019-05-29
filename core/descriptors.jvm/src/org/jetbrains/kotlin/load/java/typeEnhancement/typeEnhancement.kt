@@ -215,7 +215,7 @@ private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
     override fun toString() = "[EnhancedType]"
 }
 
-internal class NotNullTypeParameter(override val delegate: SimpleType) : CustomTypeVariable, DelegatingSimpleType() {
+internal class NotNullTypeParameter(override val delegate: SimpleType) : NotNullTypeVariable, DelegatingSimpleType() {
 
     override val isTypeVariable: Boolean
         get() = true
