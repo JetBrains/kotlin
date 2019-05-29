@@ -364,6 +364,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var inferenceCompatibility: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xdump-model",
+        description = "Don't even try to use it"
+    )
+    var dumpArgumentsDir: String? by FreezableVar(null)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
