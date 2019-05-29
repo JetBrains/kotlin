@@ -26,7 +26,7 @@ public class PostfixEditTemplateDialog extends DialogWrapper {
                                    @NotNull PostfixTemplateEditor editor,
                                    @NotNull String templateType,
                                    @Nullable PostfixTemplate template) {
-    super(null, parentComponent, false, IdeModalityType.IDE);
+    super(null, parentComponent, true, IdeModalityType.IDE);
     myEditor = editor;
     Disposer.register(getDisposable(), editor);
     String initialName = template != null ? StringUtil.trimStart(template.getKey(), ".") : "";
