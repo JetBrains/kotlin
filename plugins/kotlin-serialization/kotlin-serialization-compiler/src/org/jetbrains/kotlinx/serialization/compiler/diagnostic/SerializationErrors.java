@@ -13,13 +13,17 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
+import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface SerializationErrors {
     DiagnosticFactory0<KtAnnotationEntry> SERIALIZABLE_ANNOTATION_IGNORED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INLINE_CLASSES_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, String> DUPLICATE_SERIAL_NAME = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> SERIALIZER_NOT_FOUND = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> SERIALIZER_NULLABILITY_INCOMPATIBLE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> TRANSIENT_IS_REDUNDANT = DiagnosticFactory0.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

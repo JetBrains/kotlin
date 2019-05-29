@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
@@ -175,7 +175,7 @@ fun TranslationContext.buildInitializersRemapping(
     superClass: ClassDescriptor?
 ): Map<PropertyDescriptor, KtExpression?> {
     val myMap = (forClass.bodyPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +
-            forClass.primaryPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.defaultValue })
+            forClass.primaryConstructorPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.defaultValue })
     val parentPsi = superClass?.takeIf { it.isInternalSerializable }?.findPsi() as? KtPureClassOrObject ?: return myMap
     val parentMap = buildInitializersRemapping(parentPsi, superClass.getSuperClassNotAny())
     return myMap + parentMap

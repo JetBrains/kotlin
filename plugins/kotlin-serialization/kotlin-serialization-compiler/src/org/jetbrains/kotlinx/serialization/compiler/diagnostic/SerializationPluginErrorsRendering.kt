@@ -38,5 +38,17 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "This type is not-nullable and therefore can not be serialized with serializer for nullable type ''{0}''",
             Renderers.RENDER_TYPE
         )
+        MAP.put(
+            SerializationErrors.TRANSIENT_MISSING_INITIALIZER,
+            "This property is marked is @Transient and therefore must have an initializing expression"
+        )
+        MAP.put(
+            SerializationErrors.TRANSIENT_IS_REDUNDANT,
+            "This property does not have backing field which makes it non-serializable and therefore @Transient is redundant"
+        )
+        MAP.put(
+            SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
+            "Inline classes are not supported by serialization framework yet."
+        )
     }
 }

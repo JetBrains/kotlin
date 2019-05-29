@@ -57,7 +57,7 @@ class SerializableCodegenImpl(
     private val descToProps = classCodegen.myClass.bodyPropertiesDescriptorsMap(classCodegen.bindingContext)
 
     private val paramsToProps: Map<PropertyDescriptor, KtParameter> =
-        classCodegen.myClass.primaryPropertiesDescriptorsMap(classCodegen.bindingContext)
+        classCodegen.myClass.primaryConstructorPropertiesDescriptorsMap(classCodegen.bindingContext)
 
     private fun getProp(prop: SerializableProperty) = descToProps[prop.descriptor]
     private fun getParam(prop: SerializableProperty) = paramsToProps[prop.descriptor]

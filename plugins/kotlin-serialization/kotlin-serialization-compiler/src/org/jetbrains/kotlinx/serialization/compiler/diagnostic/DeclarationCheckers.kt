@@ -16,12 +16,16 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.hasBackingField
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 internal val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
@@ -33,10 +37,17 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
 
         checkCanBeSerializedInternally(descriptor, context.trace)
         val props = buildSerializableProperties(descriptor, context.trace) ?: return
+        checkTransients(declaration as KtPureClassOrObject, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
     }
 
     private fun checkCanBeSerializedInternally(descriptor: ClassDescriptor, trace: BindingTrace) {
+        if (!descriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return
+
+        if (descriptor.isInline) {
+            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED)
+            return
+        }
         if (!descriptor.hasSerializableAnnotationWithoutArgs) return
 
         if (!descriptor.isInternalSerializable && !descriptor.hasCompanionObjectAsSerializer) {
@@ -73,6 +84,36 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
         return props
     }
 
+    private fun checkTransients(declaration: KtPureClassOrObject, trace: BindingTrace) {
+        val propertiesMap: Map<PropertyDescriptor, KtDeclaration> =
+            declaration.bodyPropertiesDescriptorsMap(
+                trace.bindingContext,
+                filterUninitialized = false
+            ) + declaration.primaryConstructorPropertiesDescriptorsMap(trace.bindingContext)
+        propertiesMap.forEach { (descriptor, declaration) ->
+            val isInitialized = declarationHasInitializer(declaration)
+            val isMarkedTransient = descriptor.annotations.serialTransient
+            val hasBackingField = descriptor.hasBackingField(trace.bindingContext)
+            if (!hasBackingField && isMarkedTransient)
+                trace.reportFromPlugin(
+                    SerializationErrors.TRANSIENT_IS_REDUNDANT.on(declaration),
+                    SerializationPluginErrorsRendering
+                )
+
+            if (isMarkedTransient && !isInitialized && hasBackingField)
+                trace.reportFromPlugin(
+                    SerializationErrors.TRANSIENT_MISSING_INITIALIZER.on(declaration),
+                    SerializationPluginErrorsRendering
+                )
+        }
+    }
+
+    private fun declarationHasInitializer(declaration: KtDeclaration): Boolean = when (declaration) {
+        is KtParameter -> declaration.hasDefaultValue()
+        is KtProperty -> declaration.hasDelegateExpressionOrInitializer()
+        else -> false
+    }
+
     private fun analyzePropertiesSerializers(trace: BindingTrace, serializableClass: ClassDescriptor, props: List<SerializableProperty>) {
         val generatorContextForAnalysis = object : AbstractSerialGenerator(trace.bindingContext, serializableClass) {}
         props.forEach {
@@ -106,6 +147,12 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
     ) {
         if (type.genericIndex != null) return
         val element = ktType.typeElement ?: return
+        if (type.isInlineClassType()) {
+            trace.reportFromPlugin(
+                SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(element),
+                SerializationPluginErrorsRendering
+            )
+        }
         val serializer = findTypeSerializerOrContext(module, type)
         if (serializer != null) {
             checkSerializerNullability(type, serializer.defaultType, element, trace)
@@ -138,7 +185,7 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
         findSerializableAnnotationDeclaration()?.let(report)
     }
 
-    private fun BindingTrace.reportOnSerializableAnnotation(descriptor: ClassDescriptor, error: DiagnosticFactory0<KtAnnotationEntry>) {
+    private fun BindingTrace.reportOnSerializableAnnotation(descriptor: ClassDescriptor, error: DiagnosticFactory0<in KtAnnotationEntry>) {
         descriptor.safeReport { e ->
             reportFromPlugin(
                 error.on(e),

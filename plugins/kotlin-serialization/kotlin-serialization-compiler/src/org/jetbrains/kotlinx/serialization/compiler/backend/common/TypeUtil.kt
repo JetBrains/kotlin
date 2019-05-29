@@ -18,7 +18,6 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -182,20 +181,23 @@ fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDe
     return if (classDescriptor.kind == ClassKind.ENUM_CLASS) module.findClassAcrossModuleDependencies(enumSerializerId) else null
 }
 
-fun KtPureClassOrObject.bodyPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtProperty> = declarations
+internal fun KtPureClassOrObject.bodyPropertiesDescriptorsMap(
+    bindingContext: BindingContext,
+    filterUninitialized: Boolean = true
+): Map<PropertyDescriptor, KtProperty> = declarations
     .asSequence()
     .filterIsInstance<KtProperty>()
     // can filter here because it's impossible to create body property w/ backing field w/o explicit delegating or initializing
-    .filter { it.delegateExpressionOrInitializer != null }
+    .filter { if (filterUninitialized) it.delegateExpressionOrInitializer != null else true }
     .associateBy { (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? PropertyDescriptor)!! }
 
-fun KtPureClassOrObject.primaryPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtParameter> =
+internal fun KtPureClassOrObject.primaryConstructorPropertiesDescriptorsMap(bindingContext: BindingContext): Map<PropertyDescriptor, KtParameter> =
     primaryConstructorParameters
         .asSequence()
         .filter { it.hasValOrVar() }
         .associateBy { bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!! }
 
-fun KtPureClassOrObject.anonymousInitializers() = declarations
+internal fun KtPureClassOrObject.anonymousInitializers() = declarations
     .asSequence()
     .filterIsInstance<KtAnonymousInitializer>()
     .mapNotNull { it.body }
