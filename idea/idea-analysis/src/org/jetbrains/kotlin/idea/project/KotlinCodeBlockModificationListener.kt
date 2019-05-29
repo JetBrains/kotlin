@@ -46,9 +46,9 @@ val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
  * Tested in OutOfBlockModificationTestGenerated
  */
 class KotlinCodeBlockModificationListener(
-        modificationTracker: PsiModificationTracker,
-        project: Project,
-        private val treeAspect: TreeAspect
+    modificationTracker: PsiModificationTracker,
+    project: Project,
+    private val treeAspect: TreeAspect
 ) {
     private val perModuleModCount = mutableMapOf<Module, Long>()
     private val modificationTrackerImpl = modificationTracker as PsiModificationTrackerImpl
@@ -58,20 +58,18 @@ class KotlinCodeBlockModificationListener(
 
     // All modifications since that count are known to be single-module modifications reflected in
     // perModuleModCount map
-    private var perModuleChangesHighwatermark: Long? = null
+    private var perModuleChangesHighWatermark: Long? = null
 
     fun getModificationCount(module: Module): Long {
-        return perModuleModCount[module] ?:
-               perModuleChangesHighwatermark ?:
-               modificationTrackerImpl.outOfCodeBlockModificationCount
+        return perModuleModCount[module] ?: perModuleChangesHighWatermark ?: modificationTrackerImpl.outOfCodeBlockModificationCount
     }
 
-    fun hasPerModuleModificationCounts() = perModuleChangesHighwatermark != null
+    fun hasPerModuleModificationCounts() = perModuleChangesHighWatermark != null
 
     init {
         val model = PomManager.getModel(project)
         val messageBusConnection = project.messageBus.connect()
-        model.addModelListener(object: PomModelListener {
+        model.addModelListener(object : PomModelListener {
             override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
                 return aspect == treeAspect
             }
@@ -80,7 +78,7 @@ class KotlinCodeBlockModificationListener(
                 val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
                 val file = changeSet.rootElement.psi.containingFile as? KtFile ?: return
                 val changedElements = changeSet.changedElements
-                // When a code fragment is reparsed, IntelliJ doesn't do an AST diff and considers the entire
+                // When a code fragment is reparsed, Intellij doesn't do an AST diff and considers the entire
                 // contents to be replaced, which is represented in a POM event as an empty list of changed elements
                 if (changedElements.any { getInsideCodeBlockModificationScope(it.psi) == null } || changedElements.isEmpty()) {
                     messageBusConnection.deliverImmediately()
@@ -98,13 +96,12 @@ class KotlinCodeBlockModificationListener(
             val newModCount = modificationTrackerImpl.outOfCodeBlockModificationCount
             val affectedModule = lastAffectedModule
             if (affectedModule != null && newModCount == lastAffectedModuleModCount + 1) {
-                if (perModuleChangesHighwatermark == null) {
-                    perModuleChangesHighwatermark = lastAffectedModuleModCount
+                if (perModuleChangesHighWatermark == null) {
+                    perModuleChangesHighWatermark = lastAffectedModuleModCount
                 }
                 perModuleModCount[affectedModule] = newModCount
-            }
-            else {
-                perModuleChangesHighwatermark = null
+            } else {
+                perModuleChangesHighWatermark = null
                 perModuleModCount.clear()
             }
         })
@@ -124,7 +121,7 @@ class KotlinCodeBlockModificationListener(
             val lambda = element.getTopmostParentOfType<KtLambdaExpression>()
             if (lambda is KtLambdaExpression) {
                 lambda.getTopmostParentOfType<KtSuperTypeCallEntry>()
-                        ?.let { return it }
+                    ?.let { return it }
             }
 
             val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) as? KtDeclaration ?: return null
@@ -134,8 +131,7 @@ class KotlinCodeBlockModificationListener(
                 is KtNamedFunction -> {
                     if (blockDeclaration.hasBlockBody()) {
                         return blockDeclaration.bodyExpression?.takeIf { it.isAncestor(element) }
-                    }
-                    else if (blockDeclaration.hasDeclaredReturnType()) {
+                    } else if (blockDeclaration.hasDeclaredReturnType()) {
                         return blockDeclaration.initializer?.takeIf { it.isAncestor(element) }
                     }
                 }
@@ -144,8 +140,8 @@ class KotlinCodeBlockModificationListener(
                     if (blockDeclaration.typeReference != null) {
                         for (accessor in blockDeclaration.accessors) {
                             (accessor.initializer ?: accessor.bodyExpression)
-                                    ?.takeIf { it.isAncestor(element) }
-                                    ?.let { return it }
+                                ?.takeIf { it.isAncestor(element) }
+                                ?.let { return it }
                         }
                     }
                 }
@@ -169,9 +165,9 @@ class KotlinCodeBlockModificationListener(
         }
 
         private val BLOCK_DECLARATION_TYPES = arrayOf<Class<out KtDeclaration>>(
-                KtProperty::class.java,
-                KtNamedFunction::class.java,
-                KtScriptInitializer::class.java
+            KtProperty::class.java,
+            KtNamedFunction::class.java,
+            KtScriptInitializer::class.java
         )
 
         fun getInstance(project: Project) = project.getComponent(KotlinCodeBlockModificationListener::class.java)
@@ -183,17 +179,18 @@ private val FILE_OUT_OF_BLOCK_MODIFICATION_COUNT = Key<Long>("FILE_OUT_OF_BLOCK_
 val KtFile.outOfBlockModificationCount: Long
     get() = getUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT) ?: 0
 
-class KotlinModuleModificationTracker(val module: Module): ModificationTracker {
+class KotlinModuleModificationTracker(val module: Module) : ModificationTracker {
     private val kotlinModCountListener = KotlinCodeBlockModificationListener.getInstance(module.project)
     private val psiModificationTracker = PsiModificationTracker.SERVICE.getInstance(module.project)
     private val dependencies by lazy {
         module.cached(CachedValueProvider {
             CachedValueProvider.Result.create(
-                    HashSet<Module>().apply {
-                        ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
-                                CommonProcessors.CollectProcessor(this))
-                    },
-                    ProjectRootModificationTracker.getInstance(module.project)
+                HashSet<Module>().apply {
+                    ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
+                        CommonProcessors.CollectProcessor(this)
+                    )
+                },
+                ProjectRootModificationTracker.getInstance(module.project)
             )
         })
     }
