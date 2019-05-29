@@ -51,8 +51,9 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                 @NotNull FindSymbolParameters parameters,
                                 @NotNull ProgressIndicator indicator,
                                 @NotNull Processor<Object> consumer) {
-    return filterElements(base, indicator, myContext == null ? null : myContext.getElement(),
-                          () -> base.getNames(parameters.isSearchInLibraries()), consumer, parameters);
+    return ProgressManager.getInstance().computePrioritized(
+      () -> filterElements(base, indicator, myContext == null ? null : myContext.getElement(),
+                           () -> base.getNames(parameters.isSearchInLibraries()), consumer, parameters));
   }
 
   /**

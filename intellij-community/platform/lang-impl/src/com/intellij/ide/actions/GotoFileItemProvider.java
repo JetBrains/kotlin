@@ -56,6 +56,13 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
                                 @NotNull FindSymbolParameters parameters,
                                 @NotNull ProgressIndicator indicator,
                                 @NotNull Processor<Object> consumer) {
+    return ProgressManager.getInstance().computePrioritized(() -> doFilterElements(base, parameters, indicator, consumer));
+  }
+
+  private boolean doFilterElements(@NotNull ChooseByNameBase base,
+                                   @NotNull FindSymbolParameters parameters,
+                                   @NotNull ProgressIndicator indicator,
+                                   @NotNull Processor<Object> consumer) {
     long start = System.currentTimeMillis();
     try {
       String pattern = parameters.getCompletePattern();
@@ -268,7 +275,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
     }
 
     boolean processName(String name) {
-      ProgressManager.checkCanceled();
+      indicator.checkCanceled();
       int position = findMatchStartingPosition(name, namePattern);
       if (position < namePattern.length()) {
         candidateNames.get(position).add(name);

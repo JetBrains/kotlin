@@ -35,6 +35,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -135,7 +136,8 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       DumbService.getInstance(project).setAlternativeResolveEnabled(true);
       try {
-        return ApplicationManager.getApplication().runReadAction(computable);
+        ThrowableComputable<T, RuntimeException> inRead = () -> ApplicationManager.getApplication().runReadAction(computable);
+        return ProgressManager.getInstance().computePrioritized(inRead);
       }
       finally {
         DumbService.getInstance(project).setAlternativeResolveEnabled(false);

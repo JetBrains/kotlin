@@ -50,7 +50,6 @@ import com.intellij.ui.components.JBList;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
@@ -1262,9 +1261,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   }
 
   private <T> T withLock(Computable<T> computable) {
-    if (ApplicationManager.getApplication().isDispatchThread()) {
-      HeavyProcessLatch.INSTANCE.stopThreadPrioritizing();
-    }
     synchronized (myArrangerLock) {
       return computable.compute();
     }
