@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/typeArguments.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
               GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-            then: ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/jvm/isArrayOf]>#' type=IrErrorType
+            then: ERROR_CALL 'Unresolved reference: <Unresolved name: isArrayOf>#' type=IrErrorType
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false

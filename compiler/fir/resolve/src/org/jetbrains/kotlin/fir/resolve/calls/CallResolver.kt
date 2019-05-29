@@ -503,6 +503,10 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
     val candidateFactory: CandidateFactory
 ) : TowerDataConsumer() {
 
+    companion object {
+        val defaultPackage = Name.identifier("kotlin")
+    }
+
 
     override fun consume(
         kind: TowerDataKind,
@@ -548,21 +552,24 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                             dispatchReceiverValue: ClassDispatchReceiverValue?,
                             implicitExtensionReceiverValue: ImplicitReceiverValue?
                         ): ProcessorAction {
-                            val explicitReceiverType = explicitReceiver.type
-                            if (dispatchReceiverValue == null && explicitReceiverType is ConeClassType) {
-                                val declarationReceiverTypeRef = (symbol as? FirCallableSymbol)?.fir?.receiverTypeRef as? FirResolvedTypeRef
-                                val declarationReceiverType = declarationReceiverTypeRef?.type
-                                if (declarationReceiverType is ConeClassType) {
-                                    if (!AbstractTypeChecker.isSubtypeOf(
-                                            candidateFactory.inferenceComponents.ctx,
-                                            explicitReceiverType,
-                                            declarationReceiverType.lookupTag.constructClassType(
-                                                declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
-                                                isNullable = true
+                            if (symbol is FirFunctionSymbol && symbol.callableId.packageName.startsWith(defaultPackage)) {
+                                val explicitReceiverType = explicitReceiver.type
+                                if (dispatchReceiverValue == null && explicitReceiverType is ConeClassType) {
+                                    val declarationReceiverTypeRef =
+                                        (symbol as? FirCallableSymbol)?.fir?.receiverTypeRef as? FirResolvedTypeRef
+                                    val declarationReceiverType = declarationReceiverTypeRef?.type
+                                    if (declarationReceiverType is ConeClassType) {
+                                        if (!AbstractTypeChecker.isSubtypeOf(
+                                                candidateFactory.inferenceComponents.ctx,
+                                                explicitReceiverType,
+                                                declarationReceiverType.lookupTag.constructClassType(
+                                                    declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
+                                                    isNullable = true
+                                                )
                                             )
-                                        )
-                                    ) {
-                                        return ProcessorAction.NEXT
+                                        ) {
+                                            return ProcessorAction.NEXT
+                                        }
                                     }
                                 }
                             }
