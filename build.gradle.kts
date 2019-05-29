@@ -448,6 +448,11 @@ allprojects {
         }
     }
 
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.freeCompilerArgs += "-Xdump-model=" + project.property("dump.model.output").toString()
+    }
+
     tasks.withType(VerificationTask::class.java as Class<Task>) {
         (this as VerificationTask).ignoreFailures = ignoreTestFailures
     }
