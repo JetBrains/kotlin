@@ -26,7 +26,7 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
 
     override fun setUp() {
         super.setUp()
-        consoleRunner = KotlinConsoleKeeper.getInstance(project).run(myModule)!!
+        consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 

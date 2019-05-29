@@ -27,7 +27,7 @@ private const val CHECK_PACKAGE_DIRECTIVE = "CHECK_PACKAGE"
 
 abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
     AbstractDecompiledTextBaseTest(baseDirectory, true, withRuntime = true) {
-    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, myModule!!)
+    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, module!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
         assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile::class.java)

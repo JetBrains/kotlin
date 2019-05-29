@@ -26,7 +26,7 @@ abstract class LazyElementTypeTestBase<T>(private val lazyElementClass: Class<T>
         val expressionBefore = PsiTreeUtil.findChildOfType(file, lazyElementClass)
 
         performTypingAction(myFixture.editor, char)
-        PsiDocumentManager.getInstance(LightPlatformTestCase.getProject()).commitDocument(myFixture.getDocument(file))
+        PsiDocumentManager.getInstance(project).commitDocument(myFixture.getDocument(file))
 
         val expressionAfter = PsiTreeUtil.findChildOfType(file, lazyElementClass)
 

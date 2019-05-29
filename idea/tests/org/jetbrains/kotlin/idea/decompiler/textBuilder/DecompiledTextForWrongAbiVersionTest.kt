@@ -32,7 +32,7 @@ class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest
     fun testPackagePartWithWrongAbiVersion() = doTest("Wrong_packageKt")
 
     fun doTest(name: String) {
-        val root = findTestLibraryRoot(myModule!!)!!
+        val root = findTestLibraryRoot(module!!)!!
         checkFileWithWrongAbiVersion(root.findClassFileByName(name))
     }
 

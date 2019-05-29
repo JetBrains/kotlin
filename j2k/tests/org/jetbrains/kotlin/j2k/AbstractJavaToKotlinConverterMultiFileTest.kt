@@ -33,7 +33,6 @@ import java.util.*
 
 abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlinConverterTest() {
     fun doTest(dirPath: String) {
-        val project = LightPlatformTestCase.getProject()!!
         val psiManager = PsiManager.getInstance(project)
 
         val filesToConvert = File(dirPath).listFiles { _, name -> name.endsWith(".java") }

@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 
 abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPackage: Boolean)
     : AbstractDecompiledTextBaseTest(baseDirectory, allowKotlinPackage = allowKotlinPackage) {
-    override fun getFileToDecompile(): VirtualFile = getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
+    override fun getFileToDecompile(): VirtualFile = getClassFile(TEST_PACKAGE, getTestName(false), module!!)
 
     override fun checkStubConsistency(file: VirtualFile, decompiledText: String) {
         val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)

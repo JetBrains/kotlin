@@ -31,7 +31,7 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
         val fileText = FileUtil.loadFile(mainFile, true)
 
         try {
-            ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
             myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 
@@ -48,7 +48,7 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
             NavigationTestUtils.assertGotoDataMatching(editor, getSourceAndTargetElements(editor, file))
         }
         finally {
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
         }
     }
 }

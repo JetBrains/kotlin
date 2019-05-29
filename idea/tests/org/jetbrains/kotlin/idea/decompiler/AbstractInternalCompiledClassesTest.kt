@@ -39,7 +39,7 @@ abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtu
     }
 
     protected fun doTest(fileKind: String, acceptFile: VirtualFile.() -> Boolean, performTest: VirtualFile.() -> Unit) {
-        val root = findTestLibraryRoot(myModule!!)!!
+        val root = findTestLibraryRoot(module!!)!!
         var foundAtLeastOneFile = false
         root.checkRecursively {
             if (acceptFile()) {

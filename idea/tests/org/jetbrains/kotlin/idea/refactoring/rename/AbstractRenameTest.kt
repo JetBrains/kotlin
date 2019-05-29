@@ -140,7 +140,7 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
                     }
                 }
 
-                for (sourceRoot in ModuleRootManager.getInstance(myModule).sourceRoots) {
+                for (sourceRoot in ModuleRootManager.getInstance(module).sourceRoots) {
                     VfsUtilCore.visitChildrenRecursively(sourceRoot, visitor)
                 }
             }

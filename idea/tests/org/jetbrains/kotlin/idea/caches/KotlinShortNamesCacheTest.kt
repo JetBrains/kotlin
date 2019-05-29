@@ -186,7 +186,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testGetMethodsByNameWithFunctions() {
         myFixture.configureByFile("kotlinShortNamesCacheTestDataMethods.kt")
-        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
+        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
         checkIsSingleMethodFound(scope, "KotlinShortNamesCacheTestDataMethodsKt.topLevelFunction", true)
         checkIsSingleMethodFound(scope, "B1.staticMethodOfObject", true)
         checkIsSingleMethodFound(scope, "B1.nonStaticMethodOfObject", false)
@@ -197,7 +197,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun doTestGetMethodsByNameWithAccessors(file: String) {
         myFixture.configureByFile(file)
-        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
+        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
         checkIsVarAccessorsFound(scope, "topLevelVar", "KotlinShortNameCacheTestData.getTopLevelVar",
                                  "KotlinShortNameCacheTestData.setTopLevelVar", true)
 
@@ -238,7 +238,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testGetFieldsByName() {
         myFixture.configureByFile("kotlinShortNamesCacheTestDataFields.kt")
-        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
+        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
         checkIsSingleFieldFound(scope, "KotlinShortNamesCacheTestDataFieldsKt.topLevelVar", true)
         checkIsSingleFieldFound(scope, "B1.objectVar", true)
         checkIsSingleFieldFound(scope, "C1.classVar", false)

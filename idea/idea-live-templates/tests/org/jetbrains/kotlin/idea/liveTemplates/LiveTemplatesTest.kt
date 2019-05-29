@@ -28,7 +28,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
         myFixture.testDataPath = File(TEST_DATA_BASE_PATH).path + File.separator
-        TemplateManagerImpl.setTemplateTesting(myModule.project, testRootDisposable)
+        TemplateManagerImpl.setTemplateTesting(module.project, testRootDisposable)
     }
 
     fun testSout() {

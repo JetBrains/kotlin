@@ -35,7 +35,6 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
     open fun doTest(javaPath: String) {
-        val project = LightPlatformTestCase.getProject()!!
         val javaFile = File(javaPath)
         val fileContents = FileUtil.loadFile(javaFile, true)
         val matcher = testHeaderPattern.matcher(fileContents)

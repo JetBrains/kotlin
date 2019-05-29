@@ -99,7 +99,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         } catch (exc: Exception) {
             throw RuntimeException(exc)
         } finally {
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
             DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = false
         }
 

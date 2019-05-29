@@ -72,13 +72,13 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         MockLibraryUtil.compileKotlin(baseDir.path, outputDir)
 
-        PsiTestUtil.setCompilerOutputPath(myModule, outputDir.path, false)
+        PsiTestUtil.setCompilerOutputPath(module, outputDir.path, false)
 
         val mainFileName = "$dirName/${getTestName(true)}.kts"
         doCompilingTest(mainFileName)
         doReplTest(mainFileName)
 
-        ModuleRootModificationUtil.updateModel(myModule) { model ->
+        ModuleRootModificationUtil.updateModel(module) { model ->
             model.getModuleExtension(CompilerModuleExtension::class.java).inheritCompilerOutputPath(true)
         }
     }

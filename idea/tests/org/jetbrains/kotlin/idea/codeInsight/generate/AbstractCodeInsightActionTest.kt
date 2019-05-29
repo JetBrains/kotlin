@@ -58,7 +58,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         var mainPsiFile: KtFile? = null
 
         try {
-            ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
             val mainFile = File(path)
             val mainFileName = mainFile.name
@@ -112,7 +112,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         }
         finally {
             mainPsiFile?.forcedTargetPlatform = null
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
         }
     }
 

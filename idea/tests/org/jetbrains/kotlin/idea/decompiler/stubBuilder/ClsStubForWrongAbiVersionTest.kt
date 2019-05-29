@@ -21,7 +21,7 @@ class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
     fun testClass() = testStubsForFileWithWrongAbiVersion("ClassWithWrongAbiVersion")
 
     private fun testStubsForFileWithWrongAbiVersion(className: String) {
-        val root = findTestLibraryRoot(myModule!!)!!
+        val root = findTestLibraryRoot(module!!)!!
         val result = root.findClassFileByName(className)
         testClsStubsForFile(result, null)
     }

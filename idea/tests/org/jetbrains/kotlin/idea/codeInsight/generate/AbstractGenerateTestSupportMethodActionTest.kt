@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractGenerateTestSupportMethodActionTest : AbstractCodeInsightActionTest() {
     private fun setUpTestSourceRoot() {
-        val module = myModule
         val model = ModuleRootManager.getInstance(module).modifiableModel
         val entry = model.contentEntries.single()
         val sourceFolderFile = entry.sourceFolderFiles.single()

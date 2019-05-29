@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.utils.sure
 
 abstract class AbstractNavigateFromLibrarySourcesTest : LightCodeInsightFixtureTestCase() {
     protected fun navigationElementForReferenceInLibrarySource(filePath: String, referenceText: String): PsiElement {
-        val libraryOrderEntry = ModuleRootManager.getInstance(myModule!!).orderEntries.first { it is LibraryOrderEntry }
+        val libraryOrderEntry = ModuleRootManager.getInstance(module!!).orderEntries.first { it is LibraryOrderEntry }
         val libSourcesRoot = libraryOrderEntry.getUrls(OrderRootType.SOURCES)[0]
         val libUrl = "$libSourcesRoot/$filePath"
         val vf = VirtualFileManager.getInstance().refreshAndFindFileByUrl(libUrl)
