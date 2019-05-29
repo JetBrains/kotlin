@@ -11,7 +11,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.command.undo.UndoConstants;
 import com.intellij.openapi.diagnostic.Logger;
@@ -34,8 +33,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.SafeWriteRequestor;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.encoding.EncodingRegistry;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.testFramework.LightVirtualFile;
@@ -50,10 +49,8 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -433,14 +430,25 @@ public class ConsoleHistoryController implements Disposable {
       return myContent;
     }
 
+    @Nullable
+    File getFile(String id) {
+      if (myRootType.isHidden()) return null;
+      String rootPath = ScratchFileService.getInstance().getRootPath(HistoryRootType.getInstance());
+      return new File(FileUtil.toSystemDependentName(rootPath + "/" + getHistoryName(myRootType, id)));
+    }
+
+    @NotNull
+    Charset getCharset() {
+      return EncodingRegistry.getInstance().getDefaultCharset();
+    }
+
     public boolean loadHistory(String id) {
       try {
-        VirtualFile file = myRootType.isHidden() ? null :
-                           HistoryRootType.getInstance().findFile(null, getHistoryName(myRootType, id), ScratchFileService.Option.existing_only);
-        if (file == null) {
+        File file = getFile(id);
+        if (file == null || !file.exists()) {
           return false;
         }
-        String[] split = FileUtil.loadFile(VfsUtilCore.virtualToIoFile(file), file.getCharset()).split(myRootType.getEntrySeparator());
+        String[] split = FileUtil.loadFile(file, getCharset()).split(myRootType.getEntrySeparator());
         getModel().resetEntries(Arrays.asList(split));
         return true;
       }
@@ -450,20 +458,17 @@ public class ConsoleHistoryController implements Disposable {
     }
 
     private void saveHistory() {
-      try {
-        if (getModel().isEmpty()) return;
-        WriteAction.run(() -> {
-          VirtualFile file = HistoryRootType.getInstance().findFile(null, getHistoryName(myRootType, myId), ScratchFileService.Option.create_if_missing);
-          try (Writer out = new BufferedWriter(new OutputStreamWriter(file.getOutputStream(this), file.getCharset()))) {
-            boolean first = true;
-            for (String entry : getModel().getEntries()) {
-              if (first) first = false;
-              else out.write(myRootType.getEntrySeparator());
-              out.write(entry);
-            }
-            out.flush();
-          }
-        });
+      if (getModel().isEmpty()) return;
+      File file = getFile(myId);
+      if (file == null) return;
+      try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), getCharset()))) {
+        boolean first = true;
+        for (String entry : getModel().getEntries()) {
+          if (first) first = false;
+          else out.write(myRootType.getEntrySeparator());
+          out.write(entry);
+        }
+        out.flush();
       }
       catch (Exception ex) {
         LOG.error(ex);
