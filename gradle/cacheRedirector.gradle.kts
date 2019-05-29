@@ -9,7 +9,7 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import java.net.URI
 
 /**
- *  The list of repositories supported by cache redirector should be synced with the list in https://youtrack.jetbrains.com/issue/ADM-23180
+ *  The list of repositories supported by cache redirector should be synced with the list at https://cache-redirector.jetbrains.com/redirects_generated.html
  *  To add a repository to the list create an issue in ADM project (example issue https://youtrack.jetbrains.com/issue/IJI-149)
  *  Repositories in `buildscript` blocks are *NOT* substituted by this script and should be handled manually
  */
@@ -23,6 +23,7 @@ val mirroredUrls = listOf(
     "https://jcenter.bintray.com",
     "https://jetbrains.bintray.com/dekaf",
     "https://jetbrains.bintray.com/intellij-jdk",
+    "https://jetbrains.bintray.com/intellij-jbr",
     "https://jetbrains.bintray.com/intellij-plugin-service",
     "https://jetbrains.bintray.com/intellij-third-party-dependencies",
     "https://jetbrains.bintray.com/markdown",
@@ -30,15 +31,17 @@ val mirroredUrls = listOf(
     "https://jetbrains.bintray.com/test-discovery",
     "https://jetbrains.bintray.com/jediterm",
     "https://jitpack.io",
-    "https://maven.exasol.com/artifactory/exasol-releases",
+    "https://www.exasol.com/artifactory/exasol-releases",
     "https://plugins.gradle.org/m2",
     "https://plugins.jetbrains.com/maven",
     "https://repo.grails.org/grails/core",
     "https://repo.jenkins-ci.org/releases",
     "https://repo.spring.io/milestone",
     "https://repo1.maven.org/maven2",
+    "https://repo.maven.apache.org/maven2",
     "https://services.gradle.org",
     "https://www.jetbrains.com/intellij-repository",
+    "https://www.jetbrains.com/intellij-repository/nightly",
     "https://www.myget.org/F/intellij-go-snapshots/maven",
     "https://www.myget.org/F/rd-snapshots/maven",
     "https://www.myget.org/F/rd-model-snapshots/maven",
@@ -46,10 +49,20 @@ val mirroredUrls = listOf(
     "https://dl.google.com/dl/android/studio/ide-zips",
     "https://dl.bintray.com/kotlin/ktor",
     "https://cdn.azul.com/zulu/bin",
+    "https://repo.typesafe.com/typesafe/ivy-releases",
+    "https://dl.bintray.com/jetbrains/scala-plugin-deps",
+    "https://dl.bintray.com/jetbrains/maven-patched",
+    "https://dl.bintray.com/scalamacros/maven",
+    "https://dl.bintray.com/scalacenter/releases",
+    "https://oss.sonatype.org/content/repositories/releases",
+    "https://oss.sonatype.org/content/repositories/snapshots",
+    "https://oss.sonatype.org/content/repositories/staging",
+    "https://jetbrains.bintray.com/wormhole",
     "https://jetbrains.bintray.com/kotlin-native-dependencies",
+    "https://kotlin.bintray.com/kotlin-dependencies",
     "https://dl.bintray.com/kotlin/kotlinx",
     "https://dl.bintray.com/kotlin/kotlinx.html",
-    "https://kotlin.bintray.com/kotlin-dependencies"
+    "https://dl.google.com/android/repository"
 )
 
 val aliases = mapOf(
