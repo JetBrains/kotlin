@@ -947,8 +947,13 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
 
           start += textRange.getStartOffset();
           end = start + textRange.getLength();
+          //todo[kb] probably move highlight color to the editor color scheme?
+          TextAttributes highlightReferenceTextRange = new TextAttributes(null, null,
+                                                                          JBColor.namedColor("PsiViewer.referenceHighlightColor", 0xA8C023),
+                                                                          EffectType.BOLD_DOTTED_LINE, Font.PLAIN);
           myListenerHighlighter = myEditor.getMarkupModel()
-            .addRangeHighlighter(start, end, HighlighterLayer.FIRST + 1, myAttributes, HighlighterTargetArea.EXACT_RANGE);
+            .addRangeHighlighter(start, end, HighlighterLayer.LAST,
+                                 highlightReferenceTextRange, HighlighterTargetArea.EXACT_RANGE);
         }
       }
     }
