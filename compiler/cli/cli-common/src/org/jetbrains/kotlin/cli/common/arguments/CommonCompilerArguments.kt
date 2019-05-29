@@ -340,6 +340,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var explicitApi: String by FreezableVar(ExplicitApiMode.DISABLED.state)
 
+    @Argument(
+        value = "-Xdump-model",
+        description = "Don't even try to use it"
+    )
+    var dumpArgumentsDir: String? by FreezableVar(null)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)

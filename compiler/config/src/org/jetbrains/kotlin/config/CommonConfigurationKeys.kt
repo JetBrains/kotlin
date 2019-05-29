@@ -47,6 +47,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expext/actual linker")
+
+    @JvmField
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
