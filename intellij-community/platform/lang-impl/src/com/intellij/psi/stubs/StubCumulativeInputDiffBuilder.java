@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.StorageException;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
@@ -11,13 +10,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-class StubsCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, SerializedStubTree> {
+class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, SerializedStubTree> {
   private final int myInputId;
   @Nullable // null if input was not indexed before
   private final IndexedStubs myIndexedStubs;
 
-  StubsCumulativeInputDiffBuilder(int inputId,
-                                  @Nullable IndexedStubs indexedStubs) {
+  StubCumulativeInputDiffBuilder(int inputId,
+                                 @Nullable IndexedStubs indexedStubs) {
     super(inputId);
     myInputId = inputId;
     myIndexedStubs = indexedStubs;

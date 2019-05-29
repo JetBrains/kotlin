@@ -3,7 +3,6 @@ package com.intellij.psi.stubs;
 
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
@@ -78,7 +77,7 @@ class StubUpdatingForwardIndexAccessor extends AbstractForwardIndexAccessor<Inte
   @Override
   protected InputDataDiffBuilder<Integer, SerializedStubTree> createDiffBuilder(int inputId,
                                                                                 @Nullable IndexedStubs inputData) {
-    return new StubsCumulativeInputDiffBuilder(inputId, inputData);
+    return new StubCumulativeInputDiffBuilder(inputId, inputData);
   }
 
   @Nullable

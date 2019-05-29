@@ -354,7 +354,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     @Override
     protected InputDataDiffBuilder<Integer, SerializedStubTree> getKeysDiffBuilderInMemoryMode(int inputId,
                                                                                                @NotNull Map<Integer, SerializedStubTree> keysAndValues) {
-      return new StubsCumulativeInputDiffBuilder(inputId, StubUpdatingForwardIndexAccessor.getIndexedStubs(keysAndValues));
+      return new StubCumulativeInputDiffBuilder(inputId, StubUpdatingForwardIndexAccessor.getIndexedStubs(keysAndValues));
     }
 
     @Override
