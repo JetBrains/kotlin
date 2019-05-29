@@ -101,13 +101,6 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
         }
     }.toMap()
 
-    val list = symbolTable.referenceClass(builtIns.list)
-    val mutableList = symbolTable.referenceClass(builtIns.mutableList)
-    val set = symbolTable.referenceClass(builtIns.set)
-    val mutableSet = symbolTable.referenceClass(builtIns.mutableSet)
-    val map = symbolTable.referenceClass(builtIns.map)
-    val mutableMap = symbolTable.referenceClass(builtIns.mutableMap)
-
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 
     val symbolName = topLevelClass(RuntimeNames.symbolName)

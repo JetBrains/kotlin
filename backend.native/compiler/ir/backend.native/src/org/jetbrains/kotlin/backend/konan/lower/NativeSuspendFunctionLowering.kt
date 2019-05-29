@@ -65,9 +65,10 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
         )
     }
 
-    override fun buildStateMachine(originalBody: IrBody, stateMachineFunction: IrFunction,
+    override fun buildStateMachine(stateMachineFunction: IrFunction,
                                    transformingFunction: IrFunction,
                                    argumentToPropertiesMap: Map<IrValueParameter, IrField>) {
+        val originalBody = transformingFunction.body!!
         val resultArgument = stateMachineFunction.valueParameters.single()
 
         val coroutineClass = stateMachineFunction.parentAsClass
