@@ -68,7 +68,7 @@
             <border type="none"/>
             <children/>
           </xy>
-          <component id="e4723" class="com.intellij.ui.TitledSeparator" binding="myBeforeSeparator">
+          <component id="e4723" class="com.intellij.ui.TitledSeparator">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -76,7 +76,7 @@
               <text value="Before"/>
             </properties>
           </component>
-          <component id="967ce" class="com.intellij.ui.TitledSeparator" binding="myAfterSeparator">
+          <component id="967ce" class="com.intellij.ui.TitledSeparator">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
