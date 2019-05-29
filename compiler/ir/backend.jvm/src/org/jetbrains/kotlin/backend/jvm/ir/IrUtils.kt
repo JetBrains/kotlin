@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 
 /**
  * Computes the erased class for this type parameter according to the java erasure rules.
@@ -37,3 +38,8 @@ val IrType.erasedUpperBound: IrClass
         is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
         else -> throw IllegalStateException()
     }
+
+val IrFunction.propertyIfAccessor: IrDeclaration
+    get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
+
+fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)
