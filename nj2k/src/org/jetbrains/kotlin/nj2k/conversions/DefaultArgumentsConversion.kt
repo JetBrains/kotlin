@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
-import org.jetbrains.kotlin.nj2k.jvmAnnotation
+import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKUniverseMethodSymbol
