@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.KtTypeArgumentList
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
 fun KtCallExpression.replaceOrCreateTypeArgumentList(newTypeArgumentList: KtTypeArgumentList) {
@@ -26,3 +26,10 @@ fun KtModifierListOwner.hasInlineModifier() = hasModifier(KtTokens.INLINE_KEYWOR
 fun KtPrimaryConstructor.allowedValOrVar(): Boolean = containingClass()?.let {
     it.isAnnotation() || it.hasInlineModifier()
 } ?: false
+
+// TODO: add cases
+fun KtExpression.hasNoSideEffects(): Boolean = when (this) {
+    is KtStringTemplateExpression -> !hasInterpolation()
+    is KtConstantExpression -> true
+    else -> ConstantExpressionEvaluator.getConstant(this, analyze(BodyResolveMode.PARTIAL)) != null
+}

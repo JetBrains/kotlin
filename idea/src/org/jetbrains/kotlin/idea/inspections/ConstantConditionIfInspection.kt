@@ -17,9 +17,13 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.hasNoSideEffects
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -158,43 +162,29 @@ private fun KtExpression.enumEntry(): KtEnumEntry? {
 fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean, keepBraces: Boolean = false) {
     val caretModel = findExistingEditor()?.caretModel
 
-    val subjectVariable = (this as? KtWhenExpression)?.subjectVariable?.let { it ->
-        if (it.annotationEntries.isNotEmpty()) return@let it
-        val initializer = it.initializer ?: return@let it
-        val references = ReferencesSearch.search(it, LocalSearchScope(this)).toList()
-        when (references.size) {
-            0 -> when (initializer) {
-                is KtSimpleNameExpression, is KtStringTemplateExpression, is KtConstantExpression -> null
-                else -> it
-            }
+    val subjectVariable = (this as? KtWhenExpression)?.subjectVariable?.let(fun(property: KtProperty): KtProperty? {
+        if (property.annotationEntries.isNotEmpty()) return property
+        val initializer = property.initializer ?: return property
+        val references = ReferencesSearch.search(property, LocalSearchScope(this)).toList()
+        return when (references.size) {
+            0 -> property.takeUnless { initializer.hasNoSideEffects() }
             1 -> {
-                references.firstOrNull()?.element?.replace(initializer)
-                null
+                if (initializer.hasNoSideEffects()) {
+                    references.first().element.replace(initializer)
+                    null
+                } else
+                    property
             }
-            else -> it
+            else -> property
         }
-    }
-    val wrapSubjectVariableByRun = if (subjectVariable != null) {
-        val subjectVariableName = subjectVariable.nameAsName
-        val parentBlock = getStrictParentOfType<KtBlockExpression>()
-        parentBlock?.anyDescendantOfType<KtProperty> { it != subjectVariable && it.nameAsName == subjectVariableName } == true
-    } else {
-        false
-    }
+    })
 
     val factory = KtPsiFactory(this)
     val parent = this.parent
     val replaced = when {
         branch !is KtBlockExpression -> {
             if (subjectVariable != null) {
-                if (isUsedAsExpression || wrapSubjectVariableByRun) {
-                    replaced(KtPsiFactory(this).createExpressionByPattern("run { $0\n$1 }", subjectVariable, branch))
-                } else {
-                    parent.addBefore(subjectVariable, this).also {
-                        parent.addAfter(factory.createNewLine(), it)
-                        replaced(branch)
-                    }
-                }
+                replaced(KtPsiFactory(this).createExpressionByPattern("run { $0\n$1 }", subjectVariable, branch))
             } else {
                 replaced(branch)
             }
@@ -212,12 +202,11 @@ fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boo
                 if (keepBraces) {
                     parent.addAfter(branch, this)
                 } else {
-                    if (subjectVariable != null && wrapSubjectVariableByRun) {
+                    if (subjectVariable != null) {
                         branch.addAfter(subjectVariable, branch.lBrace)
                         parent.addAfter(KtPsiFactory(this).createExpression("run ${branch.text}"), this)
                     } else {
                         parent.addRangeAfter(firstChildSibling, lastChild.prevSibling, this)
-                        subjectVariable?.let { parent.addBefore(subjectVariable, this) }
                     }
                 }
             } else {

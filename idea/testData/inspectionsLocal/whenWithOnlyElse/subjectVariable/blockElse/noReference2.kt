@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun test() {
     when<caret> (val a = 42) {
         else -> {

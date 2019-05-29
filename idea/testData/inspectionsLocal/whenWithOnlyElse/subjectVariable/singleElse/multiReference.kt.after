@@ -1,6 +1,9 @@
+// WITH_RUNTIME
 fun test() {
-    <caret>val a = create()
-    use(a, a)
+    run {
+        val a = create()
+        use(a, a)
+    }
 }
 
 fun create(): String = ""

@@ -1,6 +1,9 @@
+// WITH_RUNTIME
 fun hasAnnotation() {
-    <caret>@Bar val a = create()
-    use(a)
+    run {
+        @Bar val a = create()
+        use(a)
+    }
 }
 
 fun create(): String = ""
