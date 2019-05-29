@@ -93,5 +93,9 @@ class StringJVMTest {
         // Locale-specific case mappings.
         assertEquals("ıII", "III".decapitalize(Locale("tr", "TR")))
         assertEquals("iII", "III".decapitalize(Locale.US))
+
+        // Case mapping where title case is different than uppercase.
+        assertEquals("ǳǳǳ", "Ǳǳǳ".decapitalize(Locale.US))
+        assertEquals("ǳǳǳ", "ǲǳǳ".decapitalize(Locale.US))
     }
 }
