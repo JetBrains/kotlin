@@ -46,55 +46,59 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
 
     private const val VERSION = 5
 
-    private val kindsToIndex = setOf(
-        KotlinClassHeader.Kind.CLASS,
-        KotlinClassHeader.Kind.FILE_FACADE,
-        KotlinClassHeader.Kind.MULTIFILE_CLASS
-    )
+    private val kindsToIndex: Set<KotlinClassHeader.Kind> by lazy {
+        setOf(
+            KotlinClassHeader.Kind.CLASS,
+            KotlinClassHeader.Kind.FILE_FACADE,
+            KotlinClassHeader.Kind.MULTIFILE_CLASS
+        )
+    }
 
-    private val INDEXER = DataIndexer<JvmMetadataVersion, Void, FileContent> { inputData: FileContent ->
-        var versionArray: IntArray? = null
-        var isStrictSemantics = false
-        var annotationPresent = false
-        var kind: KotlinClassHeader.Kind? = null
+    private val INDEXER: DataIndexer<JvmMetadataVersion, Void, FileContent> by lazy {
+        DataIndexer<JvmMetadataVersion, Void, FileContent> { inputData: FileContent ->
+            var versionArray: IntArray? = null
+            var isStrictSemantics = false
+            var annotationPresent = false
+            var kind: KotlinClassHeader.Kind? = null
 
-        tryBlock(inputData) {
-            val classReader = ClassReader(inputData.content)
-            classReader.accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                    if (desc != METADATA_DESC) return null
+            tryBlock(inputData) {
+                val classReader = ClassReader(inputData.content)
+                classReader.accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                        if (desc != METADATA_DESC) return null
 
-                    annotationPresent = true
-                    return object : AnnotationVisitor(Opcodes.API_VERSION) {
-                        override fun visit(name: String, value: Any) {
-                            when (name) {
-                                METADATA_VERSION_FIELD_NAME -> if (value is IntArray) {
-                                    versionArray = value
-                                }
-                                KIND_FIELD_NAME -> if (value is Int) {
-                                    kind = KotlinClassHeader.Kind.getById(value)
-                                }
-                                METADATA_EXTRA_INT_FIELD_NAME -> if (value is Int) {
-                                    isStrictSemantics = (value and METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
+                        annotationPresent = true
+                        return object : AnnotationVisitor(Opcodes.API_VERSION) {
+                            override fun visit(name: String, value: Any) {
+                                when (name) {
+                                    METADATA_VERSION_FIELD_NAME -> if (value is IntArray) {
+                                        versionArray = value
+                                    }
+                                    KIND_FIELD_NAME -> if (value is Int) {
+                                        kind = KotlinClassHeader.Kind.getById(value)
+                                    }
+                                    METADATA_EXTRA_INT_FIELD_NAME -> if (value is Int) {
+                                        isStrictSemantics = (value and METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+            }
+
+            var version =
+                if (versionArray != null) createBinaryVersion(versionArray!!, isStrictSemantics) else null
+
+            if (kind !in kindsToIndex) {
+                // Do not index metadata version for synthetic classes
+                version = null
+            } else if (annotationPresent && version == null) {
+                // No version at all because the class is too old, or version is set to something weird
+                version = JvmMetadataVersion.INVALID_VERSION
+            }
+
+            if (version != null) mapOf(version to null) else emptyMap()
         }
-
-        var version =
-            if (versionArray != null) createBinaryVersion(versionArray!!, isStrictSemantics) else null
-
-        if (kind !in kindsToIndex) {
-            // Do not index metadata version for synthetic classes
-            version = null
-        } else if (annotationPresent && version == null) {
-            // No version at all because the class is too old, or version is set to something weird
-            version = JvmMetadataVersion.INVALID_VERSION
-        }
-
-        if (version != null) mapOf(version to null) else emptyMap()
     }
 }

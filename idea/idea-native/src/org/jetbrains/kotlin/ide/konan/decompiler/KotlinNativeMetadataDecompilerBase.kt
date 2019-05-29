@@ -30,14 +30,14 @@ import java.io.IOException
 
 abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
     private val fileType: FileType,
-    private val serializerProtocol: SerializerExtensionProtocol,
+    private val serializerProtocol: () -> SerializerExtensionProtocol,
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    private val expectedBinaryVersion: V,
-    private val invalidBinaryVersion: V,
+    private val expectedBinaryVersion: () -> V,
+    private val invalidBinaryVersion: () -> V,
     stubVersion: Int
 ) : ClassFileDecompilers.Full() {
 
-    private val stubBuilder =
+    private val metadataStubBuilder: KotlinNativeMetadataStubBuilder =
         KotlinNativeMetadataStubBuilder(
             stubVersion,
             fileType,
@@ -45,13 +45,15 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
             ::readFileSafely
         )
 
-    private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+    private val renderer: DescriptorRenderer by lazy {
+        DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+    }
 
     protected abstract fun doReadFile(file: VirtualFile): FileWithMetadata?
 
     override fun accepts(file: VirtualFile) = file.fileType == fileType
 
-    override fun getStubBuilder() = stubBuilder
+    override fun getStubBuilder() = metadataStubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
         KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
@@ -81,14 +83,14 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
         val file = readFileSafely(virtualFile)
 
         return when (file) {
-            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
+            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)
             is FileWithMetadata.Compatible -> decompiledText(
                 file,
-                serializerProtocol,
+                serializerProtocol(),
                 flexibleTypeDeserializer,
                 renderer
             )
-            null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
+            null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
         }
     }
 }

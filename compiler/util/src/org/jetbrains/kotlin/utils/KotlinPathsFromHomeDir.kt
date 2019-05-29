@@ -25,7 +25,7 @@ class KotlinPathsFromHomeDir(
 ) : KotlinPathsFromBaseDirectory(File(homePath, "lib")) {
 
     // TODO: extend when needed
-    val libsWithSources = setOf(KotlinPaths.Jar.StdLib, KotlinPaths.Jar.JsStdLib)
+    val libsWithSources: Set<KotlinPaths.Jar> by lazy { setOf(KotlinPaths.Jar.StdLib, KotlinPaths.Jar.JsStdLib) }
 
     override fun sourcesJar(jar: KotlinPaths.Jar): File? = if (jar in libsWithSources) super.sourcesJar(jar) else null
 }

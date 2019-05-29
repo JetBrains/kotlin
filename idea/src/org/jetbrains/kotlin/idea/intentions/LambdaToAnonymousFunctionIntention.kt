@@ -49,8 +49,6 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
     }
 
     companion object {
-        private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES
-
         fun convertLambdaToFunction(
             lambda: KtLambdaExpression,
             functionDescriptor: FunctionDescriptor,
@@ -58,6 +56,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
             typeParameters: Map<String, KtTypeReference> = emptyMap(),
             replaceElement: (KtNamedFunction) -> KtExpression = { lambda.replaced(it) }
         ): KtExpression? {
+            val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES
             val functionLiteral = lambda.functionLiteral
             val bodyExpression = functionLiteral.bodyExpression ?: return null
 

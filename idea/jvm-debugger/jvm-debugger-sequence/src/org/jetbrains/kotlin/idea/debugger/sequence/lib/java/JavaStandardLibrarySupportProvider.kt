@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpress
 
 class JavaStandardLibrarySupportProvider : LibrarySupportProvider {
     private companion object {
-        val builder = TerminatedChainBuilder(
-            KotlinChainTransformerImpl(JavaStreamChainTypeExtractor()),
-            StandardLibraryCallChecker(PackageBasedCallChecker("java.util.stream"))
-        )
-        val support = StandardLibrarySupport()
-        val dsl = DslImpl(KotlinStatementFactory(JavaPeekCallFactory()))
+        val builder: TerminatedChainBuilder by lazy {
+            TerminatedChainBuilder(
+                KotlinChainTransformerImpl(JavaStreamChainTypeExtractor()),
+                StandardLibraryCallChecker(PackageBasedCallChecker("java.util.stream"))
+            )
+        }
+        val support: StandardLibrarySupport by lazy { StandardLibrarySupport() }
+        val dsl: DslImpl by lazy { DslImpl(KotlinStatementFactory(JavaPeekCallFactory())) }
     }
 
     override fun getLanguageId(): String = KotlinLanguage.INSTANCE.id

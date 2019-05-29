@@ -42,16 +42,18 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
     "Remove redundant calls of the conversion method"
 ) {
 
-    private val targetClassMap = mapOf(
-        "toString()" to String::class.qualifiedName,
-        "toDouble()" to Double::class.qualifiedName,
-        "toFloat()" to Float::class.qualifiedName,
-        "toLong()" to Long::class.qualifiedName,
-        "toInt()" to Int::class.qualifiedName,
-        "toChar()" to Char::class.qualifiedName,
-        "toShort()" to Short::class.qualifiedName,
-        "toByte()" to Byte::class.qualifiedName
-    )
+    private val targetClassMap: Map<String, String?> by lazy {
+        mapOf(
+            "toString()" to String::class.qualifiedName,
+            "toDouble()" to Double::class.qualifiedName,
+            "toFloat()" to Float::class.qualifiedName,
+            "toLong()" to Long::class.qualifiedName,
+            "toInt()" to Int::class.qualifiedName,
+            "toChar()" to Char::class.qualifiedName,
+            "toShort()" to Short::class.qualifiedName,
+            "toByte()" to Byte::class.qualifiedName
+        )
+    }
 
 
     override fun applyTo(element: KtQualifiedExpression, editor: Editor?) {

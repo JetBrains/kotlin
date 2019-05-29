@@ -136,7 +136,9 @@ class KotlinReportSubmitter : ITNReporterCompat() {
             return ChronoUnit.DAYS.between(releaseDate, LocalDate.now()) > NUMBER_OF_REPORTING_DAYS_FROM_RELEASE
         }
 
-        private val RELEASE_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        private val RELEASE_DATE_FORMATTER: DateTimeFormatter by lazy {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        }
 
         private fun readStoredPluginReleaseDate(): LocalDate? {
             val pluginVersionToReleaseDate = PropertiesComponent.getInstance().getValue(KOTLIN_PLUGIN_RELEASE_DATE) ?: return null

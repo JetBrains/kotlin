@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 open class KotlinNativeMetadataStubBuilder(
     private val version: Int,
     private val fileType: FileType,
-    private val serializerProtocol: SerializerExtensionProtocol,
+    private val serializerProtocol: () -> SerializerExtensionProtocol,
     private val readFile: (VirtualFile) -> FileWithMetadata?
 ) : ClsStubBuilder() {
 
@@ -39,7 +39,7 @@ open class KotlinNativeMetadataStubBuilder(
                 val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
                 val ktFileText = decompiledText(
                     file,
-                    serializerProtocol,
+                    serializerProtocol(),
                     NullFlexibleTypeDeserializer,
                     renderer
                 )

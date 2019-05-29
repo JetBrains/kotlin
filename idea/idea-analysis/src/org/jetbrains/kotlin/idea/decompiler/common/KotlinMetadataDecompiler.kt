@@ -40,29 +40,31 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.IOException
 
 abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
-        private val fileType: FileType,
-        private val serializerProtocol: SerializerExtensionProtocol,
-        private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-        private val expectedBinaryVersion: V,
-        private val invalidBinaryVersion: V,
-        stubVersion: Int
+    private val fileType: FileType,
+    private val serializerProtocol: () -> SerializerExtensionProtocol,
+    private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    private val expectedBinaryVersion: () -> V,
+    private val invalidBinaryVersion: () -> V,
+    stubVersion: Int
 ) : ClassFileDecompilers.Full() {
-    private val stubBuilder = KotlinMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
+    private val metadataStubBuilder: KotlinMetadataStubBuilder =
+        KotlinMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
 
-    private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+    private val renderer: DescriptorRenderer by lazy {
+        DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+    }
 
     abstract fun readFile(bytes: ByteArray, file: VirtualFile): FileWithMetadata?
 
     override fun accepts(file: VirtualFile) = file.fileType == fileType
 
-    override fun getStubBuilder() = stubBuilder
+    override fun getStubBuilder() = metadataStubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
             if (readFileSafely(provider.virtualFile) == null) {
                 null
-            }
-            else {
+            } else {
                 KtDecompiledFile(provider, this::buildDecompiledText)
             }
         }
@@ -91,16 +93,16 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
 
         return when (file) {
             null -> {
-                createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
+                createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
             }
             is FileWithMetadata.Incompatible -> {
-                createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
+                createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)
             }
             is FileWithMetadata.Compatible -> {
                 val packageFqName = file.packageFqName
                 val resolver = KotlinMetadataDeserializerForDecompiler(
                         packageFqName, file.proto, file.nameResolver, file.version,
-                        serializerProtocol, flexibleTypeDeserializer
+                        serializerProtocol(), flexibleTypeDeserializer
                 )
                 val declarations = arrayListOf<DeclarationDescriptor>()
                 declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
@@ -126,9 +128,9 @@ sealed class FileWithMetadata {
         val packageFqName = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))
 
         open val classesToDecompile: List<ProtoBuf.Class> =
-                proto.class_List.filter { proto ->
-                    val classId = nameResolver.getClassId(proto.fqName)
-                    !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
-                }
+            proto.class_List.filter { proto ->
+                val classId = nameResolver.getClassId(proto.fqName)
+                !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
+            }
     }
 }

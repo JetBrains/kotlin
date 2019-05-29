@@ -47,20 +47,22 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
-public class KotlinTypedHandler extends TypedHandlerDelegate {
-    private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
+class KotlinTypedHandlerInner {
+    final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
             KtNodeTypes.IF,
             KtNodeTypes.ELSE,
             KtNodeTypes.FOR,
             KtNodeTypes.WHILE,
             KtNodeTypes.TRY);
 
-    private final static TokenSet SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER = TokenSet.create(
+    final static TokenSet SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER = TokenSet.create(
             KtTokens.RPAR,
             KtTokens.ELSE_KEYWORD,
             KtTokens.TRY_KEYWORD
     );
+}
 
+public class KotlinTypedHandler extends TypedHandlerDelegate {
     private boolean kotlinLTTyped;
 
     private boolean isGlobalPreviousDollarInString; // Global flag for all editors
@@ -107,7 +109,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                     iterator.retreat();
                 }
 
-                if (iterator.atEnd() || !(SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER.contains(iterator.getTokenType()))) {
+                if (iterator.atEnd() || !(KotlinTypedHandlerInner.SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER.contains(iterator.getTokenType()))) {
                     AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, null);
                     return Result.CONTINUE;
                 }
@@ -119,7 +121,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 PsiElement leaf = file.findElementAt(offset);
                 if (leaf != null) {
                     PsiElement parent = leaf.getParent();
-                    if (parent != null && CONTROL_FLOW_EXPRESSIONS.contains(parent.getNode().getElementType())) {
+                    if (parent != null && KotlinTypedHandlerInner.CONTROL_FLOW_EXPRESSIONS.contains(parent.getNode().getElementType())) {
                         ASTNode nonWhitespaceSibling = FormatterUtil.getPreviousNonWhitespaceSibling(leaf.getNode());
                         if (nonWhitespaceSibling != null && nonWhitespaceSibling.getStartOffset() == tokenBeforeBraceOffset) {
                             EditorModificationUtil.insertStringAtCaret(editor, "{", false, true);

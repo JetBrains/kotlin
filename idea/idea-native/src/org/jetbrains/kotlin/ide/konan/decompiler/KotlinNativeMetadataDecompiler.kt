@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 
 class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<KotlinNativeMetadataVersion>(
-    KotlinNativeMetaFileType, KonanSerializerProtocol, NullFlexibleTypeDeserializer,
-    KotlinNativeMetadataVersion.DEFAULT_INSTANCE,
-    KotlinNativeMetadataVersion.INVALID_VERSION,
+    KotlinNativeMetaFileType, { KonanSerializerProtocol }, NullFlexibleTypeDeserializer,
+    { KotlinNativeMetadataVersion.DEFAULT_INSTANCE },
+    { KotlinNativeMetadataVersion.INVALID_VERSION },
     KotlinNativeMetaFileType.STUB_VERSION
 ) {
 
