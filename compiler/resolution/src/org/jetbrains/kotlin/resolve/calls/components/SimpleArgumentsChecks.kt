@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosi
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ReceiverConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.NotNullTypeVariable
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
@@ -81,6 +82,12 @@ private fun checkExpressionArgument(
 
     val expectedNullableType = expectedType.makeNullableAsSpecified(true)
     val position = if (isReceiver) ReceiverConstraintPosition(expressionArgument) else ArgumentConstraintPosition(expressionArgument)
+
+    // Used only for arguments with @NotNull annotation
+    if (expectedType is NotNullTypeVariable && argumentType.isMarkedNullable) {
+        diagnosticsHolder.addDiagnostic(ArgumentTypeMismatchDiagnostic(expectedType, argumentType, expressionArgument))
+    }
+
     if (expressionArgument.isSafeCall) {
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             diagnosticsHolder.addDiagnosticIfNotNull(
