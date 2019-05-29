@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.*;
-import com.intellij.ui.tabs.newImpl.SameHeightTabs;
+import com.intellij.ui.tabs.newImpl.SingleHeightTabs;
 import com.intellij.ui.tabs.newImpl.TabLabel;
 import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author Dennis.Ushakov
  */
-public class JBRunnerTabs extends SameHeightTabs implements JBRunnerTabsBase {
+public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   public static JBRunnerTabsBase create(@Nullable Project project, @NotNull Disposable parentDisposable) {
     IdeFocusManager focusManager = project != null ? IdeFocusManager.getInstance(project) : null;
     return JBTabsFactory.getUseNewTabs()
