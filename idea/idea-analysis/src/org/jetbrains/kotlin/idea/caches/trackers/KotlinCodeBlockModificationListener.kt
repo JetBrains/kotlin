@@ -9,6 +9,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.ModificationTracker
+import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.PomManager
 import com.intellij.pom.PomModelAspect
@@ -16,9 +18,18 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiTreeChangeEvent
+import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.psi.impl.PsiTreeChangeEventImpl
+import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.CHILD_MOVED
+import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.PROPERTY_CHANGED
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -32,19 +43,30 @@ class KotlinCodeBlockModificationListener(
     modificationTracker: PsiModificationTracker,
     project: Project,
     private val treeAspect: TreeAspect
-) {
+): PsiTreeChangePreprocessor {
     private val perModuleModCount = mutableMapOf<Module, Long>()
+
     private val modificationTrackerImpl = modificationTracker as PsiModificationTrackerImpl
-
     private var lastAffectedModule: Module? = null
-    private var lastAffectedModuleModCount = -1L
 
+    private var lastAffectedModuleModCount = -1L
     // All modifications since that count are known to be single-module modifications reflected in
     // perModuleModCount map
     private var perModuleChangesHighWatermark: Long? = null
 
+    @Volatile
+    private var kotlinModificationTracker: Long = 0
+
+    private val kotlinOutOfCodeBlockTrackerImpl = object : SimpleModificationTracker() {
+        override fun incModificationCount() {
+            super.incModificationCount()
+        }
+    }
+
+    val kotlinOutOfCodeBlockTracker: ModificationTracker = kotlinOutOfCodeBlockTrackerImpl
+
     fun getModificationCount(module: Module): Long {
-        return perModuleModCount[module] ?: perModuleChangesHighWatermark ?: modificationTrackerImpl.outOfCodeBlockModificationCount
+        return perModuleModCount[module] ?: perModuleChangesHighWatermark ?: kotlinOutOfCodeBlockTracker.modificationCount
     }
 
     fun hasPerModuleModificationCounts() = perModuleChangesHighWatermark != null
@@ -52,6 +74,9 @@ class KotlinCodeBlockModificationListener(
     init {
         val model = PomManager.getModel(project)
         val messageBusConnection = project.messageBus.connect()
+
+        (PsiManager.getInstance(project) as PsiManagerImpl).addTreeChangePreprocessor(this)
+
         model.addModelListener(object : PomModelListener {
             override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
                 return aspect == treeAspect
@@ -59,26 +84,38 @@ class KotlinCodeBlockModificationListener(
 
             override fun modelChanged(event: PomModelEvent) {
                 val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
-                val file = changeSet.rootElement.psi.containingFile as? KtFile ?: return
+                val ktFile = changeSet.rootElement.psi.containingFile as? KtFile ?: return
+
                 val changedElements = changeSet.changedElements
                 // When a code fragment is reparsed, Intellij doesn't do an AST diff and considers the entire
                 // contents to be replaced, which is represented in a POM event as an empty list of changed elements
                 if (changedElements.any { getInsideCodeBlockModificationScope(it.psi) == null } || changedElements.isEmpty()) {
                     messageBusConnection.deliverImmediately()
-                    if (file.isPhysical && !isReplLine(file.virtualFile)) {
-                        lastAffectedModule = ModuleUtil.findModuleForPsiElement(file)
-                        lastAffectedModuleModCount = modificationTrackerImpl.outOfCodeBlockModificationCount
-                        modificationTrackerImpl.incCounter()
+
+                    if (ktFile.isPhysical && !isReplLine(ktFile.virtualFile)) {
+                        kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
+                        lastAffectedModule = ModuleUtil.findModuleForPsiElement(ktFile)
+                        lastAffectedModuleModCount = kotlinOutOfCodeBlockTracker.modificationCount
+                        // TODO: Revise perModuleModCount
+//                        modificationTrackerImpl.incCounter()
                     }
-                    incOutOfBlockModificationCount(
-                        file
-                    )
+
+                    incOutOfBlockModificationCount(ktFile)
                 }
             }
         })
 
         messageBusConnection.subscribe(PsiModificationTracker.TOPIC, PsiModificationTracker.Listener {
-            val newModCount = modificationTrackerImpl.outOfCodeBlockModificationCount
+            @Suppress("UnstableApiUsage") val kotlinTrackerInternalIDECount =
+                modificationTrackerImpl.forLanguage(KotlinLanguage.INSTANCE).modificationCount
+            if (kotlinModificationTracker == kotlinTrackerInternalIDECount) {
+                // Some update that we are not sure is from Kotlin language, as Kotlin language tracker wasn't changed
+                kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
+            } else {
+                kotlinModificationTracker = kotlinTrackerInternalIDECount
+            }
+
+            val newModCount = kotlinOutOfCodeBlockTracker.modificationCount
             val affectedModule = lastAffectedModule
             if (affectedModule != null && newModCount == lastAffectedModuleModCount + 1) {
                 if (perModuleChangesHighWatermark == null) {
@@ -90,6 +127,26 @@ class KotlinCodeBlockModificationListener(
                 perModuleModCount.clear()
             }
         })
+    }
+
+    override fun treeChanged(event: PsiTreeChangeEventImpl) {
+        if (!PsiModificationTrackerImpl.canAffectPsi(event)) {
+            return
+        }
+
+        // Copy logic from PsiModificationTrackerImpl.treeChanged(). Some out-of-code-block events are written to language modification
+        // tracker in PsiModificationTrackerImpl but don't have correspondent PomModelEvent. Increase kotlinOutOfCodeBlockTracker
+        // manually if needed.
+        val outOfCodeBlock = when (event.code) {
+            PROPERTY_CHANGED ->
+                event.propertyName === PsiTreeChangeEvent.PROP_UNLOADED_PSI || event.propertyName === PsiTreeChangeEvent.PROP_ROOTS
+            CHILD_MOVED -> event.oldParent is PsiDirectory || event.newParent is PsiDirectory
+            else -> event.parent is PsiDirectory
+        }
+
+        if (outOfCodeBlock) {
+            kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
+        }
     }
 
     companion object {
