@@ -35,12 +35,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val additionalClassAnnotationPhase = makeIrFilePhase(
     ::AdditionalClassAnnotationLowering,
@@ -114,7 +112,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     private val etField = buildEnumEntry(elementTypeEnum, "FIELD")
     private val etLocalVariable = buildEnumEntry(elementTypeEnum, "LOCAL_VARIABLE")
     private val etMethod = buildEnumEntry(elementTypeEnum, "METHOD")
-    private val tModule = buildEnumEntry(elementTypeEnum, "MODULE")
+    private val etModule = buildEnumEntry(elementTypeEnum, "MODULE")
     private val etPackage = buildEnumEntry(elementTypeEnum, "PACKAGE")
     private val etParameter = buildEnumEntry(elementTypeEnum, "PARAMETER")
     private val etType = buildEnumEntry(elementTypeEnum, "TYPE")
@@ -156,12 +154,11 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     private fun generateRetentionAnnotation(irClass: IrClass) {
         if (irClass.hasAnnotation(FqName("java.lang.annotation.Retention"))) return
-        val kotlinRetentionPolicy = irClass.getAnnotation(FqName("kotlin.annotation.Retention"))
-        val javaRetentionPolicy = if (kotlinRetentionPolicy is KotlinRetention) {
-            annotationRetentionMap[kotlinRetentionPolicy] ?: rpRuntime
-        } else {
-            rpRuntime
-        }
+        val kotlinRetentionPolicyCall = irClass.getAnnotation(FqName("kotlin.annotation.Retention"))
+        val kotlinRetentionPolicyName =
+            kotlinRetentionPolicyCall?.getValueArgument(0)?.safeAs<IrGetEnumValue>()?.symbol?.owner?.name?.asString()
+        val kotlinRetentionPolicy = kotlinRetentionPolicyName?.let { KotlinRetention.valueOf(it) }
+        val javaRetentionPolicy = kotlinRetentionPolicy?.let { annotationRetentionMap[it] } ?: rpRuntime
 
         irClass.annotations.add(
             IrConstructorCallImpl.fromSymbolOwner(

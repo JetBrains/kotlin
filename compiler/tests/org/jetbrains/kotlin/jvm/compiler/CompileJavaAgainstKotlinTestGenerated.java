@@ -31,6 +31,24 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("compiler/testData/compileJavaAgainstKotlin/annotation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Annotation extends AbstractCompileJavaAgainstKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithoutJavac, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAnnotation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/annotation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("retention.kt")
+            public void testRetention() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/annotation/retention.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/compileJavaAgainstKotlin/callableReference")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -654,6 +672,24 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
 
         public void testAllFilesPresentInWithJavac() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("compiler/testData/compileJavaAgainstKotlin/annotation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Annotation extends AbstractCompileJavaAgainstKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithJavac, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAnnotation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/annotation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("retention.kt")
+            public void testRetention() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/annotation/retention.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/compileJavaAgainstKotlin/callableReference")

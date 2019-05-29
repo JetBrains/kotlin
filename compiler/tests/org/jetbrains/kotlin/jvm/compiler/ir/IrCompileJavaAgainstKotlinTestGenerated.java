@@ -29,6 +29,24 @@ public class IrCompileJavaAgainstKotlinTestGenerated extends AbstractIrCompileJa
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("compiler/testData/compileJavaAgainstKotlin/annotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Annotation extends AbstractIrCompileJavaAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithoutJavac, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/annotation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("retention.kt")
+        public void testRetention() throws Exception {
+            runTest("compiler/testData/compileJavaAgainstKotlin/annotation/retention.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
