@@ -1,23 +1,17 @@
-// ERROR: Property must be initialized
-// ERROR: Property must be initialized
 internal interface I {
     val something1: Int
-
     val something2: Int
-
     var something3: Int
-
-    var something4: Int
-
-    var something5: Int
-
+    fun getSomething4(): Int
+    fun setSomething4(value: Int)
+    fun getSomething5(): Int
+    fun setSomething5(value: Int)
     fun setSomething6(value: Int)
 }
 
 internal interface I1 : I {
-
-    val something6: Int
     fun setSomething1(value: Int)
+    val something6: Int
 }
 
 internal open class B {
@@ -40,7 +34,7 @@ internal open class B {
 }
 
 internal abstract class C(override val something1: Int) : B(), I {
-    private var mySomething6: Int = 0
+    private var mySomething6 = 0
 
     override val something2: Int
         get() = 0
@@ -49,15 +43,18 @@ internal abstract class C(override val something1: Int) : B(), I {
         get() = 0
         set(value) {}
 
-    override var something4: Int
-        get() = 0
-        set
+    override fun getSomething4(): Int {
+        return 0
+    }
 
-    override var something5: Int
-        get
-        set(value) {
+    override fun setSomething5(value: Int) {}
+    fun getSomething6(): Int {
+        return mySomething6
+    }
 
-        }
+    override fun setSomething6(value: Int) {
+        mySomething6 = value
+    }
 
     override val fromB1: String
         get() = super.fromB1
@@ -70,8 +67,8 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override var fromB3: String
         get() = super.fromB3
-        set(value: String) {
-            super.fromB3 = value
+        set(fromB3) {
+            super.fromB3 = fromB3
         }
 
     override var fromB4: String
@@ -80,15 +77,8 @@ internal abstract class C(override val something1: Int) : B(), I {
             super.fromB4 = value
         }
 
-    val fromB5: String
-        get() = ""
-
-    fun getSomething6(): Int {
-        return mySomething6
-    }
-
-    override fun setSomething6(value: Int) {
-        mySomething6 = value
+    fun getFromB5(): String {
+        return ""
     }
 
     override fun setFromB5(value: String) {

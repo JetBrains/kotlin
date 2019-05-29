@@ -1,20 +1,23 @@
-@interface TestAnnotation {
-}
+@interface TestAnnotationField {}
+@interface TestAnnotationParam {}
+@interface TestAnnotationGet {}
+@interface TestAnnotationSet {}
+
 
 public class Test {
-    @TestAnnotation
+    @TestAnnotationField
     private String arg;
 
-    public Test(@TestAnnotation String arg) {
+    public Test(@TestAnnotationParam String arg) {
         this.arg = arg;
     }
 
-    @TestAnnotation
+    @TestAnnotationGet
     public String getArg() {
         return arg;
     }
 
-    @TestAnnotation
+    @TestAnnotationSet
     public void setArg(String arg) {
         this.arg = arg;
     }

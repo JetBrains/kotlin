@@ -2,7 +2,13 @@
 // !specifyLocalVariableTypeByDefault: true
 package test
 
-class Test(internal var myStr: String) {
+class Test(str: String) {
+    internal var myStr = "String2"
+
+    init {
+        myStr = str
+    }
+
     fun sout(str: String) {
         // UNNECESSARY_NOT_NULL_ASSERTION heuristic does not work any more, instead we can skip generating !! altogether
         println(str)

@@ -1,12 +1,16 @@
 class C {
-    var x = ""
-        internal
-        set(x) {
-            println("setter invoked")
-            if (other != null) {
-                other!!.x = x
-            }
-            field = x
-        }
+    private var x = ""
     internal var other: C? = null
+
+    fun getX(): String {
+        return x
+    }
+
+    internal fun setX(x: String) {
+        println("setter invoked")
+        if (other != null) {
+            other!!.x = x
+        }
+        this.x = x
+    }
 }

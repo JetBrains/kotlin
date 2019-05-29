@@ -17,7 +17,7 @@ internal class X : Cloneable {
     }
 }
 
-internal class Y : Thread(), Cloneable {
+internal class Y : Thread() {
     @Throws(CloneNotSupportedException::class)
     override fun clone(): Any {
         return super.clone()

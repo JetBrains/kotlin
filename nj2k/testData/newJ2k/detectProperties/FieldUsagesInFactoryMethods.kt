@@ -1,5 +1,5 @@
 internal class C(val arg1: Int) {
-    val arg2: Int
+    var arg2: Int
     var arg3: Int
 
     constructor(arg1: Int, arg2: Int, arg3: Int) : this(arg1) {
@@ -16,4 +16,5 @@ internal class C(val arg1: Int) {
         arg2 = 0
         arg3 = 0
     }
+
 }

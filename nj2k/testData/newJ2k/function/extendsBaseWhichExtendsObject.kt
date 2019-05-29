@@ -1,6 +1,6 @@
 // ERROR: Unresolved reference: clone
 // ERROR: Unresolved reference: finalize
-internal class Test : Base(), Cloneable {
+internal class Test : Base() {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -43,7 +43,7 @@ internal open class Base : Cloneable {
     }
 
     @Throws(Throwable::class)
-    protected open fun finalize() {
+    protected override fun finalize() {
         super.finalize()
     }
 }

@@ -1,23 +1,25 @@
-internal class A(// comment for field2 getter
-        // comment for field2 setter
-        var field2: Int // comment for field2
-) {
-    // Comment for field1
-    // Comment for field1 getter
+internal class A(// comment for field2 setter
+        // comment for field2 getter
+        // comment for field2
+        var field2: Int) {
     /**
      * Comment for field1 setter
      */
+    // Comment for field1 getter
+    // Comment for field1
     var field1 = 0
 
-    // comment before field3
-    var field3 = 0 // comment for field3
-    // comment for field3 getter
     // comment for field3 setter
+    // comment for field3 getter
+    // comment before field3
+    var field3 // comment for field3
+            = 0
 
-    // comment for getProperty
     // comment for setProperty
+    // end of setProperty
+    // comment for getProperty
+    // end of getProperty
     var property: Int
         get() = 1
-        set(value) {} // end of getProperty
-    // end of setProperty
+        set(value) {}
 }

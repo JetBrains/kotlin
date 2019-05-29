@@ -5,9 +5,8 @@ object Test {
     fun main(args: Array<String>) {
         println()// Comment
 
-        Test
-                // Comment1
-                .foo()
+        // Comment1
+        foo()
                 // Comment2
                 .indexOf("s")
     }

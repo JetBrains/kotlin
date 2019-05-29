@@ -7,6 +7,6 @@ class Test(count: Int) {
     }
 
     fun inc() {
-        count++
+        this.count++
     }
 }

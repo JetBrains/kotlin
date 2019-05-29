@@ -1,17 +1,17 @@
 package test
 
-class Short(s: String?) {
+class Integer(s: String?) {
     companion object {
-        fun valueOf(value: String): Short {
-            return Short(value)
+        fun valueOf(value: String): Integer {
+            return Integer(value)
         }
     }
 }
 
 internal object Test {
     fun test() {
-        Short.valueOf("1")
-        Short.valueOf("1")
-        java.lang.Short.valueOf("1")
+        Integer.valueOf("1")
+        Integer.valueOf("1")
+        java.lang.Integer.valueOf("1")
     }
 }

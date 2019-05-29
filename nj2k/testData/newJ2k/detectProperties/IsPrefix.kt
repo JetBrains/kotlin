@@ -1,18 +1,13 @@
-// ERROR: Property must be initialized
-// ERROR: Property must be initialized
-// ERROR: Property must be initialized
 internal interface I {
     val isSomething1: Boolean
-
     val isSomething2: Boolean?
-
     val isSomething3: Int
-
-    var isSomething4: Boolean
-
-    var isSomething5: Boolean
-
-    var something6: Boolean
+    fun isSomething4(): Boolean
+    fun setSomething4(value: Boolean)
+    fun isSomething5(): Boolean
+    fun setSomething5(value: Boolean)
+    fun getSomething6(): Boolean
+    fun setSomething6(value: Boolean)
 }
 
 internal abstract class C : I {
@@ -20,15 +15,10 @@ internal abstract class C : I {
         get() = true
         set(b) {}
 
-    override var isSomething4: Boolean
-        get() = false
-        set
+    override fun isSomething4(): Boolean {
+        return false
+    }
 
-    override var isSomething5: Boolean
-        get
-        set(value) {}
-
-    override var something6: Boolean
-        get
-        set(value) {}
+    override fun setSomething5(value: Boolean) {}
+    override fun setSomething6(value: Boolean) {}
 }
