@@ -259,10 +259,17 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private void filtersChanged() {
+    List<ServiceViewModel> models = new ArrayList<>();
+    ServiceView allServicesView = myAllServicesView;
+    if (allServicesView != null) {
+      models.add(allServicesView.getModel());
+    }
+    for (ServiceView serviceView : myServiceViews) {
+      models.add(serviceView.getModel());
+    }
     myModel.getInvoker().invokeLater(() -> {
-      myAllServicesView.getModel().filtersChanged();
-      for (ServiceView serviceView : myServiceViews) {
-        serviceView.getModel().filtersChanged();
+      for (ServiceViewModel viewModel : models) {
+        viewModel.filtersChanged();
       }
     });
   }
@@ -370,11 +377,14 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return toolWindow;
   }
 
-  void extract(@NotNull ServiceViewDragBean dragBean) {
+  private void extract(@NotNull ServiceViewDragBean dragBean) {
+    extract(dragBean, getSelectedView());
+  }
+
+  void extract(@NotNull ServiceViewDragBean dragBean, @Nullable ServiceView selectedView) {
     List<ServiceViewItem> items = dragBean.getItems();
     if (items.isEmpty()) return;
 
-    ServiceView selectedView = getSelectedView();
     ServiceViewFilter parentFilter = selectedView == null ? null : selectedView.getModel().getFilter();
     ServiceViewModel viewModel = ServiceViewModel.createModel(items, dragBean.getContributor(), myModel, myModelFilter, parentFilter);
     extract(viewModel, new ServiceViewState(), true);
@@ -477,7 +487,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   @Nullable
-  ServiceView getSelectedView() {
+  private ServiceView getSelectedView() {
     ContentManager contentManager = myContentManager;
     Content content = contentManager == null ? null : contentManager.getSelectedContent();
     return content == null ? null : ObjectUtils.tryCast(content.getComponent(), ServiceView.class);

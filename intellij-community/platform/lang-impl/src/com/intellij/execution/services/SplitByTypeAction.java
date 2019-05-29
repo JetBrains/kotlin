@@ -7,6 +7,8 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.execution.services.ServiceViewActionProvider.getSelectedView;
+
 public class SplitByTypeAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
@@ -16,8 +18,7 @@ public class SplitByTypeAction extends DumbAwareAction {
       return;
     }
 
-    ServiceViewManagerImpl serviceViewManager = (ServiceViewManagerImpl)ServiceViewManager.getInstance(project);
-    ServiceView selectedView = serviceViewManager.getSelectedView();
+    ServiceView selectedView = getSelectedView(e);
     if (selectedView == null || selectedView.getModel().getFilter() != null) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
@@ -25,7 +26,7 @@ public class SplitByTypeAction extends DumbAwareAction {
 
     Presentation presentation = e.getPresentation();
     presentation.setVisible(true);
-    presentation.setEnabled(serviceViewManager.isSplitByTypeEnabled());
+    presentation.setEnabled(((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled());
   }
 
   @Override

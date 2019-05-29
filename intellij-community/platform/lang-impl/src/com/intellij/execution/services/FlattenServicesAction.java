@@ -4,9 +4,9 @@ package com.intellij.execution.services;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import static com.intellij.execution.services.ServiceViewActionProvider.getSelectedView;
 
 public class FlattenServicesAction extends ToggleAction implements DumbAware {
   @Override
@@ -21,13 +21,5 @@ public class FlattenServicesAction extends ToggleAction implements DumbAware {
     if (selectedView != null) {
       selectedView.setFlat(state);
     }
-  }
-
-  @Nullable
-  private static ServiceView getSelectedView(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
-    if (project == null) return null;
-
-    return ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).getSelectedView();
   }
 }

@@ -70,6 +70,15 @@ class ServiceViewActionProvider {
     return toolBarPanel;
   }
 
+  @Nullable
+  static ServiceView getSelectedView(@NotNull AnActionEvent e) {
+    Component contextComponent = e.getData(PlatformDataKeys.CONTEXT_COMPONENT);
+    while (contextComponent != null && !(contextComponent instanceof ServiceView)) {
+      contextComponent = contextComponent.getParent();
+    }
+    return (ServiceView)contextComponent;
+  }
+
   private static class ServiceViewTreeExpander extends DefaultTreeExpander {
     private final TreeModel myTreeModel;
     private boolean myFlat;
@@ -117,16 +126,13 @@ class ServiceViewActionProvider {
     Project project = e.getProject();
     if (project == null) return AnAction.EMPTY_ARRAY;
 
-    Component contextComponent = e.getData(PlatformDataKeys.CONTEXT_COMPONENT);
-    while (contextComponent != null && !(contextComponent instanceof ServiceView)) {
-      contextComponent = contextComponent.getParent();
-    }
-    if (contextComponent == null) return AnAction.EMPTY_ARRAY;
+    ServiceView serviceView = getSelectedView(e);
+    if (serviceView == null) return AnAction.EMPTY_ARRAY;
 
-    List<ServiceViewItem> selectedItems = ((ServiceView)contextComponent).getSelectedItems();
+    List<ServiceViewItem> selectedItems = serviceView.getSelectedItems();
     if (selectedItems.isEmpty()) return AnAction.EMPTY_ARRAY;
 
-    ServiceViewDescriptor descriptor = null;
+    ServiceViewDescriptor descriptor;
     if (selectedItems.size() == 1) {
       descriptor = selectedItems.get(0).getViewDescriptor();
     }
