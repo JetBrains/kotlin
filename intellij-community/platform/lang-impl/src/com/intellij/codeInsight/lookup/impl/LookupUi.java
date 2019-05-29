@@ -128,7 +128,6 @@ class LookupUi {
     myLookup.checkValid();
     if (myHintButton.isVisible()) {
       myHintButton.setVisible(false);
-      revalidateRootPane();
     }
 
     LookupElement item = myLookup.getCurrentItem();
@@ -140,18 +139,9 @@ class LookupUi {
               !((CompletionExtender)myList.getExpandableItemsHandler()).isShowing() &&
               !myProcessIcon.isVisible()) {
             myHintButton.setVisible(true);
-            revalidateRootPane();
           }
         }, 500, myModalityState);
       }
-    }
-  }
-
-  private void revalidateRootPane() {
-    JRootPane rootPane = myLookup.getComponent().getRootPane();
-    if (rootPane != null) {
-      rootPane.revalidate();
-      rootPane.repaint();
     }
   }
 
@@ -159,7 +149,6 @@ class LookupUi {
     Runnable iconUpdater = () -> {
       if (calculating && myHintButton.isVisible()) {
         myHintButton.setVisible(false);
-        revalidateRootPane();
       }
 
       ApplicationManager.getApplication().invokeLater(() -> {
