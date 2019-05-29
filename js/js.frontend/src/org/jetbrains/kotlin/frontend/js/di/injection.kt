@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
@@ -48,6 +49,7 @@ fun createTopDownAnalyzerForJs(
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
         configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
+        useImpl<SubstitutingScopeProviderImpl>()
 
         useInstance(declarationProviderFactory)
         useImpl<AnnotationResolverImpl>()

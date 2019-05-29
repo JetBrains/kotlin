@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.storage.StorageManager;
+import org.jetbrains.kotlin.types.SubstitutingScopeProvider;
 
 public abstract class ClassDescriptorBase extends AbstractClassDescriptor {
 
@@ -35,7 +36,18 @@ public abstract class ClassDescriptorBase extends AbstractClassDescriptor {
             @NotNull SourceElement source,
             boolean isExternal
     ) {
-        super(storageManager, name);
+        this(storageManager, containingDeclaration, name, source, isExternal, SubstitutingScopeProvider.Companion.getDEFAULT());
+    }
+
+    protected ClassDescriptorBase(
+            @NotNull StorageManager storageManager,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Name name,
+            @NotNull SourceElement source,
+            boolean isExternal,
+            @NotNull SubstitutingScopeProvider substitutingScopeProvider
+    ) {
+        super(storageManager, name, substitutingScopeProvider);
         this.containingDeclaration = containingDeclaration;
         this.source = source;
         this.isExternal = isExternal;

@@ -83,7 +83,7 @@ fun case_5(x: Any?) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_SMARTCAST!>x<!>.y<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_SMARTCAST!>x<!>.z<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.ip2test()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *> & kotlin.Any & kotlin.Any?")!>x<!>.ip2test()
             <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *> & kotlin.Any & kotlin.Any?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.x<!>
         }

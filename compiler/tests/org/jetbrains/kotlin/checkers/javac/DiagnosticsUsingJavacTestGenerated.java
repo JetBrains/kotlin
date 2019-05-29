@@ -8088,6 +8088,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/generics/argumentsForT.kt");
             }
 
+            @TestMetadata("capturedTypeInInputPosition.kt")
+            public void testCapturedTypeInInputPosition() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/capturedTypeInInputPosition.kt");
+            }
+
             @TestMetadata("commonSupertypeContravariant.kt")
             public void testCommonSupertypeContravariant() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/commonSupertypeContravariant.kt");
@@ -8925,6 +8930,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("setterProjectedOutAssign.kt")
                 public void testSetterProjectedOutAssign() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/varProjection/setterProjectedOutAssign.kt");
+                }
+
+                @TestMetadata("setterProjectedOutAssignFromJava.kt")
+                public void testSetterProjectedOutAssignFromJava() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/varProjection/setterProjectedOutAssignFromJava.kt");
                 }
 
                 @TestMetadata("setterProjectedOutNoPlusAssign.kt")
@@ -17370,6 +17380,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/resolve/HiddenDeclarations.kt");
             }
 
+            @TestMetadata("implicitAndExplicitThis.kt")
+            public void testImplicitAndExplicitThis() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/implicitAndExplicitThis.kt");
+            }
+
             @TestMetadata("implicitReceiverProperty.kt")
             public void testImplicitReceiverProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/implicitReceiverProperty.kt");
@@ -18085,6 +18100,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("GenericSubstitutionKT.kt")
             public void testGenericSubstitutionKT() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/GenericSubstitutionKT.kt");
+            }
+
+            @TestMetadata("kt25290.kt")
+            public void testKt25290() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/kt25290.kt");
             }
 
             @TestMetadata("OverloadPriority.kt")

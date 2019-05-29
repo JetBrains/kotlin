@@ -110,6 +110,7 @@ class ResolvedAtomCompleter(
 
         kotlinToResolvedCallTransformer.reportDiagnostics(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
 
+        resolvedCall.approximateCapturedTypesAndHackSetters()
         return resolvedCall
     }
 
@@ -155,9 +156,7 @@ class ResolvedAtomCompleter(
                     .replaceBindingTrace(topLevelTrace)
 
             val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
-            kotlinToResolvedCallTransformer.updateRecordedType(
-                argumentExpression, parameter = null, context = newContext, reportErrorForTypeMismatch = true
-            )
+            kotlinToResolvedCallTransformer.updateRecordedType(argumentExpression, parameter = null, context = newContext)
         }
     }
 

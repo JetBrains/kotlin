@@ -40,7 +40,7 @@ public class DescriptorSubstitutor {
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result
     ) {
-        TypeSubstitutor substitutor = substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null);
+        TypeSubstitutor substitutor = substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null, SubstitutingScopeProvider.Companion.getDEFAULT());
         if (substitutor == null) throw new AssertionError("Substitution failed");
         return substitutor;
     }
@@ -51,7 +51,8 @@ public class DescriptorSubstitutor {
             @NotNull TypeSubstitution originalSubstitution,
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result,
-            @Nullable boolean[] wereChanges
+            @Nullable boolean[] wereChanges,
+            @NotNull SubstitutingScopeProvider substitutingScopeProvider
     ) {
         Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
 
@@ -76,7 +77,7 @@ public class DescriptorSubstitutor {
 
         TypeSubstitutor substitutor = TypeSubstitutor.createChainedSubstitutor(
                 originalSubstitution, TypeConstructorSubstitution.createByConstructorsMap(mutableSubstitution)
-        );
+        ).setSubstitutingScopeProvider(substitutingScopeProvider);
 
         for (TypeParameterDescriptor descriptor : typeParameters) {
             TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);

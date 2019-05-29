@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 
 class CommonAnalysisParameters(
     val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider
@@ -166,6 +167,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
         useInstance(declarationProviderFactory)
         useImpl<MetadataPackageFragmentProvider>()
         useImpl<ContractDeserializerImpl>()
+        useImpl<SubstitutingScopeProviderImpl>()
 
         val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
                 ?: error("No MetadataFinderFactory in project")

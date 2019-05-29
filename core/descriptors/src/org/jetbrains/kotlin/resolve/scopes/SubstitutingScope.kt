@@ -18,18 +18,24 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Substitutable
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.SubstitutingScopeProvider
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: TypeSubstitutor) : MemberScope {
+class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: TypeSubstitutor, private val substitutingScopeProvider: SubstitutingScopeProvider) : MemberScope {
 
-    private val substitutor = givenSubstitutor.substitution.wrapWithCapturingSubstitution().buildSubstitutor()
+    private val substitutor: TypeSubstitutor = givenSubstitutor.substitution
+        .wrapWithCapturingSubstitution(capturedTypeCreator = substitutingScopeProvider.provideCapturedTypeCreator())
+        .buildSubstitutor().also { it.setSubstitutingScopeProvider(substitutingScopeProvider) }
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor>? = null
 
@@ -43,11 +49,44 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
         }
 
         val substituted = substitutedDescriptors!!.getOrPut(descriptor) {
+            val assertionMessage = {
+                "We expect that no conflict should happen while substitution is guaranteed to generate invariant projection, " +
+                        "but $descriptor substitution fails"
+            }
             when (descriptor) {
-                is Substitutable<*> -> descriptor.substitute(substitutor).sure {
-                    "We expect that no conflict should happen while substitution is guaranteed to generate invariant projection, " +
-                    "but $descriptor substitution fails"
+                /*
+                 * Here we can take null if NI enabled, because inside this place we have OI and NI collide. See following example:
+                 *
+                 * class Out<out T>
+                 *
+                 * class A<T> {
+                 *   fun T.foo() {}
+                 *   fun Out<T>.bar() {}
+                 * }
+                 *
+                 * fun test(x: A<out CharSequence>, y: Out<CharSequence>) {
+                 *   with(x) {
+                 *     "".foo()   <-- problem is here
+                 *   }
+                 * }
+                 *
+                 * Because of we don't capture type projections, in call "".foo() we have `out CharSequence` as substituted type `T`
+                 *   (instead of `CapturedType(out CharSequence)`, and `in String` as type from receiver, so we have type variance error
+                 *   and can not substitute descriptor.
+                 *
+                 * So, fix of it is hack
+                 */
+                is FunctionDescriptorImpl -> {
+                    val substitutedDescriptor = descriptor.substitute(substitutor, substitutingScopeProvider)
+                    if (substitutingScopeProvider.isNewInferenceEnabled) {
+                        substitutedDescriptor ?: ErrorUtils.createErrorScope("Cannot substitute functional descriptor")
+                            .getContributedFunctions(descriptor.name, NoLookupLocation.WHEN_RESOLVE_DECLARATION).first()
+                    } else {
+                        substitutedDescriptor.sure(assertionMessage)
+                    }
                 }
+
+                is Substitutable<*> -> descriptor.substitute(substitutor).sure(assertionMessage)
                 else -> error("Unknown descriptor in scope: $descriptor")
             }
         }
@@ -72,7 +111,7 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
     override fun getContributedVariables(name: Name, location: LookupLocation) = substitute(workerScope.getContributedVariables(name, location))
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) =
-            workerScope.getContributedClassifier(name, location)?.let { substitute(it) }
+        workerScope.getContributedClassifier(name, location)?.let { substitute(it) }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getContributedFunctions(name, location))
 

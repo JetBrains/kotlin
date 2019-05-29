@@ -1,4 +1,6 @@
 // FILE: test/GenericSam.java
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 
 package test;
 
@@ -16,7 +18,7 @@ fun f3() = java.lang.Runnable::class
 fun f4() = java.lang.Runnable::run
 
 fun f5() = GenericSam::class
-fun f6() = GenericSam<*>::invoke
+fun f6() = GenericSam<*>::<!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>invoke<!>
 fun f7() = test.GenericSam::class
 fun f8() = test.GenericSam<String>::invoke
 
