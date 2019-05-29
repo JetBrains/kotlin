@@ -8,7 +8,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.intellij.openapi.util.text.StringUtil.shortenTextWithEllipsis;
 import static com.intellij.ui.SimpleTextAttributes.*;
 import static com.intellij.util.ui.UIUtil.getListSelectionForeground;
 
@@ -59,24 +57,29 @@ public class RunAnythingItemBase extends RunAnythingItem {
                                                     RunAnythingGroup.RUN_ANYTHING_MATCHER_BUILDER.fun(pattern).build(),
                                                     background,
                                                     isSelected);
-    component.add(textComponent, BorderLayout.CENTER);
+    component.add(BorderLayout.WEST, textComponent);
 
     Icon icon = myIcon;
     if (groupIcon == myIcon) {
       icon = EmptyIcon.ICON_16;
     }
-    JLabel iconLabel = new JLabel(icon);
-    iconLabel.setBorder(JBUI.Borders.emptyLeft(3));
-    component.add(iconLabel, BorderLayout.WEST);
 
-    String description = getDescription();
-    if (description != null) {
-      SimpleColoredComponent descriptionComponent = new SimpleColoredComponent();
-      descriptionComponent.append(" " + shortenTextWithEllipsis(description, 200, 0), getDescriptionAttributes(isSelected));
-      component.add(descriptionComponent, BorderLayout.EAST);
-    }
+    textComponent.setIcon(icon);
+    addDescription(component, isSelected);
 
     return component;
+  }
+
+  private void addDescription(@NotNull JPanel panel, boolean isSelected) {
+    String description = getDescription();
+    if (description == null) {
+      return;
+    }
+
+    SimpleColoredComponent descriptionComponent = new SimpleColoredComponent();
+    descriptionComponent.append(description, getDescriptionAttributes(isSelected));
+    descriptionComponent.setTextAlign(SwingConstants.RIGHT);
+    panel.add(descriptionComponent, BorderLayout.CENTER);
   }
 
   public void setupIcon(@NotNull SimpleColoredComponent component, @Nullable Icon icon) {
