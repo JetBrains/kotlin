@@ -22,6 +22,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
+    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, arguments.dumpArgumentsDir)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
 

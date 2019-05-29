@@ -41,6 +41,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("metadata version")
+
+    @JvmField
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
