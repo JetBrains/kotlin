@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -54,10 +55,17 @@ class JvmBackendContext(
     val transformedSuspendFunctionsCache = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
     private val coroutinePackage = state.module.getPackage(state.languageVersionSettings.coroutinesPackageFqName())
+    private val coroutinesJvmInternalPackage = state.module.getPackage(state.languageVersionSettings.coroutinesJvmInternalPackageFqName())
 
     val continuationClass = symbolTable.referenceClass(
         coroutinePackage.memberScope.getContributedClassifier(
             Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND
+        ) as ClassDescriptor
+    )
+
+    val continuationImpl = symbolTable.referenceClass(
+        coroutinesJvmInternalPackage.memberScope.getContributedClassifier(
+            Name.identifier("ContinuationImpl"), NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor
     )
 

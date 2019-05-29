@@ -70,7 +70,16 @@ open class FunctionCodegen(
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
             val frameMap = createFrameMapWithReceivers(signature)
-            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
+            ExpressionCodegen(
+                irFunction,
+                frameMap,
+                InstructionAdapter(
+                    if (irFunction.isSuspend) wrapWithCoroutineTransformer(irFunction, classCodegen, methodVisitor, flags, signature)
+                    else methodVisitor
+                ),
+                classCodegen,
+                isInlineLambda
+            ).generate()
             methodVisitor.visitMaxs(-1, -1)
         }
         methodVisitor.visitEnd()
