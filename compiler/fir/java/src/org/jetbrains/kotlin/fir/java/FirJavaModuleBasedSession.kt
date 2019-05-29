@@ -26,18 +26,23 @@ class FirJavaModuleBasedSession(
     override val sessionProvider: FirProjectSessionProvider,
     scope: GlobalSearchScope,
     dependenciesProvider: FirSymbolProvider? = null
-) : FirModuleBasedSession(moduleInfo) {
+) : FirModuleBasedSession(moduleInfo), FirSymbolProviderAwareSession {
+
+    override val firSymbolProvider: FirSymbolProvider
+
     init {
         sessionProvider.sessionCache[moduleInfo] = this
+        firSymbolProvider = FirCompositeSymbolProvider(
+            listOf(
+                service<FirProvider>(),
+                JavaSymbolProvider(this, sessionProvider.project, scope),
+                dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+            )
+        )
+
         registerComponent(
             FirSymbolProvider::class,
-            FirCompositeSymbolProvider(
-                listOf(
-                    service<FirProvider>(),
-                    JavaSymbolProvider(this, sessionProvider.project, scope),
-                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
-                )
-            )
+            firSymbolProvider
         )
     }
 }
@@ -49,11 +54,13 @@ class FirLibrarySession private constructor(
     packagePartProvider: PackagePartProvider,
     kotlinClassFinder: KotlinClassFinder,
     javaClassFinder: JavaClassFinder
-) : FirSessionBase() {
+) : FirSessionBase(), FirSymbolProviderAwareSession {
+
+    override val firSymbolProvider: FirSymbolProvider
+
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-        registerComponent(
-            FirSymbolProvider::class,
+        firSymbolProvider =
             FirCompositeSymbolProvider(
                 listOf(
                     KotlinDeserializedJvmSymbolsProvider(
@@ -66,6 +73,10 @@ class FirLibrarySession private constructor(
                     FirDependenciesSymbolProviderImpl(this)
                 )
             )
+
+        registerComponent(
+            FirSymbolProvider::class,
+            firSymbolProvider
         )
     }
 
