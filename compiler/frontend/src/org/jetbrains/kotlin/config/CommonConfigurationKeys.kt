@@ -47,6 +47,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val KLIB_MPP = CompilerConfigurationKey.create<Boolean>("Klib based MPP")
+
+    @JvmField
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
