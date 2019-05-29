@@ -1,0 +1,21 @@
+package
+
+public fun JavaFaceUser<in kotlin.Any>.useIn(): kotlin.Unit
+public fun JavaFaceUser<kotlin.Any>.useInv(): kotlin.Unit
+public fun JavaFaceUser<out kotlin.Any>.useOut(): kotlin.Unit
+
+public interface JavaFace</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun singleMethod(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class JavaFaceUser</*0*/ T : kotlin.Any!> {
+    public constructor JavaFaceUser</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open fun </*0*/ X : kotlin.Any!> use1(/*0*/ face: JavaFace<X!>!): kotlin.Unit
+    public open fun use2(/*0*/ face: JavaFace<T!>!): kotlin.Unit
+}

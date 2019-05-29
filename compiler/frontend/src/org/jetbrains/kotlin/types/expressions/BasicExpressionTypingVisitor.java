@@ -958,6 +958,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         boolean result = true;
         KtExpression reportOn = expression != null ? expression : expressionWithParenthesis;
+        KtExpression originalReportOn = reportOn;
         if (reportOn instanceof KtQualifiedExpression) {
             KtExpression selector = ((KtQualifiedExpression) reportOn).getSelectorExpression();
             if (selector != null)
@@ -968,14 +969,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
             if (propertyDescriptor.isSetterProjectedOut()) {
-                trace.report(SETTER_PROJECTED_OUT.on(reportOn, propertyDescriptor));
+                trace.report(SETTER_PROJECTED_OUT.on(originalReportOn, propertyDescriptor));
                 result = false;
             }
             else if (setter != null) {
                 ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expressionWithParenthesis, context.trace.getBindingContext());
                 assert resolvedCall != null
                         : "Call is not resolved for property setter: " + PsiUtilsKt.getElementTextWithContext(expressionWithParenthesis);
-                checkPropertySetterCall(context.replaceBindingTrace(trace), setter, resolvedCall, reportOn);
+                if (((PropertyDescriptor)resolvedCall.getResultingDescriptor()).isSetterProjectedOut()) {
+                    trace.report(SETTER_PROJECTED_OUT.on(originalReportOn, propertyDescriptor));
+                    result = false;
+                } else {
+                    checkPropertySetterCall(context.replaceBindingTrace(trace), setter, resolvedCall, reportOn);
+                }
             }
         }
 

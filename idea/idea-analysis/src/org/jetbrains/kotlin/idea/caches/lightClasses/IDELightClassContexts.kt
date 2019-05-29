@@ -72,10 +72,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.WrappedTypeFactory
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.sure
 
 
@@ -334,7 +331,7 @@ internal object IDELightClassContexts {
             })
 
             IdeaEnvironment.configure(this)
-
+            useImpl<SubstitutingScopeProviderImpl>()
             useImpl<ResolveSession>()
         }
 

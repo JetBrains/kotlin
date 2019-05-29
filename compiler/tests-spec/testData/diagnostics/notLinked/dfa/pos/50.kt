@@ -14,18 +14,18 @@
 // TESTCASE NUMBER: 1
 fun Any.case_1() {
     if (this is Inv<*>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>this<!>.test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>this<!>.prop_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>this<!>.prop_4<!>.inv()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>prop_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>prop_4<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*> & kotlin.Any"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*> & kotlin.Any"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>this<!>.prop_4<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*> & kotlin.Any"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>this<!>.prop_4<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>.inv()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun Any.case_2() {
     if (this is ClassWithSixTypeParameters<*, *, *, *, *, *>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & kotlin.Any"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>this<!>.test()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>this<!>.x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any"), DEBUG_INFO_SMARTCAST!>this<!>.y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>x<!>
@@ -36,18 +36,18 @@ fun Any.case_2() {
 // TESTCASE NUMBER: 3
 fun <T> T.case_3() {
     if (this is Inv<*>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>"), DEBUG_INFO_EXPRESSION_TYPE("T"), DEBUG_INFO_SMARTCAST!>this<!>.test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>"), DEBUG_INFO_EXPRESSION_TYPE("T"), DEBUG_INFO_SMARTCAST!>this<!>.prop_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>"), DEBUG_INFO_EXPRESSION_TYPE("T"), DEBUG_INFO_SMARTCAST!>this<!>.prop_4<!>.inv()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>prop_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>prop_4<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*> & T & T!!"), DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*> & T & T!!"), DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.prop_4<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<*> & T & T!!"), DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.prop_4<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>.inv()
     }
 }
 
 // TESTCASE NUMBER: 4
 fun <T> T?.case_4() {
     if (this is ClassWithSixTypeParameters<*, *, *, *, *, *>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>"), DEBUG_INFO_EXPRESSION_TYPE("T?"), DEBUG_INFO_SMARTCAST!>this<!>.test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & T!! & T?"), DEBUG_INFO_EXPRESSION_TYPE("T?")!>this<!>.test()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>"), DEBUG_INFO_EXPRESSION_TYPE("T?"), DEBUG_INFO_SMARTCAST!>this<!>.x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *>"), DEBUG_INFO_EXPRESSION_TYPE("T?"), DEBUG_INFO_SMARTCAST!>this<!>.y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>x<!>

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -34,10 +33,11 @@ import java.util.List;
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
     protected final NotNullLazyValue<SimpleType> defaultType;
+    protected final SubstitutingScopeProvider substitutingScopeProvider;
     private final NotNullLazyValue<MemberScope> unsubstitutedInnerClassesScope;
     private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
 
-    public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
+    public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name, @NotNull SubstitutingScopeProvider substitutingScopeProvider) {
         this.name = name;
         this.defaultType = storageManager.createLazyValue(new Function0<SimpleType>() {
             @Override
@@ -57,6 +57,11 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
                 return new LazyClassReceiverParameterDescriptor(AbstractClassDescriptor.this);
             }
         });
+        this.substitutingScopeProvider = substitutingScopeProvider;
+    }
+
+    public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
+        this(storageManager, name, SubstitutingScopeProvider.Companion.getDEFAULT());
     }
 
     @NotNull
@@ -92,7 +97,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope();
 
         TypeSubstitutor substitutor = TypeConstructorSubstitution.create(getTypeConstructor(), typeArguments).buildSubstitutor();
-        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
+        return substitutingScopeProvider.createSubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
     }
 
     @NotNull
@@ -101,7 +106,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         if (typeSubstitution.isEmpty()) return getUnsubstitutedMemberScope();
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(typeSubstitution);
-        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
+        return substitutingScopeProvider.createSubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
     }
 
     @NotNull
@@ -110,7 +115,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         if (substitutor.isEmpty()) {
             return this;
         }
-        return new LazySubstitutingClassDescriptor(this, substitutor);
+        return new LazySubstitutingClassDescriptor(this, substitutor, substitutingScopeProvider);
     }
 
     @NotNull

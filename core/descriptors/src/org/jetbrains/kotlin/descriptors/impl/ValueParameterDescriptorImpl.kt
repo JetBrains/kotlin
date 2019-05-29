@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.join
 
 open class ValueParameterDescriptorImpl(
@@ -102,8 +103,7 @@ open class ValueParameterDescriptorImpl(
     override fun getOriginal() = if (original === this) this else original.original
 
     override fun substitute(substitutor: TypeSubstitutor): ValueParameterDescriptor {
-        if (substitutor.isEmpty) return this
-        throw UnsupportedOperationException() // TODO
+        return this
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {

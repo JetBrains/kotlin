@@ -36,26 +36,26 @@ fun case_2(a: Out<<!REDUNDANT_PROJECTION!>out<!> Out<<!REDUNDANT_PROJECTION!>out
     if (a != null) {
         val b = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>?> & Out<out Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>?>?")!>a<!>.get()
         if (b != null) {
-            val c = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<Out<kotlin.Int?>?>?>?>?> & Out<Out<Out<Out<Out<kotlin.Int?>?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>b<!>.get()
+            val c = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<Out<kotlin.Any?>?>?>?>?> & Out<Out<Out<Out<Out<kotlin.Any?>?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>b<!>.get()
             if (c != null) {
-                val d = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<kotlin.Int?>?>?>?> & Out<Out<Out<Out<kotlin.Int?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>c<!>.get()
+                val d = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<kotlin.Any?>?>?>?> & Out<Out<Out<Out<kotlin.Any?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>c<!>.get()
                 if (d != null) {
-                    val e = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<kotlin.Int?>?>?> & Out<Out<Out<kotlin.Int?>?>?>?"), DEBUG_INFO_SMARTCAST!>d<!>.get()
+                    val e = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<kotlin.Any?>?>?> & Out<Out<Out<kotlin.Any?>?>?>?"), DEBUG_INFO_SMARTCAST!>d<!>.get()
                     if (e != null) {
-                        val f = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<kotlin.Int?>?> & Out<Out<kotlin.Int?>?>?"), DEBUG_INFO_SMARTCAST!>e<!>.get()
+                        val f = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<kotlin.Any?>?> & Out<Out<kotlin.Any?>?>?"), DEBUG_INFO_SMARTCAST!>e<!>.get()
                         if (f != null) {
-                            val g = <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?> & Out<kotlin.Int?>?"), DEBUG_INFO_SMARTCAST!>f<!>.get()
+                            val g = <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Any?> & Out<kotlin.Any?>?"), DEBUG_INFO_SMARTCAST!>f<!>.get()
                             if (g != null) {
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.equals(null)
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.propT
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.propAny
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.propNullableT
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.propNullableAny
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.funT()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.funAny()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.funNullableT()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.funNullableAny()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.equals(null)
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.propT
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.propAny
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.propNullableT
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.propNullableAny
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.funT()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.funAny()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.funNullableT()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.funNullableAny()
                             }
                         }
                     }
@@ -392,26 +392,26 @@ fun case_17(a: Inv<out Out<Out<Out<Out<Out<Int?>?>?>?>?>?>?) {
     if (a != null) {
         val b = <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out Out<Out<Out<Out<Out<kotlin.Int?>?>?>?>?>?> & Inv<out Out<Out<Out<Out<Out<kotlin.Int?>?>?>?>?>?>?")!>a<!>.get()
         if (b != null) {
-            val c = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<Out<kotlin.Int?>?>?>?>?> & Out<Out<Out<Out<Out<kotlin.Int?>?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>b<!>.get()
+            val c = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<Out<kotlin.Any?>?>?>?>?> & Out<Out<Out<Out<Out<kotlin.Any?>?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>b<!>.get()
             if (c != null) {
-                val d = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<kotlin.Int?>?>?>?> & Out<Out<Out<Out<kotlin.Int?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>c<!>.get()
+                val d = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<kotlin.Any?>?>?>?> & Out<Out<Out<Out<kotlin.Any?>?>?>?>?"), DEBUG_INFO_SMARTCAST!>c<!>.get()
                 if (d != null) {
-                    val e = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<kotlin.Int?>?>?> & Out<Out<Out<kotlin.Int?>?>?>?"), DEBUG_INFO_SMARTCAST!>d<!>.get()
+                    val e = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<kotlin.Any?>?>?> & Out<Out<Out<kotlin.Any?>?>?>?"), DEBUG_INFO_SMARTCAST!>d<!>.get()
                     if (e != null) {
-                        val f = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<kotlin.Int?>?> & Out<Out<kotlin.Int?>?>?"), DEBUG_INFO_SMARTCAST!>e<!>.get()
+                        val f = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<kotlin.Any?>?> & Out<Out<kotlin.Any?>?>?"), DEBUG_INFO_SMARTCAST!>e<!>.get()
                         if (f != null) {
-                            val g = <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Int?> & Out<kotlin.Int?>?"), DEBUG_INFO_SMARTCAST!>f<!>.get()
+                            val g = <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Any?> & Out<kotlin.Any?>?"), DEBUG_INFO_SMARTCAST!>f<!>.get()
                             if (g != null) {
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.equals(null)
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.propT
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.propAny
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.propNullableT
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.propNullableAny
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.funT()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>g<!>.funAny()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.funNullableT()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>g<!>.funNullableAny()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.equals(null)
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.propT
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.propAny
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.propNullableT
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.propNullableAny
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.funT()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>g<!>.funAny()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.funNullableT()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>g<!>.funNullableAny()
                             }
                         }
                     }

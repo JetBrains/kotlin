@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitutio
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SubstitutingScopeProvider
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
@@ -77,7 +78,9 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
         TypeConstructorSubstitution
             .create(receiverType)
             .wrapWithCapturingSubstitution(needApproximation = false)
-            .buildSubstitutor().let { callableDescriptor.substitute(it) } ?: return false
+            .buildSubstitutor().apply {
+                setSubstitutingScopeProvider(SubstitutingScopeProvider.DEFAULT)
+            }.let { callableDescriptor.substitute(it) } ?: return false
 
     val nonApproximatedExpectedType = correspondingNotApproximatedTypeByDescriptor(substitutedDescriptor) ?: return false
     if (!TypeUtils.contains(nonApproximatedExpectedType) { it.isCaptured() }) return false

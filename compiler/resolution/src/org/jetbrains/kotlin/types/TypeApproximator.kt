@@ -21,14 +21,10 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
-import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStrategy.*
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.model.CaptureStatus.*
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 
 open class TypeApproximatorConfiguration {
@@ -424,6 +420,8 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             if (argument.isStarProjection()) continue
 
             val argumentType = argument.getType()//.unwrap()
+            val argumentTypeIsNullable = argumentType.asSimpleType()?.isMarkedNullable() ?: false
+
             val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
             when (effectiveVariance) {
                 null -> {
@@ -487,7 +485,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                      */
                     if (argumentType.typeConstructor() is NewCapturedTypeConstructor) {
                         val subType = approximateToSubType(argumentType, conf, depth) ?: continue@loop
-                        if (!subType.isTrivialSub()) {
+                        if (!subType.isTrivialSub(argumentTypeIsNullable)) {
                             newArguments[index] = createTypeArgument(subType, TypeVariance.IN)
                             continue@loop
                         }
@@ -498,7 +496,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                     if (approximatedSuperType.isTrivialSuper()) {
                         val approximatedSubType =
                             approximateToSubType(argumentType, conf, depth) ?: continue@loop // seems like this is never null
-                        if (!approximatedSubType.isTrivialSub()) {
+                        if (!approximatedSubType.isTrivialSub(argumentTypeIsNullable)) {
                             newArguments[index] = createTypeArgument(approximatedSubType, TypeVariance.IN)
                             continue@loop
                         }
@@ -527,7 +525,12 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
     private fun KotlinTypeMarker.isTrivialSuper() = upperBoundIfFlexible().isNullableAny()
 
     // Nothing or Nothing!
-    private fun KotlinTypeMarker.isTrivialSub() = lowerBoundIfFlexible().isNothing()
+    private fun KotlinTypeMarker.isTrivialSub(originalIsNullable: Boolean) = lowerBoundIfFlexible().let {
+        if (originalIsNullable)
+            it.isNothing() || it.isNullableNothing()
+        else
+            it.isNothing()
+    }
 }
 //
 //internal fun KotlinTypeMarker.typeDepth() =

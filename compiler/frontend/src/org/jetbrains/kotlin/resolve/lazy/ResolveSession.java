@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.*;
+import org.jetbrains.kotlin.types.SubstitutingScopeProvider;
 import org.jetbrains.kotlin.types.WrappedTypeFactory;
 import org.jetbrains.kotlin.utils.SmartList;
 
@@ -81,6 +82,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private DelegationFilter delegationFilter;
     private WrappedTypeFactory wrappedTypeFactory;
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
+    private SubstitutingScopeProvider substitutingScopeProvider;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -144,6 +146,17 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setPlatformDiagnosticSuppressor(@NotNull PlatformDiagnosticSuppressor platformDiagnosticSuppressor) {
         this.platformDiagnosticSuppressor = platformDiagnosticSuppressor;
+    }
+
+    @NotNull
+    @Override
+    public SubstitutingScopeProvider getSubstitutingScopeProvider() {
+        return substitutingScopeProvider;
+    }
+
+    @Inject
+    public void setSubstitutingScopeProvider(SubstitutingScopeProvider substitutingScopeProvider) {
+        this.substitutingScopeProvider = substitutingScopeProvider;
     }
 
     // Only calls from injectors expected
