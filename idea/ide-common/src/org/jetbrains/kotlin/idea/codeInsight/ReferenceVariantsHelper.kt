@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
@@ -442,7 +443,7 @@ class ReferenceVariantsHelper(
             process(descriptor as CallableDescriptor)
         }
 
-        val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
+        val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java).forceEnableSamAdapters()
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
             val lookupLocation = (scope.ownerDescriptor.toSourceElement.getPsi() as? KtElement)?.let { KotlinLookupLocation(it) }
                 ?: NoLookupLocation.FROM_IDE
@@ -477,7 +478,21 @@ fun ResolutionScope.collectSyntheticStaticMembersAndConstructors(
     kindFilter: DescriptorKindFilter,
     nameFilter: (Name) -> Boolean
 ): List<FunctionDescriptor> {
-    val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
+    val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java).forceEnableSamAdapters()
     return (syntheticScopes.collectSyntheticStaticFunctions(this) + syntheticScopes.collectSyntheticConstructors(this))
         .filter { kindFilter.accepts(it) && nameFilter(it.name) }
+}
+
+// New Inference disables scope with synthetic SAM-adapters because it uses conversions for resolution
+// However, sometimes we need to pretend that we have those synthetic members, for example:
+// - to show both option (with SAM-conversion signature, and without) in completion
+// - for various intentions and checks (see RedundantSamConstructorInspection, ConflictingExtensionPropertyIntention and other)
+// TODO(dsavvinov): review clients, rewrite them to not rely on synthetic adapetrs
+fun SyntheticScopes.forceEnableSamAdapters(): SyntheticScopes {
+    return if (this !is JavaSyntheticScopes)
+        this
+    else
+        object : SyntheticScopes {
+            override val scopes: Collection<SyntheticScope> = this@forceEnableSamAdapters.scopesWithForceEnabledSamAdapters
+        }
 }
