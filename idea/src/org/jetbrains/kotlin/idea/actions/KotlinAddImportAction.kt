@@ -180,7 +180,7 @@ class KotlinAddImportAction internal constructor(
                         return "Exclude '$value' from auto-import"
                     }
 
-                    override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<Any>? {
+                    override fun onChosen(selectedValue: String, finalChoice: Boolean): PopupStep<Any>? {
                         if (finalChoice && !project.isDisposed) {
                             AddImportAction.excludeFromImport(project, selectedValue)
                         }

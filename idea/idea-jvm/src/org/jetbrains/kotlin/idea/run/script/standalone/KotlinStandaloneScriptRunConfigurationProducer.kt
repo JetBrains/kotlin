@@ -27,8 +27,8 @@ class KotlinStandaloneScriptRunConfigurationProducer :
         RunConfigurationProducer<KotlinStandaloneScriptRunConfiguration>(KotlinStandaloneScriptRunConfigurationType.instance) {
     override fun setupConfigurationFromContext(
             configuration: KotlinStandaloneScriptRunConfiguration,
-            context: ConfigurationContext?,
-            sourceElement: Ref<PsiElement>?
+            context: ConfigurationContext,
+            sourceElement: Ref<PsiElement>
     ): Boolean {
         configuration.setupFilePath(pathFromContext(context) ?: return false)
         configuration.setGeneratedName()
@@ -40,8 +40,8 @@ class KotlinStandaloneScriptRunConfigurationProducer :
         return pathFromPsiElement(location.psiElement)
     }
 
-    override fun isConfigurationFromContext(configuration: KotlinStandaloneScriptRunConfiguration?, context: ConfigurationContext?): Boolean {
-        val filePath = configuration?.filePath
+    override fun isConfigurationFromContext(configuration: KotlinStandaloneScriptRunConfiguration, context: ConfigurationContext): Boolean {
+        val filePath = configuration.filePath
         return filePath != null && filePath == pathFromContext(context)
     }
 

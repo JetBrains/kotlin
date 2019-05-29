@@ -85,7 +85,7 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntenti
         val functionLiteral: KtFunctionLiteral,
         val cursorWasInParameterList: Boolean
     ) : RenameProcessor(
-        editor.project,
+        editor.project!!,
         functionLiteral.valueParameters.single(),
         "it",
         false,
