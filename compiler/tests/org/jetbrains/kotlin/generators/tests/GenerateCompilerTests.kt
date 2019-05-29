@@ -169,11 +169,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBlackBoxInlineCodegenTest> {
-            model("codegen/boxInline")
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
-            model("codegen/boxInline")
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractBlackBoxAgainstJavaCodegenTest> {

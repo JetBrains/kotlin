@@ -116,6 +116,11 @@ public class CallableReferenceInlineTestsGenerated extends AbstractCallableRefer
             runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsFunction.kt");
         }
 
+        @TestMetadata("emptyLhsOnInlineProperty.kt")
+        public void testEmptyLhsOnInlineProperty() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsOnInlineProperty.kt");
+        }
+
         @TestMetadata("emptyLhsProperty.kt")
         public void testEmptyLhsProperty() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/bound/emptyLhsProperty.kt");
