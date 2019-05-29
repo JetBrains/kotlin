@@ -54,6 +54,9 @@ object CommonConfigurationKeys {
     @JvmField
     val PARALLEL_BACKEND_THREADS =
         CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
+
+    @JvmField
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
