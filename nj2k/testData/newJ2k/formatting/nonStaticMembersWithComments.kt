@@ -1,5 +1,4 @@
 internal class F {
-    var i = 0
 
     //c1
 
@@ -13,9 +12,11 @@ internal class F {
 
     //c4
 
-    fun f2() {}
 
+    fun f2() {}
+    var i = 0
     fun f3() {}
 
     //c5
+
 }

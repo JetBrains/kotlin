@@ -1,5 +1,9 @@
 internal class A @JvmOverloads constructor(p: Int = 1) {
     private val v: Int
+
+    // this is a secondary constructor 2
+    constructor(s: String) : this(s.length) {} // end of secondary constructor 2 body
+
 // this is a secondary constructor 1
 
 
@@ -10,16 +14,13 @@ internal class A @JvmOverloads constructor(p: Int = 1) {
 
 
     // end of secondary constructor 1 body
-
-    // this is a secondary constructor 2
-    constructor(s: String) : this(s.length) {} // end of secondary constructor 2 body
 }
 
 internal class B // this constructor will disappear
 // end of constructor body
 (private val x: Int) {
-
     fun foo() {}
+
 }
 
 internal class CtorComment {

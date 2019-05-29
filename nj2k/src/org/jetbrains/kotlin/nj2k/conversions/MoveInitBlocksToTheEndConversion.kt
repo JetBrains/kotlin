@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.tree.*
 
-//TODO temporary
-class SortClassMembersConversion : RecursiveApplicableConversionBase() {
+class MoveInitBlocksToTheEndConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKClass) return recurse(element)
-        element.classBody.declarations = element.declarationList
-            .sortedByDescending { it is JKVariable }
+        if (element !is JKClassBody) return recurse(element)
+        element.declarations = element.declarations.sortedBy {
+            when (it) {
+                is JKKtInitDeclaration -> 1
+                else -> 0
+            }
+        }
         return recurse(element)
     }
 }

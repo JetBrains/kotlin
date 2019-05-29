@@ -1,7 +1,4 @@
-internal object F {
-    var i = 0
-
-    //c1
+internal object F {//c1
 
     /*c2*/
 
@@ -13,8 +10,9 @@ internal object F {
 
     //c4
 
-    fun f2() {}
 
+    fun f2() {}
+    var i = 0
     fun f3() {}
 
     //c5

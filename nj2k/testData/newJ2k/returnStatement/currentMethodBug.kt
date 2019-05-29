@@ -3,7 +3,6 @@ internal interface I {
 }
 
 internal class C {
-    var string: String? = null
     val `object`: Any?
         get() {
             foo(object : I {
@@ -14,4 +13,5 @@ internal class C {
         }
 
     fun foo(i: I) {}
+    var string: String? = null
 }

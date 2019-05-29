@@ -1,12 +1,8 @@
 package test
 
 class BaseSamePackage {
-
+    fun foo() {}
     var i = 1
-
-    fun foo() {
-
-    }
 }
 
 internal class DerivedSamePackage {

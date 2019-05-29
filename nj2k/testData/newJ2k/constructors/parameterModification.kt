@@ -1,6 +1,11 @@
 internal class C @JvmOverloads constructor(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
     private val field: Int
 
+    constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
+        var arg2 = arg2
+        arg2++
+    }
+
     init {
         var arg1 = arg1
         var arg3 = arg3
@@ -8,11 +13,6 @@ internal class C @JvmOverloads constructor(arg1: Int, arg2: Int = 0, arg3: Int =
         print(arg1 + arg2)
         field = arg3
         arg3++
-    }
-
-    constructor(arg1: Int, arg2: Int) : this(arg1, arg2, 0) {
-        var arg2 = arg2
-        arg2++
     }
 }
 

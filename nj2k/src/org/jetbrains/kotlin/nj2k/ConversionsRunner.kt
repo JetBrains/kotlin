@@ -84,7 +84,7 @@ object ConversionsRunner {
             +LiteralConversion()
 
             +CollectImportsConversion(context)
-            +SortClassMembersConversion()
+            +MoveInitBlocksToTheEndConversion()
             +AddElementsInfoConversion(context)
         }
 

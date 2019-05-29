@@ -11,10 +11,6 @@ internal class A {
     var field8 = 0
     private var field9: String? = "a"
     private var field10: String? = foo()
-    private val anonymous: I = object : I {}
-    var anonymous2: I = object : I {}
-    private var anonymous3: I = object : I {}
-    private var iimpl = anonymous
     fun foo(): String {
         return "x"
     }
@@ -29,6 +25,10 @@ internal class A {
 
     internal interface I
 
+    private val anonymous: I = object : I {}
+    var anonymous2: I = object : I {}
+    private var anonymous3: I = object : I {}
+    private var iimpl = anonymous
     fun testAnonymousObject(i: Any) {
         if (true) {
             iimpl = i as I
