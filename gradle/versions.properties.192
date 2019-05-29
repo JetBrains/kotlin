@@ -1,4 +1,4 @@
-versions.intellijSdk=191.6707.61
+versions.intellijSdk=192.4205.45-EAP-SNAPSHOT
 versions.androidBuildTools=r23.0.1
 versions.idea.NodeJS=181.3494.12
 versions.jar.asm-all=7.0.1
@@ -7,7 +7,7 @@ versions.jar.groovy-all=2.4.15
 versions.jar.lombok-ast=0.2.3
 versions.jar.swingx-core=1.6.2-2
 versions.jar.kxml2=2.3.0
-versions.jar.streamex=0.6.7
+versions.jar.streamex=0.6.8
 versions.jar.gson=2.8.5
 versions.jar.oro=2.0.8
 versions.jar.picocontainer=1.2
