@@ -96,8 +96,8 @@ public class TraverseUIStarter implements ApplicationStarter {
 
       SearchUtil.processProjectConfigurables(ProjectManager.getInstance().getDefaultProject(), options);
 
-      for (TraverseUIHelper extension1 : TraverseUIHelper.helperExtensionPoint.getExtensionList()) {
-        extension1.afterTraversal(options);
+      for (TraverseUIHelper extension : TraverseUIHelper.helperExtensionPoint.getExtensionList()) {
+        extension.afterTraversal(options);
       }
 
       final Map<String, Element> roots = new HashMap<>();
