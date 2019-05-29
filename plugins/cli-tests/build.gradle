@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import static androidx.build.dependencies.DependenciesKt.*
 import androidx.build.LibraryGroups
 import androidx.build.LibraryVersions
+import androidx.build.Publish
 
 plugins {
     id("AndroidXPlugin")
@@ -74,7 +75,7 @@ tasks.withType(KotlinCompile).configureEach {
 
 androidx {
     name = "AndroidX Compiler CLI Tests"
-    publish = false
+    publish = Publish.NONE
     toolingProject = true
     mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.COMPOSE
