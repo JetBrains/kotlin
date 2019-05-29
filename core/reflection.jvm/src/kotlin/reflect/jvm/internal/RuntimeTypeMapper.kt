@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.jvm.CloneableClassScope
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -199,7 +200,7 @@ internal object RuntimeTypeMapper {
             }
         }
 
-        if (DescriptorFactory.isEnumValueOfMethod(function) || DescriptorFactory.isEnumValuesMethod(function)) {
+        if (isKnownBuiltInFunction(function)) {
             return mapJvmFunctionSignature(function)
         }
 
@@ -233,6 +234,14 @@ internal object RuntimeTypeMapper {
             property.getter!!.let(this::mapJvmFunctionSignature),
             property.setter?.let(this::mapJvmFunctionSignature)
         )
+    }
+
+    private fun isKnownBuiltInFunction(descriptor: FunctionDescriptor): Boolean {
+        if (DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)) return true
+
+        if (descriptor.name == CloneableClassScope.CLONE_NAME && descriptor.valueParameters.isEmpty()) return true
+
+        return false
     }
 
     private fun mapJvmFunctionSignature(descriptor: FunctionDescriptor): JvmFunctionSignature.KotlinFunction =

@@ -28,6 +28,6 @@ class CloneableClassScope(
     )
 
     companion object {
-        internal val CLONE_NAME = Name.identifier("clone")
+        val CLONE_NAME = Name.identifier("clone")
     }
 }

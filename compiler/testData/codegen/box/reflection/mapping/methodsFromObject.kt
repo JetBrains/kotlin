@@ -30,8 +30,7 @@ fun box(): String {
         MyCustomMembers::class.functions()
     )
 
-    // TODO: KT-22923
-    // assertEquals(listOf("clone", "equals", "hashCode", "toString"), MyCloneable::class.functions())
+    assertEquals(listOf("clone", "equals", "hashCode", "toString"), MyCloneable::class.functions())
 
     return "OK"
 }
