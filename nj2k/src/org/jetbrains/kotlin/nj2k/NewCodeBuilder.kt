@@ -46,6 +46,10 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
     inner class Visitor : JKVisitorWithCommentsPrinting {
         private val printedTokens = mutableSetOf<JKNonCodeElement>()
 
+        //TODO move to ast transformation phase
+        private fun JKNonCodeElement.shouldBeDropped(): Boolean =
+            this is JKCommentElement && text.startsWith("//noinspection")
+
         private fun JKNonCodeElement.createText() =
             if (this !in printedTokens) {
                 printedTokens += this
@@ -54,7 +58,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
 
 
         private fun List<JKNonCodeElement>.createText(): String {
-            val text = joinToString("") { token -> token.createText() }
+            val text = filterNot { it.shouldBeDropped() }.joinToString("") { token -> token.createText() }
             val needNewLine = text.lastIndexOf('\n') < text.lastIndexOf("//")
             return text + "\n".takeIf { needNewLine }.orEmpty()
         }
