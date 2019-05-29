@@ -352,6 +352,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var inferenceCompatibility: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xdump-model",
+        description = "Don't even try to use it"
+    )
+    var dumpArgumentsDir: String? by FreezableVar(null)
+
+    @Argument(
         value = "-Xsuppress-version-warnings",
         description = "Suppress warnings about outdated, inconsistent or experimental language or API versions"
     )
