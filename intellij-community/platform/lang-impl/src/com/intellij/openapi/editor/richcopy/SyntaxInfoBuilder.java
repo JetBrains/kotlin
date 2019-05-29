@@ -18,7 +18,7 @@ import com.intellij.openapi.editor.markup.HighlighterLayer;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.editor.richcopy.model.SyntaxInfo;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.psi.TokenType;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -38,13 +38,13 @@ public final class SyntaxInfoBuilder {
                                                @NotNull MarkupModel markupModel,
                                                int startOffsetToUse,
                                                int endOffset) {
-    
+
     CompositeRangeIterator iterator =  new CompositeRangeIterator(
       schemeToUse,
       new HighlighterRangeIterator(highlighter, startOffsetToUse, endOffset),
       new MarkupModelRangeIterator(markupModel, schemeToUse, startOffsetToUse, endOffset)
     );
-    
+
     return new MyMarkupIterator(text, iterator, schemeToUse);
   }
 
@@ -61,7 +61,7 @@ public final class SyntaxInfoBuilder {
 
     void dispose();
   }
-  
+
   static class MyMarkupIterator {
     private final SegmentIterator mySegmentIterator;
     private final RangeIterator myRangeIterator;
@@ -531,10 +531,10 @@ public final class SyntaxInfoBuilder {
       myDefaultBackground = scheme.getDefaultBackground();
 
       int javaFontSize = scheme.getEditorFontSize();
-      float fontSize = SystemInfo.isMac || ApplicationManager.getApplication().isHeadlessEnvironment() ?
-                       javaFontSize : 
+      float fontSize = SystemInfoRt.isMac || ApplicationManager.getApplication().isHeadlessEnvironment() ?
+                       javaFontSize :
                        javaFontSize * 0.75f / UISettings.getDefFontScale(); // matching font size in external apps
-      
+
       builder = new SyntaxInfo.Builder(myDefaultForeground, myDefaultBackground, fontSize);
       myIndentSymbolsToStrip = indentSymbolsToStrip;
     }

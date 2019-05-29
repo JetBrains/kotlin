@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find;
 
 import com.intellij.featureStatistics.FeatureUsageTracker;
@@ -15,7 +15,7 @@ import com.intellij.openapi.editor.EditorCopyPasteHelper;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
@@ -56,7 +56,7 @@ import static javax.swing.ScrollPaneConstants.*;
 public class SearchTextArea extends NonOpaquePanel implements PropertyChangeListener, FocusListener {
   public static final String JUST_CLEARED_KEY = "JUST_CLEARED";
   public static final KeyStroke NEW_LINE_KEYSTROKE
-    = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, (SystemInfo.isMac ? META_DOWN_MASK : CTRL_DOWN_MASK) | SHIFT_DOWN_MASK);
+    = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, (SystemInfoRt.isMac ? META_DOWN_MASK : CTRL_DOWN_MASK) | SHIFT_DOWN_MASK);
   private final JTextArea myTextArea;
   private final boolean mySearchMode;
   private final boolean myInfoMode;
@@ -154,7 +154,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
 
       @Override
       public Insets getBorderInsets(Component c) {
-        if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
+        if (SystemInfoRt.isMac && !UIUtil.isUnderDarcula()) {
           return new JBInsets(3, 0, 3, 0);
         } else {
           int bottom = (StringUtil.getLineBreakCount(myTextArea.getText()) > 0) ? 2 : UIUtil.isUnderDarcula() ? 2 : 1;
@@ -204,7 +204,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
         myTextArea.setFont(EditorUtil.getEditorFont());
       }
       else {
-        if (SystemInfo.isMac) {
+        if (SystemInfoRt.isMac) {
           myTextArea.setFont(JBUI.Fonts.smallFont());
         } else {
           myTextArea.setFont(UIManager.getFont("TextArea.font"));
@@ -489,7 +489,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
 
     @Override
     String getLayoutConstraints() {
-      Insets i = SystemInfo.isLinux ? JBUI.insets(2) : JBUI.insets(3);
+      Insets i = SystemInfoRt.isLinux ? JBUI.insets(2) : JBUI.insets(3);
       return "flowx, ins " + i.top + " " + i.left + " " + i.bottom + " " + i.right + ", gapx " + JBUI.scale(3);
     }
 

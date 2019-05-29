@@ -5,7 +5,7 @@ import com.intellij.openapi.editor.richcopy.model.ColorRegistry;
 import com.intellij.openapi.editor.richcopy.model.FontNameRegistry;
 import com.intellij.openapi.editor.richcopy.model.MarkupHandler;
 import com.intellij.openapi.editor.richcopy.model.SyntaxInfo;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.ui.mac.MacColorSpaceLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
   private static final String HEADER_SUFFIX = "}";
   private static final String TAB           = "\\tab\n";
   // using undocumented way to denote line break on Mac (used e.g. by TextEdit) to resolve IDEA-165337
-  private static final String NEW_LINE      = SystemInfo.isMac ? "\\\n" : "\\line\n";
+  private static final String NEW_LINE      = SystemInfoRt.isMac ? "\\\n" : "\\line\n";
   private static final String BOLD          = "\\b";
   private static final String ITALIC        = "\\i";
 
@@ -62,10 +62,10 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
     holder.append("\\par");
     holder.append(HEADER_SUFFIX);
   }
-  
+
   private static int[] getAdjustedColorComponents(Color color) {
     ColorSpace genericRgbSpace;
-    if (SystemInfo.isMac && (genericRgbSpace = MacColorSpaceLoader.getGenericRgbColorSpace()) != null) {
+    if (SystemInfoRt.isMac && (genericRgbSpace = MacColorSpaceLoader.getGenericRgbColorSpace()) != null) {
       // on macOS color components are expected in Apple's 'Generic RGB' color space
       float[] components = genericRgbSpace.fromRGB(color.getRGBColorComponents(null));
       return new int[]{
@@ -78,7 +78,7 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
       return new int[]{color.getRed(), color.getGreen(), color.getBlue()};
     }
   }
-  
+
   private static int colorComponentFloatToInt(float component) {
     return (int)(component * 255 + 0.5f);
   }

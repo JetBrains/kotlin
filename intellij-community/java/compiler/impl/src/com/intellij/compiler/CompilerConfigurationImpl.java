@@ -397,7 +397,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
     String compilerHome = System.getProperty(TESTS_EXTERNAL_COMPILER_HOME_PROPERTY_NAME, null);
     if (compilerHome == null) {
       File javaHome = new File(System.getProperty("java.home"));
-      if (SystemInfo.isMac || !new File(javaHome.getParentFile(), "bin").exists()) {
+      if (SystemInfoRt.isMac || !new File(javaHome.getParentFile(), "bin").exists()) {
         compilerHome = javaHome.getAbsolutePath();
       }
       else {

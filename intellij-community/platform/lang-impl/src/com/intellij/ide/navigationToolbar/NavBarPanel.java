@@ -455,14 +455,14 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     ListenerUtil.addMouseListener(component, new MouseAdapter() {
       @Override
       public void mouseReleased(final MouseEvent e) {
-        if (SystemInfo.isWindows) {
+        if (SystemInfoRt.isWindows) {
           click(e);
         }
       }
 
       @Override
       public void mousePressed(final MouseEvent e) {
-        if (!SystemInfo.isWindows) {
+        if (!SystemInfoRt.isWindows) {
           click(e);
         }
       }

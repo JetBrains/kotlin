@@ -6,7 +6,6 @@ import com.intellij.bootRuntime.bundles.Remote
 import com.intellij.bootRuntime.bundles.Runtime
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.ui.layout.*
 import java.io.File
 import java.net.URL
 import java.util.regex.Pattern

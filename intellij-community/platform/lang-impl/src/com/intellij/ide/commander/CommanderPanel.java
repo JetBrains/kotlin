@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.commander;
 
@@ -40,7 +26,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.pom.Navigatable;
@@ -118,12 +104,12 @@ public class CommanderPanel extends JPanel {
         if (myBuilder == null) return;
         myBuilder.buildRoot();
       }
-    }, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SLASH, SystemInfo.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK),
+    }, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SLASH, SystemInfoRt.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK),
                                   JComponent.WHEN_FOCUSED);
 
     myList.getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), ACTION_DRILL_DOWN);
     myList.getInputMap(WHEN_FOCUSED)
-      .put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, SystemInfo.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK),
+      .put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, SystemInfoRt.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK),
            ACTION_DRILL_DOWN);
     myList.getActionMap().put(ACTION_DRILL_DOWN, new AbstractAction() {
       @Override
@@ -140,7 +126,7 @@ public class CommanderPanel extends JPanel {
     }.installOn(myList);
 
     myList.getInputMap(WHEN_FOCUSED)
-      .put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, SystemInfo.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK), ACTION_GO_UP);
+      .put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, SystemInfoRt.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK), ACTION_GO_UP);
     myList.getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), ACTION_GO_UP);
     myList.getActionMap().put(ACTION_GO_UP, new AbstractAction() {
       @Override
@@ -285,7 +271,7 @@ public class CommanderPanel extends JPanel {
     add(myTitlePanel, BorderLayout.NORTH);
     final JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(myList);
     scrollPane.setBorder(null);
-    scrollPane.getVerticalScrollBar().setFocusable(false); // otherwise the scrollbar steals focus and panel switching with tab is broken 
+    scrollPane.getVerticalScrollBar().setFocusable(false); // otherwise the scrollbar steals focus and panel switching with tab is broken
     scrollPane.getHorizontalScrollBar().setFocusable(false);
     add(scrollPane, BorderLayout.CENTER);
 
