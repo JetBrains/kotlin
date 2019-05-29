@@ -31,7 +31,7 @@ kotlin {
         }
         httpServerMain {
             dependencies {
-                implementation 'io.ktor:ktor-server-netty:1.1.2'
+                implementation 'io.ktor:ktor-server-netty:1.2.1'
             }
         }
     }
