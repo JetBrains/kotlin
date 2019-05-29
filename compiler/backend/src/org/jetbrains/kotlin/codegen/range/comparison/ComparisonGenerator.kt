@@ -59,17 +59,25 @@ fun getComparisonGeneratorForKotlinType(kotlinType: KotlinType): ComparisonGener
             throw UnsupportedOperationException("Unexpected element type: $kotlinType")
     }
 
+class RangeContainsTypeInfo(
+    val rangeElementType: KotlinType,
+    val valueParameterType: KotlinType
+)
+
+fun getRangeContainsTypeInfo(call: ResolvedCall<out CallableDescriptor>): RangeContainsTypeInfo? {
+    val descriptor = call.resultingDescriptor
+    val receiverType = descriptor.extensionReceiverParameter?.type ?: descriptor.dispatchReceiverParameter?.type ?: return null
+    val elementType = getRangeOrProgressionElementType(receiverType) ?: return null
+    val valueParameterType = descriptor.valueParameters.singleOrNull()?.type ?: return null
+    return RangeContainsTypeInfo(elementType, valueParameterType)
+}
+
 fun getComparisonGeneratorForRangeContainsCall(
     codegen: ExpressionCodegen,
-    call: ResolvedCall<out CallableDescriptor>
+    rangeContainsTypeInfo: RangeContainsTypeInfo
 ): ComparisonGenerator? {
-    val descriptor = call.resultingDescriptor
-
-    val receiverType = descriptor.extensionReceiverParameter?.type ?: descriptor.dispatchReceiverParameter?.type ?: return null
-
-    val elementType = getRangeOrProgressionElementType(receiverType) ?: return null
-
-    val valueParameterType = descriptor.valueParameters.singleOrNull()?.type ?: return null
+    val elementType = rangeContainsTypeInfo.rangeElementType
+    val valueParameterType = rangeContainsTypeInfo.valueParameterType
 
     val asmElementType = codegen.asmType(elementType)
     val asmValueParameterType = codegen.asmType(valueParameterType)
@@ -77,6 +85,12 @@ fun getComparisonGeneratorForRangeContainsCall(
     return when {
         asmElementType == asmValueParameterType ->
             getComparisonGeneratorForKotlinType(elementType)
+
+        KotlinBuiltIns.isUInt(elementType) ->
+            UIntComparisonGenerator
+
+        KotlinBuiltIns.isULong(elementType) ->
+            ULongComparisonGenerator
 
         asmElementType.isPrimitiveIntOrCoercible() && asmValueParameterType.isPrimitiveIntOrCoercible() ->
             IntComparisonGenerator

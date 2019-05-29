@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.range.inExpression
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.range.BoundedValue
+import org.jetbrains.kotlin.codegen.range.coerceUnsignedToUInt
+import org.jetbrains.kotlin.codegen.range.coerceUnsignedToULong
 import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
+import org.jetbrains.kotlin.codegen.range.comparison.RangeContainsTypeInfo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.org.objectweb.asm.Label
@@ -27,6 +31,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class InIntegralContinuousRangeExpressionGenerator(
     operatorReference: KtSimpleNameExpression,
+    private val rangeContainsTypeInfo: RangeContainsTypeInfo,
     private val boundedValue: BoundedValue,
     private val comparisonGenerator: ComparisonGenerator,
     private val frameMap: FrameMap
@@ -38,6 +43,7 @@ class InIntegralContinuousRangeExpressionGenerator(
 
     private fun gen(argument: StackValue): BranchedValue =
         object : BranchedValue(argument, null, comparisonGenerator.comparedType, Opcodes.IFEQ) {
+
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 if (jumpIfFalse) {
                     genJumpIfFalse(v, jumpLabel)
@@ -54,7 +60,7 @@ class InIntegralContinuousRangeExpressionGenerator(
 
                     boundedValue.putHighLow(v, operandType)
 
-                    arg1.put(operandType, v)
+                    putCoercedArgumentOnStack(v)
                     v.store(arg1Var, operandType)
                     v.load(arg1Var, operandType)
 
@@ -95,7 +101,7 @@ class InIntegralContinuousRangeExpressionGenerator(
 
                     boundedValue.putHighLow(v, operandType)
 
-                    arg1.put(operandType, v)
+                    putCoercedArgumentOnStack(v)
                     v.store(arg1Var, operandType)
                     v.load(arg1Var, operandType)
 
@@ -126,6 +132,22 @@ class InIntegralContinuousRangeExpressionGenerator(
                     }
                 }
 
+            }
+
+            private fun putCoercedArgumentOnStack(v: InstructionAdapter) {
+                val argumentKotlinType = rangeContainsTypeInfo.valueParameterType
+                val rangeElementKotlinType = rangeContainsTypeInfo.rangeElementType
+
+                val coercedValue = when {
+                    KotlinBuiltIns.isUInt(rangeElementKotlinType) ->
+                        coerceUnsignedToUInt(arg1, argumentKotlinType, rangeElementKotlinType)
+                    KotlinBuiltIns.isULong(rangeElementKotlinType) ->
+                        coerceUnsignedToULong(arg1, argumentKotlinType, rangeElementKotlinType)
+                    else ->
+                        arg1
+                }
+
+                coercedValue.put(operandType, v)
             }
         }
 }
