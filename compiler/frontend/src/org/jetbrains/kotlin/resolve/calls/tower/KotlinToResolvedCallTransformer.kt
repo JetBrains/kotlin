@@ -845,7 +845,7 @@ private fun PropertyDescriptorImpl.hackSettersAccordingToCapturedOutTypes(): Pro
         TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
     ) ?: return this
 
-    val newProperty = newCopyBuilder().build() as PropertyDescriptorImpl
+    val newProperty = newCopyBuilder().setOriginal(original).build() as PropertyDescriptorImpl
 
     val newSetter = with(setter) {
         PropertySetterDescriptorImpl(newProperty, annotations, modality, visibility, isDefault, isExternal, isInline, kind, original, source)
