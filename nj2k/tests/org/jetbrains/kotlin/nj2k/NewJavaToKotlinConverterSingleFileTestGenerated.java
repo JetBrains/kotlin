@@ -25,7 +25,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
-    public void testAllFilesPresentInFileOrElement() throws Exception {
+    public void testAllFilesPresentInNewJ2k() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
     }
 
@@ -2855,11 +2855,6 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         public void testSpaceBeforeAssignment() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/spaceBeforeAssignment.java");
         }
-
-        @TestMetadata("unfinishedReferenceExpression.java")
-        public void testUnfinishedReferenceExpression() throws Exception {
-            runTest("nj2k/testData/newJ2k/issues/unfinishedReferenceExpression.java");
-        }
     }
 
     @TestMetadata("nj2k/testData/newJ2k/kotlinApiAccess")
@@ -3806,7 +3801,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
 
         @TestMetadata("java8MapForEachWithFullJdk.java")
         public void testJava8MapForEachWithFullJdk() throws Exception {
-            runTest("j2k/testData/fileOrElement/postProcessing/java8MapForEachWithFullJdk.java");
+            runTest("nj2k/testData/newJ2k/postProcessing/java8MapForEachWithFullJdk.java");
         }
 
         @TestMetadata("NotIs.java")
