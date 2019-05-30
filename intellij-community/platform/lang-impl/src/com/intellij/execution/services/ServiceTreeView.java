@@ -130,7 +130,7 @@ class ServiceTreeView extends ServiceView {
     }
     if (newDescriptor instanceof Navigatable) {
       Navigatable navigatable = (Navigatable)newDescriptor;
-      if (ServiceViewManagerImpl.isAutoScrollToSourceEnabled(myProject) && navigatable.canNavigate()) navigatable.navigate(false);
+      if (ServiceViewSourceScrollHelper.isAutoScrollToSourceEnabled(myProject) && navigatable.canNavigate()) navigatable.navigate(false);
     }
 
     myUi.setDetailsComponent(newDescriptor == null ? null : newDescriptor.getContentComponent());

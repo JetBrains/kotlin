@@ -25,6 +25,6 @@ public class ShowInNewTabAction extends DumbAwareAction {
     if (serviceView == null) return;
 
     ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project))
-      .extract(new ServiceViewDragBean(serviceView.getSelectedItems()), serviceView);
+      .extract(new ServiceViewDragBean(serviceView, serviceView.getSelectedItems()));
   }
 }

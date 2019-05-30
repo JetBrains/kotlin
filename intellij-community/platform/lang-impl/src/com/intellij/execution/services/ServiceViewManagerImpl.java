@@ -6,22 +6,17 @@ import com.intellij.execution.services.ServiceModelFilter.ServiceViewFilter;
 import com.intellij.execution.services.ServiceViewDragHelper.ServiceViewDragBean;
 import com.intellij.execution.services.ServiceViewModel.*;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.dnd.DnDDropHandler;
-import com.intellij.ide.dnd.DnDEvent;
-import com.intellij.ide.dnd.DnDSupport;
-import com.intellij.ide.dnd.DnDTargetChecker;
 import com.intellij.ide.projectView.PresentationData;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -33,9 +28,7 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
-import com.intellij.openapi.wm.impl.InternalDecorator;
 import com.intellij.ui.AppUIUtil;
-import com.intellij.ui.AutoScrollFromSourceHandler;
 import com.intellij.ui.content.*;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -48,15 +41,10 @@ import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.*;
 
 @State(name = "ServiceViewManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public final class ServiceViewManagerImpl implements ServiceViewManager, PersistentStateComponent<ServiceViewManagerImpl.State> {
-  private static final String AUTO_SCROLL_TO_SOURCE_PROPERTY = "service.view.auto.scroll.to.source";
-  private static final String AUTO_SCROLL_FROM_SOURCE_PROPERTY = "service.view.auto.scroll.from.source";
-
   // TODO [konstantin.aleev] provide help id
   @NonNls private static final String HELP_ID = "run-dashboard.reference";
 
@@ -70,7 +58,6 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private ContentManager myContentManager;
   private Content myAllServicesContent;
-  private final Content myDropTargetContent = createDropTargetContent();
 
   public ServiceViewManagerImpl(@NotNull Project project) {
     myProject = project;
@@ -98,9 +85,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     registerActivateByContributorActions();
 
     ToolWindowEx toolWindowEx = (ToolWindowEx)toolWindow;
-    toolWindowEx.setAdditionalGearActions(new DefaultActionGroup(ToggleAutoScrollAction.toSource(), ToggleAutoScrollAction.fromSource()));
-    toolWindowEx.setTitleActions(ServiceViewAutoScrollFromSourceHandler.install(myProject, toolWindow));
-    installDnDSupport(toolWindowEx.getDecorator());
+    ServiceViewSourceScrollHelper.installAutoScrollSupport(myProject, toolWindowEx);
+    ServiceViewDragHelper.installDnDSupport(myProject, toolWindowEx.getDecorator(), myContentManager);
   }
 
   private void createAllServicesView() {
@@ -136,62 +122,6 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           }
         }
       }, myProject.getDisposed());
-    });
-  }
-
-  private void installDnDSupport(InternalDecorator decorator) {
-    DnDSupport.createBuilder(decorator)
-      .setTargetChecker(new DnDTargetChecker() {
-        @Override
-        public boolean update(DnDEvent event) {
-          Object o = event.getAttachedObject();
-          boolean dropPossible = o instanceof ServiceViewDragBean && event.getPoint().y < decorator.getHeaderHeight();
-          event.setDropPossible(dropPossible, "");
-          if (dropPossible) {
-            if (myContentManager.getIndexOfContent(myDropTargetContent) < 0) {
-              myContentManager.addContent(myDropTargetContent);
-            }
-
-            ServiceViewDragBean dragBean = (ServiceViewDragBean)o;
-            ItemPresentation presentation;
-            if (dragBean.getItems().size() > 1 && dragBean.getContributor() != null) {
-              presentation = dragBean.getContributor().getViewDescriptor().getPresentation();
-            }
-            else {
-              presentation = dragBean.getItems().get(0).getViewDescriptor().getPresentation();
-            }
-            myDropTargetContent.setDisplayName(ServiceViewDragHelper.getDisplayName(presentation));
-            myDropTargetContent.setIcon(presentation.getIcon(false));
-          }
-          else if (myContentManager.getIndexOfContent(myDropTargetContent) >= 0) {
-            myContentManager.removeContent(myDropTargetContent, false);
-          }
-          return true;
-        }
-      })
-      .setCleanUpOnLeaveCallback(() -> {
-        ContentManager contentManager = myContentManager;
-        if (contentManager != null && contentManager.getIndexOfContent(myDropTargetContent) >= 0) {
-          contentManager.removeContent(myDropTargetContent, false);
-        }
-      })
-      .setDropHandler(new DnDDropHandler() {
-        @Override
-        public void drop(DnDEvent event) {
-          Object o = event.getAttachedObject();
-          if (o instanceof ServiceViewDragBean) {
-            extract((ServiceViewDragBean)o);
-          }
-        }
-      })
-      .install();
-    decorator.addMouseMotionListener(new MouseAdapter() {
-      @Override
-      public void mouseExited(MouseEvent e) {
-        if (myContentManager.getIndexOfContent(myDropTargetContent) >= 0) {
-          myContentManager.removeContent(myDropTargetContent, false);
-        }
-      }
     });
   }
 
@@ -244,7 +174,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   private void selectContentByModel(@Nullable ServiceViewModel modelToSelect) {
     if (modelToSelect != null) {
       for (Content content : myContentManager.getContents()) {
-        if (((ServiceView)content.getComponent()).getModel() == modelToSelect) {
+        ServiceView serviceView = getServiceView(content);
+        if (serviceView != null && serviceView.getModel() == modelToSelect) {
           myContentManager.setSelectedContent(content);
           break;
         }
@@ -274,7 +205,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     });
   }
 
-  private void registerActivateByContributorActions() {
+  private static void registerActivateByContributorActions() {
     for (ServiceViewContributor contributor : ServiceModel.getContributors()) {
       ActionManager actionManager = ActionManager.getInstance();
       String actionId = getActivateContributorActionId(contributor);
@@ -319,7 +250,17 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   private static void select(Project project, Iterator<Content> iterator, AsyncPromise<Void> result,
                              @NotNull Object service, @NotNull Class<?> contributorClass) {
     Content content = iterator.next();
-    ((ServiceView)content.getComponent()).select(service, contributorClass)
+    ServiceView serviceView = getServiceView(content);
+    if (serviceView == null) {
+      if (iterator.hasNext()) {
+        select(project, iterator, result, service, contributorClass);
+      }
+      else {
+        result.setError("Not services content");
+      }
+      return;
+    }
+    serviceView.select(service, contributorClass)
       .onSuccess(v -> {
         AppUIUtil.invokeOnEdt(() -> {
           ContentManager contentManager = content.getManager();
@@ -377,14 +318,11 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return toolWindow;
   }
 
-  private void extract(@NotNull ServiceViewDragBean dragBean) {
-    extract(dragBean, getSelectedView());
-  }
-
-  void extract(@NotNull ServiceViewDragBean dragBean, @Nullable ServiceView selectedView) {
+  void extract(@NotNull ServiceViewDragBean dragBean) {
     List<ServiceViewItem> items = dragBean.getItems();
     if (items.isEmpty()) return;
 
+    ServiceView selectedView = dragBean.getServiceView();
     ServiceViewFilter parentFilter = selectedView == null ? null : selectedView.getModel().getFilter();
     ServiceViewModel viewModel = ServiceViewModel.createModel(items, dragBean.getContributor(), myModel, myModelFilter, parentFilter);
     extract(viewModel, new ServiceViewState(), true);
@@ -490,7 +428,12 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   private ServiceView getSelectedView() {
     ContentManager contentManager = myContentManager;
     Content content = contentManager == null ? null : contentManager.getSelectedContent();
-    return content == null ? null : ObjectUtils.tryCast(content.getComponent(), ServiceView.class);
+    return content == null ? null : getServiceView(content);
+  }
+
+  @Nullable
+  private static ServiceView getServiceView(Content content) {
+    return ObjectUtils.tryCast(content.getComponent(), ServiceView.class);
   }
 
   private void updateContentTab(ServiceViewItem item, Content content) {
@@ -557,13 +500,6 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return HELP_ID;
   }
 
-  private static Content createDropTargetContent() {
-    Content content = ContentFactory.SERVICE.getInstance().createContent(new JPanel(), null, false);
-    content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
-    content.setCloseable(true);
-    return content;
-  }
-
   boolean isSplitByTypeEnabled() {
     ContentManager contentManager = myContentManager;
     if (contentManager == null) return false;
@@ -603,9 +539,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   public List<Object> getChildrenSafe(@NotNull Object value) {
     Content content = myContentManager.getSelectedContent();
-    if (content == null || content == myDropTargetContent) return Collections.emptyList();
+    ServiceView serviceView = content == null ? null : getServiceView(content);
+    if (serviceView == null) return Collections.emptyList();
 
-    return ((ServiceView)content.getComponent()).getChildrenSafe(value);
+    return serviceView.getChildrenSafe(value);
   }
 
   private class MyContentMangerListener extends ContentManagerAdapter {
@@ -618,10 +555,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
     @Override
     public void contentRemoved(@NotNull ContentManagerEvent event) {
-      if (event.getContent() != myDropTargetContent && event.getContent() != myAllServicesContent) {
-        ServiceView removedView = (ServiceView)event.getContent().getComponent();
-        myModelFilter.removeFilter(removedView.getModel().getFilter());
-        myServiceViews.remove(removedView);
+      ServiceView serviceView = getServiceView(event.getContent());
+      if (serviceView != null && serviceView != myAllServicesView) {
+        myModelFilter.removeFilter(serviceView.getModel().getFilter());
+        myServiceViews.remove(serviceView);
         filtersChanged();
       }
       if (myContentManager.getContentCount() == 1) {
@@ -631,9 +568,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
     @Override
     public void selectionChanged(@NotNull ContentManagerEvent event) {
-      if (event.getContent() == myDropTargetContent) return;
+      ServiceView serviceView = getServiceView(event.getContent());
+      if (serviceView == null) return;
 
-      ServiceView serviceView = (ServiceView)event.getContent().getComponent();
       if (event.getOperation() == ContentManagerEvent.ContentOperation.add) {
         serviceView.onViewSelected();
       }
@@ -708,113 +645,6 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       }
       if (manager.myContentManager.getIndexOfContent(manager.myAllServicesContent) >= 0) {
         manager.myContentManager.setSelectedContent(manager.myAllServicesContent, true);
-      }
-    }
-  }
-
-  static boolean isAutoScrollToSourceEnabled(@NotNull Project project) {
-    return PropertiesComponent.getInstance(project).getBoolean(AUTO_SCROLL_TO_SOURCE_PROPERTY);
-  }
-
-  private static boolean isAutoScrollFromSourceEnabled(@NotNull Project project) {
-    return PropertiesComponent.getInstance(project).getBoolean(AUTO_SCROLL_FROM_SOURCE_PROPERTY);
-  }
-
-  private static class ToggleAutoScrollAction extends ToggleAction implements DumbAware {
-    private final String myProperty;
-
-    ToggleAutoScrollAction(@NotNull String text, @NotNull String property) {
-      super(text);
-      myProperty = property;
-    }
-
-    @Override
-    public boolean isSelected(@NotNull AnActionEvent e) {
-      Project project = e.getProject();
-      return project != null && PropertiesComponent.getInstance(project).getBoolean(myProperty);
-    }
-
-    @Override
-    public void setSelected(@NotNull AnActionEvent e, boolean state) {
-      Project project = e.getProject();
-      if (project != null) PropertiesComponent.getInstance(project).setValue(myProperty, state);
-    }
-
-    @NotNull
-    static AnAction toSource() {
-      return new ToggleAutoScrollAction("Autoscroll to Source", AUTO_SCROLL_TO_SOURCE_PROPERTY);
-    }
-
-    @NotNull
-    static AnAction fromSource() {
-      return new ToggleAutoScrollAction("Autoscroll from Source", AUTO_SCROLL_FROM_SOURCE_PROPERTY);
-    }
-  }
-
-  private static class ServiceViewAutoScrollFromSourceHandler extends AutoScrollFromSourceHandler {
-    ServiceViewAutoScrollFromSourceHandler(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-      super(project, toolWindow.getComponent(), toolWindow.getContentManager());
-    }
-
-    @Override
-    protected boolean isAutoScrollEnabled() {
-      return isAutoScrollFromSourceEnabled(myProject);
-    }
-
-    @Override
-    protected void setAutoScrollEnabled(boolean enabled) {
-      PropertiesComponent.getInstance(myProject).setValue(AUTO_SCROLL_FROM_SOURCE_PROPERTY, true);
-    }
-
-    @Override
-    protected void selectElementFromEditor(@NotNull FileEditor editor) {
-      select(editor);
-    }
-
-    private boolean select(@NotNull FileEditor editor) {
-      for (ServiceViewContributor extension : ServiceModel.getContributors()) {
-        if (!(extension instanceof ServiceViewFileEditorContributor)) continue;
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)extension, extension.getClass())) return true;
-      }
-      return false;
-    }
-
-    private boolean selectContributorNode(@NotNull FileEditor editor, @NotNull ServiceViewFileEditorContributor extension,
-                                          @NotNull Class<?> contributorClass) {
-      Object service = extension.findService(myProject, editor);
-      if (service == null) return false;
-      if (service instanceof ServiceViewFileEditorContributor) {
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)service, contributorClass)) return true;
-      }
-      ServiceViewManager.getInstance(myProject).select(service, contributorClass, true, true);
-      return true;
-    }
-
-    @NotNull
-    public static AnAction install(@NotNull Project project, @NotNull ToolWindow window) {
-      ServiceViewAutoScrollFromSourceHandler handler = new ServiceViewAutoScrollFromSourceHandler(project, window);
-      handler.install();
-      return new ScrollFromEditorAction(handler);
-    }
-  }
-
-  private static class ScrollFromEditorAction extends DumbAwareAction {
-    private final ServiceViewAutoScrollFromSourceHandler myScrollFromHandler;
-
-    ScrollFromEditorAction(ServiceViewAutoScrollFromSourceHandler scrollFromHandler) {
-      super("Scroll from Source", "Select node open in the active editor", AllIcons.General.Locate);
-      myScrollFromHandler = scrollFromHandler;
-    }
-
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-      Project project = e.getProject();
-      if (project == null) return;
-      FileEditorManager manager = FileEditorManager.getInstance(project);
-      FileEditor[] editors = manager.getSelectedEditors();
-      if (editors.length == 0) return;
-      for (FileEditor editor : editors) {
-        if (myScrollFromHandler.select(editor)) return;
       }
     }
   }

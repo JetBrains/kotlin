@@ -30,7 +30,7 @@ public class SplitToNewTabsAction extends DumbAwareAction {
 
     ServiceViewManagerImpl manager = (ServiceViewManagerImpl)ServiceViewManager.getInstance(project);
     for (ServiceViewItem item : serviceView.getSelectedItems()) {
-      manager.extract(new ServiceViewDragBean(Collections.singletonList(item)), serviceView);
+      manager.extract(new ServiceViewDragBean(serviceView, Collections.singletonList(item)));
     }
   }
 }

@@ -2,27 +2,90 @@
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
-import com.intellij.ide.dnd.DnDAction;
-import com.intellij.ide.dnd.DnDDragStartBean;
-import com.intellij.ide.dnd.DnDSource;
+import com.intellij.ide.dnd.*;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.PresentableNodeDescriptor;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.impl.InternalDecorator;
 import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 class ServiceViewDragHelper {
-  static DnDSource createSource(ServiceView serviceView) {
+  static DnDSource createSource(@NotNull ServiceView serviceView) {
     return new ServiceViewDnDSource(serviceView);
+  }
+
+  static void installDnDSupport(@NotNull Project project, @NotNull InternalDecorator decorator, @NotNull ContentManager contentManager) {
+    Content dropTargetContent = createDropTargetContent();
+    DnDSupport.createBuilder(decorator)
+      .setTargetChecker(new DnDTargetChecker() {
+        @Override
+        public boolean update(DnDEvent event) {
+          Object o = event.getAttachedObject();
+          boolean dropPossible = o instanceof ServiceViewDragBean && event.getPoint().y < decorator.getHeaderHeight();
+          event.setDropPossible(dropPossible, "");
+          if (dropPossible) {
+            if (contentManager.getIndexOfContent(dropTargetContent) < 0) {
+              contentManager.addContent(dropTargetContent);
+            }
+
+            ServiceViewDragBean dragBean = (ServiceViewDragBean)o;
+            ItemPresentation presentation;
+            if (dragBean.getItems().size() > 1 && dragBean.getContributor() != null) {
+              presentation = dragBean.getContributor().getViewDescriptor().getPresentation();
+            }
+            else {
+              presentation = dragBean.getItems().get(0).getViewDescriptor().getPresentation();
+            }
+            dropTargetContent.setDisplayName(getDisplayName(presentation));
+            dropTargetContent.setIcon(presentation.getIcon(false));
+          }
+          else if (contentManager.getIndexOfContent(dropTargetContent) >= 0) {
+            contentManager.removeContent(dropTargetContent, false);
+          }
+          return true;
+        }
+      })
+      .setCleanUpOnLeaveCallback(() -> {
+        if (!contentManager.isDisposed() && contentManager.getIndexOfContent(dropTargetContent) >= 0) {
+          contentManager.removeContent(dropTargetContent, false);
+        }
+      })
+      .setDropHandler(new DnDDropHandler() {
+        @Override
+        public void drop(DnDEvent event) {
+          Object o = event.getAttachedObject();
+          if (o instanceof ServiceViewDragBean) {
+            ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).extract((ServiceViewDragBean)o);
+          }
+        }
+      })
+      .install();
+    decorator.addMouseMotionListener(new MouseAdapter() {
+      @Override
+      public void mouseExited(MouseEvent e) {
+        if (contentManager.getIndexOfContent(dropTargetContent) >= 0) {
+          contentManager.removeContent(dropTargetContent, false);
+        }
+      }
+    });
   }
 
   static String getDisplayName(ItemPresentation presentation) {
@@ -58,11 +121,20 @@ class ServiceViewDragHelper {
     return result;
   }
 
+  private static Content createDropTargetContent() {
+    Content content = ContentFactory.SERVICE.getInstance().createContent(new JPanel(), null, false);
+    content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
+    content.setCloseable(true);
+    return content;
+  }
+
   static class ServiceViewDragBean {
+    private final ServiceView myServiceView;
     private final List<ServiceViewItem> myItems;
     private final ServiceViewContributor myContributor;
 
-    ServiceViewDragBean(List<ServiceViewItem> items) {
+    ServiceViewDragBean(ServiceView serviceView, List<ServiceViewItem> items) {
+      myServiceView = serviceView;
       myItems = ContainerUtil.filter(items, item -> {
         ServiceViewItem parent = item.getParent();
         while (parent != null) {
@@ -74,6 +146,10 @@ class ServiceViewDragHelper {
         return true;
       });
       myContributor = getTheOnlyContributor(myItems);
+    }
+
+    ServiceView getServiceView() {
+      return myServiceView;
     }
 
     List<ServiceViewItem> getItems() {
@@ -100,7 +176,7 @@ class ServiceViewDragHelper {
 
     @Override
     public DnDDragStartBean startDragging(DnDAction action, Point dragOrigin) {
-      return new DnDDragStartBean(new ServiceViewDragBean(myServiceView.getSelectedItems()));
+      return new DnDDragStartBean(new ServiceViewDragBean(myServiceView, myServiceView.getSelectedItems()));
     }
 
     @Override
