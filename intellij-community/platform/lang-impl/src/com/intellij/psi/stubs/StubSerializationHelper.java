@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ConcurrentIntObjectMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.RecentStringInterner;
@@ -286,7 +286,7 @@ class StubSerializationHelper {
     if (stub.isDangling()) {
       stubOut.writeByte(0);
     }
-    return tempBuffer.size() == 0 ? ArrayUtil.EMPTY_BYTE_ARRAY : tempBuffer.toByteArray();
+    return tempBuffer.size() == 0 ? ArrayUtilRt.EMPTY_BYTE_ARRAY : tempBuffer.toByteArray();
   }
 
   private static class ByteArrayInterner {
@@ -319,7 +319,7 @@ class StubSerializationHelper {
 
   private byte[] readByteArray(StubInputStream inputStream) throws IOException {
     int length = DataInputOutputUtil.readINT(inputStream);
-    if (length == 0) return ArrayUtil.EMPTY_BYTE_ARRAY;
+    if (length == 0) return ArrayUtilRt.EMPTY_BYTE_ARRAY;
 
     byte[] array = new byte[length];
     int read = inputStream.read(array);

@@ -1,8 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.io.AbstractStringEnumerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -134,7 +134,7 @@ class LazyStubData {
 
   private ByteArrayInputStream stubBytes(int index) {
     int start = getDataStart(index);
-    if (start == 0) return new ByteArrayInputStream(ArrayUtil.EMPTY_BYTE_ARRAY);
+    if (start == 0) return new ByteArrayInputStream(ArrayUtilRt.EMPTY_BYTE_ARRAY);
 
     int end = myAllStarts.nextSetBit(start + 1);
     if (end < 0) end = mySerializedStubs.length + 1;

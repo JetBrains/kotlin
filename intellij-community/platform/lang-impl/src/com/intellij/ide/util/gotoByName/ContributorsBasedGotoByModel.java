@@ -22,6 +22,7 @@ import com.intellij.pom.PomTargetPsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Processor;
 import com.intellij.util.Processors;
 import com.intellij.util.containers.ContainerUtil;
@@ -148,7 +149,7 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
     if (LOG.isDebugEnabled()) {
       LOG.debug("getNames(): (got "+allNames.size()+" elements)");
     }
-    return ArrayUtil.toStringArray(allNames);
+    return ArrayUtilRt.toStringArray(allNames);
   }
 
   private List<ChooseByNameContributor> filterDumb(List<ChooseByNameContributor> contributors) {

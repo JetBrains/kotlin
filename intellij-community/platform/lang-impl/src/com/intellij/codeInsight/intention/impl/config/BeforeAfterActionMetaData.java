@@ -4,7 +4,7 @@ package com.intellij.codeInsight.intention.impl.config;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +89,7 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
       try {
         descriptionDirectory = new URL(url.substring(0, url.lastIndexOf('/')));
         URI uri = descriptionDirectory.toURI();
-        children = uri.isOpaque() ? null : ObjectUtils.notNull(new File(uri).list(), ArrayUtil.EMPTY_STRING_ARRAY);
+        children = uri.isOpaque() ? null : ObjectUtils.notNull(new File(uri).list(), ArrayUtilRt.EMPTY_STRING_ARRAY);
       }
       catch (URISyntaxException | IllegalArgumentException | MalformedURLException e) {
         cause = e;

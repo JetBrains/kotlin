@@ -14,6 +14,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.FilteringProcessor;
 import gnu.trove.THashSet;
@@ -55,7 +56,7 @@ public class FileReferenceCompletionImpl extends FileReferenceCompletion {
   public Object[] getFileReferenceCompletionVariants(final FileReference reference) {
     final String s = reference.getText();
     if (s != null && s.equals("/")) {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
+      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
 
     final CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector =

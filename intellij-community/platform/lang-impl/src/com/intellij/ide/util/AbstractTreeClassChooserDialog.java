@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.*;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
 import com.intellij.util.indexing.FindSymbolParameters;
@@ -435,9 +436,9 @@ public abstract class AbstractTreeClassChooserDialog<T extends PsiNamedElement> 
       List<T> classes = myTreeClassChooserDialog.getClassesByName(
         name, parameters.isSearchInLibraries(), patternName, myTreeClassChooserDialog.getScope()
       );
-      if (classes.isEmpty()) return ArrayUtil.EMPTY_OBJECT_ARRAY;
+      if (classes.isEmpty()) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
       if (classes.size() == 1) {
-        return isAccepted(classes.get(0)) ? ArrayUtil.toObjectArray(classes) : ArrayUtil.EMPTY_OBJECT_ARRAY;
+        return isAccepted(classes.get(0)) ? ArrayUtil.toObjectArray(classes) : ArrayUtilRt.EMPTY_OBJECT_ARRAY;
       }
       Set<String> qNames = new HashSet<>();
       List<T> list = new ArrayList<>(classes.size());

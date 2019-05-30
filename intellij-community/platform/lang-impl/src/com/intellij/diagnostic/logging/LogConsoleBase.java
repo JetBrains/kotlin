@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2009 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.diagnostic.logging;
 
@@ -42,7 +28,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.FilterComponent;
 import com.intellij.util.Alarm;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
@@ -398,7 +384,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
         buffer.delete(0, indexOfNewline + 1);
       }
     }
-    
+
   }
 
   @Nullable
@@ -447,7 +433,7 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
     console.clear();
     myModel.processingStarted();
 
-    final String[] lines = myOriginalDocument != null ? myOriginalDocument.toString().split("\n") : ArrayUtil.EMPTY_STRING_ARRAY;
+    final String[] lines = myOriginalDocument != null ? myOriginalDocument.toString().split("\n") : ArrayUtilRt.EMPTY_STRING_ARRAY;
     int offset = 0;
     boolean caretPositioned = false;
     AnsiEscapeDecoder decoder = new AnsiEscapeDecoder();

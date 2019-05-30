@@ -32,7 +32,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.OnOffButton;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.Semaphore;
@@ -306,13 +306,13 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   @Override
   @NotNull
   public String[] getNames(boolean checkBoxState) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @Override
   @NotNull
   public Object[] getElementsByName(@NotNull String id, boolean checkBoxState, @NotNull String pattern) {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
   @NotNull
@@ -374,7 +374,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   @Override
   @NotNull
   public String[] getSeparators() {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @Nullable

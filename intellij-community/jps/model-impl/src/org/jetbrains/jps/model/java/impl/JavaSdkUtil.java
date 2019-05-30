@@ -6,7 +6,7 @@ import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ public class JavaSdkUtil {
       }
     }
     else if (new File(home, "lib/jrt-fs.jar").exists()) {
-      jarDirs = ArrayUtil.EMPTY_FILE_ARRAY;
+      jarDirs = ArrayUtilRt.EMPTY_FILE_ARRAY;
     }
     else {
       File libDir = new File(home, isJre ? "lib" : "jre/lib");
@@ -108,7 +108,7 @@ public class JavaSdkUtil {
   }
 
   private static File[] listFiles(File dir, FileFilter filter) {
-    return notNull(dir.listFiles(filter), ArrayUtil.EMPTY_FILE_ARRAY);
+    return notNull(dir.listFiles(filter), ArrayUtilRt.EMPTY_FILE_ARRAY);
   }
 
   @Nullable

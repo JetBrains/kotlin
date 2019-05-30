@@ -6,7 +6,7 @@ import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
 import com.intellij.openapi.fileTypes.FileNameMatcher;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.text.CharSequenceHashingStrategy;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
@@ -184,7 +184,7 @@ public class FileTypeAssocTable<T> {
         exts.add(entry.getKey().toString());
       }
     }
-    return ArrayUtil.toStringArray(exts);
+    return ArrayUtilRt.toStringArray(exts);
   }
 
   @NotNull

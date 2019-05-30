@@ -7,7 +7,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -249,7 +249,7 @@ class CodeFragmentCodeStyleSettingsPanel extends TabbedLanguageCodeStylePanel {
     return new CodeStyleSettingsCustomizable() {
       @Override
       public void showAllStandardOptions() {
-        original.showStandardOptions(ArrayUtil.toStringArray(names));
+        original.showStandardOptions(ArrayUtilRt.toStringArray(names));
       }
 
       @Override

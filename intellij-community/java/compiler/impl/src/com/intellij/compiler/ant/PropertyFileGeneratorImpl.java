@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.ant;
 
 import com.intellij.openapi.application.PathMacros;
@@ -8,7 +8,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class PropertyFileGeneratorImpl extends PropertyFileGenerator {
     // path variables
     final Map<String, String> pathMacros = PathMacros.getInstance().getUserMacros();
     if (pathMacros.size() > 0) {
-      final String[] macroNames = ArrayUtil.toStringArray(pathMacros.keySet());
+      final String[] macroNames = ArrayUtilRt.toStringArray(pathMacros.keySet());
       Arrays.sort(macroNames);
       for (final String macroName : macroNames) {
         addProperty(BuildProperties.getPathMacroProperty(macroName), pathMacros.get(macroName));

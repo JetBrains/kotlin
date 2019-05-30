@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.TIntObjectHashMap;
@@ -70,7 +70,7 @@ public class FileTemplateUtil {
     for (String definedAttribute : definedAttributes) {
       unsetAttributes.remove(definedAttribute);
     }
-    return ArrayUtil.toStringArray(unsetAttributes);
+    return ArrayUtilRt.toStringArray(unsetAttributes);
   }
 
   private static void collectAttributes(@NotNull Set<? super String> referenced,

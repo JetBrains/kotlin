@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author: Eugene Zhuravlev
@@ -43,7 +43,7 @@ import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.ui.AppIcon;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.content.*;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -388,7 +388,7 @@ public class CompilerTask extends Task.Backgroundable {
     while (tokenizer.hasMoreTokens()) {
       lines.add(tokenizer.nextToken());
     }
-    return ArrayUtil.toStringArray(lines);
+    return ArrayUtilRt.toStringArray(lines);
   }
 
   public static int translateCategory(CompilerMessageCategory category) {

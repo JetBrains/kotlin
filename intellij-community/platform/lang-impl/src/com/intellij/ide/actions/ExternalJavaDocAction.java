@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.actions;
 
@@ -26,7 +26,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +112,7 @@ public class ExternalJavaDocAction extends AnAction {
         }
         else {
           JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<String>("Choose external documentation root",
-                                                                                     ArrayUtil.toStringArray(finalUrls)) {
+                                                                                     ArrayUtilRt.toStringArray(finalUrls)) {
             @Override
             public PopupStep onChosen(final String selectedValue, final boolean finalChoice) {
               BrowserUtil.browse(selectedValue);

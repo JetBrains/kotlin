@@ -131,7 +131,7 @@ public class GradleExecutionHelper {
       // filter nulls and empty strings
       List<String> filteredArgs = ContainerUtil.mapNotNull(merged, s -> StringUtil.isEmpty(s) ? null : s);
 
-      operation.setJvmArguments(ArrayUtil.toStringArray(filteredArgs));
+      operation.setJvmArguments(ArrayUtilRt.toStringArray(filteredArgs));
     }
 
     if (settings.isOfflineWork()) {
@@ -168,7 +168,7 @@ public class GradleExecutionHelper {
     }
     filteredArgs.add("-Didea.active=true");
     filteredArgs.add("-Didea.version=" + getIdeaVersion());
-    operation.withArguments(ArrayUtil.toStringArray(filteredArgs));
+    operation.withArguments(ArrayUtilRt.toStringArray(filteredArgs));
 
     setupEnvironment(operation, settings, gradleVersion, id, listener);
 

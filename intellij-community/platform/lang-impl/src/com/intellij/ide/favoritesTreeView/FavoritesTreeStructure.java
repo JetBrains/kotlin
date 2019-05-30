@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.favoritesTreeView;
 
@@ -22,6 +22,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class FavoritesTreeStructure extends ProjectTreeStructure {
   @Override
   public Object[] getChildElements(@NotNull Object element) {
     if (!(element instanceof AbstractTreeNode)) {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
+      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
 
     final AbstractTreeNode favTreeElement = (AbstractTreeNode)element;
@@ -102,7 +103,7 @@ public class FavoritesTreeStructure extends ProjectTreeStructure {
       LOGGER.error(e);
     }
 
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
   private AbstractTreeNode<String> getEmptyScreen() {

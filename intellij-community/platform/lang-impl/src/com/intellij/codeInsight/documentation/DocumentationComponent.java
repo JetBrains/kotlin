@@ -65,7 +65,7 @@ import com.intellij.ui.components.JBLayeredPane;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupPositionManager;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ImageLoader;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
@@ -1188,7 +1188,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       public Object getProperty(String name) { return null; }
 
       @Override
-      public String[] getPropertyNames() { return ArrayUtil.EMPTY_STRING_ARRAY; }
+      public String[] getPropertyNames() { return ArrayUtilRt.EMPTY_STRING_ARRAY; }
 
       @Override
       public boolean isDynamic() { return false; }

@@ -29,6 +29,7 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
@@ -127,7 +128,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   protected static class DaemonCodeAnalyzerStatus {
     public boolean errorAnalyzingFinished; // all passes done
     List<ProgressableTextEditorHighlightingPass> passStati = Collections.emptyList();
-    public int[] errorCount = ArrayUtil.EMPTY_INT_ARRAY;
+    public int[] errorCount = ArrayUtilRt.EMPTY_INT_ARRAY;
     // Used in Rider
     public String reasonWhyDisabled;
     // Used in Rider

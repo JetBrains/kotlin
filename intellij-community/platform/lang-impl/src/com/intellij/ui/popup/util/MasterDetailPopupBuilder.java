@@ -11,7 +11,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.speedSearch.FilteringListModel;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -299,7 +299,7 @@ public class MasterDetailPopupBuilder implements MasterController {
 
   @Override
   public ItemWrapper[] getSelectedItems() {
-    Object[] values = ArrayUtil.EMPTY_OBJECT_ARRAY;
+    Object[] values = ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     if (myChooserComponent instanceof JList) {
       //noinspection deprecation
       values = ((JList)myChooserComponent).getSelectedValues();

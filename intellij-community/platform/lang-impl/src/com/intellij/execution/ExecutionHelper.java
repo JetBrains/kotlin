@@ -20,7 +20,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
@@ -35,7 +34,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManagerUtil;
 import com.intellij.ui.content.MessageView;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.SmartList;
@@ -45,7 +44,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -117,7 +119,7 @@ public class ExecutionHelper {
     for (final Exception exception : exceptions) {
       String message = exception.getMessage();
 
-      String[] messages = StringUtil.isNotEmpty(message) ? StringUtil.splitByLines(message) : ArrayUtil.EMPTY_STRING_ARRAY;
+      String[] messages = StringUtil.isNotEmpty(message) ? StringUtil.splitByLines(message) : ArrayUtilRt.EMPTY_STRING_ARRAY;
       if (messages.length == 0) {
         messages = new String[]{defaultMessage};
       }
@@ -178,7 +180,7 @@ public class ExecutionHelper {
           }
           else {
             errorTreeView.addMessage(MessageCategory.SIMPLE, new String[]{stderrTitle}, file, -1, -1, null);
-            errorTreeView.addMessage(MessageCategory.SIMPLE, ArrayUtil.EMPTY_STRING_ARRAY, file, -1, -1, null);
+            errorTreeView.addMessage(MessageCategory.SIMPLE, ArrayUtilRt.EMPTY_STRING_ARRAY, file, -1, -1, null);
             errorTreeView.addMessage(MessageCategory.SIMPLE, stderrLines, file, -1, -1, null);
           }
         }

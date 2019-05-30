@@ -4,7 +4,7 @@ package com.intellij.codeInspection.naming;
 import com.intellij.codeInspection.ex.InspectionElementsMergerBase;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public abstract class AbstractNamingConventionMerger<T extends PsiNameIdentifier
   @NotNull
   @Override
   public String[] getSourceToolNames() {
-    return ArrayUtil.toStringArray(myNewInspection.getOldToolNames());
+    return ArrayUtilRt.toStringArray(myNewInspection.getOldToolNames());
   }
 
   @Override

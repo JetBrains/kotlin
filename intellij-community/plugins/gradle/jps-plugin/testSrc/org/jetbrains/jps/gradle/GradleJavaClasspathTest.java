@@ -1,7 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.jps.gradle;
 
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.jps.builders.CompileScopeTestBuilder;
 import org.jetbrains.jps.builders.JpsBuildTestCase;
@@ -17,7 +17,7 @@ public class GradleJavaClasspathTest extends JpsBuildTestCase {
     String srcRoot = PathUtil.getParentPath(createFile("src/A.java", "public class A { ATest test;}"));
     String testRoot = PathUtil.getParentPath(createFile("testSrc/ATest.java", "public class ATest {}"));
     JpsModule m = addModule("m", srcRoot);
-    JpsModule commonTests = addModule("common.tests", ArrayUtil.EMPTY_STRING_ARRAY,
+    JpsModule commonTests = addModule("common.tests", ArrayUtilRt.EMPTY_STRING_ARRAY,
                                       getAbsolutePath("out/production/common.tests"), getAbsolutePath("out/tests/common.tests"), getJdk());
     commonTests.addSourceRoot(JpsPathUtil.pathToUrl(testRoot), JavaSourceRootType.TEST_SOURCE);
 
@@ -28,7 +28,7 @@ public class GradleJavaClasspathTest extends JpsBuildTestCase {
     JpsGradleExtensionService.getInstance().getOrCreateExtension(m, JpsGradleModuleExtension.GRADLE_SOURCE_SET_MODULE_TYPE_KEY);
 
     doBuild(CompileScopeTestBuilder.rebuild().allModules()).assertFailed();
-    
+
     JpsGradleExtensionService.getInstance().setProductionOnTestDependency(dependency, true);
     rebuildAllModules();
   }

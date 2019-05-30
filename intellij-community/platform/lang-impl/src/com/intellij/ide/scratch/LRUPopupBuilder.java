@@ -19,7 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -242,7 +242,7 @@ public abstract class LRUPopupBuilder<T> {
 
   @NotNull
   private String[] restoreLRUItems() {
-    return ObjectUtils.notNull(myPropertiesComponent.getValues(getLRUKey()), ArrayUtil.EMPTY_STRING_ARRAY);
+    return ObjectUtils.notNull(myPropertiesComponent.getValues(getLRUKey()), ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   private void storeLRUItems(@NotNull T t) {
@@ -255,7 +255,7 @@ public abstract class LRUPopupBuilder<T> {
         if (lastUsed.size() == LRU_ITEMS) break;
       }
     }
-    myPropertiesComponent.setValues(getLRUKey(), ArrayUtil.toStringArray(lastUsed));
+    myPropertiesComponent.setValues(getLRUKey(), ArrayUtilRt.toStringArray(lastUsed));
   }
 
 

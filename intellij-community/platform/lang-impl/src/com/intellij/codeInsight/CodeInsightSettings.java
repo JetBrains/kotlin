@@ -15,7 +15,7 @@ import com.intellij.openapi.util.DifferenceFilter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.serialization.SerializationException;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Property;
@@ -186,7 +186,7 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
   @Property(surroundWithTag = false)
   @XCollection(elementName = "EXCLUDED_PACKAGE", valueAttributeName = "NAME")
   @NotNull
-  public String[] EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
+  public String[] EXCLUDED_PACKAGES = ArrayUtilRt.EMPTY_STRING_ARRAY;
 
   @Override
   public void loadState(@NotNull Element state) {
@@ -215,7 +215,7 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
       LOG.info(e);
     }
 
-    EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
+    EXCLUDED_PACKAGES = ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @Override

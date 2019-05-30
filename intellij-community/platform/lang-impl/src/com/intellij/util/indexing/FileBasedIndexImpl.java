@@ -1581,7 +1581,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
               currentBytes = content.getBytes();
             }
             catch (IOException e) {
-              currentBytes = ArrayUtil.EMPTY_BYTE_ARRAY;
+              currentBytes = ArrayUtilRt.EMPTY_BYTE_ARRAY;
             }
             fc = new FileContentImpl(file, currentBytes);
 

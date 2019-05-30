@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.CommonBundle;
@@ -14,7 +14,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ui.EditableModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,7 +92,7 @@ class EditVariableDialog extends DialogWrapper {
     Stream<String> availableMacroNames = Arrays.stream(MacroFactory.getMacros()).filter(isAcceptableInContext).map(Macro::getPresentableName).sorted();
     Set<String> uniqueNames = availableMacroNames.collect(Collectors.toCollection(LinkedHashSet::new));
 
-    ComboBox<String> comboField = new ComboBox<>(ArrayUtil.toStringArray(uniqueNames));
+    ComboBox<String> comboField = new ComboBox<>(ArrayUtilRt.toStringArray(uniqueNames));
     comboField.setEditable(true);
     DefaultCellEditor cellEditor = new DefaultCellEditor(comboField);
     cellEditor.setClickCountToStart(1);

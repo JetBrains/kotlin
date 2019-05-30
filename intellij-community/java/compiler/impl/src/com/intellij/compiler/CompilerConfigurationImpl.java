@@ -36,6 +36,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.impl.artifacts.ArtifactBySourceFileFinder;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
@@ -482,7 +483,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   }
 
   private String[] getWildcardPatterns() {
-    return ArrayUtil.toStringArray(myWildcardPatterns);
+    return ArrayUtilRt.toStringArray(myWildcardPatterns);
   }
 
   @Override

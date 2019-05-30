@@ -34,7 +34,7 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.treeStructure.*;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -271,7 +271,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
     List<String> paths = new ArrayList<>(stateProvider.getProjectsTasksActivationMap(myProjectSystemId).keySet());
     paths.retainAll(projectSettings.getModules());
 
-    return ContainerUtil.mapNotNull(ArrayUtil.toStringArray(paths), path -> {
+    return ContainerUtil.mapNotNull(ArrayUtilRt.toStringArray(paths), path -> {
       final MyNode node = new ProjectNode(parent, stateProvider, projectSettings.getExternalProjectPath(), path);
       return node.getChildren().length > 0 ? node : null;
     }, new MyNode[]{});

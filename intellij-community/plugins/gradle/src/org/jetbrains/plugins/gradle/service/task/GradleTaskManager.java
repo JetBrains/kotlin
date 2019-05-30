@@ -11,7 +11,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.SystemProperties;
@@ -100,7 +100,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
             tasksArray = taskNames.stream().flatMap(task -> concat(Collections.singletonList(task), args).stream()).toArray(String[]::new);
           }
           else {
-            tasksArray = ArrayUtil.toStringArray(taskNames);
+            tasksArray = ArrayUtilRt.toStringArray(taskNames);
           }
 
           BuildLauncher launcher = myHelper.getBuildLauncher(id, connection, effectiveSettings, listener);

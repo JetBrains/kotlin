@@ -637,7 +637,7 @@ public class BuildManager implements Disposable {
   }
 
   private void cancelAllPreloadedBuilds() {
-    String[] paths = ArrayUtil.toStringArray(myPreloadedBuilds.keySet());
+    String[] paths = ArrayUtilRt.toStringArray(myPreloadedBuilds.keySet());
     for (String path : paths) {
       cancelPreloadedBuilds(path);
     }

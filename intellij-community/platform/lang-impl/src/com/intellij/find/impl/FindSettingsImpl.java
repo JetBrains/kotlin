@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.impl;
 
 import com.intellij.find.FindBundle;
@@ -10,7 +10,7 @@ import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -286,7 +286,7 @@ public class FindSettingsImpl extends FindSettings implements PersistentStateCom
   @NotNull
   @Override
   public String[] getRecentFileMasks() {
-    return ArrayUtil.toStringArray(recentFileMasks);
+    return ArrayUtilRt.toStringArray(recentFileMasks);
   }
 
   @Override
