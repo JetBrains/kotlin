@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight;
 
@@ -147,8 +147,8 @@ public class TargetElementUtil  {
     return TargetElementUtilBase.findTargetElement(editor, flags, offset);
   }
 
-  @Nullable
-  private static PsiElement getTargetElementFromLookup(Project project) {
+  @Internal
+  public static @Nullable PsiElement getTargetElementFromLookup(Project project) {
     Lookup activeLookup = LookupManager.getInstance(project).getActiveLookup();
     if (activeLookup != null) {
       LookupElement item = activeLookup.getCurrentItem();

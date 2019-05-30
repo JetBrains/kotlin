@@ -70,6 +70,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +87,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.intellij.find.actions.ResolverKt.findShowUsages;
+import static com.intellij.find.actions.ResolverKt.handlePsiOrSymbol;
 import static com.intellij.find.actions.ShowUsagesActionHandler.getSecondInvocationTitle;
 import static com.intellij.find.findUsages.FindUsagesHandlerFactory.OperationMode.USAGES_WITH_DEFAULT_OPTIONS;
 
@@ -213,6 +215,18 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         startFindUsages(element, popupPosition, editor);
       }
     };
+  }
+
+  /**
+   * Shows Usage popup for a single search target without disambiguation via Choose Target popup.
+   */
+  @ApiStatus.Internal
+  public static void showUsages(@NotNull Project project, @NotNull DataContext dataContext, @NotNull SearchTarget target) {
+    Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+    RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(dataContext);
+    SearchScope searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().getDefaultScopeName());
+    UsageVariantHandler variantHandler = createVariantHandler(project, editor, popupPosition, searchScope);
+    handlePsiOrSymbol(variantHandler, target);
   }
 
   private static void showPsiUsages(@NotNull Project project, @NotNull AnActionEvent e, @NotNull RelativePoint popupPosition) {
@@ -1014,12 +1028,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }
     else {
       //opening editor is performing in invokeLater
-      IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() ->
-                                                                    editor.getScrollingModel().runActionOnScrollingFinished(() -> {
-                                                                      // after new editor created, some editor resizing events are still bubbling. To prevent hiding hint, invokeLater this
-                                                                      IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(
-                                                                        () -> AsyncEditorLoader.performWhenLoaded(editor, runnable));
-                                                                    })
+      IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(
+        () -> editor.getScrollingModel().runActionOnScrollingFinished(
+          () -> {
+            // after new editor created, some editor resizing events are still bubbling. To prevent hiding hint, invokeLater this
+            IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(
+              () -> AsyncEditorLoader.performWhenLoaded(editor, runnable)
+            );
+          })
       );
     }
   }

@@ -105,14 +105,7 @@ internal interface UsageVariantHandler {
 private fun UsageVariantHandler.handle(targetVariant: TargetVariant) {
   when (targetVariant) {
     is TargetVariant.New -> {
-      val target = targetVariant.target
-      val element = targetPsi(target)
-      if (element != null) {
-        handlePsi(element)
-      }
-      else {
-        handleTarget(target)
-      }
+      handlePsiOrSymbol(targetVariant.target)
     }
     is TargetVariant.Old -> {
       val target = targetVariant.target
@@ -123,6 +116,16 @@ private fun UsageVariantHandler.handle(targetVariant: TargetVariant) {
         target.findUsages() // custom target
       }
     }
+  }
+}
+
+internal fun UsageVariantHandler.handlePsiOrSymbol(target: SearchTarget) {
+  val element = targetPsi(target)
+  if (element != null) {
+    handlePsi(element)
+  }
+  else {
+    handleTarget(target)
   }
 }
 

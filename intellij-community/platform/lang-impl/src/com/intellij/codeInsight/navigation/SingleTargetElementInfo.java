@@ -47,8 +47,8 @@ public class SingleTargetElementInfo extends BaseCtrlMouseInfo {
     return myTargetElement != myElementAtPointer && myTargetElement != myElementAtPointer.getParent();
   }
 
-  @NotNull
-  static CtrlMouseDocInfo generateInfo(PsiElement element, PsiElement atPointer, boolean fallbackToBasicInfo) {
+  @ApiStatus.Internal
+  public static @NotNull CtrlMouseDocInfo generateInfo(PsiElement element, PsiElement atPointer, boolean fallbackToBasicInfo) {
     final DocumentationProvider documentationProvider = DocumentationManager.getProviderFromElement(element, atPointer);
     String result = documentationProvider.getQuickNavigateInfo(element, atPointer);
     if (result == null && fallbackToBasicInfo) {

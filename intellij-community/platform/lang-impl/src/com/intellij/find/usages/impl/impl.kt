@@ -24,7 +24,7 @@ fun symbolSearchTargets(file: PsiFile, offset: Int): List<SearchTarget> {
   return symbolSearchTargets(file.project, targetSymbols)
 }
 
-private fun symbolSearchTargets(project: Project, targetSymbols: Collection<Symbol>): List<SearchTarget> {
+internal fun symbolSearchTargets(project: Project, targetSymbols: Collection<Symbol>): List<SearchTarget> {
   return targetSymbols.mapTo(LinkedHashSet()) {
     symbolSearchTarget(project, it)
   }.toList()

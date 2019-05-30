@@ -12,10 +12,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.elementsAroundOffsetUp
 
 /**
- * @return iterable of [references][PsiSymbolReferenceService.getReferences]
+ * @return collection of [references][PsiSymbolReferenceService.getReferences]
  * and [implicit references][ImplicitReferenceProvider] around given [offset]
  */
-fun PsiFile.allReferencesAround(offset: Int): Iterable<PsiSymbolReference> {
+fun PsiFile.allReferencesAround(offset: Int): Collection<PsiSymbolReference> {
   for ((element, offsetInElement) in elementsAroundOffsetUp(offset)) {
     val referencesInElement = allReferencesInElement(element, offsetInElement)
     if (referencesInElement.isNotEmpty()) {

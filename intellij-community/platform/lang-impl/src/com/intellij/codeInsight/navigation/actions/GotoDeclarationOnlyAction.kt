@@ -4,13 +4,26 @@ package com.intellij.codeInsight.navigation.actions
 import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.navigation.CtrlMouseInfo
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiFile
 
 class GotoDeclarationOnlyAction : GotoDeclarationAction() {
 
-  override fun getHandler(): CodeInsightActionHandler = GotoDeclarationOnlyHandler
+  override fun getHandler(): CodeInsightActionHandler {
+    return if (Registry.`is`("ide.symbol.gtd")) {
+      GotoDeclarationOnlyHandler2
+    }
+    else {
+      GotoDeclarationOnlyHandler
+    }
+  }
 
   override fun getCtrlMouseInfo(editor: Editor, file: PsiFile, offset: Int): CtrlMouseInfo? {
-    return null
+    return if (Registry.`is`("ide.symbol.gtd")) {
+      GotoDeclarationOnlyHandler2.getCtrlMouseInfo(editor, file, offset)
+    }
+    else {
+      null
+    }
   }
 }

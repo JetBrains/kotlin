@@ -2,21 +2,28 @@
 package com.intellij.codeInsight.navigation;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ReferenceRange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @ApiStatus.Internal
 public class MultipleTargetElementsInfo extends BaseCtrlMouseInfo {
 
-  public MultipleTargetElementsInfo(@NotNull PsiElement elementAtPointer) {
-    super(elementAtPointer);
+  public MultipleTargetElementsInfo(@NotNull List<@NotNull TextRange> ranges) {
+    super(ranges);
   }
 
   public MultipleTargetElementsInfo(@NotNull PsiReference reference) {
-    super(ReferenceRange.getAbsoluteRanges(reference));
+    this(ReferenceRange.getAbsoluteRanges(reference));
+  }
+
+  public MultipleTargetElementsInfo(@NotNull PsiElement elementAtPointer) {
+    super(elementAtPointer);
   }
 
   @Override
