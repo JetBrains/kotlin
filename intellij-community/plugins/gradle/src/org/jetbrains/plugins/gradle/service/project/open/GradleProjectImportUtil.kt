@@ -177,7 +177,7 @@ private fun suggestGradleHome(): String? {
 
 private fun suggestGradleJvm(project: Project, projectSdk: Sdk?, gradleVersion: GradleVersion): String? {
   with(SettingsContext(project, projectSdk, gradleVersion)) {
-    return getGradleJdk() ?: getProjectJdk() ?: getMostRecentJdk() ?: getJavaHomeJdk()
+    return getGradleJdk() ?: getProjectJdk() ?: getMostRecentJdk() ?: getJavaHomeJdk() ?: getAndAddExternalJdk()
   }
 }
 
@@ -216,4 +216,13 @@ private fun SettingsContext.getMostRecentJdk(): String? {
     .filter { it.isSupported(gradleVersion) }
     .maxBy { it.version }
   return jdk?.name
+}
+
+private fun SettingsContext.getAndAddExternalJdk(): String? {
+  val jdk = ExternalSystemJdkUtil.suggestJdkHomePaths()
+    .mapNotNull { GradleJdk.valueOf(it) }
+    .filter { it.isSupported(gradleVersion) }
+    .maxBy { it.version }
+  if (jdk == null) return null
+  return ExternalSystemJdkUtil.addJdk(jdk.homePath).name
 }
