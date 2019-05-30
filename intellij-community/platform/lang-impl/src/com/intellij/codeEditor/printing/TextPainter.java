@@ -137,7 +137,7 @@ class TextPainter extends BasePainter {
 
   private void setSegment(RangeMarker marker) {
     if (myRangeToPrint != null) {
-      myRangeToPrint.dispose();
+      ReadAction.run(() -> myRangeToPrint.dispose());
     }
     myRangeToPrint = marker;
   }
