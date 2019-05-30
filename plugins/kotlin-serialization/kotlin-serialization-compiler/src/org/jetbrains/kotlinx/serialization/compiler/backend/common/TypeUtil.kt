@@ -18,6 +18,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -104,18 +105,30 @@ fun analyzeSpecialSerializers(
     else -> null
 }
 
-fun AbstractSerialGenerator.findTypeSerializerOrContext(
+fun AbstractSerialGenerator.findTypeSerializerOrContextUnchecked(
     module: ModuleDescriptor,
-    kType: KotlinType,
-    sourceElement: PsiElement? = null
+    kType: KotlinType
 ): ClassDescriptor? {
     val annotations = kType.annotations
     if (kType.isTypeParameter()) return null
-    if (kType.isMarkedNullable) return findTypeSerializerOrContext(module, kType.makeNotNullable(), sourceElement)
+    if (kType.isMarkedNullable) return findTypeSerializerOrContextUnchecked(module, kType.makeNotNullable())
     annotations.serializableWith(module)?.let { return it.toClassDescriptor }
     additionalSerializersInScopeOfCurrentFile[kType]?.let { return it }
     if (kType in contextualKClassListInCurrentFile) return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
     return analyzeSpecialSerializers(module, annotations) ?: findTypeSerializer(module, kType)
+}
+
+fun AbstractSerialGenerator.findTypeSerializerOrContext(
+    module: ModuleDescriptor,
+    kType: KotlinType,
+    sourceElement: PsiElement? = null
+): ClassDescriptor {
+    return findTypeSerializerOrContextUnchecked(module, kType) ?: throw CompilationException(
+        "Serializer for element of type $kType has not been found.\n" +
+                "To use context serializer as fallback, explicitly annotate element with @ContextualSerialization",
+        null,
+        sourceElement
+    )
 }
 
 fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {

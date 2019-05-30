@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.diagnostic;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -22,8 +23,8 @@ public interface SerializationErrors {
     DiagnosticFactory0<KtAnnotationEntry> NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, String> DUPLICATE_SERIAL_NAME = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> SERIALIZER_NOT_FOUND = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, KotlinType> SERIALIZER_NULLABILITY_INCOMPATIBLE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> SERIALIZER_NOT_FOUND = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> SERIALIZER_NULLABILITY_INCOMPATIBLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> TRANSIENT_IS_REDUNDANT = DiagnosticFactory0.create(WARNING);
