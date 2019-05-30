@@ -42,7 +42,7 @@ public class ArrangementColorsProviderImpl implements ArrangementColorsProvider 
     myDefaultNormalAttributes.setBackgroundColor(UIUtil.getPanelBackground());
     myDefaultSelectedAttributes.setForegroundColor(UIUtil.getTreeSelectionForeground());
     myDefaultSelectedAttributes.setBackgroundColor(UIUtil.getTreeSelectionBackground());
-    myDefaultNormalBorderColor = UIUtil.getBorderColor();
+    myDefaultNormalBorderColor = JBColor.border();
     Color selectionBorderColor = UIUtil.getTreeSelectionBorderColor();
     if (selectionBorderColor == null) {
       selectionBorderColor = JBColor.black;
