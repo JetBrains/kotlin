@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
@@ -250,5 +251,6 @@ private val processings: List<GeneralPostProcessing> = listOf(
         },
         RemoveForExpressionLoopParameterTypeProcessing()
     ),
-    formatCodeProcessing
+    formatCodeProcessing,
+    optimizeImportsProcessing
 )

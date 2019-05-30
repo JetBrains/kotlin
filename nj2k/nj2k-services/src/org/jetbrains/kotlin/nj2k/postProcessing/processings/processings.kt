@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
@@ -13,6 +15,11 @@ import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.NullabilityAnalysisFacade
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.nullabilityByUndefinedNullabilityComment
 import org.jetbrains.kotlin.nj2k.nullabilityAnalysis.prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment
 import org.jetbrains.kotlin.nj2k.postProcessing.postProcessing
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.KtImportList
+import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 
 val formatCodeProcessing =
     postProcessing { file, rangeMarker, _ ->
@@ -46,3 +53,18 @@ val shortenReferencesProcessing =
         }
     }
 
+val optimizeImportsProcessing =
+    postProcessing { file, rangeMarker, _ ->
+        val elements = if (rangeMarker != null) {
+            file.elementsInRange(TextRange(rangeMarker.startOffset, rangeMarker.endOffset))
+        } else file.children.asList()
+        val needFormat = elements.any { element ->
+            element is KtElement
+                    && element !is KtImportDirective
+                    && element !is KtImportList
+                    && element !is KtPackageDirective
+        }
+        if (needFormat) {
+            OptimizeImportsProcessor(file.project, file).run()
+        }
+    }
