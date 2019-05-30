@@ -37,6 +37,7 @@ import java.awt.print.PageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 class TextPainter extends BasePainter {
   private final DocumentEx myDocument;
@@ -338,7 +339,7 @@ class TextPainter extends BasePainter {
 
   private void drawText(Graphics2D g, Rectangle2D clip) {
     float lineHeight = getLineHeight(g);
-    HighlighterIterator hIterator = myHighlighter.createIterator(myOffset);
+    HighlightingAttributesIterator hIterator = new HighlightingAttributesIterator(myHighlighter.createIterator(myOffset));
     if (hIterator.atEnd()) {
       myOffset = mySegmentEnd;
       return;
@@ -731,5 +732,43 @@ class TextPainter extends BasePainter {
   @Override
   void dispose() {
     setSegment(null);
+  }
+
+  // Wraps HighlighterIterator, joining adjacent regions with identical attributes
+  private static class HighlightingAttributesIterator {
+    @NotNull private final HighlighterIterator myDelegate;
+    private int myEnd;
+    private TextAttributes myAttributes;
+
+    private HighlightingAttributesIterator(@NotNull HighlighterIterator delegate) {
+      myDelegate = delegate;
+      advance();
+    }
+
+    public void advance() {
+      if (myDelegate.atEnd()) {
+        myEnd = -1;
+      }
+      else {
+        myAttributes = myDelegate.getTextAttributes();
+        do {
+          myEnd = myDelegate.getEnd();
+          myDelegate.advance();
+        }
+        while (!myDelegate.atEnd() && Objects.equals(myAttributes, myDelegate.getTextAttributes()));
+      }
+    }
+
+    public boolean atEnd() {
+      return myEnd == -1;
+    }
+
+    public int getEnd() {
+      return myEnd;
+    }
+
+    public TextAttributes getTextAttributes() {
+      return myAttributes;
+    }
   }
 }
