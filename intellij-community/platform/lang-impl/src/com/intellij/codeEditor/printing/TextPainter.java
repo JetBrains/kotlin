@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeEditor.printing;
 
-import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ReadAction;
@@ -15,8 +14,10 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -35,6 +36,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -59,12 +61,14 @@ class TextPainter extends BasePainter {
   private int myPageIndex = -1;
   private int myNumberOfPages = -1;
   private int mySegmentEnd;
-  private final LineMarkerInfo[] myMethodSeparators;
+  private Project myProject;
+  private LineMarkerInfo[] myMethodSeparators = new LineMarkerInfo[0];
   private int myCurrentMethodSeparator;
   private final CodeStyleSettings myCodeStyleSettings;
   private final FileType myFileType;
   private final Color myMethodSeparatorColor;
   private boolean myPerformActualDrawing;
+  private long myDocumentStamp = -1;
   
   private final String myPrintDate;
   private final String myPrintTime;
@@ -86,18 +90,8 @@ class TextPainter extends BasePainter {
                      EditorHighlighter highlighter,
                      String fullFileName,
                      String shortFileName,
-                     @NotNull PsiFile psiFile,
-                     FileType fileType) {
-    this(editorDocument, highlighter, fullFileName, shortFileName, fileType,
-         FileSeparatorProvider.getFileSeparators(psiFile, editorDocument), CodeStyle.getSettings(psiFile));
-  }
-
-  TextPainter(@NotNull DocumentEx editorDocument,
-                     EditorHighlighter highlighter,
-                     String fullFileName,
-                     String shortFileName,
                      FileType fileType,
-                     List<LineMarkerInfo<PsiElement>> separators,
+                     Project project,
                      @NotNull CodeStyleSettings codeStyleSettings) {
     myCodeStyleSettings = codeStyleSettings;
     myDocument = editorDocument;
@@ -118,8 +112,7 @@ class TextPainter extends BasePainter {
     myShortFileName = shortFileName;
     myRangeToPrint = editorDocument.createRangeMarker(0, myDocument.getTextLength());
     myFileType = fileType;
-    myMethodSeparators = separators != null ? separators.toArray(new LineMarkerInfo[0]) : new LineMarkerInfo[0];
-    myCurrentMethodSeparator = 0;
+    myProject = project;
     Date date = new Date();
     myPrintDate = new SimpleDateFormat(DATE_FORMAT).format(date);
     myPrintTime = new SimpleDateFormat(TIME_FORMAT).format(date);
@@ -272,10 +265,25 @@ class TextPainter extends BasePainter {
     myLineNumber = myDocument.getLineNumber(myOffset) + 1;
     Rectangle2D.Double clip = new Rectangle2D.Double(pageFormat.getImageableX(), pageFormat.getImageableY(),
                                                      pageFormat.getImageableWidth(), pageFormat.getImageableHeight());
-    
+    updateHighlightingInfoIfNeeded();
     draw(g2d, clip);
 
     return myOffset > startOffset && myOffset < endOffset ? myDocument.createRangeMarker(myOffset, endOffset) : null;
+  }
+
+  private void updateHighlightingInfoIfNeeded() {
+    long documentStamp = myDocument.getModificationStamp();
+    if (documentStamp == myDocumentStamp) return;
+    myDocumentStamp = documentStamp;
+
+    myHighlighter.setText(myDocument.getImmutableCharSequence());
+    myCurrentMethodSeparator = 0;
+    if (myProject != null) {
+      PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(myDocument);
+      List<LineMarkerInfo<PsiElement>> separators = psiFile == null ? Collections.emptyList()
+                                                                    : FileSeparatorProvider.getFileSeparators(psiFile, myDocument);
+      myMethodSeparators = separators.toArray(new LineMarkerInfo[0]);
+    }
   }
 
   private void draw(Graphics2D g2D, Rectangle2D.Double clip) {
@@ -732,6 +740,7 @@ class TextPainter extends BasePainter {
   @Override
   void dispose() {
     setSegment(null);
+    myProject = null;
   }
 
   // Wraps HighlighterIterator, joining adjacent regions with identical attributes

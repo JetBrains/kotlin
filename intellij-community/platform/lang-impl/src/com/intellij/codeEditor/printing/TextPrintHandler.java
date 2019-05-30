@@ -249,9 +249,8 @@ public class TextPrintHandler extends PrintActionHandler {
     DocumentEx doc = (DocumentEx)PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
     if (doc == null) return null;
     EditorHighlighter highlighter = HighlighterFactory.createHighlighter(virtualFile, EditorColorsUtil.getColorSchemeForPrinting(), psiFile.getProject());
-    highlighter.setText(doc.getCharsSequence());
     return new TextPainter(doc, highlighter, virtualFile.getPresentableUrl(), virtualFile.getPresentableName(),
-                           psiFile, psiFile.getFileType());
+                           psiFile.getFileType(), psiFile.getProject(), CodeStyle.getSettings(psiFile));
   }
 
   private static TextPainter initTextPainter(@NotNull final DocumentEx doc, final @NotNull Project project,
@@ -267,7 +266,6 @@ public class TextPrintHandler extends PrintActionHandler {
 
   private static TextPainter doInitTextPainter(@NotNull final DocumentEx doc, @NotNull Project project, @NotNull String fileName) {
     EditorHighlighter highlighter = HighlighterFactory.createHighlighter(EditorColorsUtil.getColorSchemeForPrinting(), "unknown", project);
-    highlighter.setText(doc.getCharsSequence());
     return new TextPainter(doc, highlighter, fileName, fileName, FileTypes.PLAIN_TEXT, null, CodeStyle.getSettings(project));
   }
 }
