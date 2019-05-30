@@ -161,17 +161,26 @@ private val processings: List<GeneralPostProcessing> = listOf(
             Errors.SMARTCAST_IMPOSSIBLE
         ),
         diagnosticBasedProcessing(Errors.TYPE_MISMATCH) { element: PsiElement, diagnostic ->
-            @Suppress("UNCHECKED_CAST") val diagnosticWithParameters =
+            @Suppress("UNCHECKED_CAST")
+            val diagnosticWithParameters =
                 diagnostic as? DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType>
                     ?: return@diagnosticBasedProcessing
             val expectedType = diagnosticWithParameters.a
             val realType = diagnosticWithParameters.b
-            if (realType.makeNotNullable().isSubtypeOf(expectedType.makeNotNullable())
-                && realType.isNullable()
-                && !expectedType.isNullable()
-            ) {
-                val factory = KtPsiFactory(element)
-                element.replace(factory.createExpressionByPattern("($0)!!", element.text))
+            when {
+                realType.makeNotNullable().isSubtypeOf(expectedType.makeNotNullable())
+                        && realType.isNullable()
+                        && !expectedType.isNullable()
+                -> {
+                    val factory = KtPsiFactory(element)
+                    element.replace(factory.createExpressionByPattern("($0)!!", element.text))
+                }
+                element is KtExpression
+                        && realType.isSignedOrUnsignedNumberType()
+                        && expectedType.isSignedOrUnsignedNumberType() -> {
+                    val fix = NumberConversionFix(element, expectedType, disableIfAvailable = null)
+                    fix.invoke(element.project, null, element.containingFile)
+                }
             }
         },
 
