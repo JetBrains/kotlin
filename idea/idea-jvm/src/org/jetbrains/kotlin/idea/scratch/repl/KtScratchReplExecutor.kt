@@ -108,8 +108,9 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         override fun notifyTextAvailable(text: String, outputType: Key<*>) {
             if (text.startsWith("warning: classpath entry points to a non-existent location")) return
 
-            if (outputType == ProcessOutputTypes.STDOUT) {
-                handleReplMessage(text)
+            when (outputType) {
+                ProcessOutputTypes.STDOUT -> handleReplMessage(text)
+                ProcessOutputTypes.STDERR -> errorOccurs(text)
             }
         }
 
