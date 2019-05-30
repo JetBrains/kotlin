@@ -21,7 +21,15 @@ interface FirSymbolProvider {
 
     fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): ConeClassifierSymbol? {
         return when (lookupTag) {
-            is ConeClassLikeLookupTag -> getClassLikeSymbolByFqName(lookupTag.classId)
+            is ConeClassLikeLookupTag -> {
+                (lookupTag as? ConeClassLikeLookupTagImpl)
+                    ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second as ConeClassifierSymbol? }
+
+                getClassLikeSymbolByFqName(lookupTag.classId).also {
+                    (lookupTag as? ConeClassLikeLookupTagImpl)
+                        ?.boundSymbol = Pair(this, it)
+                }
+            }
             is ConeClassifierLookupTagWithFixedSymbol -> lookupTag.symbol
             else -> error("Unknown lookupTag type: ${lookupTag::class}")
         }

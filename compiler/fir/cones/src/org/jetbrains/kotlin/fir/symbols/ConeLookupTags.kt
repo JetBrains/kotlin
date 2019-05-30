@@ -32,6 +32,8 @@ interface ConeTypeAliasLookupTag : ConeClassLikeLookupTag
 interface ConeClassLookupTag : ConeClassLikeLookupTag
 
 class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag {
+    var boundSymbol: Pair<*, *>? = null
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
