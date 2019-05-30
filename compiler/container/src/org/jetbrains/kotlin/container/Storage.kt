@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.container
 import com.intellij.util.containers.MultiMap
 import java.io.Closeable
 import java.io.PrintStream
-import java.lang.IllegalStateException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -86,7 +85,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         }
     }
 
-    fun dump(printer: PrintStream): Unit = with (printer) {
+    fun dump(printer: PrintStream): Unit = with(printer) {
         val heading = "Container: $myId"
         println(heading)
         println("=".repeat(heading.length))
@@ -158,7 +157,10 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         }
     }
 
-    private fun inspectDependenciesAndRegisterAdhoc(context: ComponentResolveContext, descriptors: Collection<ComponentDescriptor>): LinkedHashSet<ComponentDescriptor> {
+    private fun inspectDependenciesAndRegisterAdhoc(
+        context: ComponentResolveContext,
+        descriptors: Collection<ComponentDescriptor>
+    ): LinkedHashSet<ComponentDescriptor> {
         val adhoc = LinkedHashSet<ComponentDescriptor>()
         val visitedTypes = HashSet<Type>()
         for (descriptor in descriptors) {
@@ -168,8 +170,9 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         return adhoc
     }
 
-    private fun collectAdhocComponents(context: ComponentResolveContext, descriptor: ComponentDescriptor,
-                                       visitedTypes: HashSet<Type>, adhocDescriptors: LinkedHashSet<ComponentDescriptor>
+    private fun collectAdhocComponents(
+        context: ComponentResolveContext, descriptor: ComponentDescriptor,
+        visitedTypes: HashSet<Type>, adhocDescriptors: LinkedHashSet<ComponentDescriptor>
     ) {
         val dependencies = descriptor.getDependencies(context)
         for (type in dependencies) {
