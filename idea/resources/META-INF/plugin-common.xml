@@ -103,6 +103,11 @@
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
+    <action id="IntroduceLateinitProperty" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.IntroduceLateinitPropertyAction"
+            text="L_ateinit Property...">
+      <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
+    </action>
+
     <group id="InternalKotlin" text="Kotlin Internal Actions" internal="true">
       <separator/>
 

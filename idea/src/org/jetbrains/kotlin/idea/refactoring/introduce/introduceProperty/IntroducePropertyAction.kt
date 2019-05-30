@@ -25,3 +25,8 @@ class IntroducePropertyAction : AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
             (provider as? KotlinRefactoringSupportProvider)?.getIntroducePropertyHandler()
 }
+
+class IntroduceLateinitPropertyAction : AbstractIntroduceAction() {
+    override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
+        (provider as? KotlinRefactoringSupportProvider)?.getIntroduceLateinitPropertyHandler()
+}

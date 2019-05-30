@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.KotlinExtrac
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceLambdaParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroduceLateinitPropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.refactoring.pullUp.KotlinPullUpHandler
@@ -45,6 +46,8 @@ class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun getIntroduceFunctionalParameterHandler() = KotlinIntroduceLambdaParameterHandler()
 
     fun getIntroducePropertyHandler(): RefactoringActionHandler = KotlinIntroducePropertyHandler()
+
+    fun getIntroduceLateinitPropertyHandler(): RefactoringActionHandler = KotlinIntroduceLateinitPropertyHandler()
 
     fun getExtractFunctionHandler(): RefactoringActionHandler =
             ExtractKotlinFunctionHandler()

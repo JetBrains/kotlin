@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -421,6 +422,14 @@ enum class ExtractionTarget(val targetName: String) {
     PROPERTY_WITH_GETTER("property with getter") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
+        }
+    },
+
+    LATEINIT_PROPERTY("lateinit property") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+
+            // We are pointing at the variable name of KtProperty declaration.
+            return descriptor.extractionData.physicalElements.singleOrNull() is KtProperty
         }
     },
 
