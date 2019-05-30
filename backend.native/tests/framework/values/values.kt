@@ -423,3 +423,6 @@ object UnitBlockCoercionImpl : UnitBlockCoercion<() -> Unit> {
 }
 
 abstract class MyAbstractList : List<Any?>
+
+fun takeForwardDeclaredClass(obj: objcnames.classes.ForwardDeclaredClass) {}
+fun takeForwardDeclaredProtocol(obj: objcnames.protocols.ForwardDeclaredProtocol) {}

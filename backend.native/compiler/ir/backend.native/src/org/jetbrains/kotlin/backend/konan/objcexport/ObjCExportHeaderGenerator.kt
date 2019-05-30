@@ -800,9 +800,9 @@ internal class ObjCExportTranslatorImpl(
     private tailrec fun mapObjCObjectReferenceTypeIgnoringNullability(descriptor: ClassDescriptor): ObjCNonNullReferenceType {
         // TODO: more precise types can be used.
 
-        if (descriptor.isObjCMetaClass()) return ObjCIdType
+        if (descriptor.isObjCMetaClass()) return ObjCMetaClassType
 
-        if (descriptor.isExternalObjCClass()) {
+        if (descriptor.isExternalObjCClass() || descriptor.isObjCForwardDeclaration()) {
             return if (descriptor.isInterface) {
                 val name = descriptor.name.asString().removeSuffix("Protocol")
                 generator?.referenceProtocol(name)

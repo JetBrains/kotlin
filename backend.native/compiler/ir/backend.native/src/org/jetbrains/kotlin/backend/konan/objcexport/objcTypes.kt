@@ -89,6 +89,10 @@ class ObjCBlockPointerType(
     })
 }
 
+object ObjCMetaClassType : ObjCNonNullReferenceType() {
+    override fun render(attrsAndName: String): String = "Class".withAttrsAndName(attrsAndName)
+}
+
 class ObjCPrimitiveType(
         val cName: String
 ) : ObjCType() {
