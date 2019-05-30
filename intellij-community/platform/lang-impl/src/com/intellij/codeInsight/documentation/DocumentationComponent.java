@@ -272,7 +272,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       myEditorPane.getCaret().setVisible(true);
     }
     myEditorPane.setBackground(EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY));
-    HTMLEditorKit editorKit = new UIUtil.JBHtmlEditorKit(true) {
+    HTMLEditorKit editorKit = new JBHtmlEditorKit(true) {
       @Override
       public ViewFactory getViewFactory() {
         return new HTMLFactory() {
