@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 
 object NewInferenceForIDEAnalysisComponent {
     private const val inferenceOption = "kotlin.use.new.inference.for.ide.analysis"
-    private const val defaultState = true
+    const val defaultState = true
 
     @JvmStatic
     fun setEnabled(project: Project, state: Boolean) {
