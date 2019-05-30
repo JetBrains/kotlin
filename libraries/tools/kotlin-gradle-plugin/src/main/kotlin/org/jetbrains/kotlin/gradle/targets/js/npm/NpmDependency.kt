@@ -40,6 +40,8 @@ data class NpmDependency(
     override fun getGroup(): String? = org
 
     internal val dependencies = mutableSetOf<NpmDependency>()
+    internal var resolvedVersion: String? = null
+    internal var integrity: String? = null
 
     override fun resolve(transitive: Boolean): MutableSet<File> {
         val npmPackage = resolveProject() ?: return mutableSetOf()

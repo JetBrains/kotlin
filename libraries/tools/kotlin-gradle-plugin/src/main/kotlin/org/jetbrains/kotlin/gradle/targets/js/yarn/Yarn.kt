@@ -20,6 +20,6 @@ object Yarn : NpmApi {
     override fun resolveProject(resolvedNpmProject: NpmProjectPackage) =
         getDelegate(resolvedNpmProject.project).resolveProject(resolvedNpmProject)
 
-    override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) =
-        getDelegate(rootProject.project).resolveRootProject(rootProject, subProjects)
+    override fun resolveRootProject(rootProject: Project, npmProjects: MutableList<NpmProjectPackage>) =
+        getDelegate(rootProject.project).resolveRootProject(rootProject, npmProjects)
 }

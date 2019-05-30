@@ -16,31 +16,37 @@ import java.io.File
 object YarnWorkspaces : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: NpmProjectPackage) = Unit
 
-    override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) {
+    override fun resolveRootProject(rootProject: Project, npmProjects: MutableList<NpmProjectPackage>): Boolean {
         check(rootProject == rootProject.rootProject)
-        resolveWorkspaces(rootProject, subProjects)
+        val doneSomething = resolveWorkspaces(rootProject, npmProjects)
+
+        val nodeJsWorldDir = rootProject.nodeJs.root.rootPackageDir
+        yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.npmDependencies })
+
+        return doneSomething
     }
 
     private fun resolveWorkspaces(
         rootProject: Project,
         npmProjects: MutableList<NpmProjectPackage>
-    ) {
+    ): Boolean {
         val upToDateChecks = npmProjects.map {
             YarnUpToDateCheck(it.npmProject)
         }
 
-        if (upToDateChecks.all { it.upToDate }) return
+        if (upToDateChecks.all { it.upToDate }) return false
 
         val nodeJsWorldDir = rootProject.nodeJs.root.rootPackageDir
 
         saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
 
         yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
-        yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.npmDependencies })
 
         upToDateChecks.forEach {
             it.commit()
         }
+
+        return true
     }
 
     private fun saveRootProjectWorkspacesPackageJson(

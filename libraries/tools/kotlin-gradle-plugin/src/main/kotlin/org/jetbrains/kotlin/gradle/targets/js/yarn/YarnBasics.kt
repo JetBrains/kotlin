@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import com.google.gson.JsonParser
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.process.internal.ExecActionFactory
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
@@ -42,15 +45,23 @@ abstract class YarnBasics : NpmApi {
         val yarnLock = nodeWorkDir.resolve("yarn.lock")
         if (yarnLock.isFile) {
             val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.key }
-            val visited = mutableSetOf<NpmDependency>()
+            val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
             fun resolveRecursively(src: NpmDependency): NpmDependency {
-                if (src in visited) return src
-                visited.add(src)
+                val copy = visited[src]
+                if (copy != null) {
+                    src.resolvedVersion = copy.resolvedVersion
+                    src.integrity = copy.integrity
+                    src.dependencies.addAll(copy.dependencies)
+                    return src
+                }
+                visited[src] = src
 
                 val key = YarnLock.key(src.key, src.version)
                 val deps = byKey[key]
                 if (deps != null) {
+                    src.resolvedVersion = deps.version
+                    src.integrity = deps.integrity
                     src.dependencies.addAll(deps.dependencies.map { dep ->
                         val scopedName = dep.scopedName
 
@@ -64,6 +75,7 @@ abstract class YarnBasics : NpmApi {
                         )
                     })
                 } else {
+                    error(key)
                     // todo: [WARN] cannot find $key in yarn.lock
                 }
 

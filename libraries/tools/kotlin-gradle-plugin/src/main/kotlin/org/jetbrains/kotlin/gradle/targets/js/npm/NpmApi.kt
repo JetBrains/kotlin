@@ -15,10 +15,13 @@ interface NpmApi {
 
     fun resolveProject(resolvedNpmProject: NpmProjectPackage)
 
+    /**
+     * @return false if everything is already up to date
+     */
     fun resolveRootProject(
         rootProject: Project,
-        subProjects: MutableList<NpmProjectPackage>
-    )
+        npmProjects: MutableList<NpmProjectPackage>
+    ): Boolean
 
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =

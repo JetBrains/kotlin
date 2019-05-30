@@ -15,9 +15,10 @@ object YarnSimple : YarnBasics() {
 
         YarnUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
             yarnExec(project, resolvedNpmProject.npmProject.dir, NpmApi.resolveOperationDescription("yarn for ${project.path}"))
-            yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.npmDependencies)
         }
+
+        yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.npmDependencies)
     }
 
-    override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) = Unit
+    override fun resolveRootProject(rootProject: Project, npmProjects: MutableList<NpmProjectPackage>) = false
 }
