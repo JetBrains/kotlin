@@ -33,6 +33,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -290,7 +291,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       for (Path modulePath : orphanModules) {
         try {
           String path = FileUtil.loadFile(modulePath.resolveSibling(modulePath.getFileName() + ".path").toFile());
-          modulesToRestoreText.append(FileUtil.getNameWithoutExtension(new File(path))).append("\n");
+          modulesToRestoreText.append(FileUtilRt.getNameWithoutExtension(new File(path).getName())).append("\n");
           modulesToRestore.add(Pair.create(path, modulePath));
         }
         catch (IOException e) {
@@ -338,7 +339,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       @Override
       protected JComponent createCenterPanel() {
         orphanModulesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        orphanModulesList.setItems(orphanModules, module -> FileUtil.getNameWithoutExtension(new File(module.getFirst())));
+        orphanModulesList.setItems(orphanModules, module -> FileUtilRt.getNameWithoutExtension(new File(module.getFirst()).getName()));
         orphanModulesList.setBorder(JBUI.Borders.empty(5));
 
         JScrollPane myModulesScrollPane =

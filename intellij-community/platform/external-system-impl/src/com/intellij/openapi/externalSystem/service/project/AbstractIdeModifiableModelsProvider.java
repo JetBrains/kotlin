@@ -36,7 +36,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.ArtifactModel;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
@@ -123,7 +123,7 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
   @Override
   public Module newModule(@NotNull final String filePath, final String moduleTypeId) {
     Module module = getModifiableModuleModel().newModule(filePath, moduleTypeId);
-    final String moduleName = FileUtil.getNameWithoutExtension(new File(filePath));
+    final String moduleName = FileUtilRt.getNameWithoutExtension(new File(filePath).getName());
     if (!module.getName().equals(moduleName)) {
       try {
         getModifiableModuleModel().renameModule(module, moduleName);

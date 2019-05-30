@@ -1116,7 +1116,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       level = LibraryLevel.PROJECT;
       libraryName = String.format("%s:%s:%s", moduleVersion.getGroup(), moduleVersion.getName(), moduleVersion.getVersion());
       if (binaryPath.isFile()) {
-        String libraryFileName = FileUtil.getNameWithoutExtension(binaryPath);
+        String libraryFileName = FileUtilRt.getNameWithoutExtension(binaryPath.getName());
         final String mavenLibraryFileName = String.format("%s-%s", moduleVersion.getName(), moduleVersion.getVersion());
         if (!mavenLibraryFileName.equals(libraryFileName)) {
           Pattern pattern = Pattern.compile(moduleVersion.getName() + "-" + moduleVersion.getVersion() + "-(.*)");
@@ -1179,7 +1179,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   private String chooseName(File path,
                             LibraryLevel level,
                             DataNode<ProjectData> ideProject) {
-    final String fileName = FileUtil.getNameWithoutExtension(path);
+    final String fileName = FileUtilRt.getNameWithoutExtension(path.getName());
     if (level == LibraryLevel.MODULE) {
       return fileName;
     }

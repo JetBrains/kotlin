@@ -11,7 +11,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.URLUtil;
@@ -82,7 +82,7 @@ public class BuildProcessClasspathManager {
           // development mode
           if (PluginManagerCore.isRunningFromSources()) {
             // ... try "out/classes/production/<jar-name>", assuming that <jar-name> means module name
-            String moduleName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(relativePath));
+            String moduleName = FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(relativePath));
             if (OLD_TO_NEW_MODULE_NAME.containsKey(moduleName)) {
               moduleName = OLD_TO_NEW_MODULE_NAME.get(moduleName);
             }

@@ -30,7 +30,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -105,7 +105,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
           AnAction manageAction = ActionManager.getInstance().getAction("ManageProjectTemplates");
           Notification notification = new Notification("Project Template",
                                                        "Template Created",
-                                                       FileUtil.getNameWithoutExtension(file.getFileName().toString()) +
+                                                       FileUtilRt.getNameWithoutExtension(file.getFileName().toString()) +
                                                        " was successfully created",
                                                        NotificationType.INFORMATION
           );

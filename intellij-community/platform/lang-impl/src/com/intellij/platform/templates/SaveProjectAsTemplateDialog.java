@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform.templates;
 
 import com.intellij.ide.util.projectWizard.ProjectTemplateParameterFactory;
@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -109,7 +109,7 @@ public class SaveProjectAsTemplateDialog extends DialogWrapper {
     Path file = getTemplateFile();
     if (PathKt.exists(file)) {
       if (Messages.showYesNoDialog(myPanel,
-                                   FileUtil.getNameWithoutExtension(file.getFileName().toString()) + " exists already.\n" +
+                                   FileUtilRt.getNameWithoutExtension(file.getFileName().toString()) + " exists already.\n" +
                                    "Do you want to replace it with the new one?", "Template Already Exists",
                                    Messages.getWarningIcon()) == Messages.NO) {
         return;
