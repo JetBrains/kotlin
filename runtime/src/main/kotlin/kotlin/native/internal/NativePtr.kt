@@ -26,6 +26,8 @@ class NativePtr @PublishedApi internal constructor(private val value: NonNullNat
     override fun hashCode() = this.toLong().hashCode()
 
     override fun toString() = "0x${this.toLong().toString(16)}"
+
+    internal fun isNull(): Boolean = (value == null)
 }
 
 @PublishedApi

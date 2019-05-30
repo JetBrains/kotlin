@@ -583,6 +583,27 @@ func testGH2959() throws {
   try assertEquals(actual: GH2959().getI(id: 2959)[0].id, expected: 2959)
 }
 
+func testKClass() throws {
+  let test = TestKClass()
+
+  let testKClass = test.getKotlinClass(clazz: TestKClass.self)!
+  try assertTrue(test.isTestKClass(kClass: testKClass))
+  try assertFalse(test.isI(kClass: testKClass))
+  try assertEquals(actual: testKClass.simpleName, expected: "TestKClass")
+
+  let iKClass = test.getKotlinClass(protocol: TestKClassI.self)!
+  try assertFalse(test.isTestKClass(kClass: iKClass))
+  try assertTrue(test.isI(kClass: iKClass))
+  try assertEquals(actual: iKClass.simpleName, expected: "I")
+
+  try assertTrue(test.getKotlinClass(clazz: NSObject.self) == nil)
+  try assertTrue(test.getKotlinClass(clazz: PureSwiftClass.self) == nil)
+  try assertTrue(test.getKotlinClass(clazz: PureSwiftKotlinInterfaceImpl.self) == nil)
+  try assertTrue(test.getKotlinClass(clazz: Base123.self) == nil)
+
+  try assertTrue(test.getKotlinClass(protocol: NSObjectProtocol.self) == nil)
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -646,6 +667,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestGH2945", method: withAutorelease(testGH2945)),
             TestCase(name: "TestGH2830", method: withAutorelease(testGH2830)),
             TestCase(name: "TestGH2959", method: withAutorelease(testGH2959)),
+            TestCase(name: "TestKClass", method: withAutorelease(testKClass)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }

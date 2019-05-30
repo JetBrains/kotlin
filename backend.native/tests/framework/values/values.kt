@@ -11,7 +11,9 @@ package conversions
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlinx.cinterop.*
 
 // Constants
 const val dbl: Double = 3.14
@@ -426,3 +428,13 @@ abstract class MyAbstractList : List<Any?>
 
 fun takeForwardDeclaredClass(obj: objcnames.classes.ForwardDeclaredClass) {}
 fun takeForwardDeclaredProtocol(obj: objcnames.protocols.ForwardDeclaredProtocol) {}
+
+class TestKClass {
+    fun getKotlinClass(clazz: ObjCClass) = getOriginalKotlinClass(clazz)
+    fun getKotlinClass(protocol: ObjCProtocol) = getOriginalKotlinClass(protocol)
+
+    fun isTestKClass(kClass: KClass<*>): Boolean = (kClass == TestKClass::class)
+    fun isI(kClass: KClass<*>): Boolean = (kClass == TestKClass.I::class)
+
+    interface I
+}

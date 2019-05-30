@@ -350,6 +350,22 @@ static void addProtocolForInterface(Class clazz, const TypeInfo* interfaceInfo) 
   }
 }
 
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForClass(Class clazz) {
+  const TypeInfo* candidate = getAssociatedTypeInfo(clazz);
+
+  if (candidate != nullptr && (candidate->flags_ & TF_OBJC_DYNAMIC) == 0) {
+    return candidate;
+  } else {
+    return nullptr;
+  }
+}
+
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* protocol) {
+  const ObjCTypeAdapter* typeAdapter = findProtocolAdapter(protocol);
+
+  return (typeAdapter != nullptr) ? typeAdapter->kotlinTypeInfo : nullptr;
+}
+
 static const TypeInfo* getOrCreateTypeInfo(Class clazz);
 
 static void initializeClass(Class clazz) {
@@ -714,7 +730,7 @@ static const TypeInfo* createTypeInfo(
   TypeInfo* result = (TypeInfo*)konanAllocMemory(sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
-  result->flags_ = 0;
+  result->flags_ = TF_OBJC_DYNAMIC;
 
   result->instanceSize_ = superType->instanceSize_;
   result->superType_ = superType;

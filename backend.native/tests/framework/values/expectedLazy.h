@@ -526,6 +526,22 @@ __attribute__((swift_name("MyAbstractList")))
 @interface ValuesMyAbstractList : NSObject
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestKClass")))
+@interface ValuesTestKClass : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (id<ValuesKotlinKClass> _Nullable)getKotlinClassClazz:(Class)clazz __attribute__((swift_name("getKotlinClass(clazz:)")));
+- (id<ValuesKotlinKClass> _Nullable)getKotlinClassProtocol:(Protocol *)protocol __attribute__((swift_name("getKotlinClass(protocol:)")));
+- (BOOL)isTestKClassKClass:(id<ValuesKotlinKClass>)kClass __attribute__((swift_name("isTestKClass(kClass:)")));
+- (BOOL)isIKClass:(id<ValuesKotlinKClass>)kClass __attribute__((swift_name("isI(kClass:)")));
+@end;
+
+__attribute__((swift_name("TestKClassI")))
+@protocol ValuesTestKClassI
+@required
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
