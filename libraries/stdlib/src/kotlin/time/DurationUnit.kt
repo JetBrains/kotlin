@@ -46,7 +46,7 @@ public expect enum class DurationUnit {
 }
 
 /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
-public expect fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double
+internal expect fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double
 
 
 

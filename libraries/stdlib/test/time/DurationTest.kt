@@ -52,7 +52,7 @@ class DurationTest {
             repeat(10) {
                 val d1 = value.toDuration(unit)
                 val unit2 = units.random()
-                val value2 = convertDurationUnit(value, unit, unit2)
+                val value2 = Duration.convert(value, unit, unit2)
                 val d2 = value2.toDuration(unit2)
                 assertEquals(d1, d2, "$value $unit in $unit2")
                 assertEquals(d1.hashCode(), d2.hashCode())
@@ -124,7 +124,7 @@ class DurationTest {
             val unit = units.random()
             val unit2 = units.random()
 
-            assertAlmostEquals(convertDurationUnit(value.toDouble(), unit, unit2), value.toDuration(unit).toDouble(unit2))
+            assertAlmostEquals(Duration.convert(value.toDouble(), unit, unit2), value.toDuration(unit).toDouble(unit2))
         }
     }
 

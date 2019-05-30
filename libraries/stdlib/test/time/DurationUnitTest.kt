@@ -22,11 +22,11 @@ class DurationUnitTest {
     fun conversion() {
         fun test(sourceValue: Double, sourceUnit: DurationUnit, targetValue: Double, targetUnit: DurationUnit) {
             assertEquals(
-                targetValue, convertDurationUnit(sourceValue, sourceUnit, targetUnit),
+                targetValue, Duration.convert(sourceValue, sourceUnit, targetUnit),
                 "Expected $sourceValue $sourceUnit to be $targetValue $targetUnit"
             )
             assertEquals(
-                sourceValue, convertDurationUnit(targetValue, targetUnit, sourceUnit),
+                sourceValue, Duration.convert(targetValue, targetUnit, sourceUnit),
                 "Expected $targetValue $targetUnit to be $sourceValue $sourceUnit"
             )
         }

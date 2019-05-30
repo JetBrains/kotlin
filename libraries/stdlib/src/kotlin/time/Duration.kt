@@ -34,6 +34,10 @@ public inline class Duration internal constructor(internal val value: Double) : 
     companion object {
         val ZERO: Duration = Duration(0.0)
         val INFINITE: Duration = Duration(Double.POSITIVE_INFINITY)
+
+        /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
+        public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
+            convertDurationUnit(value, sourceUnit, targetUnit)
     }
 
     // arithmetic operators

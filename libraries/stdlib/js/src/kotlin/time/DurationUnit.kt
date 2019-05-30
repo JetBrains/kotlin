@@ -37,7 +37,7 @@ public actual enum class DurationUnit(internal val scale: Double) {
     DAYS(86400e9);
 }
 
-public actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double {
+internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double {
     val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
     return when {
         sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale)
