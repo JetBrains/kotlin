@@ -397,9 +397,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private Content addServiceView(ServiceView serviceView, ItemPresentation presentation, boolean select, int index) {
     int viewIndex = index == -1 ? -1 : myContentManager.getIndexOfContent(myAllServicesContent) >= 0 ? index - 1 : index;
-    myServiceViews.add(viewIndex == -1 ? myServiceViews.size() : viewIndex, serviceView);
+    myServiceViews.add(viewIndex == -1 || viewIndex > myServiceViews.size() ? myServiceViews.size() : viewIndex, serviceView);
     List<ServiceViewFilter> filters = myModelFilter.getFilters();
-    filters.add(viewIndex == -1 ? filters.size() : viewIndex, serviceView.getModel().getFilter());
+    filters.add(viewIndex == -1 || viewIndex > filters.size() ? filters.size() : viewIndex, serviceView.getModel().getFilter());
 
     Content content =
       ContentFactory.SERVICE.getInstance().createContent(serviceView, ServiceViewDragHelper.getDisplayName(presentation), false);
