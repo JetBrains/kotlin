@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import kotlin.system.measureNanoTime
 
+private val PASSES = 1
 
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -87,8 +87,10 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun beforePass() {}
 
     fun testTotalKotlin() {
-        for (i in 0..2) {
+        for (i in 0 until PASSES) {
             runTestOnce(i)
+            println("Total time is ${totalTime * 1e-6} ms")
+            totalTime = 0L
         }
     }
 }
