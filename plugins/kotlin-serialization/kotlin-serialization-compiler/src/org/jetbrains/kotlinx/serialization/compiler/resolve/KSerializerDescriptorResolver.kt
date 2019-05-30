@@ -293,7 +293,7 @@ object KSerializerDescriptorResolver {
         val markerDesc = classDescriptor.getKSerializerConstructorMarker()
         val markerType = markerDesc.toSimpleType()
 
-        val serializableProperties = SerializableProperties(classDescriptor, bindingContext).serializableProperties
+        val serializableProperties = bindingContext.serializablePropertiesFor(classDescriptor).serializableProperties
         val parameterDescsAsProps = serializableProperties.map { it.descriptor }
         val bitMaskSlotsCount = serializableProperties.bitMaskSlotCount()
         var i = 0

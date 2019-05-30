@@ -29,7 +29,6 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstr
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 internal val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
-internal val SERIALIZER_FOR_PROPERTY: WritableSlice<PropertyDescriptor, ClassDescriptor> = Slices.createSimpleSlice()
 
 class SerializationPluginDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -55,7 +54,6 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 
-    // todo: also check on a side of external serializer
     private fun buildSerializableProperties(descriptor: ClassDescriptor, trace: BindingTrace): SerializableProperties? {
         if (!descriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return null
         if (!descriptor.isInternalSerializable) return null
@@ -123,7 +121,6 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
                 val element = ktType.typeElement ?: return
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace)
                 generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace)
-                trace.record(SERIALIZER_FOR_PROPERTY, it.descriptor, serializer)
             } else {
                 generatorContextForAnalysis.checkType(it.module, it.type, ktType, trace)
             }

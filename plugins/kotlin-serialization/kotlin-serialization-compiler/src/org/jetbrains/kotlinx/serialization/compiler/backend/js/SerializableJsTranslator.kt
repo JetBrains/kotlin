@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -141,7 +141,7 @@ class SerializableJsTranslator(
     ): Int {
         val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(superClass, context.bindingContext())
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
-        val superProperties = SerializableProperties(superClass, bindingContext).serializableProperties
+        val superProperties = bindingContext.serializablePropertiesFor(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = parameters.subList(0, superSlots) +
                 parameters.subList(propertiesStart, propertiesStart + superProperties.size) +
