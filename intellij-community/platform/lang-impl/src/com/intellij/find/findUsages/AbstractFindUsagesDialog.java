@@ -240,7 +240,7 @@ public abstract class AbstractFindUsagesDialog extends DialogWrapper {
   @Nullable
   protected JPanel createUsagesOptionsPanel() {
     JPanel optionsPanel = new JPanel();
-    optionsPanel.setBorder(IdeBorderFactory.createTitledBorder(FindBundle.message("find.options.group"), true));
+    optionsPanel.setBorder(IdeBorderFactory.createTitledBorder(FindBundle.message("find.options.group")));
     optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
     addUsagesOptions(optionsPanel);
     return optionsPanel.getComponents().length == 0 ? null : optionsPanel;
