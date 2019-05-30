@@ -106,7 +106,7 @@ public abstract class AbstractExternalSystemConfigurable<
       return;
     }
 
-    myComponent.add(new TitledSeparator(ExternalSystemBundle.message("settings.title.system.settings",
+    myComponent.add(new TitledSeparator(ExternalSystemBundle.message("settings.title.projects.settings",
                                                                      myExternalSystemId.getReadableName())),
                     ExternalSystemUiUtil.getFillLineConstraints(0));
 
