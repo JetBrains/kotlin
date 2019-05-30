@@ -44,6 +44,9 @@ The table below shows how Kotlin concepts are mapped to Swift/Objective-C and vi
 | `Map` | `Dictionary` | `NSDictionary` | |
 | `MutableMap` | `NSMutableDictionary` | `NSMutableDictionary` | [note](#collections) |
 | Function type | Function type | Block pointer type | [note](#function-types) |
+| Suspend functions| Unsupported| Unsupported| [note](#unsupported) |
+| Inline classes | Unsupported| Unsupported| [note](#unsupported) |
+
 
 ### Name translation
 
@@ -360,3 +363,12 @@ this library would disable these compiler checks.
 
 See [INTEROP.md](INTEROP.md) for an example case where the library uses some plain C features
 (e.g. unsafe pointers, structs etc.).
+
+## Unsupported
+
+Some features of Kotlin programming language are not yet mapped into respective features of Objective-C or Swift.
+Currently, following features are not properly exposed in generated framework headers:
+   * suspend functions
+   * inline classes (arguments are mapped as either underlying primitive type or `id`)
+   * custom classes implementing standard Kotlin collection interfaces (`List`, `Map`, `Set`) and other special classes
+   * Kotlin subclasses of Objective-C classes
