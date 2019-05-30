@@ -235,11 +235,32 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
             Method("java.lang.CharSequence.charAt") convertTo Method("kotlin.String.get"),
             Method("java.lang.String.indexOf") convertTo Method("kotlin.text.indexOf"),
             Method("java.lang.String.lastIndexOf") convertTo Method("kotlin.text.lastIndexOf"),
+            Method("java.lang.String.getBytes") convertTo Method("kotlin.text.toByteArray")
+                    withByArgumentsFilter { it.singleOrNull()?.type(context.symbolProvider)?.isStringType() == true }
+                    withArgumentsProvider { arguments ->
+                val argument = arguments.arguments.single()::value.detached()
+                val call = JKKtCallExpressionImpl(
+                    context.symbolProvider.provideByFqName("kotlin.text.charset"),
+                    JKArgumentListImpl(argument)
+                )
+                JKArgumentListImpl(call)
+            },
             Method("java.lang.String.getBytes") convertTo Method("kotlin.text.toByteArray"),
             Method("java.lang.String.valueOf")
                     convertTo ExtensionMethod("kotlin.Any.toString")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
                     withByArgumentsFilter { it.isNotEmpty() && it.first().type(context.symbolProvider)?.isArrayType() == false },
+
+            Method("java.lang.String.getChars")
+                    convertTo Method("kotlin.text.toCharArray")
+                    withByArgumentsFilter { it.size == 4 }
+                    withArgumentsProvider { argumentList ->
+                val srcBeginArgument = argumentList.arguments[0]::value.detached()
+                val srcEndArgument = argumentList.arguments[1]::value.detached()
+                val dstArgument = argumentList.arguments[2]::value.detached()
+                val dstBeginArgument = argumentList.arguments[3]::value.detached()
+                JKArgumentListImpl(dstArgument, dstBeginArgument, srcBeginArgument, srcEndArgument)
+            },
 
             Method("java.lang.String.valueOf")
                     convertTo Method("kotlin.String")
@@ -298,7 +319,7 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
                     )
                 )
             },
-
+            Method("java.lang.String.matches") convertTo Method("kotlin.text.matches"),
             Method("java.lang.String.regionMatches")
                     convertTo Method("kotlin.text.regionMatches")
                     withByArgumentsFilter { it.size == 5 }
