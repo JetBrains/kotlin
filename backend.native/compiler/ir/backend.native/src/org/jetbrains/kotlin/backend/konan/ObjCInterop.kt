@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 internal val interopPackageName = InteropFqNames.packageName
 internal val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObject"))
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
+private val objCProtocolFqName = interopPackageName.child(Name.identifier("ObjCProtocol"))
 internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
 private val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
 private val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
@@ -69,6 +70,12 @@ fun ClassDescriptor.isObjCForwardDeclaration(): Boolean =
 fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().any {
     it.fqNameSafe == objCClassFqName
 }
+
+fun IrClass.isObjCProtocolClass(): Boolean =
+        this.fqNameSafe == objCProtocolFqName
+
+fun ClassDescriptor.isObjCProtocolClass(): Boolean =
+        this.fqNameSafe == objCProtocolFqName
 
 fun FunctionDescriptor.isObjCClassMethod() =
         this.containingDeclaration.let { it is ClassDescriptor && it.isObjCClass() }

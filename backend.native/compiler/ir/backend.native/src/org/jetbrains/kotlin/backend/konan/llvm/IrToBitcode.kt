@@ -1403,6 +1403,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 call(isClass, listOf(objCObject)).let {
                     functionGenerationContext.icmpNe(it, Int8(0).llvm)
                 }
+            } else if (dstClass.isObjCProtocolClass()) {
+                // Note: it is not clear whether this class should be looked up this way.
+                // clang does the same, however swiftc uses dynamic lookup.
+                val protocolClass =
+                        functionGenerationContext.getObjCClass("Protocol", context.standardLlvmSymbolsOrigin)
+                call(
+                        context.llvm.Kotlin_Interop_IsObjectKindOfClass,
+                        listOf(objCObject, protocolClass)
+                )
             } else {
                 kTrue
             }

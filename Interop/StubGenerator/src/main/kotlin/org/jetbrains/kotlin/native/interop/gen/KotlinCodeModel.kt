@@ -191,6 +191,7 @@ object KotlinTypes {
     val objCObjectMeta by InteropClassifier
     val objCClass by InteropClassifier
     val objCClassOf by InteropClassifier
+    val objCProtocol by InteropClassifier
 
     val cValuesRef by InteropClassifier
 

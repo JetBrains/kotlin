@@ -490,6 +490,11 @@ abstract class ObjCContainerStub(stubGenerator: StubGenerator,
             supers.add(classifier.type)
         }
 
+        if (!isMeta && container.isProtocolClass()) {
+            // TODO: map Protocol type to ObjCProtocol instead.
+            supers.add(KotlinTypes.objCProtocol.type)
+        }
+
         val keywords = when (container) {
             is ObjCClass -> "open class"
             is ObjCProtocol -> "interface"
@@ -689,4 +694,9 @@ private fun genProtocolGetter(
     stubGenerator.simpleBridgeGenerator.insertNativeBridge(nativeBacked, emptyList(), builder.lines)
 
     return functionName
+}
+
+private fun ObjCClassOrProtocol.isProtocolClass(): Boolean = when (this) {
+    is ObjCClass -> (name == "Protocol" || binaryName == "Protocol")
+    is ObjCProtocol -> false
 }

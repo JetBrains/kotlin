@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -832,12 +832,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         assert(!irClass.isInterface)
 
         return if (irClass.isExternalObjCClass()) {
-            context.llvm.imports.add(irClass.llvmSymbolOrigin)
+            val llvmSymbolOrigin = irClass.llvmSymbolOrigin
 
             if (irClass.isObjCMetaClass()) {
                 val name = irClass.descriptor.getExternalObjCMetaClassBinaryName()
-
-                val objCClass = load(codegen.objCDataGenerator!!.genClassRef(name).llvm)
+                val objCClass = getObjCClass(name, llvmSymbolOrigin)
 
                 val getClass = context.llvm.externalFunction(
                         "object_getClass",
@@ -847,7 +846,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
                 call(getClass, listOf(objCClass), exceptionHandler = exceptionHandler)
             } else {
-                load(codegen.objCDataGenerator!!.genClassRef(irClass.descriptor.getExternalObjCClassBinaryName()).llvm)
+                getObjCClass(irClass.descriptor.getExternalObjCClassBinaryName(), llvmSymbolOrigin)
             }
         } else {
             if (irClass.isObjCMetaClass()) {
@@ -872,6 +871,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 newClass
             }
         }
+    }
+
+    fun getObjCClass(binaryName: String, llvmSymbolOrigin: CompiledKonanModuleOrigin): LLVMValueRef {
+        context.llvm.imports.add(llvmSymbolOrigin)
+        return load(codegen.objCDataGenerator!!.genClassRef(binaryName).llvm)
     }
 
     fun resetDebugLocation() {

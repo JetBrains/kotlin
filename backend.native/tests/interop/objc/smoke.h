@@ -205,3 +205,11 @@ NSObject* createNSObject() {
 -(int)hashCode:(int)p;
 -(BOOL)equals;
 @end;
+
+id getPrinterProtocolRaw() {
+  return @protocol(Printer);
+}
+
+Protocol* getPrinterProtocol() {
+  return @protocol(Printer);
+}
