@@ -13811,6 +13811,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOut.kt");
         }
 
+        @TestMetadata("genericSamProjectedOutWithNewInference.kt")
+        public void testGenericSamProjectedOutWithNewInference() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOutWithNewInference.kt");
+        }
+
         @TestMetadata("lambdaInstanceOf.kt")
         public void testLambdaInstanceOf() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/lambdaInstanceOf.kt");
