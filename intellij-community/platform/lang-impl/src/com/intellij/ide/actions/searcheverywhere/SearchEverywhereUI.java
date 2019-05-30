@@ -535,8 +535,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       contributorsMap.putAll(getAllTabContributors().stream().collect(Collectors.toMap(c -> c, c -> MULTIPLE_CONTRIBUTORS_ELEMENTS_LIMIT)));
     }
 
-    Set<SearchEverywhereContributor<?>> allContributors = contributorsMap.keySet();
-    List<SearchEverywhereContributor<?>> contributors = DumbService.getInstance(myProject).filterByDumbAwareness(allContributors);
+    List<SearchEverywhereContributor<?>> contributors = DumbService.getInstance(myProject).filterByDumbAwareness(contributorsMap.keySet());
     if (contributors.isEmpty() && DumbService.isDumb(myProject)) {
       myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.mode.not.supported",
                                                    mySelectedTab.getText(),
@@ -544,7 +543,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       myListModel.clear();
       return;
     }
-    if (contributors.size() != allContributors.size()) {
+    if (contributors.size() != contributorsMap.size()) {
       myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.incomplete.results",
                                                    mySelectedTab.getText(),
                                                    ApplicationNamesInfo.getInstance().getFullProductName()));
@@ -559,11 +558,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
       if (!commands.isEmpty()) {
         if (rawPattern.contains(" ")) {
-          // important point!!!
-          // since contributors set is backed with contributorsMap
-          // removing elements from contributors leads to removing
-          // corresponding entries from contributorsMap
-          contributors.retainAll(commands.stream()
+          contributorsMap.keySet().retainAll(commands.stream()
                                    .map(SearchEverywhereCommandInfo::getContributor)
                                    .collect(Collectors.toSet()));
         }
