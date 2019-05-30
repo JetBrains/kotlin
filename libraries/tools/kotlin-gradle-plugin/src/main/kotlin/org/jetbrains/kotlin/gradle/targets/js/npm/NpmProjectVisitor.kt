@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
@@ -15,8 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatProjectVisitor
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 
 /**
  * Visits given gradle [project] for all of its [NpmProject],
@@ -29,6 +30,7 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
     private val byNpmDependency = mutableMapOf<NpmDependency, NpmProjectPackage>()
     private val taskRequirements = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
     private val requiredFromTasksByCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
+    private val dukat = DukatProjectVisitor(project)
 
     private fun addTaskRequirements(task: RequiresNpmDependencies) {
         val requirements = task.requiredNpmDependencies.toList()
@@ -126,7 +128,12 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
         }
 
         npmDependencies.forEach {
-            packageJson.dependencies[it.key] = resolver.chooseVersion(packageJson.dependencies[it.key], it.version)
+            when (it.scope) {
+                NORMAL -> packageJson.dependencies[it.key] = resolver.chooseVersion(packageJson.dependencies[it.key], it.version)
+                DEV -> packageJson.devDependencies[it.key] = resolver.chooseVersion(packageJson.devDependencies[it.key], it.version)
+                OPTIONAL -> packageJson.optionalDependencies[it.key] = resolver.chooseVersion(packageJson.optionalDependencies[it.key], it.version)
+                PEER -> packageJson.peerDependencies[it.key] = resolver.chooseVersion(packageJson.peerDependencies[it.key], it.version)
+            }
         }
 
         gradleDeps.externalModules.forEach {
