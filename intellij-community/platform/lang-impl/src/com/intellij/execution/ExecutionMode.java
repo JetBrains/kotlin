@@ -67,15 +67,17 @@ public class ExecutionMode {
    * Invoked on the {@code processHandler} waiting timeout by the execution helper.
    *
    * @param outputCollected output collected to the moment of timeout (if any)
+   * @param invocatorStack
    * @see ExecutionHelper#createTimeLimitedExecutionProcess(com.intellij.execution.process.ProcessHandler, com.intellij.execution.ExecutionMode, java.lang.String)
    */
   public void onTimeout(@NotNull ProcessHandler processHandler,
                         @NotNull String commandLineString,
-                        @NotNull ProcessOutput outputCollected) {
+                        @NotNull ProcessOutput outputCollected,
+                        @Nullable Throwable invocatorStack) {
   }
 
   /**
-   * @deprecated override {@link #onTimeout(ProcessHandler, String, ProcessOutput)}  instead
+   * @deprecated override {@link #onTimeout(ProcessHandler, String, ProcessOutput, Throwable)}  instead
    */
   @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
   @Deprecated
