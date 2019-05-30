@@ -23,10 +23,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.doMoveToPackage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -34,8 +34,10 @@ import org.jetbrains.kotlin.psi.KtPackageDirective
 
 class ChangePackageIntention :
     SelfTargetingOffsetIndependentIntention<KtPackageDirective>(KtPackageDirective::class.java, "Change package") {
+
     companion object {
-        private const val PACKAGE_NAME_VAR = "PACKAGE_NAME"
+        private val PACKAGE_NAME_VAR = "PACKAGE_NAME"
+        private val RECENTS_KEY = "ChangePackageIntention.RECENTS_KEY"
     }
 
     override fun isApplicableTo(element: KtPackageDirective) = element.packageNameExpression != null
@@ -85,10 +87,21 @@ class ChangePackageIntention :
 
                     val document = editor.document
                     project.executeWriteCommand(text) {
-                        document.replaceString(
-                            affectedRange!!.startOffset,
-                            affectedRange!!.endOffset,
-                            FqName(currentName).quoteSegmentsIfNeeded()
+                        doMoveToPackage(
+                            listOf(file),
+                            project,
+                            enteredName!!,
+                            askIfDoesNotExist = true,
+                            recentsKey = RECENTS_KEY,
+                            updatePackageDirective = true,
+                            searchReferences = true,
+                            searchInComments = false,
+                            searchInNonJavaFiles = false,
+                            moveCallback = null,
+                            initialTargetDirectory = null,
+                            destinationFolderCB = null,
+                            targetFileName = file.name,
+                            invokeRefactoring = { proc -> proc.run() }
                         )
                     }
                     PsiDocumentManager.getInstance(project).commitDocument(document)
