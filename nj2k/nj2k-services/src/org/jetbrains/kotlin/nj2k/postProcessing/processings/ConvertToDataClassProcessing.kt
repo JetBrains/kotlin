@@ -3,26 +3,29 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.nj2k.postProcessing
+package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.nj2k.NewJ2kPostProcessing
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.escaped
+import org.jetbrains.kotlin.nj2k.postProcessing.ElementsBasedPostProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.descendantsOfType
+import org.jetbrains.kotlin.nj2k.postProcessing.type
+import org.jetbrains.kotlin.nj2k.postProcessing.unpackedReferenceToProperty
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.addRemoveModifier.setModifierList
 import org.jetbrains.kotlin.psi.psiUtil.asAssignment
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierTypeOrDefault
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
-class ConvertDataClass : NewJ2kPostProcessing {
-    override val writeActionNeeded: Boolean = true
-
+class ConvertToDataClassProcessing : ElementsBasedPostProcessing() {
     private fun KtCallableDeclaration.rename(newName: String) {
         val factory = KtPsiFactory(this)
         val escapedName = newName.escaped()
@@ -49,6 +52,7 @@ class ConvertDataClass : NewJ2kPostProcessing {
                         ?.unpackedReferenceToProperty()
                         ?.takeIf { it.containingClass() == klass } ?: return@mapNotNull null
                 if (property.getter != null || property.setter != null) return@mapNotNull null
+                if (property.initializer != null) return@mapNotNull null
                 val constructorParameter =
                     ((statement.right as? KtReferenceExpression)
                         ?.references
@@ -62,41 +66,51 @@ class ConvertDataClass : NewJ2kPostProcessing {
 
                 if (constructorParameterType.makeNotNullable() != propertyType.makeNotNullable()) return@mapNotNull null
 
-                DataClassInfo(constructorParameter, property, statement)
+                DataClassInfo(
+                    constructorParameter,
+                    property,
+                    statement
+                )
             }.toList()
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics): (() -> Unit)? {
-        if (element !is KtClass) return null
-        return {
-            val factory = KtPsiFactory(element)
-            for ((constructorParameter, property, statement) in collectPropertiesData(element)) {
-                constructorParameter.addBefore(property.valOrVarKeyword, constructorParameter.nameIdentifier!!)
-                constructorParameter.addAfter(factory.createWhiteSpace(), constructorParameter.valOrVarKeyword!!)
-                constructorParameter.rename(property.name!!)
-                val propertyCommentSaver = CommentSaver(property, saveLineBreaks = true)
-                if (property.modifierList != null) {
-                    constructorParameter.setModifierList(property.modifierList!!)
-                    constructorParameter.annotationEntries.forEach { it.delete() }
-                    for (entry in constructorParameter.annotationEntries) {
-                        entry.addUseSiteTarget(AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER, element.project)
-                    }
-                }
+    override fun runProcessing(elements: List<PsiElement>, converterContext: NewJ2kConverterContext) {
+        for (klass in elements.descendantsOfType<KtClass>()) {
+            convertClass(klass)
+        }
+    }
 
-                for (annotationEntry in property.annotationEntries) {
-                    constructorParameter.addAnnotationEntry(annotationEntry).also { entry ->
-                        if (entry.useSiteTarget == null) {
-                            entry.addUseSiteTarget(AnnotationUseSiteTarget.FIELD, element.project)
-                        }
+    private fun convertClass(klass: KtClass) {
+        val factory = KtPsiFactory(klass)
+        for ((constructorParameter, property, statement) in collectPropertiesData(klass)) {
+            constructorParameter.addBefore(property.valOrVarKeyword, constructorParameter.nameIdentifier!!)
+            constructorParameter.addAfter(factory.createWhiteSpace(), constructorParameter.valOrVarKeyword!!)
+            constructorParameter.rename(property.name!!)
+            val propertyCommentSaver = CommentSaver(property, saveLineBreaks = true)
+
+            constructorParameter.setVisibility(property.visibilityModifierTypeOrDefault())
+            for (annotationEntry in constructorParameter.annotationEntries) {
+                if (annotationEntry.useSiteTarget == null) {
+                    annotationEntry.addUseSiteTarget(AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER, klass.project)
+                }
+            }
+
+            for (annotationEntry in property.annotationEntries) {
+                constructorParameter.addAnnotationEntry(annotationEntry).also { entry ->
+                    if (entry.useSiteTarget == null) {
+                        entry.addUseSiteTarget(AnnotationUseSiteTarget.FIELD, klass.project)
                     }
                 }
-                property.delete()
-                statement.delete()
-                propertyCommentSaver.restore(constructorParameter, forceAdjustIndent = false)
             }
-            for (initBlock in element.getAnonymousInitializers()) {
-                if ((initBlock.body as KtBlockExpression).statements.isEmpty()) {
-                    initBlock.delete()
-                }
+            property.delete()
+            statement.delete()
+            propertyCommentSaver.restore(constructorParameter, forceAdjustIndent = false)
+        }
+
+        for (initBlock in klass.getAnonymousInitializers()) {
+            if ((initBlock.body as KtBlockExpression).statements.isEmpty()) {
+                val commentSaver = CommentSaver(initBlock)
+                initBlock.delete()
+                klass.primaryConstructor?.let { commentSaver.restore(it) }
             }
         }
     }
