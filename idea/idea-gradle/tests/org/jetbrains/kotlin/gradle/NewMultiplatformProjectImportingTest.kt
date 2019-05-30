@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.vfs.VirtualFile
+import junit.framework.TestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.*
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestRunConfigurationProducer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -351,6 +354,48 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 sourceFolder("shared/src/iOSTest/resources", TestResourceKotlinRootType)
             }
         }
+    }
+
+    @Test
+    fun testTestTasks() {
+        val files = configureByFiles()
+        importProject()
+
+        checkProjectStructure(exhaustiveSourceSourceRootList = false) {
+            module("project")
+            module("common")
+            module("jvm")
+            module("js")
+
+            module("project_commonMain")
+            module("project_commonTest") {
+                moduleDependency("project_commonMain", DependencyScope.TEST)
+            }
+
+            module("project_jvmMain") {
+                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+            }
+
+            module("project_jvmTest") {
+                moduleDependency("project_commonMain", DependencyScope.TEST)
+                moduleDependency("project_commonTest", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.TEST)
+            }
+        }
+
+        fun findTasksToRun(file: VirtualFile): List<String> {
+            return GradleTestRunConfigurationProducer.findAllTestsTaskToRun(file, myProject)
+                .flatMap { it.tasks }
+                .sorted()
+        }
+
+        val commonTestFile = files.find { it.path.contains("commonTest") }!!
+        val commonTasks = findTasksToRun(commonTestFile)
+        assertEquals(listOf(":cleanJvmTest", ":jvmTest"), commonTasks)
+
+        val jvmTestFile = files.find { it.path.contains("jvmTest") }!!
+        val jvmTasks = findTasksToRun(jvmTestFile)
+        assertEquals(listOf(":cleanJvmTest", ":jvmTest"), jvmTasks)
     }
 
     @Test

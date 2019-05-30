@@ -11,8 +11,8 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.idea.caches.project.isMPPModule
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
-import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestTasksProvider
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -26,7 +26,7 @@ class KotlinMPPGradleTestTasksProvider : GradleTestTasksProvider {
     }
 
     override fun getTasks(module: Module): List<String> {
-        if (!isTestCommonModule(module)) {
+        if (!isMultiplatformTestModule(module)) {
             return emptyList()
         }
 
@@ -49,9 +49,9 @@ class KotlinMPPGradleTestTasksProvider : GradleTestTasksProvider {
             .flatMap { getTaskNames(it.data, taskNamePrefix) }
     }
 
-    private fun isTestCommonModule(module: Module): Boolean {
+    private fun isMultiplatformTestModule(module: Module): Boolean {
         val settings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
-        return settings.targetPlatform.isCommon() && settings.isTestModule
+        return settings.isMPPModule && settings.isTestModule
     }
 
     private fun getTaskNames(task: TaskData, namePrefix: String): List<String> {

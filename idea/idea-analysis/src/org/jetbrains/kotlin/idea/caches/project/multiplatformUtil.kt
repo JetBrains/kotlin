@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.SourceType.PRODUCTION
 import org.jetbrains.kotlin.idea.caches.project.SourceType.TEST
@@ -36,12 +37,10 @@ val Module.sourceType: SourceType?
     get() = facetSettings?.isTestModule?.let { isTest -> if (isTest) SourceType.TEST else PRODUCTION }
 
 val Module.isMPPModule: Boolean
-    get() {
-        val settings = facetSettings ?: return false
-        return settings.targetPlatform.isCommon() ||
-                settings.implementedModuleNames.isNotEmpty() ||
-                settings.kind.isNewMPP
-    }
+    get() = facetSettings?.isMPPModule ?: false
+
+val KotlinFacetSettings.isMPPModule: Boolean
+    get() = targetPlatform.isCommon() || implementedModuleNames.isNotEmpty() || kind.isNewMPP
 
 private val Module.facetSettings get() = KotlinFacet.get(this)?.configuration?.settings
 
