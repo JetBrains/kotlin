@@ -56,7 +56,7 @@ public inline class Duration internal constructor(internal val _value: Double) :
     fun isInfinite(): Boolean = _value.isInfinite()
     fun isFinite(): Boolean = _value.isFinite()
 
-    fun absoluteValue(): Duration = if (isNegative()) -this else this
+    val absoluteValue: Duration get() = if (isNegative()) -this else this
 
 
     override fun compareTo(other: Duration): Int = this._value.compareTo(other._value)
@@ -111,7 +111,7 @@ public inline class Duration internal constructor(internal val _value: Double) :
         if (isInfinite()) {
             append(_value)
         } else {
-            val absNs = absoluteValue().inNanoseconds
+            val absNs = absoluteValue.inNanoseconds
             var scientific = false
             var maxDecimals = 0
             val unit = when {
@@ -153,7 +153,7 @@ public inline class Duration internal constructor(internal val _value: Double) :
     fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append('P')
-        absoluteValue().toComponents { days, hours, minutes, seconds, nanoseconds ->
+        absoluteValue.toComponents { days, hours, minutes, seconds, nanoseconds ->
             if (days != 0)
                 append(days).append('D')
 

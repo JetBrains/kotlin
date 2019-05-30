@@ -207,9 +207,9 @@ class DurationTest {
         assertFalse(zero.isNegative())
         assertFalse(positive.isNegative())
 
-        assertEquals(positive, negative.absoluteValue())
-        assertEquals(positive, positive.absoluteValue())
-        assertEquals(zero, zero.absoluteValue())
+        assertEquals(positive, negative.absoluteValue)
+        assertEquals(positive, positive.absoluteValue)
+        assertEquals(zero, zero.absoluteValue)
     }
 
 
