@@ -1,5 +1,3 @@
-import java.util.*
-
 internal class A<T> {
     fun foo(nonMutableCollection: Collection<String>,
             mutableCollection: MutableCollection<String>,

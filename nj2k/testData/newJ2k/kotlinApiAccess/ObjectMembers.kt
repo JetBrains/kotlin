@@ -1,5 +1,4 @@
 import kotlinApi.KotlinObject
-import kotlinApi.KotlinObject.foo
 import kotlinApi.KotlinObject.property1
 import kotlinApi.KotlinObject.property2
 

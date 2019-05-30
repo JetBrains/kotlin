@@ -7,9 +7,9 @@ class A {
         // TODO: new String("original");
         new String(new char[] {'a', 'b', 'c'});
         new String(new char[] {'b', 'd'}, 1, 1);
-        new String(new int[] { 32, 65, 127 }, 0, 3);
+        new String(new int[] {32, 65, 127}, 0, 3);
 
-        byte[] bytes = new byte[] { 32, 65, 100, 81 };
+        byte[] bytes = new byte[] {32, 65, 100, 81};
         Charset charset = Charset.forName("utf-8");
         new String(bytes);
         new String(bytes, charset);
@@ -59,7 +59,7 @@ class A {
 
         s.toString();
         s.toCharArray();
-   }
+    }
 
     void specialMethods() throws Exception {
         String s = "test string";
@@ -76,15 +76,18 @@ class A {
                 2
         );
         s.regionMatches(0, "st", 1, 2);
-        s.matches("\\w+");
         s.replaceAll("\\w+", "---")
-              .replaceFirst("([s-t])", "A$1");
+                .replaceFirst("([s-t])", "A$1");
+        /* TODO
+        s.matches("\\w+");
         useSplit(s.split("\\s+"));
         useSplit(s.split("\\s+", 0));
         useSplit(s.split("\\s+", -1));
         useSplit(s.split("\\s+", 2));
         int limit = 5;
         useSplit(s.split("\\s+", limit));
+        */
+         */
         s.trim();
         s.concat(" another");
 
@@ -131,4 +134,5 @@ class A {
         */
     }
 
-    void useSplit(String[] result) {}
+    void useSplit(String[] result) {
+    }

@@ -1,6 +1,6 @@
 package test
 
-import kotlinApi.*
+import kotlinApi.KotlinClassAbstractProperty
 
 class KotlinClassAbstractPropertyImpl : KotlinClassAbstractProperty() {
     override var isVisible = false

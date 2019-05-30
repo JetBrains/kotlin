@@ -1,9 +1,10 @@
-import kotlinApi.*
-import kotlinApi.KotlinClass.Companion
+import kotlinApi.KotlinClass
 import kotlinApi.KotlinClass.Companion.nullableStaticFun
 import kotlinApi.KotlinClass.Companion.nullableStaticVar
 import kotlinApi.KotlinClass.Companion.staticFun
 import kotlinApi.KotlinClass.Companion.staticVar
+import kotlinApi.globalFunction
+import kotlinApi.nullableGlobalFunction
 
 internal class A {
     fun foo(c: KotlinClass): Int {

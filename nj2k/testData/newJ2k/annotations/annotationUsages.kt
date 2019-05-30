@@ -11,7 +11,6 @@ import javaApi.Anon7
 import javaApi.Anon8
 import javaApi.E
 
-
 @Anon1(value = ["a"], stringArray = ["b"], intArray = [1, 2], string = "x")
 @Anon2(value = "a", intValue = 1, charValue = 'a')
 @Anon3(e = E.A, stringArray = [], value = ["a", "b"])

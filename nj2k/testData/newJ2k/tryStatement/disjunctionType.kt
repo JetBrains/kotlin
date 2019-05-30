@@ -10,6 +10,5 @@ internal class A {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
     }
 }

@@ -1,7 +1,9 @@
 // ERROR: Type mismatch: inferred type is String but Charset was expected
 // ERROR: Type mismatch: inferred type is String but Charset was expected
+// ERROR: Type mismatch: inferred type is kotlin.Comparator<String> /* = java.util.Comparator<String> */ but java.util.Comparator<String?> was expected
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Comparator
+import java.util.Locale
 
 internal class A {
     @Throws(Exception::class)
@@ -69,25 +71,26 @@ internal class A {
         val s = "test string"
         s == "test"
         s.equals(
-                "tesT", ignoreCase = true
-        )
+                "tesT"
+                , ignoreCase = true)
         s.compareTo("Test", ignoreCase = true)
         s.regionMatches(
                 0,
                 "TE",
                 0,
-                2, ignoreCase = true
-        )
+                2
+                , ignoreCase = true)
         s.regionMatches(0, "st", 1, 2)
-        s.matches("\\w+".toRegex())
-        s.replace("\\w+".toRegex(), "---")
-                .replaceFirst("([s-t])".toRegex(), "A$1")
-        useSplit(s.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-        useSplit(s.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-        useSplit(s.split("\\s+".toRegex()).toTypedArray())
-        useSplit(s.split("\\s+".toRegex(), 2).toTypedArray())
-        val limit = 5
-        useSplit(s.split("\\s+".toRegex(), limit.coerceAtLeast(0)).toTypedArray())
+        s.replace("\\w+".toRegex(), "---").replaceFirst("([s-t])".toRegex(), "A$1")
+        /* TODO
+            s.matches("\\w+");
+            useSplit(s.split("\\s+"));
+            useSplit(s.split("\\s+", 0));
+            useSplit(s.split("\\s+", -1));
+            useSplit(s.split("\\s+", 2));
+            int limit = 5;
+            useSplit(s.split("\\s+", limit));
+            */
         s.trim { it <= ' ' }
         "$s another"
 
@@ -120,19 +123,18 @@ internal class A {
         String(chars, 1, 2)
         String(chars)
         String(chars, 1, 2)
-
-        val order = String.CASE_INSENSITIVE_ORDER
+        val order: Comparator<String?> = String.CASE_INSENSITIVE_ORDER
     }
 
     fun unsupportedMethods() {
         val s = "test string"
         /* TODO:
-        s.indexOf(32);
-        s.indexOf(32, 2);
-        s.lastIndexOf(32);
-        s.lastIndexOf(32, 2);
-        */
+            s.indexOf(32);
+            s.indexOf(32, 2);
+            s.lastIndexOf(32);
+            s.lastIndexOf(32, 2);
+            */
     }
 
-    fun useSplit(result: Array<String>) {}
+    fun useSplit(result: Array<String?>?) {}
 }

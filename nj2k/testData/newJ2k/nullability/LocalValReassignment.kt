@@ -1,5 +1,4 @@
 internal class A {
-
     /* rare nullable, handle with caution */
     fun nullableString(): String? {
         return if (Math.random() > 0.999) {

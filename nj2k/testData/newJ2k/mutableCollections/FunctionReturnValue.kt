@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.ArrayList
 
 internal class A {
     fun createCollection(): MutableCollection<String> {

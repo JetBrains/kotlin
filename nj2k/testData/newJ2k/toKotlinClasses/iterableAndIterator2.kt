@@ -2,8 +2,6 @@
 // ERROR: Null can not be a value of a non-null type Iterator<String?>
 package demo
 
-import java.util.*
-
 internal class Test : Iterable<String?> {
     override fun iterator(): Iterator<String?> {
         return null

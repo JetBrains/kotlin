@@ -10,7 +10,8 @@ class A {
         this.b = b;
     }
 
-    @Deprecated // this constructor will not be replaced by default parameter value in primary because of this annotation
+    // this constructor will not be replaced by default parameter value in primary because of this annotation
+    @Deprecated
     public A(int a) {
         this(a, 1);
     }

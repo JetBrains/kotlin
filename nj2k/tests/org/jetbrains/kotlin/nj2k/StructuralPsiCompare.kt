@@ -23,9 +23,6 @@ internal fun KtFile.dumpStructureText(): String {
                 }
                 return
             }
-            if (element is KtImportDirective) {
-                return
-            }
             if (element is PsiComment && (element.text.startsWith("// ERROR") || element.text.startsWith("// !"))) {
                 return
             }

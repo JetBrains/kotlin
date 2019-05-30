@@ -4,7 +4,6 @@ package foo
 // we use package 'foo'
 
 // imports:
-import java.util.ArrayList
 
 // we need ArrayList
 // let's declare a class:

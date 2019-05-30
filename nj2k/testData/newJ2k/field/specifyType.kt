@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.ArrayList
 
 internal class A {
     private val field1: List<String> = ArrayList()

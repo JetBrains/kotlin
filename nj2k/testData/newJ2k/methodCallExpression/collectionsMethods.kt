@@ -1,5 +1,3 @@
-import java.util.*
-
 internal class A {
     fun foo(): Map<String, String> {
         val list1: List<String> = emptyList()

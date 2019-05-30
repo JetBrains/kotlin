@@ -14,6 +14,7 @@ class A {
         int f = map.keySet().size();
         int g = map.values().size();
         int h = map.entrySet().size();
+        int i = map.entrySet().iterator().next().getKey() + 1
     }
 
     void bar(List<String> list, HashMap<String, Integer> map) {
@@ -34,10 +35,9 @@ class A {
         }
 
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            String key = entry.getKey();
             Integer value = entry.getValue();
-            if (entry.getKey() != null) {
-                println(value + 1)
-            }
+            entry.setValue(value + 1);
         }
     }
 }

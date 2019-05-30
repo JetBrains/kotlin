@@ -1,5 +1,3 @@
-import kotlinApi.KotlinClass
-import kotlinApi.KotlinClass.Companion
 import kotlinApi.KotlinClass.Companion.staticFun
 import kotlinApi.KotlinClass.Companion.staticProperty
 import kotlinApi.KotlinClass.Companion.staticVar

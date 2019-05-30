@@ -1,5 +1,3 @@
-import java.util.*
-
 internal class A {
     fun foo(collection: MutableCollection<String>) {
         bar(collection)

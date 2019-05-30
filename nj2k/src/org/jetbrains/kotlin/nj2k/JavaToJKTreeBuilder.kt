@@ -74,7 +74,7 @@ class JavaToJKTreeBuilder constructor(
 
     private fun PsiImportList?.toJK(filterOutUsedImports: Boolean): JKImportList =
         JKImportListImpl(
-            this?.importStatements?.let { imports ->
+            this?.allImportStatements?.let { imports ->
                 if (filterOutUsedImports) {
                     imports.filter { import ->
                         when {
@@ -84,15 +84,15 @@ class JavaToJKTreeBuilder constructor(
                         }
                     }
                 } else imports.toList()
-            }?.map { it.toJK() }.orEmpty()
+            }?.mapNotNull { it.toJK() }.orEmpty()
         )
 
 
-    private fun PsiImportStatement.isSingleUnusedImport(): Boolean {
+    private fun PsiImportStatementBase.isSingleUnusedImport(): Boolean {
         if (isOnDemand) return false
         val target = resolve() ?: return true
-        val ussages = ReferencesSearch.search(target).toList()
-        return ussages.size == 1 && PsiTreeUtil.isAncestor(this, ussages.iterator().next().element, true)
+        val usages = ReferencesSearch.search(target).toList()
+        return usages.size == 1 && PsiTreeUtil.isAncestor(this, usages.iterator().next().element, true)
     }
 
     private fun PsiPackageStatement.toJK(): JKPackageDeclaration =
@@ -102,11 +102,11 @@ class JavaToJKTreeBuilder constructor(
             }
 
 
-    private fun PsiImportStatement.toJK(): JKImportStatement {
+    private fun PsiImportStatementBase.toJK(): JKImportStatement? {
         val target = resolve()
-        val rawName = text.substringAfter("import").substringBeforeLast(";").trim()
+        val rawName = (importReference?.canonicalText ?: return null) + if (isOnDemand) ".*" else ""
         val name =
-            if (target is KtLightClassForFacade) rawName.replaceAfterLast('.', "*")
+            if (target is KtLightClassForFacade) target.fqName.parent().asString() + ".*"
             else rawName
         return JKImportStatementImpl(JKNameIdentifierImpl(name))
             .also {

@@ -1,6 +1,9 @@
 package test
 
-import javaApi.*
+import javaApi.JFunction0
+import javaApi.JFunction1
+import javaApi.JFunction2
+import javaApi.MethodReferenceHelperClass
 
 internal class Test {
     fun memberFun(): Int {
