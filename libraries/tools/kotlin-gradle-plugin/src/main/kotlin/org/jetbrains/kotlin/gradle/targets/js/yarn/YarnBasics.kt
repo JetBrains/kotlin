@@ -38,6 +38,50 @@ abstract class YarnBasics : NpmApi {
 
     }
 
+    fun info(project: Project, id: String): PackageInfo? {
+        val args = listOf("info", id, "--json")
+
+        project as ProjectInternal
+
+        val nodeJs = NodeJsPlugin.apply(project).root
+        val nodeJsEnv = nodeJs.environment
+        val yarnEnv = YarnPlugin.apply(project).environment
+
+        val exec = project.services.get(ExecActionFactory::class.java).newExecAction()
+        exec.executable = nodeJsEnv.nodeExecutable
+        exec.args = listOf(yarnEnv.home.resolve("bin/yarn.js").absolutePath) + args
+        exec.workingDir = nodeJs.rootPackageDir
+
+        val error = ByteArrayOutputStream()
+        exec.errorOutput = error
+
+        val output = ByteArrayOutputStream()
+        exec.standardOutput = output
+
+        val result = exec.execute()
+        if (result.exitValue != 0) {
+            return null
+        }
+
+        val json = JsonParser().parse(output.toString())
+        if (json.isJsonObject) {
+            val jsonObject = json.asJsonObject
+            val type = jsonObject.get("type")
+            if (type != null && type.isJsonPrimitive && type.asString == "inspect") {
+                val data = jsonObject.get("data").asJsonObject
+
+                return PackageInfo(
+                    data.get("name").asString,
+                    data.get("versions").asJsonArray.map { it.asString }
+                )
+            }
+        }
+
+        return null
+    }
+
+    class PackageInfo(name: String, versions: List<String>)
+
     protected fun yarnLockReadTransitiveDependencies(
         nodeWorkDir: File,
         srcDependenciesList: Collection<NpmDependency>
