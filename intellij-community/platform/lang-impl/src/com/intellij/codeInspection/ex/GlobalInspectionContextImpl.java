@@ -152,7 +152,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
   }
 
   public void launchInspectionsOffline(@NotNull final AnalysisScope scope,
-                                       @Nullable final String outputPath,
+                                       @NotNull final String outputPath,
                                        final boolean runGlobalToolsOnly,
                                        @NotNull final List<? super Path> inspectionsResults) {
     performInspectionsWithProgressAndExportResults(scope, runGlobalToolsOnly, true, outputPath, inspectionsResults);
@@ -161,7 +161,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
   public void performInspectionsWithProgressAndExportResults(@NotNull final AnalysisScope scope,
                                                              final boolean runGlobalToolsOnly,
                                                              final boolean isOfflineInspections,
-                                                             @Nullable final String outputPath,
+                                                             @NotNull final String outputPath,
                                                              @NotNull final List<? super Path> inspectionsResults) {
     cleanupTools();
     setCurrentScope(scope);
@@ -170,7 +170,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
       myOutputPath = outputPath;
       try {
         performInspectionsWithProgress(scope, runGlobalToolsOnly, isOfflineInspections);
-        exportResults(inspectionsResults, outputPath);
+        exportResultsSmart(inspectionsResults, outputPath);
       }
       finally {
         myOutputPath = null;
@@ -184,7 +184,93 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     }
   }
 
-  private void exportResults(@NotNull List<? super Path> inspectionsResults, @Nullable String outputPath) {
+  protected void exportResults(@NotNull List<? super Path> inspectionsResults,
+                               @NotNull List<Tools> inspections,
+                               @NotNull String outputPath,
+                               @Nullable XMLOutputFactory xmlOutputFactory) {
+    if (xmlOutputFactory == null) {
+      xmlOutputFactory = XMLOutputFactory.newInstance();
+    }
+
+    BufferedWriter[] writers = new BufferedWriter[inspections.size()];
+    XMLStreamWriter[] xmlWriters = new XMLStreamWriter[inspections.size()];
+
+    try {
+      int i = 0;
+      for (Tools inspection : inspections) {
+        inspectionsResults.add(ExportHTMLAction.getInspectionResultPath(outputPath, inspection.getShortName()));
+        try {
+          BufferedWriter writer = ExportHTMLAction.getWriter(outputPath, inspection.getShortName());
+          writers[i] = writer;
+          XMLStreamWriter xmlWriter = xmlOutputFactory.createXMLStreamWriter(writer);
+          xmlWriters[i++] = xmlWriter;
+          xmlWriter.writeStartElement(GlobalInspectionContextBase.PROBLEMS_TAG_NAME);
+          xmlWriter.writeCharacters("\n");
+          xmlWriter.flush();
+        }
+        catch (FileNotFoundException | XMLStreamException e) {
+          LOG.error(e);
+        }
+      }
+
+      getRefManager().iterate(new RefVisitor() {
+        @Override
+        public void visitElement(@NotNull final RefEntity refEntity) {
+          int i = 0;
+          for (Tools tools : inspections) {
+            for (ScopeToolState state : tools.getTools()) {
+              try {
+                InspectionToolWrapper toolWrapper = state.getTool();
+                InspectionToolPresentation presentation = getPresentation(toolWrapper);
+                BufferedWriter writer = writers[i];
+                if (writer != null) {
+                  presentation.exportResults(e -> {
+                    try {
+                      JbXmlOutputter.collapseMacrosAndWrite(e, getProject(), writer);
+                      writer.flush();
+                    }
+                    catch (IOException e1) {
+                      throw new RuntimeException(e1);
+                    }
+                  }, refEntity, d -> false);
+                }
+              }
+              catch (Throwable e) {
+                LOG.error("Problem when exporting: " + refEntity.getExternalName(), e);
+              }
+            }
+            i++;
+          }
+        }
+      });
+
+      for (XMLStreamWriter xmlWriter : xmlWriters) {
+        if (xmlWriter != null) {
+          try {
+            xmlWriter.writeEndElement();
+            xmlWriter.flush();
+          }
+          catch (XMLStreamException e) {
+            LOG.error(e);
+          }
+        }
+      }
+    }
+    finally {
+      for (BufferedWriter writer : writers) {
+        if (writer != null) {
+          try {
+            writer.close();
+          }
+          catch (IOException e) {
+            LOG.error(e);
+          }
+        }
+      }
+    }
+  }
+
+  private void exportResultsSmart(@NotNull List<? super Path> inspectionsResults, @NotNull String outputPath) {
     final List<Tools> globalToolsWithProblems = new ArrayList<>();
     for (Map.Entry<String,Tools> entry : getTools().entrySet()) {
       final Tools sameTools = entry.getValue();
@@ -225,83 +311,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     if (!globalToolsWithProblems.isEmpty()) {
       XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
       StreamEx.ofSubLists(globalToolsWithProblems, MAX_OPEN_GLOBAL_INSPECTION_XML_RESULT_FILES).forEach(inspections -> {
-        BufferedWriter[] writers = new BufferedWriter[inspections.size()];
-        XMLStreamWriter[] xmlWriters = new XMLStreamWriter[inspections.size()];
-
-        try {
-          int i = 0;
-          for (Tools inspection : inspections) {
-            inspectionsResults.add(ExportHTMLAction.getInspectionResultPath(outputPath, inspection.getShortName()));
-            try {
-              BufferedWriter writer = ExportHTMLAction.getWriter(outputPath, inspection.getShortName());
-              writers[i] = writer;
-              XMLStreamWriter xmlWriter = xmlOutputFactory.createXMLStreamWriter(writer);
-              xmlWriters[i++] = xmlWriter;
-              xmlWriter.writeStartElement(GlobalInspectionContextBase.PROBLEMS_TAG_NAME);
-              xmlWriter.writeCharacters("\n");
-              xmlWriter.flush();
-            }
-            catch (FileNotFoundException | XMLStreamException e) {
-              LOG.error(e);
-            }
-          }
-
-          getRefManager().iterate(new RefVisitor() {
-            @Override
-            public void visitElement(@NotNull final RefEntity refEntity) {
-              int i = 0;
-              for (Tools tools : inspections) {
-                for (ScopeToolState state : tools.getTools()) {
-                  try {
-                    InspectionToolWrapper toolWrapper = state.getTool();
-                    InspectionToolPresentation presentation = getPresentation(toolWrapper);
-                    BufferedWriter writer = writers[i];
-                    if (writer != null) {
-                      presentation.exportResults(e -> {
-                        try {
-                          JbXmlOutputter.collapseMacrosAndWrite(e, getProject(), writer);
-                          writer.flush();
-                        }
-                        catch (IOException e1) {
-                          throw new RuntimeException(e1);
-                        }
-                      }, refEntity, d -> false);
-                    }
-                  }
-                  catch (Throwable e) {
-                    LOG.error("Problem when exporting: " + refEntity.getExternalName(), e);
-                  }
-                }
-                i++;
-              }
-            }
-          });
-
-          for (XMLStreamWriter xmlWriter : xmlWriters) {
-            if (xmlWriter != null) {
-              try {
-                xmlWriter.writeEndElement();
-                xmlWriter.flush();
-              }
-              catch (XMLStreamException e) {
-                LOG.error(e);
-              }
-            }
-          }
-        }
-        finally {
-          for (BufferedWriter writer : writers) {
-            if (writer != null) {
-              try {
-                writer.close();
-              }
-              catch (IOException e) {
-                LOG.error(e);
-              }
-            }
-          }
-        }
-
+        exportResults(inspectionsResults, inspections, outputPath, xmlOutputFactory);
       });
     }
   }
