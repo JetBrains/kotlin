@@ -382,10 +382,10 @@ class TextPainter extends BasePainter {
       if (hEnd >= lEnd) {
         if (!drawString(g, text, lEnd - lIterator.getSeparatorLength(), myOffset == lStart, position, clip, backColor,
                         underscoredColor)) {
-          drawLineNumber(g, 0, lineY);
+          drawLineNumber(g, lineY);
           break;
         }
-        drawLineNumber(g, 0, lineY);
+        drawLineNumber(g, lineY);
         lIterator.advance();
         myLineNumber++;
         position.setLocation(0, position.getY() + lineHeight);
@@ -409,12 +409,12 @@ class TextPainter extends BasePainter {
         if (hEnd > lEnd - lIterator.getSeparatorLength()) {
           if (!drawString(g, text, lEnd - lIterator.getSeparatorLength(), myOffset == lStart, position, clip, backColor,
                           underscoredColor)) {
-            drawLineNumber(g, 0, lineY);
+            drawLineNumber(g, lineY);
             break;
           }
         } else {
           if (!drawString(g, text, hEnd, myOffset == lStart, position, clip, backColor, underscoredColor)) {
-            drawLineNumber(g, 0, lineY);
+            drawLineNumber(g, lineY);
             break;
           }
         }
@@ -588,7 +588,7 @@ class TextPainter extends BasePainter {
     return numbersStripWidth;
   }
 
-  private void drawLineNumber(Graphics2D g, double x, double y) {
+  private void drawLineNumber(Graphics2D g, double y) {
     if (!myPrintSettings.PRINT_LINE_NUMBERS || !myPerformActualDrawing) {
       return;
     }
@@ -598,7 +598,7 @@ class TextPainter extends BasePainter {
     Font savedFont = g.getFont();
     g.setColor(Color.black);
     g.setFont(myPlainFont);
-    drawStringToGraphics(g, String.valueOf(myLineNumber), x - width, getLineHeight(g) - getDescent(g) + y);
+    drawStringToGraphics(g, String.valueOf(myLineNumber), -width, getLineHeight(g) - getDescent(g) + y);
     g.setColor(savedColor);
     g.setFont(savedFont);
   }
