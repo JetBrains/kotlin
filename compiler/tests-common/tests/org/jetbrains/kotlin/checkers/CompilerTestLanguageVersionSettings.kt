@@ -28,13 +28,13 @@ data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
         override val apiVersion: ApiVersion,
         override val languageVersion: LanguageVersion,
-        private val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
+        val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
 ) : LanguageVersionSettings {
-    private val languageFeatures = specificFeaturesForTests() + initialLanguageFeatures
-    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion, emptyMap(), languageFeatures)
+    val extraLanguageFeatures = specificFeaturesForTests() + initialLanguageFeatures
+    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion, emptyMap(), extraLanguageFeatures)
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
-            languageFeatures[feature] ?: delegate.getFeatureSupport(feature)
+            extraLanguageFeatures[feature] ?: delegate.getFeatureSupport(feature)
 
     override fun isPreRelease(): Boolean = KotlinCompilerVersion.isPreRelease()
 
