@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
@@ -43,11 +43,16 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     override fun configureCompilations(platformTarget: KotlinOnlyTarget<KotlinJsCompilation>) {
         super.configureCompilations(platformTarget)
 
-        platformTarget.compilations.all {
-            it.compileKotlinTask.kotlinOptions {
+        platformTarget.compilations.all { compilation ->
+            compilation.compileKotlinTask.kotlinOptions {
                 moduleKind = "umd"
                 sourceMap = true
                 sourceMapEmbedSources = null
+            }
+
+            if (compilation.target.project.nodeJs.root.experimental.generateKotlinExternals) {
+                val npmProject = compilation.npmProject
+                compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
             }
         }
     }

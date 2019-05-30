@@ -10,6 +10,7 @@ import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import java.io.File
 
@@ -41,10 +42,16 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val packageJsonFile: File
         get() = dir.resolve(PACKAGE_JSON)
 
+    val externalsDirRoot: File
+        get() = project.buildDir.resolve("dukat").resolve(name)
+
+    val externalsDir: File
+        get() = externalsDirRoot.resolve("src")
+
     val main: String
         get() = "kotlin/$name.js"
 
-    private val modules = object : NpmProjectModules(dir, nodeModulesDir) {
+    internal val modules = object : NpmProjectModules(dir, nodeModulesDir) {
         override val parent get() = rootNodeModules
     }
 

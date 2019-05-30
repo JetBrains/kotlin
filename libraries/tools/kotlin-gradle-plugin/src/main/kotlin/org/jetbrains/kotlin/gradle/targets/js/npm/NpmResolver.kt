@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatNpmProjectPackageVisitor
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver.ResolutionCallResult.*
-import java.nio.file.Files
 
 /**
  * Generates `package.json` file for [NpmProject] with npm or js dependencies and
@@ -98,7 +97,10 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
         removeOutdatedPackages()
 
         if (allNpmPackages.any { it.npmDependencies.isNotEmpty() }) {
-            packageManager.resolveRootProject(rootProject, allNpmPackages)
+            val updated = packageManager.resolveRootProject(rootProject, allNpmPackages)
+            allNpmPackages.forEach {
+                DukatNpmProjectPackageVisitor(it).visit(updated)
+            }
         } else if (allNpmPackages.any { it.hasNodeModulesDependentTasks }) {
             NpmSimpleLinker(rootProject).link(allNpmPackages)
         }
@@ -137,7 +139,8 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
     fun findDependentResolvedNpmProject(src: Project, target: Project): NpmProjectPackage? {
         // todo: proper finding using KotlinTargetComponent.findUsageContext
         val resolvedTarget = getOrResolve(target)
-        val mainCompilations = resolvedTarget.npmProjectsByCompilation.entries.filter { it.key.name == KotlinCompilation.MAIN_COMPILATION_NAME }
+        val mainCompilations =
+            resolvedTarget.npmProjectsByCompilation.entries.filter { it.key.name == KotlinCompilation.MAIN_COMPILATION_NAME }
 
         return if (mainCompilations.isNotEmpty()) {
             if (mainCompilations.size > 1) {

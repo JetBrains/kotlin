@@ -111,6 +111,8 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
             }
         }
 
+        dukat.hookImplicitNpmDependencies(npmDependencies)
+
         packageJson.main = npmProject.main
 
         val requiredByTasks = requiredFromTasksByCompilation[compilation]
@@ -120,9 +122,12 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
             requiredByTasks.forEach {
                 if (it.nodeModulesRequired) nodeModulesRequired = true
                 it.requiredNpmDependencies.forEach { requirement ->
-                    configuration.dependencies.add(requirement.createDependency(project))
+                    configuration.dependencies.add(requirement.createDependency(project, DEV))
                 }
             }
+
+            dukat.addToolDependencies(configuration.dependencies)
+
             configuration.resolve()
             visitConfiguration(configuration, npmDependencies, gradleDeps)
         }

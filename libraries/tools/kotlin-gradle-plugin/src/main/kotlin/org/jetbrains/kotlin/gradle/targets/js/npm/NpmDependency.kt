@@ -48,26 +48,32 @@ data class NpmDependency(
         val npmProject = npmPackage.npmProject
 
         val all = mutableSetOf<File>()
+        val deps = if (transitive) getDependenciesRecursively() else dependencies
+
+        deps.forEach { item ->
+            npmProject.resolve(item.key)?.let {
+                all.add(it)
+            }
+        }
+
+        return all
+    }
+
+    fun getDependenciesRecursively(): Collection<NpmDependency> {
         val visited = mutableSetOf<NpmDependency>()
 
         fun visit(item: NpmDependency) {
             if (item in visited) return
             visited.add(item)
 
-            npmProject.resolve(item.key)?.let {
-                all.add(it)
-            }
-
-            if (transitive) {
-                item.dependencies.forEach {
-                    visit(it)
-                }
+            item.dependencies.forEach {
+                visit(it)
             }
         }
 
         visit(this)
 
-        return all
+        return visited
     }
 
     override fun resolve(): MutableSet<File> {
