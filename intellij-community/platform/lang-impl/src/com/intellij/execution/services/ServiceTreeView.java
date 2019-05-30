@@ -6,7 +6,6 @@ import com.intellij.ide.dnd.DnDManager;
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.pom.Navigatable;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ObjectUtils;
@@ -93,7 +92,7 @@ class ServiceTreeView extends ServiceView {
     mySelected = true;
     if (myLastSelection != null) {
       ServiceViewDescriptor descriptor = myLastSelection.getViewDescriptor();
-      descriptor.onNodeSelected();
+      onNodeSelected(descriptor);
       myUi.setDetailsComponent(descriptor.getContentComponent());
     }
   }
@@ -126,11 +125,7 @@ class ServiceTreeView extends ServiceView {
     ServiceViewDescriptor newDescriptor = newSelection == null ? null : newSelection.getViewDescriptor();
 
     if (newDescriptor != null) {
-      newDescriptor.onNodeSelected();
-    }
-    if (newDescriptor instanceof Navigatable) {
-      Navigatable navigatable = (Navigatable)newDescriptor;
-      if (ServiceViewSourceScrollHelper.isAutoScrollToSourceEnabled(myProject) && navigatable.canNavigate()) navigatable.navigate(false);
+      onNodeSelected(newDescriptor);
     }
 
     myUi.setDetailsComponent(newDescriptor == null ? null : newDescriptor.getContentComponent());
