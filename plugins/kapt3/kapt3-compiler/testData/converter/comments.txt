@@ -83,6 +83,9 @@ public final class Test {
     java.lang.String a) {
     }
 
+    /**
+     * prop2.
+     */
     @Anno()
     public static void prop2$annotations() {
     }
