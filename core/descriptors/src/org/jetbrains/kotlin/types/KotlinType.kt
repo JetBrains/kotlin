@@ -53,13 +53,37 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
 
     abstract fun unwrap(): UnwrappedType
 
-    final override fun hashCode(): Int {
+    /* '0' means "hashCode wasn't computed"
+
+     Note #1. We don't use 'null' as a sign of "uncomputed value" to avoid boxing,
+     and even if we get that rumored "integer hashCode collision", we'd just lose
+     caching for that "unlucky" instance
+
+     Note #2. We don't use @Volatile even though that field can be accessed concurrently.
+     The reason is that contended volatile reads may be harmful for performance,
+     and there's no harm in computing this value several times concurrently
+     */
+    private var cachedHashCode: Int = 0
+
+    private fun computeHashCode(): Int {
         if (isError) return super.hashCode()
 
         var result = constructor.hashCode()
         result = 31 * result + arguments.hashCode()
         result = 31 * result + if (isMarkedNullable) 1 else 0
         return result
+    }
+
+    final override fun hashCode(): Int {
+        // NB: make one read to prevent race
+        var currentHashCode = cachedHashCode
+        if (currentHashCode == 0) return currentHashCode
+
+        currentHashCode = computeHashCode()
+
+        cachedHashCode = currentHashCode
+
+        return currentHashCode
     }
 
     final override fun equals(other: Any?): Boolean {
