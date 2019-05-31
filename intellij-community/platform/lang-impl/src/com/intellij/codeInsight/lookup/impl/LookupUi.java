@@ -74,7 +74,13 @@ class LookupUi {
 
     MenuAction menuAction = new MenuAction();
     menuAction.add(new ChangeSortingAction());
-    menuAction.add(new ChangeQuickDocAction());
+    menuAction.add(new DelegatedAction(ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC)){
+      @Override
+      public void update(@NotNull AnActionEvent e) {
+        e.getPresentation().setVisible(!CodeInsightSettings.getInstance().AUTO_POPUP_JAVADOC_INFO);
+      }
+    });
+    menuAction.add(new DelegatedAction(ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_IMPLEMENTATIONS)));
 
     Presentation presentation = new Presentation();
     presentation.setIcon(AllIcons.Actions.More);
@@ -292,7 +298,7 @@ class LookupUi {
             }
           }
 
-          //myList.setFixedCellWidth(myScrollPane.getViewport().getWidth());
+          myList.setFixedCellWidth(myScrollPane.getViewport().getWidth());
         }
       });
     }
@@ -344,23 +350,19 @@ class LookupUi {
     }
   }
 
-  private static class ChangeQuickDocAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
-    private final AnAction quickDocAction = ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC);
-    private ChangeQuickDocAction() {
-      getTemplatePresentation().setText(quickDocAction.getTemplateText(), true);
-      copyShortcutFrom(quickDocAction);
+  private static class DelegatedAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
+    private final AnAction delegateAction;
+    private DelegatedAction(AnAction action) {
+      delegateAction = action;
+      getTemplatePresentation().setText(delegateAction.getTemplateText(), true);
+      copyShortcutFrom(delegateAction);
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
       if (e.getPlace() == ActionPlaces.EDITOR_POPUP) {
-        quickDocAction.actionPerformed(e);
+        delegateAction.actionPerformed(e);
       }
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-      e.getPresentation().setVisible(!CodeInsightSettings.getInstance().AUTO_POPUP_JAVADOC_INFO);
     }
   }
 
