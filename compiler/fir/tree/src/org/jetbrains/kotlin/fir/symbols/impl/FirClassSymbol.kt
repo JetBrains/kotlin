@@ -16,11 +16,10 @@ class FirClassSymbol(override val classId: ClassId) : ConeClassSymbol, AbstractF
     override fun toLookupTag(): ConeClassLikeLookupTag = ConeClassLikeLookupTagImpl(classId)
 
     override fun equals(other: Any?): Boolean =
-        other is FirClassSymbol && classId == other.classId && fir == other.fir
+        other is FirClassSymbol && fir == other.fir
 
     override fun hashCode(): Int {
         var result = 31
-        result = result * 19 + classId.hashCode()
         result = result * 19 + fir.hashCode()
         return result
     }
