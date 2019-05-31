@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
-import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -284,7 +282,7 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
         // based on the target's components:
         val outputConfigurationsWithCompilations =
             target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-                kotlinVariant.usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usageContext ->
+                kotlinVariant.usages.mapNotNull { usageContext ->
                     project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
                         configuration to usageContext.compilation
                     }
@@ -323,8 +321,8 @@ internal fun sourcesJarTask(
     (project.tasks.findByName(taskName) as? Jar)?.let { return it }
 
     val result = project.tasks.create(taskName, Jar::class.java) { sourcesJar ->
-        sourcesJar.appendix = artifactNameAppendix
-        sourcesJar.classifier = "sources"
+        sourcesJar.setArchiveAppendixCompatible { artifactNameAppendix }
+        sourcesJar.setArchiveClassifierCompatible { "sources" }
     }
 
     project.whenEvaluated {

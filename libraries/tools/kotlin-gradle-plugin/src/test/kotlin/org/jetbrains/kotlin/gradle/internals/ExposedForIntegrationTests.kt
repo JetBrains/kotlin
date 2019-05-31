@@ -10,3 +10,6 @@ import org.w3c.dom.Document
 
 fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProjectStructureMetadata? =
     org.jetbrains.kotlin.gradle.plugin.mpp.parseKotlinSourceSetMetadataFromXml(document)
+
+const val MULTIPLATFORM_PROJECT_METADATA_FILE_NAME =
+    org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_FILE_NAME

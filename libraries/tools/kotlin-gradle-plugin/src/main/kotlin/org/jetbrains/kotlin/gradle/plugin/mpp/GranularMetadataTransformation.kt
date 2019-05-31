@@ -239,9 +239,11 @@ internal class GranularMetadataTransformation(
         // concrete view on them:
         val requestedTransitiveDependencies: Set<ModuleId> =
             mutableSetOf<ModuleId>().apply {
-                projectStructureMetadata.sourceSetModuleDependencies
-                    .filterKeys { it in allVisibleSourceSets }
-                    .forEach { addAll(it.value) }
+                projectStructureMetadata.sourceSetModuleDependencies.forEach { (sourceSetName, moduleDependencies) ->
+                    if (sourceSetName in allVisibleSourceSets) {
+                        addAll(moduleDependencies.map { ModuleId(it.groupId, it.moduleId) })
+                    }
+                }
             }
 
         val transitiveDependenciesToVisit = module.children.filterTo(mutableSetOf()) {

@@ -61,8 +61,7 @@ class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
     private val usage: Usage,
     override val dependencyConfigurationName: String,
-    private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null,
-    private val filterConfigurationAttributes: (Attribute<*>) -> Boolean = { true }
+    private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null
 ) : KotlinUsageContext {
 
     private val kotlinTarget: KotlinTarget get() = compilation.target
@@ -107,7 +106,7 @@ class DefaultKotlinUsageContext(
         }
 
         configurationAttributes.keySet()
-            .filter { filterConfigurationAttributes(it) && it != ProjectLocalConfigurations.ATTRIBUTE }
+            .filter { it != ProjectLocalConfigurations.ATTRIBUTE }
             .forEach { copyAttribute(it, configurationAttributes, result) }
 
         return result

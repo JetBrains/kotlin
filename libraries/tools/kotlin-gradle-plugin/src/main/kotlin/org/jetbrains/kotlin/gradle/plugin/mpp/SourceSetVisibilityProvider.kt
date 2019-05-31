@@ -26,16 +26,20 @@ internal class SourceSetVisibilityProvider(
     fun getVisibleSourceSets(
         visibleFrom: KotlinSourceSet,
         dependencyScopes: Iterable<KotlinDependencyScope>,
-        mppDependency: ResolvedDependency,
+        resolvedMppDependency: ResolvedDependency,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
-        otherProject: Project?
+        resolvedToOtherProject: Project?
     ): DependencySourceSetVisibilityResult {
         val visibleByThisSourceSet =
-            getVisibleSourceSetsImpl(visibleFrom, dependencyScopes, mppDependency, dependencyProjectStructureMetadata, otherProject)
+            getVisibleSourceSetsImpl(
+                visibleFrom, dependencyScopes, resolvedMppDependency, dependencyProjectStructureMetadata, resolvedToOtherProject
+            )
 
         val visibleByParents = visibleFrom.dependsOn
             .flatMapTo(mutableSetOf()) {
-                getVisibleSourceSetsImpl(it, dependencyScopes, mppDependency, dependencyProjectStructureMetadata, otherProject)
+                getVisibleSourceSetsImpl(
+                    it, dependencyScopes, resolvedMppDependency, dependencyProjectStructureMetadata, resolvedToOtherProject
+                )
             }
 
         return DependencySourceSetVisibilityResult(visibleByThisSourceSet, visibleByParents)

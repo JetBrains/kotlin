@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 internal val useLazyTaskConfiguration = org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(4, 9)
 internal val canLocateTask = org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast(5, 0)
@@ -34,16 +35,33 @@ internal val canLocateTask = org.jetbrains.kotlin.gradle.utils.isGradleVersionAt
 @JvmName("registerTaskOld")
 @Deprecated("please use Project.createOrRegisterTask", ReplaceWith("project.createOrRegisterTask(name, body)"))
 internal fun <T : Task> registerTask(project: Project, name: String, type: Class<T>, body: (T) -> (Unit)): TaskHolder<T> =
-    project.createOrRegisterTask(name, type, body)
+    project.createOrRegisterTask(name, type, emptyList(), body)
 
-internal inline fun <reified T : Task> Project.createOrRegisterTask(name: String, noinline body: (T) -> (Unit)): TaskHolder<T> =
-    createOrRegisterTask(name, T::class.java, body)
+internal inline fun <reified T : Task> Project.createOrRegisterTask(
+    name: String,
+    args: List<Any> = emptyList(),
+    noinline body: (T) -> (Unit)
+): TaskHolder<T> =
+    createOrRegisterTask(name, T::class.java, args, body)
 
-internal fun <T : Task> Project.createOrRegisterTask(name: String, type: Class<T>, body: (T) -> (Unit)): TaskHolder<T> {
+internal fun <T : Task> Project.createOrRegisterTask(
+    name: String,
+    type: Class<T>,
+    constructorArgs: List<Any> = emptyList(), // note: args are only allowed with Gradle 4.7+
+    body: (T) -> (Unit)
+): TaskHolder<T> {
     return if (useLazyTaskConfiguration) {
-        TaskProviderHolder(name, project, project.tasks.register(name, type) { with(it, body) })
+        val provider = project.tasks.register(name, type, *constructorArgs.toTypedArray()).apply { configure(body) }
+        TaskProviderHolder(name, project, provider)
     } else {
-        val result = LegacyTaskHolder(project.tasks.create(name, type))
+        val result = LegacyTaskHolder(if (constructorArgs.isEmpty()) {
+            project.tasks.create(name, type)
+        } else {
+            if (!isGradleVersionAtLeast(4, 7)) {
+                error("Cannot inject the arguments list into a task. This requires Gradle 4.7+.")
+            }
+            project.tasks.create(name, type, *constructorArgs.toTypedArray())
+        })
         with(result.doGetTask(), body)
         result
     }
