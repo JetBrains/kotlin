@@ -65,7 +65,10 @@ internal open class ProcessedFilesCache(
             stateFile.reader().use {
                 gson.fromJson(it, State::class.java)
             }.let {
-                if (it.version != version) null else it
+                if (it.version != version) {
+                    targetDir.deleteRecursively()
+                    null
+                } else it
             }
         } catch (e: JsonParseException) {
             project.logger.warn("Cannot read $stateFile", e)
