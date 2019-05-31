@@ -19,6 +19,9 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
+    override val testTaskDescription: String
+        get() = "Run all ${target.name} tests inside browser using karma and webpack"
+
     private val webpackTaskName = disambiguateCamelCased("webpack")
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
@@ -43,6 +46,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             it.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
 
             it.compilation = compilation
+            it.description = "build webpack bundle"
 
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
         }
@@ -57,6 +61,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
             it.bin = "webpack-dev-server"
             it.compilation = compilation
+            it.description = "start webpack dev server"
 
             it.devServer = KotlinWebpackConfigWriter.DevServer(
                 open = true,
