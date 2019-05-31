@@ -175,10 +175,13 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
       }
 
       updateFrom(currentNode);
+      //noinspection unchecked
+      currentNode.setDataNode(newDataNode);
       currentNode.addAll(newDataMap.values());
+    } else {
+      //noinspection unchecked
+      currentNode.setDataNode(newDataNode);
     }
-    //noinspection unchecked
-    currentNode.setDataNode(newDataNode);
   }
 
   private void doUpdateProject(ProjectNode node) {
