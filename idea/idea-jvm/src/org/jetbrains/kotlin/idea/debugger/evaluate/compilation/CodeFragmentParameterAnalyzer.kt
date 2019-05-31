@@ -288,7 +288,7 @@ class CodeFragmentParameterAnalyzer(
             is FunctionDescriptor -> {
                 val type = SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(target, false)
                 parameters.getOrPut(target) {
-                    Smart(Dumb(Kind.LOCAL_FUNCTION, target.name.asString()), type, target)
+                    Smart(Dumb(Kind.LOCAL_FUNCTION, target.name.asString()), type, target.original)
                 }
             }
             is ValueDescriptor -> {
