@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
@@ -57,6 +58,20 @@ class ServiceViewTree extends Tree {
     // DnD
     //RowsDnDSupport.install(myTree, myTreeModel);
     setDragEnabled(true);
+  }
+
+  @Override
+  public boolean isFileColorsEnabled() {
+    return true;
+  }
+
+  @Nullable
+  @Override
+  public Color getFileColorForPath(@NotNull TreePath path) {
+    Object node = path.getLastPathComponent();
+    if (!(node instanceof ServiceViewItem)) return null;
+
+    return ((ServiceViewItem)node).getViewDescriptor().getItemBackgroundColor();
   }
 
   private static class ServiceViewTreeCellRenderer extends ServiceViewTreeCellRendererBase {
