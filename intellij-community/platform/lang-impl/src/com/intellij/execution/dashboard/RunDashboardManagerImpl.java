@@ -173,6 +173,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
             ui.setLeftToolbarVisible(false);
             ui.setContentToolbarBefore(false);
           }
+          updateServiceContent(content);
         }
 
         updateToolWindowContent();
@@ -567,40 +568,19 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   }
 
   private void addServiceContent(@NotNull Content content) {
-    RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
-    Set<RunnerAndConfigurationSettings> settingsSet = ExecutionManagerImpl.getInstance(myProject).getConfigurations(descriptor);
-    RunnerAndConfigurationSettings settings = ContainerUtil.getFirstItem(settingsSet);
+    RunnerAndConfigurationSettings settings = findSettings(content);
     if (settings == null) return;
 
     myServiceLock.writeLock().lock();
     try {
-      List<RunDashboardServiceImpl> settingsServices = getServices(settings);
-      if (settingsServices == null) return;
-
-      RunDashboardServiceImpl service = settingsServices.get(0);
-      RunDashboardServiceImpl newService;
-      if (service.getContent() == null) {
-        newService = service;
-      }
-      else {
-        newService = new RunDashboardServiceImpl(settings);
-        settingsServices.add(newService);
-      }
-      newService.setContent(content);
+      doAddServiceContent(settings, content);
       Disposer.register(content, () -> {
-        newService.setContent(null);
+        RunDashboardServiceImpl service = findService(content);
+        if (service == null) return;
+
         myServiceLock.writeLock().lock();
         try {
-          List<RunDashboardServiceImpl> services = getServices(settings);
-          if (services == null) return;
-
-          if (services.size() > 1) {
-            services.remove(newService);
-          }
-          else if (!isShowInDashboard(settings.getConfiguration()) ||
-                   !RunManager.getInstance(myProject).getAllSettings().contains(settings)) {
-            myServices.remove(services);
-          }
+          removeServiceContent(service);
         }
         finally {
           myServiceLock.writeLock().unlock();
@@ -611,6 +591,80 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     finally {
       myServiceLock.writeLock().unlock();
     }
+  }
+
+  private void updateServiceContent(@NotNull Content content) {
+    RunnerAndConfigurationSettings settings = findSettings(content);
+    if (settings == null) return;
+
+    RunDashboardServiceImpl service = findService(content);
+    if (service == null || service.getSettings().equals(settings)) return;
+
+    myServiceLock.writeLock().lock();
+    try {
+      doAddServiceContent(settings, content);
+      removeServiceContent(service);
+    }
+    finally {
+      myServiceLock.writeLock().unlock();
+    }
+  }
+
+  private void doAddServiceContent(@NotNull RunnerAndConfigurationSettings settings, @NotNull Content content) {
+    List<RunDashboardServiceImpl> settingsServices = getServices(settings);
+    if (settingsServices == null) return;
+
+    RunDashboardServiceImpl service = settingsServices.get(0);
+    RunDashboardServiceImpl newService;
+    if (service.getContent() == null) {
+      newService = service;
+    }
+    else {
+      newService = new RunDashboardServiceImpl(settings);
+      settingsServices.add(newService);
+    }
+    newService.setContent(content);
+  }
+
+  private void removeServiceContent(@NotNull RunDashboardServiceImpl service) {
+    service.setContent(null);
+    RunnerAndConfigurationSettings contentSettings = service.getSettings();
+    List<RunDashboardServiceImpl> services = getServices(contentSettings);
+    if (services == null) return;
+
+    if (services.size() > 1) {
+      services.remove(service);
+    }
+    else if (!isShowInDashboard(contentSettings.getConfiguration()) ||
+             !RunManager.getInstance(myProject).getAllSettings().contains(contentSettings)) {
+      myServices.remove(services);
+    }
+  }
+
+  @Nullable
+  private RunDashboardServiceImpl findService(@NotNull Content content) {
+    myServiceLock.readLock().lock();
+    try {
+      for (List<RunDashboardServiceImpl> services : myServices) {
+        for (RunDashboardServiceImpl service : services) {
+          if (content.equals(service.getContent())) {
+            return service;
+          }
+        }
+      }
+    }
+    finally {
+      myServiceLock.readLock().unlock();
+      updateDashboard(true);
+    }
+    return null;
+  }
+
+  @Nullable
+  private RunnerAndConfigurationSettings findSettings(@NotNull Content content) {
+    RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
+    Set<RunnerAndConfigurationSettings> settingsSet = ExecutionManagerImpl.getInstance(myProject).getConfigurations(descriptor);
+    return ContainerUtil.getFirstItem(settingsSet);
   }
 
   @Nullable
