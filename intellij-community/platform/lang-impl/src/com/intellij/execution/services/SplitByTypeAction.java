@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -25,8 +26,9 @@ public class SplitByTypeAction extends DumbAwareAction {
     }
 
     Presentation presentation = e.getPresentation();
-    presentation.setVisible(true);
-    presentation.setEnabled(((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled());
+    boolean enabled = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled();
+    presentation.setEnabled(enabled);
+    presentation.setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
   }
 
   @Override

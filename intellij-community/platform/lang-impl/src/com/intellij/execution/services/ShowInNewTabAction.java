@@ -2,6 +2,7 @@
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceViewDragHelper.ServiceViewDragBean;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -13,7 +14,9 @@ public class ShowInNewTabAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     ServiceView serviceView = getSelectedView(e);
-    e.getPresentation().setEnabled(serviceView != null && !serviceView.getSelectedItems().isEmpty());
+    boolean enabled = serviceView != null && !serviceView.getSelectedItems().isEmpty();
+    e.getPresentation().setEnabled(enabled);
+    e.getPresentation().setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
   }
 
   @Override
