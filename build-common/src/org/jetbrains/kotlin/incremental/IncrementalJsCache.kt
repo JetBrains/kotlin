@@ -54,7 +54,6 @@ open class IncrementalJsCache(
     private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile))
 
     private val dirtySources = hashSetOf<File>()
-    private val dirtyPackages = hashSetOf<String>()
 
     private val headerFile: File
         get() = File(cachesDir, HEADER_FILE_NAME)
@@ -68,8 +67,9 @@ open class IncrementalJsCache(
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         removedAndCompiledSources.forEach { sourceFile ->
-            sourceToClassesMap[sourceFile].forEach {
-                dirtyPackages += it.parentOrNull()?.asString() ?: ""
+            // The common prefix of all FQN parents has to be the file package
+            sourceToClassesMap[sourceFile].map { it.parentOrNull()?.asString() ?: "" }.minBy { it.length }?.let {
+                packageMetadata.remove(it)
             }
         }
         super.markDirty(removedAndCompiledSources)
@@ -107,7 +107,6 @@ open class IncrementalJsCache(
 
         for ((packageName, metadata) in incrementalResults.packageMetadata) {
             packageMetadata.put(packageName, metadata)
-            dirtyPackages.remove(packageName)
         }
     }
 
@@ -122,12 +121,8 @@ open class IncrementalJsCache(
             inlineFunctions.remove(it)
         }
         removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses(), changesCollector)
-        dirtyPackages.forEach {
-            packageMetadata.remove(it)
-        }
         dirtySources.clear()
         dirtyOutputClassesMap.clean()
-        dirtyPackages.clear()
     }
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
@@ -142,9 +137,7 @@ open class IncrementalJsCache(
 
     fun packageMetadata(): Map<String, ByteArray> = hashMapOf<String, ByteArray>().apply {
         for (fqNameString in packageMetadata.keys()) {
-            if (fqNameString !in dirtyPackages) {
-                put(fqNameString, packageMetadata[fqNameString]!!)
-            }
+            put(fqNameString, packageMetadata[fqNameString]!!)
         }
     }
 }
