@@ -38,6 +38,7 @@ import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.pom.Navigatable;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
@@ -220,7 +221,9 @@ public class RunDashboardContent extends JPanel implements TreeContent, Disposab
         if (myLastSelection instanceof RunDashboardRunConfigurationNode && myLastSelection.getChildren().isEmpty()) {
           RunDashboardRunConfigurationNode node = (RunDashboardRunConfigurationNode)myLastSelection;
           for (RunDashboardCustomizer customizer : node.getCustomizers()) {
-            if (customizer.handleDoubleClick(event, node)) {
+            Navigatable navigatable = customizer.getNavigatable(node);
+            if (navigatable != null && navigatable.canNavigateToSource()) {
+              navigatable.navigate(true);
               return true;
             }
           }

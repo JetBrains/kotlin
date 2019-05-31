@@ -23,6 +23,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.pom.Navigatable;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
@@ -31,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -272,14 +272,16 @@ public class RunConfigurationsServiceViewContributor
       });
     }
 
+    @Nullable
     @Override
-    public boolean handleDoubleClick(@NotNull MouseEvent event) {
+    public Navigatable getNavigatable() {
       for (RunDashboardCustomizer customizer : node.getCustomizers()) {
-        if (customizer.handleDoubleClick(event, node)) {
-          return true;
+        Navigatable navigatable = customizer.getNavigatable(node);
+        if (navigatable != null) {
+          return navigatable;
         }
       }
-      return false;
+      return null;
     }
 
     @Nullable
