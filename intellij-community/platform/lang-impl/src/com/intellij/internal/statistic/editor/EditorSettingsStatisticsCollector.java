@@ -3,6 +3,7 @@ package com.intellij.internal.statistic.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.CodeInsightWorkspaceSettings;
+import com.intellij.codeInsight.daemon.impl.tooltips.TooltipActionProvider;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.intellij.internal.statistic.beans.MetricEventFactoryKt.newBooleanMetric;
 import static com.intellij.internal.statistic.beans.MetricEventUtilKt.addBoolIfDiffers;
 import static com.intellij.internal.statistic.beans.MetricEventUtilKt.addIfDiffers;
 
@@ -115,8 +117,15 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     addBoolIfDiffers(set, cis, cisDefault, s -> s.SHOW_EXTERNAL_ANNOTATIONS_INLINE, "externalAnnotationsInline");
     addBoolIfDiffers(set, cis, cisDefault, s -> s.SHOW_INFERRED_ANNOTATIONS_INLINE, "inferredAnnotationsInline");
     addBoolIfDiffers(set, cis, cisDefault, s -> s.TAB_EXITS_BRACKETS_AND_QUOTES, "tabExitsBracketsAndQuotes");
+    addTooltipActionsMetricIfDiffers(set);
 
     return set;
+  }
+
+  private static void addTooltipActionsMetricIfDiffers(@NotNull Set<MetricEvent> set) {
+    if (TooltipActionProvider.isShowActions() != TooltipActionProvider.SHOW_FIXES_DEFAULT_VALUE) {
+      set.add(newBooleanMetric("show.actions.in.tooltip", false));
+    }
   }
 
   public static class ProjectUsages extends ProjectUsagesCollector {
