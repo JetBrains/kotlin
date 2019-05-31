@@ -40,10 +40,15 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   @NotNull
   List<? extends ServiceViewItem> getRoots() {
     List<? extends ServiceViewItem> roots = filterEmptyGroups(doGetRoots());
-    if (!myShowContributorRoots && roots.stream().anyMatch(ContributorNode.class::isInstance)) {
-      roots = roots.stream()
-        .flatMap(item -> item instanceof ContributorNode ? doGetChildren(item).stream() : Stream.of(item))
-        .collect(Collectors.toList());
+    if (roots.stream().anyMatch(ContributorNode.class::isInstance)) {
+      if (myShowContributorRoots) {
+        roots = ContainerUtil.filter(roots, item -> !(item instanceof ContributorNode) || !doGetChildren(item).isEmpty());
+      }
+      else {
+        roots = roots.stream()
+          .flatMap(item -> item instanceof ContributorNode ? doGetChildren(item).stream() : Stream.of(item))
+          .collect(Collectors.toList());
+      }
     }
     if (myFlat) {
       return JBTreeTraverser.from((Function<ServiceViewItem, List<ServiceViewItem>>)node -> new ArrayList<>(doGetChildren(node)))
