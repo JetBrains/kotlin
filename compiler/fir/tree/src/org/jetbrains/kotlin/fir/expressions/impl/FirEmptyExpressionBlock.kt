@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 class FirEmptyExpressionBlock(
     session: FirSession
 ) : FirAbstractBlock(session, null), FirBlock {
-    override val statements = listOf()
+    override val statements = listOf<FirStatement>()
 }
