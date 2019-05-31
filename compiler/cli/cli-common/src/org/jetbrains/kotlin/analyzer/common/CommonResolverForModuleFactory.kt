@@ -23,21 +23,21 @@ import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.container.useImpl
-import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
@@ -127,6 +127,7 @@ class CommonResolverForModuleFactory(private val shouldCheckExpectActual: Boolea
                 "sources for metadata serializer",
                 ProjectContext(project, "metadata serializer"),
                 listOf(moduleInfo),
+                invalidateOnOOCB = false,
                 modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
                 moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
                     override fun getLanguageVersionSettings(
