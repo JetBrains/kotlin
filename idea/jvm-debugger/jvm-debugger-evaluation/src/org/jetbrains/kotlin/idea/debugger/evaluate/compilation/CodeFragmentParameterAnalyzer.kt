@@ -279,7 +279,7 @@ class CodeFragmentParameterAnalyzer(
             is SimpleFunctionDescriptor -> {
                 val type = target.createFunctionType(target.builtIns, target.isSuspend) ?: return null
                 parameters.getOrPut(target) {
-                    Smart(Dumb(Kind.LOCAL_FUNCTION, target.name.asString()), type, target)
+                    Smart(Dumb(Kind.LOCAL_FUNCTION, target.name.asString()), type, target.original)
                 }
             }
             is ValueDescriptor -> {

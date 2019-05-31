@@ -62,4 +62,11 @@ fun main(args: Array<String>) {
     }
 
     myLocalFun7()
+
+    fun <T> myLocalFun8(): T = 1 as T
+
+    // EXPRESSION: myLocalFun8<Int>()
+    // RESULT: 1: I
+    //Breakpoint!
+    myLocalFun8<Int>()
 }
