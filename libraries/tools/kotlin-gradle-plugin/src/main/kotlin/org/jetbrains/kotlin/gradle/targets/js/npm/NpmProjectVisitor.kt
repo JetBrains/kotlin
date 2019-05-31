@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
@@ -102,10 +101,12 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
         val npmDependencies = mutableSetOf<NpmDependency>()
         val gradleDeps = NpmGradleDependencies()
 
+        val aggregateConfiguration = project.configurations.create("$name-js")
+
         compilation.allKotlinSourceSets.forEach { sourceSet ->
             sourceSet.relatedConfigurationNames.forEach { configurationName ->
                 val configuration = project.configurations.getByName(configurationName)
-                visitConfiguration(configuration, npmDependencies, gradleDeps)
+                aggregateConfiguration.extendsFrom(configuration)
             }
         }
 
@@ -114,16 +115,17 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
         val requiredByTasks = requiredFromTasksByCompilation[compilation]
         var nodeModulesRequired = false
         if (requiredByTasks != null && requiredByTasks.isNotEmpty()) {
-            val configuration = project.configurations.create("$name-jsTools")
+            val toolsConfiguration = project.configurations.create("$name-jsTools")
             requiredByTasks.forEach {
                 if (it.nodeModulesRequired) nodeModulesRequired = true
                 it.requiredNpmDependencies.forEach { requirement ->
-                    configuration.dependencies.add(requirement.createDependency(project))
+                    toolsConfiguration.dependencies.add(requirement.createDependency(project))
                 }
             }
-            configuration.resolve()
-            visitConfiguration(configuration, npmDependencies, gradleDeps)
+            aggregateConfiguration.extendsFrom(toolsConfiguration)
         }
+
+        visitConfiguration(aggregateConfiguration, npmDependencies, gradleDeps)
 
         npmDependencies.forEach {
             packageJson.dependencies[it.key] = resolver.chooseVersion(packageJson.dependencies[it.key], it.version)
