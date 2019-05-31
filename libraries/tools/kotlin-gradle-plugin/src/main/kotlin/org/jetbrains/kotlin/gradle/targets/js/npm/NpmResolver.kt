@@ -76,11 +76,8 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
 
     val gradleNodeModules = GradleNodeModulesCache(rootProject)
     val nodeJs = NodeJsPlugin.apply(rootProject).root
-    val packageManager by lazy {
-        val packageManager = nodeJs.packageManager
-        packageManager.setup(rootProject)
-        packageManager
-    }
+    val packageManager
+        get() = nodeJs.packageManager
 
     private val allNpmPackages = mutableListOf<NpmProjectPackage>()
 

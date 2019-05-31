@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectPackage
 
 object YarnSimple : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: NpmProjectPackage) {
+        setup(resolvedNpmProject.project.rootProject)
+
         val project = resolvedNpmProject.project
 
         YarnUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
