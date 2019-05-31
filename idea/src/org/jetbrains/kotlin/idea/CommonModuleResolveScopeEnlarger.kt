@@ -15,7 +15,9 @@ import com.intellij.psi.ResolveScopeEnlarger
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.idea.caches.project.implementingModules
+import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
@@ -23,6 +25,11 @@ class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
     override fun getAdditionalResolveScope(file: VirtualFile, project: Project): SearchScope? {
         val module = ProjectFileIndex.getInstance(project).getModuleForFile(file) ?: return null
         if (!module.platform.isCommon()) return null
+
+        val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
+        if (!moduleFileIndex.isInSourceContentWithoutInjected(file) && !moduleFileIndex.isInTestSourceContentKotlinAware(file)) {
+            return null
+        }
 
         val implementingModule = module.implementingModules.find { it.platform.isJvm() } ?: return null
 
