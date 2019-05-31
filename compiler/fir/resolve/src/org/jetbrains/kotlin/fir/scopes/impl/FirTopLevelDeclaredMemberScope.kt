@@ -36,7 +36,7 @@ class FirTopLevelDeclaredMemberScope(
                 name
             ).stop()
         ) {
-            return ProcessorAction.STOP
+            return STOP
         }
         val symbols = provider.getTopLevelCallableSymbols(packageFqName, name)
         for (symbol in symbols) {
