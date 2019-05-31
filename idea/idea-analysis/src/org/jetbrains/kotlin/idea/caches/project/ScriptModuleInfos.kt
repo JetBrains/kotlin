@@ -11,13 +11,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 data class ScriptModuleInfo(
     val project: Project,
@@ -51,7 +52,7 @@ data class ScriptModuleInfo(
     }
 
     override val platform: TargetPlatform
-        get() = JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): choose proper target version
+        get() = TargetPlatformDetector.getPlatform(project, scriptDefinition)
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = JvmPlatformAnalyzerServices
