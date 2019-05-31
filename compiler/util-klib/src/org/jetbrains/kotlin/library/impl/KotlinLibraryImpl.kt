@@ -108,19 +108,19 @@ open class IrLibraryImpl(
     }
 }
 
-open class BackendLibraryImpl(
+open class KotlinLibraryImpl(
     base: BaseKotlinLibraryImpl,
     metadata: MetadataLibraryImpl,
     ir: IrLibraryImpl
-) : BackendLibrary,
+) : KotlinLibrary,
     BaseKotlinLibrary by base,
     MetadataLibrary by metadata,
     IrLibrary by ir
 
-fun createBackendLibrary(
+fun createKotlinLibrary(
     libraryFile: File,
     isDefault: Boolean = false
-): BackendLibrary {
+): KotlinLibrary {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile)
     val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile)
     val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile)
@@ -129,5 +129,5 @@ fun createBackendLibrary(
     val metadata = MetadataLibraryImpl(metadataAccess)
     val ir = IrLibraryImpl(irAccess)
 
-    return BackendLibraryImpl(base, metadata, ir)
+    return KotlinLibraryImpl(base, metadata, ir)
 }

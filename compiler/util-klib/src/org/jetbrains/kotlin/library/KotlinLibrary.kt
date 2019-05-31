@@ -45,7 +45,4 @@ val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
                 UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it"))
             }
 
-interface BackendLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
-
-
-// typealias JsLibrary = BackendLibrary?
+interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
