@@ -5,6 +5,86 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import java.math.BigInteger
+
+data class SemVer(
+    val major: BigInteger,
+    val minor: BigInteger,
+    val patch: BigInteger,
+    val preRelease: String? = null,
+    val build: String? = null
+) : Comparable<SemVer> {
+    override fun compareTo(other: SemVer): Int {
+        val compareMajor = major.compareTo(other.major)
+        if (compareMajor != 0) return compareMajor
+
+        val compareMinor = minor.compareTo(other.minor)
+        if (compareMinor != 0) return compareMinor
+
+        val comparePatch = patch.compareTo(other.patch)
+        if (comparePatch != 0) return comparePatch
+
+        val comparePreRelease = compareValues(preRelease, other.preRelease)
+        if (comparePreRelease != 0) return comparePreRelease
+
+        val compareBuild = compareValues(build, other.build)
+        if (compareBuild != 0) return compareBuild
+
+        return 0
+    }
+
+
+    override fun toString() = "$major.$minor.$patch" +
+            (if (preRelease != null) "-$preRelease" else "") +
+            (if (build != null) "+$build" else "")
+
+    fun toDebugString(): String {
+        return "SemVer(major=$major, minor=$minor, patch=$patch, preRelease=$preRelease, build=$build)"
+    }
+
+    companion object {
+        fun from(string: String, loose: Boolean = false): SemVer {
+            val fixed = if (loose) fixSemver(string) else string
+
+            val minorStart = fixed.indexOf('.')
+            check(minorStart != -1) { "Bad semver: $string. Minor version missed." }
+
+            val patchStart = fixed.indexOf('.', minorStart + 1)
+            check(patchStart != -1) { "Bad semver: $string. Patch version missed." }
+
+            val preReleaseStart = fixed.indexOf('-', patchStart + 1)
+            val buildStart = fixed.indexOf('+', if (preReleaseStart == -1) patchStart + 1 else preReleaseStart + 1)
+            val preReleaseEnd = when {
+                buildStart != -1 -> buildStart
+                else -> fixed.length
+            }
+            val patchEnd = when {
+                preReleaseStart != -1 -> preReleaseStart
+                buildStart != -1 -> buildStart
+                else -> fixed.length
+            }
+
+            val major = fixed.substring(0, minorStart)
+            val minor = fixed.substring(minorStart + 1, patchStart)
+            val patch = fixed.substring(patchStart + 1, patchEnd)
+            val preRelease = if (preReleaseStart != -1) fixed.substring(preReleaseStart + 1, preReleaseEnd) else ""
+            val build = if (buildStart != -1) fixed.substring(buildStart + 1) else ""
+
+            check(major.isNotBlank()) { "Bad semver: $string. Major version missed." }
+            check(minor.isNotBlank()) { "Bad semver: $string. Minor version missed." }
+            check(patch.isNotBlank()) { "Bad semver: $string. Patch version missed." }
+
+            return SemVer(
+                BigInteger(major),
+                BigInteger(minor),
+                BigInteger(patch),
+                preRelease.takeIf { it.isNotBlank() },
+                build.takeIf { it.isNotBlank() }
+            )
+        }
+    }
+}
+
 internal fun fixSemver(version: String): String {
     var i = 0
     var number = 0
