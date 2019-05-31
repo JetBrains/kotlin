@@ -1933,7 +1933,7 @@
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
-                     level="WARNING"
+                     level="INFO"
                      language="kotlin"
     />
 
