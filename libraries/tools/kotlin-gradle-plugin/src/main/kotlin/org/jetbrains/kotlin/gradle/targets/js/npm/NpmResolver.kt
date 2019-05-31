@@ -21,7 +21,7 @@ import java.nio.file.Files
  * For external gradle modules, fake npm packages will be created and added to `package.json`
  * as path to directory.
  */
-internal class NpmResolver private constructor(val rootProject: Project) : AutoCloseable {
+internal class NpmResolver private constructor(val rootProject: Project) {
     companion object {
         fun resolveIfNeeded(project: Project): ResolutionCallResult {
             val rootProject = project.rootProject
@@ -93,14 +93,13 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
     fun resolve() {
         resolve(rootProject)
         removeOutdatedPackages()
+        gradleNodeModules.close()
 
         if (allNpmPackages.any { it.npmDependencies.isNotEmpty() }) {
             packageManager.resolveRootProject(rootProject, allNpmPackages)
         } else if (allNpmPackages.any { it.hasNodeModulesDependentTasks }) {
             NpmSimpleLinker(rootProject).link(allNpmPackages)
         }
-
-        close()
     }
 
     private fun removeOutdatedPackages() {
@@ -150,8 +149,4 @@ internal class NpmResolver private constructor(val rootProject: Project) : AutoC
 
     fun chooseVersion(oldVersion: String?, newVersion: String): String =
         oldVersion ?: newVersion // todo: real versions conflict resolution
-
-    override fun close() {
-        gradleNodeModules.close()
-    }
 }
