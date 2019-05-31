@@ -10,4 +10,7 @@ import java.io.File
 /**
  * Fake NodeJS module directory created from Gradle external module
  */
-data class GradleNodeModule(val name: String, val version: String, val path: File)
+data class GradleNodeModule(val name: String, val version: String, val path: File) {
+    val semver: SemVer
+        get() = SemVer.from(version)
+}
