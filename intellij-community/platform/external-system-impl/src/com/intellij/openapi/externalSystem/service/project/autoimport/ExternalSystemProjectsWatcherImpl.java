@@ -54,8 +54,6 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
-import com.intellij.vfs.AsyncVfsEventsListener;
-import com.intellij.vfs.AsyncVfsEventsPostProcessor;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -167,8 +165,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
       return;
     }
     myUpdatesQueue.activate();
-    AsyncVfsEventsPostProcessor.getInstance().addListener(new MyFileChangeListener(this), this);
-    //VirtualFileManager.getInstance().addAsyncFileListener(new MyFileChangeListener(this), myChangedDocumentsQueue);
+    VirtualFileManager.getInstance().addAsyncFileListener(new FileChangeListener(this), this);
 
     makeUserAware(myChangedDocumentsQueue, myProject);
     myChangedDocumentsQueue.activate();
@@ -217,7 +214,6 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
         });
       }
     };
-    //final MessageBusConnection myBusConnection = myProject.getMessageBus().connect(myChangedDocumentsQueue);
     EditorFactory.getInstance().getEventMulticaster().addDocumentListener(myDocumentListener, myChangedDocumentsQueue);
     ServiceManager.getService(ExternalSystemProgressNotificationManager.class).addNotificationListener(this);
 
@@ -686,23 +682,6 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     }
   }
 
-  private class MyFileChangeListener implements AsyncVfsEventsListener {
-    private final AsyncFileListener myFileListener;
-
-    MyFileChangeListener(ExternalSystemProjectsWatcherImpl watcher) {
-      myFileListener = new FileChangeListener(watcher);
-    }
-
-    @Override
-    public void filesChanged(@NotNull List<? extends VFileEvent> events) {
-      final AsyncFileListener.ChangeApplier applier = myFileListener.prepareChange(events);
-      if (applier != null) {
-        applier.beforeVfsChange();
-        applier.afterVfsChange();
-      }
-    }
-  }
-
   private class FileChangeListener extends AsyncFileChangeListenerBase {
     private final ExternalSystemProjectsWatcherImpl myWatcher;
     private final MultiMap<String/* file path */, String /* project path */> myKnownFiles = MultiMap.createSet();
@@ -795,7 +774,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
       if (areFileSetsInitialised()) return;
 
       filesToUpdate = new ArrayList<>();
-      filesToRemove = new ArrayList<>();
+      filesToRemove = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
