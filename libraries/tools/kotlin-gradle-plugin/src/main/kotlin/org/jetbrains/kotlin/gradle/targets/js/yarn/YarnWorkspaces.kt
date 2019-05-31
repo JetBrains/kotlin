@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectPackage
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import java.io.File
 
 object YarnWorkspaces : YarnBasics() {
@@ -53,11 +50,7 @@ object YarnWorkspaces : YarnBasics() {
         rootPackageJson.private = true
 
         val npmProjectWorkspaces = npmProjects.map { it.npmProject.dir.relativeTo(nodeJsWorldDir).path }
-        val importedProjectWorkspaces = npmProjects.flatMapTo(mutableSetOf()) {
-            it.gradleDependencies.externalModules.map { importedProject ->
-                importedProject.path.relativeTo(nodeJsWorldDir).path
-            }
-        }
+        val importedProjectWorkspaces = YarnImportedPackagesVersionResolver(rootProject, npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
 
