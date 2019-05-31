@@ -223,7 +223,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   @Override
   public Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass, boolean activate, boolean focus) {
     AsyncPromise<Void> result = new AsyncPromise<>();
-    AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
+    // Ensure model is updated, then iterate over service views on EDT in order to find view with service and select it.
+    myModel.getInvoker().runOrInvokeLater(() -> AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
       Runnable runnable = () -> {
         ContentManager contentManager = myContentManager;
         List<Content> contents =
@@ -243,7 +244,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       else {
         runnable.run();
       }
-    });
+    }));
     return result;
   }
 
