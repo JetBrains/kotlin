@@ -34,6 +34,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private var session: KtScratchExecutionSession? = null
 
     override fun execute() {
+        handler.clear(file)
         handler.onStart(file)
 
         session = KtScratchExecutionSession(file, this)

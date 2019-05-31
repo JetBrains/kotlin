@@ -29,7 +29,6 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     private const val minSpaceCount = 4
 
     override fun onStart(file: ScratchFile) {
-        clear(file)
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
