@@ -768,7 +768,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
 
     override fun transformBlock(block: FirBlock, data: Any?): CompositeTransformResult<FirStatement> {
-        val block = super.transformBlock(block, data).single as FirBlock
+        val block = block.transformChildren(this, data) as FirBlock
         val statement = block.statements.lastOrNull()
 
         val resultExpression = when (statement) {
