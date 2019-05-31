@@ -121,6 +121,16 @@ class ServiceViewSourceScrollHelper {
     }
 
     @Override
+    public void update(@NotNull AnActionEvent e) {
+      Project project = e.getProject();
+      if (project == null) {
+        e.getPresentation().setEnabledAndVisible(false);
+        return;
+      }
+      e.getPresentation().setEnabledAndVisible(!isAutoScrollFromSourceEnabled(project));
+    }
+
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
       Project project = e.getProject();
       if (project == null) return;
