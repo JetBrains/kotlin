@@ -34,7 +34,7 @@ kotlin {
         }
         compilations["main"].cinterops {
             val tensorflow by creating {
-                includeDirs(tensorflowHome.resolve("/include"))
+                includeDirs(tensorflowHome.resolve("include"))
             }
         }
     }

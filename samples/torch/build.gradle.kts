@@ -36,8 +36,8 @@ kotlin {
         compilations["main"].cinterops {
             val torch by creating {
                 includeDirs(
-                    torchHome.resolve("/include"),
-                    torchHome.resolve("/include/TH")
+                    torchHome.resolve("include"),
+                    torchHome.resolve("include/TH")
                 )
             }
         }

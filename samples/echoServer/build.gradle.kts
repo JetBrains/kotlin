@@ -4,7 +4,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-// Add two additional presets for Raspberry Pi.
+// Add two additional presets for Raspberry Pi and Linux/ARM64.
 val raspberryPiPresets: List<KotlinNativeTargetPreset> = listOf("linuxArm32Hfp", "linuxArm64").map {
     kotlin.presets[it] as KotlinNativeTargetPreset
 }
@@ -43,5 +43,10 @@ kotlin {
             val mainSourceSetName = "echoServer${preset.name.capitalize()}Main"
             getByName(mainSourceSetName).dependsOn(echoServerMain)
         }
+    }
+
+    // Enable experimental stdlib API used by the sample.
+    sourceSets.all {
+        languageSettings.useExperimentalAnnotation("kotlin.ExperimentalStdlibApi")
     }
 }
