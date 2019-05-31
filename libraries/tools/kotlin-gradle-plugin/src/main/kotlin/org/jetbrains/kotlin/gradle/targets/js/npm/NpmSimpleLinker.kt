@@ -90,7 +90,7 @@ class NpmSimpleLinker(val rootProject: Project) {
             }
 
             if (result.exitValue != 0) {
-                error("Cannot create window junctions: nodejs exited with ${result.exitValue}")
+                error("Cannot create windows junctions: nodejs exited with ${result.exitValue}")
             }
         }
     }

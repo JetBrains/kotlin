@@ -62,6 +62,8 @@ abstract class KotlinJsSubTarget(
         }
     }
 
+    abstract val testTaskDescription: String
+
     private fun configureTests(compilation: KotlinJsCompilation) {
         // apply plugin (cannot be done at task instantiation time)
         val nodeJs = NodeJsPlugin.apply(target.project).root
@@ -70,6 +72,7 @@ abstract class KotlinJsSubTarget(
             val compileTask = compilation.compileKotlinTask
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
+            testJs.description = testTaskDescription
 
             testJs.dependsOn(target.project.nodeJs.root.npmResolveTask, compileTask, nodeJs.nodeJsSetupTask)
 

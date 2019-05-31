@@ -35,6 +35,7 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
     val runTask
         get() = project.tasks.maybeCreate(runTaskName).also {
+            it.description = "Run js on all configured platforms"
             if (runTaskName != runTaskNameSuffix) {
                 project.whenEvaluated {
                     project.tasks.maybeCreate(runTaskNameSuffix).dependsOn(it)

@@ -19,6 +19,9 @@ class KotlinNodeJs(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "node"),
     KotlinJsNodeDsl {
 
+    override val testTaskDescription: String
+        get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
+
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
     }
@@ -30,7 +33,11 @@ class KotlinNodeJs(target: KotlinJsTarget) :
     override fun configureRun(compilation: KotlinJsCompilation) {
         val project = target.project
 
+        "true".toBoolean()
+
         val runTaskHolder = project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) { runTask ->
+            runTask.description = "run compiled js in nodejs"
+
             val compileKotlinTask = compilation.compileKotlinTask
             runTask.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
 
