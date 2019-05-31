@@ -137,6 +137,8 @@ open class KtLightMethodImpl protected constructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> =
             typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
+    override fun hasTypeParameters() = typeParameters.isNotEmpty()
+
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature {
         if (substitutor == PsiSubstitutor.EMPTY) {
             return clsDelegate.getSignature(substitutor)
@@ -217,8 +219,6 @@ open class KtLightMethodImpl protected constructor(
     }
 
     override fun getThrowsList() = clsDelegate.throwsList
-
-    override fun hasTypeParameters() = clsDelegate.hasTypeParameters()
 
     override fun isVarArgs() = (dummyDelegate ?: clsDelegate).isVarArgs
 
