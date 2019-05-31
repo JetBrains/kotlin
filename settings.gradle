@@ -22,6 +22,8 @@ pluginManagement {
 include ":kotlin-build-common",
         ":compiler",
         ":compiler:util",
+        ":kotlin-util-io",
+        ":kotlin-util-klib",
         ":daemon-common",
         ":daemon-common-new",
         ":kotlin-daemon",
@@ -323,6 +325,8 @@ project(':compiler:backend.js').projectDir = "$rootDir/compiler/ir/backend.js" a
 project(':compiler:backend.jvm').projectDir = "$rootDir/compiler/ir/backend.jvm" as File
 project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/serialization.common" as File
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
+project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
+project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
 project(':kotlin-native:kotlin-native-utils').projectDir = "$rootDir/konan/utils" as File
 project(':kotlin-native:kotlin-native-library-reader').projectDir = "$rootDir/konan/library-reader" as File
 project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
