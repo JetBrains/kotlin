@@ -34,15 +34,14 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
 
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
         val scriptDefinition = file.findScriptDefinition(project)
-        // TODO: this should get this particular scripts dependencies
         return when {
             scriptDefinition == null -> null
             // This is a workaround for completion in scripts and REPL to provide module dependencies
             scriptDefinition.baseClassType.fromClass == Any::class -> null
             scriptDefinition.asLegacyOrNull<StandardIdeScriptDefinition>() != null -> null
             scriptDefinition is ScriptDefinition.FromConfigurations || scriptDefinition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>() != null -> {
-                // TODO: should include the file itself
-                ScriptDependenciesManager.getInstance(project).getAllScriptsDependenciesClassFilesScope()
+                GlobalSearchScope.fileScope(project, file)
+                    .union(ScriptDependenciesManager.getInstance(project).getScriptDependenciesClassFilesScope(file))
             }
             else -> null
         }
