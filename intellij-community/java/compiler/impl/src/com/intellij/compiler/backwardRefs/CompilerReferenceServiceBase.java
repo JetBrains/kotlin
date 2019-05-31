@@ -94,7 +94,7 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
    @Override
   public void projectOpened() {
     if (CompilerReferenceService.isEnabled()) {
-      myDirtyScopeHolder.installVFSListener();
+      myDirtyScopeHolder.installVFSListener(myProject);
 
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         CompilerManager compilerManager = CompilerManager.getInstance(myProject);
