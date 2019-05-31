@@ -16,10 +16,10 @@
 package com.intellij.find.editorHeaderActions;
 
 import com.intellij.find.EditorSearchSession;
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ShortcutProvider;
 import com.intellij.openapi.actionSystem.ShortcutSet;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import javax.swing.*;
 
 public abstract class OccurrenceAction extends DumbAwareAction implements ShortcutProvider {
   protected OccurrenceAction(@NotNull String baseActionId, @NotNull Icon icon) {
-    copyFrom(ActionManager.getInstance().getAction(baseActionId));
+    ActionUtil.copyFrom(this, baseActionId);
     getTemplatePresentation().setIcon(icon);
   }
 

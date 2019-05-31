@@ -35,6 +35,7 @@ import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.ide.OccurenceNavigator;
 import com.intellij.ide.actions.PinActiveTabAction;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -290,11 +291,8 @@ public class BuildView extends CompositeView<ExecutionConsole>
     StartBuildEvent startBuildEvent = myStartBuildEventRef.get();
     if (startBuildEvent != null && startBuildEvent.getProcessHandler() != null) {
       stopAction = new StopProcessAction("Stop", "Stop", startBuildEvent.getProcessHandler());
-      AnAction generalStopAction = ActionManager.getInstance().getAction(IdeActions.ACTION_STOP_PROGRAM);
-      if (generalStopAction != null) {
-        stopAction.copyFrom(generalStopAction);
-        stopAction.registerCustomShortcutSet(generalStopAction.getShortcutSet(), this);
-      }
+      ActionUtil.copyFrom(stopAction, IdeActions.ACTION_STOP_PROGRAM);
+      stopAction.registerCustomShortcutSet(stopAction.getShortcutSet(), this);
     }
     final DefaultActionGroup consoleActionGroup = new DefaultActionGroup() {
       @Override
