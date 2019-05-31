@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
-
 plugins {
     kotlin("multiplatform")
     `maven-publish`
@@ -21,28 +18,28 @@ val cleanLocalRepo by tasks.creating(Delete::class) {
     delete(localRepo)
 }
 
-// Determine host preset.
-val hostOs = System.getProperty("os.name")
-
-val hostPreset: KotlinNativeTargetPreset = when {
-    hostOs == "Mac OS X" -> "macosX64"
-    hostOs == "Linux" -> "linuxX64"
-    hostOs.startsWith("Windows") -> "mingwX64"
-    else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
-}.let {
-    kotlin.presets[it] as KotlinNativeTargetPreset
-}
-
 val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
 
 kotlin {
-    targetFromPreset(hostPreset, "libcurl") {
+
+    // Determine host preset.
+    val hostOs = System.getProperty("os.name")
+
+    // Create target for the host platform.
+    val hostTarget = when {
+        hostOs == "Mac OS X" -> macosX64("libcurl")
+        hostOs == "Linux" -> linuxX64("libcurl")
+        hostOs.startsWith("Windows") -> mingwX64("libcurl")
+        else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
+    }
+
+    hostTarget.apply {
         compilations["main"].cinterops {
             val libcurl by creating {
-                when (hostPreset.konanTarget) {
-                    MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
-                    LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
-                    MINGW_X64 -> includeDirs.headerFilterOnly(mingwPath.resolve("/include"))
+                when (preset) {
+                    presets["macosX64"] -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
+                    presets["linuxX64"] -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
+                    presets["mingwX64"] -> includeDirs.headerFilterOnly(mingwPath.resolve("/include"))
                 }
             }
         }

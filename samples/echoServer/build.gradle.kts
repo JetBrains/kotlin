@@ -4,41 +4,35 @@ plugins {
     kotlin("multiplatform")
 }
 
-// Determine host preset.
-val hostOs = System.getProperty("os.name")
-
-val hostPreset: KotlinNativeTargetPreset = when {
-    hostOs == "Mac OS X" -> "macosX64"
-    hostOs == "Linux" -> "linuxX64"
-    hostOs.startsWith("Windows") -> "mingwX64"
-    else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
-}.let {
-    kotlin.presets[it] as KotlinNativeTargetPreset
-}
-
 // Add two additional presets for Raspberry Pi.
 val raspberryPiPresets: List<KotlinNativeTargetPreset> = listOf("linuxArm32Hfp", "linuxArm64").map {
     kotlin.presets[it] as KotlinNativeTargetPreset
 }
 
 kotlin {
-    targetFromPreset(hostPreset, "echoServer") {
+    // Determine host preset.
+    val hostOs = System.getProperty("os.name")
+
+    // Create a target for the host platform.
+    val hostTarget = when {
+        hostOs == "Mac OS X" -> macosX64("echoServer")
+        hostOs == "Linux" -> linuxX64("echoServer")
+        hostOs.startsWith("Windows") -> mingwX64("echoServer")
+        else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
+    }
+
+    // Create cross-targets.
+    val raspberryPiTargets = raspberryPiPresets.map { preset ->
+        val targetName = "echoServer${preset.name.capitalize()}"
+        targetFromPreset(preset, targetName) {}
+    }
+
+    // Configure executables for all targets.
+    configure(raspberryPiTargets + listOf(hostTarget)) {
         binaries {
             executable {
                 entryPoint = "sample.echoserver.main"
                 runTask?.args(3000)
-            }
-        }
-    }
-
-    raspberryPiPresets.forEach { preset ->
-        val targetName = "echoServer${preset.name.capitalize()}"
-        targetFromPreset(preset, targetName) {
-            binaries {
-                executable {
-                    entryPoint = "sample.echoserver.main"
-                    runTask?.args(3000)
-                }
             }
         }
     }

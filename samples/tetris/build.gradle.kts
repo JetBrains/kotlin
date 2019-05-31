@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
 
 plugins {
     kotlin("multiplatform")
@@ -19,8 +17,6 @@ val isRaspberryPiBuild =
 val isMingwX86Build =
     isWindows && project.findProperty("tetris.mingwX86.build")?.toString()?.toBoolean() == true
 
-val hostPreset = determinePreset()
-
 val winCompiledResourceFile = buildDir.resolve("compiledWindowsResources/Tetris.res")
 
 val kotlinNativeDataPath = System.getenv("KONAN_DATA_DIR")?.let { File(it) }
@@ -32,14 +28,14 @@ else
     File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
 
 kotlin {
-    targetFromPreset(hostPreset, "tetris") {
+    createRequestedTarget("tetris").apply {
         binaries {
             executable {
                 entryPoint = "sample.tetris.main"
-                when (hostPreset.konanTarget) {
-                    MACOS_X64 -> linkerOpts("-L/opt/local/lib", "-L/usr/local/lib", "-lSDL2")
-                    LINUX_X64 -> linkerOpts("-L/usr/lib64", "-L/usr/lib/x86_64-linux-gnu", "-lSDL2")
-                    MINGW_X64, MINGW_X86 -> linkerOpts(
+                when (preset) {
+                    presets["macosX64"] -> linkerOpts("-L/opt/local/lib", "-L/usr/local/lib", "-lSDL2")
+                    presets["linuxX64"] -> linkerOpts("-L/usr/lib64", "-L/usr/lib/x86_64-linux-gnu", "-lSDL2")
+                    presets["mingwX64"], presets["mingwX86"] -> linkerOpts(
                         winCompiledResourceFile.toString(),
                         mingwPath.resolve("lib").toString(),
                         "-Wl,-Bstatic",
@@ -54,7 +50,7 @@ kotlin {
                         "-lsetupapi",
                         "-mwindows"
                     )
-                    LINUX_ARM32_HFP -> linkerOpts("-lSDL2")
+                    presets["linuxArm32Hfp"] -> linkerOpts("-lSDL2")
                 }
                 runTask?.workingDir(project.provider {
                     val tetris: KotlinNativeTarget by kotlin.targets
@@ -65,18 +61,18 @@ kotlin {
         
         compilations["main"].cinterops {
             val sdl by creating {
-                when (hostPreset.konanTarget) {
-                    MACOS_X64 -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
-                    LINUX_X64 -> includeDirs("/usr/include/SDL2")
-                    MINGW_X64, MINGW_X86 -> includeDirs(mingwPath.resolve("/include/SDL2"))
-                    LINUX_ARM32_HFP -> includeDirs(kotlinNativeDataPath.resolve("dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"))
+                when (preset) {
+                    presets["macosX64"] -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
+                    presets["linuxX64"] -> includeDirs("/usr/include/SDL2")
+                    presets["mingwX64"], presets["mingwX86"] -> includeDirs(mingwPath.resolve("/include/SDL2"))
+                    presets["linuxArm32Hfp"] -> includeDirs(kotlinNativeDataPath.resolve("dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"))
                 }
             }
         }
     }
 }
 
-val compileWindowsResources: Exec? = if (hostPreset.konanTarget == MINGW_X64 || hostPreset.konanTarget == MINGW_X86) {
+val compileWindowsResources: Exec? = if (isWindows) {
     val compileWindowsResources: Exec by tasks.creating(Exec::class) {
         val windresDir = if (isMingwX86Build)
             kotlinNativeDataPath.resolve("dependencies/msys2-mingw-w64-i686-gcc-7.4.0-clang-llvm-6.0.1/bin")
@@ -117,19 +113,17 @@ afterEvaluate {
     }
 }
 
-fun determinePreset(): KotlinNativeTargetPreset {
-    val preset = when {
-        isRaspberryPiBuild -> kotlin.presets["linuxArm32Hfp"] as KotlinNativeTargetPreset // aka RaspberryPi
-        isMingwX86Build -> kotlin.presets["mingwX86"] as KotlinNativeTargetPreset
-        else -> return when {
-            hostOs == "Mac OS X" -> "macosX64"
-            hostOs == "Linux" -> "linuxX64"
-            hostOs.startsWith("Windows") -> "mingwX64"
+fun createRequestedTarget(name: String): KotlinNativeTarget = with(kotlin) {
+    return when {
+        isRaspberryPiBuild -> linuxArm32Hfp(name) // aka RaspberryPi
+        isMingwX86Build -> mingwX86(name)
+        else -> when {
+            hostOs == "Mac OS X" -> macosX64(name)
+            hostOs == "Linux" -> linuxX64(name)
+            hostOs.startsWith("Windows") -> mingwX64(name)
             else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
-        }.let {
-            kotlin.presets[it] as KotlinNativeTargetPreset
         }
+    }.also {
+        println("$project has been configured for ${it.preset?.name} platform.")
     }
-    println("$project has been configured for ${preset.name} platform.")
-    return preset
 }

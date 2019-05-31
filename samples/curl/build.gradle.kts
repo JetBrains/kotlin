@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
-
 plugins {
     kotlin("multiplatform")
 }
@@ -11,26 +8,26 @@ repositories {
     maven("file://$localRepo")
 }
 
-// Determine host preset.
-val hostOs = System.getProperty("os.name")
-
-val hostPreset: KotlinNativeTargetPreset = when {
-    hostOs == "Mac OS X" -> "macosX64"
-    hostOs == "Linux" -> "linuxX64"
-    hostOs.startsWith("Windows") -> "mingwX64"
-    else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
-}.let {
-    kotlin.presets[it] as KotlinNativeTargetPreset
-}
-
 val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
 
 kotlin {
-    targetFromPreset(hostPreset, "curl") {
+    // Determine host preset.
+    val hostOs = System.getProperty("os.name")
+    val isMingwX64 = hostOs.startsWith("Windows")
+
+    // Create target for the host platform.
+    val hostTarget = when {
+        hostOs == "Mac OS X" -> macosX64("curl")
+        hostOs == "Linux" -> linuxX64("curl")
+        isMingwX64 -> mingwX64("curl")
+        else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
+    }
+
+    hostTarget.apply {
         binaries {
             executable {
                 entryPoint = "sample.curl.main"
-                if (hostPreset.konanTarget == MINGW_X64) {
+                if (isMingwX64) {
                     // Add lib path to `libcurl` and its dependencies:
                     linkerOpts(mingwPath.resolve("lib").toString())
                     runTask?.environment("PATH" to mingwPath.resolve("bin"))

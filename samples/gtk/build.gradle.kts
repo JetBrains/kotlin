@@ -1,30 +1,27 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
-
 plugins {
     kotlin("multiplatform")
-}
-
-// Determine host preset.
-val hostOs = System.getProperty("os.name")
-
-val hostPreset: KotlinNativeTargetPreset = when {
-    hostOs == "Mac OS X" -> "macosX64"
-    hostOs == "Linux" -> "linuxX64"
-    hostOs.startsWith("Windows") -> "mingwX64"
-    else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
-}.let {
-    kotlin.presets[it] as KotlinNativeTargetPreset
 }
 
 val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
 
 kotlin {
-    targetFromPreset(hostPreset, "gtk") {
+    // Determine host preset.
+    val hostOs = System.getProperty("os.name")
+    val isMingwX64 = hostOs.startsWith("Windows")
+
+    // Create a target for the host platform.
+    val hostTarget = when {
+        hostOs == "Mac OS X" -> macosX64("gtk")
+        hostOs == "Linux" -> linuxX64("gtk")
+        isMingwX64 -> mingwX64("gtk")
+        else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
+    }
+
+    hostTarget.apply {
         binaries {
             executable {
                 entryPoint = "sample.gtk.main"
-                if (hostPreset.konanTarget == MINGW_X64) {
+                if (isMingwX64) {
                     linkerOpts(mingwPath.resolve("lib").toString())
                     runTask?.environment("PATH" to mingwPath.resolve("bin"))
                 }
@@ -32,8 +29,8 @@ kotlin {
         }
         compilations["main"].cinterops {
             val gtk3 by creating {
-                when (hostPreset.konanTarget) {
-                    MACOS_X64, LINUX_X64 -> {
+                when (preset) {
+                    presets["macosX64"], presets["linuxX64"] -> {
                         listOf("/opt/local/include", "/usr/include", "/usr/local/include").forEach {
                             includeDirs(
                                 "$it/atk-1.0",
@@ -51,7 +48,7 @@ kotlin {
                             "/usr/local/lib/glib-2.0/include"
                         )
                     }
-                    MINGW_X64 -> {
+                    presets["mingwX64"] -> {
                         listOf(
                             "/include/atk-1.0",
                             "/include/gdk-pixbuf-2.0",
