@@ -1,46 +1,53 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.nativeplatform.tooling.model.impl;
 
+import com.intellij.serialization.PropertyMapping;
 import org.jetbrains.plugins.gradle.nativeplatform.tooling.model.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class CppComponentImpl implements CppComponent {
-  private final String myName;
-  private final String myBaseName;
-  private final Set<CppBinary> myBinaries;
+  private final String name;
+  private final String baseName;
+  private final Set<CppBinary> binaries;
+
+  @PropertyMapping({"name", "baseName", "binaries"})
+  private CppComponentImpl(String name, String baseName, Set<? extends CppBinary> binaries) {
+    this(name, baseName);
+    for (CppBinary binary : binaries) {
+      this.binaries.add(newCopy(binary));
+    }
+  }
 
   public CppComponentImpl(String name, String baseName) {
-    myName = name;
-    myBaseName = baseName;
-    myBinaries = new LinkedHashSet<CppBinary>();
+    this.name = name;
+    this.baseName = baseName;
+    this.binaries = new LinkedHashSet<CppBinary>();
   }
 
   public CppComponentImpl(CppComponent component) {
-    this(component.getName(), component.getBaseName());
-    for (CppBinary binary : component.getBinaries()) {
-      myBinaries.add(newCopy(binary));
-    }
+    this(component.getName(), component.getBaseName(),
+         component.getBinaries());
   }
 
   @Override
   public String getName() {
-    return myName;
+    return name;
   }
 
   @Override
   public String getBaseName() {
-    return myBaseName;
+    return baseName;
   }
 
   @Override
   public Set<? extends CppBinary> getBinaries() {
-    return myBinaries;
+    return binaries;
   }
 
   public void addBinary(CppBinary binary) {
-    myBinaries.add(binary);
+    binaries.add(binary);
   }
 
 
