@@ -37,19 +37,26 @@ public class JpsServiceManagerImpl extends JpsServiceManager {
     //noinspection unchecked
     T service = (T)myServices.get(serviceClass);
     if (service == null) {
-      final Iterator<T> iterator = ServiceLoader.load(serviceClass, serviceClass.getClassLoader()).iterator();
-      if (!iterator.hasNext()) {
-        throw new ServiceConfigurationError("Implementation for " + serviceClass + " not found");
-      }
-      final T loadedService = iterator.next();
-      if (iterator.hasNext()) {
-        throw new ServiceConfigurationError(
-          "More than one implementation for " + serviceClass + " found: " + loadedService.getClass() + " and " + iterator.next().getClass());
-      }
-      //noinspection unchecked
-      service = (T)myServices.putIfAbsent(serviceClass, loadedService);
-      if (service == null) {
-        service = loadedService;
+      // confine costly service initialization to single thread for defined startup profile
+      synchronized (myServices) {
+        //noinspection unchecked
+        service = (T)myServices.get(serviceClass);
+        if (service == null) {
+          final Iterator<T> iterator = ServiceLoader.load(serviceClass, serviceClass.getClassLoader()).iterator();
+          if (!iterator.hasNext()) {
+            throw new ServiceConfigurationError("Implementation for " + serviceClass + " not found");
+          }
+          final T loadedService = iterator.next();
+          if (iterator.hasNext()) {
+            throw new ServiceConfigurationError("More than one implementation for " + serviceClass + " found: " + loadedService.getClass() +
+              " and " + iterator.next().getClass());
+          }
+          //noinspection unchecked
+          service = (T)myServices.putIfAbsent(serviceClass, loadedService);
+          if (service == null) {
+            service = loadedService;
+          }
+        }
       }
     }
     return service;
@@ -59,10 +66,16 @@ public class JpsServiceManagerImpl extends JpsServiceManager {
   public <T> Iterable<T> getExtensions(Class<T> extensionClass) {
     List<?> cached = myExtensions.get(extensionClass);
     if (cached == null) {
-      final List<T> extensions = new ArrayList<>(loadExtensions(extensionClass));
-      cached = myExtensions.putIfAbsent(extensionClass, extensions);
-      if (cached == null) {
-        cached = extensions;
+      // confine costly service initialization to single thread for defined startup profile
+      synchronized (myExtensions) {
+        cached = myExtensions.get(extensionClass);
+        if (cached == null) {
+          final List<T> extensions = new ArrayList<>(loadExtensions(extensionClass));
+          cached = myExtensions.putIfAbsent(extensionClass, extensions);
+          if (cached == null) {
+            cached = extensions;
+          }
+        }
       }
     }
     //noinspection unchecked
