@@ -111,6 +111,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/annotations/jetbrainsNullable.java");
         }
 
+        @TestMetadata("kt-31726.java")
+        public void testKt_31726() throws Exception {
+            runTest("nj2k/testData/newJ2k/annotations/kt-31726.java");
+        }
+
         @TestMetadata("modifiersToAnnotationsFromPropertyAccessors.java")
         public void testModifiersToAnnotationsFromPropertyAccessors() throws Exception {
             runTest("nj2k/testData/newJ2k/annotations/modifiersToAnnotationsFromPropertyAccessors.java");

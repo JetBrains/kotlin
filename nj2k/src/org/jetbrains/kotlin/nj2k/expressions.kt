@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiClass
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -482,16 +483,6 @@ fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? = classBody.declaratio
 fun List<JKExpression>.toArgumentList(): JKArgumentList =
     JKArgumentListImpl(map { JKArgumentImpl(it) })
 
-fun JKAnnotation.isVarargsArgument(index: Int): Boolean {
-    val target = classSymbol.target
-    return when (target) {
-        is JKClass -> target.primaryConstructor()?.parameters?.getOrNull(index)?.isVarArgs
-        is PsiClass -> target.methods.getOrNull(index)?.let {
-            it.isVarArgs || it.name == "value"
-        }
-        else -> false
-    } ?: false
-}
 
 
 fun JKExpression.asStatement(): JKExpressionStatement =
