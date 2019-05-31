@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.hints.presentation
 
 import com.intellij.openapi.editor.markup.TextAttributes
-import java.awt.Dimension
 import java.awt.Graphics2D
 
 data class SpacePresentation(override var width: Int, override var height: Int) : BasePresentation() {
