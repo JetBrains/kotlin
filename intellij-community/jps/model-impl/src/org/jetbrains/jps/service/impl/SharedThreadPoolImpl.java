@@ -19,9 +19,9 @@ import com.intellij.util.ConcurrencyUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.service.SharedThreadPool;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * @author nik
@@ -31,7 +31,7 @@ public class SharedThreadPoolImpl extends SharedThreadPool {
 
   @Override
   public void execute(@NotNull Runnable command) {
-    executeOnPooledThread(command);
+    myService.execute(command);
   }
 
   @NotNull
@@ -45,5 +45,76 @@ public class SharedThreadPoolImpl extends SharedThreadPool {
         Thread.interrupted(); // reset interrupted status
       }
     });
+  }
+
+  @Override
+  public void shutdown() {
+    myService.shutdown();
+  }
+
+  @NotNull
+  @Override
+  public List<Runnable> shutdownNow() {
+    return myService.shutdownNow();
+  }
+
+  @Override
+  public boolean isShutdown() {
+    return myService.isShutdown();
+  }
+
+  @Override
+  public boolean isTerminated() {
+    return myService.isTerminated();
+  }
+
+  @Override
+  public boolean awaitTermination(long timeout, @NotNull TimeUnit unit) throws InterruptedException {
+    return myService.awaitTermination(timeout, unit);
+  }
+
+  @NotNull
+  @Override
+  public <T> Future<T> submit(@NotNull Callable<T> task) {
+    return myService.submit(task);
+  }
+
+  @NotNull
+  @Override
+  public <T> Future<T> submit(@NotNull Runnable task, T result) {
+    return myService.submit(task, result);
+  }
+
+  @NotNull
+  @Override
+  public Future<?> submit(@NotNull Runnable task) {
+    return myService.submit(task);
+  }
+
+  @NotNull
+  @Override
+  public <T> List<Future<T>> invokeAll(@NotNull Collection<? extends Callable<T>> tasks) throws InterruptedException {
+    return myService.invokeAll(tasks);
+  }
+
+  @NotNull
+  @Override
+  public <T> List<Future<T>> invokeAll(@NotNull Collection<? extends Callable<T>> tasks,
+                                       long timeout,
+                                       @NotNull TimeUnit unit) throws InterruptedException {
+    return myService.invokeAll(tasks, timeout, unit);
+  }
+
+  @NotNull
+  @Override
+  public <T> T invokeAny(@NotNull Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+    return myService.invokeAny(tasks);
+  }
+
+  @Override
+  public <T> T invokeAny(@NotNull Collection<? extends Callable<T>> tasks,
+                         long timeout,
+                         @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    return myService.invokeAny(tasks, timeout, unit);
   }
 }
