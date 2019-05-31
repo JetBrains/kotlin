@@ -296,7 +296,8 @@ public abstract class InplaceRefactoring {
     for (PsiReference ref : refs) {
       if (isReferenceAtCaret(selectedElement, ref)) {
         Expression expression = createTemplateExpression(selectedElement);
-        builder.replaceElement(ref.getElement(), getRangeToRename(ref), PRIMARY_VARIABLE_NAME, expression, expression instanceof MyLookupExpression);
+        builder.replaceElement(ref.getElement(), getRangeToRename(ref), PRIMARY_VARIABLE_NAME, expression,
+                               shouldStopAtLookupExpression(expression));
         subrefOnPrimaryElement = true;
         continue;
       }
@@ -361,6 +362,10 @@ public abstract class InplaceRefactoring {
       showBalloon();
     }
     return true;
+  }
+
+  protected boolean shouldStopAtLookupExpression(Expression expression) {
+    return expression instanceof MyLookupExpression;
   }
 
   protected boolean isReferenceAtCaret(PsiElement selectedElement, PsiReference ref) {
@@ -712,7 +717,8 @@ public abstract class InplaceRefactoring {
     final PsiElement element = reference.getElement();
     if (element == selectedElement && checkRangeContainsOffset(offset, reference.getRangeInElement(), element)) {
       Expression expression = createTemplateExpression(selectedElement);
-      builder.replaceElement(reference.getElement(), getRangeToRename(reference), PRIMARY_VARIABLE_NAME, expression, expression instanceof MyLookupExpression);
+      builder.replaceElement(reference.getElement(), getRangeToRename(reference), PRIMARY_VARIABLE_NAME, expression,
+                             shouldStopAtLookupExpression(expression));
     }
     else {
       builder.replaceElement(reference.getElement(), getRangeToRename(reference), OTHER_VARIABLE_NAME, PRIMARY_VARIABLE_NAME, false);
@@ -731,7 +737,7 @@ public abstract class InplaceRefactoring {
                            final TemplateBuilderImpl builder) {
     if (element == selectedElement) {
       Expression expression = createTemplateExpression(myElementToRename);
-      builder.replaceElement(element, getRangeToRename(element), PRIMARY_VARIABLE_NAME, expression, expression instanceof MyLookupExpression);
+      builder.replaceElement(element, getRangeToRename(element), PRIMARY_VARIABLE_NAME, expression, shouldStopAtLookupExpression(expression));
     }
     else if (textRange != null) {
       builder.replaceElement(element, textRange, OTHER_VARIABLE_NAME, PRIMARY_VARIABLE_NAME, false);
