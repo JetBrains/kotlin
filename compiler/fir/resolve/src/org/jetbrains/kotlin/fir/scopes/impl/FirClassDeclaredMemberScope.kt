@@ -22,10 +22,18 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope {
     private val callablesIndex: Map<Name, List<FirCallableSymbol>> by lazy {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol>>()
         for (declaration in klass.declarations) {
-            if (declaration is FirCallableMemberDeclaration) {
-                val name = if (declaration is FirConstructor) klass.name else declaration.name
-                val list = result.getOrPut(name) { mutableListOf() }
-                list += declaration.symbol
+            when (declaration) {
+                is FirCallableMemberDeclaration -> {
+                    val name = if (declaration is FirConstructor) klass.name else declaration.name
+                    result.getOrPut(name) { mutableListOf() } += declaration.symbol
+                }
+                is FirRegularClass -> {
+                    for (nestedDeclaration in declaration.declarations) {
+                        if (nestedDeclaration is FirConstructor) {
+                            result.getOrPut(declaration.name) { mutableListOf() } += nestedDeclaration.symbol
+                        }
+                    }
+                }
             }
         }
         result
@@ -41,13 +49,6 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope {
     }
 
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
-        val matchedClass = classIndex[name]
-
-        if (matchedClass != null) {
-            if (FirClassDeclaredMemberScope(matchedClass.fir).processFunctionsByName(name, processor) == STOP) {
-                return STOP
-            }
-        }
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is ConeFunctionSymbol && !processor(symbol)) {
