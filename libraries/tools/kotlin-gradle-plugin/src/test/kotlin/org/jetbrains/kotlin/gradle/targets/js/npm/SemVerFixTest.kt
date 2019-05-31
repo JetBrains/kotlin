@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class GradleNodeModuleBuilderKtTest(val expected: String, val actual: String) {
+class SemVerFixTest(val expected: String, val actual: String) {
     companion object {
         @Parameterized.Parameters(name = "fix({1}) == {0}")
         @JvmStatic
