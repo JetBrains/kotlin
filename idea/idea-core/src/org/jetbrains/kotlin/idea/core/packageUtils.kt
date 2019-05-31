@@ -10,6 +10,7 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModulePackageIndex
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.VirtualFile
@@ -22,6 +23,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.idea.util.sourceRoot
@@ -39,12 +41,15 @@ fun PsiFile.getFqNameByDirectory(): FqName {
 
 fun PsiDirectory.getFqNameWithImplicitPrefix(): FqName {
     val packageFqName = getPackage()?.qualifiedName?.let(::FqName) ?: FqName.ROOT
-    sourceRoot?.let { sourceRoot ->
+    sourceRoot?.takeIf { !it.hasExplicitPackagePrefix(project) }?.let { sourceRoot ->
         val implicitPrefix = PerModulePackageCacheService.getInstance(project).getImplicitPackagePrefix(sourceRoot)
         return FqName.fromSegments((implicitPrefix.pathSegments() + packageFqName.pathSegments()).map { it.asString() })
     }
     return packageFqName
 }
+
+private fun VirtualFile.hasExplicitPackagePrefix(project: Project): Boolean =
+    toPsiDirectory(project)?.getPackage()?.qualifiedName?.isNotEmpty() == true
 
 fun KtFile.packageMatchesDirectory(): Boolean = packageFqName == getFqNameByDirectory()
 
