@@ -18,8 +18,8 @@ package com.intellij.compiler.impl;
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectUtil;
@@ -27,10 +27,8 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.*;
-import com.intellij.util.messages.MessageBus;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,14 +50,7 @@ import java.util.Set;
  * 1. corresponding source file has been scheduled for recompilation (see above)
  * 2. corresponding source file has been deleted
  */
-public class TranslatingCompilerFilesMonitor implements BulkFileListener {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.impl.TranslatingCompilerFilesMonitor");
-  private final BuildManager myBuildManager;
-
-  public TranslatingCompilerFilesMonitor(MessageBus bus, BuildManager buildManager) {
-    myBuildManager = buildManager;
-    bus.connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
-  }
+public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
 
   public static TranslatingCompilerFilesMonitor getInstance() {
     return ApplicationManager.getApplication().getComponent(TranslatingCompilerFilesMonitor.class);
@@ -78,6 +69,7 @@ public class TranslatingCompilerFilesMonitor implements BulkFileListener {
     VfsUtilCore.visitChildrenRecursively(fromFile, new VirtualFileVisitor() {
       @NotNull @Override
       public Result visitFileEx(@NotNull VirtualFile file) {
+        ProgressManager.checkCanceled();
         if (isIgnoredByBuild(file)) {
           return SKIP_CHILDREN;
         }
@@ -117,8 +109,8 @@ public class TranslatingCompilerFilesMonitor implements BulkFileListener {
   }
 
   @Override
-  public void before(@NotNull List<? extends VFileEvent> events) {
-    Collection<File> filesDeleted = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
+  public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    Set<File> filesDeleted = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     for (VFileEvent event : events) {
       if (event instanceof VFileDeleteEvent || event instanceof VFileMoveEvent) {
         final VirtualFile file = event.getFile();
@@ -127,12 +119,15 @@ public class TranslatingCompilerFilesMonitor implements BulkFileListener {
         }
       }
     }
-    notifyFilesDeleted(filesDeleted);
+    return new ChangeApplier() {
+      @Override
+      public void afterVfsChange() {
+        after(events, filesDeleted);
+      }
+    };
   }
 
-  @Override
-  public void after(@NotNull List<? extends VFileEvent> events) {
-    final Set<File> filesDeleted = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
+  private static void after(@NotNull List<? extends VFileEvent> events, Set<File> filesDeleted) {
     final Set<File> filesChanged = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     for (VFileEvent event : events) {
       if (event instanceof VFilePropertyChangeEvent) {
@@ -147,7 +142,7 @@ public class TranslatingCompilerFilesMonitor implements BulkFileListener {
     }
 
     // If a file name differs ony in case, on case-insensitive file systems such name still denotes the same file.
-    // In this situation filesDeleted and filesChanged sets will contain paths wchich are different only in case.
+    // In this situation filesDeleted and filesChanged sets will contain paths which are different only in case.
     // Thus the order in which BuildManager is notified, is important:
     // first deleted paths notification and only then changed paths notification
     notifyFilesDeleted(filesDeleted);
@@ -235,15 +230,15 @@ public class TranslatingCompilerFilesMonitor implements BulkFileListener {
         FileUtil.isAncestor(PathManager.getConfigPath(), file.getPath(), false); // is config file
   }
 
-  private void notifyFilesChanged(@NotNull Collection<? extends File> paths) {
+  private static void notifyFilesChanged(@NotNull Collection<? extends File> paths) {
     if (!paths.isEmpty()) {
-      myBuildManager.notifyFilesChanged(paths);
+      BuildManager.getInstance().notifyFilesChanged(paths);
     }
   }
 
-  private void notifyFilesDeleted(@NotNull Collection<? extends File> paths) {
+  private static void notifyFilesDeleted(@NotNull Collection<? extends File> paths) {
     if (!paths.isEmpty()) {
-      myBuildManager.notifyFilesDeleted(paths);
+      BuildManager.getInstance().notifyFilesDeleted(paths);
     }
   }
 }
