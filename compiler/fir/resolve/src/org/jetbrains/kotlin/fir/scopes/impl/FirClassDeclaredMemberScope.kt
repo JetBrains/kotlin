@@ -13,32 +13,27 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class FirClassDeclaredMemberScope(
-    klass: FirRegularClass
-) : FirScope {
-    private val classId = klass.symbol.classId
+class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope {
     private val callablesIndex by lazy {
         klass.declarations.filterIsInstance<FirCallableDeclaration>()
-            .map { it.symbol }.groupBy { it.callableId }
+            .map { it.symbol }.groupBy { it.callableId.callableName }
     }
     private val classIndex by lazy {
         klass.declarations.filterIsInstance<FirRegularClass>()
-            .map { it.symbol }.associateBy { it.classId }
+            .map { it.symbol }.associateBy { it.fir.name }
     }
 
-
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
-        val matchedClass = classIndex[ClassId(classId.packageFqName, classId.relativeClassName.child(name), false)]
+        val matchedClass = classIndex[name]
 
         if (matchedClass != null) {
             if (FirClassDeclaredMemberScope(matchedClass.fir).processFunctionsByName(name, processor) == STOP) {
                 return STOP
             }
         }
-        val symbols = callablesIndex[CallableId(classId.packageFqName, classId.relativeClassName, name)] ?: emptyList()
+        val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is ConeFunctionSymbol && !processor(symbol)) {
                 return STOP
@@ -48,7 +43,7 @@ class FirClassDeclaredMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
-        val symbols = callablesIndex[CallableId(classId.packageFqName, classId.relativeClassName, name)] ?: emptyList()
+        val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is ConePropertySymbol && !processor(symbol)) {
                 return STOP
@@ -58,7 +53,7 @@ class FirClassDeclaredMemberScope(
     }
 
     override fun processClassifiersByName(name: Name, position: FirPosition, processor: (ConeClassifierSymbol) -> Boolean): Boolean {
-        val matchedClass = classIndex[classId.createNestedClassId(name)]
+        val matchedClass = classIndex[name]
         if (matchedClass != null && !processor(matchedClass)) {
             return false
         }
