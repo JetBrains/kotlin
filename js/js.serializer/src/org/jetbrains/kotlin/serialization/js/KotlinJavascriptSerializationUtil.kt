@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.js
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -31,8 +32,6 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -280,21 +279,18 @@ object KotlinJavascriptSerializationUtil {
 
     fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
         return mutableSetOf<FqName>().apply {
-            getSubPackagesFqNames(module.getPackage(FqName.ROOT), this)
+            getSubPackagesFqNames(module.packageFragmentProviderForModuleContentWithoutDependencies, FqName.ROOT, this)
             add(FqName.ROOT)
         }
     }
 
-    private fun getSubPackagesFqNames(packageView: PackageViewDescriptor, result: MutableSet<FqName>) {
-        val fqName = packageView.fqName
+    private fun getSubPackagesFqNames(packageFragmentProvider: PackageFragmentProvider, fqName: FqName, result: MutableSet<FqName>) {
         if (!fqName.isRoot) {
             result.add(fqName)
         }
 
-        for (descriptor in packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)) {
-            if (descriptor is PackageViewDescriptor) {
-                getSubPackagesFqNames(descriptor, result)
-            }
+        for (subPackage in packageFragmentProvider.getSubPackagesOf(fqName) { true }) {
+            getSubPackagesFqNames(packageFragmentProvider, subPackage, result)
         }
     }
 
@@ -329,7 +325,9 @@ fun Map<FqName, ByteArray>.missingMetadata(
 
         val fragment = KotlinJavascriptSerializationUtil.serializeDescriptors(
             bindingContext, moduleDescriptor,
-            moduleDescriptor.getPackage(fqName).memberScope.getContributedDescriptors(),
+            moduleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName).flatMap {
+                it.getMemberScope().getContributedDescriptors()
+            },
             fqName, languageVersionSettings, metadataVersion
         )
 
@@ -340,6 +338,10 @@ fun Map<FqName, ByteArray>.missingMetadata(
 
     return serializedFragments
 }
+
+private val ModuleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies
+    get() = (this as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
+        ?: throw IllegalStateException("Unsupported ModuleDescriptor kind: ${this::javaClass}")
 
 private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
     class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }

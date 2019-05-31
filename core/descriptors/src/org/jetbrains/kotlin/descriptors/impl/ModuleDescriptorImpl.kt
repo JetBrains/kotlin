@@ -47,6 +47,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 
+    val packageFragmentProviderForModuleContentWithoutDependencies: PackageFragmentProvider
+        get() = packageFragmentProviderForModuleContent
+            ?: throw IllegalStateException("Module $id was not initialized by the time it's content without dependencies was queried")
+
     override var isValid: Boolean = true
 
     override fun assertValid() {
