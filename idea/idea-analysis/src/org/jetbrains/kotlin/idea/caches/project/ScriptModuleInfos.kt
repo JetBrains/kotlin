@@ -90,8 +90,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     ) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
             get() {
-                return ScriptDependenciesManager.getInstance(project).getScriptSdk(scriptFile)
-                    ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+                return ScriptDependenciesManager.getInstance(project).getScriptSdk(scriptFile, project)
             }
 
         override fun contentScope(): GlobalSearchScope {

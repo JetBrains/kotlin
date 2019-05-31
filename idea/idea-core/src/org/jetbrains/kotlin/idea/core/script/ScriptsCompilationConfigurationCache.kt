@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
@@ -79,13 +82,19 @@ class ScriptsCompilationConfigurationCache(private val project: Project) {
 
     val allSdks by ClearableLazyValue(cacheLock) {
         scriptDependenciesCache.getAll()
-            .mapNotNull { ScriptDependenciesManager.getInstance(project).getScriptSdk(it.key) }
+            .mapNotNull { ScriptDependenciesManager.getInstance(project).getScriptSdk(it.key, project) }
+            .distinct()
+    }
+
+    private val allNonIndexedSdks by ClearableLazyValue(cacheLock) {
+        scriptDependenciesCache.getAll()
+            .mapNotNull { ScriptDependenciesManager.getInstance(project).getScriptSdk(it.key, project) }
+            .filterNonModuleSdk()
             .distinct()
     }
 
     val allDependenciesClassFiles by ClearableLazyValue(cacheLock) {
-        val sdkFiles = allSdks
-            .filter { it != ScriptDependenciesManager.getProjectSdk(project) }
+        val sdkFiles = allNonIndexedSdks
             .flatMap { it.rootProvider.getFiles(OrderRootType.CLASSES).toList() }
 
         val scriptDependenciesClasspath = scriptDependenciesCache.getAll()
@@ -95,8 +104,7 @@ class ScriptsCompilationConfigurationCache(private val project: Project) {
     }
 
     val allDependenciesSources by ClearableLazyValue(cacheLock) {
-        val sdkSources = allSdks
-            .filter { it != ScriptDependenciesManager.getProjectSdk(project) }
+        val sdkSources = allNonIndexedSdks
             .flatMap { it.rootProvider.getFiles(OrderRootType.SOURCES).toList() }
 
         val scriptDependenciesSources = scriptDependenciesCache.getAll()
@@ -112,8 +120,14 @@ class ScriptsCompilationConfigurationCache(private val project: Project) {
         NonClasspathDirectoriesScope.compose(allDependenciesSources)
     }
 
+    private fun List<Sdk>.filterNonModuleSdk(): List<Sdk> {
+        val moduleSdks = ModuleManager.getInstance(project).modules.map { ModuleRootManager.getInstance(it).sdk }
+        return filterNot { moduleSdks.contains(it) }
+    }
+
     private fun onChange(files: List<VirtualFile>) {
         this::allSdks.clearValue()
+        this::allNonIndexedSdks.clearValue()
 
         this::allDependenciesClassFiles.clearValue()
         this::allDependenciesClassFilesScope.clearValue()
@@ -145,7 +159,8 @@ class ScriptsCompilationConfigurationCache(private val project: Project) {
     }
 
     fun hasNotCachedRoots(compilationConfiguration: ScriptCompilationConfigurationWrapper): Boolean {
-        return !allSdks.contains(ScriptDependenciesManager.getScriptSdk(compilationConfiguration)) ||
+        val scriptSdk = ScriptDependenciesManager.getScriptSdk(compilationConfiguration) ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+        return (scriptSdk != null && !allSdks.contains(scriptSdk)) ||
                 !allDependenciesClassFiles.containsAll(ScriptDependenciesManager.toVfsRoots(compilationConfiguration.dependenciesClassPath)) ||
                 !allDependenciesSources.containsAll(ScriptDependenciesManager.toVfsRoots(compilationConfiguration.dependenciesSources))
     }

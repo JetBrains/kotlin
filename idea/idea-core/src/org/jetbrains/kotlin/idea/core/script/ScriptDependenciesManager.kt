@@ -55,7 +55,10 @@ class ScriptDependenciesManager internal constructor(
     fun getRefinedCompilationConfiguration(file: VirtualFile): ScriptCompilationConfigurationResult? =
         cacheUpdater.getCurrentCompilationConfiguration(file)
 
-    fun getScriptSdk(file: VirtualFile): Sdk? = Companion.getScriptSdk(getRefinedCompilationConfiguration(file)?.valueOrNull())
+    fun getScriptSdk(file: VirtualFile, project: Project): Sdk? {
+        return getScriptSdk(getRefinedCompilationConfiguration(file)?.valueOrNull())
+            ?: getScriptDefaultSdk(project)
+    }
 
     fun getScriptDependenciesClassFilesScope(file: VirtualFile) = cache.scriptDependenciesClassFilesScope(file)
 
@@ -83,20 +86,22 @@ class ScriptDependenciesManager internal constructor(
             return getAllProjectSdks().find { it.homeDirectory == javaHome }
         }
 
+        fun getScriptDefaultSdk(project: Project): Sdk? {
+            val projectSdk = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }
+            if (projectSdk != null) return projectSdk
 
-        fun getScriptDefaultSdk(project: Project): Sdk? =
-            getProjectSdk(project)
-                ?: getAllProjectSdks().find { it.canBeUsedForScript() }
-                ?: run {
-                    log.warn(
-                        "Default Script SDK is null: " +
-                                "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
-                                "all sdks = ${getAllProjectSdks().joinToString("; ")}"
-                    )
-                    null
-                }
+            val anyJavaSdk = getAllProjectSdks().find { it.canBeUsedForScript() }
+            if (anyJavaSdk != null) {
+                return anyJavaSdk
+            }
 
-        fun getProjectSdk(project: Project) = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }
+            log.warn(
+                "Default Script SDK is null: " +
+                        "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
+                        "all sdks = ${getAllProjectSdks().joinToString("\n")}"
+            )
+            return null
+        }
 
         fun toVfsRoots(roots: Iterable<File>): List<VirtualFile> {
             return roots.mapNotNull { it.classpathEntryToVfs() }
