@@ -1,6 +1,6 @@
 // "class org.jetbrains.kotlin.idea.quickfix.LiftAssignmentOutOfTryFix" "false"
 // ACTION: Change to var
-// ERROR: Val cannot be reassigned
+// DISABLE-ERRORS
 // WITH_RUNTIME
 
 fun foo(arg: Boolean) {
