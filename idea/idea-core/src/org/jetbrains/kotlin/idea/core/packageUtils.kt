@@ -118,7 +118,7 @@ fun findOrCreateDirectoryForPackage(module: Module, packageName: String): PsiDir
     val project = module.project
     var existingDirectoryByPackage: PsiDirectory? = null
     var restOfName = packageName
-    if (!packageName.isEmpty()) {
+    if (packageName.isNotEmpty()) {
         val rootPackage = findLongestExistingPackage(module, packageName)
         if (rootPackage != null) {
             val beginIndex = rootPackage.qualifiedName.length + 1
@@ -129,7 +129,7 @@ fun findOrCreateDirectoryForPackage(module: Module, packageName: String): PsiDir
             }
             val moduleDirectories = getPackageDirectoriesInModule(rootPackage, module)
             existingDirectoryByPackage =
-                    DirectoryChooserUtil.selectDirectory(project, moduleDirectories, null, postfixToShow) ?: return null
+                DirectoryChooserUtil.selectDirectory(project, moduleDirectories, null, postfixToShow) ?: return null
             restOfName = subPackageName
         }
     }
