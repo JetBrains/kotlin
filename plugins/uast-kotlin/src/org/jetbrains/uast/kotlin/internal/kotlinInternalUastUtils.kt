@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
@@ -232,6 +233,10 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
 
     (constructor.declarationDescriptor as? TypeAliasDescriptor)?.let { typeAlias ->
         return typeAlias.expandedType.toPsiType(lightDeclaration, context, boxed)
+    }
+
+    if (constructor is TypeVariableTypeConstructor) {
+        return UastErrorType
     }
 
     (constructor.declarationDescriptor as? TypeParameterDescriptor)?.let { typeParameter ->
