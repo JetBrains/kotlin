@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
