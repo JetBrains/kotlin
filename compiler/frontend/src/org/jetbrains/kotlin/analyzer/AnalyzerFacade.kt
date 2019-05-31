@@ -20,7 +20,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -264,7 +263,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)
         val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker() ?: if (invalidateOnOOCB) {
-            PsiModificationTracker.SERVICE.getInstance(projectContext.project).outOfCodeBlockModificationTracker
+            KotlinModificationTrackerService.getInstance(projectContext.project).outOfBlockModificationTracker
         } else {
             null
         }

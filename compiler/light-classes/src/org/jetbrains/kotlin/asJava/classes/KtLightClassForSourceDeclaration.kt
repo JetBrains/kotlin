@@ -24,10 +24,10 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
@@ -319,7 +319,7 @@ abstract class KtLightClassForSourceDeclaration(
                 CachedValueProvider.Result
                     .create(
                         createNoCache(classOrObject, KtUltraLightSupport.forceUsingOldLightClasses),
-                        OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                        KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker
                     )
             }
 
