@@ -37,6 +37,8 @@ class StubSerializationHelper {
   private final ConcurrentIntObjectMap<ObjectStubSerializer> myIdToSerializer = ContainerUtil.createConcurrentIntObjectMap();
   private final Map<ObjectStubSerializer, Integer> mySerializerToId = ContainerUtil.newConcurrentMap();
 
+  private final RecentStringInterner myStringInterner;
+
   StubSerializationHelper(@NotNull AbstractStringEnumerator nameStorage, @NotNull Disposable parentDisposable) {
     myNameStorage = nameStorage;
     myStringInterner = new RecentStringInterner(parentDisposable);
@@ -114,11 +116,7 @@ class StubSerializationHelper {
       serializeRoot(stubOutputStream, rootStub, storage);
     }
     DataOutputStream resultStream = new DataOutputStream(stream);
-    DataInputOutputUtil.writeINT(resultStream, storage.myStrings.size());
-    byte[] buffer = IOUtil.allocReadWriteUTFBuffer();
-    for(String s:storage.myStrings) {
-      IOUtil.writeUTFFast(buffer, resultStream, s);
-    }
+    storage.write(resultStream);
     resultStream.write(out.getInternalBuffer(), 0, out.size());
   }
 
@@ -135,23 +133,13 @@ class StubSerializationHelper {
     return idValue;
   }
 
-  private final RecentStringInterner myStringInterner;
   private static final ThreadLocal<ObjectStubSerializer> ourRootStubSerializer = new ThreadLocal<>();
 
   @NotNull
   Stub deserialize(@NotNull InputStream stream) throws IOException, SerializerNotFoundException {
     FileLocalStringEnumerator storage = new FileLocalStringEnumerator(false);
     StubInputStream inputStream = new StubInputStream(stream, storage);
-    final int numberOfStrings = DataInputOutputUtil.readINT(inputStream);
-    byte[] buffer = IOUtil.allocReadWriteUTFBuffer();
-    storage.myStrings.ensureCapacity(numberOfStrings);
-
-    int i = 0;
-    while(i < numberOfStrings) {
-      String s = myStringInterner.get(IOUtil.readUTFFast(buffer, inputStream));
-      storage.myStrings.add(s);
-      ++i;
-    }
+    readEnumeratedStrings(storage, inputStream);
 
     final int stubFilesCount = DataInputOutputUtil.readINT(inputStream);
     if (stubFilesCount <= 0) {
@@ -391,6 +379,19 @@ class StubSerializationHelper {
     }
   }
 
+  private void readEnumeratedStrings(FileLocalStringEnumerator enumerator, @NotNull DataInputStream stream) throws IOException {
+    final int numberOfStrings = DataInputOutputUtil.readINT(stream);
+    byte[] buffer = IOUtil.allocReadWriteUTFBuffer();
+    enumerator.myStrings.ensureCapacity(numberOfStrings);
+
+    int i = 0;
+    while(i < numberOfStrings) {
+      String s = intern(IOUtil.readUTFFast(buffer, stream));
+      enumerator.myStrings.add(s);
+      ++i;
+    }
+  }
+
   private static class FileLocalStringEnumerator implements AbstractStringEnumerator {
     private final TObjectIntHashMap<String> myEnumerates;
     private final ArrayList<String> myStrings = new ArrayList<>();
@@ -415,6 +416,15 @@ class StubSerializationHelper {
     public String valueOf(int idx) {
       if (idx == 0) return null;
       return myStrings.get(idx - 1);
+    }
+
+    private void write(@NotNull DataOutputStream stream) throws IOException {
+      assert myEnumerates != null;
+      DataInputOutputUtil.writeINT(stream, myStrings.size());
+      byte[] buffer = IOUtil.allocReadWriteUTFBuffer();
+      for(String s: myStrings) {
+        IOUtil.writeUTFFast(buffer, stream, s);
+      }
     }
 
     @Override
