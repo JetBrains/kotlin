@@ -33,8 +33,9 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import java.util.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 
-val jvmLocalDeclarationsPhase = makeIrFilePhase(
+val jvmLocalDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     { context ->
         LocalDeclarationsLowering(context, object : LocalNameProvider {
             override fun localName(declaration: IrDeclarationWithName): String =

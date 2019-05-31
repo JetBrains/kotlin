@@ -108,7 +108,7 @@ class KotlinToResolvedCallTransformer(
 
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 if (context.inferenceSession.writeOnlyStubs()) {
-                    val stub = createStubResolvedCallAndWriteItToTrace(
+                    val stub = createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(
                         candidate,
                         context.trace,
                         baseResolvedCall.diagnostics,

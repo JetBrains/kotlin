@@ -171,7 +171,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 codegen.parentCodegen.className
             else
                 state.typeMapper.mapImplementationOwner(descriptor).internalName,
-            if (isLambda) emptyList() else additionalInnerClasses,
+            if (isLambda) emptyList<ClassDescriptor>() else additionalInnerClasses,
             isLambda
         )
 

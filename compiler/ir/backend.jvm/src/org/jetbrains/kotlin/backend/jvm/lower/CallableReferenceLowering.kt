@@ -58,7 +58,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 //Hack implementation to support CR java types in lower
 class CrIrType(val type: Type) : IrType {
-    override val annotations = emptyList()
+    override val annotations: List<IrCall> = emptyList()
 
     override fun equals(other: Any?): Boolean =
         other is CrIrType && type == other.type
@@ -595,7 +595,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
 private fun IrType.substitute(substitutionMap: Map<IrTypeParameter, IrType>): IrType {
     if (this !is IrSimpleType) return this
 
-    substitutionMap[classifier]?.let { return it }
+    // substitutionMap[classifier]?.let { return it }
 
     val newArguments = arguments.map {
         if (it is IrTypeProjection) {

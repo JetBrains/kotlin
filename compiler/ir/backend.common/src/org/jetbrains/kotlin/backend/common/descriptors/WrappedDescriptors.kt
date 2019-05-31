@@ -261,7 +261,7 @@ open class WrappedTypeParameterDescriptor(
 
             override val supertypeLoopChecker = SupertypeLoopChecker.EMPTY
 
-            override fun getParameters() = emptyList()
+            override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 
             override fun isFinal() = false
 
@@ -687,7 +687,7 @@ open class WrappedEnumEntryDescriptor(
         TODO("not implemented")
     }
 
-    override fun getDeclaredTypeParameters() = emptyList()
+    override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = emptyList()
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> {
         TODO("not implemented")
@@ -773,7 +773,7 @@ open class WrappedPropertyDescriptor(
         owner.setter?.descriptor as? PropertyAccessorDescriptor
     ).toMutableList()
 
-    override fun getTypeParameters() = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
 
     override fun getVisibility() = owner.visibility
 
@@ -877,7 +877,7 @@ open class WrappedFieldDescriptor(
 
     override fun getAccessors(): MutableList<PropertyAccessorDescriptor> = mutableListOf()
 
-    override fun getTypeParameters() = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
 
     override fun getVisibility() = owner.visibility
 

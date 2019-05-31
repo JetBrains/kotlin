@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-val jvmDefaultArgumentStubPhase = makeIrFilePhase(
+val jvmDefaultArgumentStubPhase = makeIrFilePhase<CommonBackendContext>(
     { context -> DefaultArgumentStubGenerator(context, false) },
     name = "DefaultArgumentsStubGenerator",
     description = "Generate synthetic stubs for functions with default parameter values"

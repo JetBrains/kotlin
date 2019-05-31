@@ -114,7 +114,7 @@ private class VarargTransformer(
 
         // empty vararg => empty array literal
         if (segments.isEmpty()) {
-            return emptyList().toArrayLiteral(primitiveExpressionType, primitiveElementType)
+            return emptyList<IrExpression>().toArrayLiteral(primitiveExpressionType, primitiveElementType)
         }
 
         // vararg with a single segment => no need to concatenate
@@ -173,7 +173,7 @@ private class VarargTransformer(
             val argument = expression.getValueArgument(i)
             val parameter = expression.symbol.owner.valueParameters[i]
             if (argument == null && parameter.varargElementType != null) {
-                expression.putValueArgument(i, emptyList().toArrayLiteral(parameter.type, parameter.varargElementType!!))
+                expression.putValueArgument(i, emptyList<IrExpression>().toArrayLiteral(parameter.type, parameter.varargElementType!!))
             }
         }
 

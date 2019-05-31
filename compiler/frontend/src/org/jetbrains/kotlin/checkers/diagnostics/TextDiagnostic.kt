@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.diagnostics.rendering.AbstractDiagnosticWithParamete
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticWithParameters1Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.TO_STRING
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.util.regex.Pattern
 
 class TextDiagnostic(
@@ -136,7 +138,7 @@ class TextDiagnostic(
         private fun asTextDiagnostic(actualDiagnostic: ActualDiagnostic): TextDiagnostic {
             val diagnostic = actualDiagnostic.diagnostic
             val renderer = when (diagnostic.factory) {
-                is DebugInfoDiagnosticFactory1 -> DiagnosticWithParameters1Renderer("{0}", TO_STRING)
+                is DebugInfoDiagnosticFactory1 -> DiagnosticWithParameters1Renderer("{0}", TO_STRING) as DiagnosticRenderer<Diagnostic>
                 else -> DefaultErrorMessages.getRendererForDiagnostic(diagnostic)
             }
             val diagnosticName = actualDiagnostic.name

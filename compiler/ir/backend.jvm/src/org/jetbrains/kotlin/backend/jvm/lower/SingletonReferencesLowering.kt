@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -27,7 +28,7 @@ internal val singletonReferencesPhase = makeIrFilePhase(
 
 private class SingletonReferencesLowering(val context: JvmBackendContext) : ClassLoweringPass, IrElementTransformerVoid() {
     private lateinit var containingClass: IrClass
-    private val constructingEnums = arrayListOf()
+    private val constructingEnums = arrayListOf<IrDeclarationParent>()
 
     override fun lower(irClass: IrClass) {
         containingClass = irClass
