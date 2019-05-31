@@ -18,6 +18,7 @@ object YarnWorkspaces : YarnBasics() {
 
     override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) {
         check(rootProject == rootProject.rootProject)
+        setup(rootProject)
         resolveWorkspaces(rootProject, subProjects)
     }
 
