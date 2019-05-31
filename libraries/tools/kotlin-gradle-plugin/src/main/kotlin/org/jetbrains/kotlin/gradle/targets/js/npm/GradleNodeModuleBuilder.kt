@@ -167,7 +167,7 @@ fun makeNodeModule(
     packageJson: PackageJson,
     files: (File) -> Unit
 ): PackageJson {
-    val dir = container.resolve(packageJson.name)
+    val dir = importedPackageDir(container, packageJson.name, packageJson.version)
 
     if (dir.exists()) dir.deleteRecursively()
 
@@ -187,3 +187,6 @@ fun makeNodeModule(
 
     return packageJson
 }
+
+fun importedPackageDir(container: File, name: String, version: String): File =
+    container.resolve(name).resolve(version)

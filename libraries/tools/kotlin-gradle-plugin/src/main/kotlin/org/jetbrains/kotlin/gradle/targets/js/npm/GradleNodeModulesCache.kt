@@ -22,7 +22,7 @@ internal class GradleNodeModulesCache(val project: Project) : AutoCloseable {
     }
 
     internal val dir = project.nodeJs.root.nodeModulesGradleCacheDir
-    private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "6")
+    private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "8")
     private val visited = mutableSetOf<ResolvedDependency>()
 
     fun collectDependenciesFromConfiguration(configuration: Configuration, result: NpmGradleDependencies) {
@@ -66,7 +66,7 @@ internal class GradleNodeModulesCache(val project: Project) : AutoCloseable {
 
                 if (key != null) {
                     val (name, version) = key.split(":")
-                    result.externalModules.add(GradleNodeModule(name, version, dir.resolve(name)))
+                    result.externalModules.add(GradleNodeModule(name, version, importedPackageDir(dir, name, version)))
                 }
             }
         }
