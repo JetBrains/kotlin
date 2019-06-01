@@ -177,11 +177,16 @@ val relocateCoreSources by task<Copy> {
 
 tasks.getByName("jar").enabled = false
 
-val sourcesJar = sourcesJar(sourceSet = null) {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+
     dependsOn(relocateCoreSources)
     from(relocatedCoreSrc)
     from("$core/reflection.jvm/src")
 }
+
+addArtifact("archives", sourcesJar)
+addArtifact("sources", sourcesJar)
 
 val result by task<Jar> {
     dependsOn(proguard)
