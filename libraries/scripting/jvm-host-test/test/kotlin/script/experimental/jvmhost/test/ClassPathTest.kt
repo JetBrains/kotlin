@@ -13,24 +13,60 @@ import java.io.FileOutputStream
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
+import java.util.jar.Manifest
+import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
 
 class ClassPathTest : TestCase() {
 
+    lateinit var tempDir: File
+
+    override fun setUp() {
+        tempDir = createTempDir(ClassPathTest::class.simpleName!!)
+        super.setUp()
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        tempDir.deleteRecursively()
+    }
+
     @Test
     fun testExtractFromFat() {
-        val collection = createTempFile("col", ".jar").apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
+        val collection = createTempFile("col", ".jar", directory = tempDir).apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
         val cl = URLClassLoader(arrayOf(collection.toURI().toURL()), null)
         val cp = classpathFromClassloader(cl, true)
         Assert.assertTrue(cp != null && cp.isNotEmpty())
 
         testUnpackedCollection(cp!!, emulatedCollectionFiles)
     }
+
+    @Test
+    fun testDetectClasspathFromResources() {
+        val root1 = createTempDir("root1", directory = tempDir)
+        val jar = createTempFile("jar1", ".jar", directory = tempDir).apply { createJarWithManifest() }
+        val cl = URLClassLoader(
+            (emulatedClasspath.map { File(root1, it).apply { mkdirs() }.toURI().toURL() }
+                    + jar.toURI().toURL()).toTypedArray(),
+            null
+        )
+        val cp = cl.classPathFromTypicalResourceUrls().toList()
+
+        Assert.assertTrue(cp.contains(jar.canonicalFile))
+        for (el in emulatedClasspath) {
+            Assert.assertTrue(cp.contains(File(root1, el).canonicalFile))
+        }
+    }
 }
 
 private val emulatedCollectionFiles = arrayOf(
     "classes/a/b.class",
     "lib/c-d.jar"
+)
+
+private val emulatedClasspath = arrayOf(
+    "module1/classes/kotlin/main/",
+    "module2/classes/java/test/"
 )
 
 fun File.createCollectionJar(fileNames: Array<String>, infDirName: String) {
@@ -59,4 +95,11 @@ fun testUnpackedCollection(classpath: List<File>, fileNames: Array<String>) {
     Assert.assertTrue(cpClasses.size == 1)
     classes.checkFiles(cpClasses.first().parentFile)
     jars.checkFiles(cpJars.first().parentFile.parentFile)
+}
+
+fun File.createJarWithManifest() {
+    FileOutputStream(this).use { fileStream ->
+        val jarStream = JarOutputStream(fileStream, Manifest())
+        jarStream.finish()
+    }
 }
