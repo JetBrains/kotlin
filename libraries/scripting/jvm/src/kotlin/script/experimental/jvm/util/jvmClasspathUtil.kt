@@ -8,11 +8,13 @@ package kotlin.script.experimental.jvm.util
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.net.JarURLConnection
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.jar.JarInputStream
 import kotlin.reflect.KClass
-import kotlin.script.experimental.jvm.impl.toContainingFileOrNull
+import kotlin.script.experimental.jvm.impl.toContainingJarOrNull
+import kotlin.script.experimental.jvm.impl.toFileOrNull
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClassByName
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -67,7 +69,7 @@ fun classpathFromClassloader(currentClassLoader: ClassLoader, unpackJarCollectio
             // if cache dir is specified, find all jar collections (spring boot fat jars and WARs so far, and unpack it accordingly
             val jarCollections = JAR_COLLECTIONS_KEY_PATHS.asSequence().flatMap { currentClassLoader.getResources(it).asSequence() }
                 .mapNotNull {
-                    it.toContainingFileOrNull()?.takeIf { file ->
+                    it.toContainingJarOrNull()?.takeIf { file ->
                         // additionally mark/check processed collection jars since unpacking is expensive
                         file.extension in validJarCollectionFilesExtensions && processedJars.add(file)
                     }
@@ -80,7 +82,7 @@ fun classpathFromClassloader(currentClassLoader: ClassLoader, unpackJarCollectio
             }
             else -> {
                 classLoader.classPathFromGetUrlsMethodOrNull()
-                    ?: classLoader.classPathFromManifestResourceUrls()
+                    ?: classLoader.classPathFromTypicalResourceUrls()
             }
         }
         classPath
@@ -88,7 +90,8 @@ fun classpathFromClassloader(currentClassLoader: ClassLoader, unpackJarCollectio
         .toList().takeIf { it.isNotEmpty() }
 }
 
-internal fun URL.toValidClasspathFileOrNull(): File? = toContainingFileOrNull()?.takeIf { it.isValidClasspathFile() }
+internal fun URL.toValidClasspathFileOrNull(): File? =
+    (toContainingJarOrNull() ?: toFileOrNull())?.takeIf { it.isValidClasspathFile() }
 
 internal fun File.isValidClasspathFile(): Boolean =
     isDirectory || (isFile && extension in validClasspathFilesExtensions)
@@ -105,8 +108,31 @@ private fun ClassLoader.classPathFromGetUrlsMethodOrNull(): Sequence<File>? {
     }
 }
 
-internal fun ClassLoader.classPathFromManifestResourceUrls(): Sequence<File> =
-    getResources(JAR_MANIFEST_RESOURCE_NAME).asSequence().distinct().mapNotNull { it.toValidClasspathFileOrNull() }
+internal fun ClassLoader.rawClassPathFromKeyResourcePath(keyResourcePath: String): Sequence<File> {
+    var keyResourcePathDepth = -1
+    return getResources(keyResourcePath).asSequence().mapNotNull { url ->
+        if (url.protocol == "jar") {
+            (url.openConnection() as? JarURLConnection)?.jarFileURL?.toFileOrNull()
+        } else url.toFileOrNull()?.let { file ->
+            if (keyResourcePathDepth < 0) {
+                keyResourcePathDepth = keyResourcePath.trim('/').count { it == '/' }
+            }
+            var root = file
+            for (i in 1..keyResourcePathDepth) {
+                root = root.parentFile
+            }
+            root
+        }
+    }
+}
+
+fun ClassLoader.classPathFromTypicalResourceUrls(): Sequence<File> =
+// roots without manifest cases are detected in some test scenarios
+// manifests without containing directory entries are detected in some optimized jars, e.g. after proguard
+// TODO: investigate whether getting resources with empty name works in all situations
+    (rawClassPathFromKeyResourcePath("") + rawClassPathFromKeyResourcePath(JAR_MANIFEST_RESOURCE_NAME))
+        .distinct()
+        .filter { it.isValidClasspathFile() }
 
 private fun File.unpackJarCollection(rootTempDir: File?): Sequence<File> {
     val targetDir = createTempDir(nameWithoutExtension, directory = rootTempDir)

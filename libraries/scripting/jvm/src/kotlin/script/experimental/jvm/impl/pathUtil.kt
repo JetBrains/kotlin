@@ -100,7 +100,7 @@ internal fun URL.toFileOrNull() =
         else File(file).canonicalFile
     }
 
-internal fun URL.toContainingFileOrNull(): File? =
+internal fun URL.toContainingJarOrNull(): File? =
     if (protocol == "jar") {
         (openConnection() as? JarURLConnection)?.jarFileURL?.toFileOrNull()
-    } else toFileOrNull()
+    } else null
