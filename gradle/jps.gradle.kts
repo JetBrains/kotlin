@@ -1,7 +1,9 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.gradle.ext.*
 import org.jetbrains.kotlin.ideaExt.*
-import org.jetbrains.kotlin.buildUtils.idea.*
+
 
 val ideaPluginDir: File by extra
 val ideaSandboxDir: File by extra
@@ -12,7 +14,7 @@ val intellijUltimateEnabled: Boolean by rootProject.extra
 val ideaUltimatePluginDir: File by rootProject.extra
 val ideaUltimateSandboxDir: File by rootProject.extra
 
-fun org.jetbrains.gradle.ext.JUnit.configureForKotlin() {
+fun JUnit.configureForKotlin() {
     vmParameters = listOf(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
@@ -130,7 +132,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                             mainClass = "org.jetbrains.kotlin.pill.generateAllTests.Main"
                         }
 
-                        defaults<org.jetbrains.gradle.ext.JUnit> {
+                        defaults<JUnit> {
                             configureForKotlin()
                         }
 
