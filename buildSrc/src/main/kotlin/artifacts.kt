@@ -3,15 +3,17 @@
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
@@ -88,22 +90,31 @@ fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
 
 fun Project.runtimeJar(body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask("jar", body), { })
 
-fun Project.sourcesJar(sourceSet: String? = "main", body: Jar.() -> Unit = {}): Jar =
-    getOrCreateTask("sourcesJar") {
-        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-        classifier = "sources"
-        try {
-            if (sourceSet != null) {
-                project.pluginManager.withPlugin("java-base") {
-                    from(project.javaPluginConvention().sourceSets[sourceSet].allSource)
-                }
-            }
-        } catch (e: UnknownDomainObjectException) {
-            // skip default sources location
+fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
+    val task = tasks.register<Jar>("sourcesJar") {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        archiveClassifier.set("sources")
+
+        from(project.mainSourceSet.allSource)
+
+        project.configurations.findByName("embedded")?.let { embedded ->
+            from(provider {
+                embedded.resolvedConfiguration
+                    .resolvedArtifacts
+                    .map { it.id.componentIdentifier }
+                    .filterIsInstance<ProjectComponentIdentifier>()
+                    .map { project(it.projectPath).mainSourceSet.allSource }
+            })
         }
+
         body()
-        project.addArtifact("archives", this, this)
     }
+
+    addArtifact("archives", task)
+    addArtifact("sources", task)
+
+    return task
+}
 
 fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar = getOrCreateTask("javadocJar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -193,6 +204,11 @@ fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: A
 
 fun Project.addArtifact(configurationName: String, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) =
     addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
+
+fun <T : Task> Project.addArtifact(configurationName: String, task: TaskProvider<T>, body: ConfigurablePublishArtifact.() -> Unit = {}) {
+    configurations.maybeCreate(configurationName)
+    artifacts.add(configurationName, task, body)
+}
 
 fun Project.cleanArtifacts() {
     configurations["archives"].artifacts.let { artifacts ->
