@@ -436,6 +436,10 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     SETab(@Nullable SearchEverywhereContributor<?> contributor) {
       super(contributor == null ? IdeBundle.message("searcheverywhere.allelements.tab.name") : contributor.getGroupName());
       this.contributor = contributor;
+      Runnable onChanged = () -> {
+        myToolbar.updateActionsImmediately();
+        rebuildList();
+      };
       if (contributor == null) {
         actions = Arrays.asList(new SearchEverywhereUI.CheckBoxAction(
           IdeBundle.message("checkbox.include.non.project.items", IdeUICustomization.getInstance().getProjectConceptName())) {
@@ -448,12 +452,12 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
           @Override
           public void setEverywhere(boolean state) {
             seManager.setEverywhere(state);
-            rebuildList();
+            onChanged.run();
           }
-        }, new FiltersAction(myContributorsFilter, SearchEverywhereUI.this::rebuildList));
+        }, new FiltersAction(myContributorsFilter, onChanged));
       }
       else {
-        actions = new ArrayList<>(contributor.getActions(SearchEverywhereUI.this::rebuildList));
+        actions = new ArrayList<>(contributor.getActions(onChanged));
       }
       everywhereAction = (EverywhereToggleAction)ContainerUtil.find(actions, o -> o instanceof EverywhereToggleAction);
       Insets insets = JBUI.CurrentTheme.BigPopup.tabInsets();
