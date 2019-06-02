@@ -3,6 +3,8 @@ package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ui.ScrollingUtil;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -18,11 +20,11 @@ class SEListSelectionTracker implements ListSelectionListener {
   private final JBList<?> myList;
   private final SearchEverywhereUI.SearchListModel myListModel;
 
-  private int lockCounter;
-  private final List<Object> selectedItems = new ArrayList<>();
-  private boolean moreSelected = false;
+  private int myLockCounter;
+  private final List<Object> mySelectedItems = new ArrayList<>();
+  private boolean myMoreSelected;
 
-  SEListSelectionTracker(JBList<?> list, SearchEverywhereUI.SearchListModel model) {
+  SEListSelectionTracker(@NotNull JBList<?> list, @NotNull SearchEverywhereUI.SearchListModel model) {
     myList = list;
     myListModel = model;
   }
@@ -35,23 +37,23 @@ class SEListSelectionTracker implements ListSelectionListener {
   }
 
   void saveSelection() {
-    selectedItems.clear();
+    mySelectedItems.clear();
 
     int[] indices = myList.getSelectedIndices();
     List<?> selectedItemsList;
     if (indices.length == 1 && myListModel.isMoreElement(indices[0])) {
-      moreSelected = true;
+      myMoreSelected = true;
       selectedItemsList = Collections.singletonList(myListModel.getElementAt(indices[0] - 1));
     }
     else {
-      moreSelected = false;
+      myMoreSelected = false;
       selectedItemsList = Arrays.stream(indices)
         .filter(i -> !myListModel.isMoreElement(i))
         .mapToObj(i -> myListModel.getElementAt(i))
         .collect(Collectors.toList());
     }
 
-    selectedItems.addAll(selectedItemsList);
+    mySelectedItems.addAll(selectedItemsList);
   }
 
   void restoreSelection() {
@@ -60,7 +62,7 @@ class SEListSelectionTracker implements ListSelectionListener {
     lock();
     try {
       int[] indicesToSelect = calcIndicesToSelect();
-      if (moreSelected && indicesToSelect.length == 1) {
+      if (myMoreSelected && indicesToSelect.length == 1) {
         indicesToSelect[0] += 1;
       }
 
@@ -79,29 +81,28 @@ class SEListSelectionTracker implements ListSelectionListener {
   void resetSelectionIfNeeded() {
     int[] indices = calcIndicesToSelect();
     if (indices.length == 0) {
-      selectedItems.clear();
+      mySelectedItems.clear();
     }
   }
 
   void lock() {
-    lockCounter++;
+    myLockCounter++;
   }
 
   void unlock() {
-    if (lockCounter > 0) lockCounter--;
+    if (myLockCounter > 0) myLockCounter--;
   }
 
   private boolean isLocked() {
-    return lockCounter > 0;
+    return myLockCounter > 0;
   }
 
   private int[] calcIndicesToSelect() {
     List<Object> items = myListModel.getItems();
-    if (items.isEmpty()) return new int[0];
+    if (items.isEmpty()) return ArrayUtil.EMPTY_INT_ARRAY;
 
     return IntStream.range(0, items.size())
-      .filter(i -> selectedItems.contains(items.get(i)))
+      .filter(i -> mySelectedItems.contains(items.get(i)))
       .toArray();
   }
-
 }
