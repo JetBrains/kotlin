@@ -21,9 +21,9 @@ dependencies {
     compile(project(":idea"))
     compile(project(":idea:idea-jvm"))
 
-    compile(intellijDep()) { includeJars("openapi", "extensions", "util") }
+    compileOnly(intellijDep()) { includeJars("openapi", "extensions", "util") }
     Platform[181].orHigher {
-        compile(intellijDep()) { includeJars("platform-api") }
+        compileOnly(intellijDep()) { includeJars("platform-api") }
     }
 }
 

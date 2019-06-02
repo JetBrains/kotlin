@@ -8,6 +8,7 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
+    compileOnly(intellijDep())
     compileOnly(intellijPluginDep("stream-debugger"))
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))

@@ -9,7 +9,7 @@ dependencies {
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-jvm"))
 
-    compile(intellijDep())
+    runtimeOnly(intellijDep())
     runtimeOnly(files(toolsJar()))
 }
 

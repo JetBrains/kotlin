@@ -12,6 +12,7 @@ dependencies {
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
+    compileOnly(intellijDep())
     compileOnly(intellijPluginDep("stream-debugger"))
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))

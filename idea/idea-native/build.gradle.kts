@@ -10,6 +10,9 @@ dependencies {
     compile(project(":compiler:frontend"))
     compileOnly(intellijDep())
     compile(project(":kotlin-native:kotlin-native-library-reader"))
+    
+    testCompileOnly(intellijDep())
+    testRuntimeOnly(intellijDep())
 }
 
 sourceSets {
