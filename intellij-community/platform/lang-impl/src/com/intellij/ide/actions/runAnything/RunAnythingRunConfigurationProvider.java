@@ -6,6 +6,7 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,12 @@ public class RunAnythingRunConfigurationProvider extends com.intellij.ide.action
   @Override
   public Collection<ChooseRunConfigurationPopup.ItemWrapper> getValues(@NotNull DataContext dataContext, @NotNull String pattern) {
     return getWrappers(dataContext);
+  }
+
+  @Nullable
+  @Override
+  public String getHelpGroupTitle() {
+    return null;
   }
 
   @NotNull

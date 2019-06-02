@@ -57,6 +57,12 @@ public class GradleRunAnythingProvider extends RunAnythingProviderBase<String> {
 
   @Nullable
   @Override
+  public String getHelpGroupTitle() {
+    return "Gradle";
+  }
+
+  @Nullable
+  @Override
   public String findMatchingValue(@NotNull DataContext dataContext, @NotNull String pattern) {
     return pattern.startsWith(getHelpCommand()) ? getCommand(pattern) : null;
   }

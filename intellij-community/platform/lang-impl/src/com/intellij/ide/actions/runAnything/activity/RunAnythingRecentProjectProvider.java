@@ -51,6 +51,12 @@ public class RunAnythingRecentProjectProvider extends RunAnythingAnActionProvide
     return "open";
   }
 
+  @Nullable
+  @Override
+  public String getHelpGroupTitle() {
+    return IdeBundle.message("run.anything.recent.project.help.group.title");
+  }
+
   @NotNull
   @Override
   public String getCommand(@NotNull AnAction value) {

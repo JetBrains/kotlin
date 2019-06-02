@@ -115,7 +115,6 @@
     <copyPastePreProcessor implementation="org.jetbrains.plugins.gradle.action.PasteMvnDependencyPreProcessor"/>
 
     <runAnything.executionProvider implementation="org.jetbrains.plugins.gradle.execution.GradleRunAnythingProvider" order="first"/>
-    <runAnything.helpGroup implementation="org.jetbrains.plugins.gradle.execution.GradleRunAnythingHelpGroup"/>
 
     <statistics.projectUsagesCollector implementation="org.jetbrains.plugins.gradle.statistics.GradleSettingsCollector"/>
     <statistics.counterUsagesCollector groupId="build.gradle.actions" version="1"/>

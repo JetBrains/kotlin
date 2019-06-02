@@ -108,6 +108,14 @@ public interface RunAnythingProvider<V> {
   RunAnythingItem getMainListItem(@NotNull DataContext dataContext, @NotNull V value);
 
   /**
+   * Returns help group title this provider belongs to
+   */
+  @Nullable
+  default String getHelpGroupTitle() {
+    return null;
+  }
+
+  /**
    * Returns value's presentation wrapper that is actually added into the help list.
    * See also {@link #getMainListItem(DataContext, Object)}
    *

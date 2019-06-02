@@ -1,16 +1,19 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything;
 
+import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.ide.actions.runAnything.groups.RunAnythingCompletionGroup;
 import com.intellij.ide.actions.runAnything.groups.RunAnythingGroup;
 import com.intellij.ide.actions.runAnything.groups.RunAnythingHelpGroup;
 import com.intellij.ide.actions.runAnything.groups.RunAnythingRecentGroup;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -99,10 +102,24 @@ public abstract class RunAnythingSearchListModel extends DefaultListModel<Object
   }
 
   public static class RunAnythingHelpListModel extends RunAnythingSearchListModel {
+    @Nullable private List<RunAnythingGroup> myHelpGroups;
+
     @NotNull
     @Override
     protected List<RunAnythingGroup> getGroups() {
-      return Arrays.asList(RunAnythingHelpGroup.EP_NAME.getExtensions());
+      if (myHelpGroups == null) {
+        myHelpGroups = new ArrayList<>();
+        myHelpGroups.addAll(ContainerUtil.map(StreamEx.of(RunAnythingProvider.EP_NAME.extensions())
+                                                .filter(provider -> provider.getHelpGroupTitle() != null)
+                                                .groupingBy(provider -> provider.getHelpGroupTitle())
+                                                .entrySet(), entry -> new RunAnythingHelpGroup(entry.getKey(), entry.getValue())));
+
+        List<RunAnythingGroup> epGroups = Arrays.asList(RunAnythingHelpGroup.EP_NAME.getExtensions());
+        if (!epGroups.isEmpty()) {
+          myHelpGroups.addAll(epGroups);
+        }
+      }
+      return myHelpGroups;
     }
   }
 }

@@ -5,29 +5,51 @@ import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * 'Run Anything' popup help section is divided into groups by categories.
  * E.g. 'ruby' help group contains 'ruby' related run configuration commands, 'rvm use #sdk_version' commands etc.
- * <p>
- * To add an own help group extend this class and register {@link #EP_NAME} in your ide or plugin.
- *
- * @param <P>
  */
-public abstract class RunAnythingHelpGroup<P extends RunAnythingProvider> extends RunAnythingGroupBase {
+
+public class RunAnythingHelpGroup<P extends RunAnythingProvider> extends RunAnythingGroupBase {
   public static final ExtensionPointName<RunAnythingGroup> EP_NAME = ExtensionPointName.create("com.intellij.runAnything.helpGroup");
+
+  @NotNull private String myTitle = "undefined";
+  @NotNull private List<P> myProviders = ContainerUtil.emptyList();
+
+  public RunAnythingHelpGroup(@NotNull String title, @NotNull List<P> providers) {
+    myTitle = title;
+    myProviders = providers;
+  }
+
+  @Deprecated
+  //leave it for compatibility reasons
+  public RunAnythingHelpGroup() { }
+
+  @NotNull
+  @Override
+  public String getTitle() {
+    return myTitle;
+  }
 
   /**
    * Returns collections of providers each of them is expecting to provide not null {@link RunAnythingProvider#getHelpItem(DataContext)}
    * See also {@code RunAnythingProviderBase.getHelp*()} methods.
+   * <p>
+   * Deprecated - please use {@link RunAnythingProvider#getHelpGroupTitle()} instead
    */
+  @Deprecated
   @NotNull
-  public abstract Collection<P> getProviders();
+  public Collection<P> getProviders() {
+    return myProviders;
+  }
 
   @NotNull
   @Override
@@ -37,5 +59,10 @@ public abstract class RunAnythingHelpGroup<P extends RunAnythingProvider> extend
       .map(provider -> provider.getHelpItem(dataContext))
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
+  }
+
+  @Override
+  protected int getMaxInitialItems() {
+    return 15;
   }
 }
