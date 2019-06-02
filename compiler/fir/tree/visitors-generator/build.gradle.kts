@@ -10,15 +10,17 @@ plugins {
     id("jps-compatible")
 }
 
+val runtimeOnly by configurations
+val compileOnly by configurations
+runtimeOnly.extendsFrom(compileOnly)
+
 dependencies {
     compile(project(":compiler:psi"))
 
-    compile(intellijCoreDep()) { includeJars("intellij-core") }
-    compile(intellijDep()) {
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    compileOnly(intellijDep()) {
         includeJars("trove4j", "picocontainer", rootProject = rootProject)
-        isTransitive = false
     }
-    compile(intellijDep()) { includeJars("guava", rootProject = rootProject) }
 }
 
 val writeCopyright by task<WriteCopyrightToFile> {

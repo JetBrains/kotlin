@@ -74,8 +74,9 @@ dependencies {
     testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
 
     if (intellijUltimateEnabled) {
-        testCompileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "gson", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
+        testCompileOnly(intellijUltimateDep())
     }
+    
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     testRuntime(project(":kotlin-reflect"))

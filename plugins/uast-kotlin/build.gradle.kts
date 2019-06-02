@@ -12,11 +12,9 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
 
-    Platform[181].orHigher {
-        // BEWARE: Uast should not depend on IDEA.
-        compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-        compileOnly(intellijDep()) { includeJars("java-api", "java-impl", "asm-all", rootProject = rootProject) }
-    }
+    // BEWARE: Uast should not depend on IDEA.
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
 
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -25,9 +23,8 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":idea:idea-test-framework"))
 
-    Platform[181].orHigher {
-        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }

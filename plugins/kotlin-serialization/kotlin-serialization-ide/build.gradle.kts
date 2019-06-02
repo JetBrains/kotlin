@@ -15,6 +15,9 @@ dependencies {
     compileOnly(intellijDep())
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
+
+    testCompileOnly(intellijDep())
+    testRuntimeOnly(intellijDep())
 }
 
 sourceSets {

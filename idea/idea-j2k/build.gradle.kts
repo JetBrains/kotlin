@@ -6,6 +6,8 @@ plugins {
 dependencies {
     compile(project(":j2k"))
     compile(project(":idea:idea-core"))
+
+    compileOnly(intellijDep())
 }
 
 sourceSets {

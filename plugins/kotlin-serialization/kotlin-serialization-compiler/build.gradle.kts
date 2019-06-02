@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
     compile(project(":compiler:plugin-api"))
     compile(project(":compiler:frontend"))

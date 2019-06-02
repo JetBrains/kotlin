@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compile(intellijDep()) { includeJars("util") }
+    testCompile(intellijDep()) { includeJars("util") }
     testCompile(project(":core:util.runtime"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(kotlinStdlib())

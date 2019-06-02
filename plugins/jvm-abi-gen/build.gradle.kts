@@ -15,6 +15,8 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":kotlin-build-common"))
 
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
+
     runtimeOnly(project(":kotlin-compiler"))
 
     testCompile(commonDep("junit:junit"))

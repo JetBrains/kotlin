@@ -22,6 +22,8 @@ dependencies {
     compile(project(":compiler:cli"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("commons-lang-2.4") }
+
     compile("org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.12")
 }
 

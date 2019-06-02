@@ -11,6 +11,8 @@ dependencies {
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
+    compileOnly(intellijDep())
+
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
 }

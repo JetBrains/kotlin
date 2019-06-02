@@ -23,7 +23,10 @@ dependencies {
     compile(project(":compiler:incremental-compilation-impl"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
+
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("trove4j") }
+
     runtime(project(":kotlin-reflect"))
 
     embedded(project(":daemon-common")) { isTransitive = false }

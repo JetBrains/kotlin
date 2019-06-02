@@ -13,7 +13,7 @@ dependencies {
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep())
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

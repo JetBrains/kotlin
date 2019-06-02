@@ -13,6 +13,8 @@ dependencies {
 
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
+    compileOnly(intellijDep())
+
     testCompile(commonDep("junit:junit"))
 }
 

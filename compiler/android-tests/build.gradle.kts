@@ -23,7 +23,7 @@ dependencies {
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
-    testCompile(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "groovy-all", "jps-builders", rootProject = rootProject) }
+    testCompile(intellijDep()) { includeJars("openapi", "util", "idea", "idea_rt", "groovy-all", "jps-builders", rootProject = rootProject) }
     testCompile(jpsStandalone()) { includeJars("jps-model") }
     testCompile(jpsBuildTest())
 }
