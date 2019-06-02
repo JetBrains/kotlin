@@ -90,5 +90,6 @@ val jmhExec by tasks.creating(JavaExec::class) {
 
     workingDir = rootDir
     systemProperty("idea.home.path", project.intellij.localPath)
+    systemProperty("idea.max.intellisense.filesize", 5000 * 1024)
     configurations.plusAssign(project.configurations["compile"])
 }
