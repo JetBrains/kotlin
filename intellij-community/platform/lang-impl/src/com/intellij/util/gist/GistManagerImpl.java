@@ -1,34 +1,17 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.gist;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,31 +23,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author peter
- */
-public class GistManagerImpl extends GistManager {
+public final class GistManagerImpl extends GistManager {
   private static final Logger LOG = Logger.getInstance(GistManagerImpl.class);
   private static final Set<String> ourKnownIds = ContainerUtil.newConcurrentSet();
   private static final String ourPropertyName = "file.gist.reindex.count";
   private final AtomicInteger myReindexCount = new AtomicInteger(PropertiesComponent.getInstance().getInt(ourPropertyName, 0));
 
-  public GistManagerImpl() {
-    ApplicationManager.getApplication().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-      @Override
-      public void after(@NotNull List<? extends VFileEvent> events) {
-        if (events.stream().anyMatch(this::shouldDropCache)) {
-          invalidateGists();
-        }
+  static final class MyBulkFileListener implements BulkFileListener {
+    @Override
+    public void after(@NotNull List<? extends VFileEvent> events) {
+      if (events.stream().anyMatch(MyBulkFileListener::shouldDropCache)) {
+        ((GistManagerImpl)GistManager.getInstance()).invalidateGists();
       }
+    }
 
-      private boolean shouldDropCache(VFileEvent e) {
-        if (!(e instanceof VFilePropertyChangeEvent)) return false;
+    private static boolean shouldDropCache(VFileEvent e) {
+      if (!(e instanceof VFilePropertyChangeEvent)) return false;
 
-        String propertyName = ((VFilePropertyChangeEvent)e).getPropertyName();
-        return propertyName.equals(VirtualFile.PROP_NAME) || propertyName.equals(VirtualFile.PROP_ENCODING);
-      }
-    });
+      String propertyName = ((VFilePropertyChangeEvent)e).getPropertyName();
+      return propertyName.equals(VirtualFile.PROP_NAME) || propertyName.equals(VirtualFile.PROP_ENCODING);
+    }
   }
 
   @NotNull

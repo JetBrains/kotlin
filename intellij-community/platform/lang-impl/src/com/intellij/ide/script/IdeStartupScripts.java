@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-class IdeStartupScripts implements ApplicationInitializedListener {
+final class IdeStartupScripts implements ApplicationInitializedListener {
   private static final Logger LOG = Logger.getInstance(IdeStartupScripts.class);
 
   private static final String SCRIPT_DIR = "startup";
