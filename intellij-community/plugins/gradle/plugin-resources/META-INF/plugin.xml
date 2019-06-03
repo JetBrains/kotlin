@@ -165,5 +165,12 @@
 
     <action id="Gradle.ShowDaemons" class="org.jetbrains.plugins.gradle.internal.daemon.ShowGradleDaemonsAction"/>
 
+
+    <action id="Gradle.ImportExternalProject" class="org.jetbrains.plugins.gradle.action.ImportProjectFromScriptAction"
+            text="Import Gradle Project" description="Import Gradle project described by this file"
+            icon="GradleIcons.Gradle">
+      <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </action>
   </actions>
 </idea-plugin>
