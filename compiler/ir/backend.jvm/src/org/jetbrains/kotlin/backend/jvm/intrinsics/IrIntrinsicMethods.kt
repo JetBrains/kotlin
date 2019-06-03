@@ -25,14 +25,12 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -116,9 +114,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     unaryFunForPrimitives("dec", DEC) +
                     unaryFunForPrimitives("hashCode", HashCode) +
                     unaryFunForPrimitives("toString", ToString) +
-                    binaryFunForPrimitives("equals", EQUALS) +
+                    binaryFunForPrimitives("equals", EQUALS, irBuiltIns.anyClass) +
                     symbols.primitiveArrayOfByType.values.map { it.toKey() to ArrayOf } +
-                    binaryFunForPrimitives("rangeTo", RangeTo) +
+                    binaryFunForPrimitivesAcrossPrimitives("rangeTo", RangeTo) +
                     binaryOp("plus", IADD) +
                     binaryOp("minus", ISUB) +
                     binaryOp("times", IMUL) +
@@ -131,11 +129,11 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     binaryOp("and", IAND) +
                     binaryOp("or", IOR) +
                     binaryOp("xor", IXOR) +
-                    binaryFunForPrimitives("compareTo", CompareTo) +
-                    methodWithArity(irBuiltIns.booleanClass, "not", 0, Not) +
-                    methodWithArity(irBuiltIns.stringClass, "get", 1, StringGetChar) +
-                    symbols.primitiveIteratorsByType.values.flatMap { iteratorClass ->
-                        methodWithArity(iteratorClass, "next", 0, IteratorNext)
+                    binaryFunForPrimitivesAcrossPrimitives("compareTo", CompareTo) +
+                    createKeyMapping(Not, irBuiltIns.booleanClass, "not") +
+                    createKeyMapping(StringGetChar, irBuiltIns.stringClass, "get", irBuiltIns.intClass) +
+                    symbols.primitiveIteratorsByType.values.map { iteratorClass ->
+                        createKeyMapping(IteratorNext, iteratorClass, "next")
                     } +
                     arrayMethods() +
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
@@ -144,27 +142,60 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     primitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ)
     ).toMap()
 
+    private val PrimitiveType.symbol
+        get() = irBuiltIns.primitiveTypeToIrType[this]!!.classOrNull!!
+
     fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? = intrinsicsMap[symbol.toKey()]
 
     private fun unaryFunForPrimitives(name: String, intrinsic: IntrinsicMethod): List<Pair<Key, IntrinsicMethod>> =
-        PrimitiveType.values().flatMap { type ->
-            methodWithArity(irBuiltIns.primitiveTypeToIrType[type]!!.classOrNull!!, name, 0, intrinsic)
+        PrimitiveType.values().map { type ->
+            createKeyMapping(intrinsic, type.symbol, name)
         }
 
-    private fun binaryFunForPrimitives(name: String, intrinsic: IntrinsicMethod): List<Pair<Key, IntrinsicMethod>> =
-        PrimitiveType.values().flatMap { type ->
-            methodWithArity(irBuiltIns.primitiveTypeToIrType[type]!!.classOrNull!!, name, 1, intrinsic)
+    private fun binaryFunForPrimitivesAcrossPrimitives(name: String, intrinsic: IntrinsicMethod): List<Pair<Key, IntrinsicMethod>> =
+        PrimitiveType.values().flatMap { parameter ->
+            binaryFunForPrimitives(name, intrinsic, parameter.symbol)
         }
 
-    private fun binaryOp(methodName: String, opcode: Int) = binaryFunForPrimitives(methodName, BinaryOp(opcode))
+
+    private fun binaryFunForPrimitives(
+        name: String,
+        intrinsic: IntrinsicMethod,
+        parameter: IrClassifierSymbol
+    ): List<Pair<Key, IntrinsicMethod>> =
+        PrimitiveType.values().map { type ->
+            createKeyMapping(
+                intrinsic,
+                type.symbol,
+                name,
+                parameter
+            )
+        }
+
+    private fun binaryOp(methodName: String, opcode: Int) = binaryFunForPrimitivesAcrossPrimitives(methodName, BinaryOp(opcode))
 
     private fun numberConversionMethods(): List<Pair<Key, IntrinsicMethod>> =
         PrimitiveType.NUMBER_TYPES.flatMap { type ->
-            numberConversionMethods(irBuiltIns.primitiveTypeToIrType[type]!!.classOrNull!!)
+            numberConversionMethods(type.symbol)
         } + numberConversionMethods(irBuiltIns.numberClass)
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArrays.values.flatMap { arrayMethods(it) } + arrayMethods(symbols.array)
+        symbols.primitiveArrays.flatMap { (key, value) ->
+            arrayMethods(
+                key.symbol,
+                value
+            )
+        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+
+    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
+        listOf(
+            createKeyMapping(ArraySize, arrayClass, "<get-size>"),
+            createKeyMapping(NewArray, arrayClass, "<init>", irBuiltIns.intClass),
+            createKeyMapping(ArraySet, arrayClass, "set", irBuiltIns.intClass, elementClass),
+            createKeyMapping(ArrayGet, arrayClass, "get", irBuiltIns.intClass),
+            createKeyMapping(Clone, arrayClass, "clone"),
+            createKeyMapping(ArrayIterator, arrayClass, "iterator")
+        )
 
     data class Key(val owner: FqName, val receiverParameterTypeName: FqName?, val name: String, val valueParameterTypeNames: List<FqName?>)
 
@@ -186,7 +217,10 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         }
 
         private fun getParameterFqName(parameter: IrValueParameter?): FqName? =
-            parameter?.type?.classifierOrNull?.owner?.let {
+            getParameterFqName(parameter?.type?.classifierOrNull)
+
+        private fun getParameterFqName(parameter: IrClassifierSymbol?): FqName? =
+            parameter?.owner?.let {
                 when (it) {
                     is IrClass -> it.fqNameWhenAvailable
                     is IrTypeParameter -> FqName(it.name.asString())
@@ -194,26 +228,21 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 }
             }
 
-        private fun methodWithArity(klass: IrClassSymbol, name: String, arity: Int, intrinsic: IntrinsicMethod): List<Pair<Key, IntrinsicMethod>> =
-            klass.owner.functions.filter {
-                it.name.asString() == name && it.valueParameters.size == arity
-            }.map {
-                it.symbol.toKey()!! to intrinsic
-            }.toList()
+        private fun createKeyMapping(
+            intrinsic: IntrinsicMethod,
+            klass: IrClassSymbol,
+            name: String,
+            vararg args: IrClassifierSymbol
+        ): Pair<Key, IntrinsicMethod> =
+            Key(klass.owner.fqNameWhenAvailable!!, null, name, args.map {
+                getParameterFqName(it)
+            }) to intrinsic
 
         private fun numberConversionMethods(numberClass: IrClassSymbol) =
-            OperatorConventions.NUMBER_CONVERSIONS.flatMap { method ->
-                methodWithArity(numberClass, method.asString(), 0, NumberCast)
+            OperatorConventions.NUMBER_CONVERSIONS.map { method ->
+                createKeyMapping(NumberCast, numberClass, method.asString())
             }
 
-        private fun arrayMethods(arrayClass: IrClassSymbol) = listOf(
-            arrayClass.owner.properties.single { it.name.asString() == "size" }.getter!!.symbol.toKey()!! to ArraySize
-        ) +
-                arrayClass.constructors.filter { it.owner.valueParameters.size == 1 }.map { it.toKey()!! to NewArray } +
-                methodWithArity(arrayClass, "set", 2, ArraySet) +
-                methodWithArity(arrayClass, "get", 1, ArrayGet) +
-                methodWithArity(arrayClass, "clone", 0, Clone) +
-                methodWithArity(arrayClass, "iterator", 0, ArrayIterator)
 
         private fun primitiveComparisonIntrinsics(typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>, operator: KtSingleValueToken) =
             typeToIrFun.map { (type, irFunSymbol) ->
