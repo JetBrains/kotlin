@@ -6,6 +6,7 @@ package com.intellij.navigation
 import com.intellij.ide.ui.createTargetPresentationRenderer
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.util.Consumer
 import org.jetbrains.annotations.ApiStatus.Experimental
@@ -19,7 +20,14 @@ fun chooseTarget(editor: Editor, title: String, targets: List<NavigationTarget>,
     consumer.consume(it)
     return
   }
-  val renderer = createTargetPresentationRenderer(NavigationTarget::getPresentationIfValid)
+  chooseTargetPopup(title, targets, NavigationTarget::getPresentationIfValid, consumer).showInBestPositionFor(editor)
+}
+
+fun <T> chooseTargetPopup(title: String,
+                          targets: List<T>,
+                          presentation: (T) -> TargetPresentation?,
+                          consumer: Consumer<T>): JBPopup {
+  val renderer = createTargetPresentationRenderer(presentation)
   return JBPopupFactory.getInstance()
     .createPopupChooserBuilder(targets)
     .setRenderer(renderer)
@@ -29,7 +37,6 @@ fun chooseTarget(editor: Editor, title: String, targets: List<NavigationTarget>,
     .setItemChosenCallback(consumer)
     .withHintUpdateSupply()
     .createPopup()
-    .showInBestPositionFor(editor)
 }
 
 private fun NavigationTarget.getPresentationIfValid(): TargetPresentation? {
