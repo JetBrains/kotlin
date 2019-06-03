@@ -310,24 +310,6 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift control K",          "HippieCompletion", "Vcs.Push"},
     { "control alt E",            "Console.History.Browse", "ExecuteInPyConsoleAction", "PerforceDirect.Edit"},
     });
-    put("JBuilder", new String[][] {
-    { "F2",                       "EditorTab", "GuiDesigner.EditComponent", "GuiDesigner.EditGroup", "Console.TableResult.EditValue", "XDebugger.SetValue", "Arrangement.Rule.Edit", "Git.Reword.Commit", "ShelvedChanges.Rename", "ChangesView.Rename"},
-    { "F5",                       "ToggleBreakpointEnabled", "Graph.ApplyCurrentLayout"},
-    { "TAB",                      "EditorChooseLookupItemReplace", "NextTemplateVariable", "NextParameter", "EditorIndentSelection",
-                                  "EmacsStyleIndent", "NextTemplateParameter", "ExpandLiveTemplateByTab", "BraceOrQuoteOut",
-                                  "SearchEverywhere.CompleteCommand", "SearchEverywhere.NextTab"},
-    { "control F6",               "PreviousEditorTab", "PreviousTab", },
-    { "control L",                "Vcs.Log.FocusTextFilter", "EditorSelectLine"},
-    { "control M",                "Vcs.ShowMessageHistory", "OverrideMethods", "TodoViewGroupByShowModules"},
-    { "control P",                "ChangesView.GroupBy.Directory", "FileChooser.TogglePathShowing", "FindInPath", "TodoViewGroupByShowPackages"},
-    { "shift control A",          "SaveAll", "GotoAction"},
-    { "shift ctrl C",             "DatabaseView.CopyDdlAction", "SurroundWith"},
-    { "shift control E",          "RecentLocations", "ExtractMethod"},
-    { "shift control ENTER",      "FindUsages", "Console.Jpa.GenerateSql"},
-    { "shift control F6",         "NextTab", "ChangeTypeSignature"},
-    { "shift control G",          "GotoSymbol", "ClassTemplateNavigation", "GoToClass"},
-    { "shift control X",          "EditorToggleShowWhitespaces", "com.jetbrains.php.framework.FrameworkRunConsoleAction"},
-    });
     put("Eclipse (Mac OS X)", new String[][] {
     { "meta BACK_SPACE",          "EditorDeleteToWordStart", "$Delete"},
     { "F2",                       "Console.TableResult.EditValue", "QuickJavaDoc", "XDebugger.SetValue", "Arrangement.Rule.Edit", "Git.Reword.Commit", "ShelvedChanges.Rename", "ChangesView.Rename"},
