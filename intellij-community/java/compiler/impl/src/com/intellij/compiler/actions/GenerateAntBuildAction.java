@@ -17,7 +17,10 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +101,7 @@ public class GenerateAntBuildAction extends CompileActionBase {
 
     try {
       if (genOptions.generateSingleFile) {
-        final File projectBuildFileDestDir = VfsUtil.virtualToIoFile(project.getBaseDir());
+        final File projectBuildFileDestDir = VfsUtilCore.virtualToIoFile(project.getBaseDir());
         final File destFile = new File(projectBuildFileDestDir, genOptions.getBuildFileName());
         final File propertiesFile = new File(projectBuildFileDestDir, genOptions.getPropertiesFileName());
 
@@ -107,7 +110,7 @@ public class GenerateAntBuildAction extends CompileActionBase {
       else {
         final List<File> allFiles = new ArrayList<>();
 
-        final File projectBuildFileDestDir = VfsUtil.virtualToIoFile(project.getBaseDir());
+        final File projectBuildFileDestDir = VfsUtilCore.virtualToIoFile(project.getBaseDir());
         allFiles.add(new File(projectBuildFileDestDir, genOptions.getBuildFileName()));
         allFiles.add(new File(projectBuildFileDestDir, genOptions.getPropertiesFileName()));
 
@@ -198,7 +201,7 @@ public class GenerateAntBuildAction extends CompileActionBase {
   }
 
   private File[] generateSingleFileBuild(Project project, GenerationOptions genOptions, List<? super File> filesToRefresh) throws IOException {
-    final File projectBuildFileDestDir = VfsUtil.virtualToIoFile(project.getBaseDir());
+    final File projectBuildFileDestDir = VfsUtilCore.virtualToIoFile(project.getBaseDir());
     projectBuildFileDestDir.mkdirs();
     final File destFile = new File(projectBuildFileDestDir, genOptions.getBuildFileName());
     final File propertiesFile = new File(projectBuildFileDestDir, genOptions.getPropertiesFileName());

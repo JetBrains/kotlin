@@ -11,7 +11,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.module.LanguageLevelUtil;
+import com.intellij.openapi.module.EffectiveLanguageLevelUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -113,7 +113,7 @@ public class CompilerErrorTreeView extends NewErrorTreeViewPanel {
               if (psiFile == null) {
                 return;
               }
-              if (LanguageLevelUtil.getEffectiveLanguageLevel(module).compareTo(LanguageLevel.JDK_1_5) < 0) return;
+              if (EffectiveLanguageLevelUtil.getEffectiveLanguageLevel(module).compareTo(LanguageLevel.JDK_1_5) < 0) return;
               final PsiElement context = psiFile.findElementAt(fileDescriptor.getOffset());
               if (context == null) {
                 return;
