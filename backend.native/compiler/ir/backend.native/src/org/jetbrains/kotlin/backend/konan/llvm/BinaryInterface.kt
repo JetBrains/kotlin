@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.konan.library.uniqueName
+import org.jetbrains.kotlin.backend.konan.isInlinedNative
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.name.Name
 // TODO: do not serialize descriptors of non-exported declarations.
 
 object KonanMangler : KotlinManglerImpl() {
+
+    override val IrType.isInlined
+        get() = this.isInlinedNative()
 
     override val String.hashMangle get() = this.localHash.value
 
