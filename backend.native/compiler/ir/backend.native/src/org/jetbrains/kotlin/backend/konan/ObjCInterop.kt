@@ -72,7 +72,7 @@ fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().a
 }
 
 fun IrClass.isObjCProtocolClass(): Boolean =
-        this.fqNameSafe == objCProtocolFqName
+        this.fqNameForIrSerialization == objCProtocolFqName
 
 fun ClassDescriptor.isObjCProtocolClass(): Boolean =
         this.fqNameSafe == objCProtocolFqName
