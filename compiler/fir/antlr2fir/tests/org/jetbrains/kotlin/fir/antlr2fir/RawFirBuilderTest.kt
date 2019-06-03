@@ -6,61 +6,14 @@
 package org.jetbrains.kotlin.fir.antlr2fir
 
 import junit.framework.TestCase
-import org.antlr.v4.runtime.BailErrorStrategy
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.atn.LexerATNSimulator
-import org.antlr.v4.runtime.atn.ParserATNSimulator
-import org.antlr.v4.runtime.atn.PredictionContextCache
-import org.antlr.v4.runtime.atn.PredictionMode
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSessionBase
-import org.jetbrains.kotlin.fir.antlr2fir.antlr4.generated.KotlinLexer
-import org.jetbrains.kotlin.fir.antlr2fir.antlr4.generated.KotlinParser
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.name.FqName
-import java.io.File
-import java.io.FileInputStream
-import java.nio.file.Path
 import java.nio.file.Paths
-
-class Antlr2FirBuilderTest(private val stubMode: Boolean = true) {
-    fun buildFirFile(path: Path): FirFile {
-        val fileName = path.toString().replaceBeforeLast(File.separator, "").replace(File.separator, "")
-        return buildFirFile(KotlinLexer(CharStreams.fromPath(path)), fileName)
-    }
-
-    fun buildFirFile(file: File): FirFile {
-        val lexer = KotlinLexer(CharStreams.fromFileName(file.absolutePath))
-        return buildFirFile(lexer, file.name)
-    }
-
-    fun buildFirFile(input: String): FirFile {
-        return buildFirFile(KotlinLexer(CharStreams.fromString(input)))
-    }
-
-    private fun buildFirFile(lexer: KotlinLexer, fileName: String = ""): FirFile {
-        val tokens = CommonTokenStream(lexer)
-        val parser = KotlinParser(tokens)
-
-        // TODO script
-        return Antlr2FirBuilder(object : FirSessionBase() {}, stubMode, fileName).buildFirFile(parser.kotlinFile())
-        /*return FirFileImpl(
-            object : FirSessionBase() {},
-            null,
-            fileName,
-            FqName.ROOT
-        )*/
-    }
-
-}
 
 class RawFirBuilderTest : AbstractRawFirBuilderTestCase() {
     private fun executeTest(filePath: String) {
-        val antlr2FirResult = Antlr2FirBuilderTest(true).buildFirFile(Paths.get(filePath)).render()
+        val antlr2FirResult = Antlr2Fir(true).buildFirFile(Paths.get(filePath)).render()
 
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(stubMode = true)

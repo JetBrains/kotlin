@@ -1143,9 +1143,9 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
         override fun visitReceiverType(ctx: KotlinParser.ReceiverTypeContext?): FirTypeRef? {
             val firTypeRef = when {
                 ctx == null -> return null
-                ctx.parenthesizedType() != null -> ctx.parenthesizedType().convert<FirUserTypeRefImpl>()
-                ctx.nullableType() != null -> ctx.nullableType().convert<FirUserTypeRefImpl>()
-                ctx.typeReference() != null -> ctx.typeReference().convert<FirUserTypeRefImpl>()
+                ctx.parenthesizedType() != null -> ctx.parenthesizedType().convert<FirAbstractAnnotatedTypeRef>()
+                ctx.nullableType() != null -> ctx.nullableType().convert()
+                ctx.typeReference() != null -> ctx.typeReference().convert()
                 else -> throw AssertionError("Unexpected receiver type element")
             }
 

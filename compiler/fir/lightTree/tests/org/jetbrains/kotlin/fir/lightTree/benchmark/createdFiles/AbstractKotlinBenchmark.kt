@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.lightTree.benchmark.createdFiles
 
 import org.jetbrains.kotlin.fir.lightTree.benchmark.*
+import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.LightTree2FirGenerator
+import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.Psi2FirGenerator
+import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.TreeGenerator
 import org.openjdk.jmh.annotations.*
 import java.io.File
 import java.util.concurrent.TimeUnit
