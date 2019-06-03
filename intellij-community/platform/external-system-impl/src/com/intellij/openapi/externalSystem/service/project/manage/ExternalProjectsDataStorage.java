@@ -46,6 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 import static com.intellij.openapi.externalSystem.model.ProjectKeys.MODULE;
 import static com.intellij.openapi.externalSystem.model.ProjectKeys.PROJECT;
@@ -360,7 +361,14 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
       });
     }
 
-    getCacheFile(project).writeList(externalProjects, InternalExternalProjectInfo.class);
+    try {
+      getCacheFile(project).writeList(externalProjects, InternalExternalProjectInfo.class);
+    } finally {
+      externalProjects.stream()
+        .map(InternalExternalProjectInfo::getExternalProjectStructure)
+        .filter(Objects::nonNull)
+        .forEach(dataNode -> dataNode.visit(node -> node.visitData(Function.identity())));
+    }
   }
 
   @SuppressWarnings("unchecked")

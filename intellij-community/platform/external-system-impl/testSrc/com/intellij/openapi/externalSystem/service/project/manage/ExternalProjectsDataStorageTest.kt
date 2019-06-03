@@ -10,13 +10,12 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
-import com.intellij.util.Alarm
+import com.intellij.util.ReflectionUtil
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.BDDAssertions.then
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.util.concurrent.TimeUnit.SECONDS
 import kotlin.reflect.jvm.jvmName
 
 class ExternalProjectsDataStorageTest: UsefulTestCase() {
@@ -60,5 +59,26 @@ class ExternalProjectsDataStorageTest: UsefulTestCase() {
       .next()
       .externalProjectStructure?.data?.externalName)
       .isEqualTo(externalName)
+  }
+
+  @Test
+  fun `test raw data field is not retained after dataNode graph saved`() = runBlocking<Unit> {
+    val dataStorage = ExternalProjectsDataStorage(myFixture.project)
+
+    val testId = ProjectSystemId("Test")
+    val externalName = "external_name"
+    val externalProjectPath = FileUtil.toSystemIndependentName(createTempDir(suffix = "externalProject").canonicalPath)
+
+    val projectData = ProjectData(testId, externalName,
+                                  "external_project_path",
+                                  externalProjectPath)
+    val node = DataNode<ProjectData>(Key(ProjectData::class.jvmName, 0), projectData, null)
+    val externalProjectInfo = InternalExternalProjectInfo(testId, externalProjectPath, node)
+
+    dataStorage.update(externalProjectInfo)
+    dataStorage.save()
+    val savedNode = dataStorage.get(testId, externalProjectPath)?.externalProjectStructure
+
+    then(ReflectionUtil.getField(DataNode::class.java, savedNode, ByteArray::class.java, "rawData")).isNull()
   }
 }
