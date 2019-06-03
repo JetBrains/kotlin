@@ -70,7 +70,8 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
 
   public interface Delegate {
     @Nullable
-    String getStringToReplace(@NotNull Editor editor, @Nullable FindResult findResult) throws FindManager.MalformedReplacementStringException;
+    String getStringToReplace(@NotNull Editor editor, @Nullable FindResult findResult)
+      throws FindManager.MalformedReplacementStringException;
   }
 
   @Override
@@ -136,7 +137,8 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
     for (int i = 0; i < ranges.size()-1; ++i) {
       Pair<Integer, Character> pair = ranges.get(i);
       Pair<Integer, Character> pair1 = ranges.get(i + 1);
-      dumpStream.print(pair.second + document.getText(TextRange.create(Math.max(pair.first, 0), Math.min(pair1.first, document.getTextLength() ))));
+      dumpStream.print(pair.second + document.getText(TextRange.create(Math.max(pair.first, 0),
+                                                                       Math.min(pair1.first, document.getTextLength()))));
     }
     dumpStream.println("\n--");
 

@@ -105,10 +105,6 @@ public class LivePreviewController implements LivePreview.Delegate, FindUtil.Rep
     myLivePreviewAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, parentDisposable);
   }
 
-  public int getUserActivityDelay() {
-    return myUserActivityDelay;
-  }
-
   public void setUserActivityDelay(int userActivityDelay) {
     myUserActivityDelay = userActivityDelay;
   }
