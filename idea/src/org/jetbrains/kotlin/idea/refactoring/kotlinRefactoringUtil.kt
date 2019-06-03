@@ -311,7 +311,9 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
 
 fun PsiElement.getLineNumber(start: Boolean = true): Int {
     val document = containingFile.viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(containingFile)
-    return document?.getLineNumber(if (start) this.startOffset else this.endOffset) ?: 0
+    val index = if (start) this.startOffset else this.endOffset
+    if (index > document?.textLength ?: 0) return 0
+    return document?.getLineNumber(index) ?: 0
 }
 
 class SeparateFileWrapper(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE) {

@@ -142,6 +142,8 @@
 
         <scratch.creationHelper language="kotlin"
                                 implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileCreationHelper"/>
+        <runLineMarkerContributor language="kotlin"
+                                  implementationClass="org.jetbrains.kotlin.idea.scratch.actions.ScratchRunLineMarkerContributor"/>
 
         <localInspection
             groupName="Plugin DevKit"

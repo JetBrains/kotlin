@@ -140,27 +140,6 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         return inlineElementsInRange.map { it.renderer as InlayScratchFileRenderer }
     }
 
-    private fun configureOptions(
-        scratchPanel: ScratchTopPanel,
-        fileText: String
-    ) {
-        if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// INTERACTIVE_MODE: ") != true) {
-            scratchPanel.scratchFile.saveOptions {
-                copy(isInteractiveMode = false)
-            }
-        }
-
-        if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// REPL_MODE: ") == true) {
-            scratchPanel.scratchFile.saveOptions {
-                copy(isRepl = true)
-            }
-        }
-
-        if (!InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_MODULE")) {
-            scratchPanel.setModule(myFixture.module)
-        }
-    }
-
     protected fun configureScratchByText(name: String, text: String): ScratchTopPanel {
         val scratchFile = ScratchRootType.getInstance().createScratchFile(
             project,
@@ -177,7 +156,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
-        configureOptions(scratchPanel, text)
+        configureOptions(scratchPanel, text, myFixture.module)
 
         return scratchPanel
     }
@@ -240,6 +219,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     }
 
     override fun tearDown() {
+        if (myFixture.file != null) {
+            val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
+                ?: error("Couldn't find scratch panel")
+            scratchPanel.scratchFile.replScratchExecutor?.stop()
+        }
+
         super.tearDown()
 
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
@@ -262,5 +247,24 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         private val INSTANCE_WITHOUT_RUNTIME = object : KotlinLightProjectDescriptor() {
             override fun getSdk() = PluginTestCaseBase.fullJdk()
         }
+
+        fun configureOptions(
+            scratchPanel: ScratchTopPanel,
+            fileText: String,
+            module: Module?
+        ) {
+            if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// INTERACTIVE_MODE: ") != true) {
+                scratchPanel.setInteractiveMode(false)
+            }
+
+            if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// REPL_MODE: ") == true) {
+                scratchPanel.setReplMode(true)
+            }
+
+            if (module != null && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_MODULE")) {
+                scratchPanel.setModule(module)
+            }
+        }
+
     }
 }

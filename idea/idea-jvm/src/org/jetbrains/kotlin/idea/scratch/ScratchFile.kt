@@ -26,6 +26,9 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.scratch.ui.scratchFileOptions
 
 abstract class ScratchFile(val project: Project, val editor: TextEditor) {
+    var replScratchExecutor: SequentialScratchExecutor? = null
+    var compilingScratchExecutor: ScratchExecutor? = null
+
     fun getExpressions(): List<ScratchExpression> = runReadAction {
         getPsiFile()?.let { getExpressions(it) } ?: emptyList()
     }
@@ -47,6 +50,10 @@ abstract class ScratchFile(val project: Project, val editor: TextEditor) {
             val configToUpdate = scratchFileOptions ?: ScratchFileOptions()
             scratchFileOptions = configToUpdate.update()
         }
+    }
+
+    fun getExpressionAtLine(line: Int): ScratchExpression? {
+        return getExpressions().find { line in it.lineStart..it.lineEnd }
     }
 
     abstract fun getExpressions(psiFile: PsiFile): List<ScratchExpression>

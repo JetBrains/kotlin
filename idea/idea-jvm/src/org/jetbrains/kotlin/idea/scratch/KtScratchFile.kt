@@ -19,18 +19,19 @@ package org.jetbrains.kotlin.idea.scratch
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 
 class KtScratchFile(project: Project, editor: TextEditor) : ScratchFile(project, editor) {
@@ -63,6 +64,11 @@ class KtScratchFile(project: Project, editor: TextEditor) : ScratchFile(project,
         }
 
         return result
+    }
+
+    fun PsiElement.getLineNumber(start: Boolean = true): Int {
+        val document = PsiDocumentManager.getInstance(project).getLastCommittedDocument(containingFile)
+        return document?.getLineNumber(if (start) startOffset else endOffset) ?: 0
     }
 
     override fun hasErrors(): Boolean {

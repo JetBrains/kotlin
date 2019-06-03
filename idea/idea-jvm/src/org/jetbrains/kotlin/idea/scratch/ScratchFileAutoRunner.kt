@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
+import org.jetbrains.kotlin.idea.scratch.actions.RunScratchFromHereAction
 import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 
@@ -46,22 +47,26 @@ class ScratchFileAutoRunner(private val project: Project) : DocumentListener {
         if (!panel.scratchFile.options.isInteractiveMode) return
 
         if (!event.newFragment.isBlank()) {
-            runScratch(panel)
+            runScratch(panel.scratchFile)
         }
     }
 
-    private fun runScratch(panel: ScratchTopPanel) {
+    private fun runScratch(scratchFile: ScratchFile) {
         myAlarm.cancelAllRequests()
 
-        if (ScratchCompilationSupport.isInProgress(panel.scratchFile)) {
+        if (ScratchCompilationSupport.isInProgress(scratchFile) && !scratchFile.options.isRepl) {
             ScratchCompilationSupport.forceStop()
         }
 
         myAlarm.addRequest(
             {
-                val psiFile = panel.scratchFile.getPsiFile()
-                if (psiFile != null && psiFile.isValid && !panel.scratchFile.hasErrors()) {
-                    RunScratchAction.doAction(panel, true)
+                val psiFile = scratchFile.getPsiFile()
+                if (psiFile != null && psiFile.isValid && !scratchFile.hasErrors()) {
+                    if (scratchFile.options.isRepl) {
+                        RunScratchFromHereAction.doAction(scratchFile)
+                    } else {
+                        RunScratchAction.doAction(scratchFile, true)
+                    }
                 }
             }, auto_run_delay, true
         )

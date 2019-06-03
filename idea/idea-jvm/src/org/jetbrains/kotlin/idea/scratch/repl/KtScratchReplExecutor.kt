@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.idea.scratch.repl
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.OSProcessHandler
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
 import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
@@ -36,42 +37,68 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import javax.xml.parsers.DocumentBuilderFactory
 
-class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
+class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file) {
     private val history: ReplHistory = ReplHistory()
-    private lateinit var osProcessHandler: OSProcessHandler
+    private var osProcessHandler: OSProcessHandler? = null
 
-    override fun execute() {
-        handler.onStart(file)
-
+    override fun startExecution() {
         val module = file.getModule()
         val cmdLine = KotlinConsoleKeeper.createReplCommandLine(file.project, module)
 
         LOG.printDebugMessage("Execute REPL: ${cmdLine.commandLineString}")
 
         osProcessHandler = ReplOSProcessHandler(cmdLine)
-        osProcessHandler.startNotify()
-
-        file.getExpressions().forEach { expression ->
-            history.addEntry(expression)
-            sendCommandToProcess(runReadAction { expression.element.text })
-        }
-
-        sendCommandToProcess(":quit")
+        osProcessHandler?.startNotify()
     }
 
-    override fun stop() {
+    override fun stopExecution(callback: (() -> Unit)?) {
+        val osProcessHandler = osProcessHandler ?: return
+
         try {
-            osProcessHandler.process.destroy()
-        } finally {
-            handler.onFinish(file)
+            if (callback != null) {
+                osProcessHandler.addProcessListener(object : ProcessAdapter() {
+                    override fun processTerminated(event: ProcessEvent) {
+                        callback()
+                    }
+                })
+            }
+            sendCommandToProcess(":quit")
+        } catch (e: Exception) {
+            errorOccurs("Couldn't stop REPL process", e, false)
+
+            osProcessHandler.destroyProcess()
+            clearState()
         }
+    }
+
+    private fun clearState() {
+        history.clear()
+        osProcessHandler = null
+        handler.onFinish(file)
+    }
+
+    override fun executeStatement(expression: ScratchExpression) {
+        if (needProcessToStart()) {
+            startExecution()
+        }
+
+        history.addEntry(expression)
+        try {
+            sendCommandToProcess(expression.element.text)
+        } catch (e: Throwable) {
+            errorOccurs("Couldn't execute statement: ${expression.element.text}", e, true)
+        }
+    }
+
+    override fun needProcessToStart(): Boolean {
+        return osProcessHandler == null
     }
 
     private fun sendCommandToProcess(command: String) {
         LOG.printDebugMessage("Send to REPL: ${command}")
 
-        val processInputOS = osProcessHandler.processInput ?: return logError(this::class.java, "<p>Broken execute stream</p>")
-        val charset = osProcessHandler.charset ?: Charsets.UTF_8
+        val processInputOS = osProcessHandler?.processInput ?: return logError(this::class.java, "<p>Broken execute stream</p>")
+        val charset = osProcessHandler?.charset ?: Charsets.UTF_8
 
         val xmlRes = command.replInputAsXml()
 
@@ -93,6 +120,8 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         }
 
         fun lastProcessedEntry(): ScratchExpression? {
+            if (processedEntriesCount < 1) return null
+
             val lastProcessedEntryIndex = processedEntriesCount - 1
             return entries.takeIf { lastProcessedEntryIndex < entries.size }?.get(lastProcessedEntryIndex)
         }
@@ -100,6 +129,13 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         fun entryProcessed() {
             processedEntriesCount++
         }
+
+        fun clear() {
+            entries = arrayListOf()
+            processedEntriesCount = 0
+        }
+
+        fun isAllProcessed() = entries.size == processedEntriesCount
     }
 
     private inner class ReplOSProcessHandler(cmd: GeneralCommandLine) : OSProcessHandler(cmd) {
@@ -115,7 +151,9 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         }
 
         override fun notifyProcessTerminated(exitCode: Int) {
-            handler.onFinish(file)
+            super.notifyProcessTerminated(exitCode)
+
+            clearState()
         }
 
         private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
@@ -136,6 +174,9 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
             if (outputType in setOf("SUCCESS", "COMPILE_ERROR", "INTERNAL_ERROR", "RUNTIME_ERROR", "READLINE_END")) {
                 history.entryProcessed()
+                if (history.isAllProcessed()) {
+                    handler.onFinish(file)
+                }
             }
 
             val result = parseReplOutput(content, outputType)

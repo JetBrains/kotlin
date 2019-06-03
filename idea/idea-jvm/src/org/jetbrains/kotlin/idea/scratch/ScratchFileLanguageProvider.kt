@@ -22,12 +22,39 @@ import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 
 abstract class ScratchFileLanguageProvider {
-    abstract fun createFile(project: Project, editor: TextEditor): ScratchFile?
-    abstract fun createReplExecutor(file: ScratchFile): ScratchExecutor?
-    abstract fun createCompilingExecutor(file: ScratchFile): ScratchExecutor?
+    fun newScratchFile(project: Project, editor: TextEditor): ScratchFile? {
+        val scratchFile = createFile(project, editor) ?: return null
+
+        scratchFile.replScratchExecutor = createReplExecutor(scratchFile)
+        scratchFile.compilingScratchExecutor = createCompilingExecutor(scratchFile)
+
+        scratchFile.replScratchExecutor?.addOutputHandlers()
+        scratchFile.compilingScratchExecutor?.addOutputHandlers()
+
+        return scratchFile
+    }
+
+    private fun ScratchExecutor.addOutputHandlers() {
+        addOutputHandler(getOutputHandler())
+        addOutputHandler(object : ScratchOutputHandlerAdapter() {
+            override fun onStart(file: ScratchFile) {
+                ScratchCompilationSupport.start(file, this@addOutputHandlers)
+            }
+
+            override fun onFinish(file: ScratchFile) {
+                ScratchCompilationSupport.stop()
+            }
+        })
+    }
+
+    protected abstract fun createFile(project: Project, editor: TextEditor): ScratchFile?
+    protected abstract fun createReplExecutor(file: ScratchFile): SequentialScratchExecutor?
+    protected abstract fun createCompilingExecutor(file: ScratchFile): ScratchExecutor?
 
     abstract fun getOutputHandler(): ScratchOutputHandler
 
