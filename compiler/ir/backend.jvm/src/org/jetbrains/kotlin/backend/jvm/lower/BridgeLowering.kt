@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
-import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.findAllReachableDeclarations
 import org.jetbrains.kotlin.backend.common.bridges.findConcreteSuperDeclaration
@@ -15,12 +13,15 @@ import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
+import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -58,13 +59,13 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
     override fun lower(irClass: IrClass) {
-        // TODO: Bridges should be generated for @JvmDefaults, so the interface check is too optimistic.
-        if (irClass.isInterface || irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+        if (irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
             return
         }
 
         for (member in irClass.declarations.filterIsInstance<IrSimpleFunction>()) {
-            createBridges(member)
+            if (!irClass.isInterface || member.hasJvmDefault())
+                createBridges(member)
         }
     }
 
@@ -74,7 +75,13 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         if (irFunction.isMethodOfAny()) return
 
         if (irFunction.origin === IrDeclarationOrigin.FAKE_OVERRIDE &&
-            irFunction.overriddenSymbols.all { it.owner.modality !== Modality.ABSTRACT && !it.owner.comesFromJava() }
+            irFunction.overriddenSymbols.all {
+                !it.owner.comesFromJava() &&
+                        if ((it.owner.parent as? IrClass)?.isInterface == true)
+                            it.owner.hasJvmDefault() // TODO: Remove this after modality is corrected in InterfaceLowering.
+                        else
+                            it.owner.modality !== Modality.ABSTRACT
+            }
         ) {
             // All needed bridges will be generated where functions are implemented.
             return
@@ -372,11 +379,10 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
     }
 
 
-
     private inner class FunctionHandleForIrFunction(val irFunction: IrSimpleFunction) : FunctionHandle {
         override val isDeclaration get() = irFunction.origin != IrDeclarationOrigin.FAKE_OVERRIDE
         override val isAbstract get() = irFunction.modality == Modality.ABSTRACT
-        override val mayBeUsedAsSuperImplementation get() = !irFunction.parentAsClass.isInterface
+        override val mayBeUsedAsSuperImplementation get() = !irFunction.parentAsClass.isInterface || irFunction.hasJvmDefault()
 
         override fun getOverridden() = irFunction.overriddenSymbols.map { FunctionHandleForIrFunction(it.owner) }
 

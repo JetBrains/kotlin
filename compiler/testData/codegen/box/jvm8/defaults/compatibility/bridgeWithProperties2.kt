@@ -1,5 +1,4 @@
 // !JVM_DEFAULT_MODE: compatibility
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: Simple.java
 
