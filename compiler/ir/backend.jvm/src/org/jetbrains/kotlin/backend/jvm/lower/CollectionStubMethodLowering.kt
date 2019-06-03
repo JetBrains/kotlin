@@ -44,6 +44,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         }
 
         val methodStubsToGenerate = generateRelevantStubMethods(irClass)
+        if (methodStubsToGenerate.isEmpty()) return
 
         // We don't need to generate stub for existing methods, but for FAKE_OVERRIDE methods with ABSTRACT modality,
         // it means an abstract function in superclass that is not implemented yet,
@@ -140,11 +141,22 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         return mutableClass.typeParameters.map { it.symbol }.zip(readOnlyClassTypeArguments).toMap()
     }
 
-    private data class StubsForCollectionClass(
+    private inner class StubsForCollectionClass(
         val readOnlyClass: IrClassSymbol,
-        val mutableClass: IrClassSymbol,
-        val mutableOnlyMethods: Collection<IrSimpleFunction>
-    )
+        val mutableClass: IrClassSymbol
+    ) {
+        val mutableOnlyMethods: Collection<IrSimpleFunction> by lazy {
+            val readOnlyMethodSignatures = readOnlyClass.functions.map { it.owner.toSignature() }.toHashSet()
+            mutableClass.functions
+                .map { it.owner }
+                .filter { it.toSignature() !in readOnlyMethodSignatures }
+                .toHashSet()
+        }
+
+        operator fun component1() = readOnlyClass
+        operator fun component2() = mutableClass
+        operator fun component3() = mutableOnlyMethods
+    }
 
     private val preComputedStubs: Collection<StubsForCollectionClass> by lazy {
         with(context.ir.symbols) {
@@ -158,12 +170,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
                 iterator to mutableIterator,
                 listIterator to mutableListIterator
             ).map { (readOnlyClass, mutableClass) ->
-                val readOnlyMethodSignatures = readOnlyClass.functions.map { it.owner.toSignature() }.toHashSet()
-                val mutableMethods = mutableClass.functions
-                    .map { it.owner }
-                    .filter { it.toSignature() !in readOnlyMethodSignatures }
-                    .toHashSet()
-                StubsForCollectionClass(readOnlyClass, mutableClass, mutableMethods)
+                StubsForCollectionClass(readOnlyClass, mutableClass)
             }
         }
     }
