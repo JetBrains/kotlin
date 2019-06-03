@@ -213,6 +213,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/annotations/annotatedLambda/samFunExpression.kt");
             }
 
+            @TestMetadata("samFunReference.kt")
+            public void testSamFunReference() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/annotatedLambda/samFunReference.kt");
+            }
+
             @TestMetadata("samLambda.kt")
             public void testSamLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/annotatedLambda/samLambda.kt");
