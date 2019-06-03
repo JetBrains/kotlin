@@ -5,7 +5,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.hint.EditorFragmentComponent
 import com.intellij.codeInsight.hints.*
 import com.intellij.lang.Language
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
@@ -42,7 +42,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private val settings = ServiceManager.getService(InlayHintsSettings::class.java)
   private val immediateConfigurableListener = object : ChangeListener {
     override fun settingsChanged() {
-      updateEditor(editorField.text)
+      updateEditorAsync(editorField.text)
     }
   }
 
@@ -62,7 +62,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val providerSettingsPane = JBScrollPane()
     horizontalSplitter.secondComponent = withMargin(providerSettingsPane)
     providerSettingsPane.setViewportView(getComponentFor(defaultProvider.configurable))
-    updateEditor(defaultProvider.provider.previewText ?: "")
+    updateEditorAsync(defaultProvider.provider.previewText ?: "")
     initProviderList(providerSettingsPane)
 
     bottomPanel.layout = BorderLayout()
@@ -105,7 +105,8 @@ internal class SingleLanguageInlayHintsSettingsPanel(
 
   private fun collectAndDrawHints(editor: Editor, file: PsiFile) {
     val settingsWrapper = settingsWrappers.find { it.providerWithSettings.provider === selectedProvider.provider }!!
-    val collector = settingsWrapper.providerWithSettings.getCollectorWrapperFor(file, editor, settingsWrapper.language) ?: return
+    val collector = settingsWrapper.providerWithSettings.getCollectorWrapperFor(file, editor, settingsWrapper.language)
+                    ?: return
     traverse(file) {
       collector.collectHints(it, editor)
     }
@@ -122,8 +123,8 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     traverser.forEach { action(it) }
   }
 
-  private fun updateEditor(text: String?) {
-    runWriteAction {
+  private fun updateEditorAsync(text: String?) {
+    ApplicationManager.getApplication().invokeLater {
       if (text == null) {
         bottomPanel.isVisible = false
       }
@@ -131,11 +132,13 @@ internal class SingleLanguageInlayHintsSettingsPanel(
         bottomPanel.isVisible = true
         editorField.text = text
         val document = editorField.document
-        PsiDocumentManager.getInstance(project).commitDocument(document)
-        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
-        val editor = editorField.editor
-        if (editor != null && psiFile != null) {
-          collectAndDrawHints(editor, psiFile)
+        ApplicationManager.getApplication().runWriteAction {
+          PsiDocumentManager.getInstance(project).commitDocument(document)
+          val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+          val editor = editorField.editor
+          if (editor != null && psiFile != null) {
+            collectAndDrawHints(editor, psiFile)
+          }
         }
       }
     }
@@ -165,7 +168,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private fun initProviderList(typeSettingsPane: JBScrollPane) {
     providerTypesList.setCheckBoxListListener { index, value ->
       providerTypesList.getItemAt(index)?.setEnabled(value)
-      updateEditor(editorField.text)
+      updateEditorAsync(editorField.text)
     }
     providerTypesList.addListSelectionListener {
       val index = providerTypesList.selectedIndex
@@ -173,7 +176,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
       val providerWithSettings = keyToProvider.getValue(newOption.key)
       typeSettingsPane.setViewportView(getComponentFor(providerWithSettings.configurable))
       selectedProvider = providerWithSettings
-      updateEditor(newOption.previewText)
+      updateEditorAsync(newOption.previewText)
     }
     for (option in providerTypes) {
       providerTypesList.addItem(option, option.name, option.isEnabled())
