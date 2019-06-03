@@ -4,7 +4,7 @@ package com.intellij.codeInsight.template.impl;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomUtilsWhiteListRule;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.lang.Language;
@@ -50,7 +50,7 @@ class LiveTemplateRunLogger {
     return StringUtil.isEmpty(key) || StringUtil.isEmpty(groupName);
   }
 
-  public static class LiveTemplateValidator extends CustomUtilsWhiteListRule {
+  public static class LiveTemplateValidator extends CustomWhiteListRule {
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {
       return "live_template".equals(ruleId) || "live_template_group".equals(ruleId) ;

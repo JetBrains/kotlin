@@ -5,7 +5,7 @@ import com.intellij.codeInsight.template.CustomLiveTemplate;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomUtilsWhiteListRule;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
@@ -52,7 +52,7 @@ public class SurroundWithLogger {
     log("custom.template", template.getClass(), language, project);
   }
 
-  public static class SurroundWithIdValidator extends CustomUtilsWhiteListRule {
+  public static class SurroundWithIdValidator extends CustomWhiteListRule {
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {
       return "surround_with_id".equals(ruleId);

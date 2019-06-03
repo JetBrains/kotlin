@@ -6,7 +6,7 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomUtilsWhiteListRule;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
@@ -26,7 +26,7 @@ public class RunConfigurationUsageTriggerCollector {
     }
   }
 
-  public static class RunConfigurationExecutorUtilValidator extends CustomUtilsWhiteListRule {
+  public static class RunConfigurationExecutorUtilValidator extends CustomWhiteListRule {
 
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {

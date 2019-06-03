@@ -4,7 +4,7 @@ package com.intellij.codeInsight.template.postfix.templates;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomUtilsWhiteListRule;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
@@ -33,7 +33,7 @@ public class PostfixTemplateLogger {
     return provider != null ? provider.getId() + "/" + template.getId() : template.getId();
   }
 
-  public static class PostfixTemplateValidator extends CustomUtilsWhiteListRule {
+  public static class PostfixTemplateValidator extends CustomWhiteListRule {
 
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {
