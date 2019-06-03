@@ -68,8 +68,13 @@ class ScriptsCompilationConfigurationUpdater(
     fun getCurrentCompilationConfiguration(file: VirtualFile): ScriptCompilationConfigurationResult? {
         cache[file]?.let { return it }
 
-        updateDependencies(file)
-        makeRootsChangeIfNeeded()
+        // Try-catch block is a temporary workaround for ProcessCanceledException
+        // that may happen during VirtualFile to PsiFile transformation
+        try {
+            updateDependencies(file)
+        } finally {
+            makeRootsChangeIfNeeded()
+        }
 
         return cache[file]
     }
