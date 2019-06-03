@@ -254,8 +254,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val ignoreCommonSourceSets by lazy { externalProject.notImportedCommonSourceSets() }
             for (sourceSet in mppModel.sourceSets.values) {
-                if (sourceSet.platform == KotlinPlatform.ANDROID) continue
-                if (sourceSet.platform == KotlinPlatform.COMMON && ignoreCommonSourceSets) continue
+                if (sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) continue
+                if (sourceSet.actualPlatforms.supports(KotlinPlatform.COMMON) && ignoreCommonSourceSets) continue
                 val moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 val existingSourceSetDataNode = sourceSetMap[moduleId]?.first
                 if (existingSourceSetDataNode?.kotlinSourceSet != null) continue
@@ -317,7 +317,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             val mppModel = resolverCtx.getMppModel(gradleModule) ?: return
             if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
-                if (dataNode == null || sourceSet.platform == KotlinPlatform.ANDROID) return@processSourceSets
+                if (dataNode == null || sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) return@processSourceSets
                 createContentRootData(sourceSet.sourceDirs, sourceSet.sourceType, dataNode)
                 createContentRootData(sourceSet.resourceDirs, sourceSet.resourceType, dataNode)
             }
@@ -365,7 +365,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     }
                 }
             }
-            val sourceSetGraph = GraphBuilder.directed().build<KotlinModule>()
+            val sourceSetGraph = GraphBuilder.directed().build<KotlinSourceSet>()
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
                 sourceSetGraph.addNode(sourceSet)
                 val productionSourceSet = dataNode
@@ -384,7 +384,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 }
                 // Workaround: Non-android source sets have commonMain/commonTest in their dependsOn
                 // Remove when the same is implemented for Android modules as well
-                if (sourceSet.platform == KotlinPlatform.ANDROID) {
+                if (sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) {
                     val commonSourceSetName = if (sourceSet.isTestModule) {
                         KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
                     } else {
@@ -398,7 +398,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
             val closedSourceSetGraph = Graphs.transitiveClosure(sourceSetGraph)
             for (sourceSet in closedSourceSetGraph.nodes()) {
-                val isAndroid = sourceSet.platform == KotlinPlatform.ANDROID
+                val isAndroid = sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)
                 val fromDataNode = if (isAndroid) {
                     ideModule
                 } else {
@@ -418,7 +418,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         sourceSetInfo.addSourceSets(dependeeSourceSets, selfName, gradleModule, resolverCtx)
                     }
                 }
-                if (sourceSet.platform == KotlinPlatform.ANDROID) continue
+                if (sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) continue
                 for (dependeeSourceSet in dependeeSourceSets) {
                     val toDataNode = getSiblingKotlinModuleData(dependeeSourceSet, gradleModule, ideModule, resolverCtx) ?: continue
                     addDependency(fromDataNode, toDataNode, dependeeSourceSet.isTestModule)
@@ -619,14 +619,15 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             gradleModule: IdeaModule,
             resolverCtx: ProjectResolverContext
         ): KotlinSourceSetInfo? {
-            if (sourceSet.platform.isNotSupported()) return null
+            if (sourceSet.actualPlatforms.platforms.filter { !it.isNotSupported() }.isEmpty()) return null
             return KotlinSourceSetInfo(sourceSet).also { info ->
                 val languageSettings = sourceSet.languageSettings
                 info.moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 info.gradleModuleId = getModuleId(resolverCtx, gradleModule)
-                info.platform = sourceSet.platform
+                info.actualPlatforms.addSimplePlatforms(sourceSet.actualPlatforms.platforms)
                 info.isTestModule = sourceSet.isTestModule
-                info.compilerArguments = createCompilerArguments(emptyList(), sourceSet.platform).also {
+                //TODO(auskov): target flours are lost here
+                info.compilerArguments = createCompilerArguments(emptyList(), sourceSet.actualPlatforms.getSinglePlatform()).also {
                     it.multiPlatform = true
                     it.languageVersion = languageSettings.languageVersion
                     it.apiVersion = languageSettings.apiVersion
@@ -653,7 +654,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             return KotlinSourceSetInfo(compilation).also { sourceSetInfo ->
                 sourceSetInfo.moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
-                sourceSetInfo.platform = compilation.platform
+                sourceSetInfo.actualPlatforms.addSimplePlatforms(listOf(compilation.platform))
                 sourceSetInfo.isTestModule = compilation.isTestModule
                 sourceSetInfo.compilerArguments =
                     createCompilerArguments(compilation.arguments.currentArguments, compilation.platform).also {

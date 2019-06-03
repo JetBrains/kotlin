@@ -17,6 +17,8 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
+import org.jetbrains.kotlin.gradle.KotlinPlatformContainer
+import org.jetbrains.kotlin.gradle.KotlinPlatformContainerImpl
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -32,7 +34,13 @@ val DataNode<ModuleData>.kotlinAndroidSourceSets: List<KotlinSourceSetInfo>?
 class KotlinSourceSetInfo(val kotlinModule: KotlinModule) : Serializable {
     var moduleId: String? = null
     var gradleModuleId: String = ""
-    var platform: KotlinPlatform = KotlinPlatform.COMMON
+
+    var actualPlatforms: KotlinPlatformContainer = KotlinPlatformContainerImpl()
+
+    @Deprecated("Returns only single TargetPlatform", ReplaceWith("actualPlatforms.actualPlatforms"), DeprecationLevel.ERROR)
+    val platform: KotlinPlatform
+        get() = actualPlatforms.getSinglePlatform()
+
     var defaultCompilerArguments: CommonCompilerArguments? = null
     var compilerArguments: CommonCompilerArguments? = null
     var dependencyClasspath: List<String> = emptyList()

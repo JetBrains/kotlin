@@ -80,3 +80,5 @@ interface TargetPlatformVersion {
 fun TargetPlatform?.isCommon(): Boolean = this != null && this.size > 1
 
 fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform(setOf(this))
+
+fun SimplePlatform.serializeToString() = "${this.platformName} [${this.targetPlatformVersion.description}]"

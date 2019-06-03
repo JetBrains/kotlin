@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
+    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platforms.contains(platform)
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         return if (arguments is K2JSCompilerArguments)
@@ -25,7 +26,7 @@ object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
             null
     }
 
-    override val platforms get() = listOf(JsPlatforms.defaultJsPlatform)
+    val platforms get() = listOf(JsPlatforms.defaultJsPlatform)
     override val defaultPlatform get() = JsPlatforms.defaultJsPlatform
 
     @Deprecated(

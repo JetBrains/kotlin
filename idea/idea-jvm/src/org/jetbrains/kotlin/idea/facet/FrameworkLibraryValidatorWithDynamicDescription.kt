@@ -37,7 +37,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         private val context: LibrariesValidatorContext,
         private val validatorsManager: FacetValidatorsManager,
         private val libraryCategoryName: String,
-        private val getPlatform: () -> TargetPlatform
+        private val getPlatform: () -> TargetPlatform?
 ) : FrameworkLibraryValidator() {
     private val IdePlatformKind<*>.libraryDescription: CustomLibraryDescription?
         get() = this.tooling.getLibraryDescription(context.module.project)
@@ -69,7 +69,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
     }
 
     override fun check(): ValidationResult {
-        val targetPlatform = getPlatform()
+        val targetPlatform = getPlatform() ?: return ValidationResult("No target platforms selected")
 
         if (checkLibraryIsConfigured(targetPlatform.idePlatformKind)) {
             val conflictingPlatforms = IdePlatformKind.ALL_KINDS

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 
 object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
+    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform == KonanPlatforms.defaultKonanPlatform
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         return if (arguments is FakeK2NativeCompilerArguments)
@@ -36,9 +37,6 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
         level = DeprecationLevel.ERROR
     )
     override fun getDefaultPlatform(): IdePlatform<*, *> = Platform
-
-    override val platforms
-        get() = listOf(KonanPlatforms.defaultKonanPlatform)
 
     override val argumentsClass
         get() = FakeK2NativeCompilerArguments::class.java

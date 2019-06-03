@@ -31,6 +31,7 @@ object CommonPlatforms {
         get() = CompatCommonPlatform
 
     val allSimplePlatforms: List<TargetPlatform>
+        // TODO(auskov): migrate to SimplePlatform?
         get() = sequence {
             yieldAll(JvmPlatforms.allJvmPlatforms)
             yieldAll(KonanPlatforms.allKonanPlatforms)

@@ -24,14 +24,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider;
-import org.jetbrains.kotlin.platform.IdePlatformKind;
+import org.jetbrains.kotlin.platform.*;
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
-import org.jetbrains.kotlin.platform.TargetPlatform;
-import org.jetbrains.kotlin.platform.SimplePlatform;
 import org.jetbrains.kotlin.scripting.definitions.DefinitionsKt;
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition;
 
@@ -65,7 +62,7 @@ public class TargetPlatformDetector {
             ScriptDefinition scriptDefinition = DefinitionsKt.findScriptDefinition(file);
             if (scriptDefinition != null) {
                 String platformNameFromScriptDefinition = scriptDefinition.getPlatform();
-                for (TargetPlatform compilerPlatform : IdePlatformKind.Companion.getAll_PLATFORMS()) {
+                for (TargetPlatform compilerPlatform : CommonPlatforms.INSTANCE.getAllSimplePlatforms()) {
                     // FIXME(dsavvinov): get rid of matching by name
                     SimplePlatform simplePlatform = CollectionsKt.single(compilerPlatform);
                     if (simplePlatform.getPlatformName().equals(platformNameFromScriptDefinition)) {

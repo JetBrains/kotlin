@@ -48,11 +48,16 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val sourceSets = buildSourceSets(dependencyResolver, project) ?: return null
         val sourceSetMap = sourceSets.map { it.name to it }.toMap()
         val targets = buildTargets(sourceSetMap, dependencyResolver, project) ?: return null
-        computeSourceSetsDeferredInfo(sourceSets, targets)
+        computeSourceSetsDeferredInfo(sourceSetMap, targets, isHMPPEnabled(project))
         val coroutinesState = getCoroutinesState(project)
         reportUnresolvedDependencies(targets)
         val kotlinNativeHome = KotlinNativeHomeEvaluator.getKotlinNativeHome(project) ?: NO_KOTLIN_NATIVE_HOME
         return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState), kotlinNativeHome)
+    }
+
+    private fun isHMPPEnabled(project: Project): Boolean {
+        //TODO(auskov): replace with Project.isKotlinGranularMetadataEnabled after merging with gradle pranch
+        return (project.findProperty("kotlin.mpp.enableGranularSourceSetsMetadata") as? String)?.toBoolean() ?: false
     }
 
     private fun reportUnresolvedDependencies(targets: Collection<KotlinTarget>) {
@@ -73,13 +78,46 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return getCoroutines(experimentalExt) as? String
     }
 
+
+    private fun calculateDependsOnClosure(
+        sourceSet: KotlinSourceSetImpl?,
+        sourceSetsMap: Map<String, KotlinSourceSetImpl>,
+        cache: MutableMap<String, Set<String>>
+    ): Set<String> {
+        return if (sourceSet == null) {
+            emptySet()
+        } else {
+            cache[sourceSet.name] ?: sourceSet.dependsOnSourceSets.flatMap { name ->
+                calculateDependsOnClosure(
+                    sourceSetsMap[name],
+                    sourceSetsMap,
+                    cache
+                ).union(setOf(name))
+            }.toSet().also { cache[sourceSet.name] = it }
+        }
+    }
+
     private fun buildSourceSets(dependencyResolver: DependencyResolver, project: Project): Collection<KotlinSourceSetImpl>? {
         val kotlinExt = project.extensions.findByName("kotlin") ?: return null
         val getSourceSets = kotlinExt.javaClass.getMethodOrNull("getSourceSets") ?: return null
         @Suppress("UNCHECKED_CAST")
         val sourceSets =
             (getSourceSets(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-        return sourceSets.mapNotNull { buildSourceSet(it, dependencyResolver, project) }
+        val allSourceSets = sourceSets.mapNotNull { buildSourceSet(it, dependencyResolver, project) }
+        val map = allSourceSets.map { it.name to it }.toMap()
+        val dependsOnCache = HashMap<String, Set<String>>()
+        return allSourceSets.map { sourceSet ->
+            KotlinSourceSetImpl(
+                sourceSet.name,
+                sourceSet.languageSettings,
+                sourceSet.sourceDirs,
+                sourceSet.resourceDirs,
+                sourceSet.dependencies,
+                calculateDependsOnClosure(sourceSet, map, dependsOnCache),
+                sourceSet.actualPlatforms as KotlinPlatformContainerImpl,
+                sourceSet.isTestModule
+            )
+        }
     }
 
     private fun buildSourceSet(
@@ -376,8 +414,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun computeSourceSetsDeferredInfo(
-        sourceSets: Collection<KotlinSourceSetImpl>,
-        targets: Collection<KotlinTarget>
+        sourceSets: Map<String, KotlinSourceSetImpl>,
+        targets: Collection<KotlinTarget>,
+        isHMPPEnabled: Boolean
     ) {
         val sourceSetToCompilations = LinkedHashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>()
         for (target in targets) {
@@ -387,22 +426,29 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 }
             }
         }
-        for (sourceSet in sourceSets) {
+
+        for (sourceSet in sourceSets.values) {
             val name = sourceSet.name
             if (name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
-                sourceSet.platform = KotlinPlatform.COMMON
                 sourceSet.isTestModule = false
                 continue
             }
             if (name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) {
-                sourceSet.platform = KotlinPlatform.COMMON
                 sourceSet.isTestModule = true
                 continue
             }
 
             val compilations = sourceSetToCompilations[sourceSet]
             if (compilations != null) {
-                sourceSet.platform = compilations.map { it.platform }.distinct().singleOrNull() ?: KotlinPlatform.COMMON
+                val platforms = compilations.map { it.platform }
+                sourceSet.actualPlatforms.addSimplePlatforms(platforms)
+
+                if (isHMPPEnabled) {
+                    sourceSet.dependsOnSourceSets.mapNotNull { sourceSets[it] }.forEach {
+                        it?.actualPlatforms?.addSimplePlatforms(platforms)
+                    }
+                }
+
                 sourceSet.isTestModule = compilations.all { it.isTestModule }
             } else {
                 // TODO: change me after design about it

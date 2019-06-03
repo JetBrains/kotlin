@@ -25,7 +25,6 @@ fun KotlinDependency.deepCopy(cache: MutableMap<Any, Any>): KotlinDependency {
 
 interface KotlinModule : Serializable {
     val name: String
-    val platform: KotlinPlatform
     val dependencies: Set<KotlinDependency>
     val isTestModule: Boolean
 }
@@ -35,6 +34,11 @@ interface KotlinSourceSet : KotlinModule {
     val sourceDirs: Set<File>
     val resourceDirs: Set<File>
     val dependsOnSourceSets: Set<String>
+    val actualPlatforms: KotlinPlatformContainer
+    @Deprecated("Returns single target platform", ReplaceWith("actualPlatforms.actualPlatforms"), DeprecationLevel.ERROR)
+    val platform: KotlinPlatform
+        get() = actualPlatforms.getSinglePlatform()
+
 
     companion object {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
@@ -73,6 +77,8 @@ interface KotlinCompilation : KotlinModule {
     val arguments: KotlinCompilationArguments
     val dependencyClasspath: List<String>
     val disambiguationClassifier: String?
+    val platform: KotlinPlatform
+
 
     companion object {
         const val MAIN_COMPILATION_NAME = "main"
@@ -81,7 +87,7 @@ interface KotlinCompilation : KotlinModule {
 }
 
 enum class KotlinPlatform(val id: String) {
-    COMMON("common"),
+    COMMON("common"), // this platform is left only for compatibility with NMPP (should not be used in HMPP)
     JVM("jvm"),
     JS("js"),
     NATIVE("native"),
@@ -91,6 +97,17 @@ enum class KotlinPlatform(val id: String) {
         fun byId(id: String) = values().firstOrNull { it.id == id }
     }
 }
+
+interface KotlinPlatformContainer: Serializable {
+    val platforms: Collection<KotlinPlatform>
+
+    fun supports(simplePlatform: KotlinPlatform): Boolean
+
+    fun addSimplePlatforms(platforms: Collection<KotlinPlatform>)
+
+    fun getSinglePlatform() = platforms.singleOrNull() ?: KotlinPlatform.COMMON
+}
+
 
 interface KotlinTargetJar : Serializable {
     val archiveFile: File?

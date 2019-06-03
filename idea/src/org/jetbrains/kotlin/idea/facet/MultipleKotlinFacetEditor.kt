@@ -41,7 +41,7 @@ class MultipleKotlinFacetEditor(
             initialize()
             editors.flatMap { it.editorTabs.filterIsInstance<KotlinFacetEditorGeneralTab>() }.forEach { it.initializeIfNeeded() }
             helper.bind(useProjectSettingsCheckBox, editors) { it.tabEditor.useProjectSettingsCheckBox }
-            helper.bind(targetPlatformComboBox, editors) { it.tabEditor.targetPlatformComboBox }
+            //TODO(auskov): Support bulk editing target platforms?
             with(compilerConfigurable) {
                 helper.bind(reportWarningsCheckBox, editors) { it.compilerConfigurable.reportWarningsCheckBox }
                 helper.bind(enableNewInferenceInIDECheckBox, editors) { it.compilerConfigurable.enableNewInferenceInIDECheckBox }

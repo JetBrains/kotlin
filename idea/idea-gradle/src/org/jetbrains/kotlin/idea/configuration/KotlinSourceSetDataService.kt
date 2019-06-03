@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
@@ -52,10 +53,10 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             val sourceSetData = nodeToImport.data
             val kotlinSourceSet = nodeToImport.kotlinSourceSet ?: continue
             val ideModule = modelsProvider.findIdeModule(sourceSetData) ?: continue
-            val platform = kotlinSourceSet.platform
+            val platform = kotlinSourceSet.actualPlatforms
             val rootModel = modelsProvider.getModifiableRootModel(ideModule)
 
-            if (platform != KotlinPlatform.JVM && platform != KotlinPlatform.ANDROID) {
+            if (!platform.supports(KotlinPlatform.JVM) && !platform.supports(KotlinPlatform.ANDROID)) {
                 migrateNonJvmSourceFolders(rootModel)
             }
 
@@ -99,16 +100,21 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 ?.data
                 ?.let { findKotlinPluginVersion(it) }// ?: return null TODO: Fix in CLion or our plugin KT-27623
 
-            val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
-
-            // FIXME(dsavvinov): it seems to convert platforms back-and-forth, clean-up needed
-            val platform = when (platformKind) {
-                is JvmIdePlatformKind -> {
-                    val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
-                    JvmPlatforms.jvmPlatformByTargetVersion(target)
+            val platformKinds = kotlinSourceSet.actualPlatforms.platforms //TODO(auskov): fix calculation of jvm target
+                .map { IdePlatformKindTooling.getTooling(it).kind }
+                .flatMap {
+                    when (it) {
+                        is JvmIdePlatformKind -> {
+                            val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
+                            JvmPlatforms.jvmPlatformByTargetVersion(target).componentPlatforms
+                        }
+                        else -> it.defaultPlatform.componentPlatforms
+                    }
                 }
-                else -> platformKind.defaultPlatform
-            }
+                .distinct()
+                .toSet()
+
+            val platform = TargetPlatform(platformKinds)
 
             val coroutinesProperty = CoroutineSupport.byCompilerArgument(
                 mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)

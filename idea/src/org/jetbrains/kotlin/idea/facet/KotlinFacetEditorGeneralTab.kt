@@ -21,6 +21,7 @@ import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.HoverHyperlinkLabel
+import com.intellij.util.ui.CheckBox
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.config.createArguments
 import org.jetbrains.kotlin.config.splitArgumentString
 import org.jetbrains.kotlin.idea.compiler.configuration.*
 import org.jetbrains.kotlin.idea.core.util.onTextChange
-import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import java.awt.BorderLayout
@@ -62,7 +60,7 @@ class KotlinFacetEditorGeneralTab(
 
         lateinit var useProjectSettingsCheckBox: ThreeStateCheckBox
 
-        lateinit var targetPlatformComboBox: ComboBox<TargetPlatform>
+        lateinit var platformToCheckbox: Map<SimplePlatform, ThreeStateCheckBox>
 
         private lateinit var projectSettingsLink: HoverHyperlinkLabel
 
@@ -93,9 +91,12 @@ class KotlinFacetEditorGeneralTab(
             )
 
             useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
-            targetPlatformComboBox = ComboBox<TargetPlatform>(IdePlatformKind.All_PLATFORMS.toTypedArray()).apply {
-                setRenderer(DescriptionListCellRenderer())
-            }
+            platformToCheckbox = CommonPlatforms
+                .allSimplePlatforms
+                .flatMap { it.componentPlatforms }
+                .distinct()
+                .sortedBy { it.platformName }
+                .associate { Pair(it, ThreeStateCheckBox(it.platformName).apply {isThirdStateEnabled = isMultiEditor} ) }
             projectSettingsLink = HoverHyperlinkLabel("Edit project settings").apply {
                 addHyperlinkListener {
                     ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
@@ -105,13 +106,17 @@ class KotlinFacetEditorGeneralTab(
                 }
             }
 
+            val targetPlatformsPanel = JPanel()
+            platformToCheckbox.values.forEach {
+                targetPlatformsPanel.add(it)
+                it.isEnabled = true //TODO(auskov): think about enabling/disabling editing facet settings
+            }
             val contentPanel = FormBuilder
                     .createFormBuilder()
                     .addComponent(JPanel(BorderLayout()).apply {
                         add(useProjectSettingsCheckBox, BorderLayout.WEST)
                         add(projectSettingsLink, BorderLayout.EAST)
-                    })
-                    .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
+                    }).addLabeledComponent("Selected target platforms:", targetPlatformsPanel)
                     .addComponent(compilerConfigurable.createComponent()!!.apply {
                         border = null
                     })
@@ -125,14 +130,16 @@ class KotlinFacetEditorGeneralTab(
                 updateCompilerConfigurable()
             }
 
-            targetPlatformComboBox.addActionListener {
-                updateCompilerConfigurable()
+            platformToCheckbox.values.forEach {
+                it.addActionListener {
+                    updateCompilerConfigurable()
+                }
             }
         }
 
         internal fun updateCompilerConfigurable() {
             val useProjectSettings = useProjectSettingsCheckBox.isSelected
-            compilerConfigurable.setTargetPlatform(chosenPlatform?.idePlatformKind)
+            compilerConfigurable.setTargetPlatform(getChosenPlatform()?.idePlatformKind)
             compilerConfigurable.setEnabled(!useProjectSettings)
             if (useProjectSettings) {
                 compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as CommonCompilerArguments?
@@ -149,13 +156,15 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.reset()
         }
 
-        val chosenPlatform: TargetPlatform?
-            get() = targetPlatformComboBox.selectedItemTyped
+        fun getChosenPlatform(): TargetPlatform? {
+            val simplePlatforms = platformToCheckbox.filter { it.value.isSelected }.map { it.key }.toSet()
+            return if (simplePlatforms.isEmpty()) null else TargetPlatform(simplePlatforms)
+        }
     }
 
     inner class ArgumentConsistencyValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val platform = editor.chosenPlatform ?: return ValidationResult.OK
+            val platform = editor.getChosenPlatform() ?: return ValidationResult("At least one target platform should be selected")
             val primaryArguments = platform.createArguments {
                 editor.compilerConfigurable.applyTo(
                         this,
@@ -270,7 +279,9 @@ class KotlinFacetEditorGeneralTab(
             apiVersionComboBox.validateOnChange()
             coroutineSupportComboBox.validateOnChange()
         }
-        editor.targetPlatformComboBox.validateOnChange()
+        editor.platformToCheckbox.values.forEach {
+            it.validateOnChange()
+        }
 
         editor.updateCompilerConfigurable()
         isInitialized = true
@@ -285,7 +296,7 @@ class KotlinFacetEditorGeneralTab(
     override fun isModified(): Boolean {
         if (!isInitialized) return false
         if (editor.useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
-        if (editor.chosenPlatform != configuration.settings.targetPlatform) return true
+        if (editor.getChosenPlatform() != configuration.settings.targetPlatform) return true
         return !editor.useProjectSettingsCheckBox.isSelected && editor.compilerConfigurable.isModified
     }
 
@@ -293,7 +304,9 @@ class KotlinFacetEditorGeneralTab(
         if (!isInitialized) return
         validateOnce {
             editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
-            editor.targetPlatformComboBox.selectedItem = configuration.settings.targetPlatform
+            editor.platformToCheckbox.forEach {
+                it.value.isSelected = configuration.settings.targetPlatform?.contains(it.key) ?: false
+            }
             editor.compilerConfigurable.reset()
             editor.updateCompilerConfigurable()
         }
@@ -305,7 +318,7 @@ class KotlinFacetEditorGeneralTab(
             editor.compilerConfigurable.apply()
             with(configuration.settings) {
                 useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
-                editor.chosenPlatform?.let {
+                editor.getChosenPlatform()?.let {
                     if (it != targetPlatform) {
                         val platformArguments = when {
                             it.isJvm() -> editor.compilerConfigurable.k2jvmCompilerArguments

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder.Companion.JS_JPS_LOG
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import java.io.File
 
 abstract class AbstractIncrementalJsJpsTest : AbstractIncrementalJpsTest() {
@@ -28,6 +29,7 @@ abstract class AbstractIncrementalJsJpsTest : AbstractIncrementalJpsTest() {
         myProject.modules.forEach {
             val facet = KotlinFacetSettings()
             facet.compilerArguments = K2JSCompilerArguments()
+            facet.targetPlatform = JsPlatforms.defaultJsPlatform
 
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,

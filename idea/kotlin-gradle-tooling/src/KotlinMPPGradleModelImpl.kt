@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import java.io.File
 import java.util.*
+import kotlin.collections.HashSet
 
 data class KotlinSourceSetImpl(
     override val name: String,
@@ -15,7 +16,7 @@ data class KotlinSourceSetImpl(
     override val resourceDirs: Set<File>,
     override val dependencies: Set<KotlinDependency>,
     override val dependsOnSourceSets: Set<String>,
-    val defaultPlatform: KotlinPlatform = KotlinPlatform.COMMON,
+    val defaultPlatform: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
     val defaultIsTestModule: Boolean = false
 ) : KotlinSourceSet {
 
@@ -26,11 +27,11 @@ data class KotlinSourceSetImpl(
         HashSet(kotlinSourceSet.resourceDirs),
         kotlinSourceSet.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
         HashSet(kotlinSourceSet.dependsOnSourceSets),
-        kotlinSourceSet.platform,
+        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms),
         kotlinSourceSet.isTestModule
     )
 
-    override var platform: KotlinPlatform = defaultPlatform
+    override var actualPlatforms: KotlinPlatformContainer = defaultPlatform
         internal set
 
     override var isTestModule: Boolean = defaultIsTestModule
@@ -171,4 +172,23 @@ data class KotlinMPPGradleModelImpl(
         ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState),
         mppModel.kotlinNativeHome
     )
+}
+
+class KotlinPlatformContainerImpl() : KotlinPlatformContainer {
+    private val defaultCommonPlatform = setOf(KotlinPlatform.COMMON)
+    private var myPlatforms: MutableSet<KotlinPlatform>? = null
+
+
+    constructor(platform: KotlinPlatformContainer) : this() {
+        myPlatforms = HashSet<KotlinPlatform>(platform.platforms)
+    }
+
+    override val platforms: Collection<KotlinPlatform>
+        get() = myPlatforms ?: defaultCommonPlatform
+
+    override fun supports(simplePlatform: KotlinPlatform): Boolean = platforms.contains(simplePlatform)
+
+    override fun addSimplePlatforms(platforms: Collection<KotlinPlatform>) {
+        (myPlatforms ?: HashSet<KotlinPlatform>().apply { myPlatforms = this }).addAll(platforms)
+    }
 }
