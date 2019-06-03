@@ -431,7 +431,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         val typeArgs = (loadFunc.returnType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         val ctor: IrConstructorSymbol = if (serializableDescriptor.isInternalSerializable) {
             args = bitMasks.map { irGet(it) } + args + irNull()
-            serializableIrClass.serializableSyntheticConstructor()
+            compilerContext.externalSymbols.serializableSyntheticConstructor(serializableDescriptor)
         } else {
             compilerContext.externalSymbols.referenceConstructor(serializableDescriptor.unsubstitutedPrimaryConstructor!!)
         }

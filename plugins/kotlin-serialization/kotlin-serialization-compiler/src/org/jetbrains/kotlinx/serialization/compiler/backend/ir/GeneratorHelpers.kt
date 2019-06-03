@@ -579,6 +579,6 @@ interface IrBuilderExtension {
         }
     }
 
-    fun IrClass.serializableSyntheticConstructor(): IrConstructorSymbol =
-        this.constructors.single { it.descriptor.isSerializationCtor() }.symbol
+    fun ReferenceSymbolTable.serializableSyntheticConstructor(forClass: ClassDescriptor): IrConstructorSymbol =
+        referenceConstructor(forClass.constructors.single { it.isSerializationCtor() })
 }
