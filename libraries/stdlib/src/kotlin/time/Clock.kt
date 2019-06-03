@@ -24,29 +24,29 @@ public interface Clock {
  * Represents a time point notched on a particular [Clock]. Remains bound to the clock it was taken from
  * and allows querying for the duration of time elapsed from that point (see the function [elapsed]).
  */
-public interface ClockMark {
+public abstract class ClockMark {
     /**
      * Returns the amount of time passed from this clock mark on the clock from which this mark was taken.
      */
-    fun elapsed(): Duration
+    abstract fun elapsed(): Duration
 
     /**
      * Returns a clock mark on the same clock that is ahead of this clock mark by the specified [duration].
      *
      * The returned clock mark is more _late_ when the [duration] is positive, and more _early_ when the [duration] is negative.
      */
-    operator fun plus(duration: Duration): ClockMark = AdjustedClockMark(this, duration)
+    open operator fun plus(duration: Duration): ClockMark = AdjustedClockMark(this, duration)
 
     /**
      * Returns a clock mark on the same clock that is behind this clock mark by the specified [duration].
      *
      * The returned clock mark is more _early_ when the [duration] is positive, and more _late_ when the [duration] is negative.
      */
-    operator fun minus(duration: Duration): ClockMark = plus(-duration)
+    open operator fun minus(duration: Duration): ClockMark = plus(-duration)
 }
 
 
-private class AdjustedClockMark(val mark: ClockMark, val adjustment: Duration) : ClockMark {
+private class AdjustedClockMark(val mark: ClockMark, val adjustment: Duration) : ClockMark() {
     override fun elapsed(): Duration = mark.elapsed() - adjustment
 
     override fun plus(duration: Duration): ClockMark = AdjustedClockMark(mark, adjustment + duration)

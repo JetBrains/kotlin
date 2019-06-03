@@ -18,7 +18,7 @@ public expect object MonoClock : Clock
 public abstract class AbstractLongClock(protected val unit: DurationUnit) : Clock {
     protected abstract fun read(): Long
 
-    override fun mark(): ClockMark = object : ClockMark {
+    override fun mark(): ClockMark = object : ClockMark() {
         val startedAt = read()
         override fun elapsed(): Duration = (read() - startedAt).toDuration(this@AbstractLongClock.unit)
     }
@@ -30,7 +30,7 @@ public abstract class AbstractLongClock(protected val unit: DurationUnit) : Cloc
 public abstract class AbstractDoubleClock(protected val unit: DurationUnit) : Clock {
     protected abstract fun read(): Double
 
-    override fun mark(): ClockMark = object : ClockMark {
+    override fun mark(): ClockMark = object : ClockMark() {
         val startedAt = read()
         override fun elapsed(): Duration = (read() - startedAt).toDuration(this@AbstractDoubleClock.unit)
     }
