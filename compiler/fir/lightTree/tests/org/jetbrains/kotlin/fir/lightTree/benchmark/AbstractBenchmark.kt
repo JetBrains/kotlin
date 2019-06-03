@@ -10,10 +10,12 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.openjdk.jmh.annotations.*
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @BenchmarkMode(Mode.SingleShotTime)
 @Warmup(iterations = 5, batchSize = 1)
 @Measurement(iterations = 5, batchSize = 1)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Fork(1)
 open class AbstractBenchmark {
     private val files = mutableMapOf<String, Pair<File, String>>()
@@ -41,5 +43,9 @@ open class AbstractBenchmark {
         for ((file, text) in files.values) {
             f(text, file)
         }
+    }
+
+    protected fun getFilesCount(): Int {
+        return files.size
     }
 }

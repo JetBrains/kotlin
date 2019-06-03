@@ -52,7 +52,7 @@ class Antlr2FirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 val ktFile = createKtFile(file.toRelativeString(root))
                 var firFile: FirFile? = null
                 time += measureNanoTime {
-                    firFile = Antlr2FirBuilderTest(stubMode).buildFirFile(file)
+                    firFile = Antlr2Fir(stubMode).buildFirFile(file)
                 }
                 totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile!!) }.length
                 counter++
@@ -176,7 +176,7 @@ class Antlr2FirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                     firFile = createKtFile(file.toRelativeString(root)).toFirFile(stubMode)
                 }
                 timeAntlr += measureNanoTime {
-                    firFile = Antlr2FirBuilderTest(stubMode).buildFirFile(file)
+                    firFile = Antlr2Fir(stubMode).buildFirFile(file)
                 }
                 totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile!!) }.length
                 counter++

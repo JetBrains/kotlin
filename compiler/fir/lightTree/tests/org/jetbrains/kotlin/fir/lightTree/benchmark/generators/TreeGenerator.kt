@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.lightTree.benchmark
+package org.jetbrains.kotlin.fir.lightTree.benchmark.generators
 
 import java.io.File
 
