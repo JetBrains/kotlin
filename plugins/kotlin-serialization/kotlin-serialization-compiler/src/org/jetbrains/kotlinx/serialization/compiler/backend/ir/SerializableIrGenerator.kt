@@ -127,7 +127,7 @@ class SerializableIrGenerator(
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = compilerContext.externalSymbols.referenceClass(superClass).owner.serializableSyntheticConstructor()
+        val superCtorRef = compilerContext.externalSymbols.serializableSyntheticConstructor(superClass)
         val superProperties = SerializableProperties(superClass, bindingContext).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
