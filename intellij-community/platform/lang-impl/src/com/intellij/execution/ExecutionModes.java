@@ -124,7 +124,8 @@ public class ExecutionModes {
     @Override
     public void onTimeout(@NotNull ProcessHandler processHandler,
                           @NotNull String commandLineString,
-                          @NotNull ProcessOutput outputCollected, Throwable invocatorStack) {
+                          @NotNull ProcessOutput outputCollected,
+                          @Nullable Throwable invocatorStack) {
       super.onTimeout(processHandler, commandLineString, outputCollected, invocatorStack);
       String output = "\n    stdout: " + outputCollected.getStdout() + ";\n    stderr: " + outputCollected.getStderr();
       LOG.error(new Throwable("Timeout (" + getTimeout() + " sec) on executing: " + commandLineString + "; output collected: " + output,

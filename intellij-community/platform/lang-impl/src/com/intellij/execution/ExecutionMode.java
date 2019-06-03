@@ -67,8 +67,8 @@ public class ExecutionMode {
    * Invoked on the {@code processHandler} waiting timeout by the execution helper.
    *
    * @param outputCollected output collected to the moment of timeout (if any)
-   * @param invocatorStack
-   * @see ExecutionHelper#createTimeLimitedExecutionProcess(com.intellij.execution.process.ProcessHandler, com.intellij.execution.ExecutionMode, java.lang.String)
+   * @param invocatorStack stacktrace from the entrance to {@link ExecutionHelper#createTimeLimitedExecutionProcess(ProcessHandler, ExecutionMode, String)}
+   * @see ExecutionHelper#createTimeLimitedExecutionProcess(ProcessHandler, ExecutionMode, String)
    */
   public void onTimeout(@NotNull ProcessHandler processHandler,
                         @NotNull String commandLineString,
