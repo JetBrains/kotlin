@@ -19,8 +19,8 @@ class PresentationMouseHandler : StartupActivity {
   override fun runActivity(project: Project) {
     val editorFactory = ApplicationManager.getApplication().getComponent(EditorFactory::class.java)
     val multicaster = editorFactory.eventMulticaster
-    multicaster.addEditorMouseListener(mouseListener)
-    multicaster.addEditorMouseMotionListener(mouseMotionListener)
+    multicaster.addEditorMouseListener(mouseListener, project)
+    multicaster.addEditorMouseMotionListener(mouseMotionListener, project)
   }
 
   private var activePresentation : InlayPresentation? = null

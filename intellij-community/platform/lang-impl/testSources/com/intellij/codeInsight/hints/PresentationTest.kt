@@ -112,8 +112,8 @@ class PresentationTest : TestCase() {
         fail("No clicks expected")
         return
       }
-      assertEquals(expectedClickVal.first, event.x)
-      assertEquals(expectedClickVal.second, event.y)
+      assertEquals(expectedClickVal.first, translated.x)
+      assertEquals(expectedClickVal.second, translated.y)
       super.mouseClicked(event, translated)
     }
   }
