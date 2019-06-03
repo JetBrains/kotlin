@@ -25,16 +25,13 @@ import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.konan.KonanPlatform
-import org.jetbrains.kotlin.platform.oldFashionedDescription
-import org.jetbrains.kotlin.platform.orDefault
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -67,7 +64,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         val targetPlatformName = versionInfoElement?.getOptionValue("targetPlatformName")
         val languageLevel = versionInfoElement?.getOptionValue("languageLevel")
         val apiLevel = versionInfoElement?.getOptionValue("apiLevel")
-        val targetPlatform = IdePlatformKind.All_PLATFORMS
+        val targetPlatform = CommonPlatforms.allSimplePlatforms.union(setOf(CommonPlatforms.defaultCommonPlatform))
             .firstOrNull { it.oldFashionedDescription == targetPlatformName }
             ?: JvmIdePlatformKind.defaultPlatform // FIXME(dsavvinov): choose proper default
 
@@ -115,20 +112,30 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
 
         this.compilerSettings = compilerSettings
         this.compilerArguments = compilerArguments
+        this.targetPlatform = IdePlatformKind.platformByCompilerArguments(compilerArguments)
     }
 }
 
 fun Element.getFacetPlatformByConfigurationElement(): TargetPlatform {
+    val platformNames = getAttributeValue("allPlatforms")?.split('/')?.toSet()
+    if (platformNames != null) {
+        return TargetPlatform(CommonPlatforms.allSimplePlatforms
+                                  .flatMap { it.componentPlatforms }
+                                  .filter { platformNames.contains(it.serializeToString()) }
+                                  .toSet())
+    }
+    // failed to read list of all platforms. Fallback to legacy algorythm
     val platformName = getAttributeValue("platform")
-    return IdePlatformKind.All_PLATFORMS
-        .firstOrNull { it.oldFashionedDescription == platformName }
-        .orDefault()
+    // this code could be simplified using union after fixing the equals method in SimplePlatform
+    val allPlatforms = ArrayList(CommonPlatforms.allSimplePlatforms).also { it.add(CommonPlatforms.defaultCommonPlatform) }
+    return allPlatforms.firstOrNull { it.oldFashionedDescription == platformName }.orDefault()
 }
 
 private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
     return KotlinFacetSettings().apply {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
         val targetPlatform = element.getFacetPlatformByConfigurationElement()
+        this.targetPlatform = targetPlatform
         element.getChild("implements")?.let {
             val items = it.getChildren("implement")
             implementedModuleNames = if (items.isNotEmpty()) {
@@ -288,7 +295,7 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
     targetPlatform?.let {
-        element.setAttribute("platform", it.oldFashionedDescription)
+        element.setAttribute("allPlatforms", it.componentPlatforms.map { it.serializeToString() }.joinToString(separator = "/"))
     }
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())

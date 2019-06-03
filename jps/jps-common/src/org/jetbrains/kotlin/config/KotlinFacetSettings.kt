@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.compat.toIdePlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 @Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
@@ -189,11 +190,19 @@ class KotlinFacetSettings {
             compilerArguments!!.apiVersion = value?.versionString
         }
 
-    val targetPlatform: TargetPlatform?
+    var targetPlatform: TargetPlatform? = null
         get() {
-            val compilerArguments = this.compilerArguments ?: return null
-            return IdePlatformKind.platformByCompilerArguments(compilerArguments)
+            // This work-around is required in order to fix importing of the proper JVM target version.
+            //TODO(auskov): this hack should be removed after fixing equals in SimplePlatform
+            val args = compilerArguments
+            val mappedPlatforms = field?.componentPlatforms?.flatMap {
+                if (JvmPlatforms.defaultJvmPlatform.first() == it && args != null) (IdePlatformKind.platformByCompilerArguments(args)
+                    ?: return null) else listOf(it)
+            }?.toSet() ?: return null
+
+            return TargetPlatform(mappedPlatforms)
         }
+
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(

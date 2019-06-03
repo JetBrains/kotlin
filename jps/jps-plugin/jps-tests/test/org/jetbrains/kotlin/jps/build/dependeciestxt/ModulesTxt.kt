@@ -15,9 +15,13 @@ import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
 import org.jetbrains.kotlin.config.KotlinModuleKind.SOURCE_SET_HOLDER
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt.Dependency.Kind.*
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import java.io.File
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -253,10 +257,14 @@ class ModulesTxtBuilder {
             when (flag) {
                 "sourceSetHolder" -> settings.kind = SOURCE_SET_HOLDER
                 "compilationAndSourceSetHolder" -> settings.kind = COMPILATION_AND_SOURCE_SET_HOLDER
-                "common" -> settings.compilerArguments = K2MetadataCompilerArguments()
-                "jvm" -> settings.compilerArguments = K2JVMCompilerArguments()
-                "js" -> settings.compilerArguments = K2JSCompilerArguments()
-                "native" -> settings.compilerArguments = FakeK2NativeCompilerArguments()
+                "common" -> settings.compilerArguments =
+                    K2MetadataCompilerArguments().also { settings.targetPlatform = CommonPlatforms.defaultCommonPlatform }
+                "jvm" -> settings.compilerArguments =
+                    K2JVMCompilerArguments().also { settings.targetPlatform = JvmPlatforms.defaultJvmPlatform }
+                "js" -> settings.compilerArguments =
+                    K2JSCompilerArguments().also { settings.targetPlatform = JsPlatforms.defaultJsPlatform }
+                "native" -> settings.compilerArguments =
+                    FakeK2NativeCompilerArguments().also { settings.targetPlatform = KonanPlatforms.defaultKonanPlatform }
                 else -> {
                     val flagProperty = ModulesTxt.Module.flags[flag]
                     if (flagProperty != null) flagProperty.set(module, true)

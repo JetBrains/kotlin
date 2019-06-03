@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.platform.*
 
 object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
+    override fun supportsTargetPlatform(platform: TargetPlatform) = platform.isCommon()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         return if (arguments is K2MetadataCompilerArguments)
@@ -31,7 +32,6 @@ object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
         return K2MetadataCompilerArguments() // TODO(dsavvinov): review that, as now MPP !== K2Metadata
     }
 
-    override val platforms get() = listOf(CommonPlatforms.defaultCommonPlatform)
     override val defaultPlatform get() = CommonPlatforms.defaultCommonPlatform
 
     override val argumentsClass get() = K2MetadataCompilerArguments::class.java

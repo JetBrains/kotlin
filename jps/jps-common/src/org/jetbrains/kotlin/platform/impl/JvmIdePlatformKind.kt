@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
+    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platforms.contains(platform)
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         if (arguments !is K2JVMCompilerArguments) return null
@@ -42,7 +43,7 @@ object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
         return K2JVMCompilerArguments()
     }
 
-    override val platforms: List<TargetPlatform> = JvmTarget.values().map { ver -> JvmPlatforms.jvmPlatformByTargetVersion(ver) } + listOf(JvmPlatforms.unspecifiedJvmPlatform)
+    val platforms: List<TargetPlatform> = JvmTarget.values().map { ver -> JvmPlatforms.jvmPlatformByTargetVersion(ver) } + listOf(JvmPlatforms.unspecifiedJvmPlatform)
     override val defaultPlatform get() = JvmPlatforms.defaultJvmPlatform
 
     override val argumentsClass get() = K2JVMCompilerArguments::class.java
