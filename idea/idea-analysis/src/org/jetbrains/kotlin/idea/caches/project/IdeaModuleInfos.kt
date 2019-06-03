@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
-import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.getStableName
@@ -44,15 +44,15 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.compat.toOldPlatform
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -167,7 +167,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
         get() = platform.findAnalyzerServices
 
     override fun createModificationTracker(): ModificationTracker =
-        KotlinModuleModificationTracker(module)
+        KotlinModuleOutOfCodeBlockModificationTracker(module)
 }
 
 sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) : ModuleSourceInfo {

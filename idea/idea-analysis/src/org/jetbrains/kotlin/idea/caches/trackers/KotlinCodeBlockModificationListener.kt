@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.caches.trackers
 
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
@@ -44,15 +42,7 @@ class KotlinCodeBlockModificationListener(
     project: Project,
     private val treeAspect: TreeAspect
 ): PsiTreeChangePreprocessor {
-    private val perModuleModCount = mutableMapOf<Module, Long>()
-
     private val modificationTrackerImpl = modificationTracker as PsiModificationTrackerImpl
-    private var lastAffectedModule: Module? = null
-
-    private var lastAffectedModuleModCount = -1L
-    // All modifications since that count are known to be single-module modifications reflected in
-    // perModuleModCount map
-    private var perModuleChangesHighWatermark: Long? = null
 
     @Volatile
     private var kotlinModificationTracker: Long = 0
@@ -65,11 +55,7 @@ class KotlinCodeBlockModificationListener(
 
     val kotlinOutOfCodeBlockTracker: ModificationTracker = kotlinOutOfCodeBlockTrackerImpl
 
-    fun getModificationCount(module: Module): Long {
-        return perModuleModCount[module] ?: perModuleChangesHighWatermark ?: kotlinOutOfCodeBlockTracker.modificationCount
-    }
-
-    fun hasPerModuleModificationCounts() = perModuleChangesHighWatermark != null
+    internal val perModuleOutOfCodeBlockTrackerUpdater = KotlinModuleOutOfCodeBlockModificationTracker.Updater(project)
 
     init {
         val model = PomManager.getModel(project)
@@ -94,10 +80,7 @@ class KotlinCodeBlockModificationListener(
 
                     if (ktFile.isPhysical && !isReplLine(ktFile.virtualFile)) {
                         kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
-                        lastAffectedModule = ModuleUtil.findModuleForPsiElement(ktFile)
-                        lastAffectedModuleModCount = kotlinOutOfCodeBlockTracker.modificationCount
-                        // TODO: Revise perModuleModCount
-//                        modificationTrackerImpl.incCounter()
+                        perModuleOutOfCodeBlockTrackerUpdater.onKotlinPhysicalFileOutOfBlockChange(ktFile)
                     }
 
                     incOutOfBlockModificationCount(ktFile)
@@ -115,17 +98,7 @@ class KotlinCodeBlockModificationListener(
                 kotlinModificationTracker = kotlinTrackerInternalIDECount
             }
 
-            val newModCount = kotlinOutOfCodeBlockTracker.modificationCount
-            val affectedModule = lastAffectedModule
-            if (affectedModule != null && newModCount == lastAffectedModuleModCount + 1) {
-                if (perModuleChangesHighWatermark == null) {
-                    perModuleChangesHighWatermark = lastAffectedModuleModCount
-                }
-                perModuleModCount[affectedModule] = newModCount
-            } else {
-                perModuleChangesHighWatermark = null
-                perModuleModCount.clear()
-            }
+            perModuleOutOfCodeBlockTrackerUpdater.onPsiModificationTrackerUpdate()
         })
     }
 
