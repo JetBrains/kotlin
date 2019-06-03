@@ -215,14 +215,19 @@ object AbstractTypeChecker {
         return null
     }
 
-    private fun AbstractTypeCheckerContext.hasNothingSupertype(type: SimpleTypeMarker) = // todo add tests
-        anySupertype(type, { it.typeConstructor().isNothingConstructor() }) {
+    private fun AbstractTypeCheckerContext.hasNothingSupertype(type: SimpleTypeMarker): Boolean {
+        val typeConstructor = type.typeConstructor()
+        if (typeConstructor.isClassTypeConstructor()) {
+            return typeConstructor.isNothingConstructor()
+        }
+        return anySupertype(type, { it.typeConstructor().isNothingConstructor() }) {
             if (it.isClassType()) {
                 SupertypesPolicy.None
             } else {
                 SupertypesPolicy.LowerIfFlexible
             }
         }
+    }
 
     private fun AbstractTypeCheckerContext.isSubtypeOfForSingleClassifierType(subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean {
         if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
