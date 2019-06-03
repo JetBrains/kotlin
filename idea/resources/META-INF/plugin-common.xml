@@ -863,6 +863,8 @@
 
     <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.roots.KotlinNonJvmOrderEnumerationHandler$Factory"/>
 
+    <lang.substitutor language="kotlin" order="last" implementationClass="org.jetbrains.kotlin.idea.KotlinLanguageSubstitutor"/>
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
       <category>Kotlin</category>
