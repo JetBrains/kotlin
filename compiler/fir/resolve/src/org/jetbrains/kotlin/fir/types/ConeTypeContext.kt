@@ -280,10 +280,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
         require(type is ConeKotlinType)
+        val argumentsCount = type.argumentsCount()
+        if (argumentsCount == 0) return null
+
         val typeConstructor = type.typeConstructor()
-        if (type.argumentsCount() != typeConstructor.parametersCount()) return null
+        if (argumentsCount != typeConstructor.parametersCount()) return null
+
         if (type.asArgumentList().all(this) { !it.isStarProjection() && it.getVariance() == TypeVariance.INV }) return null
-        val newArguments = Array(type.argumentsCount()) { index ->
+        val newArguments = Array(argumentsCount) { index ->
             val argument = type.getArgument(index)
             if (!argument.isStarProjection() && argument.getVariance() == TypeVariance.INV) return@Array argument as ConeKotlinTypeProjection
 
@@ -296,7 +300,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
             ConeCapturedType(status, lowerType, argument as ConeKotlinTypeProjection)
         }
 
-        for (index in 0 until type.argumentsCount()) {
+        for (index in 0 until argumentsCount) {
             val oldArgument = type.getArgument(index)
             val newArgument = newArguments[index]
 
