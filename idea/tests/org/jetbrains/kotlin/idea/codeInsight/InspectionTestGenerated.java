@@ -31,11 +31,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
         }
 
-        @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")
-        public void testBranched_ifThenToElvis_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/intentions/branched/ifThenToElvis/inspectionData/inspections.test");
-        }
-
         @TestMetadata("convertToStringTemplate/inspectionData/inspections.test")
         public void testConvertToStringTemplate_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/intentions/convertToStringTemplate/inspectionData/inspections.test");
@@ -465,6 +460,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
 
         public void testAllFilesPresentInInspectionsLocal() throws Exception {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspectionsLocal"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
+        }
+
+        @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")
+        public void testBranched_ifThenToElvis_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspectionsLocal/branched/ifThenToElvis/inspectionData/inspections.test");
         }
 
         @TestMetadata("branched/ifThenToSafeAccess/inspectionData/inspections.test")

@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
+import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToElvisInspection
 import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection
 import org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
@@ -96,7 +96,7 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         }
 
         registerInspectionBasedProcessing(IfThenToSafeAccessInspection())
-        registerIntentionBasedProcessing(IfThenToElvisIntention())
+        registerInspectionBasedProcessing(IfThenToElvisInspection(true))
         registerInspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection())
         registerInspectionBasedProcessing(ReplaceGetOrSetInspection())
         registerInspectionBasedProcessing(AddOperatorModifierInspection())

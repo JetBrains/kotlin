@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.inspections.*
+import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToElvisInspection
 import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection
 import org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
 import org.jetbrains.kotlin.idea.quickfix.*
@@ -149,7 +149,7 @@ private val processings: List<GeneralPostProcessing> = listOf(
 
         inspectionBasedProcessing(IfThenToSafeAccessInspection()),
         inspectionBasedProcessing(IfThenToSafeAccessInspection()),
-        intentionBasedProcessing(IfThenToElvisIntention()),
+        inspectionBasedProcessing(IfThenToElvisInspection(true)),
         inspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection()),
         inspectionBasedProcessing(ReplaceGetOrSetInspection()),
         inspectionBasedProcessing(AddOperatorModifierInspection()),

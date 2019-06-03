@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,8 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToElvisInspection
 import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.psi.KtContainerNodeForControlStructureBody
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtIfExpression
@@ -32,9 +32,9 @@ object SmartCastImpossibleInIfThenFactory : KotlinIntentionActionsFactory() {
             ),
             createQuickFix(
                 ifExpression,
-                { IfThenToElvisIntention.intentionText },
-                { IfThenToElvisIntention.isApplicableTo(it, expressionShouldBeStable = false) },
-                { ifExpr, _, editor -> IfThenToElvisIntention.convert(ifExpr, editor) }
+                { IfThenToElvisInspection.INTENTION_TEXT },
+                { IfThenToElvisInspection.isApplicableTo(it, expressionShouldBeStable = false) },
+                { ifExpr, _, editor -> IfThenToElvisInspection.convert(ifExpr, editor) }
             )
         )
     }
