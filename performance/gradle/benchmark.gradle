@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.MPPTools
+import org.jetbrains.kotlin.RunJvmTask
+
 apply plugin: 'kotlin-multiplatform'
 
 repositories {
@@ -54,6 +57,7 @@ kotlin {
         }
     }
 
+    
     jvm() {
         compilations.all {
             tasks[compileKotlinTaskName].kotlinOptions {
@@ -68,23 +72,20 @@ kotlin {
         compilations.main.extraOpts = (project.hasProperty('compilerArgs') ? compilerArgs.split() : []) + '-opt'
         binaries {
             executable('benchmark', [RELEASE]) {
-                if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-                    linkerOpts = ["-L${getMingwPath()}/lib".toString()]
+                if (project.hasProperty("linkerOpts")) {
+                    linkerOpts = project.ext.linkerOpts
                 }
+                if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                    linkerOpts += ["-L${getMingwPath()}/lib".toString()]
+                }
+                runTask.args("-w", "$nativeWarmup", "-r", "$attempts", "-o", "${buildDir.absolutePath}/${nativeBenchResults}", "-p", "${project.ext.applicationName}::")
             }
         }
     }
 }
 
 MPPTools.addTimeListener(project)
-
-MPPTools.createRunTask(project, 'konanRun', kotlin.targets.native) {
-    workingDir = project.provider {
-        kotlin.targets.native.binaries.getExecutable("benchmark", buildType).outputDirectory
-    }
-    depends("build")
-    args("-w", "$nativeWarmup", "-r", "$attempts", "-o", "${buildDir.absolutePath}/${nativeBenchResults}", "-p", "${project.ext.applicationName}::")
-}
+MPPTools.createRunTask(project, 'konanRun', kotlin.targets.native.binaries.getExecutable("benchmark", "RELEASE").runTask)
 
 task jvmRun(type: RunJvmTask)  {
     dependsOn 'build'
@@ -129,7 +130,6 @@ task jvmJsonReport {
 }
 
 jvmRun.finalizedBy jvmJsonReport
-konanRun.finalizedBy konanJsonReport
 
 private def getCommonProperties() {
     return ['cpu': System.getProperty("os.arch"),

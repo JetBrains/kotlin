@@ -1,5 +1,0 @@
-include ':ring'
-include ':cinterop'
-include ':helloworld'
-include ':videoplayer'
-include ':framework'

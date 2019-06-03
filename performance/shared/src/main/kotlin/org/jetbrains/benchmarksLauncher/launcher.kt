@@ -19,11 +19,19 @@ package org.jetbrains.benchmarksLauncher
 import kotlin.math.sqrt
 import org.jetbrains.report.BenchmarkResult
 import org.jetbrains.kliopt.*
+import kotlin.reflect.KFunction0
 
 abstract class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int, val prefix: String = "") {
     class Results(val mean: Double, val variance: Double)
 
     abstract val benchmarks: BenchmarksCollection
+
+    fun add(name: String, benchmark:() -> Any?) {
+        fun benchmarkWrapper() {
+            benchmark()
+        }
+        benchmarks[name] = ::benchmarkWrapper
+    }
 
     fun launch(filters: Collection<String>? = null,
                filterRegexes: Collection<String>? = null): List<BenchmarkResult> {

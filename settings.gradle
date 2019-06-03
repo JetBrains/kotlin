@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.konan.target.HostManager
+
 /*
  * Copyright 2010-2017 JetBrains s.r.o.
  *
@@ -29,15 +32,22 @@ include ':common'
 include ':backend.native:tests'
 include ':backend.native:debugger-tests'
 include ':utilities'
-//include ':performance'    TODO: return when there is one HostManager class version
-//include ':tools:benchmarksAnalyzer'
+include ':performance'
+include ':performance:ring'
+include ':performance:cinterop'
+include ':performance:helloworld'
+include ':performance:videoplayer'
+include ':performance:framework'
+if (PlatformInfo.isAppleTarget(HostManager.host)) {
+    include ':performance:objcinterop'
+    include ':performance:swiftinterop'
+}
 include ':platformLibs'
 
 includeBuild 'shared'
 includeBuild 'extracted/konan.metadata'
 includeBuild 'extracted/konan.serializer'
 includeBuild 'tools/kotlin-native-gradle-plugin'
-
 
 if (hasProperty("kotlinProjectPath")) {
     include ':runtime:generator'

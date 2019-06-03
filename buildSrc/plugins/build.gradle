@@ -23,6 +23,7 @@ buildscript {
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
     dependencies{
         classpath "org.jetbrains.kotlin:kotlin-serialization:$buildKotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
     
 }
@@ -37,12 +38,14 @@ dependencies {
     compile localGroovy()
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$buildKotlinVersion"
-    compile group: 'com.ullink.slack', name: 'simpleslackapi', version: '0.6.0'
+    compile group: 'com.ullink.slack', name: 'simpleslackapi', version: '1.2.0'
     // An artifact from the included build 'shared' cannot be used here due to https://github.com/gradle/gradle/issues/3768
-    // TODO: Remove this hack when the bug is fixed
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin"
     compile project(':shared')
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
 }
+
+sourceSets.main.kotlin.srcDirs = ["src", "$projectDir/../../tools/benchmarks/shared/src"]
 
 rootProject.dependencies {
     runtime project(path)

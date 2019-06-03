@@ -2,6 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin
 
 import groovy.lang.Closure
 import org.gradle.api.Action
@@ -36,7 +37,6 @@ import java.util.Properties
  * @property bundleBuild property to show if current build is full or not
  */
 open class RegressionsReporter : DefaultTask() {
-
 
     val slackUsers = mapOf(
             "olonho" to "nikolay.igotti",

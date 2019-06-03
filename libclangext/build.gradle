@@ -27,7 +27,8 @@ buildscript {
     }
 }
 import org.jetbrains.kotlin.konan.target.ClangArgs
-ext.isEnabled = isMac()
+import org.jetbrains.kotlin.PlatformInfo
+ext.isEnabled = PlatformInfo.isMac()
 
 model {
     components {

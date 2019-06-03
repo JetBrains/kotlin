@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+package org.jetbrains.kotlin
+
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project

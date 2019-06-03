@@ -5,4 +5,4 @@ project.ext {
     nativeSrcDirs = ['src/main/kotlin-native', '../shared/src/main/kotlin-native']
 
 }
-apply from: rootProject.file("${rootProject.rootDir}/gradle/benchmark.gradle")
+apply from: rootProject.file("${rootProject.rootDir}/performance/gradle/benchmark.gradle")

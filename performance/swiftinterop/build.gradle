@@ -1,0 +1,153 @@
+import org.jetbrains.kotlin.MPPTools
+import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.RunJvmTask
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.UtilsKt
+import java.nio.file.Paths
+
+buildscript {
+    ext.rootBuildDirectory = file('../..')
+
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/jcenter'
+        }
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    maven {
+        url 'https://cache-redirector.jetbrains.com/jcenter'
+    }
+    maven {
+        url kotlinCompilerRepo
+    }
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+def toolsPath = '../../tools'
+def frameworkName = 'CityMap'
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+            }
+            kotlin.srcDir "src"
+            kotlin.srcDir "../shared/src/main/kotlin"
+            kotlin.srcDir "$toolsPath/kliopt"
+            kotlin.srcDir "$toolsPath/benchmarks/shared/src"
+        }
+        macosMain {
+            dependsOn commonMain
+            kotlin.srcDir "../shared/src/main/kotlin-native"
+        }
+    }
+
+    macosX64("macos") {
+        compilations.main.extraOpts = (project.hasProperty('compilerArgs') ? compilerArgs.split() : []) + '-opt'
+        binaries {
+            framework(frameworkName, [RELEASE])
+        }
+    }
+}
+
+MPPTools.addTimeListener(project)
+
+build.finalizedBy 'buildSwift'
+
+defaultTasks 'konanRun'
+
+def applicationName = "swiftInterop"
+def swiftExecutable = Paths.get(buildDir.absolutePath, applicationName)
+
+if (PlatformInfo.isAppleTarget(HostManager.host)) {
+    MPPTools.createBenchmarksRunTask(project, 'konanRun') {
+        workingDir = project.provider { buildDir }
+        executable = swiftExecutable
+        depends("build")
+        args("-w", "$nativeWarmup", "-r", "$attempts", "-o", "${buildDir.absolutePath}/${nativeBenchResults}", "-p", "${applicationName}::")
+    }
+}
+
+def framework = null
+if (PlatformInfo.isMac()) {
+    framework = kotlin.targets.macos.binaries.getFramework(frameworkName, 'RELEASE')
+} else {
+    framework = kotlin.targets.ios.binaries.getFramework(frameworkName, 'RELEASE')
+}
+
+task buildSwift {
+    doLast {
+        def frameworkParentDirPath = framework.outputDirectory
+        def sources = ["$projectDir/swiftSrc/benchmarks.swift".toString(), "$projectDir/swiftSrc/main.swift".toString()]
+        def options = ['-g', '-Xlinker', '-rpath', '-Xlinker', frameworkParentDirPath, '-F', frameworkParentDirPath]
+        UtilsKt.compileSwift(project, HostManager.host, sources, options, swiftExecutable, false)
+    }
+}
+
+task jvmRun(type: RunJvmTask)  {
+    doLast {
+        println("JVM run is unsupported")
+    }
+}
+
+private def getCommonProperties() {
+    return ['cpu': System.getProperty("os.arch"),
+            'os': System.getProperty("os.name"), // OperatingSystem.current().getName()
+            'jdkVersion': System.getProperty("java.version"), // org.gradle.internal.jvm.Jvm.current().javaVersion
+            'jdkVendor': System.getProperty("java.vendor"),
+            'kotlinVersion': "${kotlinVersion}".toString()]
+}
+
+task konanJsonReport {
+    doLast {
+        if (PlatformInfo.isAppleTarget(HostManager.host)) {
+            def targetExtension = ""
+            if (PlatformInfo.isMac()) {
+                targetExtension = "Macos"
+            } else {
+                targetExtension = "Ios"
+            }
+            
+            def frameworkPath = framework.outputFile.absolutePath
+            def nativeFramework = new File("$frameworkPath/$frameworkName").canonicalPath
+            def nativeCompileTime = MPPTools.getNativeCompileTime(applicationName, ["compileKotlin${targetExtension}".toString(),
+                                                                                    "link${frameworkName}ReleaseFramework${targetExtension}".toString()])
+
+            String benchContents = new File("${buildDir.absolutePath}/${nativeBenchResults}").text
+            def properties = getCommonProperties() + ['type'           : 'native',
+                                                      'compilerVersion': "${konanVersion}".toString(),
+                                                      'flags'          : kotlin.targets.macos.compilations.main.extraOpts.collect{ "\"$it\"" },
+                                                      'benchmarks'     : benchContents,
+                                                      'compileTime'    : [nativeCompileTime],
+                                                      'codeSize'       : MPPTools.getCodeSizeBenchmark(applicationName, nativeFramework)]
+            def output = MPPTools.createJsonReport(properties)
+            new File("${buildDir.absolutePath}/${nativeJson}").write(output)
+        }
+    }
+}
+
+task jvmJsonReport {
+    doLast {
+        println("JVM run is unsupported")
+    }
+}
+
+konanRun.finalizedBy 'konanJsonReport'
+jvmRun.finalizedBy 'jvmJsonReport'

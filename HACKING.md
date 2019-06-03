@@ -103,33 +103,32 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
     
  To measure performance of Kotlin/Native compiler on existing benchmarks:
  
-    cd performance
-    ../gradlew konanRun
+    ./gradlew :performance:konanRun
     
  **konanRun** task can be run separately for one/several benchmark applications:
  
-    ../gradlew :cinterop:konanRun
+    ./gradlew :performance:cinterop:konanRun
     
  **konanRun** task has parameter `filter` which allows to run only some subset of benchmarks:
  
-    ../gradlew :cinterop:konanRun --filter=struct,macros
+    ./gradlew :performance:cinterop:konanRun --filter=struct,macros
     
  Or you can use `filterRegex` if you want to specify the filter as regexes:
  
-    ../gradlew :ring:konanRun --filterRegex=String.*,Loop.*
+    ./gradlew :performance:ring:konanRun --filterRegex=String.*,Loop.*
     
  There are also tasks for running benchmarks on JVM (pay attention, some benchmarks e.g. cinterop benchmarks can't be run on JVM)
  
-    ../gradlew jvmRun
+    ./gradlew :performance:jvmRun
     
  Files with results of benchmarks run are saved in `performance/build/nativeReport.json` for konanRun and `jvmReport.json` for jvmRun.
  You can change the output filename by setting the `nativeJson` property for konanRun and `jvmJson` for jvmRun:
 
-    ../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
+    ./gradlew :performance:ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
 
  You can use the `compilerArgs` property to pass flags to the compiler used to compile the benchmarks:
 
-    ../gradlew konanRun -PcompilerArgs="--time -g"
+    ./gradlew :performance:konanRun -PcompilerArgs="--time -g"
 
  To compare different results run benchmarksAnalyzer tool:
  

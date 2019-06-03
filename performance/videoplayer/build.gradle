@@ -1,36 +1,39 @@
+import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.MPPTools
+
 def dist = findProperty('org.jetbrains.kotlin.native.home') ?: 'dist'
 dist = (new File(dist)).isAbsolute() ? dist : "${project.getProjectDir()}/$dist"
 def toolExtension = System.getProperty("os.name").startsWith('Windows') ? ".bat" : ""
 
 def linkerOpts = []
-if (MPPTools.isMacos()) {
+if (PlatformInfo.isMac()) {
     linkerOpts += ['-linker-options','-L/opt/local/lib', '-linker-options', '-L/usr/local/lib']
-} else if (MPPTools.isLinux()) {
+} else if (PlatformInfo.isLinux()) {
     linkerOpts += ['-linker-options', '-L/usr/lib/x86_64-linux-gnu', '-linker-options', '-L/usr/lib64']
-} else if (MPPTools.isWindows()) {
+} else if (PlatformInfo.isWindows()) {
     linkerOpts += ['-linker-options', "-L${MPPTools.mingwPath()}/lib"]
 }
 
 def includeDirsFfmpeg = []
 def filterDirsFfmpeg = []
-if (MPPTools.isMacos()) {
+if (PlatformInfo.isMac()) {
     filterDirsFfmpeg += ['-headerFilterAdditionalSearchPrefix', '/opt/local/include',
                           '-headerFilterAdditionalSearchPrefix', '/usr/local/include']
-} else if (MPPTools.isLinux()) {
+} else if (PlatformInfo.isLinux()) {
     filterDirsFfmpeg += ['-headerFilterAdditionalSearchPrefix', '/usr/include',
                           '-headerFilterAdditionalSearchPrefix', '/usr/include/x86_64-linux-gnu',
                           '-headerFilterAdditionalSearchPrefix', '/usr/include/ffmpeg']
-} else if (MPPTools.isWindows()) {
+} else if (PlatformInfo.isWindows()) {
     includeDirsFfmpeg += ['-compiler-option', "-I${MPPTools.mingwPath()}/include"]
 }
 
 def includeDirsSdl = []
-if (MPPTools.isMacos()) {
+if (PlatformInfo.isMac()) {
     includeDirsSdl += ['-compiler-option', '-I/opt/local/include/SDL2',
                        '-compiler-option', '-I/usr/local/include/SDL2']
-} else if (MPPTools.isLinux()) {
+} else if (PlatformInfo.isLinux()) {
     includeDirsSdl += ['-compiler-option', '-I/usr/include/SDL2']
-} else if (MPPTools.isWindows()) {
+} else if (PlatformInfo.isWindows()) {
     includeDirsSdl += ['-compiler-option', "-I${MPPTools.mingwPath()}/include/SDL2"]
 }
 
@@ -47,4 +50,4 @@ project.ext {
                                       "-Xmulti-platform", "$dist/../samples/videoplayer/src/videoPlayerMain/kotlin",
                                       "-entry", "sample.videoplayer.main"] + linkerOpts]
 }
-apply from: rootProject.file("${rootProject.rootDir}/gradle/compileBenchmark.gradle")
+apply from: rootProject.file("${rootProject.rootDir}/performance/gradle/compileBenchmark.gradle")

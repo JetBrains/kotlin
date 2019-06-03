@@ -78,7 +78,7 @@ open class FrameworkTest : DefaultTask() {
                 listOf(provider.toString(), swiftMain)
         val options = listOf("-g", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
         val testExecutable = Paths.get(testOutput, frameworkName, "swiftTestExecutable")
-        swiftc(sources, options, testExecutable)
+        compileSwift(project, project.testTarget(), sources, options, testExecutable, fullBitcode)
 
         runTest(testExecutable)
     }
@@ -115,36 +115,6 @@ open class FrameworkTest : DefaultTask() {
             |stderr: $stdErr
             """.trimMargin())
         check(exitCode == 0, { "Execution failed with exit code: $exitCode "})
-    }
-
-    private fun swiftc(sources: List<String>, options: List<String>, output: Path) {
-        val target = project.testTarget()
-        val platform = project.platformManager().platform(target)
-        assert(platform.configurables is AppleConfigurables)
-        val configs = platform.configurables as AppleConfigurables
-        val compiler = configs.absoluteTargetToolchain + "/usr/bin/swiftc"
-
-        val swiftTarget = when (target) {
-            KonanTarget.IOS_X64   -> "x86_64-apple-ios" + configs.osVersionMin
-            KonanTarget.IOS_ARM64 -> "arm64_64-apple-ios" + configs.osVersionMin
-            KonanTarget.MACOS_X64 -> "x86_64-apple-macosx" + configs.osVersionMin
-            else -> throw IllegalStateException("Test target $target is not supported")
-        }
-
-        val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
-                options + "-o" + output.toString() + sources +
-                if (fullBitcode) listOf("-embed-bitcode", "-Xlinker", "-bitcode_verify") else listOf("-embed-bitcode-marker")
-
-        val (stdOut, stdErr, exitCode) = runProcess(executor = localExecutor(project), executable = compiler, args = args)
-
-        println("""
-            |$compiler finished with exit code: $exitCode
-            |options: ${args.joinToString(separator = " ")}
-            |stdout: $stdOut
-            |stderr: $stdErr
-            """.trimMargin())
-        check(exitCode == 0, { "Compilation failed" })
-        check(output.toFile().exists(), { "Compiler swiftc hasn't produced an output file: $output" })
     }
 
     private fun validateBitcodeEmbedding(frameworkBinary: String) {

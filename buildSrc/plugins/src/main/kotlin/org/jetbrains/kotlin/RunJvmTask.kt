@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+package org.jetbrains.kotlin
+
 import groovy.lang.Closure
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.Task

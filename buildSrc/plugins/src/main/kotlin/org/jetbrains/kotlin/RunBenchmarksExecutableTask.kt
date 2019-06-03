@@ -3,23 +3,21 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+package org.jetbrains.kotlin
+
 import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import javax.inject.Inject
 import java.io.File
 
-open class RunKotlinNativeTask @Inject constructor(
-        private val curTarget: KotlinNativeTarget
-) : DefaultTask() {
-
-    var buildType = "RELEASE"
+open class RunBenchmarksExecutableTask @Inject constructor() : DefaultTask() {
     var workingDir: Any = project.projectDir
     var outputFileName: String? = null
+    var executable: String? = null
     @Input
     @Option(option = "filter", description = "Benchmarks to run (comma-separated)")
     var filter: String = ""
@@ -40,7 +38,6 @@ open class RunKotlinNativeTask @Inject constructor(
 
     override fun configure(configureClosure: Closure<Any>): Task {
         val task = super.configure(configureClosure)
-        this.dependsOn += curTarget.binaries.getExecutable("benchmark", buildType).linkTaskName
         return task
     }
 
@@ -52,7 +49,7 @@ open class RunKotlinNativeTask @Inject constructor(
         val filterArgs = filter.splitCommaSeparatedOption("-f")
         val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
         project.exec {
-            it.executable = curTarget.binaries.getExecutable("benchmark", buildType).outputFile.getAbsolutePath()
+            it.executable = executable
             it.args = curArgs + filterArgs + filterRegexArgs
             it.environment = curEnvironment
             it.workingDir(workingDir)
@@ -70,8 +67,8 @@ open class RunKotlinNativeTask @Inject constructor(
     }
 
     internal fun emptyConfigureClosure() = object : Closure<Any>(this) {
-        override fun call(): RunKotlinNativeTask {
-            return this@RunKotlinNativeTask
+        override fun call(): RunBenchmarksExecutableTask {
+            return this@RunBenchmarksExecutableTask
         }
     }
 }

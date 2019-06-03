@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
 import org.jetbrains.kotlin.CopyCommonSources
+import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.konan.*
 
 buildscript {
@@ -41,7 +42,7 @@ wrapper.distributionType = Wrapper.DistributionType.ALL
 
 defaultTasks 'clean', 'dist'
 
-convention.plugins.platformInfo = new PlatformInfo()
+convention.plugins.platformInfo = PlatformInfo
 
 ext {
     distDir = file('dist')
@@ -159,43 +160,6 @@ void loadCommandLineProperties() {
     ext.globalBuildArgs = project.hasProperty("build_flags") ? ext.build_flags.split() : []
     ext.globalTestArgs = project.hasProperty("test_flags") ? ext.test_flags.split() : []
     ext.testTarget = project.hasProperty("test_target") ? ext.test_target : null
-}
-
-class PlatformInfo {
-    boolean isMac() {
-        return HostManager.hostIsMac
-    }
-
-    boolean isWindows() {
-        return HostManager.hostIsMingw
-    }
-
-    boolean isLinux() {
-        return HostManager.hostIsLinux
-    }
-
-    boolean isAppleTarget(Project project) {
-        def target = getTarget(project)
-        return target.family == Family.IOS || target.family == Family.OSX
-    }
-
-    boolean isWindowsTarget(Project project) {
-        return getTarget(project).family == Family.MINGW
-    }
-
-    boolean isWasmTarget(Project project) {
-        return getTarget(project).family == Family.WASM
-    }
-
-    KonanTarget getTarget(Project project) {
-        def platformManager = project.rootProject.platformManager
-        def targetName = project.project.testTarget ?: 'host'
-        return platformManager.targetManager(targetName).target
-    }
-
-    Throwable unsupportedPlatformException() {
-        return new TargetSupportException()
-    }
 }
 
 configurations {
@@ -343,7 +307,7 @@ task distCompiler(type: Copy) {
     from(file('cmd')) {
         fileMode(0755)
         into('bin')
-        if (!isWindows()) {
+        if (!PlatformInfo.isWindows()) {
             exclude('**/*.bat')
         }
     }
@@ -501,6 +465,12 @@ task samples {
     dependsOn 'samplesZip', 'samplesTar'
 }
 
+task performance {
+    dependsOn 'dist'
+    dependsOn ':performance:clean'
+    dependsOn ':performance:konanRun'
+}
+
 task samplesZip(type: Zip)
 task samplesTar(type: Tar) {
     extension = 'tar.gz'
@@ -561,12 +531,6 @@ task uploadBundle {
         }
     }
 }
-
-// TODO return when problems with HostManagers will be solved
-/*task performance {
-    dependsOn 'dist'
-    dependsOn ':performance:bench'
-}*/
 
 task teamcityKonanVersion {
     doLast {

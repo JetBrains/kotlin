@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.MPPTools
+import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.RunJvmTask
+
 buildscript {
     ext.rootBuildDirectory = file('../..')
 
@@ -64,7 +68,7 @@ kotlin {
 MPPTools.addTimeListener(project)
 
 task konanRun {
-    if (MPPTools.isMacos()) {
+    if (PlatformInfo.isMac()) {
         dependsOn 'build'
     }
 }
@@ -77,7 +81,7 @@ task jvmRun(type: RunJvmTask)  {
 
 task konanJsonReport {
     doLast {
-        if (MPPTools.isMacos()) {
+        if (PlatformInfo.isMac()) {
             def applicationName = "FrameworkBenchmarksAnalyzer"
             def frameworkPath = kotlin.macosX64("macos").binaries.
                     getFramework(frameworkName, kotlin.macosX64("macos").binaries.RELEASE).outputFile.absolutePath

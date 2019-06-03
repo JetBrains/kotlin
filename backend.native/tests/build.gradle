@@ -3098,7 +3098,7 @@ kotlinNativeInterop {
         defFile 'interop/basics/ccallbacksAndVarargs.def'
     }
 
-    if (isAppleTarget(project)) {
+    if (PlatformInfo.isAppleTarget(project)) {
         objcSmoke {
             defFile 'interop/objc/objcSmoke.def'
             headers "$projectDir/interop/objc/smoke.h"
@@ -3447,7 +3447,7 @@ task runKonanRegexTests(type: RunKonanTest) {
 
 task coverage_basic_program(type: RunStandaloneKonanTest) {
 
-    disabled = getTarget(project).name != "ios_x64" && getTarget(project).name != "macos_x64"
+    disabled = PlatformInfo.getTarget(project).name != "ios_x64" && PlatformInfo.getTarget(project).name != "macos_x64"
 
     description = "Test that `-Xcoverage` generates correct __llvm_coverage information"
 
@@ -3476,7 +3476,7 @@ task coverage_basic_program(type: RunStandaloneKonanTest) {
 
 task coverage_basic_library(type: RunStandaloneKonanTest) {
 
-    disabled = getTarget(project).name != "ios_x64" && getTarget(project).name != "macos_x64"
+    disabled = PlatformInfo.getTarget(project).name != "ios_x64" && PlatformInfo.getTarget(project).name != "macos_x64"
 
     description = "Test that `-Xlibrary-to-cover` generates correct __llvm_coverage information"
 
@@ -3486,7 +3486,7 @@ task coverage_basic_library(type: RunStandaloneKonanTest) {
     doFirst {
         def konancScript = isWindows() ? "konanc.bat" : "konanc"
         def konanc = "$dist/bin/$konancScript"
-        "$konanc -target ${getTarget(project).name} $projectDir/coverage/basic/library/library.kt -p library -o $dir/lib_to_cover".execute().waitFor()
+        "$konanc -target ${PlatformInfo.getTarget(project).name} $projectDir/coverage/basic/library/library.kt -p library -o $dir/lib_to_cover".execute().waitFor()
     }
     
     flags = ["-Xcoverage-file=$dir/program.profraw", "-l", "$dir/lib_to_cover", "-Xlibrary-to-cover=$dir/lib_to_cover.klib", "-entry", "coverage.basic.library.main"]

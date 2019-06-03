@@ -1,3 +1,8 @@
+import org.jetbrains.kotlin.RegressionsReporter
+import org.jetbrains.kotlin.RegressionsSummaryReporter
+import org.jetbrains.kotlin.BuildRegister
+import org.jetbrains.kotlin.MPPTools
+
 buildscript {
     ext.rootBuildDirectory = file('..')
 
@@ -42,16 +47,17 @@ defaultTasks 'konanRun'
 
 // Produce and send slack report.
 task slackReport(type: RegressionsReporter) {
+    def analyzerBinary = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
+            "${rootBuildDirectory}/${analyzerToolDirectory}")
     def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
-    if (teamcityConfig) {
+    if (teamcityConfig && analyzerBinary != null) {
         // Create folder for report (root Kotlin project settings make create report in separate folder).
         def reportDirectory = new File(outputReport).parentFile
         mkdir reportDirectory
         def targetsResults = new File(new File("${rootBuildDirectory}"), "targetsResults").toString()
         mkdir targetsResults
         currentBenchmarksReportFile = "${buildDir.absolutePath}/${nativeJson}"
-        analyzer = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
-                "${rootBuildDirectory}/${analyzerToolDirectory}")
+        analyzer = analyzerBinary
         htmlReport = outputReport
         defaultBranch = project.findProperty('kotlin.native.default.branch') ?: "master"
         def target = System.getProperty("os.name")
@@ -138,4 +144,39 @@ task teamCityStat(type:Exec) {
     } else {
         println("No analyzer $analyzerTool found in subdirectories of ${rootBuildDirectory}/${analyzerToolDirectory}")
     }
+}
+
+task сinterop {
+    dependsOn 'clean'
+    dependsOn 'сinterop:konanRun'
+}
+
+task framework {
+    dependsOn 'clean'
+    dependsOn 'framework:konanRun'
+}
+
+task helloworld {
+    dependsOn 'clean'
+    dependsOn 'helloworld:konanRun'
+}
+
+task objcinterop {
+    dependsOn 'clean'
+    dependsOn 'objcinterop:konanRun'
+}
+
+task ring {
+    dependsOn 'clean'
+    dependsOn 'ring:konanRun'
+}
+
+task swiftinterop {
+    dependsOn 'clean'
+    dependsOn 'swiftinterop:konanRun'
+}
+
+task videoplayer {
+    dependsOn 'clean'
+    dependsOn 'swiftinterop:konanRun'
 }
