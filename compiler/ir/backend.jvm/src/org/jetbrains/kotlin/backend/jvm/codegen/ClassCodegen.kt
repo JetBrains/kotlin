@@ -227,7 +227,7 @@ open class ClassCodegen protected constructor(
 
         val descriptor = field.metadata?.descriptor
         if (descriptor != null) {
-            val codegen = if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+            val codegen = if (field.origin != IrDeclarationOrigin.DELEGATE && JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
                 companionObjectCodegen ?: error("Class with a property moved from the companion must have a companion:\n${irClass.dump()}")
             } else this
             codegen.visitor.serializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
