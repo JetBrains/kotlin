@@ -117,10 +117,10 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
       LOG.error("Can't deserialize stub tree", e)
     }
 
-    if (stub != null) {
-      return stub
+    if (stub is PsiFileStubImpl<*>) {
+      stub.psi = fileContent.psiFile
     }
-    return null
+    return stub
   }
 }
 
