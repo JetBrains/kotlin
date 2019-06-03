@@ -83,6 +83,68 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
       .contains("build finished", "build event", "build nested event")
   }
 
+  @Test
+  fun `test derived result depend on child result - fail case`() {
+    treeConsoleView.addFilter { true }
+    listOf(
+      StartBuildEventImpl(buildDescriptor, "build started"),
+      StartEventImpl("event_id", buildDescriptor.id, 1000, "build event"),
+      StartEventImpl("sub_event_id", "event_id", 1100, "build nested event"),
+      FinishEventImpl("sub_event_id", "event_id", 1200, "build nested event", FailureResultImpl()),
+      FinishEventImpl("event_id", buildDescriptor.id, 1500, "build event", DerivedResultImpl()),
+      FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build finished", DerivedResultImpl())
+    ).forEach {
+      treeConsoleView.onEvent(it)
+    }
+
+    val tree = treeConsoleView.tree
+
+    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    PlatformTestUtil.waitWhileBusy(tree)
+
+    PlatformTestUtil.assertTreeEqual(tree, "-\n" +
+                                           " -build finished\n" +
+                                           "  -build event\n" +
+                                           "   build nested event")
+    val visitor = CollectingTreeVisitor()
+    TreeUtil.visitVisibleRows(tree, visitor)
+
+
+    assertThat(visitor.userObjects.map { it -> (it as ExecutionNode).name + "--" + it.result!!.javaClass.simpleName })
+      .containsExactly("build finished--FailureResultImpl", "build event--FailureResultImpl", "build nested event--FailureResultImpl")
+  }
+
+  @Test
+  fun `test derived result depend on child result - success case`() {
+    treeConsoleView.addFilter { true }
+    listOf(
+      StartBuildEventImpl(buildDescriptor, "build started"),
+      StartEventImpl("event_id", buildDescriptor.id, 1000, "build event"),
+      StartEventImpl("sub_event_id", "event_id", 1100, "build nested event"),
+      FinishEventImpl("sub_event_id", "event_id", 1200, "build nested event", SuccessResultImpl()),
+      FinishEventImpl("event_id", buildDescriptor.id, 1500, "build event", DerivedResultImpl()),
+      FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build finished", DerivedResultImpl())
+    ).forEach {
+      treeConsoleView.onEvent(it)
+    }
+
+    val tree = treeConsoleView.tree
+
+    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    PlatformTestUtil.waitWhileBusy(tree)
+
+    PlatformTestUtil.assertTreeEqual(tree, "-\n" +
+                                           " -build finished\n" +
+                                           "  -build event\n" +
+                                           "   build nested event")
+    val visitor = CollectingTreeVisitor()
+    TreeUtil.visitVisibleRows(tree, visitor)
+
+    assertThat(visitor.userObjects.map { (it as ExecutionNode).name + "--" + it.result!!.javaClass.simpleName })
+      .containsExactly("build finished--SuccessResultImpl", "build event--SuccessResultImpl", "build nested event--SuccessResultImpl")
+
+  }
+
 
   @After
   override fun tearDown() {

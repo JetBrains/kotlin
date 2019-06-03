@@ -38,6 +38,10 @@ public class FailureResultImpl implements FailureResult {
     this(null, error);
   }
 
+  public FailureResultImpl(@Nullable String message) {
+    this(message, null);
+  }
+
   public FailureResultImpl(@Nullable String message, @Nullable Throwable error) {
     myFailures = new ArrayList<>();
     if (message != null || error != null) {

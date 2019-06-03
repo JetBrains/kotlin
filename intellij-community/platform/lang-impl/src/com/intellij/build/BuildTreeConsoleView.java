@@ -337,11 +337,15 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
     if (event instanceof FinishEvent) {
       currentNode.setEndTime(event.getEventTime());
-      currentNode.setResult(((FinishEvent)event).getResult());
+      EventResult result = ((FinishEvent)event).getResult();
+      if (result instanceof DerivedResult) {
+        result = calculateDerivedResult((DerivedResult)result, currentNode, new HashSet<>());
+      }
+      currentNode.setResult(result);
       SkippedResult skippedResult = new SkippedResultImpl();
       finishChildren(currentNode, skippedResult);
-      if (((FinishEvent)event).getResult() instanceof FailureResult) {
-        for (Failure failure : ((FailureResult)((FinishEvent)event).getResult()).getFailures()) {
+      if (result instanceof FailureResult) {
+        for (Failure failure : ((FailureResult)result).getFailures()) {
           addChildFailureNode(currentNode, failure, event.getMessage());
         }
       }
@@ -359,6 +363,27 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
     }
     scheduleUpdate(currentNode);
+  }
+
+  private static EventResult calculateDerivedResult(DerivedResult result, ExecutionNode node, Set<ExecutionNode> recursionGuard) {
+    if (node.getResult() != null) {
+      return node.getResult(); // if another thread set result for child
+    }
+    if (!recursionGuard.add(node)) {
+      LOG.warn("Ring in execution node graph!" + node);
+      return result.createFailureResult();
+    }
+
+    for (SimpleNode simpleNode : node.getChildren()) {
+      if (simpleNode instanceof ExecutionNode) {
+        ExecutionNode child = (ExecutionNode)simpleNode;
+        EventResult childResult = child.isRunning() ? calculateDerivedResult(result, child, recursionGuard) : child.getResult();
+        if (childResult instanceof FailureResult) {
+          return result.createFailureResult();
+        }
+      }
+    }
+    return result.createSuccessResult();
   }
 
   private void reportMessageKind(@NotNull MessageEvent messageEvent, @NotNull ExecutionNode parentNode) {
