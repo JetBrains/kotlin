@@ -79,7 +79,6 @@ public class LivePreviewController implements LivePreview.Delegate, FindUtil.Rep
 
   private void smartUpdate() {
     if (myLivePreview == null) return;
-    myLivePreview.inSmartUpdate();
     FindModel findModel = mySearchResults.getFindModel();
     if (findModel != null) {
       updateInBackground(findModel, false);
@@ -164,7 +163,6 @@ public class LivePreviewController implements LivePreview.Delegate, FindUtil.Rep
                                           replacement,
                                           true,
                                           new ArrayList<>());
-    myLivePreview.inSmartUpdate();
     mySearchResults.updateThreadSafe(findModel, true, result, mySearchResults.getStamp());
     return result;
   }
