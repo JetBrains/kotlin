@@ -40,7 +40,7 @@ class ServiceViewTreeUi implements ServiceViewUi {
     mySplitter.setSecondComponent(myDetailsPanel);
 
     UIUtil.putClientProperty(myMainPanel, UIUtil.NOT_IN_HIERARCHY_COMPONENTS, (Iterable<JComponent>)() ->
-      JBIterable.from(myDetailsComponents).filter(component -> myDetailsPanel != component.getParent()).iterator());
+      JBIterable.from(myDetailsComponents).append(myMessagePanel).filter(component -> myDetailsPanel != component.getParent()).iterator());
   }
 
   @NotNull
