@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.types.typeUtil.closure
 import java.util.concurrent.ConcurrentHashMap
 
 fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
@@ -78,7 +79,7 @@ private fun mergePlatformModules(
                 listOf(module to module.expectedBy)
             else emptyList()
         }.map { (module, expectedBys) ->
-            PlatformModuleInfo(module, expectedBys)
+            PlatformModuleInfo(module, expectedBys.closure { it.expectedBy }.toList())
         }
 
     val rest = allModules - platformModules.flatMap { it.containedModules }
