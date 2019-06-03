@@ -7,16 +7,20 @@ package org.jetbrains.kotlin.fir.lightTree.benchmark
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.TreeGenerator
 import org.openjdk.jmh.annotations.*
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @BenchmarkMode(Mode.SingleShotTime)
-@Warmup(iterations = 5, batchSize = 1)
-@Measurement(iterations = 5, batchSize = 1)
+@Warmup(iterations = 10, batchSize = 1)
+@Measurement(iterations = 10, batchSize = 1)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Fork(1)
-open class AbstractBenchmark {
+@State(Scope.Benchmark)
+abstract class AbstractBenchmark {
     private val files = mutableMapOf<String, Pair<File, String>>()
+    abstract val generator: TreeGenerator
 
     protected fun readFiles(ignoreTestData: Boolean, path: String) {
         val root = File(path)
@@ -41,5 +45,9 @@ open class AbstractBenchmark {
         for ((file, text) in files.values) {
             f(text, file)
         }
+    }
+
+    protected fun getFilesCount(): Int {
+        return files.size
     }
 }

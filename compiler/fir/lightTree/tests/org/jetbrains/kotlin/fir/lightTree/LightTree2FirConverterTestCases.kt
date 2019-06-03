@@ -18,6 +18,8 @@ import java.nio.file.Paths
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class LightTree2FirConverterTestCases : AbstractRawFirBuilderTestCase() {
+    private val testDirPath = "compiler/fir/psi2fir/testData/rawBuilder/declarations"
+
     private fun executeTest(filePath: String) {
         val parserDefinition = KotlinParserDefinition()
         val lexer = parserDefinition.createLexer(myProject)
@@ -31,78 +33,78 @@ class LightTree2FirConverterTestCases : AbstractRawFirBuilderTestCase() {
     }
 
     fun testComplexTypes() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt")
+        executeTest("$testDirPath/complexTypes.kt")
     }
 
     fun testDerivedClass() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/derivedClass.kt")
+        executeTest("$testDirPath/derivedClass.kt")
     }
 
     fun testEnums() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/enums.kt")
+        executeTest("$testDirPath/enums.kt")
     }
 
     fun testEnums2() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/enums2.kt")
+        executeTest("$testDirPath/enums2.kt")
     }
 
     fun testExpectActual() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/expectActual.kt")
+        executeTest("$testDirPath/expectActual.kt")
     }
 
     fun testF() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/F.kt")
+        executeTest("$testDirPath/F.kt")
     }
 
     fun testFunctionTypes() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/functionTypes.kt")
+        executeTest("$testDirPath/functionTypes.kt")
     }
 
     fun testGenericFunctions() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/genericFunctions.kt")
+        executeTest("$testDirPath/genericFunctions.kt")
     }
 
     fun testNestedClass() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/nestedClass.kt")
+        executeTest("$testDirPath/nestedClass.kt")
     }
 
     fun testNestedOfAliasedType() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/NestedOfAliasedType.kt")
+        executeTest("$testDirPath/NestedOfAliasedType.kt")
     }
 
     fun testNestedSuperType() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/NestedSuperType.kt")
+        executeTest("$testDirPath/NestedSuperType.kt")
     }
 
     fun testNoPrimaryConstructor() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/noPrimaryConstructor.kt")
+        executeTest("$testDirPath/noPrimaryConstructor.kt")
     }
 
     fun testSimpleClass() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleClass.kt")
+        executeTest("$testDirPath/simpleClass.kt")
     }
 
     fun testSimpleFun() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleFun.kt")
+        executeTest("$testDirPath/simpleFun.kt")
     }
 
     fun testSimpleTypeAlias() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/simpleTypeAlias.kt")
+        executeTest("$testDirPath/simpleTypeAlias.kt")
     }
 
     fun testTypeAliasWithGeneric() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeAliasWithGeneric.kt")
+        executeTest("$testDirPath/typeAliasWithGeneric.kt")
     }
 
     fun testTypeParameterVsNested() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeParameterVsNested.kt")
+        executeTest("$testDirPath/typeParameterVsNested.kt")
     }
 
     fun testTypeParameters() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/typeParameters.kt")
+        executeTest("$testDirPath/typeParameters.kt")
     }
 
     fun testWhere() {
-        executeTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/where.kt")
+        executeTest("$testDirPath/where.kt")
     }
 }

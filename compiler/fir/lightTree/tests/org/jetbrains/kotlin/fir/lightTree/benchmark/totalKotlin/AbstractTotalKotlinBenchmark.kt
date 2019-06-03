@@ -6,33 +6,13 @@
 package org.jetbrains.kotlin.fir.lightTree.benchmark.totalKotlin
 
 import org.jetbrains.kotlin.fir.lightTree.benchmark.*
+import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.LightTree2FirGenerator
+import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.Psi2FirGenerator
+import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.TreeGenerator
 import org.openjdk.jmh.annotations.*
 
-@State(Scope.Benchmark)
-abstract class AbstractTotalKotlinBenchmark : AbstractBenchmark() {
-    abstract val generator: TreeGenerator
-
-    @Setup
-    fun setUp() {
-        generator.setUp()
-        readFiles(true, System.getProperty("user.dir"))
-    }
-
-    @TearDown
-    fun tearDown() {
-        generator.tearDown()
-    }
-
-    @Benchmark
-    fun testTotalKotlinOnlyBaseTree() {
-        forEachFile { text, file -> generator.generateBaseTree(text, file) }
-    }
-
-    @Benchmark
-    fun testTotalKotlinFir() {
-        forEachFile { text, file -> generator.generateFir(text, file) }
-    }
-}
+abstract class AbstractTotalKotlinBenchmark :
+    AbstractBenchmarkForGivenPath(System.getProperty("user.dir"))
 
 open class LightTree2FirTotalKotlinBenchmark(override val generator: TreeGenerator = LightTree2FirGenerator()) :
     AbstractTotalKotlinBenchmark()
