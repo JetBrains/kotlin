@@ -461,6 +461,11 @@ public class ConsoleHistoryController implements Disposable {
       if (getModel().isEmpty()) return;
       File file = getFile(myId);
       if (file == null) return;
+      File dir = file.getParentFile();
+      if (dir == null || !dir.mkdirs()) {
+        LOG.error("Unable to create " + file.getPath());
+        return;
+      }
       try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), getCharset()))) {
         boolean first = true;
         for (String entry : getModel().getEntries()) {
