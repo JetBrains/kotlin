@@ -267,6 +267,12 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     return mySelectedTab.getID();
   }
 
+  @Nullable
+  public Object getSelectionIdentity() {
+    Object value = myResultsList.getSelectedValue();
+    return value == null ? null : Objects.hashCode(value);
+  }
+
   @Override
   public void dispose() {
     stopSearching();
@@ -1606,6 +1612,17 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       hasMoreContributors.forEach(myListModel::setHasMore);
 
       mySelectionTracker.resetSelectionIfNeeded();
+
+      Object prevSelection = ((SearchEverywhereManagerImpl)SearchEverywhereManager.getInstance(myProject))
+        .getPrevSelection(getSelectedContributorID());
+      if (prevSelection instanceof Integer) {
+        for (SearchEverywhereFoundElementInfo info : myListModel.listElements) {
+          if (Objects.hashCode(info.element) == ((Integer)prevSelection).intValue()) {
+            myResultsList.setSelectedValue(info.element, true);
+            break;
+          }
+        }
+      }
     }
   }
 
