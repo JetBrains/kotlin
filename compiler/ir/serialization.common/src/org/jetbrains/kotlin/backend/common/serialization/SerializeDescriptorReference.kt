@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAccessor
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isSetter
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 
@@ -17,6 +19,12 @@ open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
     val serializeString: (String) -> KotlinIr.String,
     mangler: KotlinMangler): KotlinMangler by mangler {
+
+    private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor !is SimpleFunctionDescriptor) return false
+
+        return DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)
+    }
 
     // Not all exported descriptors are deserialized, some a synthesized anew during metadata deserialization.
     // Those created descriptors can't carry the uniqIdIndex, since it is available only for deserialized descriptors.
@@ -51,10 +59,9 @@ open class DescriptorReferenceSerializer(
         val isAccessor = declaration.isAccessor
         val isBackingField = declaration is IrField && declaration.correspondingProperty != null
         val isFakeOverride = declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE
-        val isDefaultConstructor =
-            descriptor is ClassConstructorDescriptor && containingDeclaration is ClassDescriptor && containingDeclaration.kind == ClassKind.OBJECT
+        val isDefaultConstructor = descriptor is ClassConstructorDescriptor && containingDeclaration is ClassDescriptor && (containingDeclaration.kind == ClassKind.OBJECT)
         val isEnumEntry = descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY
-        val isEnumSpecial = declaration.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+        val isEnumSpecial = isEnumSpecialMember(descriptor)
         val isTypeParameter = declaration is IrTypeParameter && declaration.parent is IrClass
 
         // The corresponding descriptor in deserialized metadata has constructors = emptyList() etc.
