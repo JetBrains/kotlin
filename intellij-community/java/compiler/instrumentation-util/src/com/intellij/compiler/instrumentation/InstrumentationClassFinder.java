@@ -85,6 +85,10 @@ public class InstrumentationClassFinder {
 
       @Override
       protected Class findClass(String name) throws ClassNotFoundException {
+        Class aClass = InstrumentationClassFinder.this.findClass(name);
+        if (aClass != null) {
+          return aClass;
+        }
         final InputStream is = lookupClassBeforeClasspath(name.replace('.', '/'));
         if (is == null) {
           throw new ClassNotFoundException("Class not found: " + name.replace('/', '.'));  // ensure presentable class name in error message
@@ -104,6 +108,10 @@ public class InstrumentationClassFinder {
     };
     myLoader = loader;
     return loader;
+  }
+
+  protected Class findClass(String name) {
+    return null;
   }
 
   public void releaseResources() {
