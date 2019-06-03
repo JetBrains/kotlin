@@ -163,7 +163,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
             |Probably you are accessing the default test binary using the 'binaries.getExecutable("$DEFAULT_TEST_NAME_PREFIX", ${DEFAULT_TEST_BUILD_TYPE.name})' method.
             |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
             |
-            |    binaries.getTest(DEBUG)
+            |    binaries.getTest("DEBUG")
             |
             """.trimMargin()
 
@@ -172,7 +172,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
             |Probably you are accessing the default test binary using the 'binaries.findExecutable("$DEFAULT_TEST_NAME_PREFIX", ${DEFAULT_TEST_BUILD_TYPE.name})' method.
             |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
             |
-            |    binaries.findTest(DEBUG)
+            |    binaries.findTest("DEBUG")
             |
             """.trimMargin()
     }

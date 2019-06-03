@@ -1173,7 +1173,15 @@ class NewMultiplatformIT : BaseGradleIT() {
         // Check that test binaries can be accessed in a buildscript.
         build("checkNewGetters") {
             assertSuccessful()
-            listOf("test.$suffix", "another.$suffix").forEach {
+            val suffixes = listOf("exe", "kexe", "wasm")
+            val names = listOf("test", "another")
+            val files = names.flatMap { name ->
+                suffixes.map { suffix ->
+                    "$name.$suffix"
+                }
+            }
+
+            files.forEach {
                 assertContains("Get test: $it")
                 assertContains("Find test: $it")
             }
@@ -1187,7 +1195,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     |Probably you are accessing the default test binary using the 'binaries.getExecutable("test", DEBUG)' method.
                     |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
                     |
-                    |    binaries.getTest(DEBUG)
+                    |    binaries.getTest("DEBUG")
                 """.trimMargin()
             )
         }
@@ -1199,7 +1207,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     |Probably you are accessing the default test binary using the 'binaries.findExecutable("test", DEBUG)' method.
                     |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
                     |
-                    |    binaries.findTest(DEBUG)
+                    |    binaries.findTest("DEBUG")
                 """.trimMargin()
             )
             assertContains("Find test: null")

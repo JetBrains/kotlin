@@ -232,30 +232,31 @@ open class KotlinNativeTargetConfigurator(
     }
 
     override fun configureTest(target: KotlinNativeTarget): Unit = with(target.project) {
-        // We don't create test tasks for non-host platforms.
-        if (target.konanTarget !in listOf(KonanTarget.MACOS_X64, KonanTarget.MINGW_X64, KonanTarget.LINUX_X64)) {
-            return
-        }
-
-        val taskName = lowerCamelCaseName(target.disambiguationClassifier, testTaskNameSuffix)
+        // We create test binaries for all platforms.
         target.binaries.test(listOf(NativeBuildType.DEBUG)) {
-            val testTask = createOrRegisterTask<KotlinNativeTest>(taskName) { testTask ->
-                testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
-                testTask.description = "Executes Kotlin/Native unit tests for target ${target.name}."
-                testTask.targetName = compilation.target.targetName
 
-                testTask.enabled = target.konanTarget.isCurrentHost
+            // But run them only on host ones.
+            if (target.konanTarget in listOf(KonanTarget.MACOS_X64, KonanTarget.MINGW_X64, KonanTarget.LINUX_X64)) {
 
-                testTask.executable { outputFile }
-                testTask.workingDir = project.projectDir.absolutePath
+                val taskName = lowerCamelCaseName(target.disambiguationClassifier, testTaskNameSuffix)
+                val testTask = createOrRegisterTask<KotlinNativeTest>(taskName) { testTask ->
+                    testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
+                    testTask.description = "Executes Kotlin/Native unit tests for target ${target.name}."
+                    testTask.targetName = compilation.target.targetName
 
-                testTask.onlyIf { outputFile.exists() }
-                testTask.dependsOn(linkTaskName)
+                    testTask.enabled = target.konanTarget.isCurrentHost
 
-                testTask.configureConventions()
+                    testTask.executable { outputFile }
+                    testTask.workingDir = project.projectDir.absolutePath
+
+                    testTask.onlyIf { outputFile.exists() }
+                    testTask.dependsOn(linkTaskName)
+
+                    testTask.configureConventions()
+                }
+
+                kotlinTestRegistry.registerTestTask(testTask)
             }
-
-            kotlinTestRegistry.registerTestTask(testTask)
         }
     }
 
