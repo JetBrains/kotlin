@@ -9,9 +9,10 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import kotlin.concurrent.getOrSet
 
 private val rootFormatSymbols = DecimalFormatSymbols(Locale.ROOT).apply { exponentSeparator = "e" }
-private val precisionFormats = Array<DecimalFormat?>(4) { null }
+private val precisionFormats = Array(4) { ThreadLocal<DecimalFormat>() }
 
 private fun createFormatForDecimals(decimals: Int) = DecimalFormat("0", rootFormatSymbols).apply {
     if (decimals > 0) minimumFractionDigits = decimals
@@ -20,7 +21,7 @@ private fun createFormatForDecimals(decimals: Int) = DecimalFormat("0", rootForm
 
 internal actual fun formatToExactDecimals(value: Double, decimals: Int): String {
     val format = if (decimals < precisionFormats.size) {
-        precisionFormats[decimals] ?: createFormatForDecimals(decimals).also { precisionFormats[decimals] = it }
+        precisionFormats[decimals].getOrSet { createFormatForDecimals(decimals) }
     } else
         createFormatForDecimals(decimals)
     return format.format(value)
@@ -31,6 +32,6 @@ internal actual fun formatUpToDecimals(value: Double, decimals: Int): String =
         .apply { maximumFractionDigits = decimals }
         .format(value)
 
-private val scientificFormat = DecimalFormat("0E0", rootFormatSymbols).apply { maximumFractionDigits = 2 }
+private val scientificFormat = ThreadLocal<DecimalFormat>()
 internal actual fun formatScientific(value: Double): String =
-    scientificFormat.format(value)
+    scientificFormat.getOrSet { DecimalFormat("0E0", rootFormatSymbols).apply { maximumFractionDigits = 2 } }.format(value)
