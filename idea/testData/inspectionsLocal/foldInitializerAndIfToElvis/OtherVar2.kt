@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 class C {
     var x: String? = null
 

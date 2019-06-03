@@ -11879,9 +11879,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/inspections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("ifNullToElvis.kt")
-            public void testIfNullToElvis() throws Exception {
-                runTest("idea/testData/quickfix/suppress/inspections/ifNullToElvis.kt");
+            @TestMetadata("constantConditionIf.kt")
+            public void testConstantConditionIf() throws Exception {
+                runTest("idea/testData/quickfix/suppress/inspections/constantConditionIf.kt");
             }
 
             @TestMetadata("unusedImports.kt")

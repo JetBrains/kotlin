@@ -86,7 +86,7 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         _processings.add(UseExpressionBodyProcessing())
         registerInspectionBasedProcessing(UnnecessaryVariableInspection())
 
-        registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
+        registerInspectionBasedProcessing(FoldInitializerAndIfToElvisInspection())
 
         registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() }
         registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) { it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(it) as KtReturnExpression).returnedExpression.isTrivialStatementBody() }

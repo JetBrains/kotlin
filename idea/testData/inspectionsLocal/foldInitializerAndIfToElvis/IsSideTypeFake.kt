@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 interface A {
     fun a() {}
 }

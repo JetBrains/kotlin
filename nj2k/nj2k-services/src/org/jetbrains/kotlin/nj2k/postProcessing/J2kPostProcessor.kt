@@ -132,7 +132,7 @@ private val processings: List<GeneralPostProcessing> = listOf(
         RemoveExplicitPropertyTypeProcessing(),
         RemoveRedundantNullabilityProcessing(),
         generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
-        intentionBasedProcessing(FoldInitializerAndIfToElvisIntention()),
+        inspectionBasedProcessing(FoldInitializerAndIfToElvisInspection()),
         generalInspectionBasedProcessing(RedundantSemicolonInspection()),
         intentionBasedProcessing(RemoveEmptyClassBodyIntention()),
         intentionBasedProcessing(

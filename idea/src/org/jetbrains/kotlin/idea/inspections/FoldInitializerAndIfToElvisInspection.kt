@@ -1,22 +1,12 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.intentions
+package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -28,7 +18,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
-import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -45,18 +34,17 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-@Suppress("DEPRECATION")
-class FoldInitializerAndIfToElvisInspection : IntentionBasedInspection<KtIfExpression>(FoldInitializerAndIfToElvisIntention::class)
+class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
+    override fun inspectionText(element: KtIfExpression): String = "If-Null return/break/... foldable to '?:'"
 
-class FoldInitializerAndIfToElvisIntention :
-    SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with elvis operator") {
+    override val defaultFixText: String = "Replace 'if' with elvis operator"
 
-    override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        return FoldInitializerAndIfToElvisIntention.applicabilityRange(element)
-    }
+    override fun inspectionRange(element: KtIfExpression): TextRange? = textRange(element)?.shiftLeft(element.startOffset)
 
-    override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val newElvis = applyTo(element)
+    override fun isApplicable(element: KtIfExpression): Boolean = Companion.isApplicable(element)
+
+    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
+        val newElvis = Companion.applyTo(element as KtIfExpression)
         editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
     }
 
@@ -67,8 +55,12 @@ class FoldInitializerAndIfToElvisIntention :
             val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
             if (!type.isNothing()) return null
 
-            val rParen = element.rightParenthesis ?: return null
-            return TextRange(element.startOffset, rParen.endOffset)
+            return textRange(element)
+        }
+
+        private fun textRange(element: KtIfExpression): TextRange? {
+            val rightOffset = element.rightParenthesis?.endOffset ?: return null
+            return TextRange(element.startOffset, rightOffset)
         }
 
         fun isApplicable(element: KtIfExpression): Boolean = applicabilityRange(element) != null
@@ -161,7 +153,12 @@ class FoldInitializerAndIfToElvisIntention :
                 return null
             }
 
-            return Data(initializer, prevStatement, statement, typeReference)
+            return Data(
+                initializer,
+                prevStatement,
+                statement,
+                typeReference
+            )
         }
 
         private fun PsiChildRange.withoutLastStatement(): PsiChildRange {

@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 open class A
 
 open class B : A() {

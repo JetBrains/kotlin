@@ -3410,6 +3410,139 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FoldInitializerAndIfToElvis extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFoldInitializerAndIfToElvis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("Break.kt")
+        public void testBreak() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/Break.kt");
+        }
+
+        @TestMetadata("CommentInBlock.kt")
+        public void testCommentInBlock() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/CommentInBlock.kt");
+        }
+
+        @TestMetadata("Comments.kt")
+        public void testComments() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/Comments.kt");
+        }
+
+        @TestMetadata("Comments2.kt")
+        public void testComments2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/Comments2.kt");
+        }
+
+        @TestMetadata("Continue.kt")
+        public void testContinue() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/Continue.kt");
+        }
+
+        @TestMetadata("ExplicitValType.kt")
+        public void testExplicitValType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/ExplicitValType.kt");
+        }
+
+        @TestMetadata("ExplicitVarType.kt")
+        public void testExplicitVarType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/ExplicitVarType.kt");
+        }
+
+        @TestMetadata("IfNotNull.kt")
+        public void testIfNotNull() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/IfNotNull.kt");
+        }
+
+        @TestMetadata("ifStatementPriority.kt")
+        public void testIfStatementPriority() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/ifStatementPriority.kt");
+        }
+
+        @TestMetadata("IsSameType.kt")
+        public void testIsSameType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/IsSameType.kt");
+        }
+
+        @TestMetadata("IsSideTypeFake.kt")
+        public void testIsSideTypeFake() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/IsSideTypeFake.kt");
+        }
+
+        @TestMetadata("IsSubType.kt")
+        public void testIsSubType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/IsSubType.kt");
+        }
+
+        @TestMetadata("IsSuperTypeFake.kt")
+        public void testIsSuperTypeFake() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/IsSuperTypeFake.kt");
+        }
+
+        @TestMetadata("MultiStatementBlock.kt")
+        public void testMultiStatementBlock() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/MultiStatementBlock.kt");
+        }
+
+        @TestMetadata("NotExit.kt")
+        public void testNotExit() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/NotExit.kt");
+        }
+
+        @TestMetadata("NotIs.kt")
+        public void testNotIs() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/NotIs.kt");
+        }
+
+        @TestMetadata("NotIsNullableType.kt")
+        public void testNotIsNullableType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/NotIsNullableType.kt");
+        }
+
+        @TestMetadata("OtherVar1.kt")
+        public void testOtherVar1() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/OtherVar1.kt");
+        }
+
+        @TestMetadata("OtherVar2.kt")
+        public void testOtherVar2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/OtherVar2.kt");
+        }
+
+        @TestMetadata("Return.kt")
+        public void testReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/Return.kt");
+        }
+
+        @TestMetadata("ThrowInBlock.kt")
+        public void testThrowInBlock() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/ThrowInBlock.kt");
+        }
+
+        @TestMetadata("UsedInside.kt")
+        public void testUsedInside() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/UsedInside.kt");
+        }
+
+        @TestMetadata("UsedInsideInTemplate.kt")
+        public void testUsedInsideInTemplate() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/UsedInsideInTemplate.kt");
+        }
+
+        @TestMetadata("Var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/Var.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/forEachParameterNotUsed")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
