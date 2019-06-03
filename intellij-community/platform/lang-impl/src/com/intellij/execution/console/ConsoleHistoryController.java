@@ -462,7 +462,7 @@ public class ConsoleHistoryController implements Disposable {
       File file = getFile(myId);
       if (file == null) return;
       File dir = file.getParentFile();
-      if (dir == null || !dir.mkdirs()) {
+      if (dir == null || dir.exists() && !dir.isDirectory() || !dir.exists() && !dir.mkdirs()) {
         LOG.error("Unable to create " + file.getPath());
         return;
       }
