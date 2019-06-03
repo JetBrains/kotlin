@@ -115,8 +115,7 @@ internal class ExpressionReplacementPerformer(
             insertedStatements.add(inserted)
         }
 
-        val mainExpression = codeToInline.mainExpression
-        val replaced: KtExpression? = when (mainExpression) {
+        val replaced: KtExpression? = when (val mainExpression = codeToInline.mainExpression) {
             is KtStringTemplateExpression -> elementToBeReplaced.replacedWithStringTemplate(mainExpression)
 
             is KtExpression -> elementToBeReplaced.replaced(mainExpression)
