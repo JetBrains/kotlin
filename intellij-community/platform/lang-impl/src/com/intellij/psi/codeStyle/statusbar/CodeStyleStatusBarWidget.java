@@ -106,8 +106,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
 
   @Nullable
   @Override
-  protected ListPopup createPopup(DataContext context)
-  {
+  protected ListPopup createPopup(DataContext context) {
     WidgetState state = getWidgetState(context.getData(CommonDataKeys.VIRTUAL_FILE));
     Editor editor = getEditor();
     PsiFile psiFile = getPsiFile();
@@ -121,7 +120,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
         }
       };
       return JBPopupFactory.getInstance().createActionGroupPopup(
-        null, actionGroup, context,
+        "Code Style", actionGroup, context,
         JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false);
     }
     return null;
