@@ -231,7 +231,8 @@ internal object DataFlowIR {
             : Call(callee, arguments, returnType, irCallSite)
 
         // TODO: It can be replaced with a pair(AllocInstance, constructor Call), remove.
-        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, val constructedType: Type, override val irCallSite: IrConstructorCall?)
+        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>,
+                        val constructedType: Type, override val irCallSite: IrConstructorCall?)
             : Call(constructor, arguments, constructedType, irCallSite)
 
         open class VirtualCall(callee: FunctionSymbol, arguments: List<Edge>,
@@ -252,7 +253,6 @@ internal object DataFlowIR {
 
         class FunctionReference(val symbol: FunctionSymbol, val type: Type, val returnType: Type) : Node()
 
-        // TODO: Add type (similar to arrays)?
         class FieldRead(val receiver: Edge?, val field: Field, val type: Type, val ir: IrGetField?) : Node()
 
         class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge, val type: Type) : Node()

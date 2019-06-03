@@ -472,7 +472,7 @@ internal object Devirtualization {
 
             val nodesMap = mutableMapOf<DataFlowIR.Node, Node>()
             val constraintGraphBuilder =
-                    ConstraintGraphBuilder(nodesMap, functions, typeHierarchy, instantiatingClasses, allTypes, rootSet)
+                    ConstraintGraphBuilder(nodesMap, functions, typeHierarchy, instantiatingClasses, allTypes, rootSet, true)
             constraintGraphBuilder.build()
 
             DEBUG_OUTPUT(0) {
@@ -678,7 +678,8 @@ internal object Devirtualization {
                                                    val typeHierarchy: TypeHierarchy,
                                                    val instantiatingClasses: Map<DataFlowIR.Type.Declared, Int>,
                                                    val allTypes: List<DataFlowIR.Type.Declared>,
-                                                   val rootSet: List<DataFlowIR.FunctionSymbol>) {
+                                                   val rootSet: List<DataFlowIR.FunctionSymbol>,
+                                                   val useTypes: Boolean) {
 
             private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
 
@@ -827,7 +828,10 @@ internal object Devirtualization {
                         val argument = argumentToConstraintNode(arguments[index])
                         argument.addEdge(parameter)
                     }
-                    return callee.returns
+                    return if (!useTypes || returnType == callee.symbol.returnParameter.type.resolved())
+                        callee.returns
+                    else
+                        doCast(function, callee.returns, returnType)
                 }
 
                 fun doCall(callee: DataFlowIR.FunctionSymbol,
@@ -853,7 +857,7 @@ internal object Devirtualization {
                         }
                     } else {
                         calleeConstraintGraph.throws.addEdge(function.throws)
-                        if (receiverType == null)
+                        if (!useTypes || receiverType == null || receiverType == callee.parameters[0].type.resolved())
                             doCall(calleeConstraintGraph, arguments, returnType)
                         else {
                             val receiverNode = argumentToConstraintNode(arguments[0])
@@ -862,6 +866,25 @@ internal object Devirtualization {
                                     returnType)
                         }
                     }
+                }
+
+                fun readField(field: DataFlowIR.Field, actualType: DataFlowIR.Type.Declared): Node {
+                    val fieldNode = fieldNode(field)
+                    val expectedType = field.type.resolved()
+                    return if (!useTypes || actualType == expectedType)
+                        fieldNode
+                    else
+                        doCast(function, fieldNode, actualType)
+                }
+
+                fun writeField(field: DataFlowIR.Field, actualType: DataFlowIR.Type.Declared, value: Node) {
+                    val fieldNode = fieldNode(field)
+                    val expectedType = field.type.resolved()
+                    val castedValue = if (!useTypes || actualType == expectedType)
+                        value
+                    else
+                        doCast(function, value, actualType)
+                    castedValue.addEdge(fieldNode)
                 }
 
                 if (node is DataFlowIR.Node.Variable && node.kind != DataFlowIR.VariableKind.Temporary) {
@@ -983,20 +1006,18 @@ internal object Devirtualization {
                         }
 
                         is DataFlowIR.Node.FieldRead ->
-                            doCast(function, fieldNode(node.field), node.type.resolved())
+                            readField(node.field, node.field.type.resolved())
 
                         is DataFlowIR.Node.FieldWrite -> {
-                            val fieldNode = fieldNode(node.field)
-                            doCast(function, edgeToConstraintNode(node.value), node.type.resolved()).addEdge(fieldNode)
+                            writeField(node.field, node.field.type.resolved(), edgeToConstraintNode(node.value))
                             constraintGraph.voidNode
                         }
 
                         is DataFlowIR.Node.ArrayRead ->
-                            doCast(function, fieldNode(constraintGraph.arrayItemField), node.type.resolved())
+                            readField(constraintGraph.arrayItemField, node.type.resolved())
 
                         is DataFlowIR.Node.ArrayWrite -> {
-                            val fieldNode = fieldNode(constraintGraph.arrayItemField)
-                            doCast(function, edgeToConstraintNode(node.value), node.type.resolved()).addEdge(fieldNode)
+                            writeField(constraintGraph.arrayItemField, node.type.resolved(), edgeToConstraintNode(node.value))
                             constraintGraph.voidNode
                         }
 
