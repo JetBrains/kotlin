@@ -156,36 +156,29 @@ public inline class Duration internal constructor(internal val value: Double) : 
 
     fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
-        append('P')
-        absoluteValue.toComponents { days, hours, minutes, seconds, nanoseconds ->
-            if (days != 0)
-                append(days).append('D')
-
-
-            if (days == 0 || seconds != 0 || nanoseconds != 0 || minutes != 0 || hours != 0) {
-                append('T')
-                val hasHours = hours != 0 || days != 0
-                val hasSeconds = seconds != 0 || nanoseconds != 0
-                val hasMinutes = minutes != 0 || (hasSeconds && hasHours)
-                if (hasHours) {
-                    append(hours).append('H')
-                }
-                if (hasMinutes) {
-                    append(minutes).append('M')
-                }
-                if (hasSeconds || (!hasHours && !hasMinutes)) {
-                    append(seconds)
-                    if (nanoseconds != 0) {
-                        append('.')
-                        val nss = nanoseconds.toString().padStart(9, '0')
-                        when {
-                            nanoseconds % 1_000_000 == 0 -> append(nss, 0, 3)
-                            nanoseconds % 1_000 == 0 -> append(nss, 0, 6)
-                            else -> append(nss)
-                        }
+        append("PT")
+        absoluteValue.toComponents { hours, minutes, seconds, nanoseconds ->
+            val hasHours = hours != 0
+            val hasSeconds = seconds != 0 || nanoseconds != 0
+            val hasMinutes = minutes != 0 || (hasSeconds && hasHours)
+            if (hasHours) {
+                append(hours).append('H')
+            }
+            if (hasMinutes) {
+                append(minutes).append('M')
+            }
+            if (hasSeconds || (!hasHours && !hasMinutes)) {
+                append(seconds)
+                if (nanoseconds != 0) {
+                    append('.')
+                    val nss = nanoseconds.toString().padStart(9, '0')
+                    when {
+                        nanoseconds % 1_000_000 == 0 -> append(nss, 0, 3)
+                        nanoseconds % 1_000 == 0 -> append(nss, 0, 6)
+                        else -> append(nss)
                     }
-                    append('S')
                 }
+                append('S')
             }
         }
     }

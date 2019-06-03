@@ -254,7 +254,7 @@ class DurationTest {
         assertEquals("PT0S", Duration.ZERO.toIsoString())
 
         // single unit
-        assertEquals("P1D", 1.days.toIsoString())
+        assertEquals("PT24H", 1.days.toIsoString())
         assertEquals("PT1H", 1.hours.toIsoString())
         assertEquals("PT1M", 1.minutes.toIsoString())
         assertEquals("PT1S", 1.seconds.toIsoString())
@@ -267,9 +267,9 @@ class DurationTest {
         assertEquals("PT0S", 0.9.nanoseconds.toIsoString())
 
         // several units combined
-        assertEquals("P1DT0H1M", (1.days + 1.minutes).toIsoString())
-        assertEquals("P1DT0H0M1S", (1.days + 1.seconds).toIsoString())
-        assertEquals("P1DT0H0M0.001S", (1.days + 1.milliseconds).toIsoString())
+        assertEquals("PT24H1M", (1.days + 1.minutes).toIsoString())
+        assertEquals("PT24H0M1S", (1.days + 1.seconds).toIsoString())
+        assertEquals("PT24H0M0.001S", (1.days + 1.milliseconds).toIsoString())
         assertEquals("PT1H30M", (1.hours + 30.minutes).toIsoString())
         assertEquals("PT1H0M0.500S", (1.hours + 500.milliseconds).toIsoString())
         assertEquals("PT2M0.500S", (2.minutes + 500.milliseconds).toIsoString())
@@ -277,7 +277,7 @@ class DurationTest {
 
         // negative
         assertEquals("-PT23H45M", (-1.days + 15.minutes).toIsoString())
-        assertEquals("-P1DT0H15M", (-1.days - 15.minutes).toIsoString())
+        assertEquals("-PT24H15M", (-1.days - 15.minutes).toIsoString())
 
         // infinite
         assertEquals("PT2147483647H", Duration.INFINITE.toIsoString())
