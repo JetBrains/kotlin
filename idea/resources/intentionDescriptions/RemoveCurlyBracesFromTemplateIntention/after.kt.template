@@ -1,3 +1,0 @@
-fun foo() {
-    val y = <spot>"$x"</spot>
-}

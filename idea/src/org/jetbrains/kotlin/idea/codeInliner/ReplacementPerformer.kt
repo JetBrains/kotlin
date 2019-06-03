@@ -20,10 +20,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiTreeChangeAdapter
 import com.intellij.psi.PsiTreeChangeEvent
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.canDropBraces
 import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
-import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
@@ -163,12 +163,8 @@ internal class ExpressionReplacementPerformer(
 
         // simplify "${x}" to "$x"
         val templateEntry = resultExpression?.parent as? KtBlockStringTemplateEntry
-        if (templateEntry != null) {
-            val intention = RemoveCurlyBracesFromTemplateIntention()
-            if (intention.isApplicableTo(templateEntry)) {
-                val newEntry = templateEntry.dropBraces()
-                return newEntry.expression
-            }
+        if (templateEntry?.canDropBraces() == true) {
+            return templateEntry.dropBraces().expression
         }
 
         return resultExpression ?: range.last as? KtExpression

@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 fun foo() {
     val x = X()
     val y = "$<caret>{x.bar()}"
