@@ -12,8 +12,52 @@ pluginManagement {
 
 include "prepare-deps"
 
-def includeCidrPlugins = hasProperty("cidrPluginsEnabled") && Boolean.parseBoolean(cidrPluginsEnabled) && file("../kotlin-ultimate").exists()
-if (includeCidrPlugins) {
+def flags = new LocalBuildProperties(settings as Settings)
+
+if (flags.includeCidrPlugins) {
+    logger.info("Including CIDR plugins in buildSrc/settings.gradle")
     include ":prepare-deps:kotlin-native-platform-deps"
-    project(":prepare-deps:kotlin-native-platform-deps").projectDir = file("../kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
+    project(":prepare-deps:kotlin-native-platform-deps").projectDir = file("${flags.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
+} else {
+    logger.info("NOT including CIDR plugins in buildSrc/settings.gradle")
+}
+
+class LocalBuildPropertiesProvider {
+    private Settings settings
+    private Properties localProperties = new Properties()
+
+    File rootProjectDir
+
+    LocalBuildPropertiesProvider(Settings settings) {
+        this.settings = settings
+        this.rootProjectDir = settings.rootProject.projectDir.parentFile
+        
+        File propertiesFile = new File(rootProjectDir, 'local.properties')
+        if (propertiesFile.isFile()) {
+            propertiesFile.withInputStream { localProperties.load(it) }
+        }
+    }
+    
+    String getString(String name) {
+        if (settings.hasProperty(name)) {
+            return settings[name]?.toString()
+        } else {
+            return localProperties[name]?.toString()
+        }
+    }
+    
+    Boolean getBoolean(String name) {
+        return Boolean.parseBoolean(getString(name))
+    }
+}
+
+class LocalBuildProperties {
+    LocalBuildPropertiesProvider propertiesProvider
+    
+    boolean includeCidrPlugins
+
+    LocalBuildProperties(Settings settings) {
+        propertiesProvider = new LocalBuildPropertiesProvider(settings)
+        includeCidrPlugins = propertiesProvider.getBoolean('cidrPluginsEnabled') && new File(propertiesProvider.rootProjectDir, 'kotlin-ultimate').exists()
+    }
 }

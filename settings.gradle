@@ -222,8 +222,9 @@ include ":kotlin-build-common",
         ":kotlin-serialization-unshaded",
         ":kotlin-serialization:plugin-marker"
 
-def includeCidrPlugins = hasProperty("cidrPluginsEnabled") && Boolean.parseBoolean(cidrPluginsEnabled) && file("kotlin-ultimate").exists()
-if (includeCidrPlugins) {
+def flags = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
+
+if (flags.includeCidrPlugins) {
     logger.info("Including CIDR plugins in settings.gradle")
     include ":kotlin-ultimate:ide:cidr-native",
             ":kotlin-ultimate:ide:clion-native",
@@ -243,8 +244,6 @@ if (isTeamcityBuild || includeUltimate) {
             ":ultimate:ultimate-runner"
     )
 }
-
-def flags = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
 if (flags.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"

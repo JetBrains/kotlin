@@ -28,7 +28,7 @@ class KotlinBuildProperties(
 
     private operator fun get(key: String): Any? = localProperties.getProperty(key) ?: propertiesProvider.getProperty(key)
 
-    private fun getBoolean(key: String): Boolean = this[key]?.toString() == "true"
+    private fun getBoolean(key: String): Boolean = this[key]?.toString()?.toBoolean() == true
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
@@ -55,6 +55,9 @@ class KotlinBuildProperties(
 
     val useBootstrapStdlib: Boolean
         get() = isInJpsBuildIdeaSync
+
+    val includeCidrPlugins: Boolean =
+        getBoolean("cidrPluginsEnabled") && propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
 }
 
 private const val extensionName = "kotlinBuildFlags"
