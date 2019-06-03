@@ -45,7 +45,7 @@ class ScratchFileAutoRunner(private val project: Project) : DocumentListener {
         val panel = getScratchPanel(file, project) ?: return
         if (!panel.scratchFile.options.isInteractiveMode) return
 
-        if (isScratchChanged(project, file)) {
+        if (!event.newFragment.isBlank()) {
             runScratch(panel)
         }
     }
