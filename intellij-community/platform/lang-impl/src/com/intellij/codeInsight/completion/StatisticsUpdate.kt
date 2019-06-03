@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.completion
 
 import com.google.common.annotations.VisibleForTesting
@@ -65,13 +65,13 @@ class StatisticsUpdate
     }
 
     val marker = document.createRangeMarker(startOffset, tailOffset)
-    val listener = object : DocumentListener {
+    document.addDocumentListener(object : DocumentListener {
       override fun beforeDocumentChange(e: DocumentEvent) {
         if (!marker.isValid || e.offset > marker.startOffset && e.offset < marker.endOffset) {
           cancelLastCompletionStatisticsUpdate()
         }
       }
-    }
+    }, this)
 
     ourStatsAlarm.addRequest({
                                if (ourPendingUpdate === this) {
@@ -79,9 +79,7 @@ class StatisticsUpdate
                                }
                              }, 20 * 1000)
 
-    document.addDocumentListener(listener)
     Disposer.register(this, Disposable {
-      document.removeDocumentListener(listener)
       marker.dispose()
       ourStatsAlarm.cancelAllRequests()
     })
