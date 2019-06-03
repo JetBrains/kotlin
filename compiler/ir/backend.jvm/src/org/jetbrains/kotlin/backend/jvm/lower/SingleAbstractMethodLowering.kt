@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -204,6 +202,15 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
 
             private fun IrBlockBuilder.createFunctionProxyInstance(superType: IrType, reference: IrFunctionReference): IrExpression {
                 val implementation = createFunctionProxy(superType, reference)
+                if (reference.origin == IrStatementOrigin.ANONYMOUS_FUNCTION || reference.origin == IrStatementOrigin.LAMBDA) {
+                    val target = reference.symbol.owner
+                    implementation.functions.single().apply {
+                        annotations.addAll(target.annotations)
+                        valueParameters.forEachIndexed { i, p ->
+                            p.annotations.addAll(target.valueParameters[i].annotations)
+                        }
+                    }
+                }
                 localImplementations += implementation
                 return irCall(implementation.constructors.single()).apply {
                     reference.arguments.filterNotNull().forEachIndexed(::putValueArgument)
