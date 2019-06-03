@@ -1,14 +1,17 @@
-import java.io.FileReader
+import java.lang.Boolean.parseBoolean
 import java.net.URL
 import java.util.*
 
-val isJointBuild: Boolean = rootProject.findProperty("cidrPluginsEnabled")?.toString()?.toBoolean() == true
+val isStandaloneBuild: Boolean = with(rootProject) {
+    findProject(":idea") == null && findProject(":kotlin-ultimate") != null
+            || findProject(":prepare-deps:idea-plugin") != null // workaround for buildSrc
+}
 
 fun locatePropertiesFile(): File {
-    val basePropertiesFilePath = if (isJointBuild) { // in joint build:
-        "kotlin-ultimate/versions.properties"
-    } else { // in standalone build:
+    val basePropertiesFilePath = if (isStandaloneBuild) { // in standalone build:
         "versions.properties"
+    } else { // in joint build:
+        "kotlin-ultimate/versions.properties"
     }
 
     return rootProject.file(basePropertiesFilePath).takeIf { it.exists() }
@@ -17,7 +20,7 @@ fun locatePropertiesFile(): File {
 
 val propertiesFile: File = locatePropertiesFile()
 
-FileReader(propertiesFile).use {
+propertiesFile.reader().use {
     val properties = Properties()
     properties.load(it)
     properties.forEach { (k, v) ->
@@ -36,7 +39,7 @@ val clionVersion: String = rootProject.extra["versions.clion"] as String
 rootProject.extra["clionVersion"] = clionVersion
 rootProject.extra["clionFriendlyVersion"] = cidrProductFriendlyVersion("CLion", clionVersion)
 rootProject.extra["clionRepo"] = rootProject.extra["versions.clion.repo"] as String
-rootProject.extra["clionVersionStrict"] = (rootProject.extra["versions.clion.strict"] as String).toBoolean()
+rootProject.extra["clionVersionStrict"] = rootProject.extra["versions.clion.strict"].toBoolean()
 rootProject.extra["clionPlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-platform-deps-$clionVersion")
 rootProject.extra["clionUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion")
 
@@ -44,7 +47,7 @@ val appcodeVersion: String = rootProject.extra["versions.appcode"] as String
 rootProject.extra["appcodeVersion"] = appcodeVersion
 rootProject.extra["appcodeFriendlyVersion"] = cidrProductFriendlyVersion("AppCode", appcodeVersion)
 rootProject.extra["appcodeRepo"] = rootProject.extra["versions.appcode.repo"] as String
-rootProject.extra["appcodeVersionStrict"] = (rootProject.extra["versions.appcode.strict"] as String).toBoolean()
+rootProject.extra["appcodeVersionStrict"] = rootProject.extra["versions.appcode.strict"].toBoolean()
 rootProject.extra["appcodePlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-platform-deps-$appcodeVersion")
 rootProject.extra["appcodeUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion")
 
@@ -55,8 +58,8 @@ rootProject.extra["appcodePluginDir"] = artifactsForCidrDir.resolve("appcodePlug
 
 rootProject.extra["cidrUnscrambledJarDir"] = rootProject.extra["clionUnscrambledJarDir"]
 
-if (!isJointBuild) { // setup additional properties that are required only when running in standalone mode:
-    val useAppCodeForCommon = findProperty("useAppCodeForCommon")?.toString()?.toBoolean() ?: false
+if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:
+    val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
     if (useAppCodeForCommon) {
         rootProject.extra["cidrIdeDir"] = externalDepsDir("cidr", "appcode-$appcodeVersion")
         rootProject.extra["cidrIdeArtifact"] = "${rootProject.extra["appcodeRepo"]}:$appcodeVersion:AppCode-$appcodeVersion.sit"
@@ -114,13 +117,13 @@ fun cidrProductFriendlyVersion(productName: String, productVersion: String): Str
 }
 
 fun cidrPluginVersionFull(productName: String, productVersion: String, cidrPluginNumber: String): String {
-    val cidrPluginVersion = if (isJointBuild) { // in joint build:
+    val cidrPluginVersion = if (isStandaloneBuild) { // in standalone build:
+        val ideaPluginForCidrBuildNumber: String by rootProject.extra
+        ideaPluginForCidrBuildNumber
+    } else { // in joint build:
         // take it from Big Kotlin
         val buildNumber: String? by rootProject.extra
         buildNumber ?: "unknownBuildNumber"
-    } else { // in standalone build:
-        val ideaPluginForCidrBuildNumber: String by rootProject.extra
-        ideaPluginForCidrBuildNumber
     }
 
     return "$cidrPluginVersion-$productName-$productVersion-$cidrPluginNumber"
@@ -135,3 +138,5 @@ fun cidrCustomPluginRepoUrl(repoUrlPropertyName: String, cidrPluginZipPath: File
         findProperty(repoUrlPropertyName)?.let {
             with (it.toString()) { URL(if (endsWith('/')) this else "$this/") }
         } ?: cidrPluginZipPath.parentFile.toURI().toURL()
+
+fun Any?.toBoolean(): Boolean = parseBoolean(this?.toString())

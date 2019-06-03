@@ -52,8 +52,8 @@ val platformDepsJarName = "kotlinNative-platformDeps.jar"
 
 val pluginXmlPath = "META-INF/plugin.xml"
 
-val Project.isJointBuild
-    get() = rootProject.findProperty("cidrPluginsEnabled")?.toString()?.toBoolean() == true
+val Project.isStandaloneBuild: Boolean
+    get() = rootProject.findProject(":idea") == null
 
 fun Logger.kotlinInfo(message: () -> String) {
     if (isInfoEnabled) { info("[KOTLIN] ${message()}") }
@@ -106,46 +106,21 @@ fun Project.guessCidrProductNameFromProject(lowerCase: Boolean): String = with(n
 // --------------------------------------------------
 
 fun ideaPluginJarDep(project: Project): Any = with(project) {
-    return if (isJointBuild) {
-        // depend on the artifact to be build
-        dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
-    } else {
+    return if (isStandaloneBuild) {
         // reuse JAR artifact from downloaded plugin
         val ideaPluginForCidrDir: String by rootProject.extra
         fileTree(ideaPluginForCidrDir) {
             include("lib/kotlin-plugin.jar")
         }
+    } else {
+        // depend on the artifact to be build
+        dependencies.project(":prepare:idea-plugin", configuration = "runtimeJar")
     }
 }
 
 fun addIdeaNativeModuleDeps(project: Project) = with(project) {
     dependencies {
-        if (isJointBuild) {
-            // Gradle projects with Kotlin/Native-specific logic
-            // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
-            add("compile", project(":idea:idea-native"))
-            add("compile", project(":idea:idea-gradle-native"))
-
-            // Detect IDE name and version
-            val ideName = if (rootProject.findProperty("intellijUltimateEnabled")?.toString()?.toBoolean() == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
-            val ideVersion = rootProject.extra["versions.intellijSdk"] as String
-
-            // Java APIs (from Big Kotlin project)
-            val javaApis = add("compile", "kotlin.build:$ideName:$ideVersion") as ExternalModuleDependency
-            with(javaApis) {
-                artifact {
-                    name = "java-api"
-                    type = "jar"
-                    extension = "jar"
-                }
-                artifact {
-                    name = "java-impl"
-                    type = "jar"
-                    extension = "jar"
-                }
-                isTransitive = false
-            }
-        } else {
+        if (isStandaloneBuild) {
             // contents of Kotlin plugin
             val ideaPluginForCidrDir: String by rootProject.extra
             val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
@@ -174,6 +149,31 @@ fun addIdeaNativeModuleDeps(project: Project) = with(project) {
             val cidrPlatformDepsDir: String by rootProject.extra
             val cidrPlatformDeps = fileTree(cidrPlatformDepsDir) { include(platformDepsJarName) }
             add("compile", cidrPlatformDeps)
+        } else {
+            // Gradle projects with Kotlin/Native-specific logic
+            // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
+            add("compile", project(":idea:idea-native"))
+            add("compile", project(":idea:idea-gradle-native"))
+
+            // Detect IDE name and version
+            val ideName = if (rootProject.findProperty("intellijUltimateEnabled")?.toString()?.toBoolean() == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
+            val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+
+            // Java APIs (from Big Kotlin project)
+            val javaApis = add("compile", "kotlin.build:$ideName:$ideVersion") as ExternalModuleDependency
+            with(javaApis) {
+                artifact {
+                    name = "java-api"
+                    type = "jar"
+                    extension = "jar"
+                }
+                artifact {
+                    name = "java-impl"
+                    type = "jar"
+                    extension = "jar"
+                }
+                isTransitive = false
+            }
         }
     }
 }
@@ -207,15 +207,15 @@ fun packageCidrPlugin(
 
         includeProjectTemplates(project(predecessorProjectName))
 
-        val ideaPluginDir = if (isJointBuild) {
+        val ideaPluginDir = if (isStandaloneBuild) {
+            // use dir where IDEA plugin has been already downloaded
+            val ideaPluginForCidrDir: File by rootProject.extra
+            ideaPluginForCidrDir
+        } else {
             dependsOn(":ideaPlugin")
             // use IDEA plugin dir from Big Kotlin
             val ideaPluginDir: File by rootProject.extra
             ideaPluginDir
-        } else {
-            // use dir where IDEA plugin has been already downloaded
-            val ideaPluginForCidrDir: File by rootProject.extra
-            ideaPluginForCidrDir
         }
 
         from(ideaPluginDir) {
@@ -428,13 +428,13 @@ fun Project.getTemplateParameters(): Map<String, String> {
 }
 
 val Project.kotlinBuildNumberByIdeaPlugin: String
-    get() = if (isJointBuild) {
+    get() = if (isStandaloneBuild) {
+        val ideaPluginForCidrBuildNumber: String by rootProject.extra
+        ideaPluginForCidrBuildNumber
+    } else {
         // take it from Big Kotlin
         val buildNumber: String by rootProject.extra
         buildNumber
-    } else {
-        val ideaPluginForCidrBuildNumber: String by rootProject.extra
-        ideaPluginForCidrBuildNumber
     }
 
 val hostOsName: String

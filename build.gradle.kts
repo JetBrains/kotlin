@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    val isJointBuild: Boolean = findProperty("cidrPluginsEnabled")?.toString()?.toBoolean() == true
+    val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
     val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    if (!isJointBuild) { // only for standalone build:
+    if (isStandaloneBuild) { // only for standalone build:
         repositories {
             if (cacheRedirectorEnabled) {
                 maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
@@ -18,10 +18,10 @@ buildscript {
     }
 }
 
-val isJointBuild: Boolean = findProperty("cidrPluginsEnabled")?.toString()?.toBoolean() == true
+val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-if (!isJointBuild) { // only for standalone build:
+if (isStandaloneBuild) { // only for standalone build:
     allprojects {
         configurations.maybeCreate("embedded")
 
