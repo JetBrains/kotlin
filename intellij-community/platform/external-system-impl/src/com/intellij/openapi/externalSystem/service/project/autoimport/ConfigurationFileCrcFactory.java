@@ -6,6 +6,7 @@ import com.intellij.lang.cacheBuilder.CacheBuilderRegistry;
 import com.intellij.lang.cacheBuilder.WordOccurrence;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.LanguageFindUsages;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
@@ -22,6 +23,9 @@ import java.util.zip.CRC32;
  * @author Vladislav.Soroka
  */
 public class ConfigurationFileCrcFactory {
+
+  private static final Logger LOG = Logger.getInstance(ConfigurationFileCrcFactory.class);
+
   private final VirtualFile myFile;
 
   @Deprecated // left for plugin compatibility
@@ -34,10 +38,16 @@ public class ConfigurationFileCrcFactory {
   }
 
   public long create() {
-    if (myFile.isDirectory()) return myFile.getModificationStamp();
+    if (myFile.isDirectory()) {
+      debug("Cannot calculate CRC for directory '" + myFile.getPath() + "'");
+      return myFile.getModificationStamp();
+    }
 
     WordsScanner wordsScanner = getScanner(myFile);
-    if (wordsScanner == null) return myFile.getModificationStamp();
+    if (wordsScanner == null) {
+      debug("WordsScanner not found for file '" + myFile.getPath() + "'");
+      return myFile.getModificationStamp();
+    }
 
     CRC32 crc32 = new CRC32();
     Document document = FileDocumentManager.getInstance().getCachedDocument(myFile);
@@ -67,5 +77,11 @@ public class ConfigurationFileCrcFactory {
       return LanguageFindUsages.getWordsScanner(lang);
     }
     return null;
+  }
+
+  private static void debug(@NotNull String message) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug(message);
+    }
   }
 }
