@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 
 internal class ProjectResolutionFacade(
     private val debugString: String,
@@ -141,17 +142,15 @@ internal class ProjectResolutionFacade(
             modulesContentFactory,
             moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
             resolverForModuleFactoryByPlatform = { modulePlatform ->
-                val platform = modulePlatform ?: settings.platform
-                platform.idePlatformKind.resolution.resolverForModuleFactory
-            },
-            platformParameters = { platform ->
-                when {
+                val platform = modulePlatform ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform
+                val parameters = when {
                     platform.isJvm() -> jvmPlatformParameters
                     platform.isCommon() -> commonPlatformParameters
                     else -> PlatformAnalysisParameters.Empty
                 }
+
+                platform.idePlatformKind.resolution.createResolverForModuleFactory(parameters, IdeaEnvironment, platform)
             },
-            targetEnvironment = IdeaEnvironment,
             builtIns = builtIns,
             delegateResolver = delegateResolverForProject,
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
@@ -215,7 +214,9 @@ internal class ProjectResolutionFacade(
 
     private companion object {
         private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
-            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
+//            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
+//             TODO: what we do about built-ins?
+            return JvmPlatforms.defaultJvmPlatform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
         }
     }
 }

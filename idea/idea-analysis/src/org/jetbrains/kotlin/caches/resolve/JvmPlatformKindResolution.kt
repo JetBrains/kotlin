@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.caches.resolve
 
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 
 class JvmPlatformKindResolution : IdePlatformKindResolution {
@@ -21,13 +25,18 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
         return false // TODO: No library kind for JVM
     }
 
+    override fun createResolverForModuleFactory(
+        settings: PlatformAnalysisParameters,
+        environment: TargetEnvironment,
+        platform: TargetPlatform
+    ): ResolverForModuleFactory {
+        return JvmResolverForModuleFactory(settings as JvmPlatformParameters, environment, platform)
+    }
+
     override val libraryKind: PersistentLibraryKind<*>?
         get() = null
 
     override val kind get() = JvmIdePlatformKind
-
-    override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = JvmResolverForModuleFactory
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns =
         if (settings.sdk != null)

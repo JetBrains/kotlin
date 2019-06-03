@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.caches.resolve
 
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.js.resolve.JsResolverForModuleFactory
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 class JsPlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
@@ -26,10 +29,13 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = JsIdePlatformKind
 
-    override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = JsResolverForModuleFactory
-
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
         return JsPlatformAnalyzerServices.builtIns
     }
+
+    override fun createResolverForModuleFactory(
+        settings: PlatformAnalysisParameters,
+        environment: TargetEnvironment,
+        platform: TargetPlatform
+    ): ResolverForModuleFactory = JsResolverForModuleFactory(environment)
 }

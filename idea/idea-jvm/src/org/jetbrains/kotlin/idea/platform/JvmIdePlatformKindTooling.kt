@@ -33,8 +33,6 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun compilerArgumentsForProject(project: Project) = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
 
-    override val resolverForModuleFactory = JvmResolverForModuleFactory
-
     override val mavenLibraryIds = listOf(
         PathUtil.KOTLIN_JAVA_STDLIB_NAME,
         PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME,

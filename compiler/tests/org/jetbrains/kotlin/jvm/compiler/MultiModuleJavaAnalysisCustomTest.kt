@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -79,21 +80,21 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val modules = setupModules(environment, moduleDirs)
         val projectContext = ProjectContext(environment.project, "MultiModuleJavaAnalysisTest")
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
+        val platformParameters = JvmPlatformParameters(
+            packagePartProviderFactory = { PackagePartProvider.Empty },
+            moduleByJavaClass = { javaClass ->
+                val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                modules.first { it._name == moduleName }
+            }
+        )
         val resolverForProject = ResolverForProjectImpl(
             "test",
             projectContext, modules,
             invalidateOnOOCB = false,
             modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-            resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
-            platformParameters = { _ ->
-                JvmPlatformParameters(
-                    packagePartProviderFactory = { PackagePartProvider.Empty },
-                    moduleByJavaClass = { javaClass ->
-                        val moduleName = javaClass.name.asString().toLowerCase().first().toString()
-                        modules.first { it._name == moduleName }
-                    }
-                )
+            resolverForModuleFactoryByPlatform = {
+                JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform)
             },
             builtIns = builtIns
         )

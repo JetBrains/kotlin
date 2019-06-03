@@ -55,14 +55,33 @@ class CommonAnalysisParameters(
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  * See [CommonPlatform]
  */
-class CommonResolverForModuleFactory(private val shouldCheckExpectActual: Boolean) : ResolverForModuleFactory() {
+class CommonResolverForModuleFactory(
+    private val platformParameters: CommonAnalysisParameters,
+    private val targetEnvironment: TargetEnvironment,
+    private val targetPlatform: TargetPlatform,
+    private val shouldCheckExpectActual: Boolean
+) : ResolverForModuleFactory() {
+    private class SourceModuleInfo(
+        override val name: Name,
+        override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
+        private val dependOnOldBuiltIns: Boolean
+    ) : ModuleInfo {
+        override fun dependencies() = listOf(this)
+
+        override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
+            if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
+
+        override val platform: TargetPlatform
+            get() = CommonPlatforms.defaultCommonPlatform
+
+        override val analyzerServices: PlatformDependentAnalyzerServices
+            get() = CommonPlatformAnalyzerServices
+    }
 
     override fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
-        platformParameters: PlatformAnalysisParameters,
-        targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule {
@@ -90,27 +109,9 @@ class CommonResolverForModuleFactory(private val shouldCheckExpectActual: Boolea
     }
 
     companion object {
-        private class SourceModuleInfo(
-            override val name: Name,
-            override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
-            private val dependOnOldBuiltIns: Boolean
-        ) : ModuleInfo {
-            override fun dependencies() = listOf(this)
-
-            override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-                if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
-
-            override val platform: TargetPlatform
-                get() = CommonPlatforms.defaultCommonPlatform
-
-            override val analyzerServices: PlatformDependentAnalyzerServices
-                get() = CommonPlatformAnalyzerServices
-        }
-
         fun analyzeFiles(
             files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
             capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
-            shouldCheckExpectActual: Boolean = false,
             metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
         ): AnalysisResult {
             val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
@@ -141,8 +142,14 @@ class CommonResolverForModuleFactory(private val shouldCheckExpectActual: Boolea
                         project: Project
                     ) = TargetPlatformVersion.NoVersion
                 },
-                resolverForModuleFactoryByPlatform = { CommonResolverForModuleFactory(shouldCheckExpectActual) },
-                platformParameters = { _ -> CommonAnalysisParameters(metadataPartProviderFactory) }
+                resolverForModuleFactoryByPlatform = {
+                    CommonResolverForModuleFactory(
+                        CommonAnalysisParameters(metadataPartProviderFactory),
+                        CompilerEnvironment,
+                        CommonPlatforms.defaultCommonPlatform,
+                        shouldCheckExpectActual = false
+                    )
+                }
             )
 
             val moduleDescriptor = resolver.descriptorForModule(moduleInfo)

@@ -64,12 +64,18 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         }
     }
 
+    override fun createResolverForModuleFactory(
+        settings: PlatformAnalysisParameters,
+        environment: TargetEnvironment,
+        platform: TargetPlatform
+    ): ResolverForModuleFactory {
+        return NativeResolverForModuleFactory(settings, environment, platform)
+    }
+
     override val libraryKind: PersistentLibraryKind<*>?
         get() = NativeLibraryKind
 
     override val kind get() = NativeIdePlatformKind
-
-    override val resolverForModuleFactory get() = NativeResolverForModuleFactory
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext) =
         createKotlinNativeBuiltIns(settings, projectContext)

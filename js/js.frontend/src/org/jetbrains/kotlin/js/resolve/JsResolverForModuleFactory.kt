@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.createKotlinJavascriptPackageFragmentProvider
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
-object JsResolverForModuleFactory : ResolverForModuleFactory() {
+class JsResolverForModuleFactory(
+    private val targetEnvironment: TargetEnvironment
+) : ResolverForModuleFactory() {
     override fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
-        platformParameters: PlatformAnalysisParameters,
-        targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule {
