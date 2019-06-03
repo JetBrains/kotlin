@@ -117,8 +117,8 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
   }
 
   @Override
-  public void reportFeatureUsageData(FeatureUsageData data) {
+  public void addCustomFeatureUsageData(@NotNull String eventId, @NotNull FeatureUsageData data) {
+    myFrameworksPanel.reportSelectedFrameworks(eventId, data);
     data.addData("gradle-kotlin-dsl", kdslCheckBox.isSelected());
-    myFrameworksPanel.reportFeatureUsageData(data);
   }
 }
