@@ -209,7 +209,7 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     }
 
     @Test
-    fun testAndroidMppProductionDependenciesInTests() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
+    fun testAndroidMppProductionDependenciesInTests() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
         // Test the fix for KT-29343
         setupWorkingDir()
 
