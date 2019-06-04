@@ -61,6 +61,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.intellij.util.ui.update.MergingUpdateQueue.ANY_COMPONENT;
@@ -92,8 +93,10 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   private final List<LocalFileSystem.WatchRequest> myWatchedRoots = new ArrayList<>();
   private final MergingUpdateQueue myRefreshRequestsQueue;
 
-  private final Map<String, Long/*LocalTimeStamp*/> myStartUpdatesTimeStamps = Collections.synchronizedMap(new LinkedHashMap<>());
-  private final Map<String, Long/*LocalTimeStamp*/> myFileModificationTimeStamps = Collections.synchronizedMap(new LinkedHashMap<>());
+  private final Map<ExternalSystemTaskId, String/*ProjectPath*/> myProjectsInSync =
+    Collections.synchronizedMap(new LinkedHashMap<>());
+  private final Map<String/*ProjectPath*/, ProjectStatus> myWatchedProjects =
+    Collections.synchronizedMap(new LinkedHashMap<>());
 
   private final CompoundParallelOperationTrace<ExternalSystemTaskId> syncTrace = new CompoundParallelOperationTrace<>();
 
@@ -138,7 +141,11 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
 
   @Override
   public void markDirtyAllExternalProjects() {
-    findLinkedProjectsSettings().forEach(this::scheduleUpdate);
+    findLinkedProjectsSettings().forEach(linkedProject -> {
+      String projectPath = getExternalProjectPath(linkedProject);
+      updateProjectStatus(projectPath, it -> it.markDirty(LocalTimeCounter.currentTime()));
+      scheduleUpdate(linkedProject);
+    });
     for (Contributor contributor : EP_NAME.getExtensions()) {
       contributor.markDirtyAllExternalProjects(myProject);
     }
@@ -146,7 +153,9 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
 
   @Override
   public void markDirty(Module module) {
-    scheduleUpdate(ExternalSystemApiUtil.getExternalProjectPath(module));
+    String projectPath = ExternalSystemApiUtil.getExternalProjectPath(module);
+    updateProjectStatus(projectPath, it -> it.markDirty(LocalTimeCounter.currentTime()));
+    scheduleUpdate(projectPath);
     for (Contributor contributor : EP_NAME.getExtensions()) {
       contributor.markDirty(module);
     }
@@ -154,6 +163,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
 
   @Override
   public void markDirty(String projectPath) {
+    updateProjectStatus(projectPath, it -> it.markDirty(LocalTimeCounter.currentTime()));
     scheduleUpdate(projectPath);
     for (Contributor contributor : EP_NAME.getExtensions()) {
       contributor.markDirty(projectPath);
@@ -182,8 +192,6 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
         String externalProjectPath = getRelatedExternalProjectPath(file);
         if (externalProjectPath == null) return;
 
-        myFileModificationTimeStamps.put(file.getPath(), doc.getModificationStamp());
-
         debug("Document changed '" + file.getPath() + "' from '" + event.getOldFragment() + "' to '" + event.getNewFragment() + "'");
         synchronized (myChangedDocuments) {
           myChangedDocuments.put(doc, Pair.create(externalProjectPath, file));
@@ -199,19 +207,28 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
             }
 
             ExternalSystemUtil.invokeLater(myProject, () -> WriteAction.run(
-              () -> copy.forEach((document, pair) -> {
-                if (!pair.second.isValid()) return;
-
-                if (fileWasChanged(pair.second)) {
-                  scheduleUpdate(pair.first, false);
-                }
-                else {
-                  handleRevertedChanges(externalProjectPath);
-                }
-              })
+              () -> copy.forEach((document, pair) -> handleDocumentChange(document, pair.first, pair.second))
             ));
           }
         });
+      }
+
+      private void handleDocumentChange(Document document, String externalProjectPath, VirtualFile file) {
+        if (!file.isValid()) return;
+
+        refreshFileCrcInfo(file);
+        if (fileWasChanged(file)) {
+          updateProjectStatus(externalProjectPath, it -> it.markModified(document.getModificationStamp()));
+        }
+        else if (!projectWasChanged(externalProjectPath)) {
+          updateProjectStatus(externalProjectPath, it -> it.markReverted(document.getModificationStamp()));
+        }
+        if (isUpToDate(externalProjectPath)) {
+          handleRevertedChanges(externalProjectPath);
+        }
+        else {
+          scheduleUpdate(externalProjectPath, false);
+        }
       }
     };
     EditorFactory.getInstance().getEventMulticaster().addDocumentListener(myDocumentListener, myChangedDocumentsQueue);
@@ -253,7 +270,8 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
       debug("Refresh started for '" + workingDir + "'");
 
-      myStartUpdatesTimeStamps.put(workingDir, LocalTimeCounter.currentTime());
+      myProjectsInSync.put(id, workingDir);
+      updateProjectStatus(workingDir, it -> it.markSynchronized(LocalTimeCounter.currentTime()));
 
       syncTrace.startTask(id);
 
@@ -284,11 +302,38 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   }
 
   @Override
+  public void onFailure(@NotNull ExternalSystemTaskId id, @NotNull Exception e) {
+    if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
+      debug("Refresh failed");
+      syncTrace.finishTask(id);
+      String projectPath = myProjectsInSync.get(id);
+      updateProjectStatus(projectPath, it -> it.markDirty(LocalTimeCounter.currentTime()));
+    }
+    super.onFailure(id, e);
+  }
+
+  @Override
+  public void onCancel(@NotNull ExternalSystemTaskId id) {
+    if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
+      debug("Refresh cancel");
+      syncTrace.finishTask(id);
+      String projectPath = myProjectsInSync.get(id);
+      updateProjectStatus(projectPath, it -> it.markDirty(LocalTimeCounter.currentTime()));
+    }
+    super.onCancel(id);
+  }
+
+  @Override
   public void onEnd(@NotNull ExternalSystemTaskId id) {
     if (id.getType() == ExternalSystemTaskType.RESOLVE_PROJECT) {
-      syncTrace.finishTask(id);
+      myProjectsInSync.remove(id);
     }
     super.onEnd(id);
+  }
+
+  @Nullable
+  private static String getExternalProjectPath(@NotNull Pair<ExternalSystemManager, ExternalProjectSettings> linkedProject) {
+    return linkedProject.second.getExternalProjectPath();
   }
 
   private void scheduleUpdate(@Nullable String projectPath) {
@@ -321,11 +366,9 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
       debug("Update disabled for '" + projectPath + "'");
       return;
     }
-    if (manager instanceof ExternalSystemAutoImportAware) {
-      if (!updateIsNeededFor((ExternalSystemAutoImportAware)manager, projectPath)) {
-        debug("Update skipped for '" + projectPath + "'");
-        return;
-      }
+    if (isUpToDate(projectPath)) {
+      debug("Update skipped for '" + projectPath + "'");
+      return;
     }
     debug("Schedule update for '" + projectPath + "'");
 
@@ -372,16 +415,8 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     }
   }
 
-  private void handleRevertedChanges(final String externalProjectPath) {
+  private void handleRevertedChanges(final @NotNull String externalProjectPath) {
     debug("Handle reverted changes for '" + externalProjectPath + "'");
-
-    for (String filePath : new ArrayList<>(myKnownAffectedFiles.get(externalProjectPath))) {
-      VirtualFile f = VfsUtil.findFileByIoFile(new File(filePath), false);
-      if (f == null ||
-          !Objects.equals(f.getUserData(CRC_WITHOUT_SPACES_BEFORE_LAST_IMPORT), f.getUserData(CRC_WITHOUT_SPACES_CURRENT))) {
-        return;
-      }
-    }
 
     ProjectSystemId systemId = getProjectSystemId(externalProjectPath);
     if (systemId == null) return;
@@ -402,34 +437,40 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     });
   }
 
-  private static boolean fileWasChanged(VirtualFile file) {
-    if (!file.isValid()) {
-      return true;
-    }
-
-    Long newCrc = calculateCrc(file);
-    file.putUserData(CRC_WITHOUT_SPACES_CURRENT, newCrc);
-
-    Long crc = file.getUserData(CRC_WITHOUT_SPACES_BEFORE_LAST_IMPORT);
-    if (crc == null) {
-      file.putUserData(CRC_WITHOUT_SPACES_BEFORE_LAST_IMPORT, newCrc);
-      return true;
-    }
-    return !newCrc.equals(crc);
+  private static boolean fileWasChanged(@NotNull VirtualFile file) {
+    if (!file.isValid()) return true;
+    Long currentCrc = file.getUserData(CRC_WITHOUT_SPACES_CURRENT);
+    Long oldCrc = file.getUserData(CRC_WITHOUT_SPACES_BEFORE_LAST_IMPORT);
+    return currentCrc == null || !currentCrc.equals(oldCrc);
   }
 
-  private boolean updateIsNeededFor(@NotNull ExternalSystemAutoImportAware manager, @NotNull String projectPath) {
-    Long lastUpdate = myStartUpdatesTimeStamps.get(projectPath);
-    if (lastUpdate == null) return true;
-    List<File> affectedFiles = manager.getAffectedExternalProjectFiles(projectPath, myProject);
-    for (File affectedFile : affectedFiles) {
-      String affectedFilePath = FileUtil.toCanonicalPath(affectedFile.getPath());
-      Long modificationStamp = myFileModificationTimeStamps.get(affectedFilePath);
-      if (modificationStamp != null && modificationStamp > lastUpdate) {
+  private boolean projectWasChanged(@NotNull String externalProjectPath) {
+    for (String filePath : new ArrayList<>(myKnownAffectedFiles.get(externalProjectPath))) {
+      VirtualFile file = VfsUtil.findFileByIoFile(new File(filePath), false);
+      if (file == null || fileWasChanged(file)) {
         return true;
       }
     }
     return false;
+  }
+
+  private static void refreshFileCrcInfo(@NotNull VirtualFile file) {
+    if (!file.isValid()) return;
+    Long crc = calculateCrc(file);
+    file.putUserData(CRC_WITHOUT_SPACES_CURRENT, crc);
+  }
+
+  private boolean isUpToDate(@NotNull String projectPath) {
+    return myWatchedProjects.getOrDefault(projectPath, new ProjectStatus()).isUpToDate();
+  }
+
+  private void updateProjectStatus(@Nullable String projectPath, @NotNull Consumer<ProjectStatus> update) {
+    if (projectPath == null) return;
+    myWatchedProjects.compute(projectPath, (path, status) -> {
+      status = status == null ? new ProjectStatus() : status;
+      update.accept(status);
+      return status;
+    });
   }
 
   private void addToRefreshQueue(String projectPath, ProjectSystemId systemId, boolean reportRefreshError) {
@@ -720,14 +761,20 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
 
     @Override
     protected void updateFile(VirtualFile file, VFileEvent event) {
-    myFileModificationTimeStamps.put(file.getPath(), file.getModificationStamp());
-    init();
+      init();
       debug("File changed '" + file.getPath() + "'");
+      refreshFileCrcInfo(file);
       if (event instanceof VFileContentChangeEvent && fileWasChanged(file)) {
+        for (String externalProjectPath : myKnownFiles.get(file.getPath())) {
+          updateProjectStatus(externalProjectPath, it -> it.markModified(file.getModificationStamp()));
+        }
         filesToUpdate.add(file);
       }
       else {
         for (String externalProjectPath : myKnownFiles.get(file.getPath())) {
+          if (projectWasChanged(externalProjectPath)) continue;
+          updateProjectStatus(externalProjectPath, it -> it.markReverted(file.getModificationStamp()));
+          if (!isUpToDate(externalProjectPath)) continue;
           handleRevertedChanges(externalProjectPath);
         }
       }
@@ -735,12 +782,13 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
 
     @Override
     protected void prepareFileDeletion(VirtualFile file) {
-      myFileModificationTimeStamps.put(file.getPath(), file.getModificationStamp());
+      for (String externalProjectPath : myKnownFiles.get(file.getPath())) {
+        updateProjectStatus(externalProjectPath, it -> it.markModified(file.getModificationStamp()));
+      }
       init();
       debug("File removed '" + file.getPath() + "'");
       filesToRemove.add(file);
     }
-    
 
     @Override
     protected void apply() {
