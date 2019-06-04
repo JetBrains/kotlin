@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -108,6 +105,12 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val longProgression = progression("LongProgression")
     val progressionClasses = listOf(charProgression, intProgression, longProgression)
     val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
+
+    val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal").getContributedFunctions(
+        Name.identifier("getProgressionLastElement"),
+        NoLookupLocation.FROM_BACKEND
+    ).filter { it.containingDeclaration !is BuiltInsPackageFragment }
+        .map { Pair(it.returnType!!, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)
