@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.shouldBeTransformed
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -40,6 +42,9 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
     override val defaultFixText: String = "Replace 'if' with elvis operator"
 
     override fun inspectionRange(element: KtIfExpression): TextRange? = textRange(element)?.shiftLeft(element.startOffset)
+
+    override fun inspectionHighlightType(element: KtIfExpression): ProblemHighlightType =
+        if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
 
     override fun isApplicable(element: KtIfExpression): Boolean = Companion.isApplicable(element)
 

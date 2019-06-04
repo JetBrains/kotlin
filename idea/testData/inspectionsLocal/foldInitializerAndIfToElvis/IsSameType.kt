@@ -1,3 +1,4 @@
+// HIGHLIGHT: INFORMATION
 open class A
 
 open class B : A() {
