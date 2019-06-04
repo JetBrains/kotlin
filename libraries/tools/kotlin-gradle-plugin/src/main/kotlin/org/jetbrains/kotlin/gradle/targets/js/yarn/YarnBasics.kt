@@ -42,29 +42,35 @@ abstract class YarnBasics : NpmApi {
         val yarnLock = nodeWorkDir.resolve("yarn.lock")
         if (yarnLock.isFile) {
             val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.key }
-            val visited = mutableSetOf<NpmDependency>()
+            val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
             fun resolveRecursively(src: NpmDependency): NpmDependency {
-                if (src in visited) return src
-                visited.add(src)
+                val copy = visited[src]
+                if (copy != null) {
+                    src.dependencies.addAll(copy.dependencies)
+                    return src
+                }
+                visited[src] = src
 
                 val key = YarnLock.key(src.key, src.version)
                 val deps = byKey[key]
                 if (deps != null) {
                     src.dependencies.addAll(deps.dependencies.map { dep ->
                         val scopedName = dep.scopedName
-
-                        resolveRecursively(
-                            NpmDependency(
-                                src.project,
-                                scopedName.scope,
-                                scopedName.name,
-                                dep.version ?: "*"
-                            )
+                        val child = NpmDependency(
+                            src.project,
+                            scopedName.scope,
+                            scopedName.name,
+                            dep.version ?: "*"
                         )
+                        child.parent = src
+
+                        resolveRecursively(child)
+
+                        child
                     })
                 } else {
-                    // todo: [WARN] cannot find $key in yarn.lock
+                    error("Cannot find $key in yarn.lock")
                 }
 
                 return src

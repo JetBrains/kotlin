@@ -31,6 +31,7 @@ data class NpmDependency(
 
     override fun getGroup(): String? = org
 
+    internal var parent: NpmDependency? = null
     internal val dependencies = mutableSetOf<NpmDependency>()
 
     override fun resolve(transitive: Boolean): MutableSet<File> {
@@ -64,7 +65,9 @@ data class NpmDependency(
     }
 
     override fun resolve(): MutableSet<File> {
-        val npmPackage = resolveProject() ?: return mutableSetOf()
+        val npmPackage = parent?.resolveProject()
+            ?: resolveProject()
+            ?: return mutableSetOf()
         return mutableSetOf(npmPackage.npmProject.resolve(key)!!)
     }
 
@@ -86,7 +89,8 @@ data class NpmDependency(
         return when (result) {
             null -> null
             is AlreadyInProgress -> null
-            is AlreadyResolved -> findIn(result.resolution) ?: error("Project hierarchy is already resolved in NPM without $this")
+            is AlreadyResolved -> findIn(result.resolution)
+                ?: error("Project hierarchy is already resolved in NPM without $this")
             is ResolvedNow -> findIn(result.resolution) ?: error("Cannot find $this after NPM project resolve")
         }
     }
