@@ -84,7 +84,6 @@ public class ExternalSystemShortcutsManager implements Disposable {
   @NotNull
   private Shortcut[] getShortcuts(@Nullable String projectPath, @Nullable String taskName) {
     String actionId = getActionId(projectPath, taskName);
-    if (actionId == null) return Shortcut.EMPTY_ARRAY;
     Keymap activeKeymap = KeymapManager.getInstance().getActiveKeymap();
     return activeKeymap.getShortcuts(actionId);
   }
@@ -99,15 +98,16 @@ public class ExternalSystemShortcutsManager implements Disposable {
     myListeners.add(listener);
   }
 
+  @FunctionalInterface
   public interface Listener {
     void shortcutsUpdated();
   }
 
-  public void scheduleKeymapUpdate(Collection<? extends DataNode<TaskData>> taskData) {
+  void scheduleKeymapUpdate(Collection<? extends DataNode<TaskData>> taskData) {
     ExternalSystemKeymapExtension.updateActions(myProject, taskData);
   }
 
-  public void scheduleRunConfigurationKeymapUpdate(@NotNull ProjectSystemId externalSystemId) {
+  void scheduleRunConfigurationKeymapUpdate(@NotNull ProjectSystemId externalSystemId) {
     ExternalSystemKeymapExtension.updateRunConfigurationActions(myProject, externalSystemId);
   }
 

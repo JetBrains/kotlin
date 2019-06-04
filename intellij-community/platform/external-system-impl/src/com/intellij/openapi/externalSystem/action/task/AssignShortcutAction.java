@@ -44,27 +44,25 @@ public class AssignShortcutAction extends ExternalSystemNodeAction<TaskData> {
     ExternalSystemActionsCollector.trigger(project, projectSystemId, this, e);
     final ExternalSystemShortcutsManager shortcutsManager = ExternalProjectsManagerImpl.getInstance(project).getShortcutsManager();
     final String actionId = shortcutsManager.getActionId(taskData.getLinkedExternalProjectPath(), taskData.getName());
-    if (actionId != null) {
-      AnAction action = ActionManager.getInstance().getAction(actionId);
-      if (action == null) {
-        ExternalSystemNode<?> taskNode = ContainerUtil.getFirstItem(e.getData(ExternalSystemDataKeys.SELECTED_NODES));
-        assert taskNode != null;
-        final String group;
-        final ModuleNode moduleDataNode = taskNode.findParent(ModuleNode.class);
-        if (moduleDataNode != null) {
-          ModuleData moduleData = moduleDataNode.getData();
-          group = moduleData != null ? moduleData.getInternalName() : null;
-        }
-        else {
-          ProjectNode projectNode = taskNode.findParent(ProjectNode.class);
-          ProjectData projectData = projectNode != null ? projectNode.getData() : null;
-          group = projectData != null ? projectData.getInternalName() : null;
-        }
-        if (group != null) {
-          ExternalSystemKeymapExtension.getOrRegisterAction(project, group, taskData);
-        }
+    AnAction action = ActionManager.getInstance().getAction(actionId);
+    if (action == null) {
+      ExternalSystemNode<?> taskNode = ContainerUtil.getFirstItem(e.getData(ExternalSystemDataKeys.SELECTED_NODES));
+      assert taskNode != null;
+      final String group;
+      final ModuleNode moduleDataNode = taskNode.findParent(ModuleNode.class);
+      if (moduleDataNode != null) {
+        ModuleData moduleData = moduleDataNode.getData();
+        group = moduleData != null ? moduleData.getInternalName() : null;
       }
-      new EditKeymapsDialog(project, actionId).show();
+      else {
+        ProjectNode projectNode = taskNode.findParent(ProjectNode.class);
+        ProjectData projectData = projectNode != null ? projectNode.getData() : null;
+        group = projectData != null ? projectData.getInternalName() : null;
+      }
+      if (group != null) {
+        ExternalSystemKeymapExtension.getOrRegisterAction(project, group, taskData);
+      }
     }
+    new EditKeymapsDialog(project, actionId).show();
   }
 }
