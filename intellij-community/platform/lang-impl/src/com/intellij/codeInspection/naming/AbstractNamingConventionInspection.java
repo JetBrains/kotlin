@@ -13,6 +13,7 @@ import com.intellij.serialization.SerializationException;
 import com.intellij.ui.CheckBoxList;
 import com.intellij.ui.CheckBoxListListener;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -185,7 +186,7 @@ public abstract class AbstractNamingConventionInspection<T extends PsiNameIdenti
   @Nullable
   @Override
   public JComponent createOptionsPanel() {
-    JPanel panel = new JPanel(new BorderLayout(JBUI.scale(2), JBUI.scale(2)));
+    JPanel panel = new JPanel(new BorderLayout(JBUIScale.scale(2), JBUIScale.scale(2)));
     CardLayout layout = new CardLayout();
     JPanel descriptionPanel = new JPanel(layout);
     descriptionPanel.setBorder(JBUI.Borders.empty(2));

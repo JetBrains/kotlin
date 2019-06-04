@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.colors;
 
 import com.intellij.application.options.schemes.AbstractSchemeActions;
@@ -20,7 +20,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.ui.JBUI;
+import com.intellij.ui.scale.JBUIScale;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -226,7 +226,7 @@ public abstract class ColorSchemeActions extends AbstractSchemeActions<EditorCol
     @Override
     public Point getInitialLocation() {
       Point location = myComponentAbove.getLocationOnScreen();
-      location.translate(0, myComponentAbove.getHeight() + JBUI.scale(20));
+      location.translate(0, myComponentAbove.getHeight() + JBUIScale.scale(20));
       return location;
     }
 

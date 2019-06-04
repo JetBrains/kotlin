@@ -34,15 +34,17 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.ClickListener;
+import com.intellij.ui.ComponentUtil;
 import com.intellij.util.SequentialModalProgressTask;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.*;
 
 /**
@@ -288,7 +290,7 @@ public abstract class QuickFixAction extends AnAction implements CustomComponent
     new ClickListener() {
       @Override
       public boolean onClick(@NotNull MouseEvent event, int clickCount) {
-        final ActionToolbar toolbar = UIUtil.getParentOfType(ActionToolbar.class, button);
+        final ActionToolbar toolbar = ComponentUtil.getParentOfType((Class<? extends ActionToolbar>)ActionToolbar.class, (Component)button);
         actionPerformed(AnActionEvent.createFromAnAction(QuickFixAction.this,
                                                          event,
                                                          place,

@@ -17,10 +17,10 @@ import com.intellij.ui.SideBorder;
 import com.intellij.ui.TitledSeparator;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -128,7 +128,7 @@ public abstract class AbstractExternalSystemConfigurable<
                       .getFillLineConstraints(1)
                       .fillCell()
                       .weighty(1)
-                      .pady(JBUI.scale(30)));
+                      .pady(JBUIScale.scale(30)));
 
     ContainerUtil.sort(settings, Comparator.comparing(s2 -> getProjectName(s2.getExternalProjectPath())));
 
@@ -198,7 +198,7 @@ public abstract class AbstractExternalSystemConfigurable<
 
       constraints = ExternalSystemUiUtil.getFillLineConstraints(0);
       constraints.insets.top = 0;
-      
+
       panel.add(new TitledSeparator(ExternalSystemBundle.message("settings.title.system.settings")), constraints);
       mySystemSettingsControl.fillUi(panel, 1);
     }

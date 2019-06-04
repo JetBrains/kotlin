@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle.excludedFiles;
 
 import com.intellij.formatting.fileSet.PatternDescriptor;
@@ -7,7 +7,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.valueEditors.TextFieldValueEditor;
 import com.intellij.ui.components.fields.valueEditors.ValueEditor;
-import com.intellij.util.ui.JBUI;
+import com.intellij.ui.scale.JBUIScale;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ public abstract class ExcludedFilesPatternForm {
   private JBTextField myPatternField;
 
   public ExcludedFilesPatternForm() {
-    int minWidth = JBUI.scale(400);
+    int minWidth = JBUIScale.scale(400);
     int minHeight = myPatternField.getMinimumSize().height;
     myPatternField.setMinimumSize(new Dimension(minWidth, minHeight));
   }

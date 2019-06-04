@@ -23,6 +23,7 @@ import com.intellij.ui.SearchTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.components.panels.Wrapper;
 import com.intellij.ui.mac.TouchbarDataKeys;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.containers.ContainerUtil;
@@ -173,7 +174,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
       @Override
       public Dimension getMinimumSize() {
         Dimension size = super.getMinimumSize();
-        size.width += JBUI.scale(16);//looks like hack but we need this extra space in case of lack of width
+        size.width += JBUIScale.scale(16);//looks like hack but we need this extra space in case of lack of width
         return size;
       }
     };

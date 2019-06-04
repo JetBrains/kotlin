@@ -12,9 +12,9 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.search.TodoAttributesUtil;
 import com.intellij.psi.search.TodoPattern;
 import com.intellij.ui.*;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.FormBuilder;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.table.IconTableCellRenderer;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ import java.util.List;
  * @author Vladimir Kondratyev
  */
 public class TodoConfigurable implements SearchableConfigurable, Configurable.NoScroll {
-  private static final int HEADER_GAP = JBUI.scale(20);
+  private static final int HEADER_GAP = JBUIScale.scale(20);
   /*
    * UI resources
    */

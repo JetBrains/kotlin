@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
 import com.intellij.execution.impl.ConsoleBuffer;
@@ -19,9 +19,9 @@ import com.intellij.ui.AddEditDeleteListPanel;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ListSpeedSearch;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.GridBag;
-import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +80,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
         northPanel.add(myCbOverrideConsoleCycleBufferSize, gridBag.nextLine().next());
         northPanel.add(myConsoleCycleBufferSizeField, gridBag.next());
         northPanel.add(new JLabel(" KB"), gridBag.next());
-        northPanel.add(Box.createHorizontalStrut(JBUI.scale(20)), gridBag.next());
+        northPanel.add(Box.createHorizontalStrut(JBUIScale.scale(20)), gridBag.next());
         northPanel.add(myConsoleBufferSizeWarningLabel, gridBag.next());
       }
       if (!editFoldingsOnly()) {

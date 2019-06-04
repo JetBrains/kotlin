@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -53,6 +53,7 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.HintUpdateSupply;
 import com.intellij.ui.popup.PopupUpdateProcessor;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.ElementFilter;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
@@ -489,7 +490,7 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(JBUI.size(540, 500));
     JPanel chkPanel = new JPanel(new GridLayout(0, checkBoxCount > 0 && checkBoxCount % 4 == 0 ? checkBoxCount / 2 : 3,
-      JBUI.scale(UIUtil.DEFAULT_HGAP), 0));
+                                                JBUIScale.scale(UIUtil.DEFAULT_HGAP), 0));
     chkPanel.setOpaque(false);
 
     Shortcut[] F4 = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE).getShortcutSet().getShortcuts();

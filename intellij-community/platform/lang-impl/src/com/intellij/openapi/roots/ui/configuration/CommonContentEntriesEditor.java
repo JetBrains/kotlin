@@ -30,6 +30,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.roots.ToolbarPanel;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -169,7 +170,7 @@ public class CommonContentEntriesEditor extends ModuleElementsEditor {
     JPanel contentPanel = new JPanel(new GridBagLayout());
     final ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("ProjectStructureContentEntries", myRootTreeEditor.getEditingActionsGroup(), true);
     contentPanel.add(new JLabel("Mark as:"),
-                     new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 0, JBUI.insets(0, 10), 0, 0));
+                     new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 0, JBInsets.create(0, 10), 0, 0));
     contentPanel.add(actionToolbar.getComponent(),
                      new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                                             JBUI.emptyInsets(), 0, 0));

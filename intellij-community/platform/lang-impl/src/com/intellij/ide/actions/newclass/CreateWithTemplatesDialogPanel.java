@@ -19,6 +19,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.ExtendableTextComponent;
 import com.intellij.ui.components.fields.ExtendableTextField;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.BooleanFunction;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.JBUI;
@@ -90,7 +91,7 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
     ComponentPopupBuilder popupBuilder = ComponentValidator.createPopupBuilder(new ValidationInfo(error, myNameField), errorHint -> {
       Insets insets = myNameField.getInsets();
       Dimension hintSize = errorHint.getPreferredSize();
-      Point point = new Point(0, insets.top - JBUI.scale(6) - hintSize.height);
+      Point point = new Point(0, insets.top - JBUIScale.scale(6) - hintSize.height);
       myErrorShowPoint = new RelativePoint(myNameField, point);
     }).setCancelOnWindowDeactivation(false)
       .setCancelOnClickOutside(true)
@@ -115,8 +116,8 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
 
     Dimension minSize = res.getMinimumSize();
     Dimension prefSize = res.getPreferredSize();
-    minSize.height = JBUI.scale(28);
-    prefSize.height = JBUI.scale(28);
+    minSize.height = JBUIScale.scale(28);
+    prefSize.height = JBUIScale.scale(28);
     res.setMinimumSize(minSize);
     res.setPreferredSize(prefSize);
     res.setColumns(30);
@@ -170,7 +171,7 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
     });
 
     Border border = JBUI.Borders.merge(
-      JBUI.Borders.emptyLeft(JBUI.scale(5)),
+      JBUI.Borders.emptyLeft(JBUIScale.scale(5)),
       JBUI.Borders.customLine(JBUI.CurrentTheme.NewClassDialog.bordersColor(), 1, 0, 0, 0),
       true
     );
@@ -217,7 +218,7 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
                                                     boolean isSelected,
                                                     boolean cellHasFocus) {
         JComponent delegate = (JComponent) delegateRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        delegate.setBorder(JBUI.Borders.empty(JBUI.scale(3), JBUI.scale(1)));
+        delegate.setBorder(JBUI.Borders.empty(JBUIScale.scale(3), JBUIScale.scale(1)));
         return delegate;
       }
     };

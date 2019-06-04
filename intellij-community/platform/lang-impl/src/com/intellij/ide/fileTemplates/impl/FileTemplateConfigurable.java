@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.fileTemplates.impl;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -42,6 +42,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.SeparatorFactory;
 import com.intellij.ui.components.panels.HorizontalLayout;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
@@ -108,10 +109,10 @@ public class FileTemplateConfigurable implements Configurable, Configurable.NoSc
                                             JBUI.insetsRight(2), 0, 0));
       myTopPanel.add(myNameField,
                      new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-                                            GridBagConstraints.HORIZONTAL, JBUI.insets(3, 2), 0, 0));
+                                            GridBagConstraints.HORIZONTAL, JBInsets.create(3, 2), 0, 0));
       myTopPanel.add(new JLabel(IdeBundle.message("label.extension")),
                      new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                            JBUI.insets(0, 2), 0, 0));
+                                            JBInsets.create(0, 2), 0, 0));
       myTopPanel.add(myExtensionField,
                      new GridBagConstraints(3, 0, 1, 1, .3, 0.0, GridBagConstraints.CENTER,
                                             GridBagConstraints.HORIZONTAL, JBUI.insetsLeft(2), 0, 0));

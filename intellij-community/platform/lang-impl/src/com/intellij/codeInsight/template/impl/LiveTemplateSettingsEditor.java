@@ -27,6 +27,7 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.DropDownLink;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
@@ -346,7 +347,7 @@ public class LiveTemplateSettingsEditor extends JPanel {
         myContextPopup = JBPopupFactory.getInstance().createComponentPopupBuilder(content, pair.second)
           .setRequestFocus(true)
           .setResizable(true).createPopup();
-        myContextPopup.show(new RelativePoint(change, new Point(change.getWidth() , -content.getPreferredSize().height - JBUI.scale(4))));
+        myContextPopup.show(new RelativePoint(change, new Point(change.getWidth() , -content.getPreferredSize().height - JBUIScale.scale(4))));
         myContextPopup.addListener(new JBPopupAdapter() {
           @Override
           public void onClosed(@NotNull LightweightWindowEvent event) {

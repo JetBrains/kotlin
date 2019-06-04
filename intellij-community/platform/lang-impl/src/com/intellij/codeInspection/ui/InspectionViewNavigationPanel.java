@@ -1,22 +1,9 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.ui;
 
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +52,7 @@ public class InspectionViewNavigationPanel extends JPanel implements InspectionT
     final int currentChildrenCount = myNode.getChildCount();
     if (myShownChildrenCount != currentChildrenCount) {
       myLinks.removeAll();
-      myLinks.add(Box.createVerticalStrut(JBUI.scale(10)));
+      myLinks.add(Box.createVerticalStrut(JBUIScale.scale(10)));
       for (int i = 0; i < currentChildrenCount; i++) {
         final InspectionTreeNode child = myNode.getChildAt(i);
         final LinkLabel link = new LinkLabel(child.getPresentableText(), null) {

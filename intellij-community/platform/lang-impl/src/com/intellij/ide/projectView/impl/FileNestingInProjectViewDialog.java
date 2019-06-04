@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.IdeBundle;
@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
@@ -20,8 +21,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class FileNestingInProjectViewDialog extends DialogWrapper {
   private static final Comparator<NestingRule> RULE_COMPARATOR =
@@ -64,7 +65,7 @@ public class FileNestingInProjectViewDialog extends DialogWrapper {
 
   @Override
   protected JComponent createCenterPanel() {
-    final JPanel mainPanel = new JPanel(new BorderLayout(0, JBUI.scale(16)));
+    final JPanel mainPanel = new JPanel(new BorderLayout(0, JBUIScale.scale(16)));
     mainPanel.setBorder(JBUI.Borders.emptyTop(8)); // Resulting indent will be 16 = 8 (default) + 8 (set here)
     mainPanel.add(myUseNestingRulesCheckBox, BorderLayout.NORTH);
     mainPanel.add(myRulesPanel, BorderLayout.CENTER);
@@ -97,7 +98,7 @@ public class FileNestingInProjectViewDialog extends DialogWrapper {
       new ColumnInfo<CombinedNestingRule, String>("Parent file suffix") {
         @Override
         public int getWidth(JTable table) {
-          return JBUI.scale(125);
+          return JBUIScale.scale(125);
         }
 
         @Override

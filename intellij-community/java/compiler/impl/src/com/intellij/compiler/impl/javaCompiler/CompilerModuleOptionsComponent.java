@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.impl.javaCompiler;
 
 import com.intellij.compiler.options.ModuleOptionsTableModel;
@@ -9,6 +9,7 @@ import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.fields.ExpandableTextField;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class CompilerModuleOptionsComponent extends JPanel {
     myProject = project;
 
     myTable = new JBTable(new ModuleOptionsTableModel());
-    myTable.setRowHeight(JBUI.scale(22));
+    myTable.setRowHeight(JBUIScale.scale(22));
     myTable.getEmptyText().setText("Additional compilation options will be the same for all modules");
 
     TableColumn moduleColumn = myTable.getColumnModel().getColumn(0);

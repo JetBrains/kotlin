@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.openapi.roots.ui.configuration;
 
@@ -36,6 +36,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
@@ -84,7 +85,7 @@ public class ContentEntryTreeEditor {
 
     JPanel excludePatternsPanel = new JPanel(new GridBagLayout());
     excludePatternsPanel.setBorder(JBUI.Borders.empty(5));
-    GridBag gridBag = new GridBag().setDefaultWeightX(1, 1.0).setDefaultPaddingX(JBUI.scale(5));
+    GridBag gridBag = new GridBag().setDefaultWeightX(1, 1.0).setDefaultPaddingX(JBUIScale.scale(5));
     excludePatternsPanel.add(new JLabel(ProjectBundle.message("module.paths.exclude.patterns")), gridBag.nextLine().next());
     myExcludePatternsField = new JTextField();
     myExcludePatternsField.getDocument().addDocumentListener(new DocumentAdapter() {

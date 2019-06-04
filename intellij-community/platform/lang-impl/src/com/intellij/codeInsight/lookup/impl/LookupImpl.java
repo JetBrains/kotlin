@@ -47,10 +47,10 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
 import com.intellij.util.ui.update.Activatable;
@@ -1250,7 +1250,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     ListPopup listPopup = JBPopupFactory.getInstance().createListPopup(new LookupActionsStep(actions, this, element));
     Point p = (itemBounds.intersects(visibleRect) || event == null) ?
               new Point(itemBounds.x + itemBounds.width, itemBounds.y):
-              SwingUtilities.convertPoint(event.getComponent(), new Point(0, event.getComponent().getHeight() + JBUI.scale(2)), getComponent());
+              SwingUtilities.convertPoint(event.getComponent(), new Point(0, event.getComponent().getHeight() + JBUIScale.scale(2)), getComponent());
 
     listPopup.show(new RelativePoint(getComponent(), p));
   }

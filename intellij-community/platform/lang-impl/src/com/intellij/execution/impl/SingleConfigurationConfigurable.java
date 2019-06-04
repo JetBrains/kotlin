@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.execution.impl;
 
@@ -30,6 +30,7 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -503,7 +504,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
               d.width = view.getMinimumSize().width;
             }
           }
-          d.height = Math.max(d.height, JBUI.scale(400));
+          d.height = Math.max(d.height, JBUIScale.scale(400));
           return d;
         }
       };

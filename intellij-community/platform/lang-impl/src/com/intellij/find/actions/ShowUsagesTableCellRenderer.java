@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.find.actions;
 
@@ -25,6 +11,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.usages.TextChunk;
 import com.intellij.usages.Usage;
@@ -37,7 +24,6 @@ import com.intellij.usages.impl.UsageViewManagerImpl;
 import com.intellij.usages.rules.UsageInFile;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -150,7 +136,7 @@ class ShowUsagesTableCellRenderer implements TableCellRenderer {
       case USAGE_TEXT_COL:
         Icon icon = presentation.getIcon();
         textChunks.setIcon(icon == null ? EmptyIcon.ICON_16 : icon);
-        textChunks.append("").appendTextPadding(JBUI.scale(16 + 5));
+        textChunks.append("").appendTextPadding(JBUIScale.scale(16 + 5));
         for (int i = 1; i < text.length; i++) {
           TextChunk chunk = text[i];
           textChunks.append(chunk.getText(), getAttributes(isSelected, fileBgColor, selectionBg, selectionFg, chunk));
@@ -161,14 +147,14 @@ class ShowUsagesTableCellRenderer implements TableCellRenderer {
 
         if (isOriginUsage) {
           SimpleColoredComponent origin = new SimpleColoredComponent();
-          origin.setIconTextGap(JBUI.scale(5)); // for this particular icon it looks better
+          origin.setIconTextGap(JBUIScale.scale(5)); // for this particular icon it looks better
 
           // use attributes of "line number" to show "Current" word
           SimpleTextAttributes attributes =
             text.length == 0 ? SimpleTextAttributes.REGULAR_ATTRIBUTES.derive(-1, new Color(0x808080), null, null) :
             getAttributes(isSelected, fileBgColor, selectionBg, selectionFg, text[0]);
           origin.append("| Current", attributes);
-          origin.appendTextPadding(JBUI.scale(45));
+          origin.appendTextPadding(JBUIScale.scale(45));
           panel.add(origin, BorderLayout.EAST);
         }
         break;

@@ -19,11 +19,11 @@ import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.TitledSeparator;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.BitUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBEmptyBorder;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -88,7 +88,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     addActionListener(this::handleScopeChooserAction);
 
     ComboBox<ScopeDescriptor> combo = getComboBox();
-    combo.setMinimumAndPreferredWidth(JBUI.scale(300));
+    combo.setMinimumAndPreferredWidth(JBUIScale.scale(300));
     combo.setRenderer(createDefaultRenderer());
     combo.setSwingPopup(false);
 

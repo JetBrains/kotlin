@@ -4,10 +4,10 @@ package com.intellij.ide.navigationToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.ui.ComponentUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.actionSystem.PlatformDataKeys.CONTEXT_COMPONENT;
-import static com.intellij.util.ui.UIUtil.getParentOfType;
 
 /**
  * @author Sergey.Malenkov
@@ -19,13 +19,13 @@ public abstract class NavBarActions extends AnAction implements DumbAware {
 
   @Override
   public final void update(@NotNull AnActionEvent event) {
-    NavBarPanel panel = getParentOfType(NavBarPanel.class, event.getData(CONTEXT_COMPONENT));
+    NavBarPanel panel = ComponentUtil.getParentOfType((Class<? extends NavBarPanel>)NavBarPanel.class, event.getData(CONTEXT_COMPONENT));
     event.getPresentation().setEnabled(panel != null);
   }
 
   @Override
   public final void actionPerformed(@NotNull AnActionEvent event) {
-    NavBarPanel panel = getParentOfType(NavBarPanel.class, event.getData(CONTEXT_COMPONENT));
+    NavBarPanel panel = ComponentUtil.getParentOfType((Class<? extends NavBarPanel>)NavBarPanel.class, event.getData(CONTEXT_COMPONENT));
     if (panel != null) actionPerformed(panel);
   }
 

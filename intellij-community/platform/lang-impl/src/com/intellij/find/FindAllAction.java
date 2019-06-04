@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find;
 
 import com.intellij.icons.AllIcons;
@@ -10,8 +10,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.IconUtil;
-import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +65,7 @@ public class FindAllAction extends AnAction implements ShortcutProvider, DumbAwa
     if (session == null || getTemplatePresentation().getIcon() != null) return;
 
     Icon base = AllIcons.Actions.Find;
-    Icon text = IconUtil.textToIcon("ALL", session.getComponent(), JBUI.scale(6F));
+    Icon text = IconUtil.textToIcon("ALL", session.getComponent(), JBUIScale.scale(6F));
 
     LayeredIcon icon = new LayeredIcon(2);
     icon.setIcon(base, 0);

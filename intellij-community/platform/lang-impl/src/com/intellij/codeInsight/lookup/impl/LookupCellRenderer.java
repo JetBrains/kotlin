@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.FList;
@@ -84,7 +85,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
 
     myLookup = lookup;
     myNameComponent = new MySimpleColoredComponent();
-    myNameComponent.setIconTextGap(JBUI.scale(4));
+    myNameComponent.setIconTextGap(JBUIScale.scale(4));
     myNameComponent.setIpad(JBUI.insetsLeft(6));
     myNameComponent.setMyBorder(null);
 

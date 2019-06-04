@@ -9,6 +9,7 @@ import com.intellij.ui.TableSpeedSearch;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
@@ -57,7 +58,7 @@ public class TargetOptionsComponent extends JPanel {
     myCbProjectTargetLevel = createTargetOptionsCombo();
 
     myTable = new JBTable(new ModuleOptionsTableModel());
-    myTable.setRowHeight(JBUI.scale(22));
+    myTable.setRowHeight(JBUIScale.scale(22));
     myTable.getEmptyText().setText("All modules will be compiled with project bytecode version");
 
     TableColumn moduleColumn = myTable.getColumnModel().getColumn(0);

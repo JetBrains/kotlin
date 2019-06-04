@@ -28,6 +28,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.border.CustomLineBorder;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -331,7 +332,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.add(myTabbedPane.getComponent(), BorderLayout.NORTH);
     Splitter splitter = new Splitter(false, 0.3f);
-    splitter.setDividerWidth(JBUI.scale(10));
+    splitter.setDividerWidth(JBUIScale.scale(10));
     splitter.setFirstComponent(leftPanelWrapper);
     splitter.setSecondComponent(myEditorComponent);
     centerPanel.add(splitter, BorderLayout.CENTER);

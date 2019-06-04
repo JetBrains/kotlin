@@ -26,10 +26,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.*
 import com.intellij.ui.components.JBLabel
-import com.intellij.util.ui.GridBag
-import com.intellij.util.ui.Html
-import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.*
 import java.awt.*
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
@@ -355,7 +352,7 @@ private fun getActionFont(): Font? {
   if (toolTipFont == null || SystemInfo.isWindows) return toolTipFont
 
   //if font was changed from default we dont have a good heuristic to customize it
-  if (JBUI.Fonts.label() != toolTipFont || UISettings.instance.overrideLafFonts) return toolTipFont
+  if (JBFont.label() != toolTipFont || UISettings.instance.overrideLafFonts) return toolTipFont
 
   if (SystemInfo.isMac) {
     return toolTipFont.deriveFont(toolTipFont.size - 1f)

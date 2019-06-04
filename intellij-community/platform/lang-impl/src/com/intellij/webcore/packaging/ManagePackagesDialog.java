@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.webcore.packaging;
 
 import com.intellij.icons.AllIcons;
@@ -15,10 +15,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.CatchingConsumer;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.PlatformColors;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
@@ -116,10 +116,10 @@ public class ManagePackagesDialog extends DialogWrapper {
       .disableRemoveAction()
       .addExtraAction(reloadButton)
       .createPanel();
-    packagesPanel.setPreferredSize(new Dimension(JBUI.scale(400), -1));
-    packagesPanel.setMinimumSize(new Dimension(JBUI.scale(100), -1));
+    packagesPanel.setPreferredSize(new Dimension(JBUIScale.scale(400), -1));
+    packagesPanel.setMinimumSize(new Dimension(JBUIScale.scale(100), -1));
     myPackages.setFixedCellWidth(0);
-    myPackages.setFixedCellHeight(JBUI.scale(22));
+    myPackages.setFixedCellHeight(JBUIScale.scale(22));
     myPackages.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mySplitPane.setLeftComponent(packagesPanel);
 
@@ -162,7 +162,7 @@ public class ManagePackagesDialog extends DialogWrapper {
     else {
       myInstallToUser.setVisible(false);
     }
-    myMainPanel.setPreferredSize(new Dimension(JBUI.scale(900), JBUI.scale(700)));
+    myMainPanel.setPreferredSize(new Dimension(JBUIScale.scale(900), JBUIScale.scale(700)));
   }
 
   public void selectPackage(@NotNull InstalledPackage pkg) {

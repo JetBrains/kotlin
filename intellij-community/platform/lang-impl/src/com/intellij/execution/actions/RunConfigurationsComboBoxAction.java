@@ -16,6 +16,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.SizedIcon;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
@@ -131,7 +132,7 @@ public class RunConfigurationsComboBoxAction extends ComboBoxAction implements D
       @Override
       public Dimension getPreferredSize() {
         Dimension d = super.getPreferredSize();
-        d.width = Math.max(d.width, JBUI.scale(75));
+        d.width = Math.max(d.width, JBUIScale.scale(75));
         return d;
       }
 

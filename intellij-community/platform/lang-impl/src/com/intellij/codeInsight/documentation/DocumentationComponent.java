@@ -65,12 +65,13 @@ import com.intellij.ui.components.JBLayeredPane;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupPositionManager;
+import com.intellij.ui.scale.JBUIScale;
+import com.intellij.ui.scale.ScaleContext;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ImageLoader;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.util.ui.*;
-import com.intellij.util.ui.JBUIScale.ScaleContext;
 import com.intellij.util.ui.accessibility.ScreenReader;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -344,17 +345,17 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
               return new ImageView(elem) {
                 @Override
                 public float getMaximumSpan(int axis) {
-                  return super.getMaximumSpan(axis) / JBUI.sysScale(myEditorPane);
+                  return super.getMaximumSpan(axis) / JBUIScale.sysScale(myEditorPane);
                 }
 
                 @Override
                 public float getMinimumSpan(int axis) {
-                  return super.getMinimumSpan(axis) / JBUI.sysScale(myEditorPane);
+                  return super.getMinimumSpan(axis) / JBUIScale.sysScale(myEditorPane);
                 }
 
                 @Override
                 public float getPreferredSpan(int axis) {
-                  return super.getPreferredSpan(axis) / JBUI.sysScale(myEditorPane);
+                  return super.getPreferredSpan(axis) / JBUIScale.sysScale(myEditorPane);
                 }
 
                 @Override
@@ -885,8 +886,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private void setHintSize() {
     Dimension hintSize;
     if (!myManuallyResized && myHint.getDimensionServiceKey() == null) {
-      int minWidth = JBUI.scale(300);
-      int maxWidth = getPopupAnchor() != null ? JBUI.scale(435) : MAX_DEFAULT.width;
+      int minWidth = JBUIScale.scale(300);
+      int maxWidth = getPopupAnchor() != null ? JBUIScale.scale(435) : MAX_DEFAULT.width;
 
       int width = definitionPreferredWidth();
       if (width < 0) { // no definition found
@@ -1153,7 +1154,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
                       myEditorPane.getFont().getFontName();
 
     // changing font will change the doc's CSS as myEditorPane has JEditorPane.HONOR_DISPLAY_PROPERTIES via UIUtil.getHTMLEditorKit
-    myEditorPane.setFont(UIUtil.getFontWithFallback(fontName, Font.PLAIN, JBUI.scale(getQuickDocFontSize().getSize())));
+    myEditorPane.setFont(UIUtil.getFontWithFallback(fontName, Font.PLAIN, JBUIScale.scale(getQuickDocFontSize().getSize())));
   }
 
   @Nullable
