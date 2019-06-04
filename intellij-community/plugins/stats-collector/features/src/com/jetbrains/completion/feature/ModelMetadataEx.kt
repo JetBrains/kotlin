@@ -7,4 +7,5 @@ interface ModelMetadataEx : ModelMetadata {
   val categorical: List<CategoricalFeature>
 
   val featuresOrder: Map<String, Int>
+  val version: String?
 }

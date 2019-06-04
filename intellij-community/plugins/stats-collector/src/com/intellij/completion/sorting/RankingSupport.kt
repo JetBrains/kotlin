@@ -31,5 +31,9 @@ object RankingSupport {
     }
 
     fun unknownFeatures(features: Set<String>): List<String> = ranker.modelMetadata.unknownFeatures(features)
+
+    fun version(): String? {
+      return ranker.modelMetadata.version
+    }
   }
 }

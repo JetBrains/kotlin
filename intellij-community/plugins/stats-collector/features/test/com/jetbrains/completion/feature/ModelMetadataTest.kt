@@ -17,7 +17,6 @@
 package com.jetbrains.completion.feature
 
 import com.jetbrains.completion.feature.impl.FeatureUtils
-import org.junit.Assert
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -120,6 +119,12 @@ abstract class ModelMetadataTest {
         assertEquals("features should totally cover the features array", metadata.featuresOrder.size, revertedFeatureOrder.size)
         assertEquals(0, revertedFeatureOrder.keys.min())
         assertEquals(metadata.featuresOrder.size - 1, revertedFeatureOrder.keys.max())
+    }
+
+    @Test
+    fun `extract model version`() {
+        val meta = modelMetadata()
+        assertNotNull(meta.version)
     }
 
     private fun assertFeaturesNotStoreValueBySameIndex(index: Int, old: Feature?, new: Feature) {

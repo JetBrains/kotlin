@@ -9,6 +9,13 @@ class MetadataReader(private val featuresDirectory: String) {
   fun allKnown(): String = resourceContent("all_features.json")
   fun featuresOrder(): Map<String, Int> = resourceContent("features_order.txt").lineToNumber()
 
+  fun extractVersion(): String? {
+    val resource = MetadataReader::class.java.classLoader.getResource("$featuresDirectory/binary.json")
+    if (resource == null) return null
+    val result = resource.file.substringBeforeLast(".jar!", "").substringAfterLast("-", "")
+    return if (result.isBlank()) null else result
+  }
+
   private fun resourceContent(fileName: String): String {
     val fileStream = MetadataReader::class.java.classLoader.getResourceAsStream("$featuresDirectory/$fileName")
     return fileStream.bufferedReader().readText()
