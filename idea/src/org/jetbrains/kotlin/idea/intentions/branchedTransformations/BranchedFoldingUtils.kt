@@ -59,7 +59,7 @@ object BranchedFoldingUtils {
     private fun KtBinaryExpression.checkAssignmentsMatch(other: KtBinaryExpression, rightTypeConstructor: TypeConstructor): Boolean {
         return left?.text == other.left?.text
                 && operationToken == other.operationToken
-                && rightTypeConstructor == other.rightTypeConstructor()
+                && (right.isNullExpression() || other.right.isNullExpression() || rightTypeConstructor == other.rightTypeConstructor())
     }
 
     private fun KtBinaryExpression.rightTypeConstructor(): TypeConstructor? {
@@ -104,7 +104,7 @@ object BranchedFoldingUtils {
             else -> false
         }
         if (!collectAssignmentsAndCheck(expression)) return -1
-        val firstAssignment = assignments.firstOrNull() ?: return 0
+        val firstAssignment = assignments.firstOrNull { !it.right.isNullExpression() } ?: assignments.firstOrNull() ?: return 0
         val rightTypeConstructor = firstAssignment.rightTypeConstructor() ?: return -1
         if (assignments.any { !firstAssignment.checkAssignmentsMatch(it, rightTypeConstructor) }) {
             return -1
