@@ -49,6 +49,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
     });
   }
 
+  @NotNull
   public String getActionId(@Nullable String projectPath, @Nullable String taskName) {
     StringBuilder result = new StringBuilder(ACTION_ID_PREFIX);
     result.append(myProject.getLocationHash());
@@ -112,6 +113,6 @@ public class ExternalSystemShortcutsManager implements Disposable {
 
   @Override
   public void dispose() {
-    ExternalSystemKeymapExtension.clearActions(myProject);
+    ExternalSystemKeymapExtension.clearActions(this);
   }
 }

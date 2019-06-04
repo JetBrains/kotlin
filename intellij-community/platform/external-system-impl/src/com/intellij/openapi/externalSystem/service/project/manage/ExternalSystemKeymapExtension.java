@@ -193,10 +193,10 @@ public class ExternalSystemKeymapExtension implements KeymapExtension {
     }
   }
 
-  public static void clearActions(Project project) {
+  static void clearActions(@NotNull ExternalSystemShortcutsManager externalSystemShortcutsManager) {
     ActionManager manager = ActionManager.getInstance();
     if (manager != null) {
-      for (String each : manager.getActionIds(getActionPrefix(project, null))) {
+      for (String each : manager.getActionIds(getActionPrefix(externalSystemShortcutsManager, null))) {
         manager.unregisterAction(each);
       }
     }
@@ -221,8 +221,15 @@ public class ExternalSystemKeymapExtension implements KeymapExtension {
     }
   }
 
+  @NotNull
   public static String getActionPrefix(@NotNull Project project, @Nullable String path) {
-    return ExternalProjectsManagerImpl.getInstance(project).getShortcutsManager().getActionId(path, null);
+    ExternalSystemShortcutsManager externalSystemShortcutsManager = ExternalProjectsManagerImpl.getInstance(project).getShortcutsManager();
+    return getActionPrefix(externalSystemShortcutsManager, path);
+  }
+
+  @NotNull
+  private static String getActionPrefix(@NotNull ExternalSystemShortcutsManager externalSystemShortcutsManager, @Nullable String path) {
+    return externalSystemShortcutsManager.getActionId(path, null);
   }
 
   public static void updateRunConfigurationActions(Project project, ProjectSystemId systemId) {
