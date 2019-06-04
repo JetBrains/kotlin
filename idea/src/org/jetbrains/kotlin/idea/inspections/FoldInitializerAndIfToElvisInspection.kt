@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.shouldBeTransformed
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.textRange
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -41,7 +41,7 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
 
     override val defaultFixText: String = "Replace 'if' with elvis operator"
 
-    override fun inspectionRange(element: KtIfExpression): TextRange? = textRange(element)?.shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression): TextRange? = element.textRange().shiftLeft(element.startOffset)
 
     override fun inspectionHighlightType(element: KtIfExpression): ProblemHighlightType =
         if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
@@ -60,12 +60,7 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
             if (!type.isNothing()) return null
 
-            return textRange(element)
-        }
-
-        private fun textRange(element: KtIfExpression): TextRange? {
-            val rightOffset = element.rightParenthesis?.endOffset ?: return null
-            return TextRange(element.startOffset, rightOffset)
+            return element.textRange()
         }
 
         fun isApplicable(element: KtIfExpression): Boolean = applicabilityRange(element) != null

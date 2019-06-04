@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -310,6 +313,11 @@ internal fun KtIfExpression.shouldBeTransformed(): Boolean = when (val condition
         !baseClause.isClauseTransformableToLetOnly(condition.checkedExpression())
     }
     else -> false
+}
+
+fun KtIfExpression.textRange(): TextRange {
+    val rightOffset = rightParenthesis?.endOffset ?: return ifKeyword.textRange
+    return TextRange(ifKeyword.startOffset, rightOffset)
 }
 
 private fun KtExpression.checkedExpression() = when (this) {

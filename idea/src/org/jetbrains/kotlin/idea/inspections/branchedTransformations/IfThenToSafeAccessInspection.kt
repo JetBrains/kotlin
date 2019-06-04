@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.replaced
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameH
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -40,7 +40,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
     override fun isApplicable(element: KtIfExpression): Boolean = isApplicableTo(element, expressionShouldBeStable = true)
 
-    override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression): TextRange? = element.textRange().shiftLeft(element.startOffset)
 
     override fun inspectionText(element: KtIfExpression) = "Foldable if-then"
 
@@ -54,8 +54,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
     override val startFixInWriteAction = false
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val ifExpression = element.getParentOfType<KtIfExpression>(true) ?: return
-        convert(ifExpression, editor)
+        convert(element as KtIfExpression, editor)
     }
 
     companion object {

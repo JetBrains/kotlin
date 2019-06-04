@@ -30,7 +30,7 @@ abstract class ReplaceSubstringInspection :
         } else
             false
 
-    override fun inspectionRange(element: KtDotQualifiedExpression): TextRange? =
+    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression): TextRange? =
         element.callExpression?.calleeExpression?.textRange?.shiftLeft(element.startOffset)
 
     protected fun isIndexOfCall(expression: KtExpression?, expectedReceiver: KtExpression): Boolean {

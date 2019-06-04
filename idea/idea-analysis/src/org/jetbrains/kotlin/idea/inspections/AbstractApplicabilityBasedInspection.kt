@@ -48,12 +48,12 @@ abstract class AbstractApplicabilityBasedInspection<TElement : KtElement>(
             inspectionText(element),
             isOnTheFly,
             inspectionHighlightType(element),
-            inspectionRange(element),
+            inspectionHighlightRangeInElement(element),
             LocalFix(fixText(element))
         )
     }
 
-    open fun inspectionRange(element: TElement): TextRange? = null
+    open fun inspectionHighlightRangeInElement(element: TElement): TextRange? = null
 
     open fun inspectionTarget(element: TElement): PsiElement = element
 

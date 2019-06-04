@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -49,10 +48,7 @@ class IfThenToElvisInspection(
         )
     }
 
-    override fun inspectionRange(element: KtIfExpression): TextRange? = TextRange(
-        element.ifKeyword.startOffset,
-        element.condition?.endOffset ?: element.ifKeyword.endOffset
-    ).shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression): TextRange? = element.textRange().shiftLeft(element.startOffset)
 
     override fun createOptionsPanel(): JComponent? = MultipleCheckboxOptionsPanel(this).also {
         it.addCheckbox("Report also on statement", "highlightStatement")

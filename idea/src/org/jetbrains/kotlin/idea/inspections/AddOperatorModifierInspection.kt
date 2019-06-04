@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.util.OperatorChecks
 
 class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNamedFunction>(KtNamedFunction::class.java) {
-    override fun inspectionRange(element: KtNamedFunction) = element.nameIdentifier?.textRange?.shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtNamedFunction) =
+        element.nameIdentifier?.textRange?.shiftLeft(element.startOffset)
 
     override fun inspectionText(element: KtNamedFunction) = "Function should have 'operator' modifier"
 
