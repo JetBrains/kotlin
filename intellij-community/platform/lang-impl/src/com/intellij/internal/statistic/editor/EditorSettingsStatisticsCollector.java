@@ -123,8 +123,9 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
   }
 
   private static void addTooltipActionsMetricIfDiffers(@NotNull Set<MetricEvent> set) {
-    if (TooltipActionProvider.isShowActions() != TooltipActionProvider.SHOW_FIXES_DEFAULT_VALUE) {
-      set.add(newBooleanMetric("show.actions.in.tooltip", false));
+    boolean value = TooltipActionProvider.isShowActions();
+    if (value != TooltipActionProvider.SHOW_FIXES_DEFAULT_VALUE) {
+      set.add(newBooleanMetric("show.actions.in.tooltip", value));
     }
   }
 
