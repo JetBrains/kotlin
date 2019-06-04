@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 public class RunConfigurationUsageTriggerCollector {
 
   public static void trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
-    final String key = AbstractRunConfigurationTypeUsagesCollector.toReportedId(factory);
+    final String key = RunConfigurationTypeUsagesCollector.toReportedId(factory);
     if (StringUtil.isNotEmpty(key)) {
       final FeatureUsageData data = new FeatureUsageData().
         addProject(project).addData("executor", executor.getId());

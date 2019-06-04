@@ -8,16 +8,13 @@ import com.intellij.execution.impl.statistics.BaseTestConfigurationFactory.First
 import com.intellij.execution.impl.statistics.BaseTestConfigurationFactory.MultiFactoryLocalTestConfigurationFactory;
 import com.intellij.execution.impl.statistics.BaseTestConfigurationFactory.MultiFactoryRemoteTestConfigurationFactory;
 import com.intellij.execution.impl.statistics.BaseTestConfigurationFactory.SecondBaseTestConfigurationFactory;
-import com.intellij.internal.statistic.beans.UsageDescriptor;
+import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
-import com.intellij.internal.statistic.service.fus.collectors.FUSUsageContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.LightPlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-
-import static java.lang.String.valueOf;
 
 public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
@@ -31,12 +28,8 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
       }
 
       final RunConfigurationTypeUsagesCollector collector = new RunConfigurationTypeUsagesCollector();
-      final TemporaryRunConfigurationTypeUsagesCollector temporaryCollector = new TemporaryRunConfigurationTypeUsagesCollector();
 
-      Set<UsageDescriptor> temporaryUsages = temporaryCollector.getUsages(project);
-      assertTrue(temporaryUsages.isEmpty());
-
-      Set<UsageDescriptor> usages = collector.getUsages(project);
+      final Set<MetricEvent> usages = collector.getMetrics(project);
       assertEquals(expected.size(), usages.size());
       assertEquals(expected, toTestUsageDescriptor(usages));
 
@@ -45,12 +38,16 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
           configuration.setTemporary(true);
         }
 
-        temporaryUsages = temporaryCollector.getUsages(project);
-        assertEquals(expected.size(), temporaryUsages.size());
-        assertEquals(expected, toTestUsageDescriptor(temporaryUsages));
+        final Set<TestUsageDescriptor> temporaryExpected = new HashSet<>();
+        for (TestUsageDescriptor descriptor : expected) {
+          final FeatureUsageData data = descriptor.myData.copy().addData("temporary", true);
+          temporaryExpected.add(new TestUsageDescriptor(descriptor.myKey, data));
+        }
 
-        usages = collector.getUsages(project);
-        assertTrue(usages.isEmpty());
+        final Set<MetricEvent> temporaryUsages = collector.getMetrics(project);
+        assertEquals(temporaryExpected.size(), temporaryUsages.size());
+        final Set<TestUsageDescriptor> actual = toTestUsageDescriptor(temporaryUsages);
+        assertEquals(temporaryExpected, actual);
       }
     }
     finally {
@@ -340,8 +337,8 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
     final Set<TestUsageDescriptor> expected = new HashSet<>();
     expected.add(new TestUsageDescriptor(
-      "MultiFactoryTestRunConfigurationType/Local", 1,
-      create(false, false, false, true))
+      "MultiFactoryTestRunConfigurationType", 1,
+      create(false, false, false, true).addData("factory", "Local"))
     );
     doTest(configurations, expected, true);
   }
@@ -354,8 +351,8 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
     final Set<TestUsageDescriptor> expected = new HashSet<>();
     expected.add(new TestUsageDescriptor(
-      "MultiFactoryTestRunConfigurationType/Remote", 1,
-      create(false, false, false, true))
+      "MultiFactoryTestRunConfigurationType", 1,
+      create(false, false, false, true).addData("factory", "Remote"))
     );
     doTest(configurations, expected, true);
   }
@@ -366,13 +363,14 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
       addData("edit_before_run", isEditBeforeRun).
       addData("activate_before_run", isActivate).
       addData("shared", isShared).
-      addData("parallel", isParallel);
+      addData("parallel", isParallel).
+      addData("temporary", false);
   }
 
   @NotNull
-  private static Set<TestUsageDescriptor> toTestUsageDescriptor(@NotNull Set<UsageDescriptor> descriptors) {
+  private static Set<TestUsageDescriptor> toTestUsageDescriptor(@NotNull Set<MetricEvent> descriptors) {
     final Set<TestUsageDescriptor> result = new HashSet<>();
-    for (UsageDescriptor descriptor : descriptors) {
+    for (MetricEvent descriptor : descriptors) {
       result.add(new TestUsageDescriptor(descriptor));
     }
     return result;
@@ -380,19 +378,20 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
   private static class TestUsageDescriptor {
     private final String myKey;
-    private final int myValue;
     private final FeatureUsageData myData;
 
     private TestUsageDescriptor(@NotNull String key, int value, @NotNull FeatureUsageData data) {
-      myKey = key;
-      myData = data;
-      myValue = value;
+      this(key, data.addData("count", value));
     }
 
-    private TestUsageDescriptor(@NotNull UsageDescriptor descriptor) {
-      myKey = descriptor.getKey();
+    private TestUsageDescriptor(@NotNull String key, @NotNull FeatureUsageData data) {
+      myKey = key;
+      myData = data;
+    }
+
+    private TestUsageDescriptor(@NotNull MetricEvent descriptor) {
+      myKey = descriptor.getEventId();
       myData = descriptor.getData();
-      myValue = descriptor.getValue();
     }
 
     @Override
@@ -401,19 +400,18 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
       if (o == null || getClass() != o.getClass()) return false;
       TestUsageDescriptor that = (TestUsageDescriptor)o;
 
-      return myValue == that.myValue &&
-             Objects.equals(myKey, that.myKey) &&
+      return Objects.equals(myKey, that.myKey) &&
              Objects.equals(myData, that.myData);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(myKey, myValue, myData);
+      return Objects.hash(myKey, myData);
     }
 
     @Override
     public String toString() {
-      return "'" + myKey + "' " + myData.build() + " : " + myValue;
+      return "'" + myKey + "' " + myData.build();
     }
   }
 
