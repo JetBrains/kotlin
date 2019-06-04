@@ -450,7 +450,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 this,
                 ConeClassTypeImpl(
                     firClass.symbol.toLookupTag(),
-                    typeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(),
+                    typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                     false
                 )
             )
@@ -732,7 +732,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         private fun typeParametersFromSelfType(delegatedSelfTypeRef: FirTypeRef): List<FirTypeParameter> {
             return delegatedSelfTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?.typeArguments
-                ?.map { ((it as ConeTypeParameterType).lookupTag as FirTypeParameterSymbol).fir }
+                ?.map { ((it as ConeTypeParameterType).lookupTag.symbol as FirTypeParameterSymbol).fir }
                 ?: emptyList()
         }
 

@@ -73,7 +73,7 @@ class JavaClassUseSiteScope(
         if (overriddenInJava.typeParameters.size != base.typeParameters.size) return false
 
         val types = base.typeParameters.map {
-            ConeTypeParameterTypeImpl(it.symbol, false)
+            ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
         }
         val substitution = ConeSubstitutorByMap(overriddenInJava.typeParameters.map { it.symbol }.zip(types).toMap())
         if (!overriddenInJava.typeParameters.zip(base.typeParameters).all { (a, b) ->

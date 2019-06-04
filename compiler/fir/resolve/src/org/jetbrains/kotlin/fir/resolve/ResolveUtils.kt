@@ -48,7 +48,7 @@ fun ConeAbbreviatedType.directExpansionType(useSiteSession: FirSession): ConeCla
 fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
     when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
-        is ConeTypeParameterSymbol -> this
+        is ConeTypeParameterLookupTag -> this.symbol
         else -> error("sealed ${this::class}")
     }
 
@@ -67,7 +67,7 @@ fun ConeClassifierLookupTag.constructType(typeArguments: Array<ConeKotlinTypePro
 fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is ConeTypeParameterSymbol -> {
-            ConeTypeParameterTypeImpl(this, isNullable)
+            ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable)
         }
         is ConeClassSymbol -> {
             ConeClassTypeImpl(this.toLookupTag(), typeArguments, isNullable)

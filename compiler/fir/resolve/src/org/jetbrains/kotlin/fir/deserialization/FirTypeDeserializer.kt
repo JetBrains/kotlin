@@ -57,7 +57,7 @@ class FirTypeDeserializer(
 
 
     private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterLookupTag? =
-        typeParameterDescriptors[typeParameterId] ?: parent?.typeParameterSymbol(typeParameterId)
+        typeParameterDescriptors[typeParameterId]?.toLookupTag() ?: parent?.typeParameterSymbol(typeParameterId)
 
 
     private fun ProtoBuf.TypeParameter.Variance.convertVariance(): Variance {
@@ -150,7 +150,7 @@ class FirTypeDeserializer(
                 val name = nameResolver.getString(proto.typeParameterName)
 
                 // TODO: Optimize
-                ownTypeParameters.find { it.name.asString() == name }
+                ownTypeParameters.find { it.name.asString() == name }?.toLookupTag()
             }
             else -> null
         }

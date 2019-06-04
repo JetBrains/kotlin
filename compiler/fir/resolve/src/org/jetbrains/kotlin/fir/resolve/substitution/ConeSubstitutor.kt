@@ -134,6 +134,6 @@ class ConeSubstitutorByMap(val substitution: Map<ConeTypeParameterSymbol, ConeKo
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
-        return makeNullableIfNeed(type.isMarkedNullable, substitution[type.lookupTag])
+        return makeNullableIfNeed(type.isMarkedNullable, substitution[type.lookupTag.symbol])
     }
 }

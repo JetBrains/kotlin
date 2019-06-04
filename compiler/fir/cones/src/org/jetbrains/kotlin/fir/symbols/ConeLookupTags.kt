@@ -8,30 +8,33 @@ package org.jetbrains.kotlin.fir.symbols
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-interface ConeClassifierLookupTag {
-    val name: Name
+abstract class ConeClassifierLookupTag {
+    abstract val name: Name
 }
 
-interface ConeClassifierLookupTagWithFixedSymbol {
-    val symbol: ConeClassifierSymbol
+abstract class ConeClassifierLookupTagWithFixedSymbol : ConeClassifierLookupTag() {
+    abstract val symbol: ConeClassifierSymbol
 }
 
-interface ConeTypeParameterLookupTag : ConeClassifierLookupTag {
-    override val name: Name
+data class ConeTypeParameterLookupTag(val typeParameterSymbol: ConeTypeParameterSymbol) : ConeClassifierLookupTagWithFixedSymbol() {
+    override val name: Name get() = typeParameterSymbol.name
+    override val symbol: ConeClassifierSymbol
+        get() = typeParameterSymbol
 
 }
-interface ConeClassLikeLookupTag : ConeClassifierLookupTag {
-    val classId: ClassId
+
+abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
+    abstract val classId: ClassId
 
     override val name: Name
         get() = classId.shortClassName
 }
 
-interface ConeTypeAliasLookupTag : ConeClassLikeLookupTag
+abstract class ConeTypeAliasLookupTag : ConeClassLikeLookupTag()
 
-interface ConeClassLookupTag : ConeClassLikeLookupTag
+abstract class ConeClassLookupTag : ConeClassLikeLookupTag()
 
-class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag {
+class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag() {
     var boundSymbol: Pair<*, *>? = null
 
     override fun equals(other: Any?): Boolean {

@@ -149,7 +149,7 @@ private fun JavaClassifierType.enhanceInflexibleType(
             val kotlinClassId = mappedId ?: classId
             ConeClassLikeLookupTagImpl(kotlinClassId)
         }
-        is JavaTypeParameter -> javaTypeParameterStack[classifier]
+        is JavaTypeParameter -> javaTypeParameterStack[classifier].toLookupTag()
         else -> return toNotNullConeKotlinType(session, javaTypeParameterStack)
     }
 

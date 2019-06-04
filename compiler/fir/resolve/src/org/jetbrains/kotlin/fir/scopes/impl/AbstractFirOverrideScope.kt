@@ -36,7 +36,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope {
         if (member.typeParameters.size != self.typeParameters.size) return false
 
         val types = self.typeParameters.map {
-            ConeTypeParameterTypeImpl(it.symbol, false)
+            ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
         }
         val substitution = ConeSubstitutorByMap(member.typeParameters.map { it.symbol }.zip(types).toMap())
         if (!member.typeParameters.zip(self.typeParameters).all { (a, b) ->

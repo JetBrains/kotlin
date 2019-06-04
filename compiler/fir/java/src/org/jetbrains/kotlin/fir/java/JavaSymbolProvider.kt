@@ -220,7 +220,8 @@ class JavaSymbolProvider(
                             FirResolvedTypeRefImpl(
                                 this@JavaSymbolProvider.session, null,
                                 firSymbol.constructType(
-                                    classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(), false
+                                    classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                                    false
                                 )
                             )
                         ).apply {

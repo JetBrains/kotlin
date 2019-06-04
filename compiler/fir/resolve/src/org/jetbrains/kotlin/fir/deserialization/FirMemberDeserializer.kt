@@ -247,7 +247,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             null,
             ConeClassTypeImpl(
                 klass.symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol, false) }.toTypedArray(),
+                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         )

@@ -30,4 +30,4 @@ class FirTypeAliasSymbol(
 
 class TypeAliasLookupTagImpl(
     override val classId: ClassId
-) : ConeTypeAliasLookupTag
+) : ConeTypeAliasLookupTag()

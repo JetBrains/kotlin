@@ -16,8 +16,9 @@ interface ConeClassifierSymbol : ConeSymbol, TypeParameterMarker {
     fun toLookupTag(): ConeClassifierLookupTag
 }
 
-interface ConeTypeParameterSymbol : ConeClassifierSymbol, ConeTypeParameterLookupTag {
-    override fun toLookupTag(): ConeTypeParameterLookupTag = this
+interface ConeTypeParameterSymbol : ConeClassifierSymbol {
+    override fun toLookupTag(): ConeTypeParameterLookupTag = ConeTypeParameterLookupTag(this)
+    val name: Name
 }
 
 interface ConeClassLikeSymbol : ConeClassifierSymbol, TypeConstructorMarker {
