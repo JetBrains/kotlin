@@ -125,4 +125,13 @@ public class ModuleNode extends ExternalSystemNode<ModuleData> {
     if (data == null) return null;
     return data.getIdeParentGrouping();
   }
+
+  @Override
+  public void mergeWith(ExternalSystemNode<ModuleData> node) {
+    super.mergeWith(node);
+    ModuleNode moduleNode = node instanceof ModuleNode ? ((ModuleNode)node) : null;
+    if (moduleNode != null) {
+      myAllModules  = moduleNode.myAllModules;
+    }
+  }
 }
