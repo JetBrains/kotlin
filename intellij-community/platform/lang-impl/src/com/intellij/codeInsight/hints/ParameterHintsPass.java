@@ -22,7 +22,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
-import com.intellij.openapi.editor.ex.util.CaretVisualPositionKeeper;
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.IndexNotReadyException;
@@ -133,12 +133,12 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
 
   @Override
   public void doApplyInformationToEditor() {
-    CaretVisualPositionKeeper keeper = new CaretVisualPositionKeeper(myEditor);
-    ParameterHintsPresentationManager manager = ParameterHintsPresentationManager.getInstance();
-    List<Inlay> hints = hintsInRootElementArea(manager);
-    ParameterHintsUpdater updater = new ParameterHintsUpdater(myEditor, hints, myHints, myShowOnlyIfExistedBeforeHints, myForceImmediateUpdate);
-    updater.update();
-    keeper.restoreOriginalLocation(false);
+    EditorScrollingPositionKeeper.perform(myEditor, false, () -> {
+      ParameterHintsPresentationManager manager = ParameterHintsPresentationManager.getInstance();
+      List<Inlay> hints = hintsInRootElementArea(manager);
+      ParameterHintsUpdater updater = new ParameterHintsUpdater(myEditor, hints, myHints, myShowOnlyIfExistedBeforeHints, myForceImmediateUpdate);
+      updater.update();
+    });
 
     if (ParameterHintsUpdater.hintRemovalDelayed(myEditor)) {
       forceHintsUpdateOnNextPass(myEditor);

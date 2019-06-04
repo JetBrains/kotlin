@@ -7,7 +7,7 @@ import com.intellij.formatting.FormattingProgressTask;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.editor.ex.util.CaretVisualPositionKeeper;
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -103,21 +103,19 @@ public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
           before = document.getImmutableCharSequence();
         }
 
-        CaretVisualPositionKeeper caretPositionKeeper = new CaretVisualPositionKeeper(document);
-
-        if (processChangedTextOnly) {
-          ChangedRangesInfo info = FormatChangedTextUtil.getInstance().getChangedRangesInfo(file);
-          if (info != null) {
-            assertFileIsValid(file);
-            CodeStyleManager.getInstance(myProject).reformatTextWithContext(file, info);
+        EditorScrollingPositionKeeper.perform(document, true, () -> {
+          if (processChangedTextOnly) {
+            ChangedRangesInfo info = FormatChangedTextUtil.getInstance().getChangedRangesInfo(file);
+            if (info != null) {
+              assertFileIsValid(file);
+              CodeStyleManager.getInstance(myProject).reformatTextWithContext(file, info);
+            }
           }
-        }
-        else {
-          Collection<TextRange> ranges = getRangesToFormat(file);
-          CodeStyleManager.getInstance(myProject).reformatText(file, ranges);
-        }
-
-        caretPositionKeeper.restoreOriginalLocation(true);
+          else {
+            Collection<TextRange> ranges = getRangesToFormat(file);
+            CodeStyleManager.getInstance(myProject).reformatText(file, ranges);
+          }
+        });
 
         if (before != null) {
           prepareUserNotificationMessage(document, before);
