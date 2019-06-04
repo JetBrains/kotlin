@@ -62,34 +62,38 @@ interface J2kPostProcessing {
 }
 
 object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
-    private val _processings = ArrayList<J2kPostProcessing>()
+    private val myProcessings = ArrayList<J2kPostProcessing>()
 
     override val processings: Collection<J2kPostProcessing>
-        get() = _processings
+        get() = myProcessings
 
     private val processingsToPriorityMap = HashMap<J2kPostProcessing, Int>()
 
     override fun priority(processing: J2kPostProcessing): Int = processingsToPriorityMap[processing]!!
 
     init {
-        _processings.add(RemoveExplicitTypeArgumentsProcessing())
-        _processings.add(RemoveRedundantOverrideVisibilityProcessing())
+        myProcessings.add(RemoveExplicitTypeArgumentsProcessing())
+        myProcessings.add(RemoveRedundantOverrideVisibilityProcessing())
         registerInspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection())
-        _processings.add(FixObjectStringConcatenationProcessing())
-        _processings.add(ConvertToStringTemplateProcessing())
-        _processings.add(UsePropertyAccessSyntaxProcessing())
-        _processings.add(UninitializedVariableReferenceFromInitializerToThisReferenceProcessing())
-        _processings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
-        _processings.add(RemoveRedundantSamAdaptersProcessing())
-        _processings.add(RemoveRedundantCastToNullableProcessing())
+        myProcessings.add(FixObjectStringConcatenationProcessing())
+        myProcessings.add(ConvertToStringTemplateProcessing())
+        myProcessings.add(UsePropertyAccessSyntaxProcessing())
+        myProcessings.add(UninitializedVariableReferenceFromInitializerToThisReferenceProcessing())
+        myProcessings.add(UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing())
+        myProcessings.add(RemoveRedundantSamAdaptersProcessing())
+        myProcessings.add(RemoveRedundantCastToNullableProcessing())
         registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection())
-        _processings.add(UseExpressionBodyProcessing())
+        myProcessings.add(UseExpressionBodyProcessing())
         registerInspectionBasedProcessing(UnnecessaryVariableInspection())
 
         registerInspectionBasedProcessing(FoldInitializerAndIfToElvisInspection())
 
         registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() }
-        registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) { it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(it) as KtReturnExpression).returnedExpression.isTrivialStatementBody() }
+        registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) {
+            it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(
+                it
+            ) as KtReturnExpression).returnedExpression.isTrivialStatementBody()
+        }
 
         registerInspectionBasedProcessing(IfThenToSafeAccessInspection())
         registerIntentionBasedProcessing(IfThenToElvisIntention())
@@ -125,13 +129,11 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
 
         registerDiagnosticBasedProcessingFactory(
             Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
-        ) {
-                element: KtSimpleNameExpression, _: Diagnostic ->
+        ) { element: KtSimpleNameExpression, _: Diagnostic ->
             val property = element.mainReference.resolve() as? KtProperty
             if (property == null) {
                 null
-            }
-            else {
+            } else {
                 {
                     if (!property.isVar) {
                         property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
@@ -149,14 +151,14 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             }
         }
 
-        processingsToPriorityMap.putAll(_processings.mapToIndex())
+        processingsToPriorityMap.putAll(myProcessings.mapToIndex())
     }
 
-    private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+    private inline fun <reified TElement : KtElement, TIntention : SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
         intention: TIntention,
         noinline additionalChecker: (TElement) -> Boolean = { true }
     ) {
-        _processings.add(object : J2kPostProcessing {
+        myProcessings.add(object : J2kPostProcessing {
             // Intention can either need or not need write action
             override val writeActionNeeded = intention.startInWriteAction()
 
@@ -176,12 +178,12 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
 
     private inline fun
             <reified TElement : KtElement,
-                    TInspection: AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
+                    TInspection : AbstractApplicabilityBasedInspection<TElement>> registerInspectionBasedProcessing(
 
         inspection: TInspection,
         acceptInformationLevel: Boolean = false
     ) {
-        _processings.add(object : J2kPostProcessing {
+        myProcessings.add(object : J2kPostProcessing {
             // Inspection can either need or not need write action
             override val writeActionNeeded = inspection.startFixInWriteAction
 
@@ -207,14 +209,21 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         vararg diagnosticFactory: DiagnosticFactory<*>,
         crossinline fix: (TElement, Diagnostic) -> Unit
     ) {
-        registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
+        registerDiagnosticBasedProcessingFactory(*diagnosticFactory) { element: TElement, diagnostic: Diagnostic ->
+            {
+                fix(
+                    element,
+                    diagnostic
+                )
+            }
+        }
     }
 
     private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
         vararg diagnosticFactory: DiagnosticFactory<*>,
         crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) {
-        _processings.add(object : J2kPostProcessing {
+        myProcessings.add(object : J2kPostProcessing {
             // ???
             override val writeActionNeeded = true
 
@@ -230,7 +239,11 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         override val writeActionNeeded = true
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
+            if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(
+                    element,
+                    approximateFlexible = true
+                )
+            ) return null
 
             return {
                 if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) {
@@ -256,10 +269,12 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         private val intention = ConvertToStringTemplateIntention()
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(element)) {
+            if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(
+                    element
+                )
+            ) {
                 return { intention.applyTo(element, null) }
-            }
-            else {
+            } else {
                 return null
             }
         }
@@ -339,8 +354,9 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
                 element.operationToken != KtTokens.PLUS ||
                 diagnostics.forElement(element.operationReference).none {
                     it.factory == Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
-                            || it.factory  == Errors.NONE_APPLICABLE
-                })
+                            || it.factory == Errors.NONE_APPLICABLE
+                }
+            )
                 return null
 
             val bindingContext = element.analyze()
@@ -391,7 +407,8 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
             val variable = anonymousObject.getParentOfType<KtVariableDeclaration>(true) ?: return null
 
             if (variable.nameAsName == element.getReferencedNameAsName() &&
-                variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject
+            ) {
                 return { element.replaced(KtPsiFactory(element).createThisExpression()) }
             }
 
