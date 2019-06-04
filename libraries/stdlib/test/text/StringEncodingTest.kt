@@ -45,6 +45,11 @@ class StringEncodingTest {
         }
     }
 
+    // https://youtrack.jetbrains.com/issue/KT-31614
+    private fun string(vararg codeUnits: Int): String {
+        return buildString { codeUnits.forEach { append(it.toChar()) } }
+    }
+
     @Test
     fun encodeToByteArray() {
         // empty string
@@ -66,9 +71,9 @@ class StringEncodingTest {
         testEncoding(true, bytes(0xED, 0x9F, 0xBF), "\uD7FF")
 
         // surrogate chars
-        testEncoding(false, surrogateCharEncoding, "\uD800")
-        testEncoding(false, surrogateCharEncoding, "\uDB6A")
-        testEncoding(false, surrogateCharEncoding, "\uDFFF")
+        testEncoding(false, surrogateCharEncoding, string(0xD800))
+        testEncoding(false, surrogateCharEncoding, string(0xDB6A))
+        testEncoding(false, surrogateCharEncoding, string(0xDFFF))
 
         // 3-byte chars
         testEncoding(true, bytes(0xEE, 0x80, 0x80), "\uE000")
@@ -81,9 +86,9 @@ class StringEncodingTest {
         testEncoding(true, bytes(0xF4, 0x8F, 0xBF, 0xBF), "\uDBFF\uDFFF")
 
         // reversed surrogate pairs
-        testEncoding(false, surrogateCharEncoding + surrogateCharEncoding, "\uDC00\uD800")
-        testEncoding(false, surrogateCharEncoding + surrogateCharEncoding, "\uDDFC\uDA49")
-        testEncoding(false, surrogateCharEncoding + surrogateCharEncoding, "\uDFFF\uDBFF")
+        testEncoding(false, surrogateCharEncoding + surrogateCharEncoding, string(0xDC00, 0xD800))
+        testEncoding(false, surrogateCharEncoding + surrogateCharEncoding, string(0xDDFC, 0xDA49))
+        testEncoding(false, surrogateCharEncoding + surrogateCharEncoding, string(0xDFFF, 0xDBFF))
 
         testEncoding(
             false,
@@ -91,7 +96,7 @@ class StringEncodingTest {
                 0, /**/ 0x2D, /**/ 0x7F, /**/ 0xC2, 0x80, /**/ 0xC2, 0xBF, /**/ 0xDF, 0xBF, /**/ 0xE0, 0xA0, 0x80, /**/
                 0xE6, 0x96, 0xA4, /**/ 0xED, 0x9F, 0xBF, /**/ 0x7A
             ) /**/ + surrogateCharEncoding /**/ + surrogateCharEncoding /**/ + 0x7A /**/ + surrogateCharEncoding /**/ + 0x7A /**/ + surrogateCharEncoding,
-            "\u0000-\u007F\u0080¿\u07FF\u0800斤\uD7FFz\uDFFF\uD800z\uDB6Az\uDB6A"
+            "\u0000-\u007F\u0080¿\u07FF\u0800斤\uD7FFz" + string(0xDFFF, 0xD800, 0x7A, 0xDB6A, 0x7A, 0xDB6A)
         )
 
         testEncoding(
@@ -130,7 +135,7 @@ class StringEncodingTest {
         testEncoding(true, bytes(0xC2, 0xBF), "¿", 0, 1)
         testEncoding(true, bytes(0xE6, 0x96, 0xA4), "斤", 0, 1)
 
-        testEncoding(false, surrogateCharEncoding, "\uDB6A", 0, 1)
+        testEncoding(false, surrogateCharEncoding, string(0xDB6A), 0, 1)
 
         testEncoding(true, bytes(0xEF, 0x98, 0xBC), "\uF63C", 0, 1)
 
@@ -141,7 +146,7 @@ class StringEncodingTest {
         testEncoding(
             false,
             bytes(0xE6, 0x96, 0xA4, /**/ 0xED, 0x9F, 0xBF, /**/ 0x7A) /**/ + surrogateCharEncoding /**/ + surrogateCharEncoding,
-            "\u0000-\u007F\u0080¿\u07FF\u0800斤\uD7FFz\uDFFF\uD800z\uDB6Az\uDB6A",
+            "\u0000-\u007F\u0080¿\u07FF\u0800斤\uD7FFz" + string(0xDFFF, 0xD800, 0x7A, 0xDB6A, 0x7A, 0xDB6A),
             startIndex = 7,
             endIndex = 12
         )
