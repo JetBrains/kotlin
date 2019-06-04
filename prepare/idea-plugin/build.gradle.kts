@@ -136,6 +136,9 @@ dependencies {
     libraries(project(":kotlin-scripting-intellij"))
     libraries(project(":kotlin-scripting-jvm"))
 
+    libraries(project(":kotlin-util-io"))
+    libraries(project(":kotlin-util-klib"))
+
     gradleToolingModel(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":plugins:kapt3-idea")) { isTransitive = false }
