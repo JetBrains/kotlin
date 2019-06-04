@@ -113,10 +113,6 @@ public interface KtNodeTypes {
     IElementType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
     IElementType BODY                      = new KtNodeType("BODY", KtContainerNodeForControlStructureBody.class);
 
-    KtNodeType KTX_ELEMENT                 = new KtNodeType("KTX_ELEMENT", KtxElement.class);
-    KtNodeType KTX_ATTRIBUTE               = new KtNodeType("KTX_ATTRIBUTE", KtxAttribute.class);
-    KtNodeType KTX_BODY_LAMBDA             = new KtNodeType("KTX_BODY_LAMBDA", KtxLambdaExpression.class);
-
     IElementType BLOCK                     = new BlockExpressionElementType();
 
     IElementType LAMBDA_EXPRESSION         = new LambdaExpressionElementType();

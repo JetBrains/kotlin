@@ -94,13 +94,6 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
 
 <KEYWORD>typealias</KEYWORD> <TYPE_ALIAS>Predicate</TYPE_ALIAS><<TYPE_PARAMETER>T</TYPE_PARAMETER>> = (<TYPE_PARAMETER>T</TYPE_PARAMETER>) -> <CLASS>Boolean</CLASS>
 <KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>baz</FUNCTION_DECLARATION>(<PARAMETER>p</PARAMETER>: <TYPE_ALIAS>Predicate</TYPE_ALIAS><<CLASS>Int</CLASS>>) = <PARAMETER><VARIABLE_AS_FUNCTION_CALL>p</VARIABLE_AS_FUNCTION_CALL></PARAMETER>(<NUMBER>42</NUMBER>)
-
-fun KtxContainingFunction(name: String) {
-    <KTX_ELEMENT_BRACKETS><</KTX_ELEMENT_BRACKETS><KTX_ELEMENT_NAME>Parent</KTX_ELEMENT_NAME> <KTX_ELEMENT_ATTRIBUTE_NAME>key</KTX_ELEMENT_ATTRIBUTE_NAME><KTX_ELEMENT_ATTRIBUTE_EQUALS>=</KTX_ELEMENT_ATTRIBUTE_EQUALS>"value" <KTX_ELEMENT_ATTRIBUTE_NAME>name</KTX_ELEMENT_ATTRIBUTE_NAME><KTX_ELEMENT_ATTRIBUTE_EQUALS>=</KTX_ELEMENT_ATTRIBUTE_EQUALS>name<KTX_ELEMENT_BRACKETS>></KTX_ELEMENT_BRACKETS>
-        <KTX_ELEMENT_BRACKETS><</KTX_ELEMENT_BRACKETS><KTX_ELEMENT_NAME>fully.qualified.Leaf</KTX_ELEMENT_NAME> <KTX_ELEMENT_BRACKETS>/></KTX_ELEMENT_BRACKETS>
-        <KTX_ELEMENT_BRACKETS><</KTX_ELEMENT_BRACKETS><KTX_ELEMENT_NAME>Leaf</KTX_ELEMENT_NAME> <KTX_ELEMENT_BRACKETS>/></KTX_ELEMENT_BRACKETS>
-    <KTX_ELEMENT_BRACKETS></</KTX_ELEMENT_BRACKETS><KTX_ELEMENT_NAME>Parent</KTX_ELEMENT_NAME><KTX_ELEMENT_BRACKETS>></KTX_ELEMENT_BRACKETS>
-}
 """
     }
 
@@ -183,10 +176,6 @@ fun KtxContainingFunction(name: String) {
             KotlinBundle.message("options.kotlin.attribute.descriptor.smart.constant") to KotlinHighlightingColors.SMART_CONSTANT,
             KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast.receiver") to KotlinHighlightingColors.SMART_CAST_RECEIVER,
             KotlinBundle.message("options.kotlin.attribute.descriptor.label") to KotlinHighlightingColors.LABEL,
-            KotlinBundle.message("options.kotlin.attribute.descriptor.ktx.tagname") to KotlinHighlightingColors.KTX_ELEMENT_NAME,
-            KotlinBundle.message("options.kotlin.attribute.descriptor.ktx.brackets") to KotlinHighlightingColors.KTX_ELEMENT_BRACKETS,
-            KotlinBundle.message("options.kotlin.attribute.descriptor.ktx.attributename") to KotlinHighlightingColors.KTX_ELEMENT_ATTRIBUTE_NAME,
-            KotlinBundle.message("options.kotlin.attribute.descriptor.ktx.eq") to KotlinHighlightingColors.KTX_ELEMENT_ATTRIBUTE_EQUALS,
             "Named argument" to KotlinHighlightingColors.NAMED_ARGUMENT
         ) +
                 DslHighlighterExtension.descriptionsToStyles.map { (description, key) -> description to key }.toTypedArray()

@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension;
-import org.jetbrains.kotlin.extensions.KtxTypeResolutionExtension;
 import org.jetbrains.kotlin.extensions.TypeResolutionInterceptorExtension;
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
@@ -661,28 +660,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public KotlinTypeInfo visitBlockExpression(@NotNull KtBlockExpression expression, ExpressionTypingContext context) {
         return components.expressionTypingServices.getBlockReturnedType(expression, context, false);
-    }
-
-    @Override
-    public KotlinTypeInfo visitKtxElement(@NotNull KtxElement element, ExpressionTypingContext context) {
-        Collection<KtxTypeResolutionExtension> extensions = KtxTypeResolutionExtension.Companion.getInstances(element.getProject());
-        for (KtxTypeResolutionExtension extension : extensions) {
-            extension.visitKtxElement(element, context, facade, components.callResolver);
-        }
-        return TypeInfoFactoryKt.createTypeInfo(components.builtIns.getUnitType(), context);
-    }
-
-    @Override
-    public KotlinTypeInfo visitKtxAttribute(@NotNull KtxAttribute attribute, ExpressionTypingContext context) {
-        KtExpression valExpr = attribute.getValue();
-
-        if (valExpr != null) {
-            KotlinTypeInfo resultTypeInfo = facade.getTypeInfo(valExpr, context);
-            context.trace.record(EXPRESSION_TYPE_INFO, valExpr, resultTypeInfo);
-            context.trace.record(PROCESSED, valExpr);
-        }
-
-        return TypeInfoFactoryKt.createTypeInfo(components.builtIns.getUnitType(), context);
     }
 
     @Override

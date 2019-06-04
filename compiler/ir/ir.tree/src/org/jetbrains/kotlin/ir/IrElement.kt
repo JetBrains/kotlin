@@ -38,7 +38,5 @@ interface IrStatement : IrElement {
         super.transform(transformer, data) as IrStatement
 }
 
-interface IrKtxStatement : IrStatement { }
-
 inline fun <reified T : IrElement> IrElement.assertCast(): T =
     if (this is T) this else throw AssertionError("Expected ${T::class.simpleName}: $this")

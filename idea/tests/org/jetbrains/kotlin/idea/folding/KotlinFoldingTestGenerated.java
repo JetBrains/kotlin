@@ -51,11 +51,6 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             runTest("idea/testData/folding/noCollapse/kdocComments.kt");
         }
 
-        @TestMetadata("Ktx.kt")
-        public void testKtx() throws Exception {
-            runTest("idea/testData/folding/noCollapse/Ktx.kt");
-        }
-
         @TestMetadata("multilineComments.kt")
         public void testMultilineComments() throws Exception {
             runTest("idea/testData/folding/noCollapse/multilineComments.kt");

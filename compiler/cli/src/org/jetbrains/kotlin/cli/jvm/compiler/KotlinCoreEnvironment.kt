@@ -104,7 +104,6 @@ import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.parsing.KtxParsingExtension
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.extensions.SyntheticIrExtension
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -606,9 +605,6 @@ class KotlinCoreEnvironment private constructor(
         fun registerPluginExtensionPoints(project: MockProject) {
             ExpressionCodegenExtension.registerExtensionPoint(project)
             SyntheticResolveExtension.registerExtensionPoint(project)
-            KtxTypeResolutionExtension.registerExtensionPoint(project)
-            KtxParsingExtension.registerExtensionPoint(project)
-            KtxControlFlowExtension.registerExtensionPoint(project)
             TypeResolutionInterceptorExtension.registerExtensionPoint(project)
             ClassBuilderInterceptorExtension.registerExtensionPoint(project)
             AnalysisHandlerExtension.registerExtensionPoint(project)

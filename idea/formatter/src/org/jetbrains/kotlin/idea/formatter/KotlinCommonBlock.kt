@@ -37,7 +37,7 @@ private const val KDOC_COMMENT_INDENT = 1
 private val BINARY_EXPRESSIONS = TokenSet.create(KtNodeTypes.BINARY_EXPRESSION, KtNodeTypes.BINARY_WITH_TYPE, KtNodeTypes.IS_EXPRESSION)
 private val KDOC_CONTENT = TokenSet.create(KDocTokens.KDOC, KDocElementTypes.KDOC_SECTION, KDocElementTypes.KDOC_TAG)
 
-private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL, KtNodeTypes.KTX_ELEMENT)
+private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
 
 private val ALIGN_FOR_BINARY_OPERATIONS = TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR)
 private val ANNOTATIONS = TokenSet.create(KtNodeTypes.ANNOTATION_ENTRY, KtNodeTypes.ANNOTATION)
@@ -410,18 +410,6 @@ abstract class KotlinCommonBlock(
             parentType == KtNodeTypes.TYPE_CONSTRAINT_LIST ->
                 createAlignmentStrategy(true, getAlignment())
 
-            parentType === KtNodeTypes.KTX_ELEMENT -> {
-                val ktxAlignment = Alignment.createAlignment()
-                return object : CommonAlignmentStrategy() {
-                    override fun getAlignment(node: ASTNode): Alignment? {
-                        return when (node.elementType) {
-                            KtNodeTypes.KTX_ATTRIBUTE -> ktxAlignment
-                            else -> null
-                        }
-                    }
-                }
-            }
-
             else ->
                 getNullAlignmentStrategy()
         }
@@ -522,10 +510,6 @@ abstract class KotlinCommonBlock(
         val nodePsi = node.psi
 
         when {
-            isKtxNowrapStrategy(node) -> {
-                return  { _ -> Wrap.createWrap(CommonCodeStyleSettings.DO_NOT_WRAP, false) }
-            }
-
             elementType === KtNodeTypes.VALUE_ARGUMENT_LIST -> {
                 val wrapSetting = commonSettings.CALL_PARAMETERS_WRAP
                 if ((wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
@@ -867,11 +851,6 @@ private val INDENT_RULES = arrayOf(
         .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
         .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS, indentFirst = true),
 
-    strategy("KTX Attribute list")
-        .within(KtNodeTypes.KTX_ELEMENT)
-        .forType(KTX_ATTRIBUTE)
-        .set(Indent.getNormalIndent()),
-
     strategy("Where clause")
         .within(KtNodeTypes.CLASS, KtNodeTypes.FUN, KtNodeTypes.PROPERTY)
         .forType(KtTokens.WHERE_KEYWORD)
@@ -962,16 +941,6 @@ private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode): ASTNode? {
 private fun getWrappingStrategyForItemList(wrapType: Int, itemType: IElementType, wrapFirstElement: Boolean = false): WrappingStrategy {
     val itemWrap = Wrap.createWrap(wrapType, wrapFirstElement)
     return { childElement -> if (childElement.elementType === itemType) itemWrap else null }
-}
-
-private fun isKtxNowrapStrategy(node: ASTNode): Boolean {
-    var walker: ASTNode? = node;
-    while(walker != null) {
-        if(walker.elementType == KtNodeTypes.KTX_BODY_LAMBDA) return false;
-        if(walker.elementType == KtNodeTypes.KTX_ELEMENT) return true;
-        walker = walker.treeParent
-    }
-    return false;
 }
 
 private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, wrapFirstElement: Boolean = false): WrappingStrategy {

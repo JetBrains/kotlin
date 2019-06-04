@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.editor.fixers.endLine
 import org.jetbrains.kotlin.idea.editor.fixers.startLine
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
-import org.jetbrains.kotlin.KtNodeTypes.REFERENCE_EXPRESSION
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtImportList
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -114,7 +112,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
                 (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
                 type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
                 type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR ||
-                type == KtNodeTypes.KTX_ELEMENT || node.shouldFoldCollection(document)
+                node.shouldFoldCollection(document)
     }
 
     private fun ASTNode.shouldFoldCollection(document: Document): Boolean {
@@ -144,8 +142,6 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             if (lbrace != null && rbrace != null) {
                 return TextRange(lbrace.startOffset, rbrace.endOffset)
             }
-        } else if (node.elementType == KtNodeTypes.KTX_ELEMENT) {
-            return getKtxNodeRangeAndPlaceholder(node, quick = true).first
         }
 
         if (node.elementType == KtNodeTypes.CALL_EXPRESSION) {
@@ -165,79 +161,8 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         node.elementType == KDocTokens.KDOC -> "/**${getFirstLineOfComment(node)}...*/"
         node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getTrimmedFirstLineOfString(node).addSpaceIfNeeded()}...\"\"\""
         node.elementType == KtNodeTypes.PRIMARY_CONSTRUCTOR || node.elementType == KtNodeTypes.CALL_EXPRESSION -> "(...)"
-        node.elementType == KtNodeTypes.KTX_ELEMENT -> getKtxNodeRangeAndPlaceholder(node, quick = false).second
         node.psi is KtImportList -> "..."
         else -> "{...}"
-    }
-
-    private fun getKtxNodeRangeAndPlaceholder(node: ASTNode, quick: Boolean): Pair<TextRange, String> {
-        val tagName = node.findChildByType(KtNodeTypes.REFERENCE_EXPRESSION)
-
-        if (tagName != null) {
-            val tagNameEndOffset = tagName.textRange.endOffset
-            val body = node.findChildByType(KtNodeTypes.KTX_BODY_LAMBDA)
-
-            if (body != null) {
-                val bodyOpen = node.findChildByType(KtTokens.GT)
-                val closeOpen = node.children().lastOrNull { it.elementType == KtTokens.LT }
-                if (bodyOpen != null && closeOpen != null) {
-                    val closeOpenStartOffset = closeOpen.startOffset
-                    val bodyOpenStartOffset = bodyOpen.startOffset
-                    if (closeOpenStartOffset > bodyOpenStartOffset && bodyOpenStartOffset >= tagNameEndOffset) {
-                        val attrTextRange = TextRange(tagNameEndOffset, bodyOpenStartOffset)
-                        val attrTextRelativeRange = attrTextRange.shiftRight(-node.textRange.startOffset)
-                        val attributeText = node.chars.subSequence(attrTextRelativeRange.startOffset, attrTextRelativeRange.endOffset)
-                        if (StringUtil.countNewLines(attributeText) > 0) {
-                            // the attribute string is long as well, so we go ahead and collapse it
-                            // in addition to the children.
-                            // <TagName{placeholder}</TagName>
-                            return Pair(
-                                TextRange(tagNameEndOffset, closeOpen.startOffset),
-                                if (quick) " ... >..." else " ${getSlimKtxAttributesText(node, 80)}>..."
-                            )
-                        }
-                        // The attributes fit on a single line, so we will keep them un-folded, and just
-                        // fold the children
-                        // <TagName>{placeholder}</TagName>
-                        return Pair(
-                            TextRange(bodyOpen.startOffset + 1, closeOpen.startOffset),
-                            "..."
-                        )
-                    }
-                }
-            }
-            val tagClose = node.findChildByType(KtTokens.DIV)
-            if (tagClose != null) {
-                // The element has no children/body, but the attributes take up multiple lines. Collapse them.
-                // <TagName{placeholder}/>
-                val tagCloseStartOffset = tagClose.startOffset
-                if (tagNameEndOffset < tagCloseStartOffset) {
-                    return Pair(
-                        TextRange(tagNameEndOffset, tagCloseStartOffset),
-                        if (quick) " ... " else " ${getSlimKtxAttributesText(node, 80)} "
-                    )
-                }
-            }
-        }
-        // if we've made it here, its probably a malformed node or something...
-        return Pair(
-            node.textRange,
-            "</>"
-        )
-    }
-
-    private fun getSlimKtxAttributesText(ktxElemNode: ASTNode, limit: Int): String {
-        return ktxElemNode.children().filter { it.elementType == KtNodeTypes.KTX_ATTRIBUTE }.map { attr ->
-            val key = attr.findChildByType(REFERENCE_EXPRESSION)
-            val value = attr.findChildByType(KtTokens.EQ)?.treeNext
-
-            if (key == null) ""
-            else when {
-                value == null -> key.text
-                value.textLength < limit / 2 -> "${key.text}=${value.text}"
-                else -> "${key.text}=..."
-            }
-        }.joinToString(separator = " ", limit = limit, truncated = "...")
     }
 
     private fun getTrimmedFirstLineOfString(node: ASTNode): String {

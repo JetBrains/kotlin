@@ -2181,9 +2181,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *  (optionalProjection type){","}
      */
     private PsiBuilder.Marker parseTypeArgumentList() {
-        if (!at(LT) || (myBuilder.newlineBeforeCurrentToken() &&
-            myExpressionParsing != null && myExpressionParsing.myKtxExtension != null &&
-                        myExpressionParsing.myKtxExtension.atKtxStart(myExpressionParsing))) return null;
+        if (!at(LT)) return null;
 
         PsiBuilder.Marker list = mark();
 

@@ -140,15 +140,6 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 super.visitBinaryExpression(expression)
             }
 
-            override fun visitKtxElement(element: KtxElement) {
-                throw UnsupportedOperationException("Not yet implemented")
-            }
-
-            override fun visitKtxAttribute(attribute: KtxAttribute) {
-                throw UnsupportedOperationException("Not yet implemented")
-            }
-
-
             override fun visitCallExpression(expression: KtCallExpression) {
                 val calleeExpression = expression.calleeExpression
                 if (calleeExpression != null) {

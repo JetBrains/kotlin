@@ -38,11 +38,6 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             return
         }
 
-        if (parent is KtxElement) {
-            // KTX Elements are highlighted separately
-            return
-        }
-
         if (!NameHighlighter.namesHighlightingEnabled) return
 
         val referenceTarget = computeReferencedDescriptor(expression) ?: return

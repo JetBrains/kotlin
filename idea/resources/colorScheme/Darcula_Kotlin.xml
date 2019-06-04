@@ -92,26 +92,4 @@
       <option name="FOREGROUND" value="20999d" />
     </value>
   </option>
-  <option name="KTX_ELEMENT_NAME">
-    <value>
-      <option name="FOREGROUND" value="5cb6db" />
-      <option name="FONT_TYPE" value="1" />
-    </value>
-  </option>
-  <option name="KTX_ELEMENT_ATTRIBUTE_NAME">
-    <value>
-      <option name="FOREGROUND" value="36a48d" />
-      <option name="FONT_TYPE" value="2" />
-    </value>
-  </option>
-  <option name="KTX_ELEMENT_BRACKETS">
-    <value>
-      <option name="FOREGROUND" value="75797b" />
-    </value>
-  </option>
-  <option name="KTX_ELEMENT_ATTRIBUTE_EQUALS">
-    <value>
-      <option name="FOREGROUND" value="75797b" />
-    </value>
-  </option>
 </list>

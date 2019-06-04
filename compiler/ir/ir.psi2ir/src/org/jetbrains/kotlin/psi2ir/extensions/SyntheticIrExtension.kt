@@ -13,7 +13,6 @@ interface SyntheticIrExtension {
             "org.jetbrains.kotlin.syntheticIrExtension", SyntheticIrExtension::class.java)
 
     fun interceptModuleFragment(context: GeneratorContext, ktFiles:Collection<KtFile>, irModuleFragment: IrModuleFragment) {}
-    fun visitKtxElement(statementGenerator: StatementGenerator, element: KtxElement): IrStatement? = null
     fun visitCallExpression(statementGenerator: StatementGenerator, element: KtCallExpression): IrExpression? = null
     fun visitSimpleNameExpression(statementGenerator: StatementGenerator, element: KtSimpleNameExpression): IrExpression? = null
 }

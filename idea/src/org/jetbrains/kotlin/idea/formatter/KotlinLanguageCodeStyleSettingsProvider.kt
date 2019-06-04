@@ -251,12 +251,6 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "'when' parentheses",
                     CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES
                 )
-
-                showCustomOption(
-                    KotlinCodeStyleSettings::SPACE_AROUND_KTX_ATTR_EQ,
-                    "Around '=' in KTX attributes",
-                    CodeStyleSettingsCustomizable.SPACES_OTHER
-                )
             }
             SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
                 consumer.showStandardOptions(

@@ -456,16 +456,6 @@ class PartialBodyResolveFilter(
                     super.visitBinaryExpression(expression)
                 }
             }
-
-            override fun visitKtxElement(element: KtxElement) {
-                element.attributes.forEach { it.accept(this) }
-                element.bodyLambdaExpression?.let { it.accept(this) }
-            }
-
-            override fun visitKtxAttribute(attribute: KtxAttribute) {
-                attribute.value?.accept(this)
-            }
-
         })
         return result
     }

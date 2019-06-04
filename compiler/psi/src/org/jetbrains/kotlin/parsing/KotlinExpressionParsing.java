@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.KotlinParsing.NameParsingMode;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -136,7 +138,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                     TokenSet.andSet(STATEMENT_FIRST, TokenSet.andNot(KEYWORDS, TokenSet.create(IN_KEYWORD))),
                     TokenSet.create(EOL_OR_SEMICOLON));
 
-    public static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
+    /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
             EOL_OR_SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
 
@@ -266,12 +268,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
 
     private final KotlinParsing myKotlinParsing;
-    final KtxParsingExtension myKtxExtension;
 
     public KotlinExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, KotlinParsing kotlinParsing) {
         super(builder);
         myKotlinParsing = kotlinParsing;
-        myKtxExtension = KtxParsingExtension.Companion.getInstance(builder.getProject());
     }
 
     /*
@@ -339,7 +339,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * operation? prefixExpression
      */
-    public void parsePrefixExpression() {
+    private void parsePrefixExpression() {
         if (at(AT)) {
             if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ false, false)) {
                 PsiBuilder.Marker expression = mark();
@@ -686,8 +686,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else if (!parseLiteralConstant()) {
             ok = false;
             // TODO: better recovery if FIRST(element) did not match
-            TokenSet recoverySet = myKtxExtension.parseKtxExpressionFollow();
-            errorWithRecovery("Expecting an element", recoverySet != null ? recoverySet : EXPRESSION_FOLLOW);
+            errorWithRecovery("Expecting an element", EXPRESSION_FOLLOW);
         }
 
         return ok;
@@ -1199,7 +1198,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : variableDeclarationEntry
      *   : multipleVariableDeclarations (":" type)?
      */
-    public void parseFunctionLiteralParameterList() {
+    private void parseFunctionLiteralParameterList() {
         PsiBuilder.Marker parameterList = mark();
 
         while (!eof()) {
@@ -1251,27 +1250,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
          *   : SEMI* statement{SEMI+} SEMI*
          */
     public void parseStatements(boolean isScriptTopLevel) {
-        parseStatements(isScriptTopLevel, null);
-    }
-
-    /*
-     * expressions
-     *   : SEMI* statement{SEMI+} SEMI*
-     *
-     * Available for use by a KtxParsingExtension
-     * If closeTagToken is null, parse a block of statements as a standard block terminated by an RBRACE
-     * If closeTagToken is NOT null, parse a block of statements terminated by a close tag of type closeTagToken
-     */
-    public void parseStatements(boolean isScriptTopLevel, String closeTagToken) {
-        KtxStatementsParser ktxParser = null;
         while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
-            if (at(LT) && myKtxExtension.atKtxStart(this)) { // This block is completed if we encounter a close KTX tag
-                if(ktxParser == null) ktxParser = myKtxExtension.createStatementsParser(this, closeTagToken);
-                ktxParser.handleTag();
-                if(ktxParser.shouldBreak()) break;
-                if (ktxParser.shouldContinue()) continue;
-            }
             if (!atSet(STATEMENT_FIRST)) {
                 errorAndAdvance("Expecting an element");
             }
@@ -1284,9 +1264,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             else if (at(RBRACE)) {
                 break;
             }
-            else if (at(LT) && myKtxExtension.atKtxStart(this)) { // KTX tag
-                continue;
-            }
             else if (!myBuilder.newlineBeforeCurrentToken()) {
                 String severalStatementsError = "Unexpected tokens (use ';' to separate expressions on the same line)";
 
@@ -1298,8 +1275,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 }
             }
         }
-
-        if(ktxParser != null) ktxParser.finish();
     }
 
     /*
@@ -1494,10 +1469,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     private void parseControlStructureBody() {
-        if(at(LT) && myKtxExtension.atKtxStart(this)) {
-            myKtxExtension.parseKtxTag(this);
-            return;
-        }
         if (!parseAnnotatedLambda(/* preferBlock = */true)) {
             parseBlockLevelExpression();
         }
@@ -1898,7 +1869,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         return myKotlinParsing.create(builder);
     }
 
-    public boolean interruptedWithNewLine() {
+    private boolean interruptedWithNewLine() {
         return !ALLOW_NEWLINE_OPERATIONS.contains(tt()) && myBuilder.newlineBeforeCurrentToken();
     }
 }
