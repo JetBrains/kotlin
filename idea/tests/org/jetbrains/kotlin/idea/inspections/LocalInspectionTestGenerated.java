@@ -673,6 +673,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noNullInCondition2.kt");
             }
 
+            @TestMetadata("noStdResultInCallChain.kt")
+            public void testNoStdResultInCallChain() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noStdResultInCallChain.kt");
+            }
+
             @TestMetadata("noThenBlock.kt")
             public void testNoThenBlock() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/noThenBlock.kt");
@@ -686,6 +691,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("notApplicableForLocalVar.kt")
             public void testNotApplicableForLocalVar() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/notApplicableForLocalVar.kt");
+            }
+
+            @TestMetadata("notApplicableResultInCallChain.kt")
+            public void testNotApplicableResultInCallChain() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/notApplicableResultInCallChain.kt");
             }
 
             @TestMetadata("nullCheckSimple.kt")
@@ -726,6 +736,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("replaceWithLetInMemberWithIs.kt")
             public void testReplaceWithLetInMemberWithIs() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/replaceWithLetInMemberWithIs.kt");
+            }
+
+            @TestMetadata("resultCall.kt")
+            public void testResultCall() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/resultCall.kt");
             }
 
             @TestMetadata("rhsEqualsNull.kt")
