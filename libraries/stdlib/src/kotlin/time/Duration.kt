@@ -24,7 +24,7 @@ private val storageUnit = DurationUnit.NANOSECONDS
  * or the properties [inHours], [inMinutes], [inSeconds], [inNanoseconds] and so on.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-public inline class Duration internal constructor(internal val _value: Double) : Comparable<Duration> {
+public inline class Duration internal constructor(internal val value: Double) : Comparable<Duration> {
 // TODO: backend fails on init block, wait for KT-28055
 
 //    init {
@@ -38,28 +38,28 @@ public inline class Duration internal constructor(internal val _value: Double) :
 
     // arithmetic operators
 
-    operator fun unaryMinus(): Duration = Duration(-_value)
-    operator fun plus(other: Duration): Duration = Duration(_value + other._value)
-    operator fun minus(other: Duration): Duration = Duration(_value - other._value)
+    operator fun unaryMinus(): Duration = Duration(-value)
+    operator fun plus(other: Duration): Duration = Duration(value + other.value)
+    operator fun minus(other: Duration): Duration = Duration(value - other.value)
 
     // should we declare symmetric extension operators?
 
-    operator fun times(scale: Int): Duration = Duration(_value * scale)
-    operator fun times(scale: Double): Duration = Duration(_value * scale)
+    operator fun times(scale: Int): Duration = Duration(value * scale)
+    operator fun times(scale: Double): Duration = Duration(value * scale)
 
-    operator fun div(scale: Int): Duration = Duration(_value / scale)
-    operator fun div(scale: Double): Duration = Duration(_value / scale)
+    operator fun div(scale: Int): Duration = Duration(value / scale)
+    operator fun div(scale: Double): Duration = Duration(value / scale)
 
-    operator fun div(other: Duration): Double = this._value / other._value
+    operator fun div(other: Duration): Double = this.value / other.value
 
-    fun isNegative(): Boolean = _value < 0
-    fun isInfinite(): Boolean = _value.isInfinite()
-    fun isFinite(): Boolean = _value.isFinite()
+    fun isNegative(): Boolean = value < 0
+    fun isInfinite(): Boolean = value.isInfinite()
+    fun isFinite(): Boolean = value.isFinite()
 
     val absoluteValue: Duration get() = if (isNegative()) -this else this
 
 
-    override fun compareTo(other: Duration): Int = this._value.compareTo(other._value)
+    override fun compareTo(other: Duration): Int = this.value.compareTo(other.value)
 
 
     // splitting to components
@@ -88,7 +88,7 @@ public inline class Duration internal constructor(internal val _value: Double) :
 
     // conversion to units
 
-    fun toDouble(unit: DurationUnit): Double = convertDurationUnit(_value, storageUnit, unit)
+    fun toDouble(unit: DurationUnit): Double = convertDurationUnit(value, storageUnit, unit)
     fun toLong(unit: DurationUnit): Long = toDouble(unit).toLong()
     fun toInt(unit: DurationUnit): Int = toDouble(unit).toInt()
 
@@ -109,7 +109,7 @@ public inline class Duration internal constructor(internal val _value: Double) :
 
     override fun toString(): String = buildString {
         if (isInfinite()) {
-            append(_value)
+            append(value)
         } else {
             val absNs = absoluteValue.inNanoseconds
             var scientific = false
@@ -145,7 +145,7 @@ public inline class Duration internal constructor(internal val _value: Double) :
 
     fun toString(unit: DurationUnit, decimals: Int = 0): String {
         require(decimals >= 0) { "decimals must be not negative, but was $decimals" }
-        if (isInfinite()) return _value.toString()
+        if (isInfinite()) return value.toString()
         return formatToExactDecimals(toDouble(unit), decimals) + unit.shortName()
     }
 

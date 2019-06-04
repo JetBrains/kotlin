@@ -25,9 +25,9 @@ class DurationTest {
             val value = Random.nextInt(1_000_000)
             val unit = units.random()
             val expected = convertDurationUnit(value.toDouble(), unit, expectStorageUnit)
-            assertEquals(expected, value.toDuration(unit)._value)
-            assertEquals(expected, value.toLong().toDuration(unit)._value)
-            assertEquals(expected, value.toDouble().toDuration(unit)._value)
+            assertEquals(expected, value.toDuration(unit).value)
+            assertEquals(expected, value.toLong().toDuration(unit).value)
+            assertEquals(expected, value.toDouble().toDuration(unit).value)
         }
 
         todo {
