@@ -38,6 +38,5 @@
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="library" scope="TEST" name="mockito" level="project" />
-    <orderEntry type="module" module-name="intellij.java.plugin" scope="TEST" />
   </component>
 </module>
