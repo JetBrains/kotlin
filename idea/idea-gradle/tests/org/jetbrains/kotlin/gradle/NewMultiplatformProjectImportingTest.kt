@@ -383,19 +383,17 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
         }
 
-        fun findTasksToRun(file: VirtualFile): List<String> {
-            return GradleTestRunConfigurationProducer.findAllTestsTaskToRun(file, myProject)
-                .flatMap { it.tasks }
-                .sorted()
-        }
-
         val commonTestFile = files.find { it.path.contains("commonTest") }!!
         val commonTasks = findTasksToRun(commonTestFile)
-        assertEquals(listOf(":cleanJvmTest", ":jvmTest"), commonTasks)
+        if (commonTasks != null) {
+            assertEquals(listOf(":cleanJvmTest", ":jvmTest"), commonTasks)
+        }
 
         val jvmTestFile = files.find { it.path.contains("jvmTest") }!!
         val jvmTasks = findTasksToRun(jvmTestFile)
-        assertEquals(listOf(":cleanJvmTest", ":jvmTest"), jvmTasks)
+        if (jvmTasks != null) {
+            assertEquals(listOf(":cleanJvmTest", ":jvmTest"), jvmTasks)
+        }
     }
 
     @Test

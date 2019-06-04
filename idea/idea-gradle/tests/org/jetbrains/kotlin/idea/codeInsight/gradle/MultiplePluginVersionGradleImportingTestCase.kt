@@ -9,11 +9,14 @@
  */
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.junit.runners.Parameterized
 import java.util.*
 
 abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTestCase() {
+    val project: Project
+        get() = myProject
 
     @JvmField
     @Parameterized.Parameter(1)
