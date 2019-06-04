@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
@@ -101,7 +104,14 @@ internal class NpmProjectVisitor(val resolver: NpmResolver, val project: Project
         val npmDependencies = mutableSetOf<NpmDependency>()
         val gradleDeps = NpmGradleDependencies()
 
-        val aggregateConfiguration = project.configurations.create("$name-js")
+        val aggregateConfiguration = project.configurations.create("$name-npm") {
+            it.usesPlatformOf(compilation.target)
+            it.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(compilation.target))
+            it.isVisible = false
+            it.isCanBeConsumed = false
+            it.isCanBeResolved = true
+            it.description = "NPM configuration for $compilation."
+        }
 
         compilation.allKotlinSourceSets.forEach { sourceSet ->
             sourceSet.relatedConfigurationNames.forEach { configurationName ->
