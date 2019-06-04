@@ -426,11 +426,11 @@ enum class ExtractionTarget(val targetName: String) {
     },
 
     LATEINIT_PROPERTY("lateinit property") {
-        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true/*: Boolean {
 
             // We are pointing at the variable name of KtProperty declaration.
             return descriptor.extractionData.physicalElements.singleOrNull() is KtProperty
-        }
+        }*/
     },
 
     LAZY_PROPERTY("lazy property") {
