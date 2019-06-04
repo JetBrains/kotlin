@@ -48,4 +48,11 @@ class ServiceViewSingleUi implements ServiceViewUi {
 
     myMainPanel.setContent(component);
   }
+
+  @Nullable
+  @Override
+  public JComponent getDetailsComponent() {
+    JComponent content = myMainPanel.getContent();
+    return content == myMessagePanel ? null : content;
+  }
 }

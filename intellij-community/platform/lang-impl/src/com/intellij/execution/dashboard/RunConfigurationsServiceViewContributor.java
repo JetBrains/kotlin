@@ -2,6 +2,8 @@
 package com.intellij.execution.dashboard;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.StopAction;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -290,6 +292,14 @@ public class RunConfigurationsServiceViewContributor
       Map<Object, Object> links = node.getUserData(NODE_LINKS);
       return links == null ? null : links.get(fragment);
     }
+
+    @Nullable
+    @Override
+    public Runnable getRemover() {
+      RunnerAndConfigurationSettings settings = node.getConfigurationSettings();
+      RunManager runManager = RunManager.getInstance(settings.getConfiguration().getProject());
+      return runManager.hasSettings(settings) ? () -> runManager.removeConfiguration(settings) : null;
+    }
   }
 
   static class RunConfigurationContributor implements ServiceViewProvidingContributor<AbstractTreeNode, RunConfigurationNode> {
@@ -322,11 +332,6 @@ public class RunConfigurationsServiceViewContributor
     public ServiceViewDescriptor getServiceDescriptor(@NotNull AbstractTreeNode service) {
       return new ServiceViewDescriptor() {
         @Override
-        public JComponent getContentComponent() {
-          return null;
-        }
-
-        @Override
         public ActionGroup getToolbarActions() {
           return RunConfigurationsServiceViewContributor.getToolbarActions(null);
         }
@@ -342,9 +347,10 @@ public class RunConfigurationsServiceViewContributor
           return service.getPresentation();
         }
 
+        @Nullable
         @Override
-        public DataProvider getDataProvider() {
-          return null;
+        public Runnable getRemover() {
+          return service instanceof RunDashboardNode ? ((RunDashboardNode)service).getRemover() : null;
         }
       };
     }

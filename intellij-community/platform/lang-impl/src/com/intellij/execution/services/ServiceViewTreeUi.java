@@ -84,4 +84,14 @@ class ServiceViewTreeUi implements ServiceViewUi {
     myDetailsPanel.revalidate();
     myDetailsPanel.repaint();
   }
+
+  @Nullable
+  @Override
+  public JComponent getDetailsComponent() {
+    int count = myDetailsPanel.getComponentCount();
+    if (count == 0) return null;
+
+    Component component = myDetailsPanel.getComponent(0);
+    return component == myMessagePanel ? null : (JComponent)component;
+  }
 }
