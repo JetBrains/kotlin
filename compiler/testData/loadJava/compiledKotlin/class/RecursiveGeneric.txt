@@ -5,5 +5,5 @@ public interface Rec</*0*/ R, /*1*/ out T : test.Rec<R, T>> {
 }
 
 public interface Super {
-    public open fun foo(/*0*/ p: test.Rec<*, *>): test.Rec<out kotlin.Any?, test.Rec<out kotlin.Any?, test.Rec<out kotlin.Any?, test.Rec<out kotlin.Any?, test.Rec<out kotlin.Any?, kotlin.Any?>>>>>
+    public open fun foo(/*0*/ p: test.Rec<*, *>): test.Rec<*, *>
 }

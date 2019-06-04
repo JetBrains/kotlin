@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
@@ -41,7 +40,6 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
             BindingTraceContext(),
             LanguageVersionSettingsImpl.DEFAULT
         )
-        useImpl<SubstitutingScopeProviderImpl>()
         useImpl<AnnotationResolverImpl>()
     })
 }

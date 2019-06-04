@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.SubstitutingScopeProvider
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 
 class LocalClassifierAnalyzer(
@@ -66,8 +65,7 @@ class LocalClassifierAnalyzer(
     private val supertypeLoopChecker: SupertypeLoopChecker,
     private val languageVersionSettings: LanguageVersionSettings,
     private val delegationFilter: DelegationFilter,
-    private val wrappedTypeFactory: WrappedTypeFactory,
-    private val substitutingScopeProvider: SubstitutingScopeProvider
+    private val wrappedTypeFactory: WrappedTypeFactory
 ) {
     fun processClassOrObject(
         scope: LexicalWritableScope?,
@@ -100,8 +98,7 @@ class LocalClassifierAnalyzer(
                 languageVersionSettings,
                 SyntheticResolveExtension.getInstance(project),
                 delegationFilter,
-                wrappedTypeFactory,
-                substitutingScopeProvider
+                wrappedTypeFactory
             ),
             analyzerServices
         )
@@ -129,8 +126,7 @@ class LocalClassDescriptorHolder(
     val languageVersionSettings: LanguageVersionSettings,
     val syntheticResolveExtension: SyntheticResolveExtension,
     val delegationFilter: DelegationFilter,
-    val wrappedTypeFactory: WrappedTypeFactory,
-    val substitutingScopeProvider: SubstitutingScopeProvider
+    val wrappedTypeFactory: WrappedTypeFactory
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -170,7 +166,6 @@ class LocalClassDescriptorHolder(
                     override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
                     override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
                     override val wrappedTypeFactory: WrappedTypeFactory = this@LocalClassDescriptorHolder.wrappedTypeFactory
-                    override val substitutingScopeProvider: SubstitutingScopeProvider = this@LocalClassDescriptorHolder.substitutingScopeProvider
                 },
                 containingDeclaration,
                 classOrObject.nameAsSafeName,

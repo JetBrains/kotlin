@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbac
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
@@ -118,7 +117,6 @@ fun createContainerForBodyResolve(
     useImpl<AnnotationResolverImpl>()
 
     useImpl<BodyResolver>()
-    useImpl<SubstitutingScopeProviderImpl>()
 }
 
 fun createContainerForLazyBodyResolve(
@@ -138,7 +136,6 @@ fun createContainerForLazyBodyResolve(
     useImpl<AnnotationResolverImpl>()
     useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
-    useImpl<SubstitutingScopeProviderImpl>()
 }
 
 fun createContainerForLazyLocalClassifierAnalyzer(
@@ -169,7 +166,6 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()
     useImpl<LocalLazyDeclarationResolver>()
 
-    useImpl<SubstitutingScopeProviderImpl>()
     useInstance(statementFilter)
 }
 
@@ -187,7 +183,6 @@ fun createContainerForLazyResolve(
     configureStandardResolveComponents()
 
     useInstance(declarationProviderFactory)
-    useImpl<SubstitutingScopeProviderImpl>()
 
     targetEnvironment.configure(this)
 

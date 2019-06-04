@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 
 fun createTopDownAnalyzerForJs(
         moduleContext: ModuleContext,
@@ -56,7 +55,6 @@ fun createTopDownAnalyzerForJs(
 
         configureIncrementalCompilation(lookupTracker, expectActualTracker)
         configureStandardResolveComponents()
-        useImpl<SubstitutingScopeProviderImpl>()
 
         useInstance(declarationProviderFactory)
         CompilerEnvironment.configure(this)

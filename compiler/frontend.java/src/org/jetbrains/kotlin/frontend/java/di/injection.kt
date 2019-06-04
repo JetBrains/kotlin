@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 
 fun createContainerForLazyResolveWithJava(
     jvmPlatform: TargetPlatform,
@@ -128,7 +127,6 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
     )
 
     useImpl<FilesByFacadeFqNameIndexer>()
-    useImpl<SubstitutingScopeProviderImpl>()
 }
 
 fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis() {
