@@ -73,6 +73,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             else -> this.text
         }
 
+        override val isReleasedCoroutine
+            get() = KotlinFacet.get(module)
+                ?.configuration?.settings?.languageLevel?.let { it.major >= 1 && it.minor >= 3 } ?: true
+
         override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
             val facet = KotlinFacet.get(module)
             val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
@@ -145,8 +149,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         private fun findTooComplexDeclaration(declaration: KtDeclaration): PsiElement? {
             if (declaration.hasExpectModifier() ||
                 declaration.hasModifier(KtTokens.ANNOTATION_KEYWORD) ||
-                declaration.hasModifier(KtTokens.INLINE_KEYWORD) && declaration is KtClassOrObject ||
-                declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)
+                declaration.hasModifier(KtTokens.INLINE_KEYWORD) && declaration is KtClassOrObject
             ) {
                 return declaration
             }

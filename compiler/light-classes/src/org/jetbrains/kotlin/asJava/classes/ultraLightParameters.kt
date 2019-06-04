@@ -13,14 +13,47 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.psi.KtFunction
+
+internal class KtUltraLightSuspendContinuationParameter(
+    private val ktFunction: KtFunction,
+    support: KtUltraLightSupport,
+    method: KtLightMethod
+) : org.jetbrains.kotlin.asJava.elements.LightParameter(SUSPEND_FUNCTION_CONTINUATION_PARAMETER, PsiType.NULL, method, method.language) {
+
+    private val psiType by lazyPub {
+        val descriptor = ktFunction.resolve() as? FunctionDescriptor
+        val returnType = descriptor?.returnType ?: return@lazyPub PsiType.NULL
+        val typeFromDescriptor = support.moduleDescriptor.getContinuationOfTypeOrAny(returnType, support.isReleasedCoroutine)
+        typeFromDescriptor.asPsiType(support, TypeMappingMode.DEFAULT, method)
+    }
+
+    private val lightModifierList by lazyPub { KtLightSimpleModifierList(method, emptySet()) }
+
+    override fun getType(): PsiType = psiType
+
+    override fun equals(other: Any?): Boolean =
+        other is KtUltraLightSuspendContinuationParameter && other.ktFunction === this.ktFunction
+
+    override fun isVarArgs(): Boolean = false
+    override fun hashCode(): Int = name.hashCode()
+    override fun getModifierList(): PsiModifierList = lightModifierList
+    override fun getNavigationElement(): PsiElement = ktFunction.navigationElement
+    override fun getUseScope(): SearchScope = ktFunction.useScope
+    override fun isValid() = ktFunction.isValid
+    override fun getContainingFile(): PsiFile = ktFunction.containingFile
+    override fun getParent(): PsiElement = method.parameterList
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean =
+        another is KtUltraLightSuspendContinuationParameter && another.psiType == this.psiType
+}
 
 internal abstract class KtUltraLightParameter(
     name: String,

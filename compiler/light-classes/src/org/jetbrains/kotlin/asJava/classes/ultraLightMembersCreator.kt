@@ -19,12 +19,15 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.REIFIED_KEYWORD
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -144,7 +147,6 @@ internal class UltraLightMembersCreator(
         val wrapper = KtUltraLightMethodForSourceDeclaration(method, ktFunction, support, containingClass)
         addReceiverParameter(ktFunction, wrapper)
 
-
         var remainingNumberOfDefaultParametersToAdd =
             if (numberOfDefaultParametersToAdd >= 0)
                 numberOfDefaultParametersToAdd
@@ -160,10 +162,23 @@ internal class UltraLightMembersCreator(
 
             method.addParameter(KtUltraLightParameterForSource(parameter.name.orEmpty(), parameter, support, wrapper, ktFunction))
         }
-        val returnType: PsiType? by lazyPub {
-            if (isConstructor) null
-            else methodReturnType(ktFunction, wrapper)
+
+        val isSuspendFunction = ktFunction.modifierList?.hasSuspendModifier() == true
+        if (isSuspendFunction) {
+            method.addParameter(KtUltraLightSuspendContinuationParameter(ktFunction, support, wrapper))
         }
+
+        val returnType: PsiType? by lazyPub {
+            when {
+                isConstructor -> null
+                isSuspendFunction -> support.moduleDescriptor
+                    .builtIns
+                    .nullableAnyType
+                    .asPsiType(support, TypeMappingMode.DEFAULT, wrapper)
+                else -> methodReturnType(ktFunction, wrapper)
+            }
+        }
+
         method.setMethodReturnType { returnType }
         return wrapper
     }

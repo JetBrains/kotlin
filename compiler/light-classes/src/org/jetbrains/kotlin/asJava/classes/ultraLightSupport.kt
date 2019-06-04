@@ -22,6 +22,7 @@ interface KtUltraLightSupport {
     val deprecationResolver: DeprecationResolver
     val typeMapper: KotlinTypeMapper
     val moduleDescriptor: ModuleDescriptor
+    val isReleasedCoroutine: Boolean
 
     companion object {
         // This property may be removed once IntelliJ versions earlier than 2018.3 become unsupported
