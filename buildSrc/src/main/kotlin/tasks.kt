@@ -127,7 +127,9 @@ fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, bo
     }
 
     if (parallel) {
-        maxParallelForks = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1)
+        maxParallelForks =
+            project.findProperty("kotlin.test.maxParallelForks")?.toString()?.toInt()
+                ?: Math.max(Runtime.getRuntime().availableProcessors() / 2, 1)
     }
     body()
 }
