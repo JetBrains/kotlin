@@ -42,6 +42,7 @@ import org.jetbrains.concurrency.Promise;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 @State(name = "ServiceViewManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public final class ServiceViewManagerImpl implements ServiceViewManager, PersistentStateComponent<ServiceViewManagerImpl.State> {
@@ -66,13 +67,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     myModelFilter = new ServiceModelFilter();
     myProject.getMessageBus().connect(myModel).subscribe(ServiceEventListener.TOPIC, e -> myModel.refresh(e).onSuccess(o -> {
       updateToolWindow(!myModel.getRoots().isEmpty(), true);
-      ServiceView allServicesView = myAllServicesView;
-      if (allServicesView != null) {
-        allServicesView.getModel().eventProcessed(e);
-      }
-      for (ServiceView serviceView : myServiceViews) {
-        serviceView.getModel().eventProcessed(e);
-      }
+      processAllModels(viewModel -> viewModel.eventProcessed(e));
     }));
     myModel.initRoots().onSuccess(o -> updateToolWindow(!myModel.getRoots().isEmpty(), false));
   }
@@ -189,20 +184,26 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     }
   }
 
-  private void filtersChanged() {
-    List<ServiceViewModel> models = new ArrayList<>();
-    ServiceView allServicesView = myAllServicesView;
-    if (allServicesView != null) {
-      models.add(allServicesView.getModel());
-    }
-    for (ServiceView serviceView : myServiceViews) {
-      models.add(serviceView.getModel());
-    }
-    myModel.getInvoker().invokeLater(() -> {
-      for (ServiceViewModel viewModel : models) {
-        viewModel.filtersChanged();
+  private void processAllModels(Consumer<ServiceViewModel> consumer) {
+    AppUIUtil.invokeOnEdt(() -> {
+      List<ServiceViewModel> models = new ArrayList<>();
+      ServiceView allServicesView = myAllServicesView;
+      if (allServicesView != null) {
+        models.add(allServicesView.getModel());
       }
-    });
+      for (ServiceView serviceView : myServiceViews) {
+        models.add(serviceView.getModel());
+      }
+      myModel.getInvoker().invokeLater(() -> {
+        for (ServiceViewModel viewModel : models) {
+          consumer.accept(viewModel);
+        }
+      });
+    }, myProject.getDisposed());
+  }
+
+  private void filtersChanged() {
+    processAllModels(ServiceViewModel::filtersChanged);
   }
 
   private static void registerActivateByContributorActions() {
