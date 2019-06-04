@@ -60,9 +60,9 @@ internal open class NpmProjectModules(
                 Gson().fromJson(it, JsonObject::class.java)
             }
 
-            packageJson["main"] as? String?
-                ?: packageJson["module"] as? String?
-                ?: packageJson["browser"] as? String?
+            packageJson.getStringOrNull("main")
+                ?: packageJson.getStringOrNull("module")
+                ?: packageJson.getStringOrNull("browser")
         } else null
 
         return if (main != null) {
@@ -70,6 +70,14 @@ internal open class NpmProjectModules(
             resolveAsFile(mainFile)
                 ?: resolveIndex(mainFile)
         } else resolveIndex(dir)
+    }
+
+    private fun JsonObject.getStringOrNull(key: String): String? {
+        val value = get(key)
+        if (value == null || !value.isJsonPrimitive) return null
+        val jsonPrimitive = value.asJsonPrimitive
+        if (jsonPrimitive.isString) return jsonPrimitive.asString
+        return null
     }
 
     private fun resolveIndex(dir: File): File? = resolveAsFile(dir.resolve(INDEX_FILE_NAME))
