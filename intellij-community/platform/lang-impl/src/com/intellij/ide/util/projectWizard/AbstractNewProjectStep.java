@@ -39,7 +39,7 @@ import java.util.List;
 import static com.intellij.platform.ProjectTemplatesFactory.CUSTOM_GROUP;
 
 
-public class AbstractNewProjectStep<T> extends DefaultActionGroup implements DumbAware {
+public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup implements DumbAware {
   private static final Logger LOG = Logger.getInstance(AbstractNewProjectStep.class);
   private final Customization<T> myCustomization;
 
