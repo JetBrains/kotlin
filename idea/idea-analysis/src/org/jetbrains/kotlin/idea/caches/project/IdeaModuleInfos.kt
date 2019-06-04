@@ -435,7 +435,14 @@ interface BinaryModuleInfo : IdeaModuleInfo {
     val sourcesModuleInfo: SourceForBinaryModuleInfo?
     fun binariesScope(): GlobalSearchScope {
         val contentScope = contentScope()
-        return KotlinSourceFilterScope.libraryClassFiles(contentScope, contentScope.project!!)
+        if (contentScope === GlobalSearchScope.EMPTY_SCOPE) {
+            return contentScope
+        }
+
+        val project = contentScope.project
+            ?: error("Project is empty for scope $contentScope (${contentScope.javaClass.name})")
+
+        return KotlinSourceFilterScope.libraryClassFiles(contentScope, project)
     }
 }
 
