@@ -46,6 +46,9 @@ data class NpmDependency(
 
             npmProject.resolve(item.key)?.let {
                 all.add(it)
+                if (it.path.endsWith(".js")) {
+                    all.add(File(it.path.removeSuffix(".js") + ".meta.js"))
+                }
             }
 
             if (transitive) {
