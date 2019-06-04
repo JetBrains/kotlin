@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.j2k.*
 
@@ -18,4 +19,7 @@ object JavaToKotlinConverterFactory {
 
     fun createPostProcessor(formatCode: Boolean): PostProcessor =
         J2kConverterExtension.extension.createPostProcessor(formatCode)
+
+    fun doCheckBeforeConversion(project: Project, module: Module): Boolean =
+        J2kConverterExtension.extension.doCheckBeforeConversion(project, module)
 }

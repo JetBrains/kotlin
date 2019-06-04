@@ -31,6 +31,7 @@ dependencies {
     compile(project(":idea:fir-view"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":plugins:uast-kotlin"))

@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.extensions.AbstractExtensionPointBean
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 
@@ -16,6 +17,8 @@ abstract class J2kConverterExtension : AbstractExtensionPointBean() {
 
     abstract fun createPostProcessor(formatCode: Boolean): PostProcessor
 
+    open fun doCheckBeforeConversion(project: Project, module: Module): Boolean =
+        true
 
     companion object {
         private fun useNewJ2k() = Registry.`is`("kotlin.use.new.j2k", false)
