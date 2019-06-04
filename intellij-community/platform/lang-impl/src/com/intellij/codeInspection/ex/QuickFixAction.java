@@ -48,7 +48,7 @@ import java.util.*;
 /**
  * @author max
  */
-public class QuickFixAction extends AnAction implements CustomComponentAction {
+public abstract class QuickFixAction extends AnAction implements CustomComponentAction {
   private static final Logger LOG = Logger.getInstance(QuickFixAction.class);
 
   public static final QuickFixAction[] EMPTY = new QuickFixAction[0];
