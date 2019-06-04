@@ -1,11 +1,11 @@
 @file:Suppress("PropertyName", "HasPlatformType", "UnstableApiUsage")
 
-import org.gradle.api.publish.ivy.internal.artifact.FileBasedIvyArtifact
-import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
-import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIdentity
-import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
+import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter
 import org.gradle.internal.os.OperatingSystem
+import java.io.FileWriter
 import java.net.URI
+import javax.xml.stream.XMLOutputFactory
+import javax.xml.stream.XMLStreamWriter
 
 plugins {
     base
@@ -310,40 +310,94 @@ fun writeIvyXml(
                 && !jar.name.startsWith("kotlin-")
                 && (allowAnnotations || jar.name != "annotations.jar") // see comments for [intellijAnnotations] above
 
-    with(IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity(organization, moduleName, version))) {
-        addConfiguration(DefaultIvyConfiguration("default"))
-        addConfiguration(DefaultIvyConfiguration("sources"))
-        artifactDir.listFiles()?.forEach { jarFile ->
-            if (shouldIncludeIntellijJar(jarFile)) {
-                val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
-                addArtifact(
-                    FileBasedIvyArtifact(
-                        jarFile,
-                        DefaultIvyPublicationIdentity(organization, relativeName, version)
-                    ).also {
-                        it.conf = "default"
+    val ivyFile = targetDir.resolve("$fileName.ivy.xml")
+    ivyFile.parentFile.mkdirs()
+    FileWriter(ivyFile).use {
+        val xmlWriter = IndentingXMLStreamWriter(XMLOutputFactory.newInstance().createXMLStreamWriter(it))
+        with(xmlWriter) {
+            document("UTF-8", "1.0") {
+                element("ivy-module") {
+                    attribute("version", "2.0")
+                    attribute("xmlns:m", "http://ant.apache.org/ivy/maven")
+
+                    emptyElement("info") {
+                        attributes(
+                            "organisation" to organization,
+                            "module" to moduleName,
+                            "revision" to version,
+                            "publication" to ""
+                        )
                     }
-                )
-            }
-        }
 
-        sourcesJar.forEach {
-            val sourcesArtifactName = it.name.substringBeforeLast("-").substringBeforeLast("-")
-            addArtifact(
-                FileBasedIvyArtifact(
-                    it,
-                    DefaultIvyPublicationIdentity(organization, sourcesArtifactName, version)
-                ).also { artifact ->
-                    artifact.conf = "sources"
-                    artifact.classifier = "sources"
+                    element("configurations") {
+                        listOf("default", "sources").forEach { configurationName ->
+                            emptyElement("conf") {
+                                attributes("name" to configurationName, "visibility" to "public")
+                            }
+                        }
+                    }
+
+                    element("publications") {
+                        artifactDir.listFiles()?.filter(::shouldIncludeIntellijJar)?.forEach { jarFile ->
+                            val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
+                            emptyElement("artifact") {
+                                attributes(
+                                    "name" to relativeName,
+                                    "type" to "jar",
+                                    "ext" to "jar",
+                                    "conf" to "default"
+                                )
+                            }
+                        }
+
+                        sourcesJar.forEach { jarFile ->
+                            emptyElement("artifact") {
+                                val sourcesArtifactName = jarFile.name
+                                    .substringBeforeLast("-")
+                                    .substringBeforeLast("-")
+
+                                attributes(
+                                    "name" to sourcesArtifactName,
+                                    "type" to "jar",
+                                    "ext" to "jar",
+                                    "conf" to "sources",
+                                    "m:classifier" to "sources"
+                                )
+                            }
+                        }
+                    }
                 }
-            )
-        }
+            }
 
-        writeTo(File(targetDir, "$fileName.ivy.xml"))
+            flush()
+            close()
+        }
     }
 }
 
 fun skipToplevelDirectory(path: String) = path.substringAfter('/')
 
 fun skipContentsDirectory(path: String) = path.substringAfter("Contents/")
+
+fun XMLStreamWriter.document(encoding: String, version: String, init: XMLStreamWriter.() -> Unit) = apply {
+    writeStartDocument(encoding, version)
+    init()
+    writeEndDocument()
+}
+
+fun XMLStreamWriter.element(name: String, init: XMLStreamWriter.() -> Unit) = apply {
+    writeStartElement(name)
+    init()
+    writeEndElement()
+}
+
+fun XMLStreamWriter.emptyElement(name: String, init: XMLStreamWriter.() -> Unit) = apply {
+    writeEmptyElement(name)
+    init()
+}
+
+fun XMLStreamWriter.attribute(name: String, value: String): Unit = writeAttribute(name, value)
+
+fun XMLStreamWriter.attributes(vararg attributes: Pair<String, String>) {
+    attributes.forEach { attribute(it.first, it.second) }
+}
