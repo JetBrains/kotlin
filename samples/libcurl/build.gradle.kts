@@ -39,7 +39,7 @@ kotlin {
                 when (preset) {
                     presets["macosX64"] -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     presets["linuxX64"] -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
-                    presets["mingwX64"] -> includeDirs.headerFilterOnly(mingwPath.resolve("/include"))
+                    presets["mingwX64"] -> includeDirs.headerFilterOnly(mingwPath.resolve("include"))
                 }
             }
         }

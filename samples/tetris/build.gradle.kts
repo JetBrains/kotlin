@@ -37,7 +37,7 @@ kotlin {
                     presets["linuxX64"] -> linkerOpts("-L/usr/lib64", "-L/usr/lib/x86_64-linux-gnu", "-lSDL2")
                     presets["mingwX64"], presets["mingwX86"] -> linkerOpts(
                         winCompiledResourceFile.toString(),
-                        mingwPath.resolve("lib").toString(),
+                        "-L${mingwPath.resolve("lib")}",
                         "-Wl,-Bstatic",
                         "-lstdc++",
                         "-static",
@@ -64,7 +64,7 @@ kotlin {
                 when (preset) {
                     presets["macosX64"] -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
                     presets["linuxX64"] -> includeDirs("/usr/include/SDL2")
-                    presets["mingwX64"], presets["mingwX86"] -> includeDirs(mingwPath.resolve("/include/SDL2"))
+                    presets["mingwX64"], presets["mingwX86"] -> includeDirs(mingwPath.resolve("include/SDL2"))
                     presets["linuxArm32Hfp"] -> includeDirs(kotlinNativeDataPath.resolve("dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"))
                 }
             }

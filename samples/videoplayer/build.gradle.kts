@@ -24,7 +24,7 @@ kotlin {
                 when (preset) {
                     presets["macosX64"] -> linkerOpts("-L/opt/local/lib", "-L/usr/local/lib")
                     presets["linuxX64"] -> linkerOpts("-L/usr/lib/x86_64-linux-gnu", "-L/usr/lib64")
-                    presets["mingwX64"] -> linkerOpts(mingwPath.resolve("lib").toString())
+                    presets["mingwX64"] -> linkerOpts("-L${mingwPath.resolve("lib")}")
                 }
             }
         }
@@ -34,14 +34,14 @@ kotlin {
                 when (preset) {
                     presets["macosX64"] -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     presets["linuxX64"] -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/ffmpeg")
-                    presets["mingwX64"] -> includeDirs(mingwPath.resolve("/include"))
+                    presets["mingwX64"] -> includeDirs(mingwPath.resolve("include"))
                 }
             }
             val sdl by creating {
                 when (preset) {
                     presets["macosX64"] -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
                     presets["linuxX64"] -> includeDirs("/usr/include/SDL2")
-                    presets["mingwX64"] -> includeDirs(mingwPath.resolve("/include/SDL2"))
+                    presets["mingwX64"] -> includeDirs(mingwPath.resolve("include/SDL2"))
                 }
             }
         }

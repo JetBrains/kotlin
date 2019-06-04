@@ -22,7 +22,7 @@ kotlin {
             executable {
                 entryPoint = "sample.gtk.main"
                 if (isMingwX64) {
-                    linkerOpts(mingwPath.resolve("lib").toString())
+                    linkerOpts("-L${mingwPath.resolve("lib")}")
                     runTask?.environment("PATH" to mingwPath.resolve("bin"))
                 }
             }
@@ -50,13 +50,13 @@ kotlin {
                     }
                     presets["mingwX64"] -> {
                         listOf(
-                            "/include/atk-1.0",
-                            "/include/gdk-pixbuf-2.0",
-                            "/include/cairo",
-                            "/include/pango-1.0",
-                            "/include/gtk-3.0",
-                            "/include/glib-2.0",
-                            "/lib/glib-2.0/include"
+                            "include/atk-1.0",
+                            "include/gdk-pixbuf-2.0",
+                            "include/cairo",
+                            "include/pango-1.0",
+                            "include/gtk-3.0",
+                            "include/glib-2.0",
+                            "lib/glib-2.0/include"
                         ).forEach {
                             includeDirs(mingwPath.resolve(it))
                         }

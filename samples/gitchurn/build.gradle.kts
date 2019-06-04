@@ -22,7 +22,7 @@ kotlin {
             executable {
                 entryPoint = "sample.gitchurn.main"
                 if (isMingwX64) {
-                    linkerOpts(mingwPath.resolve("lib").toString())
+                    linkerOpts("-L${mingwPath.resolve("lib")}")
                     runTask?.environment("PATH" to mingwPath.resolve("bin"))
                 }
                 runTask?.args(rootProject.rootDir.resolve(".."))

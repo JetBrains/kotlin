@@ -29,7 +29,7 @@ kotlin {
                 entryPoint = "sample.curl.main"
                 if (isMingwX64) {
                     // Add lib path to `libcurl` and its dependencies:
-                    linkerOpts(mingwPath.resolve("lib").toString())
+                    linkerOpts("-L${mingwPath.resolve("lib")}")
                     runTask?.environment("PATH" to mingwPath.resolve("bin"))
                 }
                 runTask?.args("https://www.jetbrains.com/")

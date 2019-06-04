@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 
 plugins {
     kotlin("multiplatform")
@@ -43,7 +43,7 @@ kotlin {
 val jsinterop by tasks.creating(Exec::class) {
     workingDir = projectDir
 
-    val ext = if (isWindows) ".bar" else ""
+    val ext = if (isWindows) ".bat" else ""
     val distributionPath = project.properties["org.jetbrains.kotlin.native.home"] as String?
 
     if (distributionPath != null) {
@@ -73,7 +73,7 @@ val jsinterop by tasks.creating(Exec::class) {
     }
 }
 
-tasks.withType(KotlinNativeCompile::class).all {
+tasks.withType(AbstractKotlinNativeCompile::class).all {
     dependsOn(jsinterop)
 }
 
