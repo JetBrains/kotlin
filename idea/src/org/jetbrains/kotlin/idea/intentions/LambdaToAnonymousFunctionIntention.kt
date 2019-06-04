@@ -38,7 +38,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
         if (element.getStrictParentOfType<KtFunction>()?.hasModifier(KtTokens.INLINE_KEYWORD) == true) return false
         val descriptor = element.functionLiteral.descriptor as? AnonymousFunctionDescriptor ?: return false
         if (descriptor.valueParameters.any { it.name.isSpecial }) return false
-        val lastElement = element.functionLiteral.arrow ?: element.functionLiteral.lBrace
+        val lastElement = element.functionLiteral.arrow ?: element.functionLiteral.lBrace ?: return false
         return caretOffset <= lastElement.endOffset
     }
 

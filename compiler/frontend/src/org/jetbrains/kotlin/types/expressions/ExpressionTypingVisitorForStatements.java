@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.extensions.KtxTypeResolutionExtension;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -392,6 +393,16 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public KotlinTypeInfo visitForExpression(@NotNull KtForExpression expression, ExpressionTypingContext context) {
         return controlStructures.visitForExpression(expression, context, true);
+    }
+
+    @Override
+    public KotlinTypeInfo visitKtxElement(@NotNull KtxElement element, ExpressionTypingContext context) {
+        return basic.visitKtxElement(element, context);
+    }
+
+    @Override
+    public KotlinTypeInfo visitKtxAttribute(@NotNull KtxAttribute attribute, ExpressionTypingContext context) {
+        return basic.visitKtxAttribute(attribute, context);
     }
 
     @Override

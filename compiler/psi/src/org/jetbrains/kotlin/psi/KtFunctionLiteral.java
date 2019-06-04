@@ -61,13 +61,12 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
         return null;
     }
 
-    @NotNull
+    @Nullable
     public PsiElement getLBrace() {
         return findChildByType(KtTokens.LBRACE);
     }
 
     @Nullable
-    @IfNotParsed
     public PsiElement getRBrace() {
         return findChildByType(KtTokens.RBRACE);
     }

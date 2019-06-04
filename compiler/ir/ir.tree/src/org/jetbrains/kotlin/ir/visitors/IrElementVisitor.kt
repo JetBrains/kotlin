@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.visitors
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrKtxStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 
@@ -113,4 +114,6 @@ interface IrElementVisitor<out R, in D> {
     fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D) = visitDeclaration(declaration, data)
     fun visitErrorExpression(expression: IrErrorExpression, data: D) = visitExpression(expression, data)
     fun visitErrorCallExpression(expression: IrErrorCallExpression, data: D) = visitErrorExpression(expression, data)
+
+    fun visitKtxStatement(expression: IrKtxStatement, data: D): R = throw UnsupportedOperationException("KTX Statements must be handled by an extension")
 }

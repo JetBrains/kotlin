@@ -878,6 +878,23 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Override
+    public void visitKtxElement(@NotNull KtxElement element) {
+        for(KtxAttribute attribute : element.getAttributes()) attribute.accept(this);
+        KtLambdaExpression body = element.getBodyLambdaExpression();
+        if (body != null) {
+            body.accept(this);
+        }
+    }
+
+    @Override
+    public void visitKtxAttribute(@NotNull KtxAttribute attribute) {
+        KtExpression value = attribute.getValue();
+        if (value != null) {
+            value.accept(this);
+        }
+    }
+
+    @Override
     public void visitBinaryExpression(@NotNull KtBinaryExpression expression) {
         super.visitBinaryExpression(expression);
 

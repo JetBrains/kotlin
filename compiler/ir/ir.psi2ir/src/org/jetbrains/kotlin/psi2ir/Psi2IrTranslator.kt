@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.extensions.SyntheticIrExtension
 import org.jetbrains.kotlin.psi2ir.generators.AnnotationGenerator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -68,6 +69,12 @@ class Psi2IrTranslator(
     fun generateModuleFragment(context: GeneratorContext, ktFiles: Collection<KtFile>, deserializer: IrDeserializer? = null): IrModuleFragment {
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
+
+        if(ktFiles.size > 0)
+            SyntheticIrExtension.getInstances(ktFiles.first().project).forEach {
+                it.interceptModuleFragment(context, ktFiles, irModule)
+            }
+
         postprocess(context, irModule)
         moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer)
         return irModule

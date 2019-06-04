@@ -47,6 +47,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean SPACE_AROUND_WHEN_ARROW = true;
     public boolean SPACE_BEFORE_LAMBDA_ARROW = true;
     public boolean SPACE_BEFORE_WHEN_PARENTHESES = true;
+    public boolean SPACE_AROUND_KTX_ATTR_EQ = false;
     public boolean LBRACE_ON_NEXT_LINE = false;
     public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
     public int NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 3;

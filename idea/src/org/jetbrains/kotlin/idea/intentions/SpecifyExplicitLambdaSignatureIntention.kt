@@ -68,7 +68,7 @@ open class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndepend
                 oldParameterList.replace(newParameterList)
             } else {
                 val openBraceElement = lBrace
-                val nextSibling = openBraceElement.nextSibling
+                val nextSibling = openBraceElement?.nextSibling
                 val addNewline = nextSibling is PsiWhiteSpace && nextSibling.text?.contains("\n") ?: false
                 val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
                 addRangeAfter(whitespace, arrow, openBraceElement)

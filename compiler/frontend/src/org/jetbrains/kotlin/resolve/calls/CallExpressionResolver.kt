@@ -59,10 +59,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
-import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.util.AstLoadingFilter

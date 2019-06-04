@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun provideLambdaImplicitHints(lambda: KtLambdaExpression): List<InlayInfo> {
-    val lbrace = lambda.leftCurlyBrace
+    val lbrace = lambda.leftCurlyBrace ?: return emptyList()
     if (!lbrace.isFollowedByNewLine()) {
         return emptyList()
     }

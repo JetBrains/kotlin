@@ -105,6 +105,14 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitConstructorCalleeExpression(constructorCalleeExpression, null);
     }
 
+    public void visitKtxElement(@NotNull KtxElement element) {
+        super.visitKtxElement(element, null);
+    }
+
+    public void visitKtxAttribute(@NotNull KtxAttribute attribute) {
+        super.visitKtxAttribute(attribute, null);
+    }
+
     public void visitTypeParameterList(@NotNull KtTypeParameterList list) {
         super.visitTypeParameterList(list, null);
     }
@@ -711,6 +719,18 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitBinaryExpression(@NotNull KtBinaryExpression expression, Void data) {
         visitBinaryExpression(expression);
+        return null;
+    }
+
+    @Override
+    public Void visitKtxElement(@NotNull KtxElement element, Void data) {
+        visitKtxElement(element);
+        return null;
+    }
+
+    @Override
+    public Void visitKtxAttribute(@NotNull KtxAttribute attribute, Void data) {
+        visitKtxAttribute(attribute);
         return null;
     }
 

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.extensions.KtxControlFlowExtension
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -1103,6 +1104,13 @@ class ControlFlowProcessor(
             } else {
                 generateInstructions(receiverExpression)
                 createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, receiverExpression)
+            }
+        }
+
+        override fun visitKtxElement(element: KtxElement) {
+            val extensions = KtxControlFlowExtension.getInstances(element.project)
+            for (extension in extensions) {
+                extension.visitKtxElement(element, builder, this, trace)
             }
         }
 

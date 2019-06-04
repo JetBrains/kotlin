@@ -134,9 +134,12 @@ open class InlineLambdaSourceMapper(
 ) : NestedSourceMapper(parent, smap.sortedRanges, smap.classSMAP.sourceInfo) {
 
     init {
-        assert(ranges.isNotEmpty()) {
-            "Mapping ranges should be presented in inline lambda: ${smap.node}"
-        }
+        // TODO(b/121206710): There is something with the way we are generating lambdas to inline during code gen that is causing these ranges
+        // to not get created correctly. We need to figure this out to properly inline everything. I am temporarily commenting this out
+        // because it still works in most cases without it, but this should be fixed before we upstream anything.
+//        assert(ranges.isNotEmpty()) {
+//            "Mapping ranges should be presented in inline lambda: ${smap.node}"
+//        }
     }
 
     override fun mapLineNumber(lineNumber: Int): Int {

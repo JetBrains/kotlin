@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
@@ -49,10 +54,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.*
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
-import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.scopes.utils.canBeResolvedWithoutDeprecation
 import org.jetbrains.kotlin.types.DeferredType
@@ -160,7 +163,8 @@ class NewResolutionOldInference(
         context: BasicCallResolutionContext,
         name: Name,
         kind: ResolutionKind,
-        tracing: TracingStrategy
+        tracing: TracingStrategy,
+        callResolver: CallResolver
     ): OverloadResolutionResultsImpl<D> {
         val explicitReceiver = context.call.explicitReceiver
         val detailedReceiver = if (explicitReceiver is QualifierReceiver?) {
@@ -170,7 +174,7 @@ class NewResolutionOldInference(
         }
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
+        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), callResolver)
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
@@ -201,6 +205,10 @@ class NewResolutionOldInference(
                 useOrder = kind != ResolutionKind.CallableReference,
                 name = deprecatedName
             )
+        }
+
+        CallResolutionInterceptorExtension.getInstances(context.call.callElement.project).forEach {
+            candidates = it.interceptCandidates(candidates, context, candidateResolver, name, kind, tracing)
         }
 
         if (candidates.isEmpty()) {
@@ -349,12 +357,17 @@ class NewResolutionOldInference(
         return true
     }
 
-    private class ImplicitScopeTowerImpl(
-        val resolutionContext: ResolutionContext<*>,
+    public class ImplicitScopeTowerImpl(
+        val resolutionContext: BasicCallResolutionContext,
         override val dynamicScope: MemberScope,
         override val syntheticScopes: SyntheticScopes,
-        override val location: LookupLocation
+        override val location: LookupLocation,
+        val callResolver: CallResolver
     ) : ImplicitScopeTower {
+
+        override val module: ModuleDescriptor
+            get() = resolutionContext.scope.ownerDescriptor.module
+
         private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? =
@@ -368,9 +381,17 @@ class NewResolutionOldInference(
 
         override val isNewInferenceEnabled: Boolean
             get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+
+        override fun getContributedFunctionsAndConstructors(
+            resolutionScope: ResolutionScope,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return getContributedFunctionsAndConstructors(resolutionContext, resolutionScope, name, location)
+        }
     }
 
-    internal class MyCandidate(
+    class MyCandidate(
         // Diagnostics that are already computed
         // if resultingApplicability is successful they must be the same as `diagnostics`,
         // otherwise they might be a bit different but result remains unsuccessful
@@ -546,6 +567,32 @@ class NewResolutionOldInference(
 
     }
 
+}
+
+fun ImplicitScopeTower.getContributedFunctionsAndConstructors(
+    resolutionContext: BasicCallResolutionContext,
+    resolutionScope: ResolutionScope,
+    name: Name,
+    location: LookupLocation
+): Collection<FunctionDescriptor> {
+
+    val initialResults = ArrayList<FunctionDescriptor>(resolutionScope.getContributedFunctions(name, location))
+
+    resolutionScope.getContributedClassifier(name, location)?.let {
+        initialResults.addAll(getConstructorsOfClassifier(it))
+    }
+
+    initialResults.addAll(syntheticScopes.collectSyntheticStaticFunctions(resolutionScope, name, location))
+    initialResults.addAll(syntheticScopes.collectSyntheticConstructors(resolutionScope, name, location))
+
+    var interceptedResults: Collection<FunctionDescriptor> = initialResults
+    //     val project = (resolutionContext.callPosition as? CallPosition.ValueArgumentPosition)?.resolvedCall?.call?.callElement?.project
+    val project = resolutionContext.call.callElement.project
+    CallResolutionInterceptorExtension.getInstances(project).forEach {
+        interceptedResults = it.interceptCandidates(interceptedResults, this, resolutionContext, resolutionScope, name, location)
+    }
+
+    return interceptedResults
 }
 
 fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue) =

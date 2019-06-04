@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.extensions.TypeResolutionInterceptorExtension
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYieldBeforeLambda
@@ -159,9 +160,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
-        val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)!!
+        val resultType = TypeResolutionInterceptorExtension.interceptType(expression, context, functionDescriptor.createFunctionType(suspendFunctionTypeExpected)!!)
+
         if (functionTypeExpected) {
-            // all checks were done before
+            components.dataFlowAnalyzer.checkType(resultType, expression, context)
             return createTypeInfo(resultType, context)
         }
 
@@ -187,7 +189,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
             CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
             context.expectedType.isSuspendFunctionType()
-        )
+        ).let {
+            TypeResolutionInterceptorExtension.interceptFunctionLiteralDescriptor(expression, context, it)
+        }
         components.functionDescriptorResolver.initializeFunctionDescriptorAndExplicitReturnType(
             context.scope.ownerDescriptor, context.scope, functionLiteral,
             functionDescriptor, context.trace, context.expectedType, context.dataFlowInfo

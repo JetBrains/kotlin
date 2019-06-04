@@ -137,6 +137,12 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
 
     @Override
     @NotNull
+    public final void checkType(@NotNull KtExpression expression, ExpressionTypingContext context) {
+        components.dataFlowAnalyzer.checkType(getTypeInfo(expression, context).getType(), expression, context);
+    }
+
+    @Override
+    @NotNull
     public final KotlinTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, boolean isStatement) {
         ExpressionTypingContext newContext = context;
         if (CodeFragmentUtilKt.suppressDiagnosticsInDebugMode(expression)) {
@@ -349,6 +355,16 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     @Override
     public KotlinTypeInfo visitBlockExpression(@NotNull KtBlockExpression expression, ExpressionTypingContext data) {
         return basic.visitBlockExpression(expression, data);
+    }
+
+    @Override
+    public KotlinTypeInfo visitKtxElement(@NotNull KtxElement element, ExpressionTypingContext data) {
+        return basic.visitKtxElement(element, data);
+    }
+
+    @Override
+    public KotlinTypeInfo visitKtxAttribute(@NotNull KtxAttribute attribute, ExpressionTypingContext data) {
+        return basic.visitKtxAttribute(attribute, data);
     }
 
     @Override

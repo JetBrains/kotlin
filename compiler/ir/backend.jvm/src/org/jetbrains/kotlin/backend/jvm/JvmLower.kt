@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.jvm.extensions.IrLoweringExtension
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
@@ -37,6 +39,20 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     description = "Patch parent references in IrFile, pass $number",
     nlevels = 0
 )
+
+fun getJvmPhasesForProject(project: Project): CompilerPhase<JvmBackendContext, IrFile, IrFile> {
+    val extensions = IrLoweringExtension.getInstances(project)
+    val phases = extensions.fold(defaultJvmPhases, { phases: CompilerPhase<JvmBackendContext, IrFile, IrFile>, extension -> extension.interceptLoweringPhases(phases) })
+    return phases
+}
+
+fun PhaseConfig.withPluginPhases(project: Project): PhaseConfig {
+    val extensions = IrLoweringExtension.getInstances(project)
+
+    return extensions.fold(this) { config: PhaseConfig, extension ->
+        config.mapPhases { extension.interceptLoweringPhases(it as CompilerPhase<JvmBackendContext, IrFile, IrFile>) }
+    }
+}
 
 private val arrayConstructorPhase = makeIrFilePhase(
     ::ArrayConstructorLowering,
@@ -61,7 +77,7 @@ private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-val jvmPhases = namedIrFilePhase<JvmBackendContext>(
+val defaultJvmPhases = namedIrFilePhase(
     name = "IrLowering",
     description = "IR lowering",
     lower = expectDeclarationsRemovingPhase then
@@ -126,6 +142,6 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
         // TODO run lowering passes as callbacks in bottom-up visitor
-        jvmPhases.invokeToplevel(context.phaseConfig, context, irFile)
+        getJvmPhasesForProject(context.state.project).invokeToplevel(context.phaseConfig, context, irFile)
     }
 }

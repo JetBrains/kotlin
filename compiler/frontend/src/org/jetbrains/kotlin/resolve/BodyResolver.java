@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -239,7 +241,16 @@ public class BodyResolver {
     }
 
     public void resolveBodies(@NotNull BodiesResolveContext c) {
+        CallResolutionInterceptorExtension
+                .Companion
+                .getFacade()
+                .get()
+                .push(
+                        expressionTypingServices
+                                .expressionTypingFacade
+                );
         resolveBehaviorDeclarationBodies(c);
+        CallResolutionInterceptorExtension.Companion.getFacade().get().pop();
         controlFlowAnalyzer.process(c);
         declarationsChecker.process(c);
         analyzerExtensions.process(c);

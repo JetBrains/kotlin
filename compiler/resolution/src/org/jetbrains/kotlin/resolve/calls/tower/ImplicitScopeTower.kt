@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
@@ -29,6 +27,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.types.KotlinType
 
 interface ImplicitScopeTower {
+    val module: ModuleDescriptor
+
     val lexicalScope: LexicalScope
 
     fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo?
@@ -42,6 +42,12 @@ interface ImplicitScopeTower {
     val isDebuggerContext: Boolean
 
     val isNewInferenceEnabled: Boolean
+
+    fun getContributedFunctionsAndConstructors(
+        resolutionScope: ResolutionScope,
+        name: Name,
+        location: LookupLocation
+    ): Collection<FunctionDescriptor>
 }
 
 interface ScopeTowerLevel {

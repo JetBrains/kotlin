@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.defaultJvmPhases
+import org.jetbrains.kotlin.backend.jvm.withPluginPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -63,9 +65,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
+        if (arguments.useIR) {
+            configuration.put(JVMConfigurationKeys.IR, true)
+        }
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(jvmPhases, arguments, messageCollector))
 
         if (!configuration.configureJdkHome(arguments)) return COMPILATION_ERROR
 
@@ -162,6 +165,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 messageCollector.report(ERROR, "No source files")
                 return COMPILATION_ERROR
             }
+
+            configuration.put(
+                CLIConfigurationKeys.PHASE_CONFIG,
+                createPhaseConfig(defaultJvmPhases, arguments, messageCollector).withPluginPhases(environment.project)
+            )
 
             KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, moduleChunk.modules)
             return OK

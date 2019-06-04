@@ -52,7 +52,7 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
             val itDescriptor = element.resolveMainReferenceToDescriptors().singleOrNull() ?: return null
             val descriptorWithSource = itDescriptor.containingDeclaration as? DeclarationDescriptorWithSource ?: return null
             val lambdaExpression = descriptorWithSource.source.getPsi()?.parent as? KtLambdaExpression ?: return null
-            return lambdaExpression.leftCurlyBrace.treeNext?.psi
+            return lambdaExpression.leftCurlyBrace?.treeNext?.psi
         }
 
         // Navigate to receiver element for this in extension declaration

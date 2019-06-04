@@ -684,6 +684,7 @@ internal open class KotlinAndroidPlugin(
     }
 }
 
+
 class KotlinConfigurationTools internal constructor(
     val kotlinTasksProvider: KotlinTasksProvider,
     val kotlinPluginVersion: String

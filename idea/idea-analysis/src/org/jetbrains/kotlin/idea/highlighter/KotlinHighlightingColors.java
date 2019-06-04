@@ -85,6 +85,12 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey VARIABLE_AS_FUNCTION_CALL = createTextAttributesKey("KOTLIN_VARIABLE_AS_FUNCTION");
     public static final TextAttributesKey VARIABLE_AS_FUNCTION_LIKE_CALL = createTextAttributesKey("KOTLIN_VARIABLE_AS_FUNCTION_LIKE");
 
+    // ktx
+    public static final TextAttributesKey KTX_ELEMENT_NAME = createTextAttributesKey("KTX_ELEMENT_NAME");
+    public static final TextAttributesKey KTX_ELEMENT_ATTRIBUTE_NAME = createTextAttributesKey("KTX_ELEMENT_ATTRIBUTE_NAME");
+    public static final TextAttributesKey KTX_ELEMENT_BRACKETS = createTextAttributesKey("KTX_ELEMENT_BRACKETS");
+    public static final TextAttributesKey KTX_ELEMENT_ATTRIBUTE_EQUALS = createTextAttributesKey("KTX_ELEMENT_ATTRIBUTE_EQUALS");
+
     // other
     public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("KOTLIN_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER);
     public static final TextAttributesKey SMART_CAST_VALUE = createTextAttributesKey("KOTLIN_SMART_CAST_VALUE");

@@ -20,7 +20,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.defaultJvmPhases
+import org.jetbrains.kotlin.backend.jvm.withPluginPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -78,7 +79,10 @@ object GenerationUtils {
             files, configuration
         ).codegenFactory(
             if (configuration.getBoolean(JVMConfigurationKeys.IR))
-                JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
+                JvmIrCodegenFactory(
+                    configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
+                        ?: PhaseConfig(defaultJvmPhases).withPluginPhases(files.first().project)
+                )
             else DefaultCodegenFactory
         ).build()
         if (analysisResult.shouldGenerateCode) {

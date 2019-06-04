@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
@@ -186,7 +187,7 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
+    public <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull KtReferenceExpression referenceExpression,
@@ -197,7 +198,7 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
+    public <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
@@ -678,15 +679,17 @@ public class CallResolver {
             }
         }
 
+        CallResolutionInterceptorExtension.Companion.getFacade().get().push(expressionTypingServices.expressionTypingFacade);
         OverloadResolutionResultsImpl<D> result;
         if (!(resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates)) {
             assert resolutionTask.name != null;
-            result = newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
+            result = newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing, this);
         }
         else {
             assert resolutionTask.givenCandidates != null;
             result = newResolutionOldInference.runResolutionForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
         }
+        CallResolutionInterceptorExtension.Companion.getFacade().get().pop();
 
         // in code like
         //   assert(a!!.isEmpty())

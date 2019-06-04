@@ -137,7 +137,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         if (usagesToRemove.isEmpty()) return null
 
         return when (element) {
-            is KtFunctionLiteral -> element.lBrace.textRange
+            is KtFunctionLiteral -> element.lBrace!!.textRange
             is KtNamedDeclaration -> element.nameIdentifier?.textRange
             else -> null
         }

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,7 +41,7 @@ import static org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_T
 
 public class ExpressionTypingServices {
 
-    private final ExpressionTypingFacade expressionTypingFacade;
+    public final ExpressionTypingFacade expressionTypingFacade;
     private final ExpressionTypingComponents expressionTypingComponents;
 
     @NotNull private final AnnotationChecker annotationChecker;
@@ -200,6 +203,45 @@ public class ExpressionTypingServices {
         return r;
     }
 
+/*
+    private fun createValueParameterDescriptors(
+            function: KtFunction,
+            functionDescriptor:SimpleFunctionDescriptorImpl,
+            innerScope: LexicalWritableScope,
+            trace: BindingTrace,
+            expectedFunctionType: KotlinType
+    ): List<ValueParameterDescriptor> {
+        val expectedValueParameters = expectedFunctionType.getValueParameters(functionDescriptor)
+        val expectedParameterTypes = expectedValueParameters?.map { it.type.removeParameterNameAnnotation() }
+        if (expectedValueParameters != null) {
+            if (expectedValueParameters.size == 1 && function is KtFunctionLiteral && function.getValueParameterList() == null) {
+                // it parameter for lambda
+                val valueParameterDescriptor = expectedValueParameters.single()
+                val it = ValueParameterDescriptorImpl(
+                        functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
+                        expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
+                        valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
+                        valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE
+                )
+                trace.record(BindingContext.AUTO_CREATED_IT, it)
+                return listOf(it)
+            }
+            if (function.valueParameters.size != expectedValueParameters.size) {
+                trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(function, expectedParameterTypes!!.size, expectedParameterTypes))
+            }
+        }
+
+        trace.recordScope(innerScope, function.valueParameterList)
+
+        return resolveValueParameters(
+                functionDescriptor,
+                innerScope,
+                function.valueParameters,
+                trace,
+                expectedParameterTypes
+        )
+    }
+*/
     @NotNull
     public KotlinType getBodyExpressionType(
             @NotNull BindingTrace trace,

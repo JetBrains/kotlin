@@ -90,6 +90,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -437,6 +438,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Override
     public StackValue visitSuperExpression(@NotNull KtSuperExpression expression, StackValue data) {
         return StackValue.thisOrOuter(this, getSuperCallLabelTarget(context, expression), true, false);
+    }
+
+    @Override
+    public StackValue visitKtxElement(@NotNull KtxElement element, StackValue data) {
+        throw new UnsupportedOperationException("KTX elements are not supported by the default ExpressionCodegen");
     }
 
     @NotNull
@@ -1215,7 +1221,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         throw new IllegalStateException("Can't get outer value in " + this + " for " + d);
     }
 
-    private StackValueWithLeaveTask generateBlock(
+    protected StackValueWithLeaveTask generateBlock(
             @NotNull List<KtExpression> statements,
             boolean isStatement,
             @Nullable Label labelBeforeLastExpression,

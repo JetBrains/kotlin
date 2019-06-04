@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -205,7 +208,7 @@ internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qual
         .getContributedFunctionsAndConstructors(
             name,
             location,
-            scopeTower.syntheticScopes
+            scopeTower
         ).map {
         createCandidateDescriptor(it, dispatchReceiver = null)
     }
@@ -253,7 +256,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
     ): Collection<CandidateWithBoundDispatchReceiver> {
         val result: ArrayList<CandidateWithBoundDispatchReceiver> = ArrayList()
 
-        resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticScopes).mapTo(result) {
+        resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower).mapTo(result) {
             createCandidateDescriptor(
                 it,
                 dispatchReceiver = null,
@@ -364,21 +367,12 @@ private fun KotlinType?.getInnerConstructors(name: Name, location: LookupLocatio
 private fun ResolutionScope.getContributedFunctionsAndConstructors(
     name: Name,
     location: LookupLocation,
-    syntheticScopes: SyntheticScopes
+    scopeTower: ImplicitScopeTower
 ): Collection<FunctionDescriptor> {
-    val result = ArrayList<FunctionDescriptor>(getContributedFunctions(name, location))
-
-    getContributedClassifier(name, location)?.let {
-        result.addAll(getConstructorsOfClassifier(it))
-    }
-
-    result.addAll(syntheticScopes.collectSyntheticStaticFunctions(this, name, location))
-    result.addAll(syntheticScopes.collectSyntheticConstructors(this, name, location))
-
-    return result.toList()
+    return scopeTower.getContributedFunctionsAndConstructors(this, name, location)
 }
 
-private fun getConstructorsOfClassifier(classifier: ClassifierDescriptor?): List<ConstructorDescriptor> {
+fun getConstructorsOfClassifier(classifier: ClassifierDescriptor?): List<ConstructorDescriptor> {
     val callableConstructors = when (classifier) {
         is TypeAliasDescriptor -> if (classifier.canHaveCallableConstructors) classifier.constructors else emptyList()
         is ClassDescriptor -> if (classifier.canHaveCallableConstructors) classifier.constructors else emptyList()

@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.defaultJvmPhases
+import org.jetbrains.kotlin.backend.jvm.withPluginPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
@@ -458,7 +459,8 @@ object KotlinToJVMBytecodeCompiler {
         )
             .codegenFactory(
                 if (isIR) JvmIrCodegenFactory(
-                    configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
+                    configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
+                        ?: PhaseConfig(defaultJvmPhases).withPluginPhases(environment.project)
                 ) else DefaultCodegenFactory
             )
             .withModule(module)
