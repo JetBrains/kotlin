@@ -50,7 +50,7 @@ open class YarnSetupTask : DefaultTask() {
     }
 
     private fun extract(archive: File, destination: File) {
-        val dirInTar = archive.name.removeSuffix(".tar.gz") + File.separator
+        val dirInTar = archive.name.removeSuffix(".tar.gz")
         project.copy {
             it.from(project.tarTree(archive))
             it.into(destination)
