@@ -1,0 +1,12 @@
+open class A
+class B : A()
+class C : A()
+
+fun liftClass(boolean: Boolean) {
+    val a1: A
+    a1 = if (boolean) {
+        B()
+    } else {
+        C()
+    }
+}
