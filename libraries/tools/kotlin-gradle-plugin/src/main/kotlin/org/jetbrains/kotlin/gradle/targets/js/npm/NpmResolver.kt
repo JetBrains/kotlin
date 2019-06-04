@@ -24,8 +24,7 @@ import java.nio.file.Files
 internal class NpmResolver private constructor(val rootProject: Project) {
     companion object {
         fun resolveIfNeeded(project: Project): ResolutionCallResult {
-            val rootProject = project.rootProject
-            val process = ProjectData[rootProject]
+            val process = ProjectData[project]
 
             if (process != null && process.visit == null) return AlreadyInProgress
 
@@ -33,7 +32,7 @@ internal class NpmResolver private constructor(val rootProject: Project) {
 
             return if (resolved != null) AlreadyResolved(resolved)
             else {
-                run(rootProject)
+                run(project.rootProject)
                 ResolvedNow(ProjectData[project]!!.visit!!)
             }
         }
