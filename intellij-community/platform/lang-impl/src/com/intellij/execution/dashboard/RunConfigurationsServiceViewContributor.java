@@ -21,10 +21,12 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.ide.util.treeView.PresentableNodeDescriptor;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.Content;
@@ -345,6 +347,27 @@ public class RunConfigurationsServiceViewContributor
         @Override
         public ItemPresentation getPresentation() {
           return service.getPresentation();
+        }
+
+        @Nullable
+        @Override
+        public String getId() {
+          ItemPresentation presentation = getPresentation();
+          String text = presentation.getPresentableText();
+          if (!StringUtil.isEmpty(text)) {
+            return text;
+          }
+          if (presentation instanceof PresentationData) {
+            List<PresentableNodeDescriptor.ColoredFragment> fragments = ((PresentationData)presentation).getColoredText();
+            if (!fragments.isEmpty()) {
+              StringBuilder result = new StringBuilder();
+              for (PresentableNodeDescriptor.ColoredFragment fragment : fragments) {
+                result.append(fragment.getText());
+              }
+              return result.toString();
+            }
+          }
+          return null;
         }
 
         @Nullable
