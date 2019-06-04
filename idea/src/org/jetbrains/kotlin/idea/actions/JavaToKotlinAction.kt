@@ -79,7 +79,8 @@ class JavaToKotlinAction : AnAction() {
                 try {
                     val document = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)
                     if (document == null) {
-                        MessagesEx.error(psiFile.project, "Failed to save conversion result: couldn't find document for " + psiFile.name).showLater()
+                        MessagesEx.error(psiFile.project, "Failed to save conversion result: couldn't find document for " + psiFile.name)
+                            .showLater()
                         continue
                     }
                     document.replaceString(0, document.textLength, text)
@@ -89,14 +90,12 @@ class JavaToKotlinAction : AnAction() {
                     if (ScratchRootType.getInstance().containsFile(virtualFile)) {
                         val mapping = ScratchFileService.getInstance().scratchesMapping
                         mapping.setMapping(virtualFile, KotlinFileType.INSTANCE.language)
-                    }
-                    else {
+                    } else {
                         val fileName = uniqueKotlinFileName(virtualFile)
                         virtualFile.pathBeforeJ2K = virtualFile.path
                         virtualFile.rename(this, fileName)
                     }
-                }
-                catch (e: IOException) {
+                } catch (e: IOException) {
                     MessagesEx.error(psiFile.project, e.message ?: "").showLater()
                 }
             }
@@ -128,25 +127,35 @@ class JavaToKotlinAction : AnAction() {
                     ::convert,
                     title,
                     true,
-                    project)) return emptyList()
+                    project
+                )
+            ) return emptyList()
 
 
             var externalCodeUpdate: (() -> Unit)? = null
 
             if (enableExternalCodeProcessing && converterResult!!.externalCodeProcessing != null) {
-                val question = "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
-                if (!askExternalCodeProcessing || (Messages.showYesNoDialog(project, question, title, Messages.getQuestionIcon()) == Messages.YES)) {
+                val question =
+                    "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
+                if (!askExternalCodeProcessing || (Messages.showYesNoDialog(
+                        project,
+                        question,
+                        title,
+                        Messages.getQuestionIcon()
+                    ) == Messages.YES)
+                ) {
                     ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                            {
-                                runReadAction {
-                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(
-                                        ProgressManager.getInstance().progressIndicator!!
-                                    )
-                                }
-                            },
-                            title,
-                            true,
-                            project)
+                        {
+                            runReadAction {
+                                externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(
+                                    ProgressManager.getInstance().progressIndicator!!
+                                )
+                            }
+                        },
+                        title,
+                        true,
+                        project
+                    )
                 }
             }
 
@@ -189,8 +198,8 @@ class JavaToKotlinAction : AnAction() {
         if (firstSyntaxError != null) {
             val count = javaFiles.filter { PsiTreeUtil.hasErrorElements(it) }.count()
             val question = firstSyntaxError.containingFile.name +
-                           (if (count > 1) " and ${count - 1} more Java files" else " file") +
-                           " contain syntax errors, the conversion result may be incorrect"
+                    (if (count > 1) " and ${count - 1} more Java files" else " file") +
+                    " contain syntax errors, the conversion result may be incorrect"
 
             val okText = "Investigate Errors"
             val cancelText = "Proceed with Conversion"
@@ -201,7 +210,8 @@ class JavaToKotlinAction : AnAction() {
                     okText,
                     cancelText,
                     Messages.getWarningIcon()
-            ) == Messages.OK) {
+                ) == Messages.OK
+            ) {
                 NavigationUtil.activateFileWithPsiElement(firstSyntaxError.navigationElement)
                 return
             }
@@ -239,8 +249,8 @@ class JavaToKotlinAction : AnAction() {
     private fun allJavaFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<PsiJavaFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
-                .asSequence()
-                .mapNotNull { manager.findFile(it) as? PsiJavaFile }
+            .asSequence()
+            .mapNotNull { manager.findFile(it) as? PsiJavaFile }
     }
 
     private fun allFiles(filesOrDirs: Array<VirtualFile>): Collection<VirtualFile> {
