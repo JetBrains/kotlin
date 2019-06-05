@@ -9,9 +9,7 @@ import com.intellij.openapi.project.Project
 import javax.swing.JComponent
 
 class SingleLanguageInlayHintsConfigurable(project: Project, val language: Language) : Configurable {
-  private val panel: SingleLanguageInlayHintsSettingsPanel
-
-  init {
+  private val panel: SingleLanguageInlayHintsSettingsPanel by lazy {
     val settings = ServiceManager.getService(InlayHintsSettings::class.java)
     // All configurables operate with copy of settings, that is why we can do live preview
     val providers = HintUtils.getHintProvidersForLanguage(language, project).map { it.withSettingsCopy() }
@@ -21,7 +19,7 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     }
     val keyToProvider = providers.associateBy { it.provider.key }
     val settingsWrappers = providers.map { it.toSettingsWrapper(settings, language) }
-    panel = SingleLanguageInlayHintsSettingsPanel(project, language, keyToProvider, settingsWrappers, providers.first(), options)
+    SingleLanguageInlayHintsSettingsPanel(project, language, keyToProvider, settingsWrappers, providers.first(), options)
   }
 
 
