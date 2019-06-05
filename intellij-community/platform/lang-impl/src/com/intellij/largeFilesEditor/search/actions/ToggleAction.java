@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("ComponentNotRegistered")
 public class ToggleAction extends CheckboxAction implements DumbAware {
   @SuppressWarnings("unused")
   private static final Logger logger = Logger.getInstance(ToggleAction.class);
