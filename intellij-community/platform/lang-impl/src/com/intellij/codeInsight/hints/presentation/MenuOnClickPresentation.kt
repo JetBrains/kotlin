@@ -24,7 +24,7 @@ class MenuOnClickPresentation(
       val actions = actionsSupplier()
       if (actions.isEmpty()) return
       val popupMenu = manager.createActionPopupMenu("InlayMenu", DefaultActionGroup(actions))
-      popupMenu.component.show(event.component, translated.x, translated.y)
+      popupMenu.component.show(event.component, event.x, event.y)
     }
   }
 }
