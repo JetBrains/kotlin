@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -129,7 +130,8 @@ internal fun KtDeclaration.getKotlinType(): KotlinType? {
     val descriptor = resolve()
     return when (descriptor) {
         is ValueDescriptor -> descriptor.type
-        is CallableDescriptor -> descriptor.returnType
+        is CallableDescriptor -> if (descriptor is FunctionDescriptor && descriptor.isSuspend)
+            descriptor.module.builtIns.nullableAnyType else descriptor.returnType
         else -> null
     }
 }

@@ -14,31 +14,36 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
-import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
 
 internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
     support: KtUltraLightSupport,
     method: KtLightMethod
-) : org.jetbrains.kotlin.asJava.elements.LightParameter(SUSPEND_FUNCTION_CONTINUATION_PARAMETER, PsiType.NULL, method, method.language) {
+) : org.jetbrains.kotlin.asJava.elements.LightParameter(SUSPEND_FUNCTION_CONTINUATION_PARAMETER, PsiType.NULL, method, method.language),
+    KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiParameter> {
 
-    private val psiType by lazyPub {
+    override val kotlinTypeForNullabilityAnnotation: KotlinType? get() = ktType
+    override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
+    override val kotlinOrigin: KtDeclaration? = null
+    override val clsDelegate: PsiParameter
+        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+
+    private val ktType by lazyPub {
         val descriptor = ktFunction.resolve() as? FunctionDescriptor
-        val returnType = descriptor?.returnType ?: return@lazyPub PsiType.NULL
-        val typeFromDescriptor = support.moduleDescriptor.getContinuationOfTypeOrAny(returnType, support.isReleasedCoroutine)
-        typeFromDescriptor.asPsiType(support, TypeMappingMode.DEFAULT, method)
+        val returnType = descriptor?.returnType ?: return@lazyPub null
+        support.moduleDescriptor.getContinuationOfTypeOrAny(returnType, support.isReleasedCoroutine)
     }
 
-    private val lightModifierList by lazyPub { KtLightSimpleModifierList(method, emptySet()) }
+    private val psiType by lazyPub {
+        ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiType.NULL
+    }
+
+    private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 
     override fun getType(): PsiType = psiType
 
