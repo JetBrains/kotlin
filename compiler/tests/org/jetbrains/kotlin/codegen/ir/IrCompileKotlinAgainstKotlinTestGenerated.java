@@ -94,11 +94,6 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
     }
 
     @TestMetadata("coroutinesBinary.kt")
-    public void testCoroutinesBinary_1_2() throws Exception {
-        runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines.experimental");
-    }
-
-    @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary_1_3() throws Exception {
         runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines");
     }

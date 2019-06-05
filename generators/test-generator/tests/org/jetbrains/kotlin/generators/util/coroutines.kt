@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,7 +54,7 @@ fun createCommonCoroutinesTestMethodModels(
     targetBackend: TargetBackend,
     skipIgnored: Boolean
 ): Collection<MethodModel> {
-    return if (targetBackend == TargetBackend.JS_IR)
+    return if (targetBackend == TargetBackend.JS_IR || targetBackend == TargetBackend.JVM_IR)
         listOf(
             CoroutinesTestModel(
                 rootDir,
