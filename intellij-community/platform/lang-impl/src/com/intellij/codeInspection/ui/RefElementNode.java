@@ -102,19 +102,6 @@ public class RefElementNode extends SuppressableInspectionTreeNode {
   }
 
   @Override
-  protected void visitProblemSeverities(@NotNull TObjectIntHashMap<HighlightDisplayLevel> counter) {
-    if (!isExcluded() && isLeaf() && !getPresentation().isProblemResolved(getElement()) && !getPresentation().isSuppressed(getElement())) {
-      HighlightSeverity severity = InspectionToolPresentation.getSeverity(getElement(), null, getPresentation());
-      HighlightDisplayLevel level = HighlightDisplayLevel.find(severity);
-      if (!counter.adjustValue(level, 1)) {
-        counter.put(level, 1);
-      }
-      return;
-    }
-    super.visitProblemSeverities(counter);
-  }
-
-  @Override
   public boolean isQuickFixAppliedFromView() {
     return isLeaf() && getPresentation().isProblemResolved(getElement());
   }
