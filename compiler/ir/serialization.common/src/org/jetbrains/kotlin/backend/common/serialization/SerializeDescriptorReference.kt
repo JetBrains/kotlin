@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.util.isAccessor
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
@@ -24,6 +25,21 @@ open class DescriptorReferenceSerializer(
         if (descriptor !is SimpleFunctionDescriptor) return false
 
         return DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)
+    }
+
+    fun extractPackageAndClassFqns(descriptor: DeclarationDescriptor): Pair<String, String>? {
+        val containingDeclaration = descriptor.containingDeclaration
+        return when (containingDeclaration) {
+            is ClassDescriptor -> {
+                val classId = containingDeclaration.classId ?: return null
+                Pair(classId.packageFqName.toString(), classId.relativeClassName.toString())
+            }
+            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName.toString(), "")
+            is PropertyDescriptor -> if (descriptor !is TypeParameterDescriptor) null else {
+                extractPackageAndClassFqns(containingDeclaration)
+            }
+            else -> return null
+        }
     }
 
     // Not all exported descriptors are deserialized, some a synthesized anew during metadata deserialization.
@@ -40,21 +56,10 @@ open class DescriptorReferenceSerializer(
         }
         if (declaration is IrAnonymousInitializer) return null
 
-        if (descriptor is ParameterDescriptor ||
-            (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor)
-            || (declaration is IrTypeParameter && declaration.parent !is IrClass)
-        ) return null
+        if (descriptor is ParameterDescriptor || (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor)) return null
 
         val containingDeclaration = descriptor.containingDeclaration!!
-
-        val (packageFqName, classFqName) = when (containingDeclaration) {
-            is ClassDescriptor -> {
-                val classId = containingDeclaration.classId ?: return null
-                Pair(classId.packageFqName.toString(), classId.relativeClassName.toString())
-            }
-            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName.toString(), "")
-            else -> return null
-        }
+        val (packageFqName, classFqName) = extractPackageAndClassFqns(descriptor) ?: return null
 
         val isAccessor = declaration.isAccessor
         val isBackingField = declaration is IrField && declaration.correspondingProperty != null
@@ -62,7 +67,7 @@ open class DescriptorReferenceSerializer(
         val isDefaultConstructor = descriptor is ClassConstructorDescriptor && containingDeclaration is ClassDescriptor && (containingDeclaration.kind == ClassKind.OBJECT)
         val isEnumEntry = descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY
         val isEnumSpecial = isEnumSpecialMember(descriptor)
-        val isTypeParameter = declaration is IrTypeParameter && declaration.parent is IrClass
+        val isTypeParameter = declaration is IrTypeParameter
 
         // The corresponding descriptor in deserialized metadata has constructors = emptyList() etc.
         if (containingDeclaration is ClassDescriptor &&
@@ -90,13 +95,24 @@ open class DescriptorReferenceSerializer(
             realDeclaration
         }
 
+        val nameString = if (isTypeParameter) {
+            val parent = declaration.parent
+            val typeParameterContainer = when (parent) {
+                is IrClass -> parent
+                is IrSimpleFunction -> parent.correspondingPropertySymbol?.owner ?: parent
+                is IrConstructor -> parent
+                else -> error("unknown type parameter container type")
+            }
+            typeParameterContainer.descriptor.name.asString()
+        } else descriptor.name.toString()
+
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
         uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
         val proto = KotlinIr.DescriptorReference.newBuilder()
             .setPackageFqName(serializeString(packageFqName))
             .setClassFqName(serializeString(classFqName))
-            .setName(serializeString(descriptor.name.toString()))
+            .setName(serializeString(nameString))
 
         if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))
 

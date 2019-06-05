@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorUniqIdAware
 import org.jetbrains.kotlin.backend.common.serialization.tryGetExtension
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassConstructorDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 
 object JsDescriptorUniqIdAware: DescriptorUniqIdAware {
     override fun DeclarationDescriptor.getUniqId(): Long? = when (this) {
@@ -20,6 +17,7 @@ object JsDescriptorUniqIdAware: DescriptorUniqIdAware {
         is DeserializedSimpleFunctionDescriptor -> this.proto.tryGetExtension(JsKlibMetadataProtoBuf.functionUniqId)
         is DeserializedPropertyDescriptor -> this.proto.tryGetExtension(JsKlibMetadataProtoBuf.propertyUniqId)
         is DeserializedClassConstructorDescriptor -> this.proto.tryGetExtension(JsKlibMetadataProtoBuf.constructorUniqId)
+        is DeserializedTypeParameterDescriptor -> this.proto.tryGetExtension(JsKlibMetadataProtoBuf.typeParamUniqId)
         else -> null
     }?.index
 }

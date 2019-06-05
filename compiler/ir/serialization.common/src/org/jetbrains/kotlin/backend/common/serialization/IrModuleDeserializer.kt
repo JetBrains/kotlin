@@ -27,11 +27,13 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 
 // TODO: This code still has some uses of descriptors:
@@ -823,12 +825,15 @@ abstract class IrModuleDeserializer(
         val symbol = deserializeIrSymbol(proto.symbol) as IrTypeParameterSymbol
         val name = deserializeName(proto.name)
         val variance = deserializeIrTypeVariance(proto.variance)
+        val descriptor = symbol.descriptor
 
-        val parameter = symbolTable.declareGlobalTypeParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-            symbol.descriptor
-        ) {
-            IrTypeParameterImpl(start, end, origin, it, name, proto.index, proto.isReified, variance)
+        val parameter =  if (descriptor is DeserializedTypeParameterDescriptor && descriptor.containingDeclaration is PropertyDescriptor && symbol.isBound) {
+            // TODO: Get rid of once new properties are implemented
+            IrTypeParameterImpl(start, end, origin, IrTypeParameterSymbolImpl(descriptor), name, proto.index, proto.isReified, variance)
+        } else {
+            symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, descriptor) {
+                IrTypeParameterImpl(start, end, origin, it, name, proto.index, proto.isReified, variance)
+            }
         }
 
         val superTypes = proto.superTypeList.map { deserializeIrType(it) }
@@ -966,19 +971,20 @@ abstract class IrModuleDeserializer(
         val symbol = deserializeIrSymbol(proto.symbol) as IrSimpleFunctionSymbol
 
         val function = symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                                                         symbol.descriptor, {
-                                                             IrFunctionImpl(
-                                                                 start, end, origin, it,
-                                                                 deserializeName(proto.base.name),
-                                                                 deserializeVisibility(proto.base.visibility),
-                                                                 deserializeModality(proto.modality),
-                                                                 deserializeIrType(proto.base.returnType),
-                                                                 proto.base.isInline,
-                                                                 proto.base.isExternal,
-                                                                 proto.isTailrec,
-                                                                 proto.isSuspend
-                                                             )
-                                                         })
+                                                         symbol.descriptor
+        ) {
+            IrFunctionImpl(
+                start, end, origin, it,
+                deserializeName(proto.base.name),
+                deserializeVisibility(proto.base.visibility),
+                deserializeModality(proto.modality),
+                deserializeIrType(proto.base.returnType),
+                proto.base.isInline,
+                proto.base.isExternal,
+                proto.isTailrec,
+                proto.isSuspend
+            )
+        }
 
         deserializeIrFunctionBase(proto.base, function as IrFunctionBase, start, end, origin)
         val overridden = proto.overriddenList.map { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }

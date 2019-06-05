@@ -200,8 +200,14 @@ abstract class KotlinManglerImpl: KotlinMangler {
 
     val IrTypeParameter.symbolName: String
         get() {
-            val containingDeclarationPart = parent.fqNameForIrSerialization
-            return "ktypeparam:$containingDeclarationPart$name"
+
+            val parentDeclaration = (parent as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: parent
+            val containingDeclarationPart = when (parentDeclaration) {
+                is IrDeclarationParent -> parentDeclaration.fqNameUnique.asString()
+                is IrProperty -> "${parentDeclaration.parent.fqNameUnique}.${parentDeclaration.name}"
+                else -> error("Unexpected type parameter parent")
+            }
+            return "ktypeparam:$containingDeclarationPart$name@$index"
         }
 
 // This is a little extension over what's used in real mangling

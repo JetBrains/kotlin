@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.serialization.UniqIdKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.backend.common.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -136,7 +134,18 @@ abstract class DescriptorReferenceDeserializer(
         }
 
         if (isTypeParameter) {
-            return clazz!!.declaredTypeParameters.first { it.name.asString() == name }
+
+            for (m in (listOfNotNull(clazz) + members)) {
+                val typeParameters = when (m) {
+                    is PropertyDescriptor -> m.typeParameters
+                    is ClassDescriptor -> m.declaredTypeParameters
+                    is SimpleFunctionDescriptor -> m.typeParameters
+                    is ClassConstructorDescriptor -> m.typeParameters
+                    else -> emptyList()
+                }
+
+                typeParameters.firstOrNull { it.getUniqId() == index }?.let { return it }
+            }
         }
 
         if (protoIndex?.let { checkIfSpecialDescriptorId(it) } == true) {
