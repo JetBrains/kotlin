@@ -95,7 +95,7 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(IfThenToElvisIntention())
         registerInspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection())
         registerInspectionBasedProcessing(ReplaceGetOrSetInspection())
-        registerIntentionBasedProcessing(AddOperatorModifierIntention())
+        registerInspectionBasedProcessing(AddOperatorModifierInspection())
         registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention())
         registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention())
         registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention())

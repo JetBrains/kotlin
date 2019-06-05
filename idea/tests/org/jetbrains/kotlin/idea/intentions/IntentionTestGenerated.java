@@ -1476,54 +1476,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/addOperatorModifier")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AddOperatorModifier extends AbstractIntentionTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAddOperatorModifier() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addOperatorModifier"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("containsBool.kt")
-        public void testContainsBool() throws Exception {
-            runTest("idea/testData/intentions/addOperatorModifier/containsBool.kt");
-        }
-
-        @TestMetadata("containsInt.kt")
-        public void testContainsInt() throws Exception {
-            runTest("idea/testData/intentions/addOperatorModifier/containsInt.kt");
-        }
-
-        @TestMetadata("extension.kt")
-        public void testExtension() throws Exception {
-            runTest("idea/testData/intentions/addOperatorModifier/extension.kt");
-        }
-
-        @TestMetadata("forOverride.kt")
-        public void testForOverride() throws Exception {
-            runTest("idea/testData/intentions/addOperatorModifier/forOverride.kt");
-        }
-
-        @TestMetadata("overridden.kt")
-        public void testOverridden() throws Exception {
-            runTest("idea/testData/intentions/addOperatorModifier/overridden.kt");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("idea/testData/intentions/addOperatorModifier/simple.kt");
-        }
-
-        @TestMetadata("toplevel.kt")
-        public void testToplevel() throws Exception {
-            runTest("idea/testData/intentions/addOperatorModifier/toplevel.kt");
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/addPropertyAccessors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

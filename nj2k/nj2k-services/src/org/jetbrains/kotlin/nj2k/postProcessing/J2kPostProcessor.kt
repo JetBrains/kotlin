@@ -125,7 +125,7 @@ private val processings: List<GeneralPostProcessing> = listOf(
         intentionBasedProcessing(IfThenToElvisIntention()),
         inspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection()),
         inspectionBasedProcessing(ReplaceGetOrSetInspection()),
-        intentionBasedProcessing(AddOperatorModifierIntention()),
+        inspectionBasedProcessing(AddOperatorModifierInspection()),
         intentionBasedProcessing(ObjectLiteralToLambdaIntention()),
         intentionBasedProcessing(AnonymousFunctionToLambdaIntention()),
         intentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()),
