@@ -69,7 +69,7 @@ class NpmSimpleLinker(val rootProject: Project) {
         }
 
         fun addLink(linkFile: String, target: String) {
-            js.appendln("fs.symlinkSync(${jsQuotedString(linkFile)}, ${jsQuotedString(target)}, 'junction')")
+            js.appendln("fs.symlinkSync(${jsQuotedString(target)}, ${jsQuotedString(linkFile)}, 'junction')")
         }
 
         private fun jsQuotedString(str: String) = StringWriter().also {
