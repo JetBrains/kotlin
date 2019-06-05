@@ -35,7 +35,7 @@ class NpmVersions {
     val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "1.0.0")
 
     val karmaMocha = NpmPackageVersion("karma-mocha", "1.3.0")
-    val karmaWebpack = NpmPackageVersion("karma-webpack", "3.0.5")
+    val karmaWebpack = NpmPackageVersion("karma-webpack", "^4.0.0-rc.6")
     val karmaCoverage = NpmPackageVersion("karma-coverage", "1.1.2")
 
     val karmaSourceMapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.3.7")

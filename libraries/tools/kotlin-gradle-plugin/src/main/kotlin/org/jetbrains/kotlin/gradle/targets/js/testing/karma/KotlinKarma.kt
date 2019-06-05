@@ -104,6 +104,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
     private fun useWebpack() {
         requiredDependencies.add(versions.karmaWebpack)
+        requiredDependencies.add(versions.webpack)
 
         addPreprocessor("webpack")
         confJsWriters.add {
