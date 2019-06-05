@@ -242,15 +242,16 @@ class LookupUi {
       location = ScreenUtil.findNearestPointOnBorder(screenRectangle, location);
     }
 
+    Rectangle candidate = new Rectangle(location, dim);
+    ScreenUtil.cropRectangleToFitTheScreen(candidate);
+
     JRootPane rootPane = editor.getComponent().getRootPane();
     if (rootPane != null) {
       SwingUtilities.convertPointFromScreen(location, rootPane.getLayeredPane());
-    } else {
+    }
+    else {
       LOG.error("editor.disposed=" + editor.isDisposed() + "; lookup.disposed=" + myLookup.isLookupDisposed() + "; editorShowing=" + editor.getContentComponent().isShowing());
     }
-
-    Rectangle candidate = new Rectangle(location, dim);
-    ScreenUtil.cropRectangleToFitTheScreen(candidate);
 
     myMaximumHeight = candidate.height;
     return new Rectangle(location.x, location.y, dim.width, candidate.height);
