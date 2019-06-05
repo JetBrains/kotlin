@@ -40,7 +40,7 @@ import java.util.List;
 
 import static com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame.BOTTOM_PANEL;
 
-public abstract class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implements DumbAware, Disposable {
+public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implements DumbAware, Disposable {
   protected DirectoryProjectGenerator<T> myProjectGenerator;
   protected AbstractNewProjectStep.AbstractCallback<T> myCallback;
   protected TextFieldWithBrowseButton myLocationField;
@@ -49,8 +49,8 @@ public abstract class ProjectSettingsStepBase<T> extends AbstractActionWithPanel
   protected JLabel myErrorLabel;
   protected NotNullLazyValue<ProjectGeneratorPeer<T>> myLazyGeneratorPeer;
 
-  protected ProjectSettingsStepBase(DirectoryProjectGenerator<T> projectGenerator,
-                                    AbstractNewProjectStep.AbstractCallback<T> callback) {
+  public ProjectSettingsStepBase(DirectoryProjectGenerator<T> projectGenerator,
+                                 AbstractNewProjectStep.AbstractCallback<T> callback) {
     super();
     getTemplatePresentation().setIcon(projectGenerator.getLogo());
     getTemplatePresentation().setText(projectGenerator.getName());
