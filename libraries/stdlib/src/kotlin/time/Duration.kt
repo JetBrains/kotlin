@@ -114,15 +114,14 @@ public inline class Duration internal constructor(internal val value: Double) : 
     public fun toLongNanoseconds(): Long = toLong(DurationUnit.NANOSECONDS)
     public fun toLongMilliseconds(): Long = toLong(DurationUnit.MILLISECONDS)
 
-    override fun toString(): String = buildString {
-        if (isInfinite()) {
-            append(value)
-        } else {
+    override fun toString(): String = when {
+        isInfinite() -> value.toString()
+        value == 0.0 -> "0s"
+        else -> {
             val absNs = absoluteValue.inNanoseconds
             var scientific = false
             var maxDecimals = 0
             val unit = when {
-                absNs == 0.0 -> return "0s"
                 absNs < 1e-6 -> DurationUnit.SECONDS.also { scientific = true }
                 absNs < 1 -> DurationUnit.NANOSECONDS.also { maxDecimals = 7 }
                 absNs < 1e3 -> DurationUnit.NANOSECONDS
@@ -135,7 +134,7 @@ public inline class Duration internal constructor(internal val value: Double) : 
                 else -> DurationUnit.DAYS.also { scientific = true }
             }
             val value = toDouble(unit)
-            return when {
+            when {
                 scientific -> formatScientific(value)
                 maxDecimals > 0 -> formatUpToDecimals(value, maxDecimals)
                 else -> formatToExactDecimals(value, precision(abs(value)))
