@@ -33,7 +33,6 @@ import com.intellij.openapi.editor.markup.HighlighterLayer;
 import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.Keymap;
@@ -61,7 +60,6 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.searches.DefinitionsScopedSearch;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.HintListener;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.ScrollPaneFactory;
@@ -86,7 +84,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -98,9 +95,8 @@ public class CtrlMouseHandler {
   private final EditorColorsManager myEditorColorsManager;
 
   private HighlightersSet myHighlighter;
-  @JdkConstants.InputEventMask private int myStoredModifiers = 0;
-  private TooltipProvider myTooltipProvider = null;
-  private final FileEditorManager myFileEditorManager;
+  @JdkConstants.InputEventMask private int myStoredModifiers;
+  private TooltipProvider myTooltipProvider;
   private final DocumentationManager myDocumentationManager;
   @Nullable private Point myPrevMouseLocation;
   private LightweightHint myHint;
@@ -145,20 +141,9 @@ public class CtrlMouseHandler {
     }
   };
 
-  private final FileEditorManagerListener myFileEditorManagerListener = new FileEditorManagerListener() {
-    @Override
-    public void selectionChanged(@NotNull FileEditorManagerEvent e) {
-      disposeHighlighter();
-      cancelPreviousTooltip();
-    }
-  };
-
-  private final VisibleAreaListener myVisibleAreaListener = new VisibleAreaListener() {
-    @Override
-    public void visibleAreaChanged(@NotNull VisibleAreaEvent e) {
-      disposeHighlighter();
-      cancelPreviousTooltip();
-    }
+  private final VisibleAreaListener myVisibleAreaListener = __ -> {
+    disposeHighlighter();
+    cancelPreviousTooltip();
   };
 
   private final EditorMouseListener myEditorMouseAdapter = new EditorMouseListener() {
@@ -205,17 +190,9 @@ public class CtrlMouseHandler {
     }
   };
 
-  private void cancelPreviousTooltip() {
-    if (myTooltipProvider != null) {
-      myTooltipProvider.dispose();
-      myTooltipProvider = null;
-    }
-  }
-
   public CtrlMouseHandler(final Project project,
                           StartupManager startupManager,
                           EditorColorsManager colorsManager,
-                          FileEditorManager fileEditorManager,
                           @NotNull DocumentationManager documentationManager,
                           @NotNull final EditorFactory editorFactory) {
     myProject = project;
@@ -236,8 +213,21 @@ public class CtrlMouseHandler {
         }, project);
       }
     });
-    myFileEditorManager = fileEditorManager;
+    project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener(){
+      @Override
+      public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+        disposeHighlighter();
+        cancelPreviousTooltip();
+      }
+    });
     myDocumentationManager = documentationManager;
+  }
+
+  private void cancelPreviousTooltip() {
+    if (myTooltipProvider != null) {
+      myTooltipProvider.dispose();
+      myTooltipProvider = null;
+    }
   }
 
   private boolean isMouseOverTooltip(@NotNull Point mouseLocationOnScreen) {
@@ -336,7 +326,7 @@ public class CtrlMouseHandler {
   }
 
   public abstract static class Info {
-    @NotNull protected final PsiElement myElementAtPointer;
+    @NotNull final PsiElement myElementAtPointer;
     @NotNull private final List<TextRange> myRanges;
 
     public Info(@NotNull PsiElement elementAtPointer, @NotNull List<TextRange> ranges) {
@@ -379,7 +369,7 @@ public class CtrlMouseHandler {
 
     public abstract boolean isNavigatable();
 
-    protected boolean rangesAreCorrect(@NotNull Document document) {
+    boolean rangesAreCorrect(@NotNull Document document) {
       final TextRange docRange = new TextRange(0, document.getTextLength());
       for (TextRange range : getRanges()) {
         if (!docRange.contains(range)) return false;
@@ -586,8 +576,8 @@ public class CtrlMouseHandler {
   }
 
   private void disposeHighlighter() {
-    if (myHighlighter != null) {
-      HighlightersSet highlighter = myHighlighter;
+    HighlightersSet highlighter = myHighlighter;
+    if (highlighter != null) {
       myHighlighter = null;
       highlighter.uninstall();
       HintManager.getInstance().hideAllHints();
@@ -680,7 +670,7 @@ public class CtrlMouseHandler {
       myProgress.cancel();
     }
 
-    public BrowseMode getBrowseMode() {
+    BrowseMode getBrowseMode() {
       return myBrowseMode;
     }
 
@@ -807,12 +797,7 @@ public class CtrlMouseHandler {
       final LightweightHint hint = new LightweightHint(wrapInScrollPaneIfNeeded(component, editor));
 
       myHint = hint;
-      hint.addHintListener(new HintListener() {
-        @Override
-        public void hintHidden(@NotNull EventObject event) {
-          myHint = null;
-        }
-      });
+      hint.addHintListener(__ -> myHint = null);
 
       showHint(hint, editor);
 
@@ -852,12 +837,7 @@ public class CtrlMouseHandler {
                                     @NotNull Editor editor) {
       if (!hint.isVisible()) return;
       Disposable hintDisposable = Disposer.newDisposable("CtrlMouseHandler.TooltipProvider.updateOnPsiChanges");
-      hint.addHintListener(new HintListener() {
-        @Override
-        public void hintHidden(@NotNull EventObject event) {
-          Disposer.dispose(hintDisposable);
-        }
-      });
+      hint.addHintListener(__ -> Disposer.dispose(hintDisposable));
       AtomicBoolean updating = new AtomicBoolean(false);
       myProject.getMessageBus().connect(hintDisposable).subscribe(PsiModificationTracker.TOPIC, () -> {
         if (updating.getAndSet(true)) return;
@@ -924,7 +904,6 @@ public class CtrlMouseHandler {
     if (info.isNavigatable()) {
       editor.setCustomCursor(CtrlMouseHandler.class, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
-    myFileEditorManager.addFileEditorManagerListener(myFileEditorManagerListener);
 
     List<RangeHighlighter> highlighters = new ArrayList<>();
 
@@ -975,11 +954,10 @@ public class CtrlMouseHandler {
       myHighlighterView.setCustomCursor(CtrlMouseHandler.class, null);
       myHighlighterView.getContentComponent().removeKeyListener(myEditorKeyListener);
       myHighlighterView.getScrollingModel().removeVisibleAreaListener(myVisibleAreaListener);
-      myFileEditorManager.removeFileEditorManagerListener(myFileEditorManagerListener);
     }
 
     @NotNull
-    public Info getStoredInfo() {
+    Info getStoredInfo() {
       return myStoredInfo;
     }
   }
@@ -988,7 +966,7 @@ public class CtrlMouseHandler {
     public static final DocInfo EMPTY = new DocInfo(null, null);
 
     @Nullable public final String text;
-    @Nullable public final DocumentationProvider docProvider;
+    @Nullable final DocumentationProvider docProvider;
 
     DocInfo(@Nullable String text, @Nullable DocumentationProvider provider) {
       this.text = text;
