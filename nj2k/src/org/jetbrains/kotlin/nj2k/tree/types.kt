@@ -310,14 +310,14 @@ inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParam
         ) as T
     } else this
 
-fun JKClassSymbol.expectedTypeParametersCount(): Int {
-    val resolvedClass = target
-    return when (resolvedClass) {
+fun JKClassSymbol.expectedTypeParametersCount(): Int =
+    when (val resolvedClass = target) {
         is PsiClass -> resolvedClass.typeParameters.size
         is KtClass -> resolvedClass.typeParameters.size
+        is JKClass -> resolvedClass.typeParameterList.typeParameters.size
         else -> 0
     }
-}
+
 
 val primitiveTypes =
     listOf(

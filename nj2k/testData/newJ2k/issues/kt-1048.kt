@@ -1,5 +1,6 @@
 // ERROR: The integer literal does not conform to the expected type CapturedType(*)
 // ERROR: The integer literal does not conform to the expected type CapturedType(*)
+// ERROR: Type argument is not within its bounds: should be subtype of 'String?'
 internal class G<T : String?>(t: T?)
 class Java {
     internal fun test() {
@@ -9,7 +10,7 @@ class Java {
 
     internal fun test2() {
         val m: HashMap<*, *> = HashMap<Any?, Any?>()
-        val g = G("")
+        val g: G<*> = G<Any?>("")
         val g2 = G("")
     }
 }
