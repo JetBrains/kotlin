@@ -16,10 +16,10 @@ internal class A @JvmOverloads constructor(p: Int = 1) {
     // end of secondary constructor 1 body
 }
 
-internal class B // this constructor will disappear
-// end of constructor body
+internal class B // end of constructor body
 (private val x: Int) {
     fun foo() {}
+// this constructor will disappear
 
 }
 

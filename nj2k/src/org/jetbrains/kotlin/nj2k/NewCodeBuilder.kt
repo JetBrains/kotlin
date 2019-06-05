@@ -342,6 +342,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
 
         override fun visitKtInitDeclarationRaw(ktInitDeclaration: JKKtInitDeclaration) {
             if (ktInitDeclaration.block.statements.isNotEmpty()) {
+                printer.println()
                 printer.print("init ")
                 ktInitDeclaration.block.accept(this)
             }
