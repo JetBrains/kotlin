@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
+import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtFunction
@@ -100,9 +103,14 @@ internal abstract class KtUltraLightParameter(
 
     private val _type: PsiType by lazyPub {
         val kotlinType = kotlinType ?: return@lazyPub PsiType.NULL
-        val containingDescriptor = computeContainingDescriptor() ?: return@lazyPub PsiType.NULL
-        support.mapType(this) { typeMapper, sw ->
-            typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
+
+        if (kotlinType.isSuspendFunctionType) {
+            kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
+        } else {
+            val containingDescriptor = computeContainingDescriptor() ?: return@lazyPub PsiType.NULL
+            support.mapType(this) { typeMapper, sw ->
+                typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
+            }
         }
     }
 

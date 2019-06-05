@@ -169,9 +169,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             }
             if (declaration is KtCallableDeclaration) {
                 declaration.valueParameters.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
-                if (declaration.typeReference?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true) {
-                    return declaration.typeReference
-                }
             }
             if (declaration is KtProperty) {
                 declaration.accessors.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
