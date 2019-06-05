@@ -149,8 +149,8 @@ class BigNumbersTest {
 
         // The most common usage is in conditions.
         assertFalse(`-1`.isPositive)
-        assertTrue(`0`.isPositive)
-        assertFalse(`1`.isPositive)
+        assertFalse(`0`.isPositive)
+        assertTrue(`1`.isPositive)
 
         // However, it can also be used as a predicate.
         assertEquals(
@@ -203,8 +203,8 @@ class BigNumbersTest {
 
         // The most common usage is in conditions.
         assertFalse(`-1`.isPositive)
-        assertTrue(`0`.isPositive)
-        assertFalse(`1`.isPositive)
+        assertFalse(`0`.isPositive)
+        assertTrue(`1`.isPositive)
 
         // However, it can also be used as a predicate.
         assertEquals(
