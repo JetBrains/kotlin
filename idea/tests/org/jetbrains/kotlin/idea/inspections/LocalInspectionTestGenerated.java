@@ -332,6 +332,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToElvis/lhsNotEqualsNull.kt");
             }
 
+            @TestMetadata("longLine.kt")
+            public void testLongLine() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToElvis/longLine.kt");
+            }
+
             @TestMetadata("missingElseClause.kt")
             public void testMissingElseClause() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToElvis/missingElseClause.kt");
@@ -3796,6 +3801,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("IsSuperTypeFake.kt")
         public void testIsSuperTypeFake() throws Exception {
             runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/IsSuperTypeFake.kt");
+        }
+
+        @TestMetadata("LongName.kt")
+        public void testLongName() throws Exception {
+            runTest("idea/testData/inspectionsLocal/foldInitializerAndIfToElvis/LongName.kt");
         }
 
         @TestMetadata("MultiStatementBlock.kt")

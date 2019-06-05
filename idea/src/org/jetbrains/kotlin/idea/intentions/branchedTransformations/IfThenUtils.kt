@@ -177,6 +177,8 @@ fun KtExpression.isStableVal(context: BindingContext = this.analyze()): Boolean 
     return this.toDataFlowValue(context)?.kind == DataFlowValue.Kind.STABLE_VALUE
 }
 
+fun elvisPattern(newLine: Boolean): String = if (newLine) "$0\n?: $1" else "$0 ?: $1"
+
 private fun KtExpression.toDataFlowValue(context: BindingContext): DataFlowValue? {
     val expressionType = this.getType(context) ?: return null
     val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
