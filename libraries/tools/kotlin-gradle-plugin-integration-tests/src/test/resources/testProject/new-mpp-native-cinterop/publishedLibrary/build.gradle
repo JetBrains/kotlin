@@ -52,6 +52,10 @@ kotlin {
 
 }
 
+// We don't create test tasks for Windows x86. But we still want to test
+// generating interop for it, so we add this dependency.
+build.dependsOn 'linkDebugTestMingw86'
+
 publishing {
     repositories {
         maven {
