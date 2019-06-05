@@ -20,8 +20,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
@@ -50,13 +52,15 @@ class NewJavaToKotlinConverter(
         postProcessor: PostProcessor,
         progress: ProgressIndicator
     ): FilesResult {
-        val withProgressProcessor = WithProgressProcessor(progress, files)
-        val (results, externalCodeProcessing, context) = ApplicationManager.getApplication().runReadAction(Computable {
-            elementsToKotlin(files, withProgressProcessor)
-        })
+        val phasesCount = postProcessor.phasesCount + 1
+        val withProgressProcessor = NewJ2kWithProgressProcessor(progress, files, phasesCount)
+        val (results, externalCodeProcessing, context) = withProgressProcessor.process {
+            ApplicationManager.getApplication().runReadAction(Computable {
+                elementsToKotlin(files, withProgressProcessor)
+            })
+        }
 
-        val texts = withProgressProcessor.processItems(0.5, results.withIndex()) { pair ->
-            val (i, result) = pair
+        val texts = results.mapIndexed { i, result ->
             try {
                 val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
                     KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
@@ -71,9 +75,15 @@ class NewJavaToKotlinConverter(
                         }
                     }
                 }
-
-                AfterConversionPass(project, postProcessor).run(kotlinFile, context, range = null)
-
+                withProgressProcessor.process {
+                    AfterConversionPass(project, postProcessor).run(
+                        kotlinFile,
+                        context,
+                        range = null,
+                        onPhaseChanged = { phase, description ->
+                            withProgressProcessor.updateState(i, phase + 1, description)
+                        })
+                }
                 kotlinFile.text
             } catch (e: ProcessCanceledException) {
                 throw e
@@ -87,12 +97,19 @@ class NewJavaToKotlinConverter(
     }
 
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
+        @Suppress("NAME_SHADOWING")
+        val processor = processor as NewJ2kWithProgressProcessor
+
+        val phaseDescription = "Converting Java code to Kotlin code"
         val symbolProvider = JKSymbolProvider()
         symbolProvider.preBuildTree(inputElements)
         val importStorage = ImportStorage()
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices, importStorage)
-        val asts = inputElements.map { element ->
-            element to treeBuilder.buildTree(element)
+        val asts = processor.process {
+            inputElements.mapIndexed { i, element ->
+                processor.updateState(i, 1, phaseDescription)
+                element to treeBuilder.buildTree(element)
+            }
         }
 
         val context = NewJ2kConverterContext(
@@ -102,22 +119,69 @@ class NewJavaToKotlinConverter(
             importStorage,
             JKElementInfoStorage()
         )
-
-        ConversionsRunner.doApply(asts.mapNotNull { it.second }, context)
-        val results = asts.map { (element, ast) ->
-            if (ast == null) return@map null
-            val code = NewCodeBuilder(context).run { printCodeOut(ast) }
-            val parseContext = when (element) {
-                is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
-                else -> ParseContext.TOP_LEVEL
+        processor.process {
+            ConversionsRunner.doApply(asts.withIndex().mapNotNull { (i, ast) ->
+                processor.updateState(i, 1, phaseDescription)
+                ast.second
+            }, context)
+        }
+        val results = processor.process {
+            asts.mapIndexed { i, elementWithAst ->
+                processor.updateState(i, 1, phaseDescription)
+                val (element, ast) = elementWithAst
+                if (ast == null) return@mapIndexed null
+                val code = NewCodeBuilder(context).run { printCodeOut(ast) }
+                val parseContext = when (element) {
+                    is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
+                    else -> ParseContext.TOP_LEVEL
+                }
+                ElementResult(
+                    code,
+                    importsToAdd = importStorage.getImports(),
+                    parseContext = parseContext
+                )
             }
-            ElementResult(
-                code,
-                importsToAdd = importStorage.getImports(),
-                parseContext = parseContext
-            )
         }
 
         return Result(results, null, context)
     }
+
+    override fun elementsToKotlin(inputElements: List<PsiElement>): Result {
+        return elementsToKotlin(inputElements, NewJ2kWithProgressProcessor.DEFAULT)
+    }
+}
+
+class NewJ2kWithProgressProcessor(
+    private val progress: ProgressIndicator?,
+    private val files: List<PsiJavaFile>?,
+    private val phasesCount: Int
+) : WithProgressProcessor {
+    companion object {
+        val DEFAULT = NewJ2kWithProgressProcessor(null, null, 0)
+    }
+
+    override fun updateState(fileIndex: Int, phase: Int, description: String) {
+        progress?.checkCanceled()
+        progress?.fraction = phase / phasesCount.toDouble()
+        progress?.text = "$description - phase $phase of $phasesCount"
+        if (files != null && files.isNotEmpty()) {
+            progress?.text2 = files[fileIndex].virtualFile.presentableUrl
+        }
+    }
+
+    override fun <TInputItem, TOutputItem> processItems(
+        fractionPortion: Double,
+        inputItems: Iterable<TInputItem>,
+        processItem: (TInputItem) -> TOutputItem
+    ): List<TOutputItem> {
+        throw AbstractMethodError("Should not be called for new J2K")
+    }
+
+    override fun <T> process(action: () -> T): T {
+        // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
+        var result: T? = null
+        ProgressManager.getInstance().runProcess({ result = action() }, EmptyProgressIndicator())
+        return result!!
+    }
+
 }

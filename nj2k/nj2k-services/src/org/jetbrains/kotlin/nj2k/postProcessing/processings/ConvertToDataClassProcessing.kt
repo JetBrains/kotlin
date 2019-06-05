@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierTypeOrDefault
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
-class ConvertToDataClassProcessing : ElementsBasedPostProcessing() {
+class ConvertToDataClassProcessing : ElementsBasedPostProcessing(ConvertGettersAndSettersToPropertyProcessing.DESCRIPTION) {
     private fun KtCallableDeclaration.rename(newName: String) {
         val factory = KtPsiFactory(this)
         val escapedName = newName.escaped()

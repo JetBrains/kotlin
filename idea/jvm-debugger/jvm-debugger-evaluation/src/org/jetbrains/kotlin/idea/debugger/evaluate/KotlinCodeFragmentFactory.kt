@@ -257,7 +257,8 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                                 .run(
                                     convertedFragment!!,
                                     conversionContext,
-                                    range = null
+                                    range = null,
+                                    onPhaseChanged = null
                                 )
                         }
                     } catch (e: Throwable) {

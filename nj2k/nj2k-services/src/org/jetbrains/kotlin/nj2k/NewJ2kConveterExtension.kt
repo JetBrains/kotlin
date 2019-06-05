@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.idea.configuration.getAbleToRunConfigurators
 import org.jetbrains.kotlin.idea.configuration.hasAnyKotlinRuntimeInScope
 import org.jetbrains.kotlin.idea.configuration.isModuleConfigured
@@ -26,6 +28,13 @@ class NewJ2kConverterExtension : J2kConverterExtension() {
 
     override fun doCheckBeforeConversion(project: Project, module: Module): Boolean =
         checkKotlinIsConfigured(project, module)
+
+    override fun createWithProgressProcessor(
+        progress: ProgressIndicator?,
+        files: List<PsiJavaFile>?,
+        phasesCount: Int
+    ): WithProgressProcessor =
+        NewJ2kWithProgressProcessor(progress, files, phasesCount)
 
     private fun checkKotlinIsConfigured(project: Project, module: Module): Boolean {
         val kotlinIsConfigured =

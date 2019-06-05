@@ -11,7 +11,10 @@ import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
@@ -21,11 +24,13 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.asGetterName
+import org.jetbrains.kotlin.nj2k.asSetterName
+import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.postProcessing.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -38,7 +43,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.mapToIndex
 
-class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing() {
+class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing(DESCRIPTION) {
     private fun KtNamedFunction.hasOverrides(): Boolean =
         toLightMethods().singleOrNull()?.let { lightMethod ->
             OverridingMethodsSearch.search(lightMethod).findFirst()
@@ -519,6 +524,9 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
                 ktProperty.addModifier(KtTokens.OPEN_KEYWORD)
             }
         }
+    }
+    companion object {
+        const val DESCRIPTION = "Converting POJOs to data classes"
     }
 }
 

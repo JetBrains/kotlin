@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
-import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.core.util.range
+import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
@@ -161,12 +161,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             val newBounds = insertImports(boundsAfterReplace, referenceData, explicitImports)
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            AfterConversionPass(project, JavaToKotlinConverterFactory.createPostProcessor(formatCode = true))
-                .run(
-                    targetFile,
-                    conversionResult?.converterContext,
-                    newBounds
-                )
+            runPostProcessing(project, targetFile, newBounds, conversionResult?.converterContext)
 
             conversionPerformed = true
         }
@@ -304,3 +299,37 @@ internal fun confirmConvertJavaOnPaste(project: Project, isPlainText: Boolean): 
     return dialog.isOK
 }
 
+
+fun runPostProcessing(project: Project, file: KtFile, bounds: TextRange?, converterContext: ConverterContext?) {
+    val postProcessor = JavaToKotlinConverterFactory.createPostProcessor(formatCode = true)
+    if (JavaToKotlinConverterFactory.isNewJ2k) {
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(
+            {
+                val processor =
+                    JavaToKotlinConverterFactory.createWithProgressIndicator(
+                        ProgressManager.getInstance().progressIndicator!!,
+                        emptyList(),
+                        postProcessor.phasesCount
+                    )
+                AfterConversionPass(project, postProcessor)
+                    .run(
+                        file,
+                        converterContext,
+                        bounds
+                    ) { phase, description ->
+                        processor.updateState(0, phase, description)
+                    }
+            },
+            "Convert Java to Kotlin",
+            true,
+            project
+        )
+    } else {
+        AfterConversionPass(project, postProcessor)
+            .run(
+                file,
+                converterContext,
+                bounds
+            )
+    }
+}

@@ -27,8 +27,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
 class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
+
+    override val phasesCount: Int = 1
+
     override fun insertImport(file: KtFile, fqName: FqName) {
         ApplicationManager.getApplication().invokeAndWait {
             runWriteAction {
@@ -57,7 +60,12 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         PROCESS
     }
 
-    override fun doAdditionalProcessing(file: KtFile, converterContext: ConverterContext?, rangeMarker: RangeMarker?) =
+    override fun doAdditionalProcessing(
+        file: KtFile,
+        converterContext: ConverterContext?,
+        rangeMarker: RangeMarker?,
+        onPhaseChanged: ((Int, String) -> Unit)?
+    ) =
         runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
             do {
                 var modificationStamp: Long? = file.modificationStamp

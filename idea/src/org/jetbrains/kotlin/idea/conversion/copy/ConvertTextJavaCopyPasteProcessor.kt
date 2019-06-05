@@ -36,9 +36,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
-import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -130,12 +128,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         }
 
         psiDocumentManager.commitAllDocuments()
-        AfterConversionPass(project, JavaToKotlinConverterFactory.createPostProcessor(formatCode = true))
-            .run(
-                targetFile,
-                convertedResult.converterContext,
-                newBounds
-            )
+        runPostProcessing(project, targetFile, newBounds, convertedResult.converterContext)
 
         conversionPerformed = true
     }

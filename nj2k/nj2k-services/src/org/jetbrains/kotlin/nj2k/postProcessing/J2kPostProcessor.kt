@@ -58,9 +58,17 @@ class NewJ2kPostProcessor : PostProcessor {
         }
     }
 
-    override fun doAdditionalProcessing(file: KtFile, converterContext: ConverterContext?, rangeMarker: RangeMarker?) {
+    override val phasesCount = processings.size
+
+    override fun doAdditionalProcessing(
+        file: KtFile,
+        converterContext: ConverterContext?,
+        rangeMarker: RangeMarker?,
+        onPhaseChanged: ((Int, String) -> Unit)?
+    ) {
         runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-            for (processing in processings) {
+            for ((i, processing) in processings.withIndex()) {
+                onPhaseChanged?.invoke(i, processing.description)
                 processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
                 commitFile(file)
             }
@@ -82,15 +90,20 @@ private val processings: List<GeneralPostProcessing> = listOf(
     nullabilityProcessing,
     formatCodeProcessing,
     shortenReferencesProcessing,
-    InspectionLikeProcessingGroup(VarToValProcessing()),
+    InspectionLikeProcessingGroup(ConvertGettersAndSettersToPropertyProcessing.DESCRIPTION, VarToValProcessing()),
     ConvertGettersAndSettersToPropertyProcessing(),
-    InspectionLikeProcessingGroup(MoveGetterAndSetterAnnotationsToPropertyProcessing()),
     InspectionLikeProcessingGroup(
+        ConvertGettersAndSettersToPropertyProcessing.DESCRIPTION,
+        MoveGetterAndSetterAnnotationsToPropertyProcessing()
+    ),
+    InspectionLikeProcessingGroup(
+        ConvertGettersAndSettersToPropertyProcessing.DESCRIPTION,
         generalInspectionBasedProcessing(RedundantGetterInspection()),
         generalInspectionBasedProcessing(RedundantSetterInspection())
     ),
     ConvertToDataClassProcessing(),
     InspectionLikeProcessingGroup(
+        "Cleaning up Kotlin code",
         RemoveRedundantVisibilityModifierProcessing(),
         RemoveRedundantModalityModifierProcessing(),
         RemoveRedundantConstructorKeywordProcessing(),

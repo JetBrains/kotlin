@@ -16,8 +16,8 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.quickfix.QuickFixActionBase
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
@@ -36,13 +36,18 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.utils.mapToIndex
-import java.util.ArrayList
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 
-class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<InspectionLikeProcessing>) : ProcessingGroup {
-    constructor(vararg inspectionLikeProcessings: InspectionLikeProcessing) : this(inspectionLikeProcessings.toList())
+class InspectionLikeProcessingGroup(
+    override val description: String,
+    val inspectionLikeProcessings: List<InspectionLikeProcessing>
+) : ProcessingGroup {
+
+    constructor(description: String, vararg inspectionLikeProcessings: InspectionLikeProcessing) :
+            this(description, inspectionLikeProcessings.toList())
 
     private val processingsToPriorityMap = inspectionLikeProcessings.mapToIndex()
     fun priority(processing: InspectionLikeProcessing): Int = processingsToPriorityMap.getValue(processing)

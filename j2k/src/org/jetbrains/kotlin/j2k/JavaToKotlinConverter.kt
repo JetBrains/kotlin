@@ -40,7 +40,14 @@ import java.util.*
 interface PostProcessor {
     fun insertImport(file: KtFile, fqName: FqName)
 
-    fun doAdditionalProcessing(file: KtFile, converterContext: ConverterContext?, rangeMarker: RangeMarker?)
+    val phasesCount: Int
+
+    fun doAdditionalProcessing(
+        file: KtFile,
+        converterContext: ConverterContext?,
+        rangeMarker: RangeMarker?,
+        onPhaseChanged: ((Int, String) -> Unit)?
+    )
 }
 
 enum class ParseContext {
@@ -73,9 +80,7 @@ abstract class JavaToKotlinConverter {
         progress: ProgressIndicator = EmptyProgressIndicator()
     ): FilesResult
 
-    fun elementsToKotlin(inputElements: List<PsiElement>): Result {
-        return elementsToKotlin(inputElements, WithProgressProcessor.DEFAULT)
-    }
+    abstract fun elementsToKotlin(inputElements: List<PsiElement>): Result
 }
 
 class OldJavaToKotlinConverter(
@@ -91,7 +96,7 @@ class OldJavaToKotlinConverter(
         postProcessor: PostProcessor,
         progress: ProgressIndicator
     ): FilesResult {
-        val withProgressProcessor = WithProgressProcessor(progress, files)
+        val withProgressProcessor = OldWithProgressProcessor(progress, files)
         val (results, externalCodeProcessing) = ApplicationManager.getApplication().runReadAction(Computable {
             elementsToKotlin(files, withProgressProcessor)
         })
@@ -106,7 +111,7 @@ class OldJavaToKotlinConverter(
 
                 result!!.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
 
-                AfterConversionPass(project, postProcessor).run(kotlinFile, converterContext = null, range = null)
+                AfterConversionPass(project, postProcessor).run(kotlinFile, converterContext = null, range = null, onPhaseChanged = null)
 
                 kotlinFile.text
             } catch (e: ProcessCanceledException) {
@@ -156,6 +161,11 @@ class OldJavaToKotlinConverter(
             }
         }
     }
+
+    override fun elementsToKotlin(inputElements: List<PsiElement>): Result {
+        return elementsToKotlin(inputElements, OldWithProgressProcessor.DEFAULT)
+    }
+
 
     private data class ReferenceInfo(
         val reference: PsiReference,
@@ -252,10 +262,21 @@ class OldJavaToKotlinConverter(
     }
 }
 
+interface WithProgressProcessor {
+    fun <TInputItem, TOutputItem> processItems(
+        fractionPortion: Double,
+        inputItems: Iterable<TInputItem>,
+        processItem: (TInputItem) -> TOutputItem
+    ): List<TOutputItem>
 
-class WithProgressProcessor(private val progress: ProgressIndicator?, private val files: List<PsiJavaFile>?) {
+    fun updateState(fileIndex: Int, phase: Int, description: String)
+    fun <T> process(action: () -> T): T
+}
+
+
+class OldWithProgressProcessor(private val progress: ProgressIndicator?, private val files: List<PsiJavaFile>?) : WithProgressProcessor {
     companion object {
-        val DEFAULT = WithProgressProcessor(null, null)
+        val DEFAULT = OldWithProgressProcessor(null, null)
     }
 
     private val progressText = "Converting Java to Kotlin"
@@ -264,7 +285,7 @@ class WithProgressProcessor(private val progress: ProgressIndicator?, private va
     private var fraction = 0.0
     private var pass = 1
 
-    fun <TInputItem, TOutputItem> processItems(
+    override fun <TInputItem, TOutputItem> processItems(
         fractionPortion: Double,
         inputItems: Iterable<TInputItem>,
         processItem: (TInputItem) -> TOutputItem
@@ -290,6 +311,14 @@ class WithProgressProcessor(private val progress: ProgressIndicator?, private va
             EmptyProgressIndicator()
         )
         return outputItems
+    }
+
+    override fun <T> process(action: () -> T): T {
+        throw AbstractMethodError("Should not be called for old J2K")
+    }
+
+    override fun updateState(fileIndex: Int, phase: Int, description: String) {
+        throw AbstractMethodError("Should not be called for old J2K")
     }
 }
 
