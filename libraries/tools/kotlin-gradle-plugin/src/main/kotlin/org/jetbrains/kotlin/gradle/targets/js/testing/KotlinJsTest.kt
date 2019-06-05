@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import groovy.lang.Closure
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.SkipWhenEmpty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.*
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -29,6 +27,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     @get:Internal
     internal var testFramework: KotlinJsTestFramework? = null
 
+    @Suppress("unused")
     val testFrameworkSettings: String
         @Input get() = testFramework!!.settingsState
 
@@ -38,9 +37,11 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     @Internal
     override lateinit var compilation: KotlinJsCompilation
 
-    val entry: File
-        @InputFile get() = compilation.compileKotlinTask.outputFile
+    @Suppress("unused")
+    val runtimeClasspath: FileCollection
+        @InputFiles get() = compilation.runtimeDependencyFiles
 
+    @Suppress("unused")
     val compilationId: String
         @Input get() = compilation.let {
             val target = it.target
