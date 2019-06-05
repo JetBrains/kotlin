@@ -22,7 +22,6 @@ import com.intellij.util.ThreeState;
 import com.intellij.util.containers.SmartHashSet;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.messages.impl.MessageListenerList;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +37,8 @@ import java.util.*;
 public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableComponent, PersistentStateComponent<Element> {
   private final List<Sdk> mySdks = new ArrayList<>();
 
-  private final MessageListenerList<Listener> myListenerList;
-
-  @NonNls private static final String ELEMENT_JDK = "jdk";
+  @NonNls
+  private static final String ELEMENT_JDK = "jdk";
 
   private final Map<String, ProjectJdkImpl> myCachedProjectJdks = new HashMap<>();
   private final MessageBus myMessageBus;
@@ -48,7 +46,6 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
   // constructor is public because it is accessed from Upsource
   public ProjectJdkTableImpl() {
     myMessageBus = ApplicationManager.getApplication().getMessageBus();
-    myListenerList = new MessageListenerList<>(myMessageBus, JDK_TABLE_TOPIC);
     // support external changes to jdk libraries (Endorsed Standards Override)
     final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
@@ -206,16 +203,6 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
       // fire changes because after renaming JDK its name may match the associated jdk name of modules/project
       myMessageBus.syncPublisher(JDK_TABLE_TOPIC).jdkNameChanged(originalJdk, previousName);
     }
-  }
-
-  @Override
-  public void addListener(@NotNull Listener listener) {
-    myListenerList.add(listener);
-  }
-
-  @Override
-  public void removeListener(@NotNull Listener listener) {
-    myListenerList.remove(listener);
   }
 
   @Override
