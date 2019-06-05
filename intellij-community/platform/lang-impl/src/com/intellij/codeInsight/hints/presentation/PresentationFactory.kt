@@ -117,6 +117,11 @@ class PresentationFactory(private val editor: EditorImpl) {
     }), onClick = unwrapAction)
   }
 
+  @Contract(pure = true)
+  fun inset(base: InlayPresentation, left: Int = 0, right: Int = 0, top: Int = 0, down: Int = 0): InsetPresentation {
+    return InsetPresentation(base, left, right, top, down)
+  }
+
   /**
    * Creates node, that can be collapsed/expanded by clicking on prefix/suffix.
    * If presentation is collapsed, clicking to content will expand it.
@@ -268,6 +273,19 @@ class PresentationFactory(private val editor: EditorImpl) {
       1 -> presentations.first()
       else -> SequencePresentation(presentations.toList())
     }
+  }
+
+  fun join(presentations: List<InlayPresentation>, separator: () -> InlayPresentation) : InlayPresentation {
+    val seq = mutableListOf<InlayPresentation>()
+    var first = true
+    for (presentation in presentations) {
+      if (!first) {
+        seq.add(separator())
+      }
+      seq.add(presentation)
+      first = false
+    }
+    return SequencePresentation(seq)
   }
 
   @Contract(pure = true)
