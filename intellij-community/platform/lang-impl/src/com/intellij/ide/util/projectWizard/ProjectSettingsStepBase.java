@@ -40,6 +40,7 @@ import java.util.List;
 
 import static com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame.BOTTOM_PANEL;
 
+@SuppressWarnings("ComponentNotRegistered")
 public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implements DumbAware, Disposable {
   protected DirectoryProjectGenerator<T> myProjectGenerator;
   protected AbstractNewProjectStep.AbstractCallback<T> myCallback;
