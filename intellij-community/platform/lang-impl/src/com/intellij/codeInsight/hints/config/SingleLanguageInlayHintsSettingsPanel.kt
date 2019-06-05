@@ -42,7 +42,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private val settings = ServiceManager.getService(InlayHintsSettings::class.java)
   private val immediateConfigurableListener = object : ChangeListener {
     override fun settingsChanged() {
-      updateEditorAsync(editorField.text)
+      updateEditor(editorField.text)
     }
   }
 
@@ -62,7 +62,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val providerSettingsPane = JBScrollPane()
     horizontalSplitter.secondComponent = withMargin(providerSettingsPane)
     providerSettingsPane.setViewportView(getComponentFor(defaultProvider.configurable))
-    updateEditorAsync(defaultProvider.provider.previewText ?: "")
+    updateEditor(defaultProvider.provider.previewText ?: "")
     initProviderList(providerSettingsPane)
 
     bottomPanel.layout = BorderLayout()
@@ -123,23 +123,21 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     traverser.forEach { action(it) }
   }
 
-  private fun updateEditorAsync(text: String?) {
-    ApplicationManager.getApplication().invokeLater {
-      if (text == null) {
-        bottomPanel.isVisible = false
-      }
-      else {
-        bottomPanel.isVisible = true
-        if (editorField.isValid) {
-          editorField.text = text
-          val document = editorField.document
-          ApplicationManager.getApplication().runWriteAction {
-            PsiDocumentManager.getInstance(project).commitDocument(document)
-            val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
-            val editor = editorField.editor
-            if (editor != null && psiFile != null) {
-              collectAndDrawHints(editor, psiFile)
-            }
+  private fun updateEditor(text: String?) {
+    if (text == null) {
+      bottomPanel.isVisible = false
+    }
+    else {
+      bottomPanel.isVisible = true
+      if (editorField.isValid) {
+        editorField.text = text
+        val document = editorField.document
+        ApplicationManager.getApplication().runWriteAction {
+          PsiDocumentManager.getInstance(project).commitDocument(document)
+          val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+          val editor = editorField.editor
+          if (editor != null && psiFile != null) {
+            collectAndDrawHints(editor, psiFile)
           }
         }
       }
@@ -170,7 +168,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private fun initProviderList(typeSettingsPane: JBScrollPane) {
     providerTypesList.setCheckBoxListListener { index, value ->
       providerTypesList.getItemAt(index)?.setEnabled(value)
-      updateEditorAsync(editorField.text)
+      updateEditor(editorField.text)
     }
     providerTypesList.addListSelectionListener {
       val index = providerTypesList.selectedIndex
@@ -178,7 +176,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
       val providerWithSettings = keyToProvider.getValue(newOption.key)
       typeSettingsPane.setViewportView(getComponentFor(providerWithSettings.configurable))
       selectedProvider = providerWithSettings
-      updateEditorAsync(newOption.previewText)
+      updateEditor(newOption.previewText)
     }
     for (option in providerTypes) {
       providerTypesList.addItem(option, option.name, option.isEnabled())
