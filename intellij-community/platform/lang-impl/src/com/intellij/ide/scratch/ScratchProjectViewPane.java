@@ -13,6 +13,7 @@ import com.intellij.ide.projectView.impl.nodes.*;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeUi;
 import com.intellij.lang.Language;
+import com.intellij.notebook.editor.BackedVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -131,6 +132,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
       @Override
       protected boolean canSelect(PsiFileSystemItem file) {
         VirtualFile vFile = PsiUtilCore.getVirtualFile(file);
+        vFile = BackedVirtualFile.getOriginFileIfBacked(vFile);
         if (vFile == null || !vFile.isValid()) return false;
         if (!vFile.isInLocalFileSystem()) return false;
 

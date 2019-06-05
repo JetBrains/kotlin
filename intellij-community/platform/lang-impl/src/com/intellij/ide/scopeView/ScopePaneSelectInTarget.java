@@ -8,6 +8,7 @@ import com.intellij.ide.StandardTargetWeights;
 import com.intellij.ide.impl.ProjectViewSelectInTarget;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.scratch.ScratchUtil;
+import com.intellij.notebook.editor.BackedVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,6 +34,7 @@ public class ScopePaneSelectInTarget extends ProjectViewSelectInTarget {
   @Override
   public boolean canSelect(PsiFileSystemItem fileSystemItem) {
     VirtualFile file = PsiUtilCore.getVirtualFile(fileSystemItem);
+    file = BackedVirtualFile.getOriginFileIfBacked(file);
     if (file == null || !file.isValid()) return false;
     ProjectRootManager manager = myProject.isDisposed() ? null : ProjectRootManager.getInstance(myProject);
     if (manager == null || null == manager.getFileIndex().getModuleForFile(file)) return false; // libraries are not supported yet

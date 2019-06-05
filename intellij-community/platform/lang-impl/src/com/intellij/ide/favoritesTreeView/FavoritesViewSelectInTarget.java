@@ -4,6 +4,7 @@ package com.intellij.ide.favoritesTreeView;
 import com.intellij.ide.SelectInManager;
 import com.intellij.ide.StandardTargetWeights;
 import com.intellij.ide.impl.SelectInTargetPsiWrapper;
+import com.intellij.notebook.editor.BackedVirtualFile;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
@@ -50,6 +51,7 @@ public class FavoritesViewSelectInTarget extends SelectInTargetPsiWrapper {
     PsiElement toSelect = findElementToSelect(element, null);
     if (toSelect != null) {
       VirtualFile virtualFile = PsiUtilCore.getVirtualFile(toSelect);
+      virtualFile = BackedVirtualFile.getOriginFileIfBacked(virtualFile);
       select(toSelect, virtualFile, requestFocus);
     }
   }

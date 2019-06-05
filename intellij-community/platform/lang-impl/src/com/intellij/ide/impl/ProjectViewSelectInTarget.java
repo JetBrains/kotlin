@@ -9,6 +9,7 @@ import com.intellij.ide.projectView.SelectableTreeStructureProvider;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewImpl;
+import com.intellij.notebook.editor.BackedVirtualFile;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -104,6 +105,7 @@ public abstract class ProjectViewSelectInTarget extends SelectInTargetPsiWrapper
   @Override
   protected boolean canSelect(PsiFileSystemItem file) {
     VirtualFile vFile = PsiUtilCore.getVirtualFile(file);
+    vFile = BackedVirtualFile.getOriginFileIfBacked(vFile);
     if (vFile == null || !vFile.isValid()) return false;
 
     return canBeSelectedInProjectView(myProject, vFile);
@@ -134,6 +136,7 @@ public abstract class ProjectViewSelectInTarget extends SelectInTargetPsiWrapper
 
     if (toSelect != null) {
       VirtualFile virtualFile = PsiUtilCore.getVirtualFile(toSelect);
+      virtualFile = BackedVirtualFile.getOriginFileIfBacked(virtualFile);
       select(toSelect, virtualFile, requestFocus);
     }
   }
