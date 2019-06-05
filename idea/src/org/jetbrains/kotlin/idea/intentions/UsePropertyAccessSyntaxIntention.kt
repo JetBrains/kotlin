@@ -182,6 +182,10 @@ class UsePropertyAccessSyntaxIntention :
 
         val isSetUsage = callExpression.valueArguments.size == 1
 
+        if (isSetUsage && callExpression.valueArguments.first() is KtLambdaArgument) {
+            return null
+        }
+
         if (isSetUsage && qualifiedExpression.isUsedAsExpression(bindingContext)) {
             // call to the setter used as expression can be converted in the only case when it's used as body expression for some declaration and its type is Unit
             val parent = qualifiedExpression.parent

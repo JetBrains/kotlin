@@ -16643,6 +16643,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setImplicitReceiver.kt");
         }
 
+        @TestMetadata("setLambdaArgument.kt")
+        public void testSetLambdaArgument() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setLambdaArgument.kt");
+        }
+
         @TestMetadata("setReservedWord1.kt")
         public void testSetReservedWord1() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setReservedWord1.kt");
