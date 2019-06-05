@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.project
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyContractedFunctionShortNameIndex
 import org.jetbrains.kotlin.resolve.lazy.ProbablyContractedCallableNames
 
@@ -17,7 +17,7 @@ class ProbablyContractedCallableNamesImpl(project: Project) : ProbablyContracted
         {
             CachedValueProvider.Result.create(
                 KotlinProbablyContractedFunctionShortNameIndex.getInstance().getAllKeys(project),
-                PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
             )
         },
         false
