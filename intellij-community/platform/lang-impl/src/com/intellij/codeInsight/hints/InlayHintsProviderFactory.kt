@@ -21,7 +21,7 @@ object HintUtils {
     val config = ServiceManager.getService(InlayHintsSettings::class.java)
     return getAllMetaProviders()
       .flatMap { it.getProvidersInfo(project) }
-      .filter { it.language == language }
+      .filter { language.isKindOf(it.language) }
       .map { it.provider.withSettings(language, config) }
   }
 }
