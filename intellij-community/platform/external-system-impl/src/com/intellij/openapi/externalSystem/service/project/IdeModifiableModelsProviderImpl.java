@@ -52,15 +52,6 @@ public class IdeModifiableModelsProviderImpl extends AbstractIdeModifiableModels
   }
 
   @Override
-  protected ModifiableArtifactModel doGetModifiableArtifactModel() {
-    return ReadAction.compute(() -> {
-      // todo move this to external system java module
-      ArtifactManager artifactManager = ArtifactManager.getInstance(myProject);
-      return artifactManager != null ? artifactManager.createModifiableModel() : new DummyArtifactModel();
-    });
-  }
-
-  @Override
   protected ModifiableModuleModel doGetModifiableModuleModel() {
     return ReadAction.compute(() -> ModuleManager.getInstance(myProject).getModifiableModel());
   }
@@ -79,102 +70,5 @@ public class IdeModifiableModelsProviderImpl extends AbstractIdeModifiableModels
   @Override
   protected Library.ModifiableModel doGetModifiableLibraryModel(Library library) {
     return library.getModifiableModel();
-  }
-
-  private static class DummyArtifactModel implements ModifiableArtifactModel {
-    @NotNull
-    @Override
-    public ModifiableArtifact addArtifact(@NotNull String name, @NotNull ArtifactType artifactType) {
-      throw new UnsupportedOperationException();
-    }
-
-    @NotNull
-    @Override
-    public ModifiableArtifact addArtifact(@NotNull String name,
-                                          @NotNull ArtifactType artifactType,
-                                          CompositePackagingElement<?> rootElement) {
-      throw new UnsupportedOperationException();
-    }
-
-    @NotNull
-    @Override
-    public ModifiableArtifact addArtifact(@NotNull String name,
-                                          @NotNull ArtifactType artifactType,
-                                          CompositePackagingElement<?> rootElement,
-                                          @Nullable ProjectModelExternalSource externalSource) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void removeArtifact(@NotNull Artifact artifact) {
-    }
-
-    @NotNull
-    @Override
-    public ModifiableArtifact getOrCreateModifiableArtifact(@NotNull Artifact artifact) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Nullable
-    @Override
-    public Artifact getModifiableCopy(Artifact artifact) {
-      return null;
-    }
-
-    @Override
-    public void addListener(@NotNull ArtifactListener listener) {
-    }
-
-    @Override
-    public void removeListener(@NotNull ArtifactListener listener) {
-    }
-
-    @Override
-    public boolean isModified() {
-      return false;
-    }
-
-    @Override
-    public void commit() {
-    }
-
-    @Override
-    public void dispose() {
-    }
-
-    @NotNull
-    @Override
-    public Artifact[] getArtifacts() {
-      return new Artifact[0];
-    }
-
-    @Nullable
-    @Override
-    public Artifact findArtifact(@NotNull String name) {
-      return null;
-    }
-
-    @NotNull
-    @Override
-    public Artifact getArtifactByOriginal(@NotNull Artifact artifact) {
-      throw new UnsupportedOperationException();
-    }
-
-    @NotNull
-    @Override
-    public Artifact getOriginalArtifact(@NotNull Artifact artifact) {
-      throw new UnsupportedOperationException();
-    }
-
-    @NotNull
-    @Override
-    public Collection<? extends Artifact> getArtifactsByType(@NotNull ArtifactType type) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<? extends Artifact> getAllArtifactsIncludingInvalid() {
-      throw new UnsupportedOperationException();
-    }
   }
 }

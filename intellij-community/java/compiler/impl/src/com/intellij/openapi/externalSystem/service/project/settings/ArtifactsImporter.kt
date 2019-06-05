@@ -5,7 +5,7 @@ import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.BeforeRunTaskProvider
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.externalSystem.model.project.settings.ConfigurationData
-import com.intellij.openapi.externalSystem.project.ModifiableArtifactsProvider
+import com.intellij.openapi.externalSystem.project.PackagingModifiableModel
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -25,14 +25,14 @@ import com.intellij.util.ObjectUtils.consumeIfCast
 class ArtifactsImporter: ConfigurationHandler {
 
   override fun apply(project: Project, modelsProvider: IdeModifiableModelsProvider, configuration: ConfigurationData) {
-    if (modelsProvider !is ModifiableArtifactsProvider) return
     val artifacts = configuration.find("ideArtifacts") as? List<*> ?: return
 
     if (artifacts.isEmpty()) {
       return
     }
 
-    val modifiableModel = modelsProvider.modifiableArtifactModel
+    val packagingModifiableModel = modelsProvider.getModifiableModel(PackagingModifiableModel::class.java)
+    val modifiableModel = packagingModifiableModel.modifiableArtifactModel
     val postponedOps: MutableList<(ModifiableArtifactModel) -> Unit> = mutableListOf()
 
     artifacts.forEach { value ->
