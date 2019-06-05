@@ -5258,3 +5258,144 @@ public final class kotlin/text/UStringsKt {
 	public static final fun toUShortOrNull (Ljava/lang/String;I)Lkotlin/UShort;
 }
 
+public abstract class kotlin/time/AbstractDoubleClock : kotlin/time/Clock {
+	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
+	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
+	public fun mark ()Lkotlin/time/ClockMark;
+	protected abstract fun read ()D
+}
+
+public abstract class kotlin/time/AbstractLongClock : kotlin/time/Clock {
+	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
+	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
+	public fun mark ()Lkotlin/time/ClockMark;
+	protected abstract fun read ()J
+}
+
+public abstract interface class kotlin/time/Clock {
+	public abstract fun mark ()Lkotlin/time/ClockMark;
+}
+
+public abstract class kotlin/time/ClockMark {
+	public fun <init> ()V
+	public abstract fun elapsed ()D
+	public fun minus-LRDsOJo (D)Lkotlin/time/ClockMark;
+	public fun plus-LRDsOJo (D)Lkotlin/time/ClockMark;
+}
+
+public final class kotlin/time/Duration : java/lang/Comparable {
+	public static final field Companion Lkotlin/time/Duration$Companion;
+	public static final synthetic fun box-impl (D)Lkotlin/time/Duration;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo-LRDsOJo (D)I
+	public static fun compareTo-LRDsOJo (DD)I
+	public static final fun div-LRDsOJo (DD)D
+	public static final fun div-impl (DD)D
+	public static final fun div-impl (DI)D
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (DLjava/lang/Object;)Z
+	public static final fun equals-impl0 (DD)Z
+	public static final fun getAbsoluteValue-impl (D)D
+	public static final fun getInDays-impl (D)D
+	public static final fun getInHours-impl (D)D
+	public static final fun getInMicroseconds-impl (D)D
+	public static final fun getInMilliseconds-impl (D)D
+	public static final fun getInMinutes-impl (D)D
+	public static final fun getInNanoseconds-impl (D)D
+	public static final fun getInSeconds-impl (D)D
+	public fun hashCode ()I
+	public static fun hashCode-impl (D)I
+	public static final fun isFinite-impl (D)Z
+	public static final fun isInfinite-impl (D)Z
+	public static final fun isNegative-impl (D)Z
+	public static final fun minus-LRDsOJo (DD)D
+	public static final fun plus-LRDsOJo (DD)D
+	public static final fun times-impl (DD)D
+	public static final fun times-impl (DI)D
+	public static final fun toComponents-impl (DLkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static final fun toComponents-impl (DLkotlin/jvm/functions/Function3;)Ljava/lang/Object;
+	public static final fun toComponents-impl (DLkotlin/jvm/functions/Function4;)Ljava/lang/Object;
+	public static final fun toComponents-impl (DLkotlin/jvm/functions/Function5;)Ljava/lang/Object;
+	public static final fun toDouble-impl (DLjava/util/concurrent/TimeUnit;)D
+	public static final fun toInt-impl (DLjava/util/concurrent/TimeUnit;)I
+	public static final fun toIsoString-impl (D)Ljava/lang/String;
+	public static final fun toLong-impl (DLjava/util/concurrent/TimeUnit;)J
+	public static final fun toLongMilliseconds-impl (D)J
+	public static final fun toLongNanoseconds-impl (D)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (D)Ljava/lang/String;
+	public static final fun toString-impl (DLjava/util/concurrent/TimeUnit;I)Ljava/lang/String;
+	public static synthetic fun toString-impl$default (DLjava/util/concurrent/TimeUnit;IILjava/lang/Object;)Ljava/lang/String;
+	public static final fun unaryMinus-impl (D)D
+	public final synthetic fun unbox-impl ()D
+}
+
+public final class kotlin/time/Duration$Companion {
+	public final fun convert (DLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/TimeUnit;)D
+	public final fun getINFINITE ()D
+	public final fun getZERO ()D
+}
+
+public final class kotlin/time/DurationKt {
+	public static final fun getDays (D)D
+	public static final fun getDays (I)D
+	public static final fun getDays (J)D
+	public static final fun getHours (D)D
+	public static final fun getHours (I)D
+	public static final fun getHours (J)D
+	public static final fun getMicroseconds (D)D
+	public static final fun getMicroseconds (I)D
+	public static final fun getMicroseconds (J)D
+	public static final fun getMilliseconds (D)D
+	public static final fun getMilliseconds (I)D
+	public static final fun getMilliseconds (J)D
+	public static final fun getMinutes (D)D
+	public static final fun getMinutes (I)D
+	public static final fun getMinutes (J)D
+	public static final fun getNanoseconds (D)D
+	public static final fun getNanoseconds (I)D
+	public static final fun getNanoseconds (J)D
+	public static final fun getSeconds (D)D
+	public static final fun getSeconds (I)D
+	public static final fun getSeconds (J)D
+	public static final fun toDuration (DLjava/util/concurrent/TimeUnit;)D
+	public static final fun toDuration (ILjava/util/concurrent/TimeUnit;)D
+	public static final fun toDuration (JLjava/util/concurrent/TimeUnit;)D
+}
+
+public abstract interface annotation class kotlin/time/ExperimentalTime : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/time/MeasureTimeKt {
+	public static final fun measureTime (Lkotlin/jvm/functions/Function0;)D
+	public static final fun measureTime (Lkotlin/time/Clock;Lkotlin/jvm/functions/Function0;)D
+	public static final fun measureTimedValue (Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
+	public static final fun measureTimedValue (Lkotlin/time/Clock;Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
+}
+
+public final class kotlin/time/MonoClock : kotlin/time/AbstractLongClock, kotlin/time/Clock {
+	public static final field INSTANCE Lkotlin/time/MonoClock;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/time/TestClock : kotlin/time/AbstractLongClock {
+	public fun <init> ()V
+	public fun <init> (JLjava/util/concurrent/TimeUnit;)V
+	public synthetic fun <init> (JLjava/util/concurrent/TimeUnit;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getReading ()J
+	public final fun setReading (J)V
+}
+
+public final class kotlin/time/TimedValue {
+	public synthetic fun <init> (Ljava/lang/Object;DLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()D
+	public final fun copy-RFiDyg4 (Ljava/lang/Object;D)Lkotlin/time/TimedValue;
+	public static synthetic fun copy-RFiDyg4$default (Lkotlin/time/TimedValue;Ljava/lang/Object;DILjava/lang/Object;)Lkotlin/time/TimedValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDuration ()D
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
