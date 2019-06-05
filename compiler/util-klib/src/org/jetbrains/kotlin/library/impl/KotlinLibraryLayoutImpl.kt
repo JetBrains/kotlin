@@ -96,43 +96,44 @@ class FromZipIrLibraryImpl(zipped: IrLibraryLayoutImpl, zipFileSystem: FileSyste
  * This class and its children automatically extracts pieces of the library on first access. Use it if you need
  * to pass extracted files to an external tool. Otherwise, stick to [FromZipBaseLibraryImpl].
  */
-open class KotlinLibraryExtractor(private val zipped: KotlinLibraryLayoutImpl) {
-    fun extract(file: File): File = zipped.klib.withZipFileSystem { zipFileSystem ->
-        val temporary = org.jetbrains.kotlin.konan.file.createTempFile(file.name)
-        zipFileSystem.file(file).copyTo(temporary)
-        temporary.deleteOnExit()
-        temporary
-    }
+fun KotlinLibraryLayoutImpl.extract(file: File): File = this.klib.withZipFileSystem { zipFileSystem ->
+    val temporary = org.jetbrains.kotlin.konan.file.createTempFile(file.name)
+    zipFileSystem.file(file).copyTo(temporary)
+    temporary.deleteOnExit()
+    temporary
+}
 
-    fun extractDir(directory: File): File = zipped.klib.withZipFileSystem { zipFileSystem ->
-        val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
-        zipFileSystem.file(directory).recursiveCopyTo(temporary)
-        temporary.deleteOnExitRecursively()
-        temporary
-    }
+fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = this.klib.withZipFileSystem { zipFileSystem ->
+    val temporary = org.jetbrains.kotlin.konan.file.createTempDir(directory.name)
+    zipFileSystem.file(directory).recursiveCopyTo(temporary)
+    temporary.deleteOnExitRecursively()
+    temporary
+}
+
+open class ExtractingKotlinLibraryLayout(zipped: KotlinLibraryLayoutImpl) : KotlinLibraryLayout {
+    override val libDir get() = error("Extracting layout doesn't extract its own root")
+    override val libraryName = zipped.libraryName
 }
 
 open class ExtractingBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl) :
-    KotlinLibraryExtractor(zipped),
-    KotlinLibraryLayout by zipped {
-
-    override val manifestFile: File by lazy { extract(zipped.manifestFile) }
-    override val resourcesDir: File by lazy { extractDir(zipped.resourcesDir) }
+    ExtractingKotlinLibraryLayout(zipped) {
+    override val manifestFile: File by lazy { zipped.extract(zipped.manifestFile) }
+    override val resourcesDir: File by lazy { zipped.extractDir(zipped.resourcesDir) }
 }
 
-class ExtractingMetadataLibraryImpl(zipped: MetadataLibraryLayoutImpl) :
-    KotlinLibraryExtractor(zipped),
-    MetadataKotlinLibraryLayout by zipped {
+class ExtractingMetadataLibraryImpl(val zipped: MetadataLibraryLayoutImpl) :
+    ExtractingKotlinLibraryLayout(zipped),
+    MetadataKotlinLibraryLayout {
 
-    override val metadataDir: File by lazy { extractDir(zipped.metadataDir) }
+    override val metadataDir by lazy { zipped.extractDir(zipped.metadataDir) }
 }
 
-class ExtractingIrLibraryImpl(zipped: IrLibraryLayoutImpl) : KotlinLibraryExtractor(zipped),
-    IrKotlinLibraryLayout by zipped {
+class ExtractingIrLibraryImpl(val zipped: IrLibraryLayoutImpl) :
+    ExtractingKotlinLibraryLayout(zipped),
+    IrKotlinLibraryLayout {
 
-    override val irFile: File by lazy { extract(zipped.irFile) }
+    override val irFile: File by lazy { zipped.extract(zipped.irFile) }
 }
-
 
 internal fun zippedKotlinLibraryChecks(klibFile: File) {
     check(klibFile.exists) { "Could not find $klibFile." }
