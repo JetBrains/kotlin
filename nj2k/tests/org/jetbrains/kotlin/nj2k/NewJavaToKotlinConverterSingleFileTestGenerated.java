@@ -2676,6 +2676,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-14248.java");
         }
 
+        @TestMetadata("kt-16662.java")
+        public void testKt_16662() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-16662.java");
+        }
+
         @TestMetadata("kt-17379.java")
         public void testKt_17379() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-17379.java");
@@ -3078,6 +3083,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/literalExpression/hex.java");
         }
 
+        @TestMetadata("kt-15991.java")
+        public void testKt_15991() throws Exception {
+            runTest("nj2k/testData/newJ2k/literalExpression/kt-15991.java");
+        }
+
         @TestMetadata("long.java")
         public void testLong() throws Exception {
             runTest("nj2k/testData/newJ2k/literalExpression/long.java");
@@ -3469,6 +3479,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("IndirectOverride.java")
         public void testIndirectOverride() throws Exception {
             runTest("nj2k/testData/newJ2k/nullability/IndirectOverride.java");
+        }
+
+        @TestMetadata("kt-12050.java")
+        public void testKt_12050() throws Exception {
+            runTest("nj2k/testData/newJ2k/nullability/kt-12050.java");
         }
 
         @TestMetadata("LocalValReassignment.java")
