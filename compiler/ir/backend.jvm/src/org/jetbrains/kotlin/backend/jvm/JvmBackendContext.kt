@@ -52,33 +52,10 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    // TODO: Can I make it local to AddContinuationLowering?
-    val transformedSuspendFunctionsCache = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
     val suspendFunctionContinuations = mutableMapOf<IrFunction, IrClass>()
     val suspendLambdaClasses = mutableMapOf<IrClass, KtElement>()
     val continuationClassBuilders = mutableMapOf<IrClass, ClassBuilder>()
     var functionReferenceAndContinuationsCount = 0
-
-    private val coroutinePackage = state.module.getPackage(state.languageVersionSettings.coroutinesPackageFqName())
-    private val coroutinesJvmInternalPackage = state.module.getPackage(state.languageVersionSettings.coroutinesJvmInternalPackageFqName())
-
-    val continuationClass = symbolTable.referenceClass(
-        coroutinePackage.memberScope.getContributedClassifier(
-            Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND
-        ) as ClassDescriptor
-    )
-
-    val continuationImpl = symbolTable.referenceClass(
-        coroutinesJvmInternalPackage.memberScope.getContributedClassifier(
-            Name.identifier("ContinuationImpl"), NoLookupLocation.FROM_BACKEND
-        ) as ClassDescriptor
-    )
-
-    val suspendLambda = symbolTable.referenceClass(
-        coroutinesJvmInternalPackage.memberScope.getContributedClassifier(
-            Name.identifier("SuspendLambda"), NoLookupLocation.FROM_BACKEND
-        ) as ClassDescriptor
-    )
 
     internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
