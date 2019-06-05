@@ -28,6 +28,7 @@ messages/**)
 -dontwarn com.intellij.util.SVGLoader
 -dontwarn com.intellij.util.SVGLoader$MyTranscoder
 -dontwarn com.intellij.util.ImageLoader$ImageDesc
+-dontwarn kotlinx.coroutines.flow.FlowKt__MergeKt
 -dontwarn net.sf.cglib.**
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn com.sun.jna.NativeString
