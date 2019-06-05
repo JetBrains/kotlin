@@ -143,7 +143,8 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
         }
 
         // from AbstractTypeCheckerContextForConstraintSystem
-        override fun isMyTypeVariable(type: SimpleTypeMarker): Boolean = c.allTypeVariables.containsKey(type.typeConstructor())
+        override fun isMyTypeVariable(type: SimpleTypeMarker): Boolean =
+            type.mayBeTypeVariable() && c.allTypeVariables.containsKey(type.typeConstructor())
 
         override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker) =
             addConstraint(typeVariable, superType, UPPER)
