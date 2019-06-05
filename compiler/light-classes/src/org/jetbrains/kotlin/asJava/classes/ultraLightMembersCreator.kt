@@ -171,11 +171,7 @@ internal class UltraLightMembersCreator(
         val returnType: PsiType? by lazyPub {
             when {
                 isConstructor -> null
-                isSuspendFunction -> support.moduleDescriptor
-                    .builtIns
-                    .nullableAnyType
-                    .asPsiType(support, TypeMappingMode.DEFAULT, wrapper)
-                else -> methodReturnType(ktFunction, wrapper)
+                else -> methodReturnType(ktFunction, wrapper, isSuspendFunction)
             }
         }
 
@@ -188,7 +184,20 @@ internal class UltraLightMembersCreator(
         method.delegate.addParameter(KtUltraLightReceiverParameter(callable, support, method))
     }
 
-    private fun methodReturnType(ktDeclaration: KtDeclaration, wrapper: KtUltraLightMethod): PsiType {
+    private fun methodReturnType(ktDeclaration: KtDeclaration, wrapper: KtUltraLightMethod, isSuspendFunction: Boolean): PsiType {
+
+        if (isSuspendFunction) {
+            return support.moduleDescriptor
+                .builtIns
+                .nullableAnyType
+                .asPsiType(support, TypeMappingMode.DEFAULT, wrapper)
+        }
+
+        if (ktDeclaration is KtNamedFunction &&
+            ktDeclaration.hasBlockBody() &&
+            !ktDeclaration.hasDeclaredReturnType()
+        ) return PsiType.VOID
+
         val desc =
             ktDeclaration.resolve()?.getterIfProperty() as? FunctionDescriptor
                 ?: return PsiType.NULL
@@ -359,7 +368,7 @@ internal class UltraLightMembersCreator(
             val getterName = computeMethodName(ktGetter ?: declaration, JvmAbi.getterName(propertyName), MethodType.GETTER)
             val getterPrototype = lightMethod(getterName, ktGetter ?: declaration, onlyJvmStatic || forceStatic)
             val getterWrapper = KtUltraLightMethodForSourceDeclaration(getterPrototype, declaration, support, containingClass)
-            val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper) }
+            val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper, isSuspendFunction = false) }
             getterPrototype.setMethodReturnType { getterType }
             addReceiverParameter(declaration, getterWrapper)
             result.add(getterWrapper)
