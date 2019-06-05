@@ -10,19 +10,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.util.OperatorChecks
 
-class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNamedFunction>(
-    KtNamedFunction::class.java
-) {
-    override fun inspectionTarget(element: KtNamedFunction) = element.nameIdentifier ?: element
+class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNamedFunction>(KtNamedFunction::class.java) {
+    override fun inspectionRange(element: KtNamedFunction) = element.nameIdentifier?.textRange?.shiftLeft(element.startOffset)
 
     override fun inspectionText(element: KtNamedFunction) = "Function should have 'operator' modifier"
 
     override val defaultFixText = "Add 'operator' modifier"
+
+    override val startFixInWriteAction: Boolean = false
 
     override fun isApplicable(element: KtNamedFunction): Boolean {
         if (element.nameIdentifier == null || element.hasModifier(KtTokens.OPERATOR_KEYWORD)) return false
@@ -31,7 +32,9 @@ class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNam
     }
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val function = element.getStrictParentOfType<KtNamedFunction>() ?: return
-        function.withExpectedActuals().forEach { it.addModifier(KtTokens.OPERATOR_KEYWORD) }
+        val declarations = (element as KtNamedFunction).withExpectedActuals()
+        project.executeWriteCommand(defaultFixText) {
+            for (declaration in declarations) declaration.addModifier(KtTokens.OPERATOR_KEYWORD)
+        }
     }
 }
