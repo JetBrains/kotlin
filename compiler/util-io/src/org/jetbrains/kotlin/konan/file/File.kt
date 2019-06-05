@@ -107,7 +107,8 @@ data class File constructor(internal val javaPath: Path) {
                                     if (mode == FileChannel.MapMode.READ_ONLY) "r" else "rw")
         val fileSize = if (mode == FileChannel.MapMode.READ_ONLY)
             file.length() else size.also { assert(size != -1L) }
-        return file.channel.map(mode, start, fileSize) // Shall we .also { file.close() }?
+        val channel = file.channel
+        return channel.map(mode, start, fileSize).also { channel.close() }
     }
 
     fun deleteOnExit(): File {
