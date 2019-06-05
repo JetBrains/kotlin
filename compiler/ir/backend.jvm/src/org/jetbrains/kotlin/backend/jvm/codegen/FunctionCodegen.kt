@@ -5,23 +5,18 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.createType
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
@@ -29,7 +24,6 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_N
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -70,17 +64,39 @@ open class FunctionCodegen(
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
             val frameMap = createFrameMapWithReceivers(signature)
+            val irClass = classCodegen.context.suspendFunctionContinuations[irFunction]
+            val element = irFunction.symbol.descriptor.psiElement as? KtElement
+                ?: classCodegen.context.suspendLambdaClasses[classCodegen.context.suspendLambdaClasses.keys.find { it == irFunction.parent }]
+            val continuationClassBuilder = classCodegen.context.continuationClassBuilders[irClass]
             ExpressionCodegen(
                 irFunction,
                 frameMap,
                 InstructionAdapter(
-                    if (irFunction.isSuspend) wrapWithCoroutineTransformer(irFunction, classCodegen, methodVisitor, flags, signature)
-                    else methodVisitor
+                    when {
+                        irFunction.isSuspend -> generateStateMachineForNamedFunction(
+                            irFunction,
+                            classCodegen,
+                            methodVisitor,
+                            flags,
+                            signature,
+                            continuationClassBuilder,
+                            element!!
+                        )
+                        irFunction.isInvokeSuspendOfLambda(classCodegen.context) -> generateStateMachineForLambda(
+                            classCodegen,
+                            methodVisitor,
+                            flags,
+                            signature,
+                            element!!
+                        )
+                        else -> methodVisitor
+                    }
                 ),
                 classCodegen,
                 isInlineLambda
             ).generate()
             methodVisitor.visitMaxs(-1, -1)
+            continuationClassBuilder?.done()
         }
         methodVisitor.visitEnd()
 

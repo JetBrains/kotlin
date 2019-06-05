@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.ir.builders.declarations
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -56,6 +59,13 @@ inline fun IrDeclarationContainer.addField(b: IrFieldBuilder.() -> Unit) =
     buildField(b).also { field ->
         field.parent = this
         declarations.add(field)
+    }
+
+fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
+    addField {
+        name = Name.identifier(fieldName)
+        type = fieldType
+        visibility = fieldVisibility
     }
 
 fun IrPropertyBuilder.buildProperty(): IrProperty {
@@ -152,6 +162,12 @@ fun IrDeclarationContainer.addFunction(
         if (!isStatic) {
             dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
         }
+    }
+
+fun IrDeclarationContainer.addFunctionOverride(function: IrSimpleFunction, modality: Modality = Modality.FINAL): IrSimpleFunction =
+    addFunction(function.name.asString(), function.returnType, modality).apply {
+        overriddenSymbols.add(function.symbol)
+        valueParameters.addAll(function.valueParameters.map { it.copyTo(this) })
     }
 
 inline fun buildConstructor(b: IrFunctionBuilder.() -> Unit): IrConstructor =

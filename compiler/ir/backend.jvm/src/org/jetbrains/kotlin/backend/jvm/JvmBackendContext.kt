@@ -11,21 +11,21 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 class JvmBackendContext(
@@ -52,7 +52,12 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
+    // TODO: Can I make it local to AddContinuationLowering?
     val transformedSuspendFunctionsCache = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
+    val suspendFunctionContinuations = mutableMapOf<IrFunction, IrClass>()
+    val suspendLambdaClasses = mutableMapOf<IrClass, KtElement>()
+    val continuationClassBuilders = mutableMapOf<IrClass, ClassBuilder>()
+    var functionReferenceAndContinuationsCount = 0
 
     private val coroutinePackage = state.module.getPackage(state.languageVersionSettings.coroutinesPackageFqName())
     private val coroutinesJvmInternalPackage = state.module.getPackage(state.languageVersionSettings.coroutinesJvmInternalPackageFqName())
@@ -66,6 +71,12 @@ class JvmBackendContext(
     val continuationImpl = symbolTable.referenceClass(
         coroutinesJvmInternalPackage.memberScope.getContributedClassifier(
             Name.identifier("ContinuationImpl"), NoLookupLocation.FROM_BACKEND
+        ) as ClassDescriptor
+    )
+
+    val suspendLambda = symbolTable.referenceClass(
+        coroutinesJvmInternalPackage.memberScope.getContributedClassifier(
+            Name.identifier("SuspendLambda"), NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor
     )
 

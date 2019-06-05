@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -395,7 +395,7 @@ internal fun removeFinallyMarkers(intoNode: MethodNode) {
     }
 }
 
-internal fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
+fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     v.visitMethodInsn(
         Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
         if (isStartNotEnd) INLINE_MARKER_BEFORE_METHOD_NAME else INLINE_MARKER_AFTER_METHOD_NAME,
@@ -423,7 +423,7 @@ internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall
     }
 }
 
-internal fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
+fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID)
 }
 

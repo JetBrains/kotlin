@@ -115,10 +115,10 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
             makePatchParentsPhase(1) then
 
             enumWhenPhase then
-            singletonReferencesPhase then
             localDeclarationsPhase then
             singleAbstractMethodPhase then
             addContinuationPhase then
+            singletonReferencesPhase then
             callableReferencePhase then
             functionNVarargInvokePhase then
 

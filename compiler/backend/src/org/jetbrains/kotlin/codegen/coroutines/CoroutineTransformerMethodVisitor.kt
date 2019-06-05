@@ -69,7 +69,9 @@ class CoroutineTransformerMethodVisitor(
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
-    private val internalNameForDispatchReceiver: String? = null
+    private val internalNameForDispatchReceiver: String? = null,
+    // JVM_IR backend generates $completion, while old backend does not
+    private val putContinuationParameterToLvt: Boolean = true
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -105,7 +107,9 @@ class CoroutineTransformerMethodVisitor(
         if (isForNamedFunction) {
             ReturnUnitMethodTransformer.transform(containingClassInternalName, methodNode)
 
-            addCompletionParameterToLVT(methodNode)
+            if (putContinuationParameterToLvt) {
+                addCompletionParameterToLVT(methodNode)
+            }
 
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
                 dropSuspensionMarkers(methodNode, suspensionPoints)
