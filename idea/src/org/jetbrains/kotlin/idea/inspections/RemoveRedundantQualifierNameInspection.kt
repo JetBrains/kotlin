@@ -76,7 +76,7 @@ private fun KtDotQualifiedExpression.applicableExpression(
         )
     ) return null
     val expressionText = originalExpression.text.substring(lastChild.startOffset - originalExpression.startOffset)
-    val newExpression = KtPsiFactory(originalExpression).createExpression(expressionText)
+    val newExpression = KtPsiFactory(originalExpression).createExpressionIfPossible(expressionText) ?: return null
     val newContext = newExpression.analyzeAsReplacement(originalExpression, oldContext)
     val newDescriptor = newExpression.getQualifiedElementSelector()?.getResolvedCall(newContext)?.resultingDescriptor ?: return null
 
@@ -132,9 +132,9 @@ class RemoveRedundantQualifierNameQuickFix : LocalQuickFix {
             else -> IntRange.EMPTY
         }
 
-        val substring = file.text.substring(range.start, range.endInclusive)
+        val substring = file.text.substring(range.first, range.last)
         Regex.fromLiteral(substring).findAll(file.text, file.importList?.endOffset ?: 0).toList().reversed().forEach {
-            ShortenReferences.DEFAULT.process(file, it.range.start, it.range.endInclusive + 1)
+            ShortenReferences.DEFAULT.process(file, it.range.first, it.range.last + 1)
         }
     }
 }
