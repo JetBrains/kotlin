@@ -16575,6 +16575,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/set.kt");
         }
 
+        @TestMetadata("setAnonymouseFunctionArgument.kt")
+        public void testSetAnonymouseFunctionArgument() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setAnonymouseFunctionArgument.kt");
+        }
+
         @TestMetadata("setAsExpressionBody.kt")
         public void testSetAsExpressionBody() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setAsExpressionBody.kt");
@@ -16590,9 +16595,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setAsExpressionBodyUnqualified.kt");
         }
 
+        @TestMetadata("setFunctionReferenceArgument.kt")
+        public void testSetFunctionReferenceArgument() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setFunctionReferenceArgument.kt");
+        }
+
         @TestMetadata("setImplicitReceiver.kt")
         public void testSetImplicitReceiver() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setImplicitReceiver.kt");
+        }
+
+        @TestMetadata("setLambdaArgument.kt")
+        public void testSetLambdaArgument() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setLambdaArgument.kt");
+        }
+
+        @TestMetadata("setLambdaArgument2.kt")
+        public void testSetLambdaArgument2() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setLambdaArgument2.kt");
         }
 
         @TestMetadata("setReservedWord1.kt")
