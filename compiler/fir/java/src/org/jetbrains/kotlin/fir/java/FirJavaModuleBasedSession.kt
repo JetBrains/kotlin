@@ -24,16 +24,15 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
 class FirJavaModuleBasedSession(
     moduleInfo: ModuleInfo,
-    override val sessionProvider: FirProjectSessionProvider,
+    sessionProvider: FirProjectSessionProvider,
     scope: GlobalSearchScope,
     dependenciesProvider: FirSymbolProvider? = null
-) : FirModuleBasedSession(moduleInfo), FirSymbolProviderAwareSession {
+) : FirModuleBasedSession(moduleInfo, sessionProvider) {
 
-    override val firSymbolProvider: FirSymbolProvider
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-        firSymbolProvider = FirCompositeSymbolProvider(
+        _firSymbolProvider = FirCompositeSymbolProvider(
             listOf(
                 service<FirProvider>(),
                 JavaSymbolProvider(this, sessionProvider.project, scope),
@@ -43,25 +42,24 @@ class FirJavaModuleBasedSession(
 
         registerComponent(
             FirSymbolProvider::class,
-            firSymbolProvider
+            _firSymbolProvider as FirSymbolProvider
         )
     }
 }
 
 class FirLibrarySession private constructor(
     moduleInfo: ModuleInfo,
-    override val sessionProvider: FirProjectSessionProvider,
+    sessionProvider: FirProjectSessionProvider,
     scope: GlobalSearchScope,
     packagePartProvider: PackagePartProvider,
     kotlinClassFinder: KotlinClassFinder,
     javaClassFinder: JavaClassFinder
-) : FirSessionBase(), FirSymbolProviderAwareSession {
+) : FirSessionBase(sessionProvider) {
 
-    override val firSymbolProvider: FirSymbolProvider
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-        firSymbolProvider =
+        _firSymbolProvider =
             FirCompositeSymbolProvider(
                 listOf(
                     KotlinDeserializedJvmSymbolsProvider(
@@ -77,7 +75,7 @@ class FirLibrarySession private constructor(
 
         registerComponent(
             FirSymbolProvider::class,
-            firSymbolProvider
+            _firSymbolProvider as FirSymbolProvider
         )
         registerComponent(FirClassDeclaredMemberScopeProvider::class, FirClassDeclaredMemberScopeProvider())
     }

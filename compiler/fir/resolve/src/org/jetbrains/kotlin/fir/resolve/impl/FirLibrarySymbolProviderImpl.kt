@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
-class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider {
+class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider() {
     private class BuiltInsPackageFragment(stream: InputStream, val fqName: FqName, val session: FirSession) {
         lateinit var version: BuiltInsBinaryVersion
 

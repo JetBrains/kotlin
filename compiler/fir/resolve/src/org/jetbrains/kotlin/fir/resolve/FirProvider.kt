@@ -9,32 +9,31 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-interface FirProvider : FirSymbolProvider {
-    fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration?
+abstract class FirProvider : FirSymbolProvider() {
+    abstract fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration?
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol?
+    abstract override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol?
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol>
+    abstract override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol>
 
     override fun getPackage(fqName: FqName): FqName? {
         if (getFirFilesByPackage(fqName).isNotEmpty()) return fqName
         return null
     }
 
-    fun getFirClassifierContainerFile(fqName: ClassId): FirFile
+    abstract fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 
-    fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile?
+    abstract fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile?
 
     companion object {
         fun getInstance(session: FirSession): FirProvider = session.service()
     }
 
-    fun getFirFilesByPackage(fqName: FqName): List<FirFile>
+    abstract fun getFirFilesByPackage(fqName: FqName): List<FirFile>
 }

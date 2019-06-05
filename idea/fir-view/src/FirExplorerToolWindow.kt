@@ -72,7 +72,7 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
                     val psiDocumentManager = PsiDocumentManager.getInstance(project)
                     val file = runReadAction { psiDocumentManager.getPsiFile(editor.document) as? KtFile }
                     if (file != null) {
-                        val firFile = runReadAction { RawFirBuilder(object : FirSessionBase() {}, stubMode = false).buildFirFile(file) }
+                        val firFile = runReadAction { RawFirBuilder(object : FirSessionBase(null) {}, stubMode = false).buildFirFile(file) }
                         runInEdt {
                             treeStructure.root = FirExplorerTreeNode("root = ", firFile, null)
                             builder.updateFromRoot(!init)

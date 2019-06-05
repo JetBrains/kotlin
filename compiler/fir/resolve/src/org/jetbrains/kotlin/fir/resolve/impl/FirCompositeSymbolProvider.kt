@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider {
+class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider() {
     override fun getClassUseSiteMemberScope(
         classId: ClassId,
         useSiteSession: FirSession,

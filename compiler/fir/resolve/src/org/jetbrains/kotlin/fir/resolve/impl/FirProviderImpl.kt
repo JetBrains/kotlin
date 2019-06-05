@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirProviderImpl(val session: FirSession) : FirProvider {
+class FirProviderImpl(val session: FirSession) : FirProvider() {
     override fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile? {
         return state.callableContainerMap[symbol]
     }

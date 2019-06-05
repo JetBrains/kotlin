@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-interface FirSymbolProvider {
+abstract class FirSymbolProvider {
 
-    fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol?
+    abstract fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol?
 
     fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): ConeClassifierSymbol? {
         return when (lookupTag) {
@@ -35,22 +35,22 @@ interface FirSymbolProvider {
         }
     }
 
-    fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol>
+    abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol>
 
-    fun getClassDeclaredMemberScope(classId: ClassId): FirScope?
-    fun getClassUseSiteMemberScope(
+    abstract fun getClassDeclaredMemberScope(classId: ClassId): FirScope?
+    abstract fun getClassUseSiteMemberScope(
         classId: ClassId,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope?
 
-    fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
-    fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()
+    open fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
+    open fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()
 
-    fun getAllCallableNamesInClass(classId: ClassId): Set<Name> = emptySet()
-    fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> = emptySet()
+    open fun getAllCallableNamesInClass(classId: ClassId): Set<Name> = emptySet()
+    open fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> = emptySet()
 
-    fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
+    abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 
     // TODO: should not retrieve session through the FirElement::session
     fun getSessionForClass(classId: ClassId): FirSession? = getClassLikeSymbolByFqName(classId)?.toFirClassLike()?.session

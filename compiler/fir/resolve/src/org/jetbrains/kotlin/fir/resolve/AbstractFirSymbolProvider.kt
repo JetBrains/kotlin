@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-abstract class AbstractFirSymbolProvider : FirSymbolProvider {
+abstract class AbstractFirSymbolProvider : FirSymbolProvider() {
     protected val classCache = mutableMapOf<ClassId, ConeClassLikeSymbol?>()
     protected val topLevelCallableCache = mutableMapOf<CallableId, List<ConeCallableSymbol>>()
     protected val packageCache = mutableMapOf<FqName, FqName?>()
