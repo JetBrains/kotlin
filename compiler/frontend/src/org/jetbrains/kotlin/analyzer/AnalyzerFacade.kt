@@ -96,7 +96,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val invalidateOnOOCB: Boolean,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val firstDependency: M? = null,
+    private val sdkDependency: (M) -> M?,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
     private val isReleaseCoroutines: Boolean? = null
 ) : ResolverForProject<M>() {
@@ -139,7 +139,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             LazyModuleDependencies(
                 projectContext.storageManager,
                 module,
-                firstDependency,
+                sdkDependency(module),
                 this
             )
         )
