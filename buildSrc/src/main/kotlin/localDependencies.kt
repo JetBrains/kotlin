@@ -31,7 +31,7 @@ private fun Project.kotlinBuildLocalRepoDir() = File("${project.rootDir.absolute
 private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
     Ide.Kind.IntelliJ -> {
-        if (getBooleanProperty("intellijUltimateEnabled") == true) "ideaIU" else "ideaIC"
+        if (kotlinBuildProperties.intellijUltimateEnabled) "ideaIU" else "ideaIC"
     }
 }
 

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 extra["versions.shadow"] = "4.0.3"
 extra["versions.native-platform"] = "0.14"
 
@@ -64,8 +66,10 @@ rootProject.apply {
     from(rootProject.file("../gradle/versions.gradle.kts"))
 }
 
-val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild)
+val flags = LocalBuildProperties(project)
+
+val isTeamcityBuild = flags.isTeamcityBuild
+val intellijUltimateEnabled by extra(flags.intellijUltimateEnabled)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 val verifyDependencyOutput by extra( getBooleanProperty("kotlin.build.dependency.output.verification") ?: isTeamcityBuild)
 
@@ -116,4 +120,31 @@ allprojects {
     afterEvaluate {
         apply(from = "$rootDir/../gradle/cacheRedirector.gradle.kts")
     }
+}
+
+// TODO: These classes should be omitted once Gradle plugin supports local.properties
+class LocalBuildPropertiesProvider(private val project: Project) {
+    private val localProperties: Properties = Properties()
+
+    val rootProjectDir: File = project.rootProject.rootDir.parentFile
+
+    init {
+        rootProjectDir.resolve("local.properties").takeIf { it.isFile }?.let {
+            it.reader().use(localProperties::load)
+        }
+    }
+
+    fun getString(name: String): String? = project.findProperty(name)?.toString() ?: localProperties[name]?.toString()
+
+    fun getBoolean(name: String): Boolean = getString(name)?.toBoolean() == true
+}
+
+class LocalBuildProperties(project: Project) {
+    val propertiesProvider = LocalBuildPropertiesProvider(project)
+
+    val isTeamcityBuild = propertiesProvider.getString("teamcity") != null || System.getenv("TEAMCITY_VERSION") != null
+
+    val intellijUltimateEnabled =
+        (propertiesProvider.getBoolean("intellijUltimateEnabled") || isTeamcityBuild)
+                && propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
 }

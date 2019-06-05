@@ -237,12 +237,14 @@ if (flags.includeCidrPlugins) {
 }
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-def includeUltimate = hasProperty("intellijUltimateEnabled") && intellijUltimateEnabled != 'false'
-if (isTeamcityBuild || includeUltimate) {
+if (flags.kotlinUltimateExists && (isTeamcityBuild || flags.intellijUltimateEnabled)) {
     include(
-            ":ultimate",
-            ":ultimate:ultimate-runner"
+            ":kotlin-ultimate:ultimate",
+            ":kotlin-ultimate:ultimate:ultimate-runner"
     )
+    logger.info("Including extension for IJ Ultimate in settings.gradle")
+} else {
+    logger.info("NOT including extension for IJ Ultimate in settings.gradle")
 }
 
 if (flags.inJpsBuildIdeaSync) {

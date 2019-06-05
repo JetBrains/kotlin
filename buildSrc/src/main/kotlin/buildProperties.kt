@@ -56,8 +56,13 @@ class KotlinBuildProperties(
     val useBootstrapStdlib: Boolean
         get() = isInJpsBuildIdeaSync
 
-    val includeCidrPlugins: Boolean =
-        getBoolean("cidrPluginsEnabled") && propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
+    val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
+
+    val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
+
+    val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
+
+    val intellijUltimateEnabled: Boolean = kotlinUltimateExists && (getBoolean("intellijUltimateEnabled") || isTeamcityBuild)
 }
 
 private const val extensionName = "kotlinBuildFlags"
