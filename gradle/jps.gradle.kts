@@ -43,7 +43,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
     }
 
-    gradle.projectsEvaluated {
+    rootProject.afterEvaluate {
         rootProject.allprojects {
             idea {
                 module {
