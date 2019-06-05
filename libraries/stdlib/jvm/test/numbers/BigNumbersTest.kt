@@ -104,5 +104,113 @@ class BigNumbersTest {
         assertEquals(d4, d7 / d2)
         assertEquals(d1, d7 / d5)
     }
+
+    @Test
+    fun bigIntegerIsNegative() {
+        val `-1` = BigInteger.ONE.negate()
+        val `0` = BigInteger.ZERO
+        val `1` = BigInteger.ONE
+
+        // The most common usage is in conditions.
+        assertTrue(`-1`.isNegative)
+        assertFalse(`0`.isNegative)
+        assertFalse(`1`.isNegative)
+
+        // However, it can also be used as a predicate.
+        assertEquals(
+            listOf(`-1`),
+            listOf(`-1`, `0`, `1`).filter(BigInteger::isNegative)
+        )
+    }
+
+    @Test
+    fun bigIntegerIsZero() {
+        val `-1` = BigInteger.ONE.negate()
+        val `0` = BigInteger.ZERO
+        val `1` = BigInteger.ONE
+
+        // The most common usage is in conditions.
+        assertFalse(`-1`.isZero)
+        assertTrue(`0`.isZero)
+        assertFalse(`1`.isZero)
+
+        // However, it can also be used as a predicate.
+        assertEquals(
+            listOf(`0`),
+            listOf(`-1`, `0`, `1`).filter(BigInteger::isZero)
+        )
+    }
+
+    @Test
+    fun bigIntegerIsPositive() {
+        val `-1` = BigInteger.ONE.negate()
+        val `0` = BigInteger.ZERO
+        val `1` = BigInteger.ONE
+
+        // The most common usage is in conditions.
+        assertFalse(`-1`.isPositive)
+        assertTrue(`0`.isPositive)
+        assertFalse(`1`.isPositive)
+
+        // However, it can also be used as a predicate.
+        assertEquals(
+            listOf(`1`),
+            listOf(`-1`, `0`, `1`).filter(BigInteger::isPositive)
+        )
+    }
+
+    @Test
+    fun bigDecimalIsNegative() {
+        val `-1` = BigDecimal.ONE.negate()
+        val `0` = BigDecimal.ZERO
+        val `1` = BigDecimal.ONE
+
+        // The most common usage is in conditions.
+        assertTrue(`-1`.isNegative)
+        assertFalse(`0`.isNegative)
+        assertFalse(`1`.isNegative)
+
+        // However, it can also be used as a predicate.
+        assertEquals(
+            listOf(`-1`),
+            listOf(`-1`, `0`, `1`).filter(BigDecimal::isNegative)
+        )
+    }
+
+    @Test
+    fun bigDecimalIsZero() {
+        val `-1` = BigDecimal.ONE.negate()
+        val `0` = BigDecimal.ZERO
+        val `1` = BigDecimal.ONE
+
+        // The most common usage is in conditions.
+        assertFalse(`-1`.isZero)
+        assertTrue(`0`.isZero)
+        assertFalse(`1`.isZero)
+
+        // However, it can also be used as a predicate.
+        assertEquals(
+            listOf(`0`),
+            listOf(`-1`, `0`, `1`).filter(BigDecimal::isZero)
+        )
+    }
+
+    @Test
+    fun bigDecimalIsPositive() {
+        val `-1` = BigDecimal.ONE.negate()
+        val `0` = BigDecimal.ZERO
+        val `1` = BigDecimal.ONE
+
+        // The most common usage is in conditions.
+        assertFalse(`-1`.isPositive)
+        assertTrue(`0`.isPositive)
+        assertFalse(`1`.isPositive)
+
+        // However, it can also be used as a predicate.
+        assertEquals(
+            listOf(`1`),
+            listOf(`-1`, `0`, `1`).filter(BigDecimal::isPositive)
+        )
+    }
 }
 

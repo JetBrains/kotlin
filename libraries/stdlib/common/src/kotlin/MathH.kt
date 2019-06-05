@@ -401,6 +401,24 @@ public expect val Double.absoluteValue: Double
 @SinceKotlin("1.2")
 public expect val Double.sign: Double
 
+/** Whether this value is negative, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Double.isNegative: Boolean
+    get() = this.sign == -1.0
+
+/** Whether this value is zero, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Double.isZero: Boolean
+    get() = this.sign == 0.0
+
+/** Whether this value is positive, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Double.isPositive: Boolean
+    get() = this.sign == 1.0
+
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  *
@@ -865,6 +883,24 @@ public expect val Float.absoluteValue: Float
 @SinceKotlin("1.2")
 public expect val Float.sign: Float
 
+/** Whether this value is negative, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Float.isNegative: Boolean
+    get() = this.sign == -1.0f
+
+/** Whether this value is zero, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Float.isZero: Boolean
+    get() = this.sign == 0.0f
+
+/** Whether this value is positive, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Float.isPositive: Boolean
+    get() = this.sign == 1.0f
+
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  *
@@ -955,7 +991,23 @@ public expect val Int.absoluteValue: Int
 @SinceKotlin("1.2")
 public expect val Int.sign: Int
 
+/** Whether this value is negative, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Int.isNegative: Boolean
+    get() = this.sign == -1
 
+/** Whether this value is zero, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Int.isZero: Boolean
+    get() = this.sign == 0
+
+/** Whether this value is positive, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Int.isPositive: Boolean
+    get() = this.sign == 1
 
 /**
  * Returns the absolute value of the given value [n].
@@ -1000,5 +1052,22 @@ public expect val Long.absoluteValue: Long
 @SinceKotlin("1.2")
 public expect val Long.sign: Int
 
+/** Whether this value is negative, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Long.isNegative: Boolean
+    get() = this.sign == -1
+
+/** Whether this value is zero, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Long.isZero: Boolean
+    get() = this.sign == 0
+
+/** Whether this value is positive, or not. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val Long.isPositive: Boolean
+    get() = this.sign == 1
 
 // endregion

@@ -93,6 +93,46 @@ public inline infix fun BigInteger.shl(n: Int): BigInteger = this.shiftLeft(n)
 @kotlin.internal.InlineOnly
 public inline infix fun BigInteger.shr(n: Int): BigInteger = this.shiftRight(n)
 
+/**
+ * Returns the sign of this value:
+ *   - `-1` if the value is negative,
+ *   - `0` if the value is zero,
+ *   - `1` if the value is positive
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigInteger.sign: Int
+    get() = this.signum()
+
+/**
+ * Whether this value is negative, or not.
+ *
+ * @sample test.numbers.BigNumbersTest.bigIntegerIsNegative
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigInteger.isNegative: Boolean
+    get() = this.sign == -1
+
+/**
+ * Whether this value is zero, or not.
+ *
+ * @sample test.numbers.BigNumbersTest.bigIntegerIsZero
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigInteger.isZero: Boolean
+    get() = this.sign == 0
+
+/**
+ * Whether this value is positive, or not.
+ *
+ * @sample test.numbers.BigNumbersTest.bigIntegerIsPositive
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigInteger.isPositive: Boolean
+    get() = this.sign == 1
 
 /**
  * Returns the value of this [Int] number as a [BigInteger].

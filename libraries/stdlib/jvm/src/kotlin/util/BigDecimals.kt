@@ -73,6 +73,47 @@ public inline operator fun BigDecimal.inc(): BigDecimal = this.add(BigDecimal.ON
 public inline operator fun BigDecimal.dec(): BigDecimal = this.subtract(BigDecimal.ONE)
 
 /**
+ * Returns the sign of this value:
+ *   - `-1` if the value is negative,
+ *   - `0` if the value is zero,
+ *   - `1` if the value is positive
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigDecimal.sign: Int
+    get() = this.signum()
+
+/**
+ * Whether this value is negative, or not.
+ *
+ * @sample test.numbers.BigNumbersTest.bigDecimalIsNegative
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigDecimal.isNegative: Boolean
+    get() = this.sign == -1
+
+/**
+ * Whether this value is zero, or not.
+ *
+ * @sample test.numbers.BigNumbersTest.bigDecimalIsZero
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigDecimal.isZero: Boolean
+    get() = this.sign == 0
+
+/**
+ * Whether this value is positive, or not.
+ *
+ * @sample test.numbers.BigNumbersTest.bigDecimalIsPositive
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline val BigDecimal.isPositive: Boolean
+    get() = this.sign == 1
+
+/**
  * Returns the value of this [Int] number as a [BigDecimal].
  */
 @SinceKotlin("1.2")
