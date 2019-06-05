@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.PsiFile
 import com.intellij.util.io.exists
+import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
@@ -60,6 +61,9 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
         val resolutionFacade = file.getResolutionFacade()
         val (bindingContext, moduleDescriptor) = resolutionFacade.analyzeWithAllCompilerChecks(listOf(file))
 
+        val directives = KotlinTestUtils.parseDirectives(file.text)
+        val diagnosticsFilter = BaseDiagnosticsTest.parseDiagnosticFilterDirective(directives, allowUnderscoreUsage = false)
+
         val actualDiagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
             bindingContext,
             file,
@@ -70,7 +74,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             languageVersionSettings = resolutionFacade.frontendService(),
             dataFlowValueFactory = resolutionFacade.frontendService(),
             moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
-        )
+        ).filter { diagnosticsFilter.value(it.diagnostic) }
 
         val actualTextWithDiagnostics = CheckerTestUtil.addDiagnosticMarkersToText(
             file,
