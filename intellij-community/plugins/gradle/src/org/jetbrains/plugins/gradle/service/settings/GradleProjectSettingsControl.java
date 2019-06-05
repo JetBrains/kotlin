@@ -3,7 +3,6 @@ package org.jetbrains.plugins.gradle.service.settings;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.externalSystem.service.settings.AbstractExternalProjectSettingsControl;
-import com.intellij.openapi.externalSystem.service.settings.AbstractImportFromExternalSystemControl;
 import com.intellij.openapi.externalSystem.util.PaintAwarePanel;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
