@@ -40,12 +40,6 @@ class PresentationMouseHandler : StartupActivity {
         renderer.presentation.mouseClicked(event, translated)
       }
     }
-
-    private fun translate(e: MouseEvent, dx: Int, dy: Int): MouseEvent {
-      return MouseEvent(e.source as Component, e.id, e.`when`, e.modifiers,
-                        e.x + dx, e.y + dy, e.xOnScreen, e.yOnScreen, e.clickCount, e.isPopupTrigger, e.button)
-    }
-
   }
 
   private val mouseMotionListener = object: EditorMouseMotionListener {
