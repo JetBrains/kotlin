@@ -163,7 +163,7 @@ public abstract class InplaceRefactoring {
   }
 
 
-  public boolean performInplaceRefactoring(final LinkedHashSet<String> nameSuggestions) {
+  public boolean performInplaceRefactoring(@Nullable final LinkedHashSet<String> nameSuggestions) {
     myNameSuggestions = nameSuggestions;
     if (InjectedLanguageUtil.isInInjectedLanguagePrefixSuffix(myElementToRename)) {
       return false;
