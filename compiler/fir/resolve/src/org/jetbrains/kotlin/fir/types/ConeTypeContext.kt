@@ -46,6 +46,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         TODO("not implemented")
     }
 
+    override fun SimpleTypeMarker.isIntegerLiteralType(): Boolean {
+        return false
+    }
+
     override fun KotlinTypeMarker.asSimpleType(): SimpleTypeMarker? {
         assert(this is ConeKotlinType)
         return when (this) {
