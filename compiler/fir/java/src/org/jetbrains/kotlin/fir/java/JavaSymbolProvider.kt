@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteScope
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -60,7 +60,7 @@ class JavaSymbolProvider(
 
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
         val classSymbol = getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
-        return FirClassDeclaredMemberScope(classSymbol.fir)
+        return declaredMemberScope(classSymbol.fir)
     }
 
     override fun getClassUseSiteMemberScope(
@@ -89,7 +89,7 @@ class JavaSymbolProvider(
         scopeSession: ScopeSession
     ): JavaClassUseSiteScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = scopeSession.getOrBuild(regularClass.symbol, DECLARED) { FirClassDeclaredMemberScope(regularClass) }
+            val declaredScope = scopeSession.getOrBuild(regularClass.symbol, DECLARED) { declaredMemberScope(regularClass) }
             val superTypeEnhancementScopes =
                 lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                     .mapNotNull { useSiteSuperType ->

@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -393,7 +392,9 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     override fun getClassDeclaredMemberScope(classId: ClassId) =
-        findRegularClass(classId)?.let(::FirClassDeclaredMemberScope)
+        findRegularClass(classId)?.let {
+            declaredMemberScope(it)
+        }
 
     private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
         return packagePartsCache.getOrPut(packageFqName) {

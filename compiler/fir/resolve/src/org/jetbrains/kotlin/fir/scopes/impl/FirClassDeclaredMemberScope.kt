@@ -13,13 +13,31 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
+import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 
+class FirClassDeclaredMemberScopeProvider {
+
+    val cache = mutableMapOf<FirRegularClass, FirClassDeclaredMemberScope>()
+    fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
+        return cache.getOrPut(klass) {
+            FirClassDeclaredMemberScope(klass)
+        }
+    }
+}
+
+fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
+    return klass
+        .session
+        .service<FirClassDeclaredMemberScopeProvider>()
+        .declaredMemberScope(klass)
+}
+
 class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope {
-    private val callablesIndex: Map<Name, List<FirCallableSymbol>> by lazy {
+    private val callablesIndex: Map<Name, List<FirCallableSymbol>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol>>()
         for (declaration in klass.declarations) {
             when (declaration) {
@@ -38,7 +56,7 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope {
         }
         result
     }
-    private val classIndex: Map<Name, FirClassSymbol> by lazy {
+    private val classIndex: Map<Name, FirClassSymbol> = run {
         val result = mutableMapOf<Name, FirClassSymbol>()
         for (declaration in klass.declarations) {
             if (declaration is FirRegularClass) {

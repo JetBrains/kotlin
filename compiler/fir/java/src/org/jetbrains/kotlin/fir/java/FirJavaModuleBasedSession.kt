@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
@@ -78,6 +79,7 @@ class FirLibrarySession private constructor(
             FirSymbolProvider::class,
             firSymbolProvider
         )
+        registerComponent(FirClassDeclaredMemberScopeProvider::class, FirClassDeclaredMemberScopeProvider())
     }
 
     companion object {
