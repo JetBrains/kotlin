@@ -45,6 +45,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         public void testInternalFromProduction() throws Exception {
             runTest("idea/testData/multiplatform/internalFromProduction/");
         }
+
+        @TestMetadata("useCorrectBuiltIns")
+        public void testUseCorrectBuiltIns() throws Exception {
+            runTest("idea/testData/multiplatform/useCorrectBuiltIns/");
+        }
     }
 
     @TestMetadata("idea/testData/multiplatformTypeRefinement")
@@ -61,8 +66,7 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         }
 
         public void testAllFilesPresentInMultiplatformTypeRefinement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiplatformTypeRefinement"),
-                                                            Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiplatformTypeRefinement"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("callableReferences")
