@@ -36,6 +36,15 @@ class JsIrLinker(
     override val ModuleDescriptor.irHeader: ByteArray?
         get() = this.kotlinLibrary.irHeader
 
+    override fun readSymbol(moduleDescriptor: ModuleDescriptor, symbolIndex: Int) =
+        moduleDescriptor.kotlinLibrary.symbol(symbolIndex)
+
+    override fun readType(moduleDescriptor: ModuleDescriptor, typeIndex: Int) =
+        moduleDescriptor.kotlinLibrary.type(typeIndex)
+
+    override fun readString(moduleDescriptor: ModuleDescriptor, stringIndex: Int) =
+        moduleDescriptor.kotlinLibrary.string(stringIndex)
+
     override fun declareForwardDeclarations() {
         // since for `knownBuiltIns` such as FunctionN it is possible to have unbound symbols after deserialization
         // reference them through out lazy symbol table
@@ -49,4 +58,3 @@ class JsIrLinker(
         }
     }
 }
-

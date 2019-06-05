@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.properties.propertyList
 
 open class BaseKotlinLibraryImpl(
     private val access: BaseLibraryAccess<KotlinLibraryLayout>,
@@ -87,9 +85,33 @@ open class IrLibraryImpl(
 
     override fun irDeclaration(index: Long, isLocal: Boolean) = loadIrDeclaraton(index, isLocal)
 
+    override fun symbol(index: Int) = symbols.tableItemBytes(index)
+
+    override fun type(index: Int) = types.tableItemBytes(index)
+
+    override fun string(index: Int) = strings.tableItemBytes(index)
+
     private val combinedDeclarations: CombinedIrFileReader by lazy {
         CombinedIrFileReader(access.realFiles {
-            it.irFile
+            it.irDeclarations
+        })
+    }
+
+    private val symbols: SimpleIrTableFileReader by lazy {
+        SimpleIrTableFileReader(access.realFiles {
+            it.irSymbols
+        })
+    }
+
+    private val types: SimpleIrTableFileReader by lazy {
+        SimpleIrTableFileReader(access.realFiles {
+            it.irTypes
+        })
+    }
+
+    private val strings: SimpleIrTableFileReader by lazy {
+        SimpleIrTableFileReader(access.realFiles {
+            it.irStrings
         })
     }
 

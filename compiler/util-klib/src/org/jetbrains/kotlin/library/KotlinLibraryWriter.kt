@@ -35,5 +35,8 @@ class SerializedMetadata(
 
 class SerializedIr (
     val module: ByteArray,
+    val symbolTableFilePath: String,
+    val typeTableFilePath: String,
+    val stringTableFilePath: String,
     val combinedDeclarationFilePath: String
 )

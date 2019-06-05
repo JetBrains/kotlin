@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.common.library.CombinedIrFileWriter
-import org.jetbrains.kotlin.backend.common.library.DeclarationId
 import org.jetbrains.kotlin.library.SerializedIr
+import org.jetbrains.kotlin.library.impl.CombinedIrFileWriter
+import org.jetbrains.kotlin.library.impl.DeclarationId
+import org.jetbrains.kotlin.library.impl.SimpleIrTableFileWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -1205,6 +1206,9 @@ open class IrModuleSerializer(
     }
 
     lateinit var writer: CombinedIrFileWriter
+    lateinit var symbolTableWriter: SimpleIrTableFileWriter
+    lateinit var typeTableWriter: SimpleIrTableFileWriter
+    lateinit var stringTableWriter: SimpleIrTableFileWriter
 
     fun serializeModule(module: IrModuleFragment): KotlinIr.IrModule {
         val proto = KotlinIr.IrModule.newBuilder()
@@ -1217,23 +1221,27 @@ open class IrModuleSerializer(
         module.files.forEach {
             proto.addFile(serializeIrFile(it))
         }
-        proto.symbolTable = KotlinIr.IrSymbolTable.newBuilder()
-            .addAllSymbols(protoSymbolArray)
-            .build()
 
-        proto.typeTable = KotlinIr.IrTypeTable.newBuilder()
-            .addAllTypes(protoTypeArray)
-            .build()
+        symbolTableWriter = SimpleIrTableFileWriter("symbols", protoSymbolArray.size)
+        for (protoSymbol in protoSymbolArray)
+            symbolTableWriter.addItem(protoSymbol.toByteArray())
 
-        proto.stringTable = KotlinIr.StringTable.newBuilder()
-            .addAllStrings(protoStringArray)
-            .build()
+        typeTableWriter = SimpleIrTableFileWriter("types", protoTypeArray.size)
+        for (protoSymbol in protoTypeArray)
+            typeTableWriter.addItem(protoSymbol.toByteArray())
+
+        stringTableWriter = SimpleIrTableFileWriter("strings", protoStringArray.size)
+        for (protoSymbol in protoStringArray)
+            stringTableWriter.addItem(protoSymbol.toByteArray())
 
         return proto.build()
     }
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIr {
         val moduleHeader = serializeModule(module).toByteArray()
-        return SerializedIr(moduleHeader, writer.finishWriting().absolutePath)
+        return SerializedIr(moduleHeader, symbolTableWriter.finishWriting().absolutePath,
+                            typeTableWriter.finishWriting().absolutePath,
+                            stringTableWriter.finishWriting().absolutePath,
+                            writer.finishWriting().absolutePath)
     }
 }

@@ -6719,44 +6719,35 @@ public final class KotlinIr {
 
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     java.util.List<org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile> 
         getFileList();
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile getFile(int index);
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     int getFileCount();
-
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-     */
-    boolean hasSymbolTable();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-     */
-    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable getSymbolTable();
-
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-     */
-    boolean hasTypeTable();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-     */
-    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable getTypeTable();
-
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-     */
-    boolean hasStringTable();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-     */
-    org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable getStringTable();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.IrModule}
@@ -6829,45 +6820,6 @@ public final class KotlinIr {
               file_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile.PARSER, extensionRegistry));
               break;
             }
-            case 26: {
-              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000002) == 0x00000002)) {
-                subBuilder = symbolTable_.toBuilder();
-              }
-              symbolTable_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(symbolTable_);
-                symbolTable_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000002;
-              break;
-            }
-            case 34: {
-              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000004) == 0x00000004)) {
-                subBuilder = typeTable_.toBuilder();
-              }
-              typeTable_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(typeTable_);
-                typeTable_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000004;
-              break;
-            }
-            case 42: {
-              org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000008) == 0x00000008)) {
-                subBuilder = stringTable_.toBuilder();
-              }
-              stringTable_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(stringTable_);
-                stringTable_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000008;
-              break;
-            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -6924,12 +6876,24 @@ public final class KotlinIr {
     private java.util.List<org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile> file_;
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     public java.util.List<org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile> getFileList() {
       return file_;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFileOrBuilder> 
         getFileOrBuilderList() {
@@ -6937,75 +6901,45 @@ public final class KotlinIr {
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     public int getFileCount() {
       return file_.size();
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile getFile(int index) {
       return file_.get(index);
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+     *
+     * <pre>
+     *required IrSymbolTable symbol_table = 3;
+     *required IrTypeTable type_table = 4;
+     *required StringTable string_table = 5;
+     * </pre>
      */
     public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFileOrBuilder getFileOrBuilder(
         int index) {
       return file_.get(index);
     }
 
-    public static final int SYMBOL_TABLE_FIELD_NUMBER = 3;
-    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable symbolTable_;
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-     */
-    public boolean hasSymbolTable() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable getSymbolTable() {
-      return symbolTable_;
-    }
-
-    public static final int TYPE_TABLE_FIELD_NUMBER = 4;
-    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable typeTable_;
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-     */
-    public boolean hasTypeTable() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable getTypeTable() {
-      return typeTable_;
-    }
-
-    public static final int STRING_TABLE_FIELD_NUMBER = 5;
-    private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable stringTable_;
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-     */
-    public boolean hasStringTable() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable getStringTable() {
-      return stringTable_;
-    }
-
     private void initFields() {
       name_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.String.getDefaultInstance();
       file_ = java.util.Collections.emptyList();
-      symbolTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.getDefaultInstance();
-      typeTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.getDefaultInstance();
-      stringTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -7014,18 +6948,6 @@ public final class KotlinIr {
       if (isInitialized == 0) return false;
 
       if (!hasName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasSymbolTable()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasTypeTable()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasStringTable()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -7039,14 +6961,6 @@ public final class KotlinIr {
           return false;
         }
       }
-      if (!getSymbolTable().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!getTypeTable().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -7059,15 +6973,6 @@ public final class KotlinIr {
       }
       for (int i = 0; i < file_.size(); i++) {
         output.writeMessage(2, file_.get(i));
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeMessage(3, symbolTable_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeMessage(4, typeTable_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(5, stringTable_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -7085,18 +6990,6 @@ public final class KotlinIr {
       for (int i = 0; i < file_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, file_.get(i));
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(3, symbolTable_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(4, typeTable_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(5, stringTable_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -7196,12 +7089,6 @@ public final class KotlinIr {
         bitField0_ = (bitField0_ & ~0x00000001);
         file_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
-        symbolTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.getDefaultInstance();
-        bitField0_ = (bitField0_ & ~0x00000004);
-        typeTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.getDefaultInstance();
-        bitField0_ = (bitField0_ & ~0x00000008);
-        stringTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.getDefaultInstance();
-        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -7234,18 +7121,6 @@ public final class KotlinIr {
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.file_ = file_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.symbolTable_ = symbolTable_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.typeTable_ = typeTable_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        result.stringTable_ = stringTable_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -7265,15 +7140,6 @@ public final class KotlinIr {
           }
           
         }
-        if (other.hasSymbolTable()) {
-          mergeSymbolTable(other.getSymbolTable());
-        }
-        if (other.hasTypeTable()) {
-          mergeTypeTable(other.getTypeTable());
-        }
-        if (other.hasStringTable()) {
-          mergeStringTable(other.getStringTable());
-        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -7281,18 +7147,6 @@ public final class KotlinIr {
 
       public final boolean isInitialized() {
         if (!hasName()) {
-          
-          return false;
-        }
-        if (!hasSymbolTable()) {
-          
-          return false;
-        }
-        if (!hasTypeTable()) {
-          
-          return false;
-        }
-        if (!hasStringTable()) {
           
           return false;
         }
@@ -7305,14 +7159,6 @@ public final class KotlinIr {
             
             return false;
           }
-        }
-        if (!getSymbolTable().isInitialized()) {
-          
-          return false;
-        }
-        if (!getTypeTable().isInitialized()) {
-          
-          return false;
         }
         return true;
       }
@@ -7407,24 +7253,48 @@ public final class KotlinIr {
 
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public java.util.List<org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile> getFileList() {
         return java.util.Collections.unmodifiableList(file_);
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public int getFileCount() {
         return file_.size();
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile getFile(int index) {
         return file_.get(index);
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder setFile(
           int index, org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile value) {
@@ -7438,6 +7308,12 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder setFile(
           int index, org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile.Builder builderForValue) {
@@ -7448,6 +7324,12 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder addFile(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile value) {
         if (value == null) {
@@ -7460,6 +7342,12 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder addFile(
           int index, org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile value) {
@@ -7473,6 +7361,12 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder addFile(
           org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile.Builder builderForValue) {
@@ -7483,6 +7377,12 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder addFile(
           int index, org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile.Builder builderForValue) {
@@ -7493,6 +7393,12 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder addAllFile(
           java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrFile> values) {
@@ -7504,6 +7410,12 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder clearFile() {
         file_ = java.util.Collections.emptyList();
@@ -7513,191 +7425,17 @@ public final class KotlinIr {
       }
       /**
        * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.IrFile file = 2;</code>
+       *
+       * <pre>
+       *required IrSymbolTable symbol_table = 3;
+       *required IrTypeTable type_table = 4;
+       *required StringTable string_table = 5;
+       * </pre>
        */
       public Builder removeFile(int index) {
         ensureFileIsMutable();
         file_.remove(index);
 
-        return this;
-      }
-
-      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable symbolTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.getDefaultInstance();
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-       */
-      public boolean hasSymbolTable() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-       */
-      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable getSymbolTable() {
-        return symbolTable_;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-       */
-      public Builder setSymbolTable(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        symbolTable_ = value;
-
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-       */
-      public Builder setSymbolTable(
-          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.Builder builderForValue) {
-        symbolTable_ = builderForValue.build();
-
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-       */
-      public Builder mergeSymbolTable(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable value) {
-        if (((bitField0_ & 0x00000004) == 0x00000004) &&
-            symbolTable_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.getDefaultInstance()) {
-          symbolTable_ =
-            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.newBuilder(symbolTable_).mergeFrom(value).buildPartial();
-        } else {
-          symbolTable_ = value;
-        }
-
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrSymbolTable symbol_table = 3;</code>
-       */
-      public Builder clearSymbolTable() {
-        symbolTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrSymbolTable.getDefaultInstance();
-
-        bitField0_ = (bitField0_ & ~0x00000004);
-        return this;
-      }
-
-      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable typeTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.getDefaultInstance();
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-       */
-      public boolean hasTypeTable() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-       */
-      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable getTypeTable() {
-        return typeTable_;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-       */
-      public Builder setTypeTable(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        typeTable_ = value;
-
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-       */
-      public Builder setTypeTable(
-          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.Builder builderForValue) {
-        typeTable_ = builderForValue.build();
-
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-       */
-      public Builder mergeTypeTable(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable value) {
-        if (((bitField0_ & 0x00000008) == 0x00000008) &&
-            typeTable_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.getDefaultInstance()) {
-          typeTable_ =
-            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.newBuilder(typeTable_).mergeFrom(value).buildPartial();
-        } else {
-          typeTable_ = value;
-        }
-
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.IrTypeTable type_table = 4;</code>
-       */
-      public Builder clearTypeTable() {
-        typeTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrTypeTable.getDefaultInstance();
-
-        bitField0_ = (bitField0_ & ~0x00000008);
-        return this;
-      }
-
-      private org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable stringTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.getDefaultInstance();
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-       */
-      public boolean hasStringTable() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-       */
-      public org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable getStringTable() {
-        return stringTable_;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-       */
-      public Builder setStringTable(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        stringTable_ = value;
-
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-       */
-      public Builder setStringTable(
-          org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.Builder builderForValue) {
-        stringTable_ = builderForValue.build();
-
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-       */
-      public Builder mergeStringTable(org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable value) {
-        if (((bitField0_ & 0x00000010) == 0x00000010) &&
-            stringTable_ != org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.getDefaultInstance()) {
-          stringTable_ =
-            org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.newBuilder(stringTable_).mergeFrom(value).buildPartial();
-        } else {
-          stringTable_ = value;
-        }
-
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.backend.common.serialization.StringTable string_table = 5;</code>
-       */
-      public Builder clearStringTable() {
-        stringTable_ = org.jetbrains.kotlin.backend.common.serialization.KotlinIr.StringTable.getDefaultInstance();
-
-        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 

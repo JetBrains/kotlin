@@ -97,9 +97,6 @@ message IrFile {
 message IrModule {
   required String name = 1;
   repeated IrFile file = 2;
-  required IrSymbolTable symbol_table = 3;
-  required IrTypeTable type_table = 4;
-  required StringTable string_table = 5;
 }
 
 /* ------ String Table ------------------------------------------ */

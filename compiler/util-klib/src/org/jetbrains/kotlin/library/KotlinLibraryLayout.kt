@@ -48,10 +48,18 @@ interface MetadataKotlinLibraryLayout : KotlinLibraryLayout {
 interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     val irDir
         get() = File(libDir, "ir")
-    val irFile
-        get() = File(irDir, "irCombined.knd")
+    val irTablesDir
+        get() = File(irDir, "ir_tables")
     val irHeader
         get() = File(irDir, "irHeaders.kni")
+    val irDeclarations
+        get() = File(irTablesDir, "irCombined.knd")
+    val irSymbols
+        get() = File(irTablesDir, "symbols.knt")
+    val irTypes
+        get() = File(irTablesDir, "types.knt")
+    val irStrings
+        get() = File(irTablesDir, "strings.knt")
     val dataFlowGraphFile
         get() = File(irDir, "module_data_flow_graph")
 }

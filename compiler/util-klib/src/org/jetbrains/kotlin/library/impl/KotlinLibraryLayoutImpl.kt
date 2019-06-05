@@ -132,7 +132,13 @@ class ExtractingIrLibraryImpl(val zipped: IrLibraryLayoutImpl) :
     ExtractingKotlinLibraryLayout(zipped),
     IrKotlinLibraryLayout {
 
-    override val irFile: File by lazy { zipped.extract(zipped.irFile) }
+    override val irDeclarations: File by lazy { zipped.extract(zipped.irDeclarations) }
+
+    override val irSymbols: File by lazy { zipped.extract(zipped.irSymbols) }
+
+    override val irTypes: File by lazy { zipped.extract(zipped.irTypes) }
+
+    override val irStrings: File by lazy { zipped.extract(zipped.irStrings) }
 }
 
 internal fun zippedKotlinLibraryChecks(klibFile: File) {

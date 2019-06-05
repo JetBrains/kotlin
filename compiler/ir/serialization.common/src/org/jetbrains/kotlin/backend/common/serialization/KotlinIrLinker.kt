@@ -66,6 +66,10 @@ abstract class KotlinIrLinker(
 
         private var moduleLoops = mutableMapOf<Int, IrLoopBase>()
 
+        private val symbolProtosCache = mutableMapOf<Int, KotlinIr.IrSymbolData>()
+        private val typeProtosCache = mutableMapOf<Int, KotlinIr.IrType>()
+        private val stringsCache = mutableMapOf<Int, String>()
+
         // This is a heavy initializer
         val module = deserializeIrModuleHeader(moduleProto)
 
@@ -132,18 +136,36 @@ abstract class KotlinIrLinker(
             else -> TODO("Unexpected classifier symbol kind: ${proto.kind}")
         }
 
+        private fun loadSymbolProto(index: Int): KotlinIr.IrSymbolData {
+            return symbolProtosCache.getOrPut(index) {
+                loadSymbolProto(moduleDescriptor, index)
+            }
+        }
+
+        private fun loadTypeProto(index: Int): KotlinIr.IrType {
+            return typeProtosCache.getOrPut(index) {
+                loadTypeProto(moduleDescriptor, index)
+            }
+        }
+
+        private fun loadString(index: Int): String {
+            return stringsCache.getOrPut(index) {
+                loadString(moduleDescriptor, index)
+            }
+        }
+
         override fun deserializeIrSymbol(proto: KotlinIr.IrSymbol): IrSymbol {
-            val symbolData = moduleProto.symbolTable.getSymbols(proto.index)
+            val symbolData = loadSymbolProto(proto.index)
             return deserializeIrSymbolData(symbolData)
         }
 
         override fun deserializeIrType(proto: KotlinIr.IrTypeIndex): IrType {
-            val typeData = moduleProto.typeTable.getTypes(proto.index)
+            val typeData = loadTypeProto(proto.index)
             return deserializeIrTypeData(typeData)
         }
 
         override fun deserializeString(proto: KotlinIr.String): String =
-            moduleProto.stringTable.getStrings(proto.index)
+            loadString(proto.index)
 
         override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
             moduleLoops.getOrPut(loopIndex, loopBuilder)
@@ -228,7 +250,7 @@ abstract class KotlinIrLinker(
             when (deserializationStrategy) {
                 DeserializationStrategy.EXPLICITLY_EXPORTED -> {
                     fileProto.explicitlyExportedToCompilerList.forEach {
-                        val symbolProto = moduleProto.symbolTable.getSymbols(it.index)
+                        val symbolProto = loadSymbolProto(it.index)
                         reachableTopLevels.add(symbolProto.topLevelUniqId.uniqIdKey(moduleDescriptor))
                     }
                 }
@@ -293,10 +315,27 @@ abstract class KotlinIrLinker(
     }
 
     protected abstract fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId): ByteArray
+    protected abstract fun readSymbol(moduleDescriptor: ModuleDescriptor, symbolIndex: Int): ByteArray
+    protected abstract fun readType(moduleDescriptor: ModuleDescriptor, typeIndex: Int): ByteArray
+    protected abstract fun readString(moduleDescriptor: ModuleDescriptor, stringIndex: Int): ByteArray
 
     private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): KotlinIr.IrDeclaration {
         val stream = reader(uniqIdKey.moduleOfOrigin!!, uniqIdKey.uniqId).codedInputStream
         return KotlinIr.IrDeclaration.parseFrom(stream, newInstance())
+    }
+
+    private fun loadSymbolProto(moduleDescriptor: ModuleDescriptor, index: Int): KotlinIr.IrSymbolData {
+        val stream = readSymbol(moduleDescriptor, index).codedInputStream
+        return KotlinIr.IrSymbolData.parseFrom(stream, newInstance())
+    }
+
+    private fun loadTypeProto(moduleDescriptor: ModuleDescriptor, index: Int): KotlinIr.IrType {
+        val stream = readType(moduleDescriptor, index).codedInputStream
+        return KotlinIr.IrType.parseFrom(stream, newInstance())
+    }
+
+    private fun loadString(moduleDescriptor: ModuleDescriptor, index: Int): String {
+        return String(readString(moduleDescriptor, index))
     }
 
     private fun deserializeFileAnnotationsIfFirstUse(module: ModuleDescriptor, file: IrFile) {

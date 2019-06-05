@@ -34,6 +34,9 @@ interface IrLibrary {
     val dataFlowGraph: ByteArray?
     val irHeader: ByteArray?
     fun irDeclaration(index: Long, isLocal: Boolean): ByteArray
+    fun symbol(index: Int): ByteArray
+    fun type(index: Int): ByteArray
+    fun string(index: Int): ByteArray
 }
 
 val BaseKotlinLibrary.uniqueName: String
