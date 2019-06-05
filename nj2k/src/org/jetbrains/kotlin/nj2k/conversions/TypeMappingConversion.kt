@@ -81,12 +81,12 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
 
     private fun JKType.fixRawType(typeElement: JKTypeElement) =
         when (typeElement.parent) {
+            is JKClassLiteralExpression -> this
             is JKKtIsExpression ->
                 addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl())
                     .updateNullability(Nullability.NotNull)
             is JKTypeCastExpression ->
                 addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl())
-
             else ->
                 addTypeParametersToRawProjectionType(
                     JKStarProjectionTypeImpl()
