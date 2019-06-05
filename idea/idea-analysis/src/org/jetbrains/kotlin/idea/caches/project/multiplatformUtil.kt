@@ -10,10 +10,9 @@ import com.intellij.facet.FacetTypeRegistry
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -49,37 +48,30 @@ val KotlinFacetSettings.isMPPModule: Boolean
 private val Module.facetSettings get() = KotlinFacet.get(this)?.configuration?.settings
 
 val Module.implementingModules: List<Module>
-    get() = cached(CachedValueProvider {
+    get() = cacheInvalidatingOnRootModifications {
         val moduleManager = ModuleManager.getInstance(project)
-        CachedValueProvider.Result(
-            if (isNewMPPModule) {
-                moduleManager.getModuleDependentModules(this).filter {
-                    it.isNewMPPModule && it.externalProjectId == externalProjectId
-                }
-            } else {
-                moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
-            },
-            ProjectRootModificationTracker.getInstance(project)
-        )
-    })
+
+        if (isNewMPPModule) {
+            moduleManager.getModuleDependentModules(this).filter {
+                it.isNewMPPModule && it.externalProjectId == externalProjectId
+            }
+        } else {
+            moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
+        }
+    }
 
 val Module.implementedModules: List<Module>
-    get() = cached<List<Module>>(
-        CachedValueProvider {
-            CachedValueProvider.Result(
-                if (isNewMPPModule) {
-                    rootManager.dependencies.filter {
-                        // TODO: remove additional android check
+    get() = cacheInvalidatingOnRootModifications {
+        if (isNewMPPModule) {
+            rootManager.dependencies.filter {
+                // TODO: remove additional android check
                         it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId && (isAndroidModule() || it.isTestModule == isTestModule)
-                    }
-                } else {
-                    val modelsProvider = IdeModelsProviderImpl(project)
-                    findOldFashionedImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) }
-                },
-                ProjectRootModificationTracker.getInstance(project)
-            )
+            }
+        } else {
+            val modelsProvider = IdeModelsProviderImpl(project)
+            findOldFashionedImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) }
         }
-    )
+    }
 
 private fun Module.findOldFashionedImplementedModuleNames(): List<String> {
     val facet = FacetManager.getInstance(this).findFacet(

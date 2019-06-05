@@ -17,7 +17,6 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
 import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
+import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
@@ -177,16 +177,9 @@ sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) 
             return expectedByModules.mapNotNull { if (forProduction) it.productionSourceInfo() else it.testSourceInfo() }
         }
 
-    override fun dependencies(): List<IdeaModuleInfo> = module.cached(createCachedValueProvider {
-        CachedValueProvider.Result(
-            ideaModelDependencies(module, forProduction, platform),
-            ProjectRootModificationTracker.getInstance(module.project)
-        )
-    })
-
-    // NB: CachedValueProvider must exist separately in Production / Test source info,
-    // otherwise caching does not work properly
-    protected abstract fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>): CachedValueProvider<T>
+    override fun dependencies(): List<IdeaModuleInfo> = module.cacheByClassInvalidatingOnRootModifications(this::class.java) {
+        ideaModelDependencies(module, forProduction, platform)
+    }
 }
 
 data class ModuleProductionSourceInfo internal constructor(
@@ -200,8 +193,6 @@ data class ModuleProductionSourceInfo internal constructor(
     override fun contentScope(): GlobalSearchScope {
         return enlargedSearchScope(ModuleProductionSourceScope(module), module, isTestScope = false)
     }
-
-    override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
 }
 
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
@@ -217,19 +208,20 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
 
     override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module, isTestScope = true)
 
-    override fun modulesWhoseInternalsAreVisible() = module.cached(CachedValueProvider {
-        val list = SmartList<ModuleInfo>()
+    override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> =
+        module.cacheByClassInvalidatingOnRootModifications(KeyForModulesWhoseInternalsAreVisible::class.java) {
+            val list = SmartList<ModuleInfo>()
 
-        list.addIfNotNull(module.productionSourceInfo())
+            list.addIfNotNull(module.productionSourceInfo())
 
-        TestModuleProperties.getInstance(module).productionModule?.let {
-            list.addIfNotNull(it.productionSourceInfo())
+            TestModuleProperties.getInstance(module).productionModule?.let {
+                list.addIfNotNull(it.productionSourceInfo())
+            }
+
+            list
         }
 
-        CachedValueProvider.Result(list, ProjectRootModificationTracker.getInstance(module.project))
-    })
-
-    override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
+    private object KeyForModulesWhoseInternalsAreVisible
 }
 
 fun Module.productionSourceInfo(): ModuleProductionSourceInfo? = if (hasProductionRoots()) ModuleProductionSourceInfo(this) else null

@@ -13,17 +13,17 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.types.typeUtil.closure
 import java.util.concurrent.ConcurrentHashMap
 
 fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
-    val modelInfosCache = project.cached(CachedValueProvider {
-        CachedValueProvider.Result(collectModuleInfosFromIdeaModel(project), ProjectRootModificationTracker.getInstance(project))
-    })
+    val modelInfosCache = project.cacheInvalidatingOnRootModifications {
+        collectModuleInfosFromIdeaModel(project)
+    }
+
     return modelInfosCache.forPlatform(platform)
 }
 
