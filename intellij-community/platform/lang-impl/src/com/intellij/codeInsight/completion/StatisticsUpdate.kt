@@ -8,7 +8,10 @@ import com.intellij.codeInsight.lookup.LookupEvent
 import com.intellij.featureStatistics.FeatureUsageTracker
 import com.intellij.featureStatistics.FeatureUsageTrackerImpl
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.WeakReferenceDisposableWrapper
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.util.Disposer
@@ -65,13 +68,12 @@ class StatisticsUpdate
     }
 
     val marker = document.createRangeMarker(startOffset, tailOffset)
-    val listener = object : DocumentListener {
-      override fun beforeDocumentChange(e: DocumentEvent) {
-        if (!marker.isValid || e.offset > marker.startOffset && e.offset < marker.endOffset) {
-          cancelLastCompletionStatisticsUpdate()
-        }
-      }
-    }
+    val listener = DocumentChangeListener(document, marker)
+    document.addDocumentListener(listener)
+    // Avoid hard-ref from Disposer to the document through the listener.
+    // The document could be some text field with the project scope life-time,
+    // don't make it leak past closing of the project.
+    Disposer.register(this, WeakReferenceDisposableWrapper(listener))
 
     ourStatsAlarm.addRequest({
                                if (ourPendingUpdate === this) {
@@ -79,12 +81,23 @@ class StatisticsUpdate
                                }
                              }, 20 * 1000)
 
-    document.addDocumentListener(listener)
     Disposer.register(this, Disposable {
-      document.removeDocumentListener(listener)
-      marker.dispose()
       ourStatsAlarm.cancelAllRequests()
     })
+  }
+
+  private class DocumentChangeListener(val document: Document,
+                                       val marker: RangeMarker) : DocumentListener, Disposable {
+    override fun beforeDocumentChange(e: DocumentEvent) {
+      if (!marker.isValid || e.offset > marker.startOffset && e.offset < marker.endOffset) {
+        cancelLastCompletionStatisticsUpdate()
+      }
+    }
+
+    override fun dispose() {
+      document.removeDocumentListener(this)
+      marker.dispose()
+    }
   }
 
   companion object {
