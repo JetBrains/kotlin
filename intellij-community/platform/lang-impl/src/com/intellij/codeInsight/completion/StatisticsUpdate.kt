@@ -65,13 +65,13 @@ class StatisticsUpdate
     }
 
     val marker = document.createRangeMarker(startOffset, tailOffset)
-    document.addDocumentListener(object : DocumentListener {
+    val listener = object : DocumentListener {
       override fun beforeDocumentChange(e: DocumentEvent) {
         if (!marker.isValid || e.offset > marker.startOffset && e.offset < marker.endOffset) {
           cancelLastCompletionStatisticsUpdate()
         }
       }
-    }, this)
+    }
 
     ourStatsAlarm.addRequest({
                                if (ourPendingUpdate === this) {
@@ -79,7 +79,9 @@ class StatisticsUpdate
                                }
                              }, 20 * 1000)
 
+    document.addDocumentListener(listener)
     Disposer.register(this, Disposable {
+      document.removeDocumentListener(listener)
       marker.dispose()
       ourStatsAlarm.cancelAllRequests()
     })
