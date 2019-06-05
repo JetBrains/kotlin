@@ -80,7 +80,7 @@ internal class ConstraintsCollector(
             }
 
             expression is KtBinaryExpression && expression.asAssignment() != null -> {
-                expression.right?.addSubtypeNullabilityConstraint(expression.left!!, ConstraintCameFrom.ASSIGNMENT_TARGET)
+                expression.right?.addSubtypeNullabilityConstraint(expression.left ?: return, ConstraintCameFrom.ASSIGNMENT_TARGET)
             }
 
             expression is KtBinaryExpression && expression.isComaprationWithNull() -> {
@@ -152,7 +152,7 @@ internal class ConstraintsCollector(
                         analysisContext.typeElementToTypeVariable[typeElement]
                     }
                 if (loopParameterTypeVariable != null) {
-                    val loopRangeBoundType = boundTypeStorage.boundTypeFor(expression.loopRange!!)
+                    val loopRangeBoundType = boundTypeStorage.boundTypeFor(expression.loopRange ?: return)
                     val loopRangeType = expression.loopRange?.getType(expression.analyze()) ?: return
                     val loopRangeItemType = loopRangeType
                         .constructor
@@ -280,7 +280,7 @@ internal class ConstraintsCollector(
                 }
             }?.let { type ->
                 boundTypeStorage
-                    .boundTypeForType(type, receiverBoundType, callExpression.typeArgumentsDescriptors(descriptor))
+                    .boundTypeForType(type, receiverBoundType, callExpression.typeArgumentsDescriptors(descriptor).orEmpty())
             }
 
 
@@ -299,9 +299,12 @@ internal class ConstraintsCollector(
         }
     }
 
-    private fun KtCallExpression.typeArgumentsDescriptors(descriptor: CallableDescriptor): Map<TypeParameterDescriptor, TypeVariable> =
-        descriptor.typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
-            typeParameter to
-                    this@ConstraintsCollector.analysisContext.typeElementToTypeVariable.getValue(typeArgument.typeReference?.typeElement!!)
+    private fun KtCallExpression.typeArgumentsDescriptors(descriptor: CallableDescriptor): Map<TypeParameterDescriptor, TypeVariable>? {
+        return descriptor.typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
+            val typeVariable =
+                analysisContext.typeElementToTypeVariable[typeArgument.typeReference?.typeElement ?: return null]
+                    ?: return null
+            typeParameter to typeVariable
         }.toMap()
+    }
 }

@@ -11,7 +11,6 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asLabel
 import org.jetbrains.kotlin.nj2k.parentOfType
@@ -29,10 +28,10 @@ internal fun TypeVariable.changeNullability(toNullable: Boolean) {
 internal fun KtTypeElement.changeNullability(toNullable: Boolean) {
     val factory = KtPsiFactory(this)
     if (this is KtNullableType && !toNullable) {
-        replace(factory.createType(innerType!!.text).typeElement!!)
+        replace(factory.createType(innerType?.text ?: return).typeElement ?: return)
     }
     if (this !is KtNullableType && toNullable) {
-        replace(factory.createType("$text?").typeElement!!)
+        replace(factory.createType("$text?").typeElement ?: return)
     }
 }
 
@@ -70,10 +69,10 @@ internal fun KtTypeElement.classReference(): ClassReference {
     return when (target) {
         is KtClassOrObject -> KtClassReference(target)
         is PsiClass -> JavaClassReference(target)
-        is KtTypeAlias -> target.getTypeReference()?.typeElement?.classReference()!!
+        is KtTypeAlias -> target.getTypeReference()?.typeElement?.classReference()
         is KtTypeParameter -> TypeParameterClassReference(target)
-        else -> UnknownClassReference(text)
-    }
+        else -> null
+    } ?: UnknownClassReference(text)
 }
 
 class NullabilityAnalysisFacade(

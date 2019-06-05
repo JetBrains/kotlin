@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.jvm.checkers.mustNotBeNull
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.util.javaslang.getOrNull
 
 internal fun KtExpression.deepestReceiver(): KtExpression =
@@ -52,7 +53,7 @@ internal fun KtExpression.getForcedNullability(): Nullability? {
 }
 
 
-private fun KotlinType.isExternallyAnnotatedNotNull(dataFlowInfo: DataFlowInfo, dataFlowValue: DataFlowValue): Boolean=
+private fun KotlinType.isExternallyAnnotatedNotNull(dataFlowInfo: DataFlowInfo, dataFlowValue: DataFlowValue): Boolean =
     mustNotBeNull()?.isFromJava == true && dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()
 
 private fun IElementType.isEqualsToken() =

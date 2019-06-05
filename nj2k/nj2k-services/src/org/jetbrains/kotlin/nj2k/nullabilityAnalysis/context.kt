@@ -50,7 +50,7 @@ internal class ContextCreator(
                 if (typeArguments.isNotEmpty())
                     FunctionCallTypeArgumentTarget(
                         this,
-                        typeArguments.map { it.typeReference?.typeElement?.asTypeVariable()!! }
+                        typeArguments.map { it.typeReference?.typeElement?.asTypeVariable() ?: return null }
                     )
                 else null
             else -> null

@@ -30,7 +30,6 @@ internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisCon
 
     fun boundTypeFor(expression: KtExpression): BoundType =
         cache.getOrPut(expression) {
-            if (expression is KtParenthesizedExpression) return@getOrPut boundTypeFor(expression.expression!!)
             val boundType =
                 when (expression) {
                     is KtParenthesizedExpression -> expression.expression?.let { boundTypeFor(it) }
@@ -131,13 +130,18 @@ internal class BoundTypeStorage(private val analysisAnalysisContext: AnalysisCon
         val descriptor =
             getResolvedCall(bindingContext)?.candidateDescriptor?.original?.safeAs<CallableDescriptor>() ?: return null
         val typeParameters =
-            if (this is KtCallElement) {
-                typeArguments.mapIndexed { index, typeArgument ->
-                    //TODO better check
-                    descriptor.typeParameters[index] to
-                            analysisAnalysisContext.typeElementToTypeVariable.getValue(typeArgument.typeReference?.typeElement!!)
-                }.toMap()
-            } else emptyMap()
+            run {
+                if (this is KtCallElement) {
+                    typeArguments.mapIndexed { index, typeArgument ->
+                        //TODO better check
+                        val typeParameter = descriptor.typeParameters.getOrNull(index) ?: return@run null
+                        val typeVariable =
+                            analysisAnalysisContext.typeElementToTypeVariable[typeArgument.typeReference?.typeElement ?: return@run null]
+                                ?: return@run null
+                        typeParameter to typeVariable
+                    }.toMap()
+                } else emptyMap()
+            } ?: emptyMap()
         return descriptor.returnType?.toBoundType(contextBoundType, typeParameters)
     }
 
