@@ -148,7 +148,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             } else {
                 element.transformChildren(this, Unit)
             }
-            return CompositeTransformResult(element)
+            return CompositeTransformResult.single(element)
         }
     }
 
