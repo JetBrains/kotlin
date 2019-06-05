@@ -130,14 +130,16 @@ internal class SingleLanguageInlayHintsSettingsPanel(
       }
       else {
         bottomPanel.isVisible = true
-        editorField.text = text
-        val document = editorField.document
-        ApplicationManager.getApplication().runWriteAction {
-          PsiDocumentManager.getInstance(project).commitDocument(document)
-          val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
-          val editor = editorField.editor
-          if (editor != null && psiFile != null) {
-            collectAndDrawHints(editor, psiFile)
+        if (editorField.isValid) {
+          editorField.text = text
+          val document = editorField.document
+          ApplicationManager.getApplication().runWriteAction {
+            PsiDocumentManager.getInstance(project).commitDocument(document)
+            val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+            val editor = editorField.editor
+            if (editor != null && psiFile != null) {
+              collectAndDrawHints(editor, psiFile)
+            }
           }
         }
       }
