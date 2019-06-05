@@ -29,6 +29,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/addOperatorModifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddOperatorModifier extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddOperatorModifier() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/addOperatorModifier"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("containsBool.kt")
+        public void testContainsBool() throws Exception {
+            runTest("idea/testData/inspectionsLocal/addOperatorModifier/containsBool.kt");
+        }
+
+        @TestMetadata("containsInt.kt")
+        public void testContainsInt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/addOperatorModifier/containsInt.kt");
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            runTest("idea/testData/inspectionsLocal/addOperatorModifier/extension.kt");
+        }
+
+        @TestMetadata("forOverride.kt")
+        public void testForOverride() throws Exception {
+            runTest("idea/testData/inspectionsLocal/addOperatorModifier/forOverride.kt");
+        }
+
+        @TestMetadata("overridden.kt")
+        public void testOverridden() throws Exception {
+            runTest("idea/testData/inspectionsLocal/addOperatorModifier/overridden.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/addOperatorModifier/simple.kt");
+        }
+
+        @TestMetadata("toplevel.kt")
+        public void testToplevel() throws Exception {
+            runTest("idea/testData/inspectionsLocal/addOperatorModifier/toplevel.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/arrayInDataClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
