@@ -46,21 +46,40 @@ private fun expandMacros(
         typeConverter: TypeConverter
 ): List<MacroDef> {
 
-    // Each macro is expanded by parsing it separately with the library;
-    // so precompile library headers to significantly speed up the parsing:
+    // In the worst case code is parsed against the library a lot of times;
+    // so precompile library headers to significantly speed up the parsing and avoid visiting headers' AST:
     val library = originalLibrary.precompileHeaders()
 
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val sourceFile = library.createTempSource()
+        val compilerArgs = library.compilerArgs.toMutableList()
         // We disable implicit function declaration to filter out cases when a macro is expanded as a function
         // or function-like construction (e.g. #define FOO throw()) but such a function is undeclared.
-        val compilerArgs = library.compilerArgs + listOf("-Werror=implicit-function-declaration")
+        compilerArgs += "-Werror=implicit-function-declaration"
+
+        // Ensure libclang reports all errors:
+        compilerArgs += "-ferror-limit=0"
+
         val translationUnit = parseTranslationUnit(index, sourceFile, compilerArgs, options = 0)
         try {
-            translationUnit.ensureNoCompileErrors()
-            return names.mapNotNull {
-                expandMacro(library, translationUnit, sourceFile, it, typeConverter)
+            val nameToMacroDef = mutableMapOf<String, MacroDef>()
+            val unprocessedMacros = names.toMutableList()
+
+            // Note: will be slow for a library with a lot of macros having unbalanced '{'. TODO: Optimize this case too.
+
+            while (unprocessedMacros.isNotEmpty()) {
+                val processedMacros =
+                        tryExpandMacros(library, translationUnit, sourceFile, unprocessedMacros, typeConverter)
+
+                unprocessedMacros -= (processedMacros.keys + unprocessedMacros.first())
+                // Note: removing first macro should not have any effect, doing this to ensure the loop is finite.
+
+                processedMacros.forEach { (name, macroDef) ->
+                    if (macroDef != null) nameToMacroDef[name] = macroDef
+                }
             }
+
+            return names.mapNotNull { nameToMacroDef[it] }
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }
@@ -68,71 +87,111 @@ private fun expandMacros(
 }
 
 /**
- * Expands the macro [name] defined in [library].
- * Returns the resulting constant or `null` if the result is not a constant (expression).
+ * Tries to expand macros [names] defined in [library].
+ * Returns the map of successfully processed macros with resulting constant as a value
+ * or `null` if the result is not a constant (expression).
  *
  * As a side effect, modifies the [sourceFile] and reparses the [translationUnit].
  */
-private fun expandMacro(
+private fun tryExpandMacros(
         library: NativeLibrary,
         translationUnit: CXTranslationUnit,
         sourceFile: File,
-        name: String,
+        names: List<String>,
         typeConverter: TypeConverter
-): MacroDef? {
+): Map<String, MacroDef?> {
 
-    reparseWithCodeSnippet(library, translationUnit, sourceFile, name)
+    reparseWithCodeSnippets(library, translationUnit, sourceFile, names)
 
-    if (!translationUnit.hasCompileErrors()) {
-        return processCodeSnippet(translationUnit, name, typeConverter)
-    } else {
-        return null
+    val macrosWithErrorsInSnippetFunctionHeader = mutableSetOf<String>()
+    val macrosWithErrorsInSnippetFunctionBody = mutableSetOf<String>()
+
+    val preambleSize = library.preambleLines.size
+
+    translationUnit.getErrorLineNumbers().map { it - preambleSize - 1 }.forEach { lineNumber ->
+        val index = lineNumber / CODE_SNIPPET_LINES_NUMBER
+        if (index >= 0 && index < names.size) {
+            when (lineNumber % CODE_SNIPPET_LINES_NUMBER) {
+                0 -> macrosWithErrorsInSnippetFunctionHeader += names[index]
+                1 -> macrosWithErrorsInSnippetFunctionBody += names[index]
+                else -> {}
+            }
+        }
     }
+
+    val result = mutableMapOf<String, MacroDef?>()
+
+    visitChildren(translationUnit) { cursor, _ ->
+        if (cursor.kind == CXCursorKind.CXCursor_FunctionDecl) {
+            val functionName = getCursorSpelling(cursor)
+            if (functionName.startsWith(CODE_SNIPPET_FUNCTION_NAME_PREFIX)) {
+                val macroName = functionName.removePrefix(CODE_SNIPPET_FUNCTION_NAME_PREFIX)
+                if (macroName in macrosWithErrorsInSnippetFunctionHeader) {
+                    // Code snippet is likely affected by previous macros' snippets, skip it for now.
+                } else {
+                    result[macroName] = if (macroName in macrosWithErrorsInSnippetFunctionBody) {
+                        // Code snippet is likely unaffected by previous ones but parsed with its own errors,
+                        // so suppose macro is processed successfully as non-expression:
+                        null
+                    } else {
+                        processCodeSnippet(cursor, macroName, typeConverter)
+                    }
+                }
+            }
+        }
+        CXChildVisitResult.CXChildVisit_Continue
+    }
+
+    return result
 }
 
+private const val CODE_SNIPPET_LINES_NUMBER = 3
+private const val CODE_SNIPPET_FUNCTION_NAME_PREFIX = "kni_indexer_function_"
+
 /**
- * Adds the code snippet to be then processed with [processCodeSnippet] to the [sourceFile]
+ * Adds code snippets to be then processed with [processCodeSnippet] to the [sourceFile]
  * and reparses the [translationUnit].
  *
- *  - If the code snippet allows extracting the constant value using libclang API, we'll add a [ConstantDef] in the
+ *  - If a code snippet allows extracting the constant value using libclang API, we'll add a [ConstantDef] in the
  * native index and generate a Kotlin constant for it.
  *  - If the expression type can be inferred by libclang, we'll add a [WrappedMacroDef] in the native index and
  * generate a bridge for this macro.
  *  - Otherwise the macro is skipped.
  */
-private fun reparseWithCodeSnippet(library: NativeLibrary,
-                                   translationUnit: CXTranslationUnit, sourceFile: File,
-                                   name: String) {
+private fun reparseWithCodeSnippets(library: NativeLibrary,
+                                    translationUnit: CXTranslationUnit, sourceFile: File,
+                                    names: List<String>) {
 
     // TODO: consider using CXUnsavedFile instead of writing the modified file to OS file system.
     sourceFile.bufferedWriter().use { writer ->
         writer.appendPreamble(library)
 
-        // Note: clang_Cursor_Evaluate permits expression to have side-effects,
-        // so the code pattern should force the constant evaluation that corresponds to language rules.
-        val codeSnippetLines = when (library.language) {
-            // Note: __auto_type is a GNU extension which is supported by clang.
-            Language.C, Language.OBJECTIVE_C -> listOf(
-                    "void kni_indexer_function() { __auto_type KNI_INDEXER_VARIABLE = $name; }"
-            )
-        }
+        names.forEach { name ->
+            val codeSnippetLines = when (library.language) {
+                Language.C, Language.OBJECTIVE_C ->
+                    listOf("void $CODE_SNIPPET_FUNCTION_NAME_PREFIX$name() {",
+                            "    __auto_type KNI_INDEXER_VARIABLE_$name = $name;",
+                            "}")
+            }
 
-        codeSnippetLines.forEach { writer.append(it) }
+            assert(codeSnippetLines.size == CODE_SNIPPET_LINES_NUMBER)
+            codeSnippetLines.forEach { writer.appendln(it) }
+        }
     }
     clang_reparseTranslationUnit(translationUnit, 0, null, 0)
 }
 
 /**
- * Checks that [translationUnit] is parsed exactly as expected for the code appended by [reparseWithCodeSnippet],
+ * Checks that [functionCursor] is parsed exactly as expected for the code appended by [reparseWithCodeSnippets],
  * and returns the constant on success.
  */
 private fun processCodeSnippet(
-        translationUnit: CXTranslationUnit,
+        functionCursor: CValue<CXCursor>,
         name: String,
         typeConverter: TypeConverter
 ): MacroDef? {
 
-    val kindsToSkip = listOf(CXCursorKind.CXCursor_FunctionDecl, CXCursorKind.CXCursor_CompoundStmt)
+    val kindsToSkip = setOf(CXCursorKind.CXCursor_CompoundStmt)
     var state = VisitorState.EXPECT_NODES_TO_SKIP
     var evalResultOrNull: CXEvalResult? = null
     var typeOrNull: Type? = null
@@ -169,7 +228,7 @@ private fun processCodeSnippet(
     }
 
     try {
-        visitChildren(translationUnit, visitor)
+        visitChildren(functionCursor, visitor)
 
         if (state != VisitorState.EXPECT_END) {
             return null

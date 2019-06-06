@@ -275,7 +275,7 @@ internal fun NativeLibrary.includesDeclaration(cursor: CValue<CXCursor>): Boolea
     }
 }
 
-private fun CXTranslationUnit.getErrorLineNumbers(): Sequence<Int> =
+internal fun CXTranslationUnit.getErrorLineNumbers(): Sequence<Int> =
         getDiagnostics().filter {
             it.isError()
         }.map {

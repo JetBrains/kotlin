@@ -24,8 +24,15 @@ struct_t getStruct() {
 
 int global_var = 5;
 
+#define TOO_MANY_ERRORS x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x
+
+#define LEFT_BRACE {
+
 #define ZERO 0
 #define ONE 1
+
+#define RIGHT_BRACE }
+
 #define MAX_LONG 9223372036854775807
 #define FOO_STRING "foo"
 // This one should be ignored:
@@ -35,11 +42,15 @@ int global_var = 5;
 #define ONE_POINT_ZERO 1.0
 #define ONE_POINT_FIVE 1.5f
 
+#define LEFT_PAREN (
+
 #define NULL_PTR ((void*)0)
 #define VOID_PTR ((void*)1)
 #define INT_PTR ((int*)1)
 #define PTR_SUM (INT_PTR + 1)
 #define PTR_SUM_EXPECTED (sizeof(int) + 1)
+
+#define RIGHT_PAREN )
 
 enum {
     INT_CALL = 1 // Should be replaced by macro below.
