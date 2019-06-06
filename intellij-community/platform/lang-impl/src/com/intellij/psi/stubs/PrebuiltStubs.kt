@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs
 
 import com.google.common.hash.HashCode
@@ -8,23 +8,16 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeExtension
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.util.indexing.FileContent
-import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.DataInputOutputUtil
-import com.intellij.util.io.KeyDescriptor
-import com.intellij.util.io.PersistentHashMap
+import com.intellij.util.io.*
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 
-/**
- * @author traff
- */
-
-const val EP_NAME: String = "com.intellij.filetype.prebuiltStubsProvider"
+const val EP_NAME = "com.intellij.filetype.prebuiltStubsProvider"
 
 object PrebuiltStubsProviders : FileTypeExtension<PrebuiltStubsProvider>(EP_NAME)
 
@@ -38,7 +31,6 @@ class FileContentHashing {
 
   fun hashString(fileContent: FileContent): HashCode = hashing.hashBytes(fileContent.content)!!
 }
-
 
 class HashCodeDescriptor : HashCodeExternalizers(), KeyDescriptor<HashCode> {
   override fun getHashCode(value: HashCode): Int = value.hashCode()
@@ -90,18 +82,15 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
   }
 
   override fun openIndexStorage(indexesRoot: File): PersistentHashMap<HashCode, SerializedStubTree>? {
-    val versionInFile = FileUtil.loadFile(File(indexesRoot, "$indexName.version"))
-
-    return if (Integer.parseInt(versionInFile) == stubVersion) {
-      mySerializationManager = SerializationManagerImpl(File(indexesRoot, "$indexName.names"))
-
-      Disposer.register(ApplicationManager.getApplication(), mySerializationManager!!)
-
-      super.openIndexStorage(indexesRoot)
+    val versionInFile = indexesRoot.toPath().resolve("$indexName.version").readText()
+    if (StringUtilRt.parseInt(versionInFile, 0) != stubVersion) {
+      LOG.error("Prebuilt stubs version mismatch: $versionInFile, current version is $stubVersion")
+      return null
     }
     else {
-      LOG.error("Prebuilt stubs version mismatch: $versionInFile, current version is $stubVersion")
-      null
+      mySerializationManager = SerializationManagerImpl(File(indexesRoot, "$indexName.names"))
+      Disposer.register(ApplicationManager.getApplication(), mySerializationManager!!)
+      return super.openIndexStorage(indexesRoot)
     }
   }
 
