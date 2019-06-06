@@ -173,7 +173,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
 
                 if (!reference.canBeResolvedViaImport(descriptor, bindingContext)) continue
 
-                val fqName = descriptor.importableFqName!!
+                val fqName = descriptor.importableFqName ?: continue
                 val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
                 val isQualifiable = KotlinReferenceData.isQualifiable(ktElement, descriptor)
                 val relativeStart = ktElement.range.start - startOffset
