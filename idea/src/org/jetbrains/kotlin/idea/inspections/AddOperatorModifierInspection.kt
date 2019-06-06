@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -23,8 +22,6 @@ class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNam
 
     override val defaultFixText = "Add 'operator' modifier"
 
-    override val startFixInWriteAction: Boolean = false
-
     override fun isApplicable(element: KtNamedFunction): Boolean {
         if (element.nameIdentifier == null || element.hasModifier(KtTokens.OPERATOR_KEYWORD)) return false
         val functionDescriptor = element.resolveToDescriptorIfAny() ?: return false
@@ -32,9 +29,8 @@ class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNam
     }
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val declarations = (element as KtNamedFunction).withExpectedActuals()
-        project.executeWriteCommand(defaultFixText) {
-            for (declaration in declarations) declaration.addModifier(KtTokens.OPERATOR_KEYWORD)
+        for (declaration in (element as KtNamedFunction).withExpectedActuals()) {
+            declaration.addModifier(KtTokens.OPERATOR_KEYWORD)
         }
     }
 }

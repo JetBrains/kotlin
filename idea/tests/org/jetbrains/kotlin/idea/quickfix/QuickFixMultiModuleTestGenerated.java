@@ -70,14 +70,14 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/addFunctionToCommonClassFromJavaUsage/");
     }
 
-    @TestMetadata("addOperatorByHeader")
-    public void testAddOperatorByHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addOperatorByHeader/");
+    @TestMetadata("addOperatorByActual")
+    public void testAddOperatorByActual() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/addOperatorByActual/");
     }
 
-    @TestMetadata("addOperatorByImpl")
-    public void testAddOperatorByImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addOperatorByImpl/");
+    @TestMetadata("addOperatorByExpect")
+    public void testAddOperatorByExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/addOperatorByExpect/");
     }
 
     public void testAllFilesPresentInMultiModuleQuickFix() throws Exception {
