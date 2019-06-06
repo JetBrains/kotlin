@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -83,10 +84,10 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: ()
 }
 
 class KtLightAnnotationForSourceEntry(
-        private val qualifiedName: String,
-        override val kotlinOrigin: KtCallElement,
-        parent: PsiElement,
-        computeDelegate: () -> PsiAnnotation
+    private val qualifiedName: String,
+    override val kotlinOrigin: KtCallElement,
+    parent: PsiElement,
+    computeDelegate: () -> PsiAnnotation
 ) : KtLightAbstractAnnotation(parent, computeDelegate) {
 
     override fun getQualifiedName() = qualifiedName
@@ -237,9 +238,9 @@ class KtLightEmptyAnnotationParameterList(parent: PsiElement) : KtLightElementBa
 
 open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwner>>(val member: D, parent: PsiElement) :
     KtLightAbstractAnnotation(parent, {
-    // searching for last because nullability annotations are generated after backend generates source annotations
+        // searching for last because nullability annotations are generated after backend generates source annotations
         getClsNullabilityAnnotation(member) ?: KtLightNonExistentAnnotation(member)
-}) {
+    }) {
     override fun fqNameMatches(fqName: String): Boolean {
         if (!isNullabilityAnnotation(fqName)) return false
 
@@ -253,8 +254,8 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
 
     override fun getQualifiedName(): String? {
         val annotatedElement = member.takeIf(::isFromSources)?.kotlinOrigin
-                ?: // it is out of our hands
-                return getClsNullabilityAnnotation(member)?.qualifiedName
+            ?: // it is out of our hands
+            return getClsNullabilityAnnotation(member)?.qualifiedName
 
         // all data-class generated members are not-null
         if (annotatedElement is KtClass && annotatedElement.isData()) return NotNull::class.java.name
@@ -266,7 +267,12 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
         // don't annotate property setters
         if (annotatedElement is KtValVarKeywordOwner && member is KtLightMethod && member.returnType == PsiType.VOID) return null
 
+        if (annotatedElement is KtNamedFunction && annotatedElement.modifierList?.hasSuspendModifier() == true) {
+            return Nullable::class.java.name
+        }
+
         val kotlinType = getTargetType(annotatedElement) ?: return null
+
         if (KotlinBuiltIns.isPrimitiveType(kotlinType) && (annotatedElement as? KtParameter)?.isVarArg != true) {
             // no need to annotate them explicitly except the case when overriding reference-type makes it non-primitive for Jvm
             if (!(annotatedElement is KtCallableDeclaration && annotatedElement.hasModifier(KtTokens.OVERRIDE_KEYWORD))) return null
