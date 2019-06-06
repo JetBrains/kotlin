@@ -23,6 +23,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.util.Disposer;
@@ -64,6 +65,7 @@ import java.util.stream.IntStream;
  */
 @ApiStatus.Experimental
 public class MultipleBuildsView implements BuildProgressListener, Disposable {
+  private static final Logger LOG = Logger.getInstance(MultipleBuildsView.class);
   @NonNls private static final String SPLITTER_PROPERTY = "MultipleBuildsView.Splitter.Proportion";
 
   protected final Project myProject;
@@ -134,26 +136,31 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
   @Override
   public void onEvent(@NotNull BuildEvent event) {
     List<Runnable> runOnEdt = new SmartList<>();
+    AbstractViewManager.BuildInfo buildInfo;
     if (event instanceof StartBuildEvent) {
       StartBuildEvent startBuildEvent = (StartBuildEvent)event;
       if (isInitializeStarted.get()) {
         clearOldBuilds(runOnEdt, startBuildEvent);
       }
-      AbstractViewManager.BuildInfo buildInfo = new AbstractViewManager.BuildInfo(
+      buildInfo = new AbstractViewManager.BuildInfo(
         event.getId(), startBuildEvent.getBuildTitle(), startBuildEvent.getWorkingDir(), event.getEventTime());
       myBuildsMap.put(event.getId(), buildInfo);
     }
-    else {
-      if (event.getParentId() != null) {
-        AbstractViewManager.BuildInfo buildInfo = myBuildsMap.get(event.getParentId());
-        assert buildInfo != null;
+    else if (event.getParentId() != null) {
+      buildInfo = myBuildsMap.get(event.getParentId());
+      if (buildInfo != null && mayHaveChildren(event)) {
         myBuildsMap.put(event.getId(), buildInfo);
       }
     }
+    else {
+      buildInfo = myBuildsMap.get(event.getId());
+    }
+    if (buildInfo == null) {
+      LOG.warn("Build can not be found for event with id: '" + event.getId() + "' and parent event id: '" + event.getParentId() + "'");
+      return;
+    }
 
     runOnEdt.add(() -> {
-      final AbstractViewManager.BuildInfo buildInfo = myBuildsMap.get(event.getId());
-      assert buildInfo != null;
       if (event instanceof StartBuildEvent) {
         StartBuildEvent startBuildEvent = (StartBuildEvent)event;
         buildInfo.message = startBuildEvent.getMessage();
@@ -323,6 +330,14 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
         }
       });
     }
+  }
+
+  // The current dispatching of incoming build events is done based on event parent ids.
+  // It forces to put event ids into the myBuildsMap.
+  // In order to reduce memory footprint of the map we will assume that OutputBuildEvents and MessageEvents will never have children.
+  // TODO[Vlad] change event routing logic to avoid such excessive usage of event ids
+  private static boolean mayHaveChildren(BuildEvent event) {
+    return !(event instanceof OutputBuildEvent) && !(event instanceof MessageEvent);
   }
 
   private void clearOldBuilds(List<Runnable> runOnEdt, StartBuildEvent startBuildEvent) {
