@@ -29,6 +29,7 @@ import com.intellij.util.EnvironmentUtil
 import com.intellij.util.io.exists
 import com.intellij.util.text.nullize
 import org.gradle.util.GradleVersion
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.DistributionType.DEFAULT_WRAPPED
@@ -52,6 +53,7 @@ fun canImportProjectFrom(file: VirtualFile): Boolean {
   return file.children.any(::isGradleProjectFile)
 }
 
+@ApiStatus.Experimental
 fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
   if (!canImportProjectFrom(projectFile)) return null
   val projectDirectory = findExternalProjectDirectory(projectFile)
@@ -66,6 +68,7 @@ fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInN
   return project
 }
 
+@ApiStatus.Experimental
 fun importProject(projectDirectory: String, project: Project) {
   LOG.info("Import project at $projectDirectory")
   val projectSdk = ProjectRootManager.getInstance(project).projectSdk
