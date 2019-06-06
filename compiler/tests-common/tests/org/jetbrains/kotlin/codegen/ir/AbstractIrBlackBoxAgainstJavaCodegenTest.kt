@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.codegen.ir
 
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxAgainstJavaCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxAgainstJavaCodegenTest() {
-
     override fun updateConfiguration(configuration: CompilerConfiguration) {
-        configuration.addJvmClasspathRoot(javaClassesOutputDirectory)
+        super.updateConfiguration(configuration)
         configuration.put(JVMConfigurationKeys.IR, true)
     }
 

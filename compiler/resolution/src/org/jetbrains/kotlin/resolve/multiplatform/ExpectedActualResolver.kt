@@ -52,6 +52,8 @@ object ExpectedActualResolver {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect &&
+                    // TODO: use some other way to determine that the declaration is from Kotlin.
+                    //       This way behavior differs between fast and PSI-based Java class reading mode
                     // TODO: support non-source definitions (e.g. from Java)
                     actual.source.containingFile != SourceFile.NO_SOURCE_FILE
                 }.groupBy { actual ->
