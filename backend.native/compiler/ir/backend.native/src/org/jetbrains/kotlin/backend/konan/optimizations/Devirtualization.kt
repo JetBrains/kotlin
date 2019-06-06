@@ -827,7 +827,7 @@ internal object Devirtualization {
                         val argument = argumentToConstraintNode(arguments[index])
                         argument.addEdge(parameter)
                     }
-                    return doCast(function, callee.returns, returnType)
+                    return callee.returns
                 }
 
                 fun doCall(callee: DataFlowIR.FunctionSymbol,
