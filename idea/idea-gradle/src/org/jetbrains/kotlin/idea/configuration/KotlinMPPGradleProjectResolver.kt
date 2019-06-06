@@ -241,7 +241,6 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     val compilationDataNode =
                         (existingSourceSetDataNode ?: mainModuleNode.createChild(GradleSourceSetData.KEY, compilationData)).also {
                             it.kotlinSourceSet = kotlinSourceSet
-                            it.kotlinTargetDataNode = targetDataNode
                         }
                     if (existingSourceSetDataNode == null) {
                         sourceSetMap[moduleId] = Pair(compilationDataNode, createExternalSourceSet(compilation, compilationData))
