@@ -22,6 +22,17 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import javax.swing.Icon
 
 
+/**
+ * Do not use this project import builder directly.
+ *
+ * Internal stable Api
+ * Use [com.intellij.ide.actions.ImportModuleAction.doImport] to import (attach) a new project.
+ * Use [com.intellij.ide.impl.ProjectUtil.openOrImport] to open (import) a new project.
+ *
+ * Internal experimental Api
+ * Use [org.jetbrains.plugins.gradle.service.project.open.openProject] to open (import) a new gradle project.
+ * Use [org.jetbrains.plugins.gradle.service.project.open.importProject] to attach a gradle project to an opened idea project.
+ */
 class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedProjectBuilderForImport {
 
   override fun getName(): String = GradleBundle.message("gradle.name")

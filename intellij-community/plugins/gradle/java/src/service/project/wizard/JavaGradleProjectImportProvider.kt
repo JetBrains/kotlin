@@ -9,6 +9,10 @@ import org.jetbrains.plugins.gradle.service.project.open.canImportProjectFrom
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 
+/**
+ * Do not use this import provider directly.
+ * @see JavaGradleProjectImportBuilder
+ */
 class JavaGradleProjectImportProvider : AbstractExternalProjectImportProvider(JavaGradleProjectImportBuilder(), SYSTEM_ID) {
 
   override fun createSteps(context: WizardContext): Array<ModuleWizardStep> {
