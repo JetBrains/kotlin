@@ -106,9 +106,7 @@ internal fun produceOutput(context: Context) {
                 context.config.includeBinaries,
                 neededLibraries,
                 context.serializedMetadata!!,
-                // During serializer and library commonizations we've got duplicate SerializedIr in
-                // two different packages. TODO: Eliminate them eventually.
-                SerializedIr(context.serializedIr!!.module, context.serializedIr!!.combinedDeclarationFilePath),
+                context.serializedIr!!,
                 versions,
                 target,
                 output,

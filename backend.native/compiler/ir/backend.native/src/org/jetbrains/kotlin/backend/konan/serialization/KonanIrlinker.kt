@@ -42,6 +42,15 @@ class KonanIrLinker(
     override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId) =
         moduleDescriptor.konanLibrary!!.irDeclaration(uniqId.index, uniqId.isLocal)
 
+    override fun readSymbol(moduleDescriptor: ModuleDescriptor, symbolIndex: Int) =
+            moduleDescriptor.konanLibrary!!.symbol(symbolIndex)
+
+    override fun readType(moduleDescriptor: ModuleDescriptor, typeIndex: Int) =
+            moduleDescriptor.konanLibrary!!.type(typeIndex)
+
+    override fun readString(moduleDescriptor: ModuleDescriptor, stringIndex: Int) =
+            moduleDescriptor.konanLibrary!!.string(stringIndex)
+
     override val ModuleDescriptor.irHeader get() = this.konanLibrary!!.irHeader
 
     val modules: Map<String, IrModuleFragment> get() = mutableMapOf<String, IrModuleFragment>().apply {
