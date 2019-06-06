@@ -40,12 +40,12 @@ class PresentationFactory(private val editor: EditorImpl) {
     val ascent = editor.ascent
     val descent = editor.descent
     val height = editor.lineHeight
-    val textWithoutBox = EffectInlayPresentation(
+    val textWithoutBox = InsetPresentation(EffectInlayPresentation(
       TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline) {
         plainFont
       },
       plainFont, height, ascent, descent
-    )
+    ), top = 1, down = 1)
     return withInlayAttributes(textWithoutBox)
   }
 
@@ -317,7 +317,7 @@ class PresentationFactory(private val editor: EditorImpl) {
       val context = getCurrentContext(editor)
       metrics = FontInfo.getFontMetrics(font, context)
       // We assume this will be a better approximation to a real line height for a given font
-      lineHeight = Math.ceil(font.createGlyphVector(context, "Albp").visualBounds.height).toInt()
+      lineHeight = Math.ceil(font.createGlyphVector(context, "Albpq@").visualBounds.height).toInt()
       baseline = Math.ceil(font.createGlyphVector(context, "Alb").visualBounds.height).toInt()
     }
 
