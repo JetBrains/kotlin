@@ -21,7 +21,7 @@ public class RunConfigurationUsageTriggerCollector {
     final String key = RunConfigurationTypeUsagesCollector.toReportedId(factory);
     if (StringUtil.isNotEmpty(key)) {
       final FeatureUsageData data = new FeatureUsageData().
-        addProject(project).addData("executor", executor.getId());
+        addProject(project).addExecutor(executor);
       FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", key, data);
     }
   }

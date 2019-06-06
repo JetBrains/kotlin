@@ -28,7 +28,7 @@ public class ShowGradleDaemonsAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
-    GradleActionsUsagesCollector.trigger(project, "showGradleDaemonsAction");
+    GradleActionsUsagesCollector.trigger(project, GradleActionsUsagesCollector.ActionID.showGradleDaemonsAction);
     myUi = new DaemonsUi(project) {
       @Override
       public void dispose() {
