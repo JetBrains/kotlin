@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
@@ -424,8 +426,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
-
-        registerOutputItems(outputConsumer, generatedFiles)
+        val kotlinTargets = kotlinContext.targetsBinding
+        for ((target, outputItems) in generatedFiles) {
+            val kotlinTarget = kotlinTargets[target] ?: error("Could not find Kotlin target for JPS target $target")
+            kotlinTarget.registerOutputItems(outputConsumer, outputItems)
+        }
         kotlinChunk.saveVersions()
 
         if (targets.any { kotlinContext.hasKotlinMarker[it] == null }) {
@@ -631,14 +636,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 ?: representativeTarget
 
         return outputItemCollector.outputs.groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
-    }
-
-    private fun registerOutputItems(outputConsumer: OutputConsumer, outputItems: Map<ModuleBuildTarget, List<GeneratedFile>>) {
-        for ((target, outputs) in outputItems) {
-            for (output in outputs) {
-                outputConsumer.registerOutputFile(target, output.outputFile, output.sourceFiles.map { it.path })
-            }
-        }
     }
 
     private fun updateLookupStorage(

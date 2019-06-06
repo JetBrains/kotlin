@@ -14,8 +14,7 @@ import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.storage.BuildDataPaths
-import org.jetbrains.jps.incremental.CompileContext
-import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsSdkDependency
 import org.jetbrains.kotlin.build.GeneratedFile
@@ -147,6 +146,22 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         }
 
         return true
+    }
+
+    override fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
+        if (kotlinContext.isInstrumentationEnabled) {
+            val (classFiles, nonClassFiles) = outputItems.partition { it is GeneratedJvmClass }
+            super.registerOutputItems(outputConsumer, nonClassFiles)
+
+            for (output in classFiles) {
+                val bytes = output.outputFile.readBytes()
+                val binaryContent = BinaryContent(bytes)
+                val compiledClass = CompiledClass(output.outputFile, output.sourceFiles, ClassReader(bytes).className, binaryContent)
+                outputConsumer.registerCompiledClass(jpsModuleBuildTarget, compiledClass)
+            }
+        } else {
+            super.registerOutputItems(outputConsumer, outputItems)
+        }
     }
 
     private fun generateChunkModuleDescription(dirtyFilesHolder: KotlinDirtySourceFilesHolder): File? {
