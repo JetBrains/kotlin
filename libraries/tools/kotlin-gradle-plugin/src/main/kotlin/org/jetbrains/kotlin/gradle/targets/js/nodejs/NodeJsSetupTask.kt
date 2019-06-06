@@ -14,11 +14,6 @@ open class NodeJsSetupTask : DefaultTask() {
     private val settings = project.nodeJs.root
     private val env by lazy { settings.environment }
 
-    init {
-        group = NodeJsRootExtension.NODE_JS
-        description = "Download and install a local node/npm version."
-    }
-
     val ivyDependency: String
         @Input get() = env.ivyDependency
 
@@ -93,6 +88,6 @@ open class NodeJsSetupTask : DefaultTask() {
     }
 
     companion object {
-        const val NAME: String = "nodeJsSetup"
+        const val NAME: String = "kotlinNodeJsSetup"
     }
 }
