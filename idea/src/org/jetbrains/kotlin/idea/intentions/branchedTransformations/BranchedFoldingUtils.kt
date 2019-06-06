@@ -57,16 +57,20 @@ object BranchedFoldingUtils {
         }
 
     private fun KtBinaryExpression.checkAssignmentsMatch(other: KtBinaryExpression, rightTypeConstructor: TypeConstructor): Boolean {
-        return left?.text == other.left?.text
-                && operationToken == other.operationToken
-                && (right.isNullExpression() || other.right.isNullExpression() || rightTypeConstructor == other.rightTypeConstructor())
+        val left = this.left ?: return false
+        val otherLeft = other.left ?: return false
+        if (left.text != otherLeft.text || operationToken != other.operationToken) return false
+        val otherRightTypeConstructor = other.rightTypeConstructor() ?: return false
+        return (otherRightTypeConstructor == rightTypeConstructor || right.isNullExpression() || other.right.isNullExpression())
     }
 
     private fun KtBinaryExpression.rightTypeConstructor(): TypeConstructor? {
         val right = this.right ?: return null
         val context = this.analyze()
         val diagnostics = context.diagnostics
-        fun hasTypeMismatchError(e: KtExpression) = diagnostics.forElement(e).any { it.factory == Errors.TYPE_MISMATCH }
+        fun hasTypeMismatchError(e: KtExpression) = diagnostics.forElement(e).any { 
+            it.factory == Errors.TYPE_MISMATCH || it.factory == Errors.NULL_FOR_NONNULL_TYPE 
+        }
         if (hasTypeMismatchError(this) || hasTypeMismatchError(right)) return null
         return right.getType(context)?.constructor
     }

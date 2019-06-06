@@ -4439,6 +4439,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/hasNull4.kt");
             }
 
+            @TestMetadata("hasNull5.kt")
+            public void testHasNull5() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/hasNull5.kt");
+            }
+
             @TestMetadata("ifElseIf.kt")
             public void testIfElseIf() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/ifElseIf.kt");
