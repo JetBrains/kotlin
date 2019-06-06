@@ -1,4 +1,3 @@
-/** should load cls */
 
 suspend fun doSomething(foo: String): Int {}
 
