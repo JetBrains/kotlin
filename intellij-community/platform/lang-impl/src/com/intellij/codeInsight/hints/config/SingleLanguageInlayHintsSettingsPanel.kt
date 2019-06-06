@@ -8,6 +8,8 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
@@ -92,6 +94,12 @@ internal class SingleLanguageInlayHintsSettingsPanel(
         additionalLinesCount = 2
         isAutoCodeFoldingEnabled = false
       }
+      // Sadly, but we can't use daemon here, because we need specific kind of settings instance here.
+      editor.document.addDocumentListener(object: DocumentListener {
+        override fun documentChanged(event: DocumentEvent) {
+          updateHints()
+        }
+      })
       editor.backgroundColor = EditorFragmentComponent.getBackgroundColor(editor, false)
       editor.setBorder(JBUI.Borders.empty())
       // If editor is created as not viewer, daemon is enabled automatically. But we want to collect hints manually with another settings.
@@ -129,17 +137,20 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     }
     else {
       bottomPanel.isVisible = true
-      if (editorField.isValid) {
-        editorField.text = text
-        val document = editorField.document
-        ApplicationManager.getApplication().runWriteAction {
-          PsiDocumentManager.getInstance(project).commitDocument(document)
-          val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
-          val editor = editorField.editor
-          if (editor != null && psiFile != null) {
-            collectAndDrawHints(editor, psiFile)
-          }
-        }
+      //if (editorField.isValid) {
+      editorField.text = text
+      updateHints()
+    }
+  }
+
+  private fun updateHints() {
+    val document = editorField.document
+    ApplicationManager.getApplication().runWriteAction {
+      PsiDocumentManager.getInstance(project).commitDocument(document)
+      val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
+      val editor = editorField.editor
+      if (editor != null && psiFile != null) {
+        collectAndDrawHints(editor, psiFile)
       }
     }
   }
