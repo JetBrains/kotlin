@@ -172,7 +172,7 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
 
         if (kaptIsEnabled) {
             project.getAllTasks(false)[project]?.forEach { compileTask ->
-                if (compileTask.javaClass.name !in kotlinCompileTaskClasses) return@forEach
+                if (compileTask.javaClass.name !in kotlinCompileJvmTaskClasses) return@forEach
 
                 val sourceSetName = compileTask.getSourceSetName()
                 val isTest = sourceSetName.toLowerCase().endsWith("test")
