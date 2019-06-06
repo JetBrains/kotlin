@@ -17,37 +17,42 @@ import org.jetbrains.annotations.Nullable;
 
 public class PostfixTemplateLogger {
   private static final String USAGE_GROUP = "completion.postfix";
-  public static final String CUSTOM = "custom";
+  private static final String CUSTOM = "custom";
+  private static final String NO_PROVIDER = "no.provider";
+  private static final String TEMPLATE_FIELD = "template";
 
   static void log(@NotNull final PostfixTemplate template, @NotNull final PsiElement context) {
     final FeatureUsageData data = new FeatureUsageData().addLanguage(context.getLanguage());
-    FUCounterUsageLogger.getInstance().logEvent(context.getProject(), USAGE_GROUP, getTemplateId(template), data);
-  }
-
-  @NotNull
-  private static String getTemplateId(@NotNull PostfixTemplate template) {
-    if (!template.isBuiltin()) {
-      return CUSTOM;
+    if (template.isBuiltin()) {
+      data.addData(TEMPLATE_FIELD, template.getId());
+      final PostfixTemplateProvider provider = template.getProvider();
+      final String providerId = provider != null ? provider.getId() : NO_PROVIDER;
+      FUCounterUsageLogger.getInstance().logEvent(context.getProject(), USAGE_GROUP, providerId, data);
     }
-    final PostfixTemplateProvider provider = template.getProvider();
-    return provider != null ? provider.getId() + "/" + template.getId() : template.getId();
+    else {
+      FUCounterUsageLogger.getInstance().logEvent(context.getProject(), USAGE_GROUP, CUSTOM, data);
+    }
   }
 
   public static class PostfixTemplateValidator extends CustomWhiteListRule {
 
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {
-      return "completion_template".equals(ruleId);
+      return "completion_template".equals(ruleId) || "completion_provider_template".equals(ruleId);
     }
 
     @NotNull
     @Override
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      if (StringUtil.equals(data, CUSTOM)) return ValidationResultType.ACCEPTED;
+      if (StringUtil.equals(data, CUSTOM) || StringUtil.equals(data, NO_PROVIDER)) return ValidationResultType.ACCEPTED;
 
       final Language lang = getLanguage(context);
-      if (lang != null) {
-        final Pair<PostfixTemplate, PostfixTemplateProvider> template = findPostfixTemplate(lang, data);
+      if (lang == null) return ValidationResultType.REJECTED;
+
+      final String providerId = context.eventId;
+      final String templateId = context.eventData.containsKey(TEMPLATE_FIELD) ? context.eventData.get(TEMPLATE_FIELD).toString() : null;
+      if ((StringUtil.equals(data, providerId) || StringUtil.equals(data, templateId)) && StringUtil.isNotEmpty(templateId)) {
+        final Pair<PostfixTemplate, PostfixTemplateProvider> template = findPostfixTemplate(lang, providerId, templateId);
         if (template.getFirst() != null && template.getSecond() != null) {
           final PluginInfo templateInfo = PluginInfoDetectorKt.getPluginInfo(template.getFirst().getClass());
           final PluginInfo providerInfo = PluginInfoDetectorKt.getPluginInfo(template.getSecond().getClass());
@@ -62,15 +67,15 @@ public class PostfixTemplateLogger {
     }
 
     @NotNull
-    private static Pair<PostfixTemplate, PostfixTemplateProvider> findPostfixTemplate(@NotNull Language lang, @NotNull String data) {
-      final String[] split = data.split("/");
-      if (split.length == 2) {
-        final PostfixTemplateProvider provider = findProviderById(split[0].trim(), lang);
-        final PostfixTemplate template = provider != null ? findTemplateById(provider, split[1].trim()) : null;
+    private static Pair<PostfixTemplate, PostfixTemplateProvider> findPostfixTemplate(@NotNull Language lang,
+                                                                                      @NotNull String providerId,
+                                                                                      @NotNull String templateId) {
+      if (!StringUtil.equals(providerId, NO_PROVIDER)) {
+        final PostfixTemplateProvider provider = findProviderById(providerId, lang);
+        final PostfixTemplate template = provider != null ? findTemplateById(provider, templateId) : null;
         return provider != null && template != null ? Pair.create(template, provider) : Pair.empty();
       }
-      else if (split.length == 1) {
-        final String templateId = split[0].trim();
+      else {
         for (PostfixTemplateProvider provider : LanguagePostfixTemplate.LANG_EP.allForLanguage(lang)) {
           final PostfixTemplate template = findTemplateById(provider, templateId);
           if (template != null) {
