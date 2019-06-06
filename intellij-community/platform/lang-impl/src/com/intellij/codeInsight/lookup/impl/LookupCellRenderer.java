@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ObjectUtils;
@@ -424,8 +425,8 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       return standard;
     }
 
-    if (!Registry.is("ide.completion.show.visibility.icon") && icon instanceof RowIcon) {
-      RowIcon rowIcon = (RowIcon)icon;
+    if (!Registry.is("ide.completion.show.visibility.icon") && icon instanceof com.intellij.ui.icons.RowIcon) {
+      com.intellij.ui.icons.RowIcon rowIcon = (RowIcon)icon;
       if (rowIcon.getIconCount() >= 1 ) {
         Icon firstIcon = rowIcon.getIcon(0);
         if (firstIcon != null) icon = firstIcon;

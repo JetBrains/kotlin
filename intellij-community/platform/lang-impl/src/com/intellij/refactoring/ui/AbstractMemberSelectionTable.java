@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.refactoring.ui;
 
@@ -29,6 +15,7 @@ import com.intellij.refactoring.classMembers.MemberInfoChange;
 import com.intellij.refactoring.classMembers.MemberInfoChangeListener;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.intellij.ui.*;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
@@ -188,7 +175,13 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
 
   protected abstract boolean isAbstractColumnEditable(int rowIndex);
 
-  protected abstract void setVisibilityIcon(M memberInfo, RowIcon icon);
+  protected void setVisibilityIcon(M memberInfo, com.intellij.ui.RowIcon icon) {
+    throw new AbstractMethodError();
+  }
+
+  protected void setVisibilityIcon(M memberInfo, RowIcon icon) {
+    setVisibilityIcon(memberInfo, (com.intellij.ui.RowIcon)icon);
+  }
 
   protected abstract Icon getOverrideIcon(M memberInfo);
 
@@ -379,7 +372,7 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
       if (modelColumn == DISPLAY_NAME_COLUMN) {
         Icon memberIcon = myTable.getMemberIcon(memberInfo, 0);
         Icon overrideIcon = myTable.getOverrideIcon(memberInfo);
-        RowIcon icon = new RowIcon(3);
+        RowIcon icon = new com.intellij.ui.RowIcon(3);
         icon.setIcon(memberIcon, MEMBER_ICON_POSITION);
         myTable.setVisibilityIcon(memberInfo, icon);
         icon.setIcon(overrideIcon, OVERRIDE_ICON_POSITION);

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.scopeView;
 
 import com.intellij.icons.AllIcons;
@@ -35,14 +35,17 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.NavigatableWithText;
 import com.intellij.problems.ProblemListener;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.search.scope.ProblemsScope;
 import com.intellij.psi.search.scope.ProjectFilesScope;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.RowIcon;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.stripe.ErrorStripe;
 import com.intellij.ui.tree.AbstractTreeWalker;
 import com.intellij.ui.tree.BaseTreeModel;

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.projectView.impl.nodes;
 
@@ -30,7 +30,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
@@ -178,12 +178,12 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
   @Nullable
   public static Icon patchIcon(@NotNull Project project, @Nullable Icon original, @Nullable VirtualFile file) {
     if (file == null || original == null) return original;
-    
+
     Icon icon = original;
 
     final Bookmark bookmarkAtFile = BookmarkManager.getInstance(project).findFileBookmark(file);
     if (bookmarkAtFile != null) {
-      final RowIcon composite = new RowIcon(2, RowIcon.Alignment.CENTER);
+      final RowIcon composite = new com.intellij.ui.RowIcon(2, com.intellij.ui.RowIcon.Alignment.CENTER);
       composite.setIcon(icon, 0);
       composite.setIcon(bookmarkAtFile.getIcon(), 1);
       icon = composite;
@@ -199,7 +199,7 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
 
     return icon;
   }
-  
+
   protected boolean isDeprecated() {
     return false;
   }

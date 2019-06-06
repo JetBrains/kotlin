@@ -9,7 +9,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.CommonActionsPanel;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -168,7 +168,7 @@ public class BookmarksFavoriteListProvider extends AbstractFavoritesListProvider
       Bookmark bookmark = (Bookmark)value;
       BookmarkItem.setupRenderer(renderer, myProject, bookmark, selected);
       if (renderer.getIcon() != null) {
-        RowIcon icon = new RowIcon(3, RowIcon.Alignment.CENTER);
+        RowIcon icon = new com.intellij.ui.RowIcon(3, com.intellij.ui.RowIcon.Alignment.CENTER);
         icon.setIcon(bookmark.getIcon(), 0);
         icon.setIcon(JBUI.scale(EmptyIcon.create(1)), 1);
         icon.setIcon(renderer.getIcon(), 2);

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.ui.IconManager;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.icons.RowIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

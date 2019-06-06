@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.intention.impl;
 
@@ -35,8 +35,8 @@ import com.intellij.refactoring.BaseRefactoringIntentionAction;
 import com.intellij.ui.HintHint;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.PopupMenuListenerAdapter;
-import com.intellij.ui.RowIcon;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.popup.WizardPopup;
 import com.intellij.util.Alarm;
 import com.intellij.util.ThreeState;
@@ -86,7 +86,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
   private static Border createActiveBorder() {
     return BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(getBorderColor(), 1), BorderFactory.createEmptyBorder(NORMAL_BORDER_SIZE - 1, NORMAL_BORDER_SIZE-1, NORMAL_BORDER_SIZE-1, NORMAL_BORDER_SIZE-1));
   }
-  
+
   private static  Border createActiveBorderSmall() {
     return BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(getBorderColor(), 1), BorderFactory.createEmptyBorder(SMALL_BORDER_SIZE-1, SMALL_BORDER_SIZE-1, SMALL_BORDER_SIZE-1, SMALL_BORDER_SIZE-1));
   }
@@ -324,8 +324,8 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
     Icon smartTagIcon = showRefactoringsBulb ? AllIcons.Actions.RefactoringBulb : showFix ? AllIcons.Actions.QuickfixBulb : AllIcons.Actions.IntentionBulb;
 
-    myHighlightedIcon = new RowIcon(smartTagIcon, AllIcons.General.ArrowDown);
-    myInactiveIcon = new RowIcon(smartTagIcon, ourInactiveArrowIcon);
+    myHighlightedIcon = new com.intellij.ui.RowIcon(smartTagIcon, AllIcons.General.ArrowDown);
+    myInactiveIcon = new com.intellij.ui.RowIcon(smartTagIcon, ourInactiveArrowIcon);
 
     myIconLabel = new JLabel(myInactiveIcon);
     myIconLabel.setOpaque(false);
@@ -440,10 +440,10 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     boolean committed = PsiDocumentManager.getInstance(myFile.getProject()).isCommitted(myEditor.getDocument());
     final PsiFile injectedFile = committed ? InjectedLanguageUtil.findInjectedPsiNoCommit(myFile, myEditor.getCaretModel().getOffset()) : null;
     final Editor injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(myEditor, injectedFile);
-    
+
     final ScopeHighlighter highlighter = new ScopeHighlighter(myEditor);
     final ScopeHighlighter injectionHighlighter = new ScopeHighlighter(injectedEditor);
-    
+
     myPopup.addListener(new JBPopupListener() {
       @Override
       public void onClosed(@NotNull LightweightWindowEvent event) {

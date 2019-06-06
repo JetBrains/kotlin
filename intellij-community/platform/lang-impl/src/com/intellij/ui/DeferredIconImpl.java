@@ -13,6 +13,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ScalableIcon;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.tabs.newImpl.TabLabel;
 import com.intellij.util.Alarm;
 import com.intellij.util.Function;
@@ -20,8 +21,8 @@ import com.intellij.util.IconUtil;
 import com.intellij.util.concurrency.EdtExecutorService;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.JBCachingScalableIcon;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -288,8 +289,8 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
         checkDoesntReferenceThis(layer);
       }
     }
-    else if (icon instanceof RowIcon) {
-      final RowIcon rowIcon = (RowIcon)icon;
+    else if (icon instanceof com.intellij.ui.icons.RowIcon) {
+      final com.intellij.ui.icons.RowIcon rowIcon = (RowIcon)icon;
       final int count = rowIcon.getIconCount();
       for (int i = 0; i < count; i++) {
         checkDoesntReferenceThis(rowIcon.getIcon(i));
