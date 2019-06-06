@@ -1,3 +1,4 @@
+import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.gradle.ext.*
 import org.jetbrains.kotlin.ideaExt.*
 import org.jetbrains.kotlin.buildUtils.idea.*
@@ -43,7 +44,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
     }
 
-    gradle.projectsEvaluated {
+    rootProject.afterEvaluate {
         rootProject.allprojects {
             idea {
                 module {
@@ -162,6 +163,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
 fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
     val ideaPluginProject = project(":prepare:idea-plugin")
+    (ideaPluginProject as ProjectInternal).evaluate()
     val libraries by ideaPluginProject.configurations
     val jpsPlugin by ideaPluginProject.configurations
 
