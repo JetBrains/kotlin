@@ -98,4 +98,13 @@
     <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
     <description>If-Then foldable to '?:'</description>
   </problem>
+  <problem>
+    <file>longLine.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <package>longLine</package>
+    <entry_point TYPE="method" FQNAME="longLine.LongLineKt void main()" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
 </problems>
