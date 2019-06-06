@@ -32,6 +32,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "alt DOWN",                 "ShowContent", "MethodDown", "Arrangement.Rule.Match.Condition.Move.Down", "ShowSearchHistory"},
     { "alt UP",                   "MethodUp", "Arrangement.Rule.Match.Condition.Move.Up"},
     { "alt F1",                   "SelectIn", "ProjectViewChangeView"},
+    { "alt F6",                   "CommanderSyncViews", "EditPropertyValue"},
     { "alt INSERT",               "FileChooser.NewFolder", "Generate", "NewElement"},
     { "alt LEFT",                 "Diff.PrevChange", "PreviousTab"},
     { "alt RIGHT",                "Diff.NextChange", "NextTab"},
