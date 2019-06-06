@@ -48,7 +48,7 @@ open class FunctionCodegen(
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(irFunction, OwnerKind.IMPLEMENTATION)
 
         val flags = calculateMethodFlags(irFunction.isStatic)
-        val methodVisitor = createMethod(flags, signature)
+        var methodVisitor = createMethod(flags, signature)
 
         generateParameterNames(irFunction, methodVisitor, signature, state, flags.and(Opcodes.ACC_SYNTHETIC) != 0)
 
@@ -68,33 +68,16 @@ open class FunctionCodegen(
             val element = irFunction.symbol.descriptor.psiElement as? KtElement
                 ?: classCodegen.context.suspendLambdaClasses[classCodegen.context.suspendLambdaClasses.keys.find { it == irFunction.parent }]
             val continuationClassBuilder = classCodegen.context.continuationClassBuilders[irClass]
-            ExpressionCodegen(
-                irFunction,
-                frameMap,
-                InstructionAdapter(
-                    when {
-                        irFunction.isSuspend -> generateStateMachineForNamedFunction(
-                            irFunction,
-                            classCodegen,
-                            methodVisitor,
-                            flags,
-                            signature,
-                            continuationClassBuilder,
-                            element!!
-                        )
-                        irFunction.isInvokeSuspendOfLambda(classCodegen.context) -> generateStateMachineForLambda(
-                            classCodegen,
-                            methodVisitor,
-                            flags,
-                            signature,
-                            element!!
-                        )
-                        else -> methodVisitor
-                    }
-                ),
-                classCodegen,
-                isInlineLambda
-            ).generate()
+            methodVisitor = when {
+                irFunction.isSuspend -> generateStateMachineForNamedFunction(
+                    irFunction, classCodegen, methodVisitor, flags, signature, continuationClassBuilder, element!!
+                )
+                irFunction.isInvokeSuspendOfLambda(classCodegen.context) -> generateStateMachineForLambda(
+                    classCodegen, methodVisitor, flags, signature, element!!
+                )
+                else -> methodVisitor
+            }
+            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
             methodVisitor.visitMaxs(-1, -1)
             continuationClassBuilder?.done()
         }
