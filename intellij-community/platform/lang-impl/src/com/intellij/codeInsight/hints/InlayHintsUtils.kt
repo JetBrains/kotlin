@@ -73,9 +73,10 @@ class CollectorWithSettings<T : Any>(
   fun applyToEditor(
     editor: Editor,
     existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>
+    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+    isEnabled: Boolean
   ) {
-    sink.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays)
+    sink.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, isEnabled)
   }
 }
 

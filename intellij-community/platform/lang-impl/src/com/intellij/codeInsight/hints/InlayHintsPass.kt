@@ -10,14 +10,17 @@ import com.intellij.psi.SyntaxTraverser
 class InlayHintsPass(
   val rootElement: PsiElement,
   val collectors: List<CollectorWithSettings<out Any>>,
-  editor: Editor
+  editor: Editor,
+  val settings: InlayHintsSettings
 ) : EditorBoundHighlightingPass(editor, rootElement.containingFile, true) {
   val traverser = SyntaxTraverser.psiTraverser(rootElement)
 
   override fun doCollectInformation(progress: ProgressIndicator) {
     traverser.forEach { element ->
       for (collector in collectors) {
-        collector.collectHints(element, myEditor)
+        if (settings.hintsEnabled(collector.key, collector.language)) {
+          collector.collectHints(element, myEditor)
+        }
       }
     }
   }
@@ -30,7 +33,12 @@ class InlayHintsPass(
     val existingHorizontalInlays = inlayModel.getInlineElementsInRange(startOffset, endOffset)
     val existingVerticalInlays = inlayModel.getBlockElementsInRange(startOffset, endOffset)
     for (collector in collectors) {
-      collector.applyToEditor(myEditor, existingHorizontalInlays, existingVerticalInlays)
+      collector.applyToEditor(
+        myEditor,
+        existingHorizontalInlays,
+        existingVerticalInlays,
+        settings.hintsEnabled(collector.key, collector.language)
+      )
     }
   }
 }

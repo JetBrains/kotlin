@@ -54,11 +54,12 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
 
   fun applyToEditor(editor: Editor,
                     existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-                    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>) {
+                    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+                    isEnabled: Boolean) {
     val inlayModel = editor.inlayModel
     val isBulkChange = existingHorizontalInlays.size + hints.size() > BulkChangeThreshold
     DocumentUtil.executeInBulk(editor.document, isBulkChange) {
-      updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays)
+      updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays, isEnabled)
       createNewHints(inlayModel)
     }
     hints.clear()
@@ -93,20 +94,21 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
 
   private fun updateOrDeleteExistingHints(
     existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>
+    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+    isEnabled: Boolean
   ) {
-    updateOrDeleteExistingHints(existingHorizontalInlays, true)
-    updateOrDeleteExistingHints(existingVerticalInlays, false)
+    updateOrDeleteExistingHints(existingHorizontalInlays, true, isEnabled)
+    updateOrDeleteExistingHints(existingVerticalInlays, false, isEnabled)
   }
 
-  private fun updateOrDeleteExistingHints(existingInlays: List<Inlay<EditorCustomElementRenderer>>, isInline: Boolean) {
+  private fun updateOrDeleteExistingHints(existingInlays: List<Inlay<EditorCustomElementRenderer>>, isInline: Boolean, isEnabled: Boolean) {
     for (inlay in existingInlays) {
       val inlayKey = inlay.getUserData(INLAY_KEY) as SettingsKey<*>?
       if (inlayKey != key) continue
       val offset = inlay.offset
       val newHint = hints[offset]
       if (newHint != null && newHint is InlineElement != isInline) continue
-      if (newHint == null) {
+      if (newHint == null || !isEnabled) {
         Disposer.dispose(inlay)
       }
       else {

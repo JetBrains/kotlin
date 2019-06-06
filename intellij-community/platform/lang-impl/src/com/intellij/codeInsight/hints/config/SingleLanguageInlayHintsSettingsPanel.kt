@@ -115,7 +115,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val endOffset = file.textRange.endOffset
     val existingHorizontalInlays = model.getInlineElementsInRange(startOffset, endOffset)
     val existingVerticalInlays = model.getBlockElementsInRange(startOffset, endOffset)
-    collector.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays)
+    collector.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, true)
   }
 
   private fun traverse(root: PsiElement, action: (PsiElement) -> Unit) {
