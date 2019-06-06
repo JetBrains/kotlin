@@ -147,10 +147,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
 
         private fun findTooComplexDeclaration(declaration: KtDeclaration): PsiElement? {
-            if (declaration.hasExpectModifier() ||
-                declaration.hasModifier(KtTokens.ANNOTATION_KEYWORD) ||
-                declaration.hasModifier(KtTokens.INLINE_KEYWORD) && declaration is KtClassOrObject
-            ) {
+            if (declaration.hasExpectModifier() || declaration.hasModifier(KtTokens.ANNOTATION_KEYWORD)) {
                 return declaration
             }
 
@@ -213,7 +210,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
         val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
 
-        return KtUltraLightClass(element, KtUltraLightSupportImpl(element, module))
+        return KtUltraLightSupportImpl(element, module).let {
+            if (element.hasModifier(KtTokens.INLINE_KEYWORD)) KtUltraLightInlineClass(element, it)
+            else KtUltraLightClass(element, it)
+        }
     }
 
     private fun implementsKotlinCollection(classOrObject: KtClassOrObject): Boolean {
