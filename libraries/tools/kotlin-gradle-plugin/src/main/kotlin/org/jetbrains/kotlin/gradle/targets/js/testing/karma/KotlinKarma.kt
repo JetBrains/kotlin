@@ -71,6 +71,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         config.autoWatch = true
     }
 
+    fun useConfigDirectory(dir: String) = useConfigDirectory(File(dir))
+
     fun useConfigDirectory(dir: File) {
         configDirectory = dir
     }
