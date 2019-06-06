@@ -89,17 +89,19 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
 
         internal fun hasPerModuleModificationCounts() = perModuleChangesHighWatermark != null
 
-        internal fun onKotlinPhysicalFileOutOfBlockChange(ktFile: KtFile) {
+        internal fun onKotlinPhysicalFileOutOfBlockChange(ktFile: KtFile, immediateUpdatesProcess: Boolean) {
             lastAffectedModule = ModuleUtil.findModuleForPsiElement(ktFile)
             lastAffectedModuleModCount = kotlinOfOfCodeBlockTracker.modificationCount
 
-            onPsiModificationTrackerUpdate()
+            if (immediateUpdatesProcess) {
+                onPsiModificationTrackerUpdate(0)
+            }
         }
 
-        internal fun onPsiModificationTrackerUpdate() {
+        internal fun onPsiModificationTrackerUpdate(customIncrement: Int) {
             val newModCount = kotlinOfOfCodeBlockTracker.modificationCount
             val affectedModule = lastAffectedModule
-            if (affectedModule != null && newModCount == lastAffectedModuleModCount) {
+            if (affectedModule != null && newModCount == lastAffectedModuleModCount + customIncrement) {
                 if (perModuleChangesHighWatermark == null) {
                     perModuleChangesHighWatermark = lastAffectedModuleModCount
                 }
