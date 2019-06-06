@@ -17,6 +17,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import com.intellij.mock.MockProject
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -32,13 +33,19 @@ import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPlug
 
 class SerializationComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension())
+        registerExtensions(project)
+    }
 
-        ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension())
-        JsSyntheticTranslateExtension.registerExtension(project, SerializationJsExtension())
-        IrGenerationExtension.registerExtension(project, SerializationLoweringExtension())
+    companion object {
+        fun registerExtensions(project: Project) {
+            SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension())
 
-        StorageComponentContainerContributor.registerExtension(project, SerializationPluginComponentContainerContributor())
+            ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension())
+            JsSyntheticTranslateExtension.registerExtension(project, SerializationJsExtension())
+            IrGenerationExtension.registerExtension(project, SerializationLoweringExtension())
+
+            StorageComponentContainerContributor.registerExtension(project, SerializationPluginComponentContainerContributor())
+        }
     }
 }
 

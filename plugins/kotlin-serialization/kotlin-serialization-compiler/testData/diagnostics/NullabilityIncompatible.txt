@@ -1,0 +1,56 @@
+package
+
+@kotlinx.serialization.Serializable public final class Foo {
+    public constructor Foo(/*0*/ foo: Nope)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Foo(/*0*/ seen1: kotlin.Int, /*1*/ foo: Nope?, /*2*/ serializationConstructorMarker: kotlinx.serialization.SerializationConstructorMarker?)
+    public final val foo: Nope
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<Foo> {
+        private constructor `$serializer`()
+        public open override /*1*/ /*synthesized*/ val descriptor: kotlinx.serialization.SerialDescriptor
+        public open override /*1*/ /*synthesized*/ fun childSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
+        public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.Decoder): Foo
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.Decoder, /*1*/ old: Foo): Foo
+        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.Encoder, /*1*/ obj: Foo): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final /*synthesized*/ fun serializer(): kotlinx.serialization.KSerializer<Foo>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+@kotlinx.serialization.Serializable(with = NopeNullableSerializer::class) public final class Nope {
+    public constructor Nope()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final /*synthesized*/ fun serializer(): kotlinx.serialization.KSerializer<Nope>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class NopeNullableSerializer : kotlinx.serialization.KSerializer<Nope?> {
+    public constructor NopeNullableSerializer()
+    public open override /*1*/ val descriptor: kotlinx.serialization.SerialDescriptor
+    public open override /*1*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.Decoder): Nope?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.Decoder, /*1*/ old: Nope?): Nope?
+    public open override /*1*/ fun serialize(/*0*/ encoder: kotlinx.serialization.Encoder, /*1*/ obj: Nope?): kotlin.Nothing
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -20,7 +20,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
         MAP.put(
             SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED,
-            "@Serializable annotation is ignored because it is impossible to serialize automatically interfaces or enums" +
+            "@Serializable annotation is ignored because it is impossible to serialize automatically interfaces or enums. " +
                     "Provide serializer manually via e.g. companion object"
         )
         MAP.put(
@@ -54,7 +54,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
         MAP.put(
             SerializationErrors.TRANSIENT_IS_REDUNDANT,
-            "This property does not have backing field which makes it non-serializable and therefore @Transient is redundant"
+            "Property does not have backing field which makes it non-serializable and therefore @Transient is redundant"
         )
     }
 }

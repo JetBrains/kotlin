@@ -20,12 +20,14 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.hasBackingField
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
@@ -103,17 +105,21 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
             val isInitialized = declarationHasInitializer(declaration)
             val isMarkedTransient = descriptor.annotations.serialTransient
             val hasBackingField = descriptor.hasBackingField(trace.bindingContext)
-            if (!hasBackingField && isMarkedTransient)
+            if (!hasBackingField && isMarkedTransient) {
+                val transientPsi =
+                    (descriptor.annotations.findAnnotation(SerializationAnnotations.serialTransientFqName) as? LazyAnnotationDescriptor)?.annotationEntry
                 trace.reportFromPlugin(
-                    SerializationErrors.TRANSIENT_IS_REDUNDANT.on(declaration),
+                    SerializationErrors.TRANSIENT_IS_REDUNDANT.on(transientPsi ?: declaration),
                     SerializationPluginErrorsRendering
                 )
+            }
 
-            if (isMarkedTransient && !isInitialized && hasBackingField)
+            if (isMarkedTransient && !isInitialized && hasBackingField) {
                 trace.reportFromPlugin(
                     SerializationErrors.TRANSIENT_MISSING_INITIALIZER.on(declaration),
                     SerializationPluginErrorsRendering
                 )
+            }
         }
     }
 

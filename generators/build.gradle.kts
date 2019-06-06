@@ -28,6 +28,7 @@ dependencies {
     compile(projectTests(":kotlin-allopen-compiler-plugin"))
     compile(projectTests(":kotlin-noarg-compiler-plugin"))
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
+    compile(projectTests(":kotlinx-serialization-compiler-plugin"))
     compile(projectTests(":generators:test-generator"))
     builtinsCompile("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
     testCompileOnly(project(":kotlin-reflect-api"))
