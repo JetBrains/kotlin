@@ -18,6 +18,9 @@ package kotlin.time
 public interface Clock {
     /**
      * Marks a time point on this clock.
+     *
+     * The returned [ClockMark] instance encapsulates captured time point and allows querying
+     * the duration of time interval [elapsed][ClockMark.elapsed] from that point.
      */
     public fun mark(): ClockMark
 }

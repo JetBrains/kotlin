@@ -145,6 +145,10 @@ Functions for writing test assertions.
 
 Functions for working with text and regular expressions.
 
+# Package kotlin.time
+
+Experimental API for representing [Duration][kotlin.time.Duration] values and measuring time intervals.
+
 # Package org.khronos.webgl
 
 Kotlin JavaScript wrappers for the WebGL API.
