@@ -22,7 +22,7 @@ object HintUtils {
     return getAllMetaProviders()
       .flatMap { it.getProvidersInfo(project) }
       .filter { language.isKindOf(it.language) && !it.provider.isLanguageIgnored(language) }
-      .map { it.provider.withSettings(language, config) }
+      .map { it.provider.withSettings(it.language, config) }
   }
 }
 
