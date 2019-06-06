@@ -93,6 +93,9 @@ public class ModuleDeleteProvider  implements DeleteProvider, TitledHandler  {
         removeDependenciesOnModules(moduleNamesToDelete, otherModuleRootModels.values());
         if (modules != null) {
           for (final Module module : modules) {
+            for (ProjectAttachProcessor processor : ProjectAttachProcessor.EP_NAME.getExtensionList()) {
+              processor.beforeDetach(module);
+            }
             modifiableModuleModel.disposeModule(module);
           }
         }
