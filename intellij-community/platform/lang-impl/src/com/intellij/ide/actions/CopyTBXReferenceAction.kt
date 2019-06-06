@@ -26,8 +26,8 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
-import com.intellij.util.PlatformUtils
 import com.intellij.util.PlatformUtils.*
+import com.intellij.util.io.encodeUrlQueryParameter
 import java.awt.datatransfer.StringSelection
 import java.util.stream.Collectors
 import java.util.stream.IntStream
@@ -130,7 +130,9 @@ class CopyTBXReferenceAction : DumbAwareAction() {
           .mapValues { FileUtil.getLocationRelativeToUserHome(it.value, false) }
           .entries
           .ifEmpty { return null }
-          .joinToString("") { createRefs(isFile(elements[it.key]), it.value, parameterIndex(it.key, elements.size)) }
+          .joinToString("") {
+            val reference = if (elements.size > 1) it.value.encodeUrlQueryParameter() else it.value
+            createRefs(isFile(elements[it.key]), reference, parameterIndex(it.key, elements.size)) }
 
       return createLink(editor, project, refsParameters)
     }
@@ -142,9 +144,9 @@ class CopyTBXReferenceAction : DumbAwareAction() {
     private fun createRefs(isFile: Boolean, reference: String?, index: String) = "&${if (isFile) PATH_KEY else FQN_KEY}${index}=$reference"
 
     private fun createLink(editor: Editor?, project: Project, refsParameters: String?): String? {
-      val tool = IDE_TAGS[PlatformUtils.getPlatformPrefix()]
+      val tool = IDE_TAGS[getPlatformPrefix()]
       if (tool == null) {
-        LOG.warn("Cannot find TBX tool for IDE: ${PlatformUtils.getPlatformPrefix()}")
+        LOG.warn("Cannot find TBX tool for IDE: ${getPlatformPrefix()}")
         return null
       }
 

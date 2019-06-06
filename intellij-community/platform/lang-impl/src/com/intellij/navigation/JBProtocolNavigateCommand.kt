@@ -8,6 +8,7 @@ import com.intellij.ide.ReopenProjectAction
 import com.intellij.ide.actions.searcheverywhere.SymbolSearchEverywhereContributor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.JBProtocolCommand
+import com.intellij.openapi.application.JetBrainsProtocolHandler.FRAGMENT_PARAM_NAME
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.LogicalPosition
@@ -126,11 +127,15 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
     }
 
     private fun navigateByFqn(project: Project, parameters: Map<String, String>, reference: String) {
+      // handle single reference to method: com.intellij.navigation.JBProtocolNavigateCommand#perform
+      // multiple references are encoded and decoded properly
+      val fqn = parameters[FRAGMENT_PARAM_NAME]?.let { "$reference#$it" } ?: reference
+
       ProgressManager.getInstance().run(
-        object : Task.Backgroundable(project, IdeBundle.message("navigate.command.search.reference.progress.title", reference), true) {
+        object : Task.Backgroundable(project, IdeBundle.message("navigate.command.search.reference.progress.title", fqn), true) {
           override fun run(indicator: ProgressIndicator) {
             SymbolSearchEverywhereContributor(project, null)
-              .search(reference, ProgressManager.getInstance().progressIndicator ?: StatusBarProgress())
+              .search(fqn, ProgressManager.getInstance().progressIndicator ?: StatusBarProgress())
               .filterIsInstance<PsiElement>()
               .forEach {
                 ApplicationManager.getApplication().invokeLater {
