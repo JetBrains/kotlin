@@ -18,7 +18,7 @@ dependencies {
     testRuntimeOnly(intellijDep()) {
         includeJars("guava", rootProject = rootProject)
     }
-    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":compiler:tests-common"))

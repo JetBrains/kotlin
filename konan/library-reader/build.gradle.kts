@@ -22,7 +22,7 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
-    mavenCompileScope(projectRuntimeJar(":kotlin-compiler"))
+    mavenCompileScope(project(":kotlin-compiler"))
 
     compile(project(":kotlin-native:kotlin-native-utils"))
 

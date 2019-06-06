@@ -15,8 +15,6 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep())
-    runtime(project(":kotlin-compiler"))
-    runtime(project(":kotlin-reflect"))
 }
 
 sourceSets {

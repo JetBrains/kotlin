@@ -19,6 +19,12 @@ dependencies {
     testCompile(project(":kotlin-scripting-jvm-host"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+
+    testRuntimeOnly(project(":kotlin-compiler"))
+    testRuntimeOnly(project(":kotlin-scripting-compiler"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    
     embeddableTestRuntime(project(":kotlin-scripting-jvm-host-embeddable"))
     embeddableTestRuntime(project(":kotlin-test:kotlin-test-jvm"))
     embeddableTestRuntime(project(":kotlin-test:kotlin-test-junit"))
