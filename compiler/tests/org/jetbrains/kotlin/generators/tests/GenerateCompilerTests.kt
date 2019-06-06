@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrSteppingTest
+import org.jetbrains.kotlin.codegen.debugInformation.AbstractSteppingTest
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
@@ -342,6 +344,10 @@ fun main(args: Array<String>) {
             model("lineNumber")
         }
 
+        testClass<AbstractSteppingTest> {
+            model("debug/stepping", targetBackend = TargetBackend.JVM)
+        }
+
         testClass<AbstractLocalClassProtoTest> {
             model("serialization/local")
         }
@@ -417,6 +423,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrLineNumberTest> {
             model("lineNumber", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrSteppingTest> {
+            model("debug/stepping", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {

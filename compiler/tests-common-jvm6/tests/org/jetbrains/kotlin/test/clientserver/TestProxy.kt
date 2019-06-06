@@ -54,6 +54,25 @@ class TestProxy(val serverPort: Int, val testClass: String, val classPath: List<
         }
     }
 
+    fun runTestNoOutput(): String {
+        return Socket("localhost", serverPort).use { clientSocket ->
+
+            val output = ObjectOutputStream(clientSocket.getOutputStream())
+            try {
+                output.writeObject(MessageHeader.NEW_TEST)
+                output.writeObject(testClass)
+                output.writeObject("box")
+
+                output.writeObject(MessageHeader.CLASS_PATH)
+                //filter out jdk libs
+                output.writeObject(filterOutJdkJars(classPath).toTypedArray())
+                return "OK"
+            } finally {
+                output.close()
+            }
+        }
+    }
+
     fun filterOutJdkJars(classPath: List<URL>): List<URL> {
         val javaHome = System.getProperty("java.home")
         val javaFolder = File(javaHome)
