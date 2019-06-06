@@ -169,6 +169,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         invokeSuspend: IrFunction,
         invokeToOverride: IrSimpleFunctionSymbol
     ) {
+        val unitClass = context.irBuiltIns.unitClass
+        val unitField = context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
         addFunctionOverride(invokeToOverride.owner).also { function ->
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
                 +irReturn(irCall(invokeSuspend).also { invokeSuspendCall ->
@@ -178,7 +180,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                             it.putValueArgument(index, irGet(param))
                         }
                     }
-                    invokeSuspendCall.putValueArgument(0, irUnit())
+                    invokeSuspendCall.putValueArgument(0, irGetField(null, unitField))
                 })
             }
         }
