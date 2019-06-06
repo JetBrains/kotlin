@@ -16,4 +16,6 @@ class KotlinUastTypesTest : AbstractKotlinTypesTest() {
     @Test fun testStringTemplateComplex() = doTest("StringTemplateComplex")
 
     @Test fun testInferenceInsideUnresolvedConstructor() = doTest("InferenceInsideUnresolvedConstructor")
+
+    @Test fun testInnerNonFixedTypeVariable() = doTest("InnerNonFixedTypeVariable")
 }
