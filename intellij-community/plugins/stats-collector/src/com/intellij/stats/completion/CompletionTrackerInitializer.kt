@@ -6,6 +6,7 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.settings.CompletionStatsCollectorSettings
 import com.intellij.completion.tracker.PositionTrackingListener
 import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
+import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
@@ -41,7 +42,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
       val shownTimesTracker = PositionTrackingListener(lookup)
       lookup.setPrefixChangeListener(shownTimesTracker)
 
-      if (sessionShouldBeLogged(experimentHelper)) {
+      if (sessionShouldBeLogged(experimentHelper, lookup.language())) {
         val tracker = actionsTracker(lookup, experimentHelper)
         actionListener.listener = tracker
         lookup.addLookupListener(tracker)
@@ -65,10 +66,14 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
 
   private fun shouldUseUserFactors() = UserFactorsManager.ENABLE_USER_FACTORS
 
-  private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus): Boolean {
+  private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus, language: Language?): Boolean {
     val application = ApplicationManager.getApplication()
     if (!application.isEAP) return false
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
+
+    if (language != null && language.displayName.toLowerCase() != "java") {
+      return true
+    }
 
     return Random.nextDouble() < LOGGED_SESSIONS_RATIO
   }
