@@ -40,7 +40,7 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
   }
 
   override fun getDisplayName(): String {
-    return "Inlay hints"
+    return "Inlay Hints"
   }
 
   override fun createComponent(): JComponent {
