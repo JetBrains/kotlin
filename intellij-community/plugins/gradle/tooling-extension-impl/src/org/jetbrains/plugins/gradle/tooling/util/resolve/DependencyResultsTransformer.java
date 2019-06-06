@@ -43,7 +43,7 @@ public class DependencyResultsTransformer {
   private final String scope;
   private final Set<File> resolvedDepsFiles = new HashSet<File>();
 
-  private final List<DependencyResult> handledDependencyResults = new ArrayList<DependencyResult>();
+  private final Set<DependencyResult> handledDependencyResults = new HashSet<DependencyResult>();
   private final Set<ComponentResultKey> myVisitedComponentResults = new HashSet<ComponentResultKey>();
 
   public DependencyResultsTransformer(@NotNull final Project project,
@@ -71,9 +71,7 @@ public class DependencyResultsTransformer {
     for (DependencyResult dependencyResult : gradleDependencies) {
 
       // dependency cycles check
-      if (!handledDependencyResults.contains(dependencyResult)) {
-        handledDependencyResults.add(dependencyResult);
-
+      if (handledDependencyResults.add(dependencyResult)) {
         if (dependencyResult instanceof ResolvedDependencyResult) {
           dependencies.addAll(processResolvedResult((ResolvedDependencyResult)dependencyResult));
         }
