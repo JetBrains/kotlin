@@ -16643,6 +16643,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setAsExpressionBodyUnqualified.kt");
         }
 
+        @TestMetadata("setFunctionReferenceArgument.kt")
+        public void testSetFunctionReferenceArgument() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setFunctionReferenceArgument.kt");
+        }
+
         @TestMetadata("setImplicitReceiver.kt")
         public void testSetImplicitReceiver() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setImplicitReceiver.kt");

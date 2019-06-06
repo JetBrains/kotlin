@@ -182,8 +182,10 @@ class UsePropertyAccessSyntaxIntention :
 
         val isSetUsage = callExpression.valueArguments.size == 1
 
-        val valueArgumentExpression = callExpression.valueArguments.firstOrNull()?.getArgumentExpression()
-        if (isSetUsage && (valueArgumentExpression is KtLambdaExpression || valueArgumentExpression is KtNamedFunction)) {
+        val valueArgumentExpression = callExpression.valueArguments.firstOrNull()?.getArgumentExpression()?.takeUnless {
+            it is KtLambdaExpression || it is KtNamedFunction || it is KtCallableReferenceExpression
+        }
+        if (isSetUsage && valueArgumentExpression == null) {
             return null
         }
 
