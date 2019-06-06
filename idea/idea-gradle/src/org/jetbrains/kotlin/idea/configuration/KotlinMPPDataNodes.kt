@@ -24,9 +24,6 @@ import com.intellij.openapi.externalSystem.model.Key as ExternalKey
 var DataNode<out ModuleData>.kotlinSourceSet: KotlinSourceSetInfo?
         by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_SOURCE_SET"))
 
-var DataNode<out ModuleData>.kotlinTargetDataNode: DataNode<KotlinTargetData>?
-        by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_TARGET_DATA_NODE"))
-
 val DataNode<ModuleData>.kotlinAndroidSourceSets: List<KotlinSourceSetInfo>?
         get() = ExternalSystemApiUtil.getChildren(this, KotlinAndroidSourceSetData.KEY).firstOrNull()?.data?.sourceSetInfos
 
