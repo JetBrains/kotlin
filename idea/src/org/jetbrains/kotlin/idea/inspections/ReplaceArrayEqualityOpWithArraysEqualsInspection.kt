@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.resolvedToArrayType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -28,24 +27,23 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class ReplaceArrayEqualityOpWithArraysEqualsInspection : AbstractApplicabilityBasedInspection<KtBinaryExpression>(
-        KtBinaryExpression::class.java
+    KtBinaryExpression::class.java
 ) {
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val expression = element as? KtBinaryExpression ?: return
-        val right = expression.right ?: return
-        val left = expression.left ?: return
+    override fun applyTo(element: KtBinaryExpression, project: Project, editor: Editor?) {
+        val right = element.right ?: return
+        val left = element.left ?: return
         val factory = KtPsiFactory(project)
         val template = buildString {
-            if (expression.operationToken == KtTokens.EXCLEQ) append("!")
+            if (element.operationToken == KtTokens.EXCLEQ) append("!")
             append("$0.contentEquals($1)")
         }
-        expression.replace(factory.createExpressionByPattern(template, left, right))
+        element.replace(factory.createExpressionByPattern(template, left, right))
     }
 
     override fun isApplicable(element: KtBinaryExpression): Boolean {
-        val operationToken = element.operationToken
-        when (operationToken) {
-            KtTokens.EQEQ, KtTokens.EXCLEQ -> {}
+        when (element.operationToken) {
+            KtTokens.EQEQ, KtTokens.EXCLEQ -> {
+            }
             else -> return false
         }
         val right = element.right

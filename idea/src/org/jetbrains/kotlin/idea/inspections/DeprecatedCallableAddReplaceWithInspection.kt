@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -22,8 +21,8 @@ import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -38,14 +37,13 @@ import java.util.*
 class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedInspection<KtCallableDeclaration>(
     KtCallableDeclaration::class.java
 ) {
-    override fun inspectionText(element: KtCallableDeclaration) =
-        "@Deprecated annotation without 'replaceWith' argument"
+    override fun inspectionText(element: KtCallableDeclaration) = "@Deprecated annotation without 'replaceWith' argument"
 
-    override fun inspectionTarget(element: KtCallableDeclaration): KtAnnotationEntry =
-        element.annotationEntries.first { it.shortName == DEPRECATED_NAME }
+    override fun inspectionHighlightRangeInElement(element: KtCallableDeclaration) = element.annotationEntries.first {
+        it.shortName == DEPRECATED_NAME
+    }.textRangeIn(element)
 
-    override val defaultFixText =
-        "Add 'replaceWith' argument to specify replacement pattern"
+    override val defaultFixText = "Add 'replaceWith' argument to specify replacement pattern"
 
     private class ReplaceWith(val expression: String, vararg val imports: String)
 
@@ -54,14 +52,13 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
         return element.suggestReplaceWith() != null
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val declaration = element.getParentOfType<KtCallableDeclaration>(strict = true) ?: return
-        val replaceWith = declaration.suggestReplaceWith()!!
+    override fun applyTo(element: KtCallableDeclaration, project: Project, editor: Editor?) {
+        val replaceWith = element.suggestReplaceWith()!!
 
         assert('\n' !in replaceWith.expression && '\r' !in replaceWith.expression) { "Formatted expression text should not contain \\n or \\r" }
 
-        val annotationEntry = declaration.deprecatedAnnotationWithNoReplaceWith()!!
-        val psiFactory = KtPsiFactory(declaration)
+        val annotationEntry = element.deprecatedAnnotationWithNoReplaceWith()!!
+        val psiFactory = KtPsiFactory(element)
 
         var escapedText = replaceWith.expression.replace("\\", "\\\\").replace("\"", "\\\"")
 
@@ -212,8 +209,8 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val bindingContext = expression.analyze()
                 val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression]
-                             ?: bindingContext[BindingContext.REFERENCE_TARGET, expression]
-                             ?: return
+                    ?: bindingContext[BindingContext.REFERENCE_TARGET, expression]
+                    ?: return
                 if (target.isExtension || expression.getReceiverExpression() == null) {
                     val fqName = target.importableFqName ?: return
                     if (!importHelper.isImportedWithDefault(ImportPath(fqName, false), file)

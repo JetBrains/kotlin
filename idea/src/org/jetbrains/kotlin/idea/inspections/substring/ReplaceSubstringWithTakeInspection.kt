@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.inspections.substring
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 
@@ -16,9 +15,8 @@ class ReplaceSubstringWithTakeInspection : ReplaceSubstringInspection() {
 
     override val defaultFixText: String = "Replace 'substring' call with 'take' call"
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        if (element !is KtDotQualifiedExpression) return
-        val argument = element.callExpression!!.valueArguments[1].getArgumentExpression()!!
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val argument = element.callExpression?.valueArguments?.elementAtOrNull(1)?.getArgumentExpression() ?: return
         element.replaceWith("$0.take($1)", argument)
     }
 

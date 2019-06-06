@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.canDropBraces
 import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
@@ -20,7 +19,7 @@ class RemoveCurlyBracesFromTemplateInspection :
 
     override fun isApplicable(element: KtBlockStringTemplateEntry): Boolean = element.canDropBraces()
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        (element as KtBlockStringTemplateEntry).dropBraces()
+    override fun applyTo(element: KtBlockStringTemplateEntry, project: Project, editor: Editor?) {
+        element.dropBraces()
     }
 }

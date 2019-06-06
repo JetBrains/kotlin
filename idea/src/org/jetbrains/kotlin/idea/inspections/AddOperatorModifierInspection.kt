@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
+import org.jetbrains.kotlin.idea.util.nameIdentifierTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.util.OperatorChecks
 
 class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNamedFunction>(KtNamedFunction::class.java) {
-    override fun inspectionHighlightRangeInElement(element: KtNamedFunction) =
-        element.nameIdentifier?.textRange?.shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtNamedFunction) = element.nameIdentifierTextRangeInThis()
 
     override fun inspectionText(element: KtNamedFunction) = "Function should have 'operator' modifier"
 
@@ -29,8 +27,8 @@ class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNam
         return !functionDescriptor.isOperator && OperatorChecks.check(functionDescriptor).isSuccess
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        for (declaration in (element as KtNamedFunction).withExpectedActuals()) {
+    override fun applyTo(element: KtNamedFunction, project: Project, editor: Editor?) {
+        for (declaration in element.withExpectedActuals()) {
             declaration.addModifier(KtTokens.OPERATOR_KEYWORD)
         }
     }

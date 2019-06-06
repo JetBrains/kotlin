@@ -5,20 +5,19 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.getLastLambdaExpression
 import org.jetbrains.kotlin.idea.inspections.collections.isMap
 import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -41,16 +40,14 @@ class JavaMapForEachInspection : AbstractApplicabilityBasedInspection<KtDotQuali
         return resolvedCall.isResolvedWithSamConversions()
     }
 
-    override fun inspectionTarget(element: KtDotQualifiedExpression) = element.callExpression?.calleeExpression ?: element
+    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression): TextRange? = element.calleeTextRangeInThis()
 
     override fun inspectionText(element: KtDotQualifiedExpression) = "Java Map.forEach method call should be replaced with Kotlin's forEach"
 
-    override fun inspectionHighlightType(element: KtDotQualifiedExpression) = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-
     override val defaultFixText = "Replace with Kotlin's forEach"
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val call = element.getStrictParentOfType<KtCallExpression>() ?: return
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val call = element.callExpression ?: return
         val lambda = call.lambda() ?: return
         val valueParameters = lambda.valueParameters
         lambda.functionLiteral.valueParameterList?.replace(

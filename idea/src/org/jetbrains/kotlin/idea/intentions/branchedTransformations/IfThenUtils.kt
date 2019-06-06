@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -317,9 +318,9 @@ internal fun KtIfExpression.shouldBeTransformed(): Boolean = when (val condition
     else -> false
 }
 
-fun KtIfExpression.textRange(): TextRange {
-    val rightOffset = rightParenthesis?.endOffset ?: return ifKeyword.textRange
-    return TextRange(ifKeyword.startOffset, rightOffset)
+fun KtIfExpression.fromIfKeywordToRightParenthesisTextRangeInThis(): TextRange {
+    val rightOffset = rightParenthesis?.endOffset ?: return ifKeyword.textRangeIn(this)
+    return TextRange(ifKeyword.startOffset, rightOffset).shiftLeft(startOffset)
 }
 
 private fun KtExpression.checkedExpression() = when (this) {

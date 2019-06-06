@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.inspections.substring
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -17,8 +16,7 @@ class ReplaceSubstringWithSubstringAfterInspection : ReplaceSubstringInspection(
 
     override val defaultFixText: String = "Replace 'substring' call with 'substringAfter' call"
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        if (element !is KtDotQualifiedExpression) return
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         element.replaceWith(
             "$0.substringAfter($1)",
             (element.getArgumentExpression(0) as KtDotQualifiedExpression).getArgumentExpression(0)
@@ -36,8 +34,7 @@ class ReplaceSubstringWithSubstringBeforeInspection : ReplaceSubstringInspection
 
     override val defaultFixText: String = "Replace 'substring' call with 'substringBefore' call"
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        if (element !is KtDotQualifiedExpression) return
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         element.replaceWith(
             "$0.substringBefore($1)",
             (element.getArgumentExpression(1) as KtDotQualifiedExpression).getArgumentExpression(0)

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.inspections.substring
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -20,10 +19,9 @@ class ReplaceSubstringWithDropLastInspection : ReplaceSubstringInspection() {
     override fun inspectionText(element: KtDotQualifiedExpression): String = "Replace 'substring' call with 'dropLast' call"
     override val defaultFixText: String = "Replace 'substring' call with 'dropLast' call"
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        if (element !is KtDotQualifiedExpression) return
-        val argument = element.callExpression!!.valueArguments[1].getArgumentExpression()!!
-        val rightExpression = (argument as KtBinaryExpression).right!!
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val argument = element.callExpression?.valueArguments?.elementAtOrNull(1)?.getArgumentExpression() ?: return
+        val rightExpression = (argument as? KtBinaryExpression)?.right ?: return
 
         element.replaceWith("$0.dropLast($1)", rightExpression)
     }

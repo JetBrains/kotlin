@@ -22,14 +22,13 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.elvisPattern
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.fromIfKeywordToRightParenthesisTextRangeInThis
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.shouldBeTransformed
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.textRange
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isError
@@ -43,16 +42,15 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
 
     override val defaultFixText: String = "Replace 'if' with elvis operator"
 
-    override fun inspectionHighlightRangeInElement(element: KtIfExpression): TextRange? = element.textRange().shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.fromIfKeywordToRightParenthesisTextRangeInThis()
 
     override fun inspectionHighlightType(element: KtIfExpression): ProblemHighlightType =
         if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
 
     override fun isApplicable(element: KtIfExpression): Boolean = Companion.isApplicable(element)
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val newElvis = Companion.applyTo(element as KtIfExpression)
-        editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
+    override fun applyTo(element: KtIfExpression, project: Project, editor: Editor?) {
+        Companion.applyTo(element).right?.textOffset?.let { editor?.caretModel?.moveToOffset(it) }
     }
 
     companion object {
@@ -62,7 +60,7 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
             if (!type.isNothing()) return null
 
-            return element.textRange()
+            return element.fromIfKeywordToRightParenthesisTextRangeInThis()
         }
 
         fun isApplicable(element: KtIfExpression): Boolean = applicabilityRange(element) != null

@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.idea.inspections.substring
 
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-abstract class ReplaceSubstringInspection :
-    AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java) {
+abstract class ReplaceSubstringInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
+    KtDotQualifiedExpression::class.java
+) {
     protected abstract fun isApplicableInner(element: KtDotQualifiedExpression): Boolean
     protected open val isAlwaysStable: Boolean = false
 
@@ -30,8 +30,7 @@ abstract class ReplaceSubstringInspection :
         } else
             false
 
-    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression): TextRange? =
-        element.callExpression?.calleeExpression?.textRange?.shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
 
     protected fun isIndexOfCall(expression: KtExpression?, expectedReceiver: KtExpression): Boolean {
         return expression is KtDotQualifiedExpression

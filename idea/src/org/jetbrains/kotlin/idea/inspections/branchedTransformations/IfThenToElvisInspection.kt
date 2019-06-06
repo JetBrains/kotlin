@@ -10,8 +10,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -42,14 +39,11 @@ class IfThenToElvisInspection(
         else
             ProblemHighlightType.INFORMATION
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        convert(
-            element as KtIfExpression,
-            editor
-        )
+    override fun applyTo(element: KtIfExpression, project: Project, editor: Editor?) {
+        convert(element, editor)
     }
 
-    override fun inspectionHighlightRangeInElement(element: KtIfExpression): TextRange? = element.textRange().shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.fromIfKeywordToRightParenthesisTextRangeInThis()
 
     override fun createOptionsPanel(): JComponent? = MultipleCheckboxOptionsPanel(this).also {
         it.addCheckbox("Report also on statement", "highlightStatement")

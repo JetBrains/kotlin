@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
@@ -40,7 +38,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
     override fun isApplicable(element: KtIfExpression): Boolean = isApplicableTo(element, expressionShouldBeStable = true)
 
-    override fun inspectionHighlightRangeInElement(element: KtIfExpression): TextRange? = element.textRange().shiftLeft(element.startOffset)
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.fromIfKeywordToRightParenthesisTextRangeInThis()
 
     override fun inspectionText(element: KtIfExpression) = "Foldable if-then"
 
@@ -53,8 +51,8 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
     override val startFixInWriteAction = false
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        convert(element as KtIfExpression, editor)
+    override fun applyTo(element: KtIfExpression, project: Project, editor: Editor?) {
+        convert(element, editor)
     }
 
     companion object {

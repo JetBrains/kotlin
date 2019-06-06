@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -39,21 +38,20 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
         return (element.replaceableAssertion() != null)
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val expression = element as? KtCallExpression ?: return
-        val valueArguments = expression.valueArguments
+    override fun applyTo(element: KtCallExpression, project: Project, editor: Editor?) {
+        val valueArguments = element.valueArguments
         val condition = valueArguments.firstOrNull()?.getArgumentExpression() as? KtBinaryExpression ?: return
         val left = condition.left ?: return
         val right = condition.right ?: return
-        val assertion = expression.replaceableAssertion() ?: return
+        val assertion = element.replaceableAssertion() ?: return
 
-        val file = expression.containingKtFile
+        val file = element.containingKtFile
         val factory = KtPsiFactory(project)
         val replaced = if (valueArguments.size == 2) {
             val message = valueArguments[1].getArgumentExpression() ?: return
-            expression.replaced(factory.createExpressionByPattern("$assertion($0, $1, $2)", left, right, message))
+            element.replaced(factory.createExpressionByPattern("$assertion($0, $1, $2)", left, right, message))
         } else {
-            expression.replaced(factory.createExpressionByPattern("$assertion($0, $1)", left, right))
+            element.replaced(factory.createExpressionByPattern("$assertion($0, $1)", left, right))
         }
         ShortenReferences.DEFAULT.process(replaced)
         OptimizeImportsProcessor(project, file).run()
@@ -79,11 +77,11 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
 
         return assertionMap[Pair(referencedName, operationToken)]
     }
-    
+
     private fun KtExpression.descriptor(context: BindingContext): CallableDescriptor? {
         return getResolvedCall(context)?.resultingDescriptor
     }
-    
+
     private fun KtExpression.type(context: BindingContext): KotlinType? {
         return descriptor(context)?.returnType
     }

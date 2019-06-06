@@ -75,7 +75,7 @@ class NullableBooleanElvisInspection : AbstractKotlinInspection(), CleanupLocalI
             val prefixExpression = equalityCheckExpression.getParentOfType<KtPrefixExpression>(strict = true) ?: return
             val simplifier = SimplifyNegatedBinaryExpressionInspection()
             if (simplifier.isApplicable(prefixExpression)) {
-                simplifier.applyTo(prefixExpression.operationReference)
+                simplifier.applyTo(prefixExpression)
             }
         }
     }

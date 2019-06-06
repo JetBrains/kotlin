@@ -35,11 +35,12 @@ import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSmartCastToFP
-import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -82,7 +82,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         return element.isReceiverExpressionWithValue()
     }
 
-    override fun inspectionTarget(element: KtDotQualifiedExpression) = element.callExpression?.calleeExpression ?: element
+    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
 
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression
@@ -118,28 +118,27 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         return "Replace with '${operation.value}'"
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val qualifiedExpression = element.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return
-        val callExpression = qualifiedExpression.callExpression ?: return
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val callExpression = element.callExpression ?: return
         val operation = operation(callExpression.calleeExpression as? KtSimpleNameExpression ?: return) ?: return
         val argument = callExpression.valueArguments.single().getArgumentExpression() ?: return
-        val receiver = qualifiedExpression.receiverExpression
+        val receiver = element.receiverExpression
 
-        val factory = KtPsiFactory(qualifiedExpression)
+        val factory = KtPsiFactory(element)
         when (operation) {
             KtTokens.EXCLEQ -> {
-                val prefixExpression = qualifiedExpression.getWrappingPrefixExpressionIfAny() ?: return
+                val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return
                 val newExpression = factory.createExpressionByPattern("$0 != $1", receiver, argument)
                 prefixExpression.replace(newExpression)
             }
             in OperatorConventions.COMPARISON_OPERATIONS -> {
-                val binaryParent = qualifiedExpression.parent as? KtBinaryExpression ?: return
+                val binaryParent = element.parent as? KtBinaryExpression ?: return
                 val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
                 binaryParent.replace(newExpression)
             }
             else -> {
                 val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
-                qualifiedExpression.replace(newExpression)
+                element.replace(newExpression)
             }
         }
     }

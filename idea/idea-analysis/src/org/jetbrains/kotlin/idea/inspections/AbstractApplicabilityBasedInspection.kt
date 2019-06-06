@@ -20,7 +20,6 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
@@ -44,7 +43,7 @@ abstract class AbstractApplicabilityBasedInspection<TElement : KtElement>(
         if (!isApplicable(element)) return
 
         holder.registerProblemWithoutOfflineInformation(
-            inspectionTarget(element),
+            element,
             inspectionText(element),
             isOnTheFly,
             inspectionHighlightType(element),
@@ -54,8 +53,6 @@ abstract class AbstractApplicabilityBasedInspection<TElement : KtElement>(
     }
 
     open fun inspectionHighlightRangeInElement(element: TElement): TextRange? = null
-
-    open fun inspectionTarget(element: TElement): PsiElement = element
 
     open fun inspectionHighlightType(element: TElement): ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
@@ -67,7 +64,7 @@ abstract class AbstractApplicabilityBasedInspection<TElement : KtElement>(
 
     abstract fun isApplicable(element: TElement): Boolean
 
-    abstract fun applyTo(element: PsiElement, project: Project = element.project, editor: Editor? = null)
+    abstract fun applyTo(element: TElement, project: Project = element.project, editor: Editor? = null)
 
     open val startFixInWriteAction = true
 
@@ -75,7 +72,8 @@ abstract class AbstractApplicabilityBasedInspection<TElement : KtElement>(
         override fun startInWriteAction() = startFixInWriteAction
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val element = descriptor.psiElement
+            @Suppress("UNCHECKED_CAST")
+            val element = descriptor.psiElement as TElement
             applyTo(element, project, element.findExistingEditor())
         }
 

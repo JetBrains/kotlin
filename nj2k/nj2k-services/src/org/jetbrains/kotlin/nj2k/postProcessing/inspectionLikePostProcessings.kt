@@ -287,7 +287,7 @@ inline fun <reified TElement : PsiElement, TInspection : AbstractApplicabilityBa
             if (!isApplicable(tElement)) return null
             return {
                 if (isApplicable(tElement)) { // isApplicableTo availability of the inspection again because something could change
-                    inspection.applyTo(inspection.inspectionTarget(tElement))
+                    inspection.applyTo(tElement)
                 }
             }
         }

@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.isToString
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java
@@ -24,15 +22,12 @@ class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedIn
         return element.isToString()
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val expression = element.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return
-        val variable = expression.receiverExpression.text
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val variable = element.receiverExpression.text
         element.replace(KtPsiFactory(element).createExpression("\"$$variable\""))
     }
 
     override fun inspectionText(element: KtDotQualifiedExpression) = "Call of 'toString' could be replaced with string template"
-
-    override fun inspectionTarget(element: KtDotQualifiedExpression) = element
 
     override val defaultFixText = "Replace 'toString' with string template"
 }
