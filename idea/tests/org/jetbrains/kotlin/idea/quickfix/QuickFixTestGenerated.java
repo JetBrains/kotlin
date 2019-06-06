@@ -8622,6 +8622,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/visibilityModiferParameter.kt");
         }
 
+        @TestMetadata("withAnnotationAndBlockComment.kt")
+        public void testWithAnnotationAndBlockComment() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/withAnnotationAndBlockComment.kt");
+        }
+
+        @TestMetadata("withAnnotationAndEolComment.kt")
+        public void testWithAnnotationAndEolComment() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/withAnnotationAndEolComment.kt");
+        }
+
+        @TestMetadata("withAnnotationAndEolComment2.kt")
+        public void testWithAnnotationAndEolComment2() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/withAnnotationAndEolComment2.kt");
+        }
+
+        @TestMetadata("withAnnotationAndEolComment3.kt")
+        public void testWithAnnotationAndEolComment3() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/withAnnotationAndEolComment3.kt");
+        }
+
         @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

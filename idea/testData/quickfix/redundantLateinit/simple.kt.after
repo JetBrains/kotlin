@@ -1,5 +1,5 @@
 // "Remove 'lateinit' modifier" "true"
 
 class Test {
-    private <caret>var foo: String = ""
+    private<caret> var foo: String = ""
 }

@@ -3,6 +3,6 @@ class Foo<out T> {
     val x = 0
 }
 
-fun bar(x : Foo< out<caret>  Any>) {
+fun bar(x : Foo<out<caret>  Any>) {
 
 }

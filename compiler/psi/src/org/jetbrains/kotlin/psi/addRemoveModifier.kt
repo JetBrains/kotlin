@@ -22,6 +22,7 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 private fun KtModifierListOwner.addModifierList(newModifierList: KtModifierList): KtModifierList {
@@ -119,6 +120,12 @@ fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken)
         it.getModifier(modifier)?.delete()
         if (it.firstChild == null) {
             it.delete()
+            return
+        }
+
+        val lastChild = it.lastChild
+        if (lastChild is PsiComment) {
+            it.addAfter(KtPsiFactory(owner).createNewLine(), lastChild)
         }
     }
 }
