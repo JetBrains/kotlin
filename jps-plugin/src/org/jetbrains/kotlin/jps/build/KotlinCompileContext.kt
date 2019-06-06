@@ -13,6 +13,7 @@ import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
+import org.jetbrains.kotlin.config.CompilerRunnerConstants.*
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.incremental.*
@@ -66,6 +67,15 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     val shouldCheckCacheVersions = System.getProperty(KotlinBuilder.SKIP_CACHE_VERSION_CHECK_PROPERTY) == null
 
     val hasKotlinMarker = HasKotlinMarker(dataManager)
+
+    val isInstrumentationEnabled: Boolean by lazy {
+        val value = System.getProperty("kotlin.jps.instrument.bytecode")?.toBoolean() ?: false
+        if (value) {
+            val message = "Experimental bytecode instrumentation for Kotlin classes is enabled"
+            jpsContext.processMessage(CompilerMessage(KOTLIN_COMPILER_NAME, BuildMessage.Kind.INFO, message))
+        }
+        value
+    }
 
     val fileToPathConverter: FileToPathConverter =
         JpsFileToPathConverter(jpsContext.projectDescriptor.project)
@@ -287,7 +297,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             testingLogger?.addCustomMessage(msg)
             jpsContext.processMessage(
                 CompilerMessage(
-                    CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
+                    KOTLIN_COMPILER_NAME,
                     BuildMessage.Kind.WARNING,
                     msg
                 )
