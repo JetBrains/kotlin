@@ -15,6 +15,6 @@ open class NpmResolveTask : AbstractTask() {
     }
 
     companion object {
-        const val NAME = "npmResolve"
+        const val NAME = "kotlinNpmResolve"
     }
 }
