@@ -5,6 +5,9 @@
 
 package kotlin.reflect
 
+/**
+ * Returns a runtime representation of the given reified type [T] as an instance of [KType].
+ */
 @Suppress("unused") // KT-12448
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
