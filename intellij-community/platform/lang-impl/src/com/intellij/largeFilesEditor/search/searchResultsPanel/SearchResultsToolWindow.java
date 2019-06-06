@@ -27,6 +27,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.CalledInAwt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,7 +105,6 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
 
     myShowingResultsList = new JBList<>(myShowingListModel);
     myShowingResultsList.setSelectionModel(new SingleSelectionModel());
-    //myShowingResultsList.setAutoscrolls(false);
     myShowingResultsList.addMouseListener(new MouseInputAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -135,7 +135,7 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
                                            int index,
                                            boolean selected,
                                            boolean hasFocus) {
-        value.render(this, selected);
+        value.render(this, selected, hasFocus);
       }
     });
 
@@ -401,16 +401,15 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     }
   }
 
-  interface ListElementWrapper {
-    void render(ColoredListCellRenderer coloredListCellRenderer, boolean selected);
+  private interface ListElementWrapper {
+    void render(ColoredListCellRenderer coloredListCellRenderer, boolean selected, boolean hasFocus);
 
     void onSelected();
   }
 
-  class SearchResultWrapper implements ListElementWrapper {
+  private class SearchResultWrapper implements ListElementWrapper {
     private final SimpleTextAttributes attrForMatchers = new SimpleTextAttributes(
       SimpleTextAttributes.STYLE_SEARCH_MATCH, null);
-    private final SimpleTextAttributes attrForPageNumber = SimpleTextAttributes.GRAY_ATTRIBUTES;
 
     private final SearchResult mySearchResult;
 
@@ -419,13 +418,8 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     }
 
     @Override
-    public void render(ColoredListCellRenderer coloredListCellRenderer, boolean selected) {
-      if (selected) {
-        coloredListCellRenderer.setBackground(JBColor.BLUE);
-      }
-      else {
-        coloredListCellRenderer.setBackground(JBColor.WHITE);
-      }
+    public void render(ColoredListCellRenderer coloredListCellRenderer, boolean selected, boolean hasFocus) {
+      coloredListCellRenderer.setBackground(UIUtil.getListBackground(selected, hasFocus));
 
       coloredListCellRenderer.append(mySearchResult.contextPrefix);
       coloredListCellRenderer.append(mySearchResult.stringToFind, attrForMatchers);
@@ -443,8 +437,7 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     }
   }
 
-  class SearchFurtherBtnWrapper implements ListElementWrapper {
-    private final SimpleTextAttributes greyText = SimpleTextAttributes.EXCLUDED_ATTRIBUTES;
+  private class SearchFurtherBtnWrapper implements ListElementWrapper {
     private final SimpleTextAttributes linkText = new SimpleTextAttributes(
       SimpleTextAttributes.STYLE_PLAIN, JBUI.CurrentTheme.Link.linkPressedColor());
     private final boolean isForwardDirection;
@@ -455,7 +448,7 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     }
 
     @Override
-    public void render(ColoredListCellRenderer coloredListCellRenderer, boolean selected) {
+    public void render(ColoredListCellRenderer coloredListCellRenderer, boolean selected, boolean hasFocus) {
       String text;
       if (isForwardDirection) {
         text = "find next matches";
@@ -465,29 +458,23 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
       }
 
       if (selected) {
-        if (isEnabled) {
-          coloredListCellRenderer.setBackground(JBColor.BLUE);
-        }
-        else {
-          coloredListCellRenderer.setBackground(JBColor.GRAY);
-        }
         coloredListCellRenderer.append(text);
       }
       else {
-        coloredListCellRenderer.setBackground(JBColor.WHITE);
-        if (isEnabled) {
-          coloredListCellRenderer.append(text, linkText);
-        }
-        else {
-          coloredListCellRenderer.append(text, greyText);
-        }
+        coloredListCellRenderer.append(text, linkText);
       }
+
+      coloredListCellRenderer.setBackground(UIUtil.getListBackground(selected, hasFocus));
     }
 
     @Override
     public void onSelected() {
       if (isEnabled) {
         onClickSearchFurther(isForwardDirection, true);
+      }
+      else {
+        logger.warn("[Large File Editor Subsystem] SearchResultsToolWindow.SearchFurtherBtnWrapper.onSelected():"
+                    + " called onSelected() on disabled element, which should be hidden.");
       }
     }
 
@@ -496,7 +483,7 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     }
   }
 
-  class ShowingListModel implements ListModel<ListElementWrapper> {
+  private class ShowingListModel implements ListModel<ListElementWrapper> {
 
     private final CollectionListModel<SearchResult> mySearchResultsListModel;
     private final SearchFurtherBtnWrapper btnSearchBackwardWrapper = new SearchFurtherBtnWrapper(false);
