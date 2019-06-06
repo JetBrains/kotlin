@@ -169,6 +169,7 @@ class ScriptsCompilationConfigurationCache(private val project: Project) {
         val keys = scriptDependenciesCache.getAll().map { it.key }.toList()
 
         scriptDependenciesCache.clear()
+        scriptsModificationStampsCache.clear()
 
         onChange(keys)
     }
