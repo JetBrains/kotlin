@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.uast.*
@@ -235,7 +236,7 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
         return typeAlias.expandedType.toPsiType(lightDeclaration, context, boxed)
     }
 
-    if (constructor is TypeVariableTypeConstructor) {
+    if (contains { type -> type.constructor is TypeVariableTypeConstructor }) {
         return UastErrorType
     }
 
