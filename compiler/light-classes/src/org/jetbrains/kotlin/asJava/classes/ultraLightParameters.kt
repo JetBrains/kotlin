@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
+import org.jetbrains.kotlin.asJava.elements.LightParameter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.types.KotlinType
@@ -22,9 +23,9 @@ import org.jetbrains.kotlin.psi.*
 
 internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
-    support: KtUltraLightSupport,
+    private val support: KtUltraLightSupport,
     method: KtLightMethod
-) : org.jetbrains.kotlin.asJava.elements.LightParameter(SUSPEND_FUNCTION_CONTINUATION_PARAMETER, PsiType.NULL, method, method.language),
+) : LightParameter(SUSPEND_FUNCTION_CONTINUATION_PARAMETER, PsiType.NULL, method, method.language),
     KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiParameter> {
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType? get() = ktType
@@ -61,6 +62,8 @@ internal class KtUltraLightSuspendContinuationParameter(
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         another is KtUltraLightSuspendContinuationParameter && another.psiType == this.psiType
+
+    override fun copy(): PsiElement = KtUltraLightSuspendContinuationParameter(ktFunction, support, method)
 }
 
 internal abstract class KtUltraLightParameter(
