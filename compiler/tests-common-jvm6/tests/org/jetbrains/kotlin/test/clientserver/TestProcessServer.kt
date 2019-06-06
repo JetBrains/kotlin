@@ -49,6 +49,8 @@ fun getBoxMethodOrNull(aClass: Class<*>): Method? {
 //Use only JDK 1.6 compatible api
 object TestProcessServer {
 
+    const val DEBUG_TEST = "--debugTest"
+
     private val executor = Executors.newFixedThreadPool(1)!!
 
     @Volatile
@@ -63,13 +65,21 @@ object TestProcessServer {
 
     private lateinit var serverSocket: ServerSocket
 
+    private var suppressOutput = false
+    private var allocatePort = false
+
     @JvmStatic
     fun main(args: Array<String>) {
-        val portNumber = args[0].toInt()
-        println("Starting server on port $portNumber...")
+        if (args[0] == DEBUG_TEST) {
+            suppressOutput = true
+            allocatePort = true
+        }
 
+        val portNumber = if (allocatePort) 0 else args[0].toInt()
+        println("Starting server on port $portNumber...")
         val serverSocket = ServerSocket(portNumber)
-        sheduleShutdownProcess()
+        println("...server started on port ${serverSocket.localPort}")
+        scheduleShutdownProcess()
 
         try {
             while (true) {
@@ -78,7 +88,7 @@ object TestProcessServer {
                 val clientSocket = serverSocket.accept()
                 isProcessingTask = true
                 println("Socket established...")
-                executor.execute(ServerTest(clientSocket))
+                executor.execute(ServerTest(clientSocket, suppressOutput))
             }
         }
         finally {
@@ -89,7 +99,7 @@ object TestProcessServer {
         }
     }
 
-    private fun sheduleShutdownProcess() {
+    private fun scheduleShutdownProcess() {
         handler = scheduler.scheduleAtFixedRate({
             if (!isProcessingTask && (System.currentTimeMillis() - lastTime) >= 60 * 1000 /*60 sec*/) {
                 println("Stopping server...")
@@ -97,15 +107,21 @@ object TestProcessServer {
             }
         }, 60, 60, TimeUnit.SECONDS)
     }
+
+    private fun printlnTest(text: String) {
+        if (!suppressOutput) {
+            println(text)
+        }
+    }
 }
 
-private class ServerTest(val clientSocket: Socket) : Runnable {
+private class ServerTest(val clientSocket: Socket, val suppressOutput: Boolean) : Runnable {
     private lateinit var className: String
     private lateinit var testMethod: String
 
     override fun run() {
         val input = ObjectInputStream(clientSocket.getInputStream())
-        val output = ObjectOutputStream(clientSocket.getOutputStream())
+        val output = if (suppressOutput) null else ObjectOutputStream(clientSocket.getOutputStream())
         try {
             var message = input.readObject() as MessageHeader
             assert(message == MessageHeader.NEW_TEST, { "New test marker missed, but $message received" })
@@ -119,13 +135,13 @@ private class ServerTest(val clientSocket: Socket) : Runnable {
             val classPath = input.readObject() as Array<URL>
 
             val result = executeTest(URLClassLoader(classPath, JDK_EXT_JARS_CLASS_LOADER))
-            output.writeObject(MessageHeader.RESULT)
-            output.writeObject(result)
+            output?.writeObject(MessageHeader.RESULT)
+            output?.writeObject(result)
         } catch (e: Throwable) {
-            output.writeObject(MessageHeader.ERROR)
-            output.writeObject(e)
+            output?.writeObject(MessageHeader.ERROR)
+            output?.writeObject(e)
         } finally {
-            output.close()
+            output?.close()
             input.close()
             clientSocket.close()
         }
