@@ -177,6 +177,11 @@
                    description="Whether to convert `KtStringTemplateExpression` to `KotlinStringTemplateUPolyadicExpression` in all cases"
                    defaultValue="false"
                    restartRequired="false"/>
+
+      <registryKey key="kotlin.jps.instrument.bytecode"
+                   description="Enable bytecode instrumentation for Kotlin classes"
+                   defaultValue="false"
+                   restartRequired="false"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">

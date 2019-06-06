@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.compiler.configuration
 
 import com.intellij.compiler.server.BuildProcessParametersProvider
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.idea.PluginStartupComponent
 
@@ -34,6 +35,9 @@ class KotlinBuildProcessParametersProvider(
         }
         if (compilerWorkspaceSettings.enableDaemon) {
             res.add("-Dkotlin.daemon.enabled")
+        }
+        if (Registry.`is`("kotlin.jps.instrument.bytecode", false)) {
+            res.add("-Dkotlin.jps.instrument.bytecode=true")
         }
         kotlinPluginStartupComponent.aliveFlagPath.let {
             if (!it.isBlank()) {
