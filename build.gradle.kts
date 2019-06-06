@@ -410,10 +410,8 @@ allprojects {
         }
 
         // Aggregate task for build related checks
-        tasks.register("checkBuild") {
-            tasks.findByName("check")?.dependsOn(this)
-        }
-
+        tasks.register("checkBuild")
+        
         apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
     }
 }
