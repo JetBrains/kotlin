@@ -1,5 +1,5 @@
 // !LANGUAGE: +ReleaseCoroutines
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR, JS_IR, NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.*
