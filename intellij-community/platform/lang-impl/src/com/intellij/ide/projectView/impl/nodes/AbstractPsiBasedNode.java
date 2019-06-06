@@ -29,6 +29,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.AstLoadingFilter;
@@ -183,7 +184,7 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
 
     final Bookmark bookmarkAtFile = BookmarkManager.getInstance(project).findFileBookmark(file);
     if (bookmarkAtFile != null) {
-      final RowIcon composite = new com.intellij.ui.RowIcon(2, com.intellij.ui.RowIcon.Alignment.CENTER);
+      final RowIcon composite = IconManager.getInstance().createRowIcon(2, RowIcon.Alignment.CENTER);
       composite.setIcon(icon, 0);
       composite.setIcon(bookmarkAtFile.getIcon(), 1);
       icon = composite;

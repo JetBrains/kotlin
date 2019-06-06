@@ -372,7 +372,7 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
       if (modelColumn == DISPLAY_NAME_COLUMN) {
         Icon memberIcon = myTable.getMemberIcon(memberInfo, 0);
         Icon overrideIcon = myTable.getOverrideIcon(memberInfo);
-        RowIcon icon = new com.intellij.ui.RowIcon(3);
+        RowIcon icon = IconManager.getInstance().createRowIcon(3);
         icon.setIcon(memberIcon, MEMBER_ICON_POSITION);
         myTable.setVisibilityIcon(memberInfo, icon);
         icon.setIcon(overrideIcon, OVERRIDE_ICON_POSITION);

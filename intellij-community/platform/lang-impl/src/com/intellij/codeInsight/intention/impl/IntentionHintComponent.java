@@ -33,6 +33,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.refactoring.BaseRefactoringIntentionAction;
 import com.intellij.ui.HintHint;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.PopupMenuListenerAdapter;
 import com.intellij.ui.awt.RelativePoint;
@@ -324,8 +325,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
     Icon smartTagIcon = showRefactoringsBulb ? AllIcons.Actions.RefactoringBulb : showFix ? AllIcons.Actions.QuickfixBulb : AllIcons.Actions.IntentionBulb;
 
-    myHighlightedIcon = new com.intellij.ui.RowIcon(smartTagIcon, AllIcons.General.ArrowDown);
-    myInactiveIcon = new com.intellij.ui.RowIcon(smartTagIcon, ourInactiveArrowIcon);
+    IconManager iconManager = IconManager.getInstance();
+    myHighlightedIcon = iconManager.createRowIcon(smartTagIcon, AllIcons.General.ArrowDown);
+    myInactiveIcon = iconManager.createRowIcon(smartTagIcon, ourInactiveArrowIcon);
 
     myIconLabel = new JLabel(myInactiveIcon);
     myIconLabel.setOpaque(false);
