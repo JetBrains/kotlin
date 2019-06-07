@@ -16132,6 +16132,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/function.kt");
             }
 
+            @TestMetadata("functionFromOtherModule.kt")
+            public void testFunctionFromOtherModule() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/functionFromOtherModule.kt");
+            }
+
             @TestMetadata("inheritedFromCommonClass.kt")
             public void testInheritedFromCommonClass() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromCommonClass.kt");
@@ -16140,11 +16145,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("inheritedFromExpectedClass.kt")
             public void testInheritedFromExpectedClass() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedClass.kt");
-            }
-
-            @TestMetadata("inheritedFromExpectedFunction.kt")
-            public void testInheritedFromExpectedFunction() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedFunction.kt");
             }
 
             @TestMetadata("inheritedFromExpectedInterface.kt")
