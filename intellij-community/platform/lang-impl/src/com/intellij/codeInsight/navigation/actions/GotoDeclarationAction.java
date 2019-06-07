@@ -83,7 +83,9 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
       if (elements.length != 1) {
         if (elements.length == 0 && suggestCandidates(TargetElementUtil.findReference(editor, offset)).isEmpty()) {
           PsiElement element = findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset());
-          if (startFindUsages(editor, project, element)) {
+
+          if (element != null) {
+            startFindUsages(editor, project, element);
             return;
           }
 
@@ -95,8 +97,8 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
       }
 
       PsiElement element = elements[0];
-      if (element == findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset()) &&
-          startFindUsages(editor, project, element)) {
+      if (element == findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset())) {
+        startFindUsages(editor, project, element);
         return;
       }
 
@@ -114,10 +116,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     }
   }
 
-  private static boolean startFindUsages(@NotNull Editor editor, @NotNull Project project, PsiElement element) {
-    if (element == null) {
-      return false;
-    }
+  public static void startFindUsages(@NotNull Editor editor, @NotNull Project project, @NotNull PsiElement element) {
     if (DumbService.getInstance(project).isDumb()) {
       AnAction action = ActionManager.getInstance().getAction(ShowUsagesAction.ID);
       String name = action.getTemplatePresentation().getText();
@@ -127,7 +126,6 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
       RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(editor);
       new ShowUsagesAction().startFindUsages(element, popupPosition, editor, ShowUsagesAction.getUsagesPageSize());
     }
-    return true;
   }
 
   static <T> T underModalProgress(@NotNull Project project,
