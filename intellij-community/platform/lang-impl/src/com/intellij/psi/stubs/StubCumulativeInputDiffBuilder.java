@@ -100,10 +100,10 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
     );
   }
 
-  static void updateStubIndices(@NotNull final Collection<StubIndexKey> indexKeys,
-                                final int inputId,
-                                @NotNull final Map<StubIndexKey, Map<Object, StubIdList>> oldStubTree,
-                                @NotNull final Map<StubIndexKey, Map<Object, StubIdList>> newStubTree) {
+  private static void updateStubIndices(@NotNull final Collection<StubIndexKey> indexKeys,
+                                        final int inputId,
+                                        @NotNull final Map<StubIndexKey, Map<Object, StubIdList>> oldStubTree,
+                                        @NotNull final Map<StubIndexKey, Map<Object, StubIdList>> newStubTree) {
     final StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
     for (StubIndexKey key : indexKeys) {
       final Map<Object, StubIdList> oldMap = oldStubTree.get(key);
