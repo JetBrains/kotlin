@@ -20,10 +20,15 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
+import org.gradle.api.Named
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getCompilations
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getCompileKotlinTaskName
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
@@ -140,8 +145,12 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
         val sourceSets = mutableListOf<KaptSourceSetModel>()
 
         if (kaptIsEnabled) {
-            project.getAllTasks(false)[project]?.forEach { compileTask ->
-                if (compileTask.javaClass.name !in kotlinCompileJvmTaskClasses) return@forEach
+            val targets = project.getTargets()
+
+            fun handleCompileTask(moduleName: String, compileTask: Task) {
+                if (compileTask.javaClass.name !in kotlinCompileJvmTaskClasses) {
+                    return
+                }
 
                 val sourceSetName = compileTask.getSourceSetName()
                 val isTest = sourceSetName.toLowerCase().endsWith("test")
@@ -150,11 +159,39 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
                 val kaptGeneratedClassesDir = getKaptDirectory("getKaptGeneratedClassesDir", project, sourceSetName)
                 val kaptGeneratedKotlinSourcesDir = getKaptDirectory("getKaptGeneratedKotlinSourcesDir", project, sourceSetName)
                 sourceSets += KaptSourceSetModelImpl(
-                        sourceSetName, isTest, kaptGeneratedSourcesDir, kaptGeneratedClassesDir, kaptGeneratedKotlinSourcesDir)
+                    moduleName, isTest, kaptGeneratedSourcesDir, kaptGeneratedClassesDir, kaptGeneratedKotlinSourcesDir
+                )
+            }
+
+            if (targets != null && targets.isNotEmpty()) {
+                for (target in targets) {
+                    if (!isWithJavaEnabled(target)) {
+                        continue
+                    }
+
+                    val compilations = getCompilations(target) ?: continue
+                    for (compilation in compilations) {
+                        val compileTask = getCompileKotlinTaskName(project, compilation) ?: continue
+                        val moduleName = target.name + compilation.name.capitalize()
+                        handleCompileTask(moduleName, compileTask)
+                    }
+                }
+            } else {
+                project.getAllTasks(false)[project]?.forEach { compileTask ->
+                    val sourceSetName = compileTask.getSourceSetName()
+                    handleCompileTask(sourceSetName, compileTask)
+                }
             }
         }
 
         return KaptGradleModelImpl(kaptIsEnabled, project.buildDir, sourceSets)
+    }
+
+    private fun isWithJavaEnabled(target: Named): Boolean {
+        val getWithJavaEnabledMethod = target.javaClass.methods
+            .firstOrNull { it.name == "getWithJavaEnabled" && it.parameterCount == 0 } ?: return false
+
+        return getWithJavaEnabledMethod.invoke(target) == true
     }
 
     private fun getKaptDirectory(funName: String, project: Project, sourceSetName: String): String {
