@@ -20,6 +20,7 @@ pluginManagement {
 
 // modules
 include ":kotlin-build-common",
+        ":benchmarks",
         ":compiler",
         ":compiler:util",
         ":kotlin-util-io",
