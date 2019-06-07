@@ -88,7 +88,7 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
       return null
     }
     else {
-      mySerializationManager = SerializationManagerImpl(File(indexesRoot, "$indexName.names"))
+      mySerializationManager = SerializationManagerImpl(File(indexesRoot, "$indexName.names"), true)
       Disposer.register(ApplicationManager.getApplication(), mySerializationManager!!)
       return super.openIndexStorage(indexesRoot)
     }

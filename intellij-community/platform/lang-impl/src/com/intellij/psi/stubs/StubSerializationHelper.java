@@ -14,6 +14,7 @@ import com.intellij.util.containers.RecentStringInterner;
 import com.intellij.util.io.AbstractStringEnumerator;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.IOUtil;
+import com.intellij.util.io.PersistentStringEnumerator;
 import gnu.trove.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,9 @@ import java.util.*;
  * Author: dmitrylomov
  */
 class StubSerializationHelper {
-  private final AbstractStringEnumerator myNameStorage;
+  private static final Logger LOG = Logger.getInstance(StubSerializationHelper.class);
+
+  private final PersistentStringEnumerator myNameStorage;
 
   private final TIntObjectHashMap<String> myIdToName = new TIntObjectHashMap<>();
   private final TObjectIntHashMap<String> myNameToId = new TObjectIntHashMap<>();
@@ -34,10 +37,12 @@ class StubSerializationHelper {
   private final ConcurrentIntObjectMap<ObjectStubSerializer> myIdToSerializer = ContainerUtil.createConcurrentIntObjectMap();
   private final Map<ObjectStubSerializer, Integer> mySerializerToId = ContainerUtil.newConcurrentMap();
 
+  private final boolean myUnmodifiable;
   private final RecentStringInterner myStringInterner;
 
-  StubSerializationHelper(@NotNull AbstractStringEnumerator nameStorage, @NotNull Disposable parentDisposable) {
+  StubSerializationHelper(@NotNull PersistentStringEnumerator nameStorage, boolean unmodifiable, @NotNull Disposable parentDisposable) {
     myNameStorage = nameStorage;
+    myUnmodifiable = unmodifiable;
     myStringInterner = new RecentStringInterner(parentDisposable);
   }
 
@@ -53,7 +58,17 @@ class StubSerializationHelper {
       return;
     }
 
-    int id = myNameStorage.enumerate(name);
+    int id;
+    if (myUnmodifiable) {
+      id = myNameStorage.tryEnumerate(name);
+      if (id == 0) {
+        LOG.info("serialized " + name + " is ignored in unmodifiable stub serialization manager");
+        return;
+      }
+    }
+    else {
+      id = myNameStorage.enumerate(name);
+    }
     myIdToName.put(id, name);
     myNameToId.put(name, id);
   }
