@@ -43,7 +43,7 @@ class NewOverloadingConflictResolver(
         // todo investigate
         it.resolvedCall.candidateDescriptor
     },
-    { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
+    { statelessCallbacks.createConstraintSystemForOverloadResolution(constraintInjector, builtIns) },
     Companion::createFlatSignature,
     { it.variableCandidateIfInvoke },
     { statelessCallbacks.isDescriptorFromSource(it) },
