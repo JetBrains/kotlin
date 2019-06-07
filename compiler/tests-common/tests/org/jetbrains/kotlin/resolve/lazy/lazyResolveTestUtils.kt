@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -53,7 +54,9 @@ fun createResolveSessionForFiles(
         moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
         resolverForModuleFactoryByPlatform = {
             JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform)
-        }
+        },
+        builtInsProvider = { DefaultBuiltIns.Instance },
+        sdkDependency = { null }
     )
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()
 }

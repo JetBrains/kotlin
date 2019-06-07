@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -149,7 +150,9 @@ class CommonResolverForModuleFactory(
                         CommonPlatforms.defaultCommonPlatform,
                         shouldCheckExpectActual = false
                     )
-                }
+                },
+                builtInsProvider = { DefaultBuiltIns.Instance },
+                sdkDependency = { null }
             )
 
             val moduleDescriptor = resolver.descriptorForModule(moduleInfo)

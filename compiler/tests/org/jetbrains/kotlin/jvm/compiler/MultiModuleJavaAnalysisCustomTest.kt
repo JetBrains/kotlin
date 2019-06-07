@@ -96,7 +96,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             resolverForModuleFactoryByPlatform = {
                 JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform)
             },
-            sdkDependency = { null }
+            sdkDependency = { null },
+            builtInsProvider = { builtIns }
         )
 
         builtIns.initialize(

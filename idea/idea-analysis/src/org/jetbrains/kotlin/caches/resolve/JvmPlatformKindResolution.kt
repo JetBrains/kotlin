@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.caches.resolve
 
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
+import org.jetbrains.kotlin.idea.caches.project.findSdkAcrossDependencies
+import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -38,9 +41,19 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = JvmIdePlatformKind
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns =
-        if (settings.sdk != null)
+    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo): BuiltInsCacheKey {
+        val sdkInfo = moduleInfo.findSdkAcrossDependencies()
+        return if (sdkInfo != null) CacheKeyBySdk(sdkInfo.sdk) else BuiltInsCacheKey.DefaultBuiltInsKey
+    }
+
+    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns {
+        val sdk = moduleInfo.findSdkAcrossDependencies()
+
+        return if (sdk != null)
             JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         else
             DefaultBuiltIns.Instance
+    }
+
+    data class CacheKeyBySdk(val sdk: Sdk) : BuiltInsCacheKey
 }

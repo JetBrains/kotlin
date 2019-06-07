@@ -65,6 +65,7 @@ internal class ProjectResolutionFacade(
     val moduleFilter: (IdeaModuleInfo) -> Boolean,
     dependencies: List<Any>,
     private val invalidateOnOOCB: Boolean,
+    val builtInsCache: BuiltInsCache,
     val syntheticFiles: Collection<KtFile> = listOf(),
     val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
 ) {
@@ -104,17 +105,10 @@ internal class ProjectResolutionFacade(
 
         if (reuseDataFrom != null) {
             delegateResolverForProject = reuseDataFrom.cachedResolverForProject
-            delegateBuiltIns = delegateResolverForProject.builtIns
         } else {
             delegateResolverForProject = EmptyResolverForProject()
-            delegateBuiltIns = null
         }
         val projectContext = globalContext.withProject(project)
-
-        val builtIns = delegateBuiltIns ?: createBuiltIns(
-            settings,
-            projectContext
-        )
 
         val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, (settings as? PlatformAnalysisSettingsImpl)?.platform))
             .toMutableSet()
@@ -165,7 +159,11 @@ internal class ProjectResolutionFacade(
                         CompositeAnalyzerServices(modulePlatform.componentPlatforms.map { it.toTargetPlatform().findAnalyzerServices })
                     )
             },
-            builtIns = builtIns,
+            builtInsProvider = { module ->
+                require(module in modulesToCreateResolversFor)
+                val key = module.platform.idePlatformKind.resolution.getKeyForBuiltIns(module)
+                builtInsCache.getOrPut(key) { throw IllegalStateException("Can't find builtIns by key $key for module $module") }
+            },
             delegateResolver = delegateResolverForProject,
             sdkDependency = { module ->
                 if (settings is PlatformAnalysisSettingsImpl)
@@ -178,13 +176,26 @@ internal class ProjectResolutionFacade(
             isReleaseCoroutines = settings.isReleaseCoroutines
         )
 
-        if (delegateBuiltIns == null && builtIns is JvmBuiltIns) {
-            val sdkModuleDescriptor = (settings as PlatformAnalysisSettingsImpl).sdk!!.let {
-                resolverForProject.descriptorForModule(
-                    SdkInfo(project, it)
-                )
+        // Fill builtInsCache
+        modulesToCreateResolversFor.forEach {
+            val key = it.platform.idePlatformKind.resolution.getKeyForBuiltIns(it)
+            val cachedBuiltIns = builtInsCache[key]
+            if (cachedBuiltIns == null) {
+                // Note that we can't use .getOrPut, because we have to put builtIns into map *before*
+                // initialization
+                val builtIns = it.platform.idePlatformKind.resolution.createBuiltIns(it, projectContext)
+                builtInsCache[key] = builtIns
+
+                if (builtIns is JvmBuiltIns) {
+                    // SDK should be present, otherwise we wouldn't have created JvmBuiltIns in createBuiltIns
+                    val sdk = it.findSdkAcrossDependencies()!!
+                    val sdkDescriptor = resolverForProject.descriptorForModule(sdk)
+
+                    val isAdditionalBuiltInsFeaturesSupported = it.supportsAdditionalBuiltInsMembers(project)
+
+                    builtIns.initialize(sdkDescriptor, isAdditionalBuiltInsFeaturesSupported)
+                }
             }
-            builtIns.initialize(sdkModuleDescriptor, settings.isAdditionalBuiltInFeaturesSupported)
         }
 
         return resolverForProject
@@ -229,13 +240,5 @@ internal class ProjectResolutionFacade(
 
     override fun toString(): String {
         return "$debugString@${Integer.toHexString(hashCode())}"
-    }
-
-    private companion object {
-        private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
-//            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
-//             TODO: what we do about built-ins?
-            return JvmPlatforms.defaultJvmPlatform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
-        }
     }
 }

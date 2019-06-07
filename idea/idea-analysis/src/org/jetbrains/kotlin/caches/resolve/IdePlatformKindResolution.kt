@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
-import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
+import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 interface IdePlatformKindResolution {
     val kind: IdePlatformKind<*>
 
-    fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns
+    fun getKeyForBuiltIns(moduleInfo: ModuleInfo): BuiltInsCacheKey
+    fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns
 
     fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
