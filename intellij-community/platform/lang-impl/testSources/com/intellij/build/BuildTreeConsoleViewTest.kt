@@ -41,8 +41,9 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
   @Test
   fun `test tree console handles event`() {
     val tree = treeConsoleView.tree
+    val buildId = Object()
     val message = "build Started"
-    treeConsoleView.onEvent(StartBuildEventImpl(buildDescriptor, message))
+    treeConsoleView.onEvent(buildId, StartBuildEventImpl(buildDescriptor, message))
     PlatformTestUtil.waitWhileBusy(tree)
 
     PlatformTestUtil.assertTreeEqual(tree, "-\n" +
@@ -58,6 +59,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
   fun `test two levels of tree console view are auto-expanded`() {
     val tree = treeConsoleView.tree
     treeConsoleView.addFilter { true }
+    val buildId = Object()
     listOf(
       StartBuildEventImpl(buildDescriptor, "build started"),
       StartEventImpl("event_id", buildDescriptor.id, 1000, "build event"),
@@ -66,7 +68,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
       FinishEventImpl("event_id", buildDescriptor.id, 1500, "build event", SuccessResultImpl(true)),
       FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build finished", SuccessResultImpl(true))
     ).forEach {
-      treeConsoleView.onEvent(it)
+      treeConsoleView.onEvent(buildId, it)
     }
 
     PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
@@ -86,6 +88,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
   @Test
   fun `test derived result depend on child result - fail case`() {
     treeConsoleView.addFilter { true }
+    val buildId = Object()
     listOf(
       StartBuildEventImpl(buildDescriptor, "build started"),
       StartEventImpl("event_id", buildDescriptor.id, 1000, "build event"),
@@ -94,7 +97,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
       FinishEventImpl("event_id", buildDescriptor.id, 1500, "build event", DerivedResultImpl()),
       FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build finished", DerivedResultImpl())
     ).forEach {
-      treeConsoleView.onEvent(it)
+      treeConsoleView.onEvent(buildId, it)
     }
 
     val tree = treeConsoleView.tree
@@ -117,6 +120,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
   @Test
   fun `test derived result depend on child result - success case`() {
     treeConsoleView.addFilter { true }
+    val buildId = Object()
     listOf(
       StartBuildEventImpl(buildDescriptor, "build started"),
       StartEventImpl("event_id", buildDescriptor.id, 1000, "build event"),
@@ -125,7 +129,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
       FinishEventImpl("event_id", buildDescriptor.id, 1500, "build event", DerivedResultImpl()),
       FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build finished", DerivedResultImpl())
     ).forEach {
-      treeConsoleView.onEvent(it)
+      treeConsoleView.onEvent(buildId, it)
     }
 
     val tree = treeConsoleView.tree

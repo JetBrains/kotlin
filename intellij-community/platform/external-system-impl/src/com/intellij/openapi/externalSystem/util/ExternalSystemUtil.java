@@ -473,7 +473,7 @@ public class ExternalSystemUtil {
 
               if (isPreviewMode) return;
               String message = "syncing...";
-              eventDispatcher.onEvent(
+              eventDispatcher.onEvent(id,
                 new StartBuildEventImpl(new DefaultBuildDescriptor(id, projectName, externalProjectPath, eventTime), message)
                   .withProcessHandler(processHandler, null)
                   .withRestartAction(rerunImportAction)
@@ -522,11 +522,11 @@ public class ExternalSystemUtil {
               if (isPreviewMode) return;
               if (event instanceof ExternalSystemBuildEvent) {
                 BuildEvent buildEvent = ((ExternalSystemBuildEvent)event).getBuildEvent();
-                eventDispatcher.onEvent(buildEvent);
+                eventDispatcher.onEvent(event.getId(), buildEvent);
               }
               else if (event instanceof ExternalSystemTaskExecutionEvent) {
                 BuildEvent buildEvent = convert(((ExternalSystemTaskExecutionEvent)event));
-                eventDispatcher.onEvent(buildEvent);
+                eventDispatcher.onEvent(event.getId(), buildEvent);
               }
             }
 
@@ -606,12 +606,12 @@ public class ExternalSystemUtil {
           }
         }
         if (finishBuildEvent != null) {
-          ServiceManager.getService(project, SyncViewManager.class).onEvent(finishBuildEvent);
+          ServiceManager.getService(project, SyncViewManager.class).onEvent(resolveProjectTask.getId(), finishBuildEvent);
         }
         else {
           String message = "Sync finish event has not been received";
           LOG.warn(message, exception);
-          ServiceManager.getService(project, SyncViewManager.class).onEvent(
+          ServiceManager.getService(project, SyncViewManager.class).onEvent(resolveProjectTask.getId(),
             new FinishBuildEventImpl(resolveProjectTask.getId(), null, System.currentTimeMillis(), "failed",
                                      new FailureResultImpl(new Exception(message, exception))));
         }

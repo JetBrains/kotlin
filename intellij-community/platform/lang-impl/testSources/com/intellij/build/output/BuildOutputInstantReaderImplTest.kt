@@ -61,7 +61,10 @@ class BuildOutputInstantReaderImplTest {
       return@BuildOutputParser false
     }
     parsers.add(parser)
-    val outputReader = BuildOutputInstantReaderImpl(Object(), BuildProgressListener { messages += it.message }, parsers)
+    val buildId = Object()
+    val outputReader = BuildOutputInstantReaderImpl(buildId, buildId,
+                                                    BuildProgressListener { _, event -> messages += event.message },
+                                                    parsers)
     val trashOut = StringUtil.repeat("trash\n", getMaxLinesBufferSize()).trimEnd()
     outputReader
       .append("""

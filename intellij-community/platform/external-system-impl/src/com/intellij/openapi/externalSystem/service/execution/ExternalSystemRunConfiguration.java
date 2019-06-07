@@ -339,7 +339,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
                 BuildViewSettingsProvider viewSettingsProvider =
                   consoleView instanceof BuildViewSettingsProvider ?
                   new BuildViewSettingsProviderAdapter((BuildViewSettingsProvider)consoleView) : null;
-                progressListener.onEvent(
+                progressListener.onEvent(id,
                   new StartBuildEventImpl(new DefaultBuildDescriptor(id, executionName, workingDir, eventTime), "running...")
                     .withProcessHandler(processHandler, view -> {
                       foldGreetingOrFarewell(consoleView, greeting, true);
@@ -370,7 +370,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
               FailureResult failureResult =
                 ExternalSystemUtil.createFailureResult(executionName + " failed", e, id.getProjectSystemId(), myProject);
               if (progressListener != null) {
-                progressListener.onEvent(new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
+                progressListener.onEvent(id, new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
               }
               processHandler.notifyProcessTerminated(1);
             }
@@ -378,7 +378,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
             @Override
             public void onSuccess(@NotNull ExternalSystemTaskId id) {
               if (progressListener != null) {
-                progressListener.onEvent(new FinishBuildEventImpl(
+                progressListener.onEvent(id, new FinishBuildEventImpl(
                   id, null, System.currentTimeMillis(), "successful", new SuccessResultImpl()));
               }
             }
@@ -386,11 +386,11 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
             @Override
             public void onStatusChange(@NotNull ExternalSystemTaskNotificationEvent event) {
               if (event instanceof ExternalSystemBuildEvent) {
-                eventDispatcher.onEvent(((ExternalSystemBuildEvent)event).getBuildEvent());
+                eventDispatcher.onEvent(event.getId(), ((ExternalSystemBuildEvent)event).getBuildEvent());
               }
               else if (event instanceof ExternalSystemTaskExecutionEvent) {
                 BuildEvent buildEvent = convert(((ExternalSystemTaskExecutionEvent)event));
-                eventDispatcher.onEvent(buildEvent);
+                eventDispatcher.onEvent(event.getId(), buildEvent);
               }
             }
 

@@ -86,12 +86,12 @@ public class BuildView extends CompositeView<ExecutionConsole>
   }
 
   @Override
-  public void onEvent(@NotNull BuildEvent event) {
+  public void onEvent(@NotNull Object buildId, @NotNull BuildEvent event) {
     if (event instanceof StartBuildEvent) {
       ApplicationManager.getApplication().invokeAndWait(() -> {
-        onStartBuild((StartBuildEvent)event);
+        onStartBuild(buildId, (StartBuildEvent)event);
         for (BuildEvent buildEvent : myAfterStartEvents) {
-          processEvent(buildEvent);
+          processEvent(buildId, buildEvent);
         }
         myAfterStartEvents.clear();
         isBuildStartEventProcessed.set(true);
@@ -103,26 +103,26 @@ public class BuildView extends CompositeView<ExecutionConsole>
       myAfterStartEvents.add(event);
     }
     else {
-      processEvent(event);
+      processEvent(buildId, event);
     }
   }
 
-  private void processEvent(BuildEvent event) {
+  private void processEvent(@NotNull Object buildId, @NotNull BuildEvent event) {
     if (event instanceof OutputBuildEvent && (event.getParentId() == null || event.getParentId() == myBuildDescriptor.getId())) {
       ExecutionConsole consoleView = getConsoleView();
       if (consoleView instanceof BuildProgressListener) {
-        ((BuildProgressListener)consoleView).onEvent(event);
+        ((BuildProgressListener)consoleView).onEvent(buildId, event);
       }
     }
     else {
       BuildTreeConsoleView eventView = getEventView();
       if (eventView != null) {
-        EdtExecutorService.getInstance().execute(() -> eventView.onEvent(event));
+        EdtExecutorService.getInstance().execute(() -> eventView.onEvent(buildId, event));
       }
     }
   }
 
-  private void onStartBuild(StartBuildEvent startBuildEvent) {
+  private void onStartBuild(@NotNull Object buildId, @NotNull StartBuildEvent startBuildEvent) {
     myStartBuildEventRef.set(startBuildEvent);
     if (startBuildEvent instanceof StartBuildEventImpl) {
       myViewSettingsProvider = ((StartBuildEventImpl)startBuildEvent).getBuildViewSettingsProvider();
@@ -182,7 +182,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
     }
 
     if (eventView != null) {
-      eventView.onEvent(startBuildEvent);
+      eventView.onEvent(buildId, startBuildEvent);
     }
   }
 

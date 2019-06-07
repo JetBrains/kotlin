@@ -94,7 +94,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   }
 
   @Override
-  public void onEvent(@NotNull BuildEvent event) {
+  public void onEvent(@NotNull Object buildId, @NotNull BuildEvent event) {
     if (isDisposed.get()) return;
 
     MultipleBuildsView buildsView;
@@ -104,14 +104,14 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     }
     else {
       buildsView = myBuildsViewValue.getValue();
-      if (!buildsView.shouldConsume(event)) {
+      if (!buildsView.shouldConsume(buildId, event)) {
         buildsView = myPinnedViews.stream()
-                                  .filter(pinnedView -> pinnedView.shouldConsume(event))
-                                  .findFirst().orElse(null);
+          .filter(pinnedView -> pinnedView.shouldConsume(buildId, event))
+          .findFirst().orElse(null);
       }
     }
     if (buildsView != null) {
-      buildsView.onEvent(event);
+      buildsView.onEvent(buildId, event);
     }
   }
 

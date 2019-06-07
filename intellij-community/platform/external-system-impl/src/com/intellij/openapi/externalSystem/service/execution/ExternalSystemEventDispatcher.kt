@@ -52,8 +52,8 @@ class ExternalSystemEventDispatcher(taskId: ExternalSystemTaskId,
     }
   }
 
-  override fun onEvent(event: BuildEvent) {
-    outputMessageDispatcher?.onEvent(event)
+  override fun onEvent(buildId: Any, event: BuildEvent) {
+    outputMessageDispatcher?.onEvent(buildId, event)
   }
 
   override fun append(csq: CharSequence): BuildEventDispatcher? {
@@ -83,10 +83,10 @@ class ExternalSystemEventDispatcher(taskId: ExternalSystemTaskId,
 private class DefaultOutputMessageDispatcher(buildId: Any,
                                              private val buildProgressListener: BuildProgressListener,
                                              parsers: List<BuildOutputParser>) :
-  BuildOutputInstantReaderImpl(buildId, buildProgressListener, parsers), ExternalSystemOutputMessageDispatcher {
+  BuildOutputInstantReaderImpl(buildId, buildId, buildProgressListener, parsers), ExternalSystemOutputMessageDispatcher {
   override var stdOut: Boolean = true
 
-  override fun onEvent(event: BuildEvent) = buildProgressListener.onEvent(event)
+  override fun onEvent(buildId: Any, event: BuildEvent) = buildProgressListener.onEvent(buildId, event)
 }
 
 interface ExternalSystemOutputDispatcherFactory {

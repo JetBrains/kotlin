@@ -129,12 +129,12 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
     return Collections.unmodifiableMap(myViewMap);
   }
 
-  public boolean shouldConsume(BuildEvent event) {
-    return (event.getParentId() != null && myBuildsMap.containsKey(event.getParentId())) || myBuildsMap.containsKey(event.getId());
+  public boolean shouldConsume(@NotNull Object buildId, @NotNull BuildEvent event) {
+    return myBuildsMap.containsKey(buildId);
   }
 
   @Override
-  public void onEvent(@NotNull BuildEvent event) {
+  public void onEvent(@NotNull Object buildId, @NotNull BuildEvent event) {
     List<Runnable> runOnEdt = new SmartList<>();
     AbstractViewManager.BuildInfo buildInfo;
     if (event instanceof StartBuildEvent) {
@@ -144,19 +144,13 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
       }
       buildInfo = new AbstractViewManager.BuildInfo(
         event.getId(), startBuildEvent.getBuildTitle(), startBuildEvent.getWorkingDir(), event.getEventTime());
-      myBuildsMap.put(event.getId(), buildInfo);
-    }
-    else if (event.getParentId() != null) {
-      buildInfo = myBuildsMap.get(event.getParentId());
-      if (buildInfo != null && mayHaveChildren(event)) {
-        myBuildsMap.put(event.getId(), buildInfo);
-      }
+      myBuildsMap.put(buildId, buildInfo);
     }
     else {
-      buildInfo = myBuildsMap.get(event.getId());
+      buildInfo = myBuildsMap.get(buildId);
     }
     if (buildInfo == null) {
-      LOG.warn("Build can not be found for event with id: '" + event.getId() + "' and parent event id: '" + event.getParentId() + "'");
+      LOG.warn("Build can not be found for buildId: '" + buildId + "'");
       return;
     }
 
@@ -200,7 +194,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
           }
           return buildView;
         });
-        view.onEvent(startBuildEvent);
+        view.onEvent(buildId, startBuildEvent);
 
         myContent.setPreferredFocusedComponent(view::getPreferredFocusableComponent);
 
@@ -261,7 +255,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
           buildInfo.statusMessage = event.getMessage();
         }
 
-        myViewMap.get(buildInfo).onEvent(event);
+        myViewMap.get(buildInfo).onEvent(buildId, event);
       }
     });
 
@@ -330,14 +324,6 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
         }
       });
     }
-  }
-
-  // The current dispatching of incoming build events is done based on event parent ids.
-  // It forces to put event ids into the myBuildsMap.
-  // In order to reduce memory footprint of the map we will assume that OutputBuildEvents and MessageEvents will never have children.
-  // TODO[Vlad] change event routing logic to avoid such excessive usage of event ids
-  private static boolean mayHaveChildren(BuildEvent event) {
-    return !(event instanceof OutputBuildEvent) && !(event instanceof MessageEvent);
   }
 
   private void clearOldBuilds(List<Runnable> runOnEdt, StartBuildEvent startBuildEvent) {
