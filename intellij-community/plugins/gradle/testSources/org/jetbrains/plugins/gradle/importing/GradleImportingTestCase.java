@@ -22,11 +22,13 @@ import com.intellij.testFramework.RunAll;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.lang.JavaVersion;
 import org.gradle.StartParameter;
 import org.gradle.util.GradleVersion;
 import org.gradle.wrapper.GradleWrapperMain;
 import org.gradle.wrapper.PathAssembler;
 import org.gradle.wrapper.WrapperConfiguration;
+import org.hamcrest.CustomMatcher;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +75,17 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   @Override
   public void setUp() throws Exception {
     assumeThat(gradleVersion, versionMatcherRule.getMatcher());
+    if (isGradleOlderThen_4_8()) {
+      Properties properties = System.getProperties();
+      String javaVersionString = properties.getProperty("java.runtime.version", properties.getProperty("java.version", "unknown"));
+      JavaVersion javaVersion = JavaVersion.tryParse(javaVersionString);
+      assumeThat(javaVersion.feature, new CustomMatcher<Integer>("Java version older than 9") {
+        @Override
+        public boolean matches(Object item) {
+          return item instanceof Integer && ((Integer)item).compareTo(9) < 0;
+        }
+      });
+    }
     myJdkHome = IdeaTestUtil.requireRealJdkHome();
     super.setUp();
     WriteAction.runAndWait(() -> {
