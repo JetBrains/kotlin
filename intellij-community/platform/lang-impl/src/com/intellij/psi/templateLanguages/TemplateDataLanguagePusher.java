@@ -49,11 +49,6 @@ public class TemplateDataLanguagePusher implements FilePropertyPusher<Language> 
     1
   );
 
-  @Override
-  public void initExtra(@NotNull Project project, @NotNull MessageBus bus, @NotNull Engine languageLevelUpdater) {
-
-  }
-
   @NotNull
   @Override
   public Key<Language> getFileDataKey() {
