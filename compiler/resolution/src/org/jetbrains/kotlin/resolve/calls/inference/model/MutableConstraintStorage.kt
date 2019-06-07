@@ -37,7 +37,8 @@ class MutableVariableWithConstraints(
         get() =
             mutableConstraints.filter {
                 val position = it.position.from
-                position is ArgumentConstraintPosition || position is ReceiverConstraintPosition || position is ExpectedTypeConstraintPosition
+                position is ArgumentConstraintPosition || position is ReceiverConstraintPosition ||
+                        position is ExpectedTypeConstraintPosition || position is ExplicitTypeParameterConstraintPosition
             }.map {
                 (it.type as KotlinType).unCapture().unwrap()
             }
