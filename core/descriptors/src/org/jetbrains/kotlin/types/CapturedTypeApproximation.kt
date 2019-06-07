@@ -28,12 +28,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
-class OldCaptureTypeApproximator : CapturedTypeApproximator {
-    override fun approximateCapturedTypes(typeProjection: TypeProjection?, approximateContravariant: Boolean): TypeProjection? {
-        return approximateCapturedTypesIfNecessary(typeProjection, approximateContravariant)
-    }
-}
-
 data class ApproximationBounds<out T>(
     val lower: T,
     val upper: T

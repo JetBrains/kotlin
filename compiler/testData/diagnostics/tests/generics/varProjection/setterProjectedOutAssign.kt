@@ -7,9 +7,8 @@ interface Tr<T> {
 }
 
 fun test(t: Tr<*>) {
-    <!NI;SETTER_PROJECTED_OUT!>t.v<!> = null!!
-    <!SETTER_PROJECTED_OUT!>t.v<!> = <!NI;TYPE_MISMATCH!>""<!>
-    <!SETTER_PROJECTED_OUT!>t.v<!> = <!NI;NULL_FOR_NONNULL_TYPE!>null<!>
-
+    t.v = null!!
+    <!SETTER_PROJECTED_OUT!>t.v<!> = ""
+    <!SETTER_PROJECTED_OUT!>t.v<!> = null
     t.v checkType { _<Any?>() }
 }

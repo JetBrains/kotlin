@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
@@ -25,13 +23,12 @@ import org.jetbrains.kotlin.resolve.calls.components.AdditionalDiagnosticReporte
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
-import org.jetbrains.kotlin.resolve.calls.inference.approximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
-import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateIntegerLiteralTypes
+import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -41,13 +38,14 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -295,14 +293,15 @@ class KotlinToResolvedCallTransformer(
             // todo external argument
 
             val argumentExpression = valueArgument.getArgumentExpression() ?: continue
-            updateRecordedType(argumentExpression, parameter, newContext)
+            updateRecordedType(argumentExpression, parameter, newContext, resolvedCall.isReallySuccess())
         }
     }
 
     fun updateRecordedType(
         expression: KtExpression,
         parameter: ValueParameterDescriptor?,
-        context: BasicCallResolutionContext
+        context: BasicCallResolutionContext,
+        reportErrorForTypeMismatch: Boolean
     ): KotlinType? {
         val deparenthesized = expression.let {
             KtPsiUtil.getLastElementDeparenthesized(it, context.statementFilter)
@@ -319,6 +318,9 @@ class KotlinToResolvedCallTransformer(
             updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, deparenthesized) ?: updatedType
         }
 
+
+        var reportErrorDuringTypeCheck = reportErrorForTypeMismatch
+
         if (parameter != null && ImplicitIntegerCoercion.isEnabledForParameter(parameter)) {
             val argumentCompileTimeValue = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
             if (argumentCompileTimeValue != null && argumentCompileTimeValue.parameters.isConvertableConstVal) {
@@ -327,6 +329,7 @@ class KotlinToResolvedCallTransformer(
                     updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(
                         context.trace, context.statementFilter, context.expectedType, generalNumberType, expression
                     )
+                    reportErrorDuringTypeCheck = true
                 }
 
             }
@@ -334,7 +337,7 @@ class KotlinToResolvedCallTransformer(
 
         updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context)
 
-        dataFlowAnalyzer.checkType(updatedType, deparenthesized, context, false)
+        dataFlowAnalyzer.checkType(updatedType, deparenthesized, context, reportErrorDuringTypeCheck)
 
         return updatedType
     }
@@ -687,42 +690,30 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         @Suppress("UNCHECKED_CAST")
         resultingDescriptor = run {
             val candidateDescriptor = resolvedCallAtom.candidateDescriptor
-            val containsIntegerLiteralTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains {
-                it.constructor is IntegerLiteralTypeConstructor
-            } ?: false
+            val containsCapturedTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains { it is NewCapturedType } ?: false
+            val containsIntegerLiteralTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains { it.constructor is IntegerLiteralTypeConstructor } ?: false
 
             when {
                 candidateDescriptor is FunctionDescriptor ||
-                        (candidateDescriptor is PropertyDescriptor && candidateDescriptor.typeParameters.isNotEmpty() || containsIntegerLiteralTypes) ->
+                        (candidateDescriptor is PropertyDescriptor && (candidateDescriptor.typeParameters.isNotEmpty() || containsCapturedTypes || containsIntegerLiteralTypes)) ->
                     // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
                     // but it seems like temporary solution.
-                    candidateDescriptor.substituteAndApproximateIntegerLiteralTypes(resolvedCallAtom.substitutor).let {
-                        if (substitutor != null) {
-                            it.substitute(substitutor)
-                        } else {
-                            it
-                        }
-                    }
-
+                    candidateDescriptor.substitute(resolvedCallAtom.substitutor).substituteAndApproximateCapturedTypes(
+                        substitutor ?: FreshVariableNewTypeSubstitutor.Empty
+                    )
                 else ->
                     candidateDescriptor
             }
         } as D
 
         typeArguments = resolvedCallAtom.substitutor.freshVariables.map {
-            (substitutor ?: FreshVariableNewTypeSubstitutor.Empty).safeSubstitute(it.defaultType)
+            val substituted = (substitutor ?: FreshVariableNewTypeSubstitutor.Empty).safeSubstitute(it.defaultType)
+            TypeApproximator(substituted.constructor.builtIns)
+                .approximateToSuperType(substituted, TypeApproximatorConfiguration.IntegerLiteralsTypesApproximation)
+                ?: substituted
         }
 
         calculateExpectedTypeForSamConvertedArgumentMap(substitutor)
-    }
-
-    fun approximateCapturedTypesAndHackSetters() {
-        val approximator = TypeApproximator(resultingDescriptor.builtIns)
-        resultingDescriptor = resultingDescriptor.hackSettersAccordingToCapturedOutTypes()
-        resultingDescriptor = resultingDescriptor.approximateCapturedTypes()
-        typeArguments = typeArguments.map {
-            approximator.approximateToSuperType(it, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation) ?: it
-        }
     }
 
     fun getExpectedTypeForSamConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
@@ -816,42 +807,4 @@ fun NewResolvedCallImpl<*>.hasInferredReturnType(): Boolean {
 
     val returnType = this.resultingDescriptor.returnType ?: return false
     return !returnType.contains { ErrorUtils.isUninferredParameter(it) }
-}
-
-fun ResolvedCall<*>.approximateCapturedTypesAndHackSetters() {
-    when (this) {
-        is NewResolvedCallImpl<*> -> approximateCapturedTypesAndHackSetters()
-        is NewVariableAsFunctionResolvedCallImpl -> {
-            functionCall.approximateCapturedTypesAndHackSetters()
-            variableCall.approximateCapturedTypesAndHackSetters()
-        }
-        else -> throw UnsupportedOperationException("Illegal resolved call: $this")
-    }
-}
-
-fun <D : CallableDescriptor> D.hackSettersAccordingToCapturedOutTypes(): D {
-    return when (this) {
-        is PropertyDescriptorImpl -> hackSettersAccordingToCapturedOutTypes() as D
-        else -> this
-    }
-}
-
-private fun PropertyDescriptorImpl.hackSettersAccordingToCapturedOutTypes(): PropertyDescriptor {
-    val setter = setter ?: return this
-    val valueParameter = setter.valueParameters.first()
-    val inputType = valueParameter.type
-    val approximatedType = TypeApproximator(builtIns).approximateToSubType(
-        inputType.unwrap(),
-        TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
-    ) ?: return this
-
-    val newProperty = newCopyBuilder().setOriginal(original).build() as PropertyDescriptorImpl
-
-    val newSetter = with(setter) {
-        PropertySetterDescriptorImpl(newProperty, annotations, modality, visibility, isDefault, isExternal, isInline, kind, original, source)
-    }
-    newSetter.initialize(PropertySetterDescriptorImpl.createSetterParameter(newSetter, approximatedType, setter.annotations))
-    newProperty.initialize(getter, newSetter, backingField, delegateField)
-    newProperty.isSetterProjectedOut = true
-    return newProperty
 }

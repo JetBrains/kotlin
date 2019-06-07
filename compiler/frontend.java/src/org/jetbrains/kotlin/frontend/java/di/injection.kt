@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
 
 private fun StorageComponentContainer.configureJavaTopDownAnalysis(
         moduleContentScope: GlobalSearchScope,
@@ -126,7 +125,6 @@ fun createContainerForLazyResolveWithJava(
     targetEnvironment.configure(this)
 
     useImpl<ContractDeserializerImpl>()
-    useImpl<SubstitutingScopeProviderImpl>()
     useImpl<FilesByFacadeFqNameIndexer>()
 }.apply {
     get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())

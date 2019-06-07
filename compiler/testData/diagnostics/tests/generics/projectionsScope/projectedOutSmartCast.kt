@@ -9,7 +9,7 @@ fun foo(x: Any?, y: C<*>) {
     y.<!OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
 
     if (x is C<*>) {
-        <!OI;DEBUG_INFO_SMARTCAST!>x<!>.<!OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.<!OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
         with(<!DEBUG_INFO_SMARTCAST!>x<!>) {
             <!OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
         }
@@ -17,7 +17,7 @@ fun foo(x: Any?, y: C<*>) {
 
     with(x) {
         if (this is C<*>) {
-            <!OI;DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST, OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST, OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
         }
     }
 }
