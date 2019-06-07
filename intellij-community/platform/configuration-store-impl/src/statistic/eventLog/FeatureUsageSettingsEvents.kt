@@ -5,10 +5,10 @@ import com.intellij.configurationStore.jdomSerializer
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
 import com.intellij.internal.statistic.utils.getProjectId
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.util.concurrency.NonUrgentExecutor
 import com.intellij.util.xmlb.BeanBinding
 import org.jdom.Element
 import java.util.*
@@ -21,7 +21,7 @@ object FeatureUsageSettingsEvents {
 
   fun logDefaultConfigurationState(componentName: String, stateSpec: State, clazz: Class<*>, project: Project?) {
     if (stateSpec.reportStatistic && FeatureUsageLogger.isEnabled()) {
-      ApplicationManager.getApplication().executeOnPooledThread {
+      NonUrgentExecutor.getInstance().execute {
         printer.logDefaultConfigurationState(componentName, clazz, project)
       }
     }
@@ -29,7 +29,7 @@ object FeatureUsageSettingsEvents {
 
   fun logConfigurationState(componentName: String, stateSpec: State, state: Any, project: Project?) {
     if (stateSpec.reportStatistic && FeatureUsageLogger.isEnabled()) {
-      ApplicationManager.getApplication().executeOnPooledThread {
+      NonUrgentExecutor.getInstance().execute {
         printer.logConfigurationState(componentName, state, project)
       }
     }
