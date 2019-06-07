@@ -51,16 +51,16 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
 
                 val actionShouldBeAvailable = actionHint.shouldPresent()
 
-                if (actionFile is KtFile) {
-                    DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
-                }
-
                 expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ") ?: ""
 
                 AbstractQuickFixMultiFileTest.doAction(
                     text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
                     InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
                 )
+
+                if (actionFile is KtFile) {
+                    DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
+                }
 
                 if (actionShouldBeAvailable) {
                     compareToExpected()
