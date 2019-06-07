@@ -619,7 +619,11 @@ fun Copy.applyCidrVersionRestrictions(
         productVersion.substringBefore('.') + ".*"
 
     val javaPluginDependency = if (useJavaPlugin)
-        "<depends>com.intellij.java</depends>"
+        """
+        |
+        |  <depends>com.intellij.java</depends>
+        |  <xi:include href="/META-INF/JavaForCIDRActionPatcher.xml" xpointer="xpointer(/idea-plugin/*)"/>
+        """.trimMargin().trimStart()
     else
         """
         |  <xi:include href="/META-INF/JavaAnalysisPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
