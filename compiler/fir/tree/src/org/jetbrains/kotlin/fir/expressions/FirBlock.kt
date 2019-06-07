@@ -17,7 +17,6 @@ interface FirBlock : FirExpression {
         for (statement in statements) {
             statement.accept(visitor, data)
         }
-        typeRef.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
 }
