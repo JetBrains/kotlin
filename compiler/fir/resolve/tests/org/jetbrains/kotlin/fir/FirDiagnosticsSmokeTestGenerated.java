@@ -17900,6 +17900,26 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt10640.kt");
             }
 
+            @TestMetadata("kt31670.kt")
+            public void testKt31670() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31670.kt");
+            }
+
+            @TestMetadata("kt31670_compat.kt")
+            public void testKt31670_compat() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31670_compat.kt");
+            }
+
+            @TestMetadata("kt31758.kt")
+            public void testKt31758() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31758.kt");
+            }
+
+            @TestMetadata("kt31758_compat.kt")
+            public void testKt31758_compat() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31758_compat.kt");
+            }
+
             @TestMetadata("numberOfDefaults.kt")
             public void testNumberOfDefaults() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/numberOfDefaults.kt");
@@ -17908,6 +17928,16 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             @TestMetadata("originalExamples.kt")
             public void testOriginalExamples() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/originalExamples.kt");
+            }
+
+            @TestMetadata("overloadResolutionOnNullableContravariantParameter.kt")
+            public void testOverloadResolutionOnNullableContravariantParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/overloadResolutionOnNullableContravariantParameter.kt");
+            }
+
+            @TestMetadata("overloadResolutionOnNullableContravariantParameter_compat.kt")
+            public void testOverloadResolutionOnNullableContravariantParameter_compat() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/overloadResolutionOnNullableContravariantParameter_compat.kt");
             }
 
             @TestMetadata("varargWithMoreSpecificSignature.kt")
