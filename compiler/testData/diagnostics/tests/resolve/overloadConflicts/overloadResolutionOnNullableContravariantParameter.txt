@@ -1,0 +1,11 @@
+package
+
+public fun main(): kotlin.Unit
+
+package a {
+    public fun </*0*/ T> foo(/*0*/ block: (T?) -> kotlin.Unit): kotlin.Unit
+}
+
+package b {
+    public fun </*0*/ K> foo(/*0*/ block: (K) -> kotlin.Unit): kotlin.Unit
+}
