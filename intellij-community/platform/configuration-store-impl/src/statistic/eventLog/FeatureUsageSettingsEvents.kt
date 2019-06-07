@@ -6,17 +6,19 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
 import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.internal.statistic.utils.getProjectId
+import com.intellij.openapi.components.ReportValue
 import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.NonUrgentExecutor
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.serialization.MutableAccessor
 import com.intellij.util.xmlb.BeanBinding
 import org.jdom.Element
 import java.util.*
 
 private val LOG = Logger.getInstance("com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter")
-private val GROUP = EventLogGroup("settings", 3)
+private val GROUP = EventLogGroup("settings", 4)
 
 private val recordedComponents: MutableSet<String> = ContainerUtil.newConcurrentSet()
 private val recordedOptionNames: MutableSet<String> = ContainerUtil.newConcurrentSet()
@@ -91,25 +93,47 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
     for (accessor in accessors) {
       val type = accessor.genericType
       if (type === Boolean::class.javaPrimitiveType) {
-        val value = accessor.readUnsafe(state)
-        val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
-        if (!isDefault || recordDefault) {
-          recordedOptionNames.add(accessor.name)
-          val content = HashMap<String, Any>()
-          content["component"] = componentName
-          content["name"] = accessor.name
-          content["value"] = value
-          if (recordDefault) {
-            content["default"] = isDefault
-          }
-          addProjectOptions(content, isDefaultProject, hash)
-          logConfig(GROUP, eventId, content)
-        }
+        logConfigValue(accessor, state, "bool", eventId, isDefaultProject, true, hash, componentName)
+      }
+      else if (type === Int::class.javaPrimitiveType || type === Long::class.javaPrimitiveType) {
+        val reportValue = accessor.getAnnotation(ReportValue::class.java) != null
+        logConfigValue(accessor, state, "int", eventId, isDefaultProject, reportValue, hash, componentName)
+      }
+      else if (type === Float::class.javaPrimitiveType || type === Double::class.javaPrimitiveType) {
+        val reportValue = accessor.getAnnotation(ReportValue::class.java) != null
+        logConfigValue(accessor, state, "float", eventId, isDefaultProject, reportValue, hash, componentName)
       }
     }
 
     if (!recordDefault) {
       logSettingCollectorWasInvoked(componentName, isDefaultProject, hash)
+    }
+  }
+
+  private fun logConfigValue(accessor: MutableAccessor,
+                             state: Any,
+                             type: String,
+                             eventId: String,
+                             isDefaultProject: Boolean,
+                             reportValue: Boolean,
+                             hash: String?,
+                             componentName: String) {
+    val value = accessor.readUnsafe(state)
+    val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
+    if (!isDefault || recordDefault) {
+      recordedOptionNames.add(accessor.name)
+      val content = HashMap<String, Any>()
+      content["type"] = type
+      content["component"] = componentName
+      content["name"] = accessor.name
+      if (reportValue) {
+        content["value"] = value
+      }
+      if (recordDefault) {
+        content["default"] = isDefault
+      }
+      addProjectOptions(content, isDefaultProject, hash)
+      logConfig(GROUP, eventId, content)
     }
   }
 
