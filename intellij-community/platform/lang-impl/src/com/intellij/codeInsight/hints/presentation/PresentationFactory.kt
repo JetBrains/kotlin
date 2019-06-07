@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.ui.LightweightHint
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.Contract
 import java.awt.*
 import java.awt.event.MouseEvent
 import java.awt.font.FontRenderContext
@@ -33,6 +34,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   /**
    * Smaller text, than editor, required to be wrapped with [roundWithBackground]
    */
+  @Contract(pure = true)
   fun smallText(text: String): InlayPresentation {
     val fontData = getFontData(editor)
     val plainFont = fontData.font
@@ -52,6 +54,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   /**
    * Text, that is not expected to be drawn with rounding, the same font size as in editor.
    */
+  @Contract(pure = true)
   fun text(text: String): InlayPresentation {
     val font = editor.colorsScheme.getFont(EditorFontType.PLAIN)
     val width = editor.contentComponent.getFontMetrics(font).stringWidth(text)
@@ -67,6 +70,7 @@ class PresentationFactory(private val editor: EditorImpl) {
    * Adds inlay background and rounding with insets.
    * Intended to be used with [smallText]
    */
+  @Contract(pure = true)
   fun roundWithBackground(base: InlayPresentation): InlayPresentation {
     val rounding = rounding(8, 8, withInlayAttributes(BackgroundPresentation(
       InsetPresentation(
@@ -81,13 +85,16 @@ class PresentationFactory(private val editor: EditorImpl) {
     return InsetPresentation(rounding, top = offsetFromTop)
   }
 
+  @Contract(pure = true)
   fun icon(icon: Icon): IconPresentation = IconPresentation(icon, editor.component)
 
+  @Contract(pure = true)
   fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
     tooltip.isEmpty() -> base
     else -> onHover(base, tooltipHandler(tooltip))
   }
 
+  @Contract(pure = true)
   fun folding(placeholder: InlayPresentation, unwrapAction: () -> InlayPresentation): InlayPresentation {
     return ChangeOnClickPresentation(changeOnHover(placeholder, onHover = {
       attributes(placeholder) {
@@ -100,6 +107,7 @@ class PresentationFactory(private val editor: EditorImpl) {
    * Creates node, that can be collapsed/expanded by clicking on prefix/suffix.
    * If presentation is collapsed, clicking to content will expand it.
    */
+  @Contract(pure = true)
   fun collapsible(
     prefix: InlayPresentation,
     collapsed: InlayPresentation,
@@ -128,11 +136,13 @@ class PresentationFactory(private val editor: EditorImpl) {
     return seq(prefixExposed, content, suffixExposed)
   }
 
+  @Contract(pure = true)
   fun matchingBraces(left: InlayPresentation, right: InlayPresentation) : Pair<InlayPresentation, InlayPresentation> {
     val (leftMatching, rightMatching) = matching(listOf(left, right))
     return leftMatching to rightMatching
   }
 
+  @Contract(pure = true)
   fun matching(presentations: List<InlayPresentation>) : List<InlayPresentation> {
     return synchronousOnHover(presentations) { presentation ->
       attributes(presentation) { base ->
@@ -145,6 +155,7 @@ class PresentationFactory(private val editor: EditorImpl) {
    * On hover of any of [presentations] changes all the presentations with a given decorator.
    * This presentation is stateless.
    */
+  @Contract(pure = true)
   fun synchronousOnHover(presentations: List<InlayPresentation>, decorator: (InlayPresentation) -> InlayPresentation) : List<InlayPresentation> {
     val forwardings = presentations.map { DynamicDelegatePresentation(it) }
     return forwardings.map {
@@ -165,6 +176,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   /**
    * @see OnHoverPresentation
    */
+  @Contract(pure = true)
   fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit): InlayPresentation {
     return OnHoverPresentation(base, onHover)
   }
@@ -172,6 +184,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   /**
    * @see OnClickPresentation
    */
+  @Contract(pure = true)
   fun onClick(base: InlayPresentation, button: MouseButton, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
     return OnClickPresentation(base) { e, p ->
       if (button == e.mouseButton) {
@@ -183,6 +196,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   /**
    * @see OnClickPresentation
    */
+  @Contract(pure = true)
   fun onClick(base: InlayPresentation, buttons: EnumSet<MouseButton>, onClick: (MouseEvent, Point) -> Unit): InlayPresentation {
     return OnClickPresentation(base) { e, p ->
       if (e.mouseButton in buttons) {
@@ -194,12 +208,14 @@ class PresentationFactory(private val editor: EditorImpl) {
   /**
    * @see ChangeOnHoverPresentation
    */
+  @Contract(pure = true)
   fun changeOnHover(
     default: InlayPresentation,
     onHover: () -> InlayPresentation,
     onHoverPredicate: (MouseEvent) -> Boolean = { true }
   ): InlayPresentation = ChangeOnHoverPresentation(default, onHover, onHoverPredicate)
 
+  @Contract(pure = true)
   fun reference(base: InlayPresentation, onClickAction: () -> Unit): InlayPresentation {
     val noHighlightReference = onClick(base, MouseButton.Middle) { _, _ ->
       onClickAction()
@@ -216,10 +232,12 @@ class PresentationFactory(private val editor: EditorImpl) {
     }) { isControlDown(it) }
   }
 
+  @Contract(pure = true)
   fun psiSingleReference(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
     return reference(base) { navigateInternal(resolve) }
   }
 
+  @Contract(pure = true)
   fun seq(vararg presentations: InlayPresentation): InlayPresentation {
     return when (presentations.size) {
       0 -> SpacePresentation(0, 0)
@@ -228,6 +246,7 @@ class PresentationFactory(private val editor: EditorImpl) {
     }
   }
 
+  @Contract(pure = true)
   fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
     RoundPresentation(presentation, arcWidth, arcHeight)
 
