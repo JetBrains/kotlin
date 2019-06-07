@@ -13,3 +13,12 @@ public final class InlinedDelegate /* InlinedDelegate*/<T>  {
   public final T getNode();
 
 }
+
+public final class InlineInheritance /* InlineInheritance*/ {
+  public final int getV();
+
+  public int getX();
+
+  public int y();
+
+}

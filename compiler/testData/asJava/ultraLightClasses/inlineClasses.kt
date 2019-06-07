@@ -18,3 +18,11 @@ inline class InlinedDelegate<T>(var node: T) {
         return node
     }
 }
+
+inline class InlineInheritance(val v: Int) : I {
+    override fun y() = 4
+
+    override val x get() = 5
+
+    fun z() = 7
+}

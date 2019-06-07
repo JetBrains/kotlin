@@ -11,7 +11,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 
 class KtUltraLightInlineClass(
     classOrObject: KtClassOrObject,
@@ -23,29 +26,50 @@ class KtUltraLightInlineClass(
 
     override fun getScope(): PsiElement? = parent
 
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
-
-        val inlineClassParameter = classOrObject
-            .primaryConstructor
-            ?.valueParameters
-            ?.firstOrNull()
-            ?: return@lazyPub emptyList()
-
-
+    private val membersBuilder: UltraLightMembersCreator by lazyPub {
         UltraLightMembersCreator(
             containingClass = this,
             containingClassIsNamedObject = false,
             containingClassIsSealed = false,
             mangleInternalFunctions = false,
             support = support
-        ).run {
-            propertyAccessors(
+        )
+    }
+
+    private val _ownMethods: List<KtLightMethod> by lazyPub {
+
+        val result = arrayListOf<KtLightMethod>()
+
+        val applicableDeclarations = this.classOrObject.declarations
+            .filter { it.hasModifier(KtTokens.OVERRIDE_KEYWORD) }
+            .filterNot { it.isHiddenByDeprecation(support) }
+
+        for (declaration in applicableDeclarations) {
+            when (declaration) {
+                is KtNamedFunction -> result.addAll(membersBuilder.createMethods(declaration, forceStatic = false))
+                is KtProperty -> result.addAll(
+                    membersBuilder.propertyAccessors(declaration, declaration.isVar, forceStatic = false, onlyJvmStatic = false)
+                )
+            }
+        }
+
+        val inlineClassParameter = classOrObject
+            .primaryConstructor
+            ?.valueParameters
+            ?.firstOrNull()
+
+        if (inlineClassParameter !== null) {
+            membersBuilder.propertyAccessors(
                 inlineClassParameter,
                 mutable = false,
                 forceStatic = false,
                 onlyJvmStatic = false
-            )
+            ).let {
+                result.addAll(it)
+            }
         }
+
+        result;
     }
 
     override fun getOwnFields(): List<KtLightField> = emptyList()
