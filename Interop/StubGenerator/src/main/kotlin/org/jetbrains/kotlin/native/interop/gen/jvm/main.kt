@@ -202,9 +202,8 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     val excludedMacros = def.config.excludedMacros.toSet()
     val staticLibraries = def.config.staticLibraries + argParser.getValuesAsArray("staticLibrary")
     val libraryPaths = def.config.libraryPaths + argParser.getValuesAsArray("libraryPath")
-    val fqParts = (argParser.get<String>("pkg") ?: def.config.packageName)?.let {
-        it.split('.')
-    } ?: defFile!!.name.split('.').reversed().drop(1)
+    val fqParts = (argParser.get<String>("pkg") ?: def.config.packageName)?.split('.')
+            ?: defFile!!.name.split('.').reversed().drop(1)
 
     val outKtFileName = fqParts.last() + ".kt"
 
@@ -235,18 +234,14 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             target = tool.target
     )
 
-    val gen = StubGenerator(nativeIndex, configuration, libName, verbose, flavor, imports)
-
     outKtFile.parentFile.mkdirs()
 
     File(nativeLibsDir).mkdirs()
     val outCFile = tempFiles.create(libName, ".${language.sourceFileExtension}")
 
-    outKtFile.bufferedWriter().use { ktFile ->
-        File(outCFile.absolutePath).bufferedWriter().use { cFile ->
-            gen.generateFiles(ktFile = ktFile, cFile = cFile, entryPoint = entryPoint)
-        }
-    }
+    val stubIrContext = StubIrContext(configuration, nativeIndex, imports, flavor, libName)
+    val stubIrDriver = StubIrDriver(stubIrContext, verbose)
+    stubIrDriver.run(outKtFile, File(outCFile.absolutePath), entryPoint)
 
     // TODO: if a library has partially included headers, then it shouldn't be used as a dependency.
     def.manifestAddendProperties["includedHeaders"] = nativeIndex.includedHeaders.joinToString(" ") { it.value }
@@ -258,7 +253,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
     def.manifestAddendProperties["interop"] = "true"
 
-    gen.addManifestProperties(def.manifestAddendProperties)
+    stubIrContext.addManifestProperties(def.manifestAddendProperties)
 
     manifestAddend?.parentFile?.mkdirs()
     manifestAddend?.let { def.manifestAddendProperties.storeProperties(it) }
@@ -267,7 +262,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
         val outOFile = tempFiles.create(libName,".o")
 
-        val compilerCmd = arrayOf(compiler, *gen.libraryForCStubs.compilerArgs.toTypedArray(),
+        val compilerCmd = arrayOf(compiler, *stubIrContext.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
 
         runCmd(compilerCmd, verbose)
@@ -282,7 +277,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     } else if (flavor == KotlinPlatform.NATIVE) {
         val outBcName = libName + ".bc"
         val outLib = File(nativeLibsDir, outBcName)
-        val compilerCmd = arrayOf(compiler, *gen.libraryForCStubs.compilerArgs.toTypedArray(),
+        val compilerCmd = arrayOf(compiler, *stubIrContext.libraryForCStubs.compilerArgs.toTypedArray(),
                 "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
 
         runCmd(compilerCmd, verbose)

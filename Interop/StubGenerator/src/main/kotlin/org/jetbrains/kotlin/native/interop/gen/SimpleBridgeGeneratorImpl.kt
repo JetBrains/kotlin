@@ -234,7 +234,6 @@ class SimpleBridgeGeneratorImpl(
         }
 
         // TODO: exclude unused bridges.
-
         return object : NativeBridges {
 
             override val kotlinLines: Sequence<String>

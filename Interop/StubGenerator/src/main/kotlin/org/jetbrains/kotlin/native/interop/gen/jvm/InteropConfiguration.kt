@@ -34,3 +34,8 @@ class InteropConfiguration(
         val disableDesignatedInitializerChecks: Boolean,
         val target: KonanTarget
 )
+
+enum class KotlinPlatform {
+    JVM,
+    NATIVE
+}

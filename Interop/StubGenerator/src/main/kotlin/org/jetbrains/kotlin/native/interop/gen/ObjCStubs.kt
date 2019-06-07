@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.native.interop.gen.jvm.StubGenerator
 import org.jetbrains.kotlin.native.interop.indexer.*
 
-private fun ObjCMethod.getKotlinParameterNames(forConstructorOrFactory: Boolean = false): List<String> {
+internal fun ObjCMethod.getKotlinParameterNames(forConstructorOrFactory: Boolean = false): List<String> {
     val selectorParts = this.selector.split(":")
 
     val result = mutableListOf<String>()
@@ -66,194 +65,168 @@ private fun ObjCMethod.getFirstKotlinParameterNameCandidate(forConstructorOrFact
 }
 
 private fun ObjCMethod.getKotlinParameters(
-        stubGenerator: StubGenerator,
+        stubIrBuilder: StubsBuildingContext,
         forConstructorOrFactory: Boolean
-): List<KotlinParameter> {
+): List<FunctionParameterStub> {
     val names = getKotlinParameterNames(forConstructorOrFactory) // TODO: consider refactoring.
-    val result = mutableListOf<KotlinParameter>()
+    val result = mutableListOf<FunctionParameterStub>()
 
     this.parameters.mapIndexedTo(result) { index, it ->
-        val kotlinType = stubGenerator.mirror(it.type).argType
+        val kotlinType = stubIrBuilder.mirror(it.type).argType
         val name = names[index]
-        val annotations = if (it.nsConsumed) listOf("@CCall.Consumed") else emptyList()
-        KotlinParameter(name, kotlinType, isVararg = false, annotations = annotations)
+        val annotations = if (it.nsConsumed) listOf(AnnotationStub.ObjC.Consumed) else emptyList()
+        FunctionParameterStub(name, WrapperStubType(kotlinType), isVararg = false, annotations = annotations)
     }
-
     if (this.isVariadic) {
-        result += KotlinParameter(
+        result += FunctionParameterStub(
                 names.last(),
-                KotlinTypes.any.makeNullable(),
+                WrapperStubType(KotlinTypes.any.makeNullable()),
                 isVararg = true,
                 annotations = emptyList()
         )
     }
-
     return result
 }
 
-class ObjCMethodStub(private val stubGenerator: StubGenerator,
-                     val method: ObjCMethod,
-                     private val container: ObjCContainer,
-                     private val isDesignatedInitializer: Boolean) : KotlinStub, NativeBacked {
-
-    override fun generate(context: StubGenerationContext): Sequence<String> =
-            if (context.nativeBridges.isSupported(this)) {
-                val result = mutableListOf<String>()
-                result.addAll(objCMethodAnnotations)
-                result.add(header)
-
-                if (method.isInit) {
-                    // TODO: generate only constructor/factory in this case.
-                    val kotlinScope = stubGenerator.kotlinFile
-
-                    val parameters = method.getKotlinParameters(stubGenerator, forConstructorOrFactory = true)
-                            .renderParameters(kotlinScope)
-
-                    when (container) {
-                        is ObjCClass -> {
-                            result.add(0,
-                                    deprecatedInit(
-                                            container.kotlinClassName(method.isClass),
-                                            kotlinMethodParameters.map { it.name },
-                                            factory = false
-                                    )
-                            )
-
-                            // TODO: consider generating non-designated initializers as factories.
-                            val designated = isDesignatedInitializer ||
-                                    stubGenerator.configuration.disableDesignatedInitializerChecks
-
-                            result.add("")
-                            result.add("@ObjCConstructor(${method.selector.quoteAsKotlinLiteral()}, $designated)")
-                            result.add("constructor($parameters) {}")
-                        }
-                        is ObjCCategory -> {
-                            assert(!method.isClass)
-
-                            val className = stubGenerator.declarationMapper
-                                    .getKotlinClassFor(container.clazz, isMeta = false).type
-                                    .render(kotlinScope)
-
-                            result.add(0,
-                                    deprecatedInit(
-                                            className,
-                                            kotlinMethodParameters.map { it.name },
-                                            factory = true
-                                    )
-                            )
-
-                            // TODO: add support for type parameters to [KotlinType] etc.
-                            val receiver = kotlinScope.reference(KotlinTypes.objCClassOf) + "<T>"
-
-                            val originalReturnType = method.getReturnType(container.clazz)
-                            val returnType = if (originalReturnType is ObjCPointer) {
-                                if (originalReturnType.isNullable) "T?" else "T"
-                            } else {
-                                // This shouldn't happen actually.
-                                this.kotlinReturnType
-                            }
-
-                            result.add("")
-                            result.addAll(buildObjCMethodAnnotations("@ObjCFactory"))
-                            result.add("external fun <T : $className> $receiver.create($parameters): $returnType")
-                        }
-                        is ObjCProtocol -> {} // Nothing to do.
-                    }
-                }
-
-                result.asSequence()
-            } else {
-                sequenceOf(
-                        annotationForUnableToImport,
-                        header
-                )
-            }
-
-    private val kotlinMethodParameters: List<KotlinParameter>
-    private val kotlinReturnType: String
-    private val header: String
-    internal val objCMethodAnnotations: List<String>
+private class ObjCMethodStubBuilder(
+        private val method: ObjCMethod,
+        private val container: ObjCContainer,
+        private val isDesignatedInitializer: Boolean,
+        override val context: StubsBuildingContext
+) : StubElementBuilder {
     private val isStret: Boolean
+    private val stubReturnType: StubType
+    val annotations = mutableListOf<AnnotationStub>()
+    private val kotlinMethodParameters: List<FunctionParameterStub>
+    private val external: Boolean
+    private val receiver: ReceiverParameterStub?
+    private val name: String = method.kotlinName
+    private val origin = StubOrigin.ObjCMethod(method, container)
+    private val modality: MemberStubModality
 
     init {
-        kotlinMethodParameters = method.getKotlinParameters(stubGenerator, forConstructorOrFactory = false)
-
         val returnType = method.getReturnType(container.classOrProtocol)
-
-        isStret = returnType.isStret(stubGenerator.configuration.target)
-
-        this.kotlinReturnType = if (returnType.unwrapTypedefs() is VoidType) {
-            KotlinTypes.unit
+        isStret = returnType.isStret(context.configuration.target)
+        stubReturnType = if (returnType.unwrapTypedefs() is VoidType) {
+            WrapperStubType(KotlinTypes.unit)
         } else {
-            stubGenerator.mirror(returnType).argType
-        }.render(stubGenerator.kotlinFile)
-
-        objCMethodAnnotations = buildObjCMethodAnnotations("@ObjCMethod")
-
-        val joinedKotlinParameters = kotlinMethodParameters.renderParameters(stubGenerator.kotlinFile)
-
-        this.header = buildString {
-            if (container !is ObjCProtocol) append("external ")
-            val modality = when (container) {
-                is ObjCClassOrProtocol -> if (method.isOverride(container)) {
-                    "override "
-                } else when (container) {
-                    is ObjCClass -> "open "
-                    is ObjCProtocol -> ""
-                }
-                is ObjCCategory -> ""
-            }
-            append(modality)
-
-            append("fun ")
-            if (container is ObjCCategory) {
-                val receiverType = stubGenerator.declarationMapper
-                        .getKotlinClassFor(container.clazz, isMeta = method.isClass).type
-                        .render(stubGenerator.kotlinFile)
-
-                append(receiverType)
-                append('.')
-            }
-            append("${method.kotlinName.asSimpleName()}($joinedKotlinParameters): $kotlinReturnType")
-
-            if (container is ObjCProtocol && method.isOptional) append(" = optional()")
+            WrapperStubType(context.mirror(returnType).argType)
         }
+        val methodAnnotation = AnnotationStub.ObjC.Method(
+                method.selector,
+                method.encoding,
+                isStret
+        )
+        annotations += buildObjCMethodAnnotations(methodAnnotation)
+        kotlinMethodParameters = method.getKotlinParameters(context, forConstructorOrFactory = false)
+        external = (container !is ObjCProtocol)
+        modality = when (container) {
+            is ObjCClassOrProtocol -> {
+                if (method.isOverride(container)) {
+                    MemberStubModality.OVERRIDE
+                } else when (container) {
+                    is ObjCClass -> MemberStubModality.OPEN
+                    is ObjCProtocol -> MemberStubModality.OPEN
+                }
+            }
+            is ObjCCategory -> MemberStubModality.FINAL
+        }
+        receiver = if (container is ObjCCategory) {
+            val receiverType = ClassifierStubType(context.getKotlinClassFor(container.clazz, isMeta = method.isClass))
+            ReceiverParameterStub(receiverType)
+        } else null
     }
 
-    private fun buildObjCMethodAnnotations(main: String) = listOfNotNull(
-            buildObjCMethodAnnotation(main),
-            "@CCall.ConsumesReceiver".takeIf { method.nsConsumesSelf },
-            "@CCall.ReturnsRetained".takeIf { method.nsReturnsRetained }
+    private fun buildObjCMethodAnnotations(main: AnnotationStub): List<AnnotationStub> = listOfNotNull(
+            main,
+            AnnotationStub.ObjC.ConsumesReceiver.takeIf { method.nsConsumesSelf },
+            AnnotationStub.ObjC.ReturnsRetained.takeIf { method.nsReturnsRetained }
     )
 
-    private fun buildObjCMethodAnnotation(annotation: String) = buildString {
-        append(annotation)
-        append('(')
-        append(method.selector.quoteAsKotlinLiteral())
-        append(", ")
-        append(method.encoding.quoteAsKotlinLiteral())
-        if (isStret) {
-            append(", ")
-            append("true")
+    fun isDefaultConstructor(): Boolean =
+            method.isInit && method.parameters.isEmpty()
+
+    override fun build(): List<FunctionalStub> {
+        val replacement = if (method.isInit) {
+            val parameters = method.getKotlinParameters(context, forConstructorOrFactory = true)
+            when (container) {
+                is ObjCClass -> {
+                    annotations.add(0, deprecatedInit(
+                            container.kotlinClassName(method.isClass),
+                            kotlinMethodParameters.map { it.name },
+                            factory = false
+                    ))
+                    val designated = isDesignatedInitializer ||
+                            context.configuration.disableDesignatedInitializerChecks
+
+                    val annotations = listOf(AnnotationStub.ObjC.Constructor(method.selector, designated))
+                    val constructor = ConstructorStub(parameters, annotations)
+                    constructor
+                }
+                is ObjCCategory -> {
+                    assert(!method.isClass)
+
+
+                    val clazz = context.getKotlinClassFor(container.clazz, isMeta = false).type
+
+                    annotations.add(0, deprecatedInit(
+                            clazz.classifier.relativeFqName,
+                            kotlinMethodParameters.map { it.name },
+                            factory = true
+                    ))
+
+                    val factoryAnnotation = AnnotationStub.ObjC.Factory(
+                            method.selector,
+                            method.encoding,
+                            isStret
+                    )
+                    val annotations = buildObjCMethodAnnotations(factoryAnnotation)
+
+                    val originalReturnType = method.getReturnType(container.clazz)
+                    val typeParameter = TypeParameterStub("T", WrapperStubType(clazz))
+                    val returnType = if (originalReturnType is ObjCPointer) {
+                        typeParameter.getStubType(originalReturnType.isNullable)
+                    } else {
+                        // This shouldn't happen actually.
+                        this.stubReturnType
+                    }
+                    val typeArgument = TypeArgumentStub(typeParameter.getStubType(false))
+                    val receiverType = ClassifierStubType(KotlinTypes.objCClassOf, listOf(typeArgument))
+                    val receiver = ReceiverParameterStub(receiverType)
+                    val createMethod = FunctionStub(
+                            "create",
+                            returnType,
+                            parameters,
+                            receiver = receiver,
+                            typeParameters = listOf(typeParameter),
+                            external = true,
+                            origin = StubOrigin.None,
+                            annotations = annotations,
+                            modality = MemberStubModality.FINAL
+                    )
+                    createMethod
+                }
+                is ObjCProtocol -> null
+            }
+        } else {
+            null
         }
-        append(')')
+        return listOfNotNull(
+                FunctionStub(
+                        name,
+                        stubReturnType,
+                        kotlinMethodParameters.toList(),
+                        origin,
+                        annotations.toList(),
+                        external,
+                        receiver,
+                        modality),
+                replacement
+        )
     }
 }
 
-private fun deprecatedInit(className: String, initParameterNames: List<String>, factory: Boolean): String {
-    val replacement = if (factory) "$className.create" else className
-    val replacementKind = if (factory) "factory method" else "constructor"
-    val replaceWith = "$replacement(${initParameterNames.joinToString { it.asSimpleName() }})"
-
-    return deprecated("Use $replacementKind instead", replaceWith)
-}
-
-private fun deprecated(message: String, replaceWith: String): String =
-        "@Deprecated(${message.quoteAsKotlinLiteral()}, " +
-                "ReplaceWith(${replaceWith.quoteAsKotlinLiteral()}), " +
-                "DeprecationLevel.ERROR)"
-
-private val ObjCContainer.classOrProtocol: ObjCClassOrProtocol
+internal val ObjCContainer.classOrProtocol: ObjCClassOrProtocol
     get() = when (this) {
         is ObjCClassOrProtocol -> this
         is ObjCCategory -> this.clazz
@@ -265,7 +238,7 @@ private val ObjCContainer.classOrProtocol: ObjCClassOrProtocol
  *
  * The entire implementation is just the real ABI approximation which is enough for practical cases.
  */
-private fun Type.isStret(target: KonanTarget): Boolean {
+internal fun Type.isStret(target: KonanTarget): Boolean {
     val unwrappedType = this.unwrapTypedefs()
     return when (target) {
         KonanTarget.IOS_ARM64 ->
@@ -284,6 +257,13 @@ private fun Type.isStret(target: KonanTarget): Boolean {
 
         else -> error(target)
     }
+}
+
+private fun deprecatedInit(className: String, initParameterNames: List<String>, factory: Boolean): AnnotationStub {
+    val replacement = if (factory) "$className.create" else className
+    val replacementKind = if (factory) "factory method" else "constructor"
+    val replaceWith = "$replacement(${initParameterNames.joinToString { it.asSimpleName() }})"
+    return AnnotationStub.Deprecated("Use $replacementKind instead", replaceWith)
 }
 
 private fun Type.isIntegerLikeType(): Boolean = when (this) {
@@ -325,7 +305,7 @@ private fun Type.hasUnalignedMembers(): Boolean = when (this) {
 // TODO: should the recursive checks be made in indexer when computing `hasUnalignedFields`?
 }
 
-private val ObjCMethod.kotlinName: String
+internal val ObjCMethod.kotlinName: String
     get() {
         val candidate = selector.split(":").first()
         val trimmed = candidate.trimEnd('_')
@@ -337,10 +317,10 @@ private val ObjCMethod.kotlinName: String
         }
     }
 
-private val ObjCClassOrProtocol.protocolsWithSupers: Sequence<ObjCProtocol>
+internal val ObjCClassOrProtocol.protocolsWithSupers: Sequence<ObjCProtocol>
     get() = this.protocols.asSequence().flatMap { sequenceOf(it) + it.protocolsWithSupers }
 
-private val ObjCClassOrProtocol.immediateSuperTypes: Sequence<ObjCClassOrProtocol>
+internal val ObjCClassOrProtocol.immediateSuperTypes: Sequence<ObjCClassOrProtocol>
     get() {
         val baseClass = (this as? ObjCClass)?.baseClass
         if (baseClass != null) {
@@ -350,28 +330,28 @@ private val ObjCClassOrProtocol.immediateSuperTypes: Sequence<ObjCClassOrProtoco
         return this.protocols.asSequence()
     }
 
-private val ObjCClassOrProtocol.selfAndSuperTypes: Sequence<ObjCClassOrProtocol>
+internal val ObjCClassOrProtocol.selfAndSuperTypes: Sequence<ObjCClassOrProtocol>
     get() = sequenceOf(this) + this.superTypes
 
-private val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
+internal val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
     get() = this.immediateSuperTypes.flatMap { it.selfAndSuperTypes }.distinct()
 
-private fun ObjCClassOrProtocol.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
+internal fun ObjCClassOrProtocol.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.methods.asSequence().filter { it.isClass == isClass }
 
 @Suppress("UNUSED_PARAMETER")
-private fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
+internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
         this // TODO: exclude methods that are marked as unavailable in [container].
 
-private fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
+internal fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.immediateSuperTypes.flatMap { it.methodsWithInherited(isClass) }
                 .distinctBy { it.selector }
                 .inheritedTo(this, isClass)
 
-private fun ObjCClassOrProtocol.methodsWithInherited(isClass: Boolean): Sequence<ObjCMethod> =
+internal fun ObjCClassOrProtocol.methodsWithInherited(isClass: Boolean): Sequence<ObjCMethod> =
         (this.declaredMethods(isClass) + this.inheritedMethods(isClass)).distinctBy { it.selector }
 
-private fun ObjCClass.getDesignatedInitializerSelectors(result: MutableSet<String>): Set<String> {
+internal fun ObjCClass.getDesignatedInitializerSelectors(result: MutableSet<String>): Set<String> {
     // Note: Objective-C initializers act as usual methods and thus are inherited by subclasses.
     // Swift considers all super initializers to be available (unless otherwise specified explicitly),
     // but seems to consider them as non-designated if class declares its own ones explicitly.
@@ -392,15 +372,21 @@ private fun ObjCClass.getDesignatedInitializerSelectors(result: MutableSet<Strin
     return result
 }
 
-private fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
+internal fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
         container.superTypes.any { superType -> superType.methods.any(this::replaces) }
 
-abstract class ObjCContainerStub(stubGenerator: StubGenerator,
-                                 private val container: ObjCClassOrProtocol,
-                                 protected val metaContainerStub: ObjCContainerStub?
-) : KotlinStub {
-
+internal abstract class ObjCContainerStubBuilder(
+        final override val context: StubsBuildingContext,
+        private val container: ObjCClassOrProtocol,
+        protected val metaContainerStub: ObjCContainerStubBuilder?
+) : StubElementBuilder {
     private val isMeta: Boolean get() = metaContainerStub == null
+
+    private val designatedInitializerSelectors = if (container is ObjCClass && !isMeta) {
+        container.getDesignatedInitializerSelectors(mutableSetOf())
+    } else {
+        emptySet()
+    }
 
     private val methods: List<ObjCMethod>
     private val properties: List<ObjCProperty>
@@ -446,139 +432,130 @@ abstract class ObjCContainerStub(stubGenerator: StubGenerator,
         }
     }
 
-    private val designatedInitializerSelectors = if (container is ObjCClass && !isMeta) {
-        container.getDesignatedInitializerSelectors(mutableSetOf())
-    } else {
-        emptySet()
-    }
-
     private val methodToStub = methods.map {
-        it to ObjCMethodStub(
-                stubGenerator, it, container,
-                isDesignatedInitializer = it.selector in designatedInitializerSelectors
-        )
+        it to ObjCMethodStubBuilder(it, container, it.selector in designatedInitializerSelectors, context)
     }.toMap()
 
-    private val methodStubs get() = methodToStub.values
-
-    val propertyStubs = properties.mapNotNull {
-        createObjCPropertyStub(stubGenerator, it, container, this.methodToStub)
+    private val propertyBuilders = properties.mapNotNull {
+        createObjCPropertyBuilder(context, it, container, this.methodToStub)
     }
 
-    private val classHeader: String
+    private val modality = when (container) {
+        is ObjCClass -> ClassStubModality.OPEN
+        is ObjCProtocol -> ClassStubModality.INTERFACE
+    }
 
-    init {
-        val supers = mutableListOf<KotlinType>()
+    private val classifier = context.getKotlinClassFor(container, isMeta)
 
+    private val externalObjCAnnotation = when (container) {
+        is ObjCProtocol -> {
+            protocolGetter = if (metaContainerStub != null) {
+                metaContainerStub.protocolGetter!!
+            } else {
+                // TODO: handle the case when protocol getter stub can't be compiled.
+                context.generateNextUniqueId("kniprot_")
+            }
+            AnnotationStub.ObjC.ExternalClass(protocolGetter)
+        }
+        is ObjCClass -> {
+            protocolGetter = null
+            val binaryName = container.binaryName
+            AnnotationStub.ObjC.ExternalClass("", binaryName ?: "")
+        }
+    }
+
+    private val interfaces: List<StubType> by lazy {
+        val interfaces = mutableListOf<StubType>()
         if (container is ObjCClass) {
             val baseClass = container.baseClass
             val baseClassifier = if (baseClass != null) {
-                stubGenerator.declarationMapper.getKotlinClassFor(baseClass, isMeta)
+                context.getKotlinClassFor(baseClass, isMeta)
             } else {
                 if (isMeta) KotlinTypes.objCObjectBaseMeta else KotlinTypes.objCObjectBase
             }
-
-            supers.add(baseClassifier.type)
+            interfaces += WrapperStubType(baseClassifier.type)
         }
         container.protocols.forEach {
-            supers.add(stubGenerator.declarationMapper.getKotlinClassFor(it, isMeta).type)
+            interfaces += WrapperStubType(context.getKotlinClassFor(it, isMeta).type)
         }
-
-        if (supers.isEmpty()) {
+        if (interfaces.isEmpty()) {
             assert(container is ObjCProtocol)
             val classifier = if (isMeta) KotlinTypes.objCObjectMeta else KotlinTypes.objCObject
-            supers.add(classifier.type)
+            interfaces += WrapperStubType(classifier.type)
         }
-
         if (!isMeta && container.isProtocolClass()) {
             // TODO: map Protocol type to ObjCProtocol instead.
-            supers.add(KotlinTypes.objCProtocol.type)
+            interfaces += WrapperStubType(KotlinTypes.objCProtocol.type)
         }
-
-        val keywords = when (container) {
-            is ObjCClass -> "open class"
-            is ObjCProtocol -> "interface"
-        }
-
-        val supersString = supers.joinToString { it.render(stubGenerator.kotlinFile) }
-        val classifier = stubGenerator.declarationMapper.getKotlinClassFor(container, isMeta)
-        val name = stubGenerator.kotlinFile.declare(classifier)
-
-        val externalObjCClassAnnotationName = "@ExternalObjCClass"
-
-        val externalObjCClassAnnotation: String = when (container) {
-            is ObjCProtocol -> {
-                protocolGetter = if (metaContainerStub != null) {
-                    metaContainerStub.protocolGetter!!
-                } else {
-                    val nativeBacked = object : NativeBacked {}
-                    // TODO: handle the case when protocol getter stub can't be compiled.
-                    genProtocolGetter(stubGenerator, nativeBacked, container)
-                }
-
-                externalObjCClassAnnotationName.applyToStrings(protocolGetter)
-            }
-            is ObjCClass -> {
-                protocolGetter = null
-                val binaryName = container.binaryName
-                if (binaryName != null) {
-                    externalObjCClassAnnotationName.applyToStrings("", binaryName)
-                } else {
-                    externalObjCClassAnnotationName
-                }
-            }
-        }
-
-        this.classHeader = "$externalObjCClassAnnotation $keywords $name : $supersString"
+        interfaces
     }
 
-    open fun generateBody(context: StubGenerationContext): Sequence<String> {
-        var result = (propertyStubs.asSequence() + methodStubs.asSequence())
-                .flatMap { sequenceOf("") + it.generate(context) }
-
-        if (container is ObjCClass && methodStubs.none {
-            it.method.isInit && it.method.parameters.isEmpty() && context.nativeBridges.isSupported(it)
-        }) {
+    private fun buildBody(): Pair<List<PropertyStub>, List<FunctionalStub>> {
+        val defaultConstructor =  if (container is ObjCClass && methodToStub.values.none { it.isDefaultConstructor() }) {
             // Always generate default constructor.
             // If it is not produced for an init method, then include it manually:
-            result += sequenceOf("", "protected constructor() {}")
-        }
+            ConstructorStub(listOf(), listOf(), VisibilityModifier.PROTECTED)
+        } else null
 
-        return result
+        return Pair(
+                propertyBuilders.flatMap { it.build() },
+                methodToStub.values.flatMap { it.build() } + listOfNotNull(defaultConstructor)
+        )
     }
 
-    override fun generate(context: StubGenerationContext): Sequence<String> = block(classHeader, generateBody(context))
+    protected fun buildClassStub(origin: StubOrigin, companion: ClassStub.Companion? = null): ClassStub {
+        val (properties, methods) = buildBody()
+        return ClassStub.Simple(
+                classifier,
+                properties = properties,
+                functions = methods,
+                origin = origin,
+                modality = modality,
+                annotations = listOf(externalObjCAnnotation),
+                interfaces = interfaces,
+                companion = companion
+        )
+    }
 }
 
-open class ObjCClassOrProtocolStub(
-        stubGenerator: StubGenerator,
+internal sealed class ObjCClassOrProtocolStubBuilder(
+        context: StubsBuildingContext,
         private val container: ObjCClassOrProtocol
-) : ObjCContainerStub(
-        stubGenerator,
+) : ObjCContainerStubBuilder(
+        context,
         container,
-        metaContainerStub = object : ObjCContainerStub(stubGenerator, container, metaContainerStub = null) {}
-) {
-    override fun generate(context: StubGenerationContext) =
-            metaContainerStub!!.generate(context) + "" + super.generate(context)
+        metaContainerStub = object : ObjCContainerStubBuilder(context, container, metaContainerStub = null) {
+
+            override fun build(): List<StubIrElement> =
+                    listOf(buildClassStub(StubOrigin.None))
+        }
+)
+
+internal class ObjCProtocolStubBuilder(
+        context: StubsBuildingContext,
+        private val protocol: ObjCProtocol
+) : ObjCClassOrProtocolStubBuilder(context, protocol), StubElementBuilder {
+    override fun build(): List<StubIrElement> {
+        val classStub = buildClassStub(StubOrigin.ObjCProtocol(protocol))
+        return listOf(*metaContainerStub!!.build().toTypedArray(), classStub)
+    }
 }
 
-class ObjCProtocolStub(stubGenerator: StubGenerator, protocol: ObjCProtocol) :
-        ObjCClassOrProtocolStub(stubGenerator, protocol)
-
-class ObjCClassStub(private val stubGenerator: StubGenerator, private val clazz: ObjCClass) :
-        ObjCClassOrProtocolStub(stubGenerator, clazz) {
-
-    override fun generateBody(context: StubGenerationContext): Sequence<String> {
-        val companionSuper = stubGenerator.declarationMapper
-                .getKotlinClassFor(clazz, isMeta = true).type
-                .render(stubGenerator.kotlinFile)
+internal class ObjCClassStubBuilder(
+        context: StubsBuildingContext,
+        private val clazz: ObjCClass
+) : ObjCClassOrProtocolStubBuilder(context, clazz), StubElementBuilder {
+    override fun build(): List<StubIrElement> {
+        val companionSuper = ClassifierStubType(context.getKotlinClassFor(clazz, isMeta = true))
 
         val objCClassType = KotlinTypes.objCClassOf.typeWith(
-                stubGenerator.declarationMapper.getKotlinClassFor(clazz, isMeta = false).type
-        ).render(stubGenerator.kotlinFile)
+                context.getKotlinClassFor(clazz, isMeta = false).type
+        ).let { WrapperStubType(it) }
 
-        return sequenceOf( "companion object : $companionSuper(), $objCClassType {}") +
-                super.generateBody(context)
+        val superClassInit = SuperClassInit(companionSuper)
+        val companion = ClassStub.Companion(superClassInit, listOf(objCClassType))
+        val classStub = buildClassStub(StubOrigin.ObjCClass(clazz), companion)
+        return listOf(*metaContainerStub!!.build().toTypedArray(), classStub)
     }
 }
 
@@ -594,77 +571,71 @@ class GeneratedObjCCategoriesMembers {
 
 }
 
-class ObjCCategoryStub(
-        private val stubGenerator: StubGenerator, private val category: ObjCCategory
-) : KotlinStub {
-
-    private val generatedMembers = stubGenerator.generatedObjCCategoriesMembers
+internal class ObjCCategoryStubBuilder(
+        override val context: StubsBuildingContext,
+        private val category: ObjCCategory
+) : StubElementBuilder {
+    private val generatedMembers = context.generatedObjCCategoriesMembers
             .getOrPut(category.clazz, { GeneratedObjCCategoriesMembers() })
 
-    // TODO: consider removing members that are also present in the class or its supertypes.
-
-    private val methodToStub = category.methods.filter { generatedMembers.register(it) }.map {
-        it to ObjCMethodStub(stubGenerator, it, category, isDesignatedInitializer = false)
+    private val methodToBuilder = category.methods.filter { generatedMembers.register(it) }.map {
+        it to ObjCMethodStubBuilder(it, category, isDesignatedInitializer = false, context = context)
     }.toMap()
 
-    private val methodStubs get() = methodToStub.values
+    private val methodBuilders get() = methodToBuilder.values
 
-    private val propertyStubs = category.properties.filter { generatedMembers.register(it) }.mapNotNull {
-        createObjCPropertyStub(stubGenerator, it, category, methodToStub)
+    private val propertyBuilders = category.properties.filter { generatedMembers.register(it) }.mapNotNull {
+        createObjCPropertyBuilder(context, it, category, methodToBuilder)
     }
 
-    override fun generate(context: StubGenerationContext): Sequence<String> {
+    override fun build(): List<StubIrElement> {
         val description = "${category.clazz.name} (${category.name})"
-        return sequenceOf("// @interface $description") +
-                propertyStubs.asSequence().flatMap { sequenceOf("") + it.generate(context) } +
-                methodStubs.asSequence().flatMap { sequenceOf("") + it.generate(context) } +
-                sequenceOf("// @end; // $description")
+        val meta = StubContainerMeta(
+                "// @interface $description",
+                "// @end; // $description"
+        )
+        val container = SimpleStubContainer(
+                meta = meta,
+                functions = methodBuilders.flatMap { it.build() },
+                properties = propertyBuilders.flatMap { it.build() }
+        )
+        return listOf(container)
     }
 }
 
-private fun createObjCPropertyStub(
-        stubGenerator: StubGenerator,
+private fun createObjCPropertyBuilder(
+        context: StubsBuildingContext,
         property: ObjCProperty,
         container: ObjCContainer,
-        methodToStub: Map<ObjCMethod, ObjCMethodStub>
-): ObjCPropertyStub? {
+        methodToStub: Map<ObjCMethod, ObjCMethodStubBuilder>
+): ObjCPropertyStubBuilder? {
     // Note: the code below assumes that if the property is generated,
     // then its accessors are also generated as explicit methods.
     val getterStub = methodToStub[property.getter] ?: return null
     val setterStub = property.setter?.let { methodToStub[it] ?: return null }
-    return ObjCPropertyStub(stubGenerator, property, container, getterStub, setterStub)
+    return ObjCPropertyStubBuilder(context, property, container, getterStub, setterStub)
 }
 
-class ObjCPropertyStub(
-        val stubGenerator: StubGenerator, val property: ObjCProperty, val container: ObjCContainer,
-        val getterStub: ObjCMethodStub, val setterStub: ObjCMethodStub?
-) : KotlinStub {
-
-    override fun generate(context: StubGenerationContext): Sequence<String> {
+private class ObjCPropertyStubBuilder(
+        override val context: StubsBuildingContext,
+        private val property: ObjCProperty,
+        private val container: ObjCContainer,
+        private val getterBuilder: ObjCMethodStubBuilder,
+        private val setterMethod: ObjCMethodStubBuilder?
+) : StubElementBuilder {
+    override fun build(): List<PropertyStub> {
         val type = property.getType(container.classOrProtocol)
-
-        val kotlinType = stubGenerator.mirror(type).argType.render(stubGenerator.kotlinFile)
-
-        val kind = if (property.setter == null) "val" else "var"
-        val modifiers = if (container is ObjCProtocol) "final " else ""
+        val kotlinType = context.mirror(type).argType
+        val getter = PropertyAccessor.Getter.ExternalGetter(annotations = getterBuilder.annotations)
+        val setter = property.setter?.let { PropertyAccessor.Setter.ExternalSetter(annotations = setterMethod!!.annotations) }
+        val kind = setter?.let { PropertyStub.Kind.Var(getter, it) } ?: PropertyStub.Kind.Val(getter)
+        val modality = MemberStubModality.FINAL
         val receiver = when (container) {
-            is ObjCClassOrProtocol -> ""
-            is ObjCCategory -> stubGenerator.declarationMapper
-                    .getKotlinClassFor(container.clazz, isMeta = property.getter.isClass).type
-                    .render(stubGenerator.kotlinFile) + "."
+            is ObjCClassOrProtocol -> null
+            is ObjCCategory -> ClassifierStubType(context.getKotlinClassFor(container.clazz, isMeta = property.getter.isClass))
         }
-        val result = mutableListOf(
-                "$modifiers$kind $receiver${property.name.asSimpleName()}: $kotlinType",
-                "    ${getterStub.objCMethodAnnotations.joinToString(" ")} external get"
-        )
-
-        property.setter?.let {
-            result.add("    ${setterStub!!.objCMethodAnnotations.joinToString(" ")} external set")
-        }
-
-        return result.asSequence()
+        return listOf(PropertyStub(property.name, WrapperStubType(kotlinType), kind, modality, receiver))
     }
-
 }
 
 fun ObjCClassOrProtocol.kotlinClassName(isMeta: Boolean): String {
@@ -676,27 +647,7 @@ fun ObjCClassOrProtocol.kotlinClassName(isMeta: Boolean): String {
     return if (isMeta) "${baseClassName}Meta" else baseClassName
 }
 
-private fun genProtocolGetter(
-        stubGenerator: StubGenerator,
-        nativeBacked: NativeBacked,
-        protocol: ObjCProtocol
-): String {
-    val functionName = "kniprot_" + stubGenerator.pkgName.replace('.', '_') + stubGenerator.nextUniqueId()
-
-    val builder = NativeCodeBuilder(stubGenerator.simpleBridgeGenerator.topLevelNativeScope)
-
-    with(builder) {
-        out("Protocol* $functionName() {")
-        out("    return @protocol(${protocol.name});")
-        out("}")
-    }
-
-    stubGenerator.simpleBridgeGenerator.insertNativeBridge(nativeBacked, emptyList(), builder.lines)
-
-    return functionName
-}
-
-private fun ObjCClassOrProtocol.isProtocolClass(): Boolean = when (this) {
+internal fun ObjCClassOrProtocol.isProtocolClass(): Boolean = when (this) {
     is ObjCClass -> (name == "Protocol" || binaryName == "Protocol")
     is ObjCProtocol -> false
 }

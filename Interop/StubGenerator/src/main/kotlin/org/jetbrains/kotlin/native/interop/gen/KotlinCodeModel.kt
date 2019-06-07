@@ -284,7 +284,7 @@ abstract class KotlinFile(
 
     override fun declare(classifier: Classifier): String {
         if (classifier.pkg != this.pkg) {
-            throw IllegalArgumentException("wrong package; expected '$pkg', got '${classifier.pkg}'")
+            throw IllegalArgumentException("wrong package for classifier ${classifier.fqName}; expected '$pkg', got '${classifier.pkg}'")
         }
 
         if (!classifier.isTopLevel) {
