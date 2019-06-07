@@ -1370,11 +1370,11 @@ internal object Devirtualization {
 
         irModule.transformChildrenVoid(object: IrElementTransformerVoid() {
 
-            fun IrFunction.getCoercedClass(): IrClassifierSymbol {
+            fun IrFunction.getCoercedClass(): IrClass {
                 if (name.asString().endsWith("-box>"))
-                    return valueParameters[0].type.classifierOrFail
+                    return valueParameters[0].type.classifierOrFail.owner as IrClass
                 if (name.asString().endsWith("-unbox>"))
-                    return returnType.classifierOrFail
+                    return returnType.classifierOrFail.owner as IrClass
                 error("Unexpected coercion: ${this.dump()}")
             }
 
