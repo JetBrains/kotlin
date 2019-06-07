@@ -33,13 +33,22 @@ private fun buildModulesInfo(index: CXIndex, modules: List<String>, modulesASTFi
 }
 
 internal open class ModularCompilation(compilation: Compilation): Compilation by compilation, Disposable {
-    private val moduleCacheDirectory = createTempDir("ModuleCache")
 
-    override val compilerArgs = compilation.compilerArgs +
-            listOf("-fmodules", "-fmodules-cache-path=${moduleCacheDirectory.absolutePath}")
+    companion object {
+        private const val moduleCacheFlag = "-fmodules-cache-path="
+    }
+
+    private val moduleCacheDirectory = if (compilation.compilerArgs.none { it.startsWith(moduleCacheFlag) }) {
+        createTempDir("ModuleCache")
+    } else {
+        null
+    }
+
+    override val compilerArgs: List<String> = compilation.compilerArgs +
+            listOfNotNull("-fmodules", moduleCacheDirectory?.let { "$moduleCacheFlag${it.absolutePath}" })
 
     override fun dispose() {
-        moduleCacheDirectory.deleteRecursively()
+        moduleCacheDirectory?.deleteRecursively()
     }
 }
 
