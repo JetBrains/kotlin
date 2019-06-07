@@ -4,17 +4,30 @@ package com.intellij.configurationStore.statistic.eventLog
 import com.intellij.configurationStore.jdomSerializer
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
+import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.internal.statistic.utils.getProjectId
 import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.NonUrgentExecutor
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.xmlb.BeanBinding
 import org.jdom.Element
 import java.util.*
 
 private val LOG = Logger.getInstance("com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter")
-private val GROUP = EventLogGroup("settings", 2)
+private val GROUP = EventLogGroup("settings", 3)
+
+private val recordedComponents: MutableSet<String> = ContainerUtil.newConcurrentSet()
+private val recordedOptionNames: MutableSet<String> = ContainerUtil.newConcurrentSet()
+
+fun isComponentNameWhitelisted(name: String): Boolean {
+  return recordedComponents.contains(name)
+}
+
+fun isComponentOptionNameWhitelisted(name: String): Boolean {
+  return recordedOptionNames.contains(name)
+}
 
 object FeatureUsageSettingsEvents {
   val printer = FeatureUsageSettingsEventPrinter(false)
@@ -43,7 +56,8 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
         val default = jdomSerializer.getDefaultSerializationFilter().getDefaultValue(clazz)
         logConfigurationState(componentName, default, project)
       }
-      else {
+      else if (clazz != Element::class.java && getPluginInfo(clazz).isDevelopedByJetBrains()) {
+        recordedComponents.add(componentName)
         val isDefaultProject = project?.isDefault == true
         val hash = if (!isDefaultProject) toHash(project) else null
         logSettingCollectorWasInvoked(componentName, isDefaultProject, hash)
@@ -59,11 +73,18 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
       return
     }
 
+    val pluginInfo = getPluginInfo(state.javaClass)
+    if (!pluginInfo.isDevelopedByJetBrains()) {
+      return
+    }
+
     val accessors = BeanBinding.getAccessors(state.javaClass)
     if (accessors.isEmpty()) {
       return
     }
 
+    recordedComponents.add(componentName)
+    val eventId: String = if (recordDefault) "option" else "not.default"
     val isDefaultProject = project?.isDefault == true
     val hash = if (!isDefaultProject) toHash(project) else null
 
@@ -71,16 +92,18 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
       val type = accessor.genericType
       if (type === Boolean::class.javaPrimitiveType) {
         val value = accessor.readUnsafe(state)
-        val isNotDefault = jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
-        if (recordDefault || isNotDefault) {
+        val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
+        if (!isDefault || recordDefault) {
+          recordedOptionNames.add(accessor.name)
           val content = HashMap<String, Any>()
+          content["component"] = componentName
           content["name"] = accessor.name
           content["value"] = value
-          if (isNotDefault) {
-            content["default"] = false
+          if (recordDefault) {
+            content["default"] = isDefault
           }
           addProjectOptions(content, isDefaultProject, hash)
-          logConfig(GROUP, componentName, content)
+          logConfig(GROUP, eventId, content)
         }
       }
     }
@@ -110,9 +133,9 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
 
   private fun logSettingCollectorWasInvoked(componentName: String, isDefaultProject: Boolean, projectHash: String?) {
     val content = HashMap<String, Any>()
-    content["invoked"] = true
+    content["component"] = componentName
     addProjectOptions(content, isDefaultProject, projectHash)
-    logConfig(GROUP, componentName, content)
+    logConfig(GROUP, "invoked", content)
   }
 
   internal fun toHash(project: Project?): String? {

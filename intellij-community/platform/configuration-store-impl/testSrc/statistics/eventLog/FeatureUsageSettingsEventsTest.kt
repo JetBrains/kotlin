@@ -13,6 +13,7 @@ import com.intellij.util.xmlb.annotations.Attribute
 import org.junit.ClassRule
 import org.junit.Test
 
+@Suppress("SameParameterValue")
 class FeatureUsageSettingsEventsTest {
   companion object {
     @JvmField
@@ -38,7 +39,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(true)
     printer.logConfigurationState(spec.name, component.state, null)
-    assertDefaultState(printer, false, false)
+    assertDefaultState(printer, withProject = false, defaultProject = false)
   }
 
   @Test
@@ -47,7 +48,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(false)
     printer.logConfigurationState(spec.name, component.state, null)
-    assertDefaultWithoutDefaultRecording(printer, false, false)
+    assertDefaultWithoutDefaultRecording(printer, withProject = false, defaultProject = false)
   }
 
   @Test
@@ -56,7 +57,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(true)
     printer.logDefaultConfigurationState(spec.name, ComponentState::class.java, null)
-    assertDefaultState(printer, false, false)
+    assertDefaultState(printer, withProject = false, defaultProject = false)
   }
 
   @Test
@@ -65,7 +66,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(false)
     printer.logDefaultConfigurationState(spec.name, ComponentState::class.java, null)
-    assertDefaultWithoutDefaultRecording(printer, false, false)
+    assertDefaultWithoutDefaultRecording(printer, withProject = false, defaultProject = false)
   }
 
   @Test
@@ -74,7 +75,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(true)
     printer.logConfigurationState(spec.name, component.state, projectRule.project)
-    assertDefaultState(printer, true, false)
+    assertDefaultState(printer, withProject = true, defaultProject = false)
   }
 
   @Test
@@ -83,7 +84,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(false)
     printer.logConfigurationState(spec.name, component.state, projectRule.project)
-    assertDefaultWithoutDefaultRecording(printer, true, false)
+    assertDefaultWithoutDefaultRecording(printer, withProject = true, defaultProject = false)
   }
 
   @Test
@@ -92,7 +93,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(true)
     printer.logDefaultConfigurationState(spec.name, ComponentState::class.java, projectRule.project)
-    assertDefaultState(printer, true, false)
+    assertDefaultState(printer, withProject = true, defaultProject = false)
   }
 
   @Test
@@ -101,7 +102,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(false)
     printer.logDefaultConfigurationState(spec.name, ComponentState::class.java, projectRule.project)
-    assertDefaultWithoutDefaultRecording(printer, true, false)
+    assertDefaultWithoutDefaultRecording(printer, withProject = true, defaultProject = false)
   }
 
   @Test
@@ -128,7 +129,7 @@ class FeatureUsageSettingsEventsTest {
     printer.logDefaultConfigurationState(spec.name, MultiComponentState::class.java, projectRule.project)
 
     assertThat(printer.result).hasSize(1)
-    assertDefaultWithoutDefaultRecording(printer, true, false)
+    assertDefaultWithoutDefaultRecording(printer, withProject = true, defaultProject = false)
   }
 
   @Test
@@ -137,7 +138,7 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(true)
     printer.logConfigurationState(spec.name, component.state, ProjectManager.getInstance().defaultProject)
-    assertDefaultState(printer, false, true)
+    assertDefaultState(printer, withProject = false, defaultProject = true)
   }
 
   @Test
@@ -146,21 +147,23 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(false)
     printer.logConfigurationState(spec.name, component.state, ProjectManager.getInstance().defaultProject)
-    assertDefaultWithoutDefaultRecording(printer, false, true)
+    assertDefaultWithoutDefaultRecording(printer, withProject = false, defaultProject = true)
   }
 
   @Test
   fun `record not default application component with enabled default recording`() {
+    val withRecordDefault = true
     val component = TestComponent()
     component.loadState(ComponentState(bool = true))
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(true)
     printer.logConfigurationState(spec.name, component.state, null)
-    assertNotDefaultState(printer, false, false)
+    assertNotDefaultState(printer, withRecordDefault, withProject = false, defaultProject = false)
   }
 
   @Test
   fun `record not default application component with disabled default recording`() {
+    val withRecordDefault = false
     val component = TestComponent()
     component.loadState(ComponentState(bool = true))
     val spec = getStateSpec(component)
@@ -171,7 +174,7 @@ class FeatureUsageSettingsEventsTest {
     val defaultProject = false
     assertThat(printer.result).hasSize(2)
     assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
-    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withRecordDefault, withProject, defaultProject)
   }
 
   @Test
@@ -181,11 +184,12 @@ class FeatureUsageSettingsEventsTest {
     val spec = getStateSpec(component)
     val printer = TestFeatureUsageSettingsEventsPrinter(true)
     printer.logConfigurationState(spec.name, component.state, projectRule.project)
-    assertNotDefaultState(printer, true, false)
+    assertNotDefaultState(printer, withRecordDefault = true, withProject = true, defaultProject = false)
   }
 
   @Test
   fun `record not default component with disabled default recording`() {
+    val withRecordDefault = false
     val component = TestComponent()
     component.loadState(ComponentState(bool = true))
     val spec = getStateSpec(component)
@@ -196,11 +200,12 @@ class FeatureUsageSettingsEventsTest {
     val defaultProject = false
     assertThat(printer.result).hasSize(2)
     assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
-    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withRecordDefault, withProject, defaultProject)
   }
 
   @Test
   fun `record partially not default multi component with enabled default recording`() {
+    val withRecordDefault = true
     val component = TestComponent()
     component.loadState(MultiComponentState(bool = true, secondBool = true))
     val spec = getStateSpec(component)
@@ -210,12 +215,13 @@ class FeatureUsageSettingsEventsTest {
     val withProject = true
     val defaultProject = false
     assertThat(printer.result).hasSize(2)
-    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withRecordDefault, withProject, defaultProject)
     assertDefaultState(printer.getOptionByName("secondBoolOption"), "secondBoolOption", true, withProject, defaultProject)
   }
 
   @Test
   fun `record partially not default multi component with disabled default recording`() {
+    val withRecordDefault = false
     val component = TestComponent()
     component.loadState(MultiComponentState(bool = true, secondBool = true))
     val spec = getStateSpec(component)
@@ -226,11 +232,13 @@ class FeatureUsageSettingsEventsTest {
     val defaultProject = false
     assertThat(printer.result).hasSize(2)
     assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
-    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withRecordDefault, withProject, defaultProject)
   }
 
+  @Suppress("SameParameterValue")
   @Test
   fun `record not default multi component with enabled default recording`() {
+    val withRecordDefault = true
     val component = TestComponent()
     component.loadState(MultiComponentState(bool = true, secondBool = false))
     val spec = getStateSpec(component)
@@ -240,12 +248,13 @@ class FeatureUsageSettingsEventsTest {
     val withProject = true
     val defaultProject = false
     assertThat(printer.result).hasSize(2)
-    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withProject, defaultProject)
-    assertNotDefaultState(printer.getOptionByName("secondBoolOption"), "secondBoolOption", false, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withRecordDefault, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("secondBoolOption"), "secondBoolOption", false, withRecordDefault, withProject, defaultProject)
   }
 
   @Test
   fun `record not default multi component with disabled default recording`() {
+    val withRecordDefault = false
     val component = TestComponent()
     component.loadState(MultiComponentState(bool = true, secondBool = false))
     val spec = getStateSpec(component)
@@ -256,8 +265,8 @@ class FeatureUsageSettingsEventsTest {
     val defaultProject = false
     assertThat(printer.result).hasSize(3)
     assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
-    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withProject, defaultProject)
-    assertNotDefaultState(printer.getOptionByName("secondBoolOption"), "secondBoolOption", false, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("boolOption"), "boolOption", true, withRecordDefault, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("secondBoolOption"), "secondBoolOption", false, withRecordDefault, withProject, defaultProject)
   }
 
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
@@ -267,28 +276,33 @@ class FeatureUsageSettingsEventsTest {
     assertInvokedRecorded(printer.result[0], withProject, defaultProject)
   }
 
-  private fun assertNotDefaultState(printer: TestFeatureUsageSettingsEventsPrinter, withProject: Boolean, defaultProject: Boolean) {
+  private fun assertNotDefaultState(printer: TestFeatureUsageSettingsEventsPrinter, withRecordDefault: Boolean, withProject: Boolean, defaultProject: Boolean) {
     assertThat(printer.result).hasSize(1)
-    assertNotDefaultState(printer.result[0], "boolOption", true, withProject, defaultProject)
+    assertNotDefaultState(printer.result[0], "boolOption", true, withRecordDefault, withProject, defaultProject)
   }
 
   private fun assertNotDefaultState(event: LoggedComponentStateEvents,
                                     name: String,
                                     value: Any,
+                                    withDefaultRecorded: Boolean,
                                     withProject: Boolean,
                                     defaultProject: Boolean) {
     assertThat(event.group.id).isEqualTo("settings")
     assertThat(event.group.version > 0).isTrue()
-    assertThat(event.id).isEqualTo("MyTestComponent")
+    assertThat(event.id).isEqualTo(if (withDefaultRecorded) "option" else "not.default")
 
     var size = 3
+    if (withDefaultRecorded) size++
     if (withProject) size++
     if (defaultProject) size++
 
     assertThat(event.data).hasSize(size)
+    assertThat(event.data["component"]).isEqualTo("MyTestComponent")
     assertThat(event.data["name"]).isEqualTo(name)
     assertThat(event.data["value"]).isEqualTo(value)
-    assertThat(event.data["default"]).isEqualTo(false)
+    if (withDefaultRecorded) {
+      assertThat(event.data["default"]).isEqualTo(false)
+    }
     if (withProject) {
       assertThat(event.data).containsKey("project")
     }
@@ -309,15 +323,17 @@ class FeatureUsageSettingsEventsTest {
                                  defaultProject: Boolean) {
     assertThat(event.group.id).isEqualTo("settings")
     assertThat(event.group.version).isGreaterThan(0)
-    assertThat(event.id).isEqualTo("MyTestComponent")
+    assertThat(event.id).isEqualTo("option")
 
-    var size = 2
+    var size = 4
     if (withProject) size++
     if (defaultProject) size++
 
     assertThat(event.data).hasSize(size)
+    assertThat(event.data["component"]).isEqualTo("MyTestComponent")
     assertThat(event.data["name"]).isEqualTo(name)
     assertThat(event.data["value"]).isEqualTo(value)
+    assertThat(event.data["default"]).isEqualTo(true)
     if (withProject) {
       assertThat(event.data).containsKey("project")
     }
@@ -329,14 +345,14 @@ class FeatureUsageSettingsEventsTest {
   private fun assertInvokedRecorded(event: LoggedComponentStateEvents, withProject: Boolean, defaultProject: Boolean) {
     assertThat(event.group.id).isEqualTo("settings")
     assertThat(event.group.version).isGreaterThan(0)
-    assertThat(event.id).isEqualTo("MyTestComponent")
+    assertThat(event.id).isEqualTo("invoked")
 
     var size = 1
     if (withProject) size++
     if (defaultProject) size++
 
     assertThat(event.data).hasSize(size)
-    assertThat(event.data["invoked"]).isEqualTo(true)
+    assertThat(event.data["component"]).isEqualTo("MyTestComponent")
     if (withProject) {
       assertThat(event.data).containsKey("project")
     }
@@ -363,7 +379,7 @@ class FeatureUsageSettingsEventsTest {
 
     fun getInvokedEvent(): LoggedComponentStateEvents {
       for (event in result) {
-        if (event.data.containsKey("invoked") && event.data["invoked"] == true) {
+        if (event.id == "invoked") {
           return event
         }
       }
