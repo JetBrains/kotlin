@@ -5,6 +5,7 @@ import com.intellij.configurationStore.jdomSerializer
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
 import com.intellij.internal.statistic.utils.getProjectId
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -20,13 +21,17 @@ object FeatureUsageSettingsEvents {
 
   fun logDefaultConfigurationState(componentName: String, stateSpec: State, clazz: Class<*>, project: Project?) {
     if (stateSpec.reportStatistic && FeatureUsageLogger.isEnabled()) {
-      printer.logDefaultConfigurationState(componentName, clazz, project)
+      ApplicationManager.getApplication().executeOnPooledThread {
+        printer.logDefaultConfigurationState(componentName, clazz, project)
+      }
     }
   }
 
   fun logConfigurationState(componentName: String, stateSpec: State, state: Any, project: Project?) {
     if (stateSpec.reportStatistic && FeatureUsageLogger.isEnabled()) {
-      printer.logConfigurationState(componentName, state, project)
+      ApplicationManager.getApplication().executeOnPooledThread {
+        printer.logConfigurationState(componentName, state, project)
+      }
     }
   }
 }
