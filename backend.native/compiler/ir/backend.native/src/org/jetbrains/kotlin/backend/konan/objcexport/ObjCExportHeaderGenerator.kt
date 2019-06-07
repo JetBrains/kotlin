@@ -200,7 +200,7 @@ internal class ObjCExportTranslatorImpl(
             return builder.toString()
         }
 
-        assert(mapper.shouldBeExposed(descriptor))
+        assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(!descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
 
@@ -211,7 +211,7 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun referenceProtocol(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
-        assert(mapper.shouldBeExposed(descriptor))
+        assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
 
@@ -221,7 +221,7 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun translateClassOrInterfaceName(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
-        assert(mapper.shouldBeExposed(descriptor))
+        assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         if (ErrorUtils.isError(descriptor)) {
             return ObjCExportNamer.ClassOrProtocolName("ERROR", "ERROR")
         }
