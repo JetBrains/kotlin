@@ -783,6 +783,11 @@ internal class ObjCExportTranslatorImpl(
             return mapObjCObjectReferenceTypeIgnoringNullability(classDescriptor)
         }
 
+        // Workaround for https://github.com/JetBrains/kotlin-native/issues/3053
+        if (!mapper.shouldBeExposed(classDescriptor)) {
+            return ObjCIdType
+        }
+
         return if (classDescriptor.isInterface) {
             ObjCProtocolType(referenceProtocol(classDescriptor).objCName)
         } else {
