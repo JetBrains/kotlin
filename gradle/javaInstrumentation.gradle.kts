@@ -43,7 +43,7 @@ fun JavaCompile.instrumentClasses(instrumentatorClasspath: String) {
         )
     }
 
-    val sourceSet = project.sourceSets.single { it.compileJavaTaskName == name }
+    val sourceSet = project.sourceSets.singleOrNull { it.compileJavaTaskName == name } ?: return
 
     val javaSourceDirectories = sourceSet.allJava.sourceDirectories.filter { it.exists() }
 
