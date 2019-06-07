@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
 import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.konan.*
+import org.jetbrains.kotlin.KotlinBuildPusher
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -549,4 +549,11 @@ task clean {
         delete distDir
         delete bundle.outputs.files
     }
+}
+
+task pusher(type:  KotlinBuildPusher){
+    kotlinVersion = project.kotlinVersion
+    konanVersion = KonanVersionGeneratedKt.getCurrentKonanVersion()
+    buildServer = "teamcity.jetbrains.com"
+    token = project.findProperty("teamcityBearToken") ?: System.getenv("TEAMCITY_BEAR_TOKEN")
 }

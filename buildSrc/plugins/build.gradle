@@ -43,6 +43,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-gradle-plugin"
     compile project(':shared')
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
+    implementation 'io.ktor:ktor-client-auth:1.2.1'
+    implementation 'io.ktor:ktor-client-core:1.2.1'
+    implementation 'io.ktor:ktor-client-cio:1.2.1'
 }
 
 sourceSets.main.kotlin.srcDirs = ["src", "$projectDir/../../tools/benchmarks/shared/src"]
