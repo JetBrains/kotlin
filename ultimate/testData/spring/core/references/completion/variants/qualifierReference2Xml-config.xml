@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean class="bean.MultiHolder" name="existingBean1">
+        <constructor-arg name="thing" value="1"/>
+    </bean>
+    <bean class="bean.MultiHolder" name="existingBean2">
+        <constructor-arg name="thing" value="2"/>
+    </bean>
+    <bean class="bean.MultiHolder" name="anotherBean">
+        <constructor-arg name="thing" value="0"/>
+    </bean>
+    <bean class="bean.AutoMultiUser" name="existingBean3">
+    </bean>
+</beans>

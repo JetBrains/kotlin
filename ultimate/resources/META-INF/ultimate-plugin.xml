@@ -1,0 +1,3 @@
+<idea-plugin>
+    <depends optional="true" config-file="kotlin-nodejs.xml">NodeJS</depends>
+</idea-plugin>

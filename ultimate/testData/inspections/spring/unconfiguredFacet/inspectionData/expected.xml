@@ -1,0 +1,18 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>12</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Spring Facet Code Configuration (Kotlin)</problem_class>
+        <description>Application context not configured for this file</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>15</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Spring Facet Code Configuration (Kotlin)</problem_class>
+        <description>Application context not configured for this file</description>
+    </problem>
+</problems>
