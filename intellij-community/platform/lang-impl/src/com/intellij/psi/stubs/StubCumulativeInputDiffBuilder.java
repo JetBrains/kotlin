@@ -2,6 +2,7 @@
 package com.intellij.psi.stubs;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -38,7 +39,20 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
       SerializedStubTree newSerializedStubTree = newData.get(myInputId);
       if (myIndexedStubs != null) {
         byte[] currentHash = myIndexedStubs.getStubTreeHash();
-        if (treesAreEqual(newSerializedStubTree, currentHash)) return false;
+        final boolean[] treesAreEqual = new boolean[1];
+        final StorageException[] exception = new StorageException[1];
+        ProgressManager.getInstance().executeNonCancelableSection(() -> {
+          try {
+            treesAreEqual[0] = treesAreEqual(newSerializedStubTree, currentHash);
+          }
+          catch (StorageException e) {
+            exception[0] = e;
+          }
+        });
+        if (treesAreEqual[0]) return false;
+        if (exception[0] != null) {
+          throw exception[0];
+        }
         removeProcessor.process(myInputId, myInputId);
       }
       addProcessor.process(myInputId, newSerializedStubTree, myInputId);
