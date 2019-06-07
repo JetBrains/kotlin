@@ -519,15 +519,6 @@ public class GradleExecutionHelper {
     }
   }
 
-  /**
-   * @deprecated use {@link GradleExecutionHelper#writeToFileGradleInitScript(String, String)} instead
-   */
-  @Deprecated
-  @ApiStatus.ScheduledForRemoval(inVersion = "2019.1")
-  public static File writeToFileGradleInitScript(@NotNull String content) throws IOException {
-    return writeToFileGradleInitScript(content, "ijinit");
-  }
-
   public static File writeToFileGradleInitScript(@NotNull String content, @NotNull String filePrefix) throws IOException {
     byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
     int contentLength = contentBytes.length;
