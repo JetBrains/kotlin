@@ -67,7 +67,7 @@ public class XDebuggerTestUtil {
     assertNotNull(breakpoint);
     Icon expectedIcon = validity
                         ? pending
-                          ? AllIcons.Debugger.Db_set_breakpoint
+                          ? AllIcons.Debugger.Db_invalid_breakpoint
                           : XDebuggerUtilImpl.getVerifiedIcon(breakpoint)
                         : AllIcons.Debugger.Db_invalid_breakpoint;
     assertEquals(expectedIcon, breakpoint.getIcon());
