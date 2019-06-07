@@ -6,7 +6,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
-import com.intellij.openapi.projectRoots.impl.JavaDependentSdkType;
+import com.intellij.openapi.projectRoots.impl.DependentSdkType;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -14,7 +14,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.EnvironmentUtil;
-import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +69,6 @@ public class ExternalSystemJdkUtil {
 
     // Workaround for projects without project Jdk
     SdkType jdkType = getJavaSdk();
-    if (jdkType == null) return getInternalJdk();
     return ProjectJdkTable.getInstance()
       .getSdksOfType(jdkType).stream()
       .filter(it -> isValidJdk(it.getHomePath()))
@@ -144,8 +142,10 @@ public class ExternalSystemJdkUtil {
 
   private static Sdk findReferencedJDK(Project project) {
     Sdk projectSdk = ProjectRootManager.getInstance(project).getProjectSdk();
-    if (projectSdk != null && projectSdk.getSdkType() instanceof JavaDependentSdkType) {
-      final JavaDependentSdkType sdkType = (JavaDependentSdkType)projectSdk.getSdkType();
+    if (projectSdk != null
+        && projectSdk.getSdkType() instanceof DependentSdkType
+        && projectSdk.getSdkType() instanceof JavaSdkType) {
+      final JavaSdkType sdkType = (JavaSdkType)projectSdk.getSdkType();
       final String jdkPath = FileUtil.toSystemIndependentName(new File(sdkType.getBinPath(projectSdk)).getParent());
       return Arrays.stream(ProjectJdkTable.getInstance().getAllJdks())
         .filter(sdk -> {
@@ -165,9 +165,7 @@ public class ExternalSystemJdkUtil {
 
   @NotNull
   public static SdkType getJavaSdkType() {
-    // JavaSdk.getInstance() can be null for non-java IDE
-    SdkType javaSdk = getJavaSdk();
-    return javaSdk == null ? SimpleJavaSdkType.getInstance() : javaSdk;
+    return getJavaSdk();
   }
 
   public static boolean isValidJdk(@Nullable String homePath) {
@@ -176,46 +174,18 @@ public class ExternalSystemJdkUtil {
 
   @NotNull
   public static Sdk addJdk(String homePath) {
-    Sdk jdk;
-    if (isJavaSdkPresent()) {
-      jdk = ExternalSystemJavaUtil.tryAddJdk(homePath);
-      if (jdk != null) {
-        return jdk;
-      }
-    }
-    SimpleJavaSdkType simpleJavaSdkType = SimpleJavaSdkType.getInstance();
-    jdk = simpleJavaSdkType.createJdk(simpleJavaSdkType.suggestSdkName(null, homePath), homePath);
+    Sdk jdk = ExternalSystemJdkProvider.getInstance().createJdk(null, homePath);
     SdkConfigurationUtil.addSdk(jdk);
     return jdk;
   }
 
-  @Nullable
+  @NotNull
   private static SdkType getJavaSdk() {
-    if (isJavaSdkPresent()) {
-      return ExternalSystemJavaUtil.getJavaSdk();
-    }
-    return null;
+    return ExternalSystemJdkProvider.getInstance().getJavaSdkType();
   }
 
   @NotNull
   private static Sdk getInternalJdk() {
-    if (isJavaSdkPresent()) {
-      Sdk internalJdk = ExternalSystemJavaUtil.getInternalJdk();
-      if (internalJdk != null) return internalJdk;
-    }
-    final String jdkHome = SystemProperties.getJavaHome();
-    SimpleJavaSdkType simpleJavaSdkType = SimpleJavaSdkType.getInstance();
-    return simpleJavaSdkType.createJdk(simpleJavaSdkType.suggestSdkName(null, jdkHome), jdkHome);
-  }
-
-  // todo [Vlad, IDEA-187832]: extract to `external-system-java` module
-  private static boolean isJavaSdkPresent() {
-    try {
-      Class.forName("com.intellij.openapi.projectRoots.impl.JavaSdkImpl");
-      return true;
-    }
-    catch (Throwable ignore) {
-      return false;
-    }
+    return ExternalSystemJdkProvider.getInstance().getInternalJdk();
   }
 }
