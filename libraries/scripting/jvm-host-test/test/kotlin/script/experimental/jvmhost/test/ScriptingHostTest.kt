@@ -7,6 +7,9 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import org.junit.Test
 import java.io.*
@@ -25,6 +28,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.*
 import kotlin.script.experimental.jvmhost.impl.CompiledScriptClassLoader
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
 import kotlin.script.templates.standard.SimpleScriptTemplate
 
 class ScriptingHostTest : TestCase() {
@@ -273,6 +277,38 @@ class ScriptingHostTest : TestCase() {
         assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: -version, -d, -Xreport-perf" })
         assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: -Xdump-perf" })
         assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored when configured from refinement callbacks: -no-jdk, -no-stdlib" })
+    }
+
+    fun jvmTargetTestImpl(target: String, expectedVersion: Int) {
+        val script = "println(\"Hi\")"
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            compilerOptions("-jvm-target", target)
+        }
+        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
+        val compiledScript = runBlocking { compiler(script.toScriptSource(name = "SavedScript.kts"), compilationConfiguration) }
+        assertTrue(compiledScript is ResultWithDiagnostics.Success)
+
+        val jvmCompiledScript = compiledScript.resultOrNull()!! as KJvmCompiledScript
+        val jvmCompiledModule = jvmCompiledScript.compiledModule as KJvmCompiledModuleInMemory
+        val bytes = jvmCompiledModule.compilerOutputFiles["SavedScript.class"]!!
+
+        var classFileVersion: Int? = null
+        ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+            override fun visit(
+                version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?
+            ) {
+                classFileVersion = version
+            }
+        }, 0)
+
+        assertEquals(expectedVersion, classFileVersion)
+    }
+
+    @Test
+    fun testJvmTarget() {
+        jvmTargetTestImpl("1.6", 50)
+        jvmTargetTestImpl("1.8", 52)
+        jvmTargetTestImpl("9", 53)
     }
 
     @Test

@@ -95,7 +95,32 @@ internal fun createInitialConfigurations(
         )
     )
 
+    initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
+        kotlinCompilerConfiguration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
+    }
+
     return Pair(initialScriptCompilationConfiguration, kotlinCompilerConfiguration)
+}
+
+private fun CompilerConfiguration.updateWithCompilerOptions(
+    compilerOptions: List<String>,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    ignoredOptionsReportingState: IgnoredOptionsReportingState,
+    isRefinement: Boolean
+) {
+    val compilerArguments = K2JVMCompilerArguments()
+    parseCommandLineArguments(compilerOptions, compilerArguments)
+
+    reportArgumentsIgnoredGenerally(compilerArguments, messageCollector, ignoredOptionsReportingState)
+    if (isRefinement) {
+        reportArgumentsIgnoredFromRefinement(compilerArguments, messageCollector, ignoredOptionsReportingState)
+    }
+
+    setupCommonArguments(compilerArguments)
+
+    setupJvmSpecificArguments(compilerArguments)
+
+    configureAdvancedJvmOptions(compilerArguments)
 }
 
 private fun ScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration: CompilerConfiguration) =
@@ -208,17 +233,6 @@ private fun CompilerConfiguration.updateWithRefinedConfigurations(
     if (updatedCompilerOptions.isNotEmpty() &&
         updatedCompilerOptions != initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
     ) {
-
-        val updatedArguments = K2JVMCompilerArguments()
-        parseCommandLineArguments(updatedCompilerOptions, updatedArguments)
-
-        reportArgumentsIgnoredGenerally(updatedArguments, messageCollector, reportingState)
-        reportArgumentsIgnoredFromRefinement(updatedArguments, messageCollector, reportingState)
-
-        setupCommonArguments(updatedArguments)
-
-        setupJvmSpecificArguments(updatedArguments)
-
-        configureAdvancedJvmOptions(updatedArguments)
+        updateWithCompilerOptions(updatedCompilerOptions, messageCollector, reportingState, true)
     }
 }
