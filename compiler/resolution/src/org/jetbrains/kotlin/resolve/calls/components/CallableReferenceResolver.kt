@@ -44,7 +44,7 @@ class CallableReferenceOverloadConflictResolver(
     module,
     specificityComparator,
     { it.candidate },
-    { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
+    { statelessCallbacks.createConstraintSystemForOverloadResolution(constraintInjector, builtIns) },
     Companion::createFlatSignature,
     { null },
     { statelessCallbacks.isDescriptorFromSource(it) },
