@@ -3,7 +3,6 @@ package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.CommonBundle;
 import com.intellij.configurationStore.StorageUtilKt;
-import com.intellij.core.JavaCoreBundle;
 import com.intellij.debugger.ui.DebuggerView;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
@@ -26,6 +25,7 @@ import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl;
 import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemProgressNotificationManager;
@@ -33,14 +33,12 @@ import com.intellij.openapi.externalSystem.service.remote.wrapper.ExternalSystem
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.module.EmptyModuleType;
-import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.ProjectBundle;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.ShutDownTracker;
-import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.PsiBundle;
 import com.intellij.serialization.ObjectSerializer;
 import com.intellij.ui.PlaceHolder;
@@ -126,12 +124,13 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExtensionPointName.class));
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(StorageUtilKt.class));
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExternalSystemTaskNotificationListener.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(StdModuleTypes.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(JavaModuleType.class));
-        ExternalSystemApiUtil.addBundle(params.getClassPath(), "messages.JavaCoreBundle", JavaCoreBundle.class);
+
+        // java plugin jar if it's installed
+        Class<? extends SdkType> javaSdkClass = ExternalSystemJdkProvider.getInstance().getJavaSdkType().getClass();
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(javaSdkClass));
+
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ModuleType.class));
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(EmptyModuleType.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(LanguageLevel.class));
 
         // add Kotlin runtime
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(Unit.class));
