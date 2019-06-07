@@ -148,7 +148,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     ServiceViewContributor[] result = EP_NAME.getExtensions();
     return Registry.is("ide.service.view") ?
            result :
-           Arrays.stream(result).filter(c -> c.alwaysEnabled()).toArray(ServiceViewContributor[]::new);
+           Arrays.stream(result).filter(c -> c instanceof ServiceViewAlwaysEnabledContributor).toArray(ServiceViewContributor[]::new);
   }
 
   private static <T> List<ServiceViewItem> getContributorChildren(Project project,
