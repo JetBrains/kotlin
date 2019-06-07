@@ -43,7 +43,7 @@ private val javaVersionRegex = Regex("""(?:1\.)?(\d+)(\.\d+)?([+-_]\w+){0,3}""")
 
 fun MutableCollection<JdkId>.addIfBetter(project: Project, version: String, id: String, homeDir: File): Boolean {
     val matchString = javaMajorVersionRegex.matchEntire(version)?.groupValues?.get(1)
-    val majorJersion = when (matchString) {
+    val majorJdkVersion = when (matchString) {
         "6" -> JdkMajorVersion.JDK_16
         "7" -> JdkMajorVersion.JDK_17
         "8" -> JdkMajorVersion.JDK_18
@@ -53,9 +53,9 @@ fun MutableCollection<JdkId>.addIfBetter(project: Project, version: String, id: 
             return false
         }
     }
-    val prev = find { it.majorVersion == majorJersion }
+    val prev = find { it.majorVersion == majorJdkVersion }
     if (prev == null) {
-        add(JdkId(false, majorJersion, version, homeDir))
+        add(JdkId(false, majorJdkVersion, version, homeDir))
         return true
     }
     if (prev.explicit) return false
