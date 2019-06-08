@@ -83,7 +83,7 @@ public class InstalledPackagesPanel extends JPanel {
     myPackagesTable.getTableHeader().setReorderingAllowed(false);
     new TableSpeedSearch(myPackagesTable);
 
-    myUpgradeButton = new AnActionButton("Upgrade", IconUtil.getMoveUpIcon()) {
+    myUpgradeButton = new DumbAwareActionButton("Upgrade", IconUtil.getMoveUpIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         upgradeAction();
@@ -99,7 +99,7 @@ public class InstalledPackagesPanel extends JPanel {
       }
     };
     myInstallButton.setShortcut(CommonShortcuts.getNew());
-    myUninstallButton = new AnActionButton("Uninstall", IconUtil.getRemoveIcon()) {
+    myUninstallButton = new DumbAwareActionButton("Uninstall", IconUtil.getRemoveIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         uninstallAction();
