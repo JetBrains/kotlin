@@ -254,7 +254,7 @@ class JavaToJKTreeBuilder constructor(
                 if (method.isConstructor || !method.hasTypeParameters()) return typeArgumentList
             }
 
-            return AddTypeArgumentsFix.addTypeArguments(this, null)
+            return FixTypeArguments.addTypeArguments(this, null)
                 ?.safeAs<PsiMethodCallExpression>()
                 ?.typeArgumentList
                 ?: typeArgumentList
