@@ -144,12 +144,39 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
     }
 }
 
-class KotlinDslGradleKotlinJSFrameworkSupportProvider :
-    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin/JS", KotlinIcons.JS) {
+abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
+    frameworkTypeId: String,
+    displayName: String
+) : KotlinDslGradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.JS) {
+    abstract val jsSubTargetName: String
+
+    override fun addSupport(
+        projectId: ProjectId,
+        module: Module,
+        rootModel: ModifiableRootModel,
+        modifiableModelsProvider: ModifiableModelsProvider,
+        buildScriptData: BuildScriptDataBuilder
+    ) {
+        super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
+
+        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+    }
 
     override fun getOldSyntaxPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
     override fun getPluginDefinition(): String = "id(\"org.jetbrains.kotlin.js\")"
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?) =
         "implementation(${getKotlinModuleDependencySnippet(MAVEN_JS_STDLIB_ID.removePrefix("kotlin-"), version)})"
+}
+
+class KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider :
+    AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider("KOTLIN_JS_BROWSER", "Kotlin/JS for browser") {
+    override val jsSubTargetName: String
+        get() = "browser"
+}
+
+class KotlinDslGradleKotlinJSNodeFrameworkSupportProvider :
+    AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider("KOTLIN_JS_NODE", "Kotlin/JS for Node.js") {
+    override val jsSubTargetName: String
+        get() = "Node.js"
 }
