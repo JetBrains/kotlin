@@ -182,7 +182,12 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
             kotlin {
                 jvm()
-                js()
+                js {
+                    browser {
+                    }
+                    nodejs {
+                    }
+                }
                 // For ARM, should be changed to iosArm32 or iosArm64
                 // For Linux, should be changed to e.g. linuxX64
                 // For MacOS, should be changed to e.g. macosX64
