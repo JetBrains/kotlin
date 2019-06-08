@@ -1,5 +1,7 @@
 package test
 
+import java.util.ArrayList
+
 class Test {
     private var myProp: String? = null
     private var myIntProp: Int? = null

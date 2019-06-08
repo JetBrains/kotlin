@@ -1,3 +1,5 @@
+import java.util.HashMap
+
 internal class A {
     fun foo() {
         val map1: Map<String, Int> = getMap1()

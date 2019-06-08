@@ -279,5 +279,6 @@ private val processings: List<GeneralPostProcessing> = listOf(
         RemoveForExpressionLoopParameterTypeProcessing()
     ),
     formatCodeProcessing,
-    optimizeImportsProcessing
+    optimizeImportsProcessing,
+    shortenReferencesProcessing
 )

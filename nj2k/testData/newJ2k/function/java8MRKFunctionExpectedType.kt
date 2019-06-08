@@ -77,7 +77,7 @@ internal class Java8Class {
     }
 
     fun testGenericFunctions() {
-        val emptyList: Function0<kotlin.collections.List<String>> = { emptyList() }
+        val emptyList: Function0<List<String>> = { emptyList() }
         val list = emptyList.invoke()
         list[0]
     }
