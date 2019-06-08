@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
@@ -38,6 +39,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Internal
     override lateinit var compilation: KotlinJsCompilation
 
+    @Suppress("unused")
     val compilationId: String
         @Input get() = compilation.let {
             val target = it.target
@@ -45,7 +47,11 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         }
 
     val entry: File
-        @InputFile get() = compilation.compileKotlinTask.outputFile
+        @Input get() = compilation.compileKotlinTask.outputFile
+
+    @Suppress("unused")
+    val runtimeClasspath: FileCollection
+        @InputFiles get() = compilation.compileDependencyFiles
 
     open val configFile: File
         @OutputFile get() = compilation.npmProject.dir.resolve("webpack.config.js")
