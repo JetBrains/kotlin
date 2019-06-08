@@ -186,8 +186,7 @@ public class TestParseEventLogWhitelistDialog extends DialogWrapper {
     myResultEditor.getSelectionModel().removeSelection();
     updateResultRequest("{}");
 
-    final BuildNumber build = BuildNumber.fromString(EventLogConfiguration.INSTANCE.getBuild());
-    final FUSWhitelist whitelist = FUStatisticsWhiteListGroupsService.parseApprovedGroups(myWhitelistEditor.getDocument().getText(), build);
+    final FUSWhitelist whitelist = FUStatisticsWhiteListGroupsService.parseApprovedGroups(myWhitelistEditor.getDocument().getText());
     try {
       final String parsed = parseLogAndFilter(new LogEventWhitelistFilter(whitelist), myEventLogPanel.getText());
       updateResultRequest(parsed.trim());
