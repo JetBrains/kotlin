@@ -42,7 +42,7 @@ internal class LabelToFunctionTypeVariableMapper(analysisContext: AnalysisContex
 
 internal class ConstraintsCollector(
     private val analysisContext: AnalysisContext,
-    private val converterContext: NewJ2kConverterContext,
+    private val converterContext: NewJ2kConverterContext?,
     printConstraints: Boolean
 ) {
     private val boundTypeStorage = BoundTypeStorage(analysisContext, printConstraints)
@@ -51,7 +51,7 @@ internal class ConstraintsCollector(
 
     private val PsiElement.elementInfo: List<JKElementInfo>?
         get() = getLabel()?.let { label ->
-            converterContext.elementsInfoStorage.getInfoForLabel(label)
+            converterContext?.elementsInfoStorage?.getInfoForLabel(label)
         }
 
     private inline val KtExpression.boundType

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
+import org.jetbrains.kotlin.nj2k.isEquals
+import org.jetbrains.kotlin.nj2k.parenthesizeIfBinaryExpression
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -100,7 +103,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
             copyTreeAndDetach().parenthesizeIfBinaryExpression(),
             JKKtQualifierImpl.DOT,
             JKKtCallExpressionImpl(
-                context.symbolProvider.provideByFqName("kotlin.text.toRegex", multiResolve = true),
+                context.symbolProvider.provideMethodSymbol("kotlin.text.toRegex"),
                 JKArgumentListImpl(),
                 JKTypeArgumentListImpl()
             )
@@ -142,7 +145,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
             this.copyTreeAndDetach(),
             JKKtQualifierImpl.DOT,
             JKJavaMethodCallExpressionImpl(
-                context.symbolProvider.provideByFqName("kotlin.$initialTypeName.$conversionFunctionName"),
+                context.symbolProvider.provideMethodSymbol("kotlin.$initialTypeName.$conversionFunctionName"),
                 JKArgumentListImpl()
             )
         )

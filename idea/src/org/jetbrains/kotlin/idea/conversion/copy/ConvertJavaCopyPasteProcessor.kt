@@ -21,6 +21,7 @@ import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.j2k.ConverterContext
 import org.jetbrains.kotlin.j2k.ConverterSettings
@@ -85,6 +87,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
         val document = editor.document
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? KtFile ?: return
+        val targetModule = targetFile.module
 
         if (isNoConversionPosition(targetFile, bounds.startOffset)) return
 
@@ -97,7 +100,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
         fun doConversion(): Result {
             val dataForConversion = DataForConversion.prepare(data, project)
-            val result = dataForConversion.elementsAndTexts.convertCodeToKotlin(project)
+            val result = dataForConversion.elementsAndTexts.convertCodeToKotlin(project, targetModule)
             val referenceData = buildReferenceData(result.text, result.parseContext, dataForConversion.importsAndPackage, targetFile)
             val text = if (result.textChanged) result.text else null
             return Result(text, referenceData, result.importsToAdd, result.converterContext)
@@ -214,10 +217,11 @@ internal class ConversionResult(
         val converterContext: ConverterContext?
 )
 
-internal fun ElementAndTextList.convertCodeToKotlin(project: Project): ConversionResult {
+internal fun ElementAndTextList.convertCodeToKotlin(project: Project, targetModule: Module?): ConversionResult {
     val converter =
         JavaToKotlinConverterFactory.createJavaToKotlinConverter(
             project,
+            targetModule,
             ConverterSettings.defaultSettings,
             IdeaJavaToKotlinServices
         )

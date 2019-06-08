@@ -22,9 +22,9 @@ class ArrayOperationsConversion(private val context: NewJ2kConverterContext) : R
         if (element.receiver.type(context.symbolProvider) !is JKJavaArrayType) return recurse(element)
         if (selector.identifier.name == "length") {
             val sizeCall =
-                    JKFieldAccessExpressionImpl(
-                        context.symbolProvider.provideByFqName("kotlin/Array.size")
-                    )
+                JKFieldAccessExpressionImpl(
+                    context.symbolProvider.provideFieldSymbol("kotlin.Array.size")
+                )
             element.selector = sizeCall
         }
         return recurse(element)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiClass
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Nullable): JKClassType =
     JKClassTypeImpl(
-        symbolProvider.provideByFqName(name),
+        symbolProvider.provideClassSymbol(name),
         emptyList(),
         nullability
     )
@@ -31,7 +30,7 @@ private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
     when (this) {
         is JKClassType -> classReference
         is JKJavaPrimitiveType ->
-            symbolProvider.provideByFqName(jvmPrimitiveType.primitiveType.typeFqName.asString())
+            symbolProvider.provideClassSymbol(jvmPrimitiveType.primitiveType.typeFqName)
 
         else -> null
     }
@@ -54,7 +53,7 @@ private fun JKKtOperatorToken.arithmeticMethodType(
 
 
     val classSymbol =
-        if (leftType.isStringType()) symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.string.toSafe())
+        if (leftType.isStringType()) symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.string.toSafe())
         else leftType.classSymbol(symbolProvider)
 
     return when (classSymbol) {
@@ -83,7 +82,7 @@ private fun JKKtOperatorToken.unaryExpressionMethodType(
         return operandType!!
     }
     if (this == KtTokens.EXCL) {
-        return symbolProvider.provideByFqName<JKClassSymbol>(KotlinBuiltIns.FQ_NAMES._boolean).asType()
+        return symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES._boolean.toSafe()).asType()
     }
     if (this == KtTokens.MINUS || this == KtTokens.PLUS) {
         return operandType!!
@@ -169,7 +168,7 @@ fun kotlinBinaryExpression(
     val returnType =
         when {
             token is JKKtSingleValueOperatorToken && token.psiToken in booleanOperators ->
-                JKClassTypeImpl(symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES._boolean))
+                JKClassTypeImpl(symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES._boolean.toSafe()))
             else -> {
                 val leftType = left.type(symbolProvider)
                 val rightType = right.type(symbolProvider)
@@ -178,7 +177,7 @@ fun kotlinBinaryExpression(
                         token.arithmeticMethodType(l, r, symbolProvider)
                     }
                 } ?: token.defaultReturnType(leftType, rightType, symbolProvider)
-                ?: symbolProvider.provideByFqName<JKClassSymbol>(KotlinBuiltIns.FQ_NAMES.nothing).asType()
+                ?: symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.nothing.toSafe()).asType()
             }
         }
     return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, returnType))
@@ -261,7 +260,7 @@ fun rangeExpression(
         to,
         JKKtOperatorImpl(
             JKKtWordOperatorToken(operatorName),
-            conversionContext.symbolProvider.provideByFqName<JKMethodSymbol>("kotlin.ranges.$operatorName").returnType!!
+            conversionContext.symbolProvider.provideMethodSymbol("kotlin.ranges.$operatorName").returnType!!
         )
     )
 
@@ -278,7 +277,7 @@ fun useExpression(
     body: JKStatement,
     symbolProvider: JKSymbolProvider
 ): JKExpression {
-    val useSymbol = symbolProvider.provideByFqName<JKMethodSymbol>("kotlin.io.use")
+    val useSymbol = symbolProvider.provideMethodSymbol("kotlin.io.use")
     val lambdaParameter =
         JKParameterImpl(JKTypeElementImpl(JKNoTypeImpl), variableIdentifier)
 
@@ -305,12 +304,12 @@ fun kotlinAssert(assertion: JKExpression, message: JKExpression?, symbolProvider
 
 fun jvmAnnotation(name: String, symbolProvider: JKSymbolProvider) =
     JKAnnotationImpl(
-        symbolProvider.provideByFqName("kotlin.jvm.$name")
+        symbolProvider.provideClassSymbol("kotlin.jvm.$name")
     )
 
 fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
     JKAnnotationImpl(
-        symbolProvider.provideByFqName("kotlin.jvm.Throws"),
+        symbolProvider.provideClassSymbol("kotlin.jvm.Throws"),
         throws.map {
             JKAnnotationParameterImpl(
                 JKClassLiteralExpressionImpl(JKTypeElementImpl(it), JKClassLiteralExpression.LiteralType.KOTLIN_CLASS)
@@ -419,7 +418,7 @@ fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpres
         emptyList()
     )
     return JKKtCallExpressionImpl(
-        symbolProvider.provideByFqName("kotlin.run", true),
+        symbolProvider.provideMethodSymbol("kotlin.run"),
         (listOf(lambda)).toArgumentList()
     )
 }

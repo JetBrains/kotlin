@@ -9,6 +9,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiMember
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -23,6 +24,7 @@ fun PsiElement.convertToKotlin(): org.jetbrains.kotlin.j2k.Result? {
     val j2kConverter =
         JavaToKotlinConverterFactory.createJavaToKotlinConverter(
             project,
+            module,
             ConverterSettings.defaultSettings,
             IdeaJavaToKotlinServices
         )

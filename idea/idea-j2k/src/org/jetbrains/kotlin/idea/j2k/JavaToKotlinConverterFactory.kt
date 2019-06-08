@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.j2k.*
 object JavaToKotlinConverterFactory {
     fun createJavaToKotlinConverter(
         project: Project,
+        targetModule: Module?,
         settings: ConverterSettings,
         services: JavaToKotlinConverterServices
     ): JavaToKotlinConverter =
-        J2kConverterExtension.extension.createJavaToKotlinConverter(project, settings, services)
+        J2kConverterExtension.extension.createJavaToKotlinConverter(project, targetModule, settings, services)
 
     fun createPostProcessor(formatCode: Boolean): PostProcessor =
         J2kConverterExtension.extension.createPostProcessor(formatCode)

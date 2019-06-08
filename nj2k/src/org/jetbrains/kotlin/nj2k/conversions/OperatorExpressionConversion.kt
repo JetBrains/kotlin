@@ -49,7 +49,7 @@ class OperatorExpressionConversion(private val context: NewJ2kConverterContext) 
         if (javaOperator.token.psiToken == JavaTokenType.TILDE) {
             val invCall =
                 JKKtCallExpressionImpl(
-                    context.symbolProvider.provideByFqName("kotlin.Int.inv"),//TODO check if Long
+                    context.symbolProvider.provideMethodSymbol("kotlin.Int.inv"),//TODO check if Long
                     JKArgumentListImpl()
                 )
             JKQualifiedExpressionImpl(
@@ -72,7 +72,7 @@ class OperatorExpressionConversion(private val context: NewJ2kConverterContext) 
         ) {
             val toStringCall =
                 JKKtCallExpressionImpl(
-                    context.symbolProvider.provideByFqName("kotlin.Any.toString"),
+                    context.symbolProvider.provideMethodSymbol("kotlin.Any.toString"),
                     JKArgumentListImpl()
                 )
             val qualifiedCall = JKQualifiedExpressionImpl(left, JKKtQualifierImpl.DOT, toStringCall)

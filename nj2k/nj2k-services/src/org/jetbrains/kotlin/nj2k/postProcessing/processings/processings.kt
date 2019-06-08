@@ -38,8 +38,8 @@ val nullabilityProcessing =
     postProcessing("Inferring declarations nullability") { file, rangeMarker, converterContext ->
         NullabilityAnalysisFacade(
             converterContext,
-            getTypeElementNullability = ::nullabilityByUndefinedNullabilityComment,
-            prepareTypeElement = ::prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment,
+            getTypeElementNullability = { nullabilityByUndefinedNullabilityComment(it, converterContext) },
+            prepareTypeElement = { prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment(it, converterContext) },
             debugPrint = false
         ).fixNullability(AnalysisScope(file, rangeMarker))
     }

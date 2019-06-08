@@ -21,7 +21,7 @@ class ParameterModificationInMethodCallsConversion(private val context: NewJ2kCo
                     val parameterType =
                         if (parameter.isVarArgs) {
                             JKClassTypeImpl(
-                                context.symbolProvider.provideByFqName(parameter.type.type.arrayFqName()),
+                                context.symbolProvider.provideClassSymbol(parameter.type.type.arrayFqName()),
                                 if (parameter.type.type is JKJavaPrimitiveType) emptyList()
                                 else listOf(
                                     JKVarianceTypeParameterTypeImpl(

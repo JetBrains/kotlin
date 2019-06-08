@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaArrayTypeImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
 
 
 //TODO temporary
@@ -28,7 +30,7 @@ class MainFunctionConversion(private val context: NewJ2kConverterContext) : Recu
             }
             element.annotationList.annotations +=
                     JKAnnotationImpl(
-                        context.symbolProvider.provideByFqName("kotlin.jvm.JvmStatic"),
+                        context.symbolProvider.provideClassSymbol("kotlin.jvm.JvmStatic"),
                         emptyList()
                     )
         }

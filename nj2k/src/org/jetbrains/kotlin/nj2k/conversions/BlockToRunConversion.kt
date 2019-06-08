@@ -23,7 +23,10 @@ class BlockToRunConversion(private val context: NewJ2kConverterContext) : Recurs
             JKBlockStatementImpl(element.block),
             emptyList()
         )
-        val call = JKKtCallExpressionImpl(context.symbolProvider.provideByFqName("kotlin.run", true), JKArgumentListImpl(lambda))
+        val call = JKKtCallExpressionImpl(
+            context.symbolProvider.provideMethodSymbol("kotlin.run"),
+            JKArgumentListImpl(lambda)
+        )
         return recurse(JKExpressionStatementImpl(call).withNonCodeElementsFrom(element))
     }
 

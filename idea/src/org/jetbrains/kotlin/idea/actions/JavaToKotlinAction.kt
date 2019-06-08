@@ -21,10 +21,14 @@ import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
@@ -103,7 +107,9 @@ class JavaToKotlinAction : AnAction() {
         }
 
         fun convertFiles(
-            javaFiles: List<PsiJavaFile>, project: Project,
+            javaFiles: List<PsiJavaFile>,
+            project: Project,
+            module: Module,
             enableExternalCodeProcessing: Boolean = true,
             askExternalCodeProcessing: Boolean = true
         ): List<KtFile> {
@@ -112,6 +118,7 @@ class JavaToKotlinAction : AnAction() {
                 val converter =
                     JavaToKotlinConverterFactory.createJavaToKotlinConverter(
                         project,
+                        module,
                         ConverterSettings.defaultSettings,
                         IdeaJavaToKotlinServices
                     )
@@ -217,7 +224,7 @@ class JavaToKotlinAction : AnAction() {
             }
         }
 
-        convertFiles(javaFiles, project)
+        convertFiles(javaFiles, project, module)
     }
 
     override fun update(e: AnActionEvent) {

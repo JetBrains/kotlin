@@ -29,14 +29,14 @@ class JavaAnnotationsConversion(private val context: NewJ2kConverterContext) : R
 
     private fun processAnnotation(annotation: JKAnnotation) {
         if (annotation.classSymbol.fqName == "java.lang.Deprecated") {
-            annotation.classSymbol = context.symbolProvider.provideByFqName("kotlin.Deprecated")
+            annotation.classSymbol = context.symbolProvider.provideClassSymbol("kotlin.Deprecated")
             if (annotation.arguments.isEmpty()) {
                 annotation.arguments +=
                     JKAnnotationParameterImpl(JKKtLiteralExpressionImpl("\"\"", JKLiteralExpression.LiteralType.STRING))
             }
         }
         if (annotation.classSymbol.fqName == "java.lang.annotation.Target") {
-            annotation.classSymbol = context.symbolProvider.provideByFqName("kotlin.annotation.Target")
+            annotation.classSymbol = context.symbolProvider.provideClassSymbol("kotlin.annotation.Target")
 
             val arguments = annotation.arguments.singleOrNull()?.let { parameter ->
                 val value = parameter.value
@@ -51,7 +51,7 @@ class JavaAnnotationsConversion(private val context: NewJ2kConverterContext) : R
                         value.fieldAccessFqName()
                             ?.let { targetMappings[it] }
                             ?.map { fqName ->
-                                JKFieldAccessExpressionImpl(context.symbolProvider.provideByFqName(fqName))
+                                JKFieldAccessExpressionImpl(context.symbolProvider.provideFieldSymbol(fqName))
                             } ?: listOf(value.copyTreeAndDetach())
                     }
                 annotation.arguments = newArguments.map { JKAnnotationParameterImpl(it) }

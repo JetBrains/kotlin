@@ -185,7 +185,7 @@ class JKMultiverseFunctionSymbol(override val target: KtFunction, private val sy
             type?.let {
                 if (parameter.isVarArg) {
                     JKClassTypeImpl(
-                        symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.array),
+                        symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.array.toSafe()),
                         listOf(it)
                     )
                 } else it
@@ -252,12 +252,13 @@ class JKUnresolvedField(override val target: String, private val symbolProvider:
         get() {
             val resolvedType = (target as? PsiReferenceExpressionImpl)?.type
             if (resolvedType != null) return resolvedType.toJK(symbolProvider)
-            return JKClassTypeImpl(symbolProvider.provideByFqName("kotlin.Nothing"), emptyList())
+            return JKClassTypeImpl(symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.nothing.toSafe()), emptyList())
         }
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String = target
-    override val name: String = target
+    override val name: String
+        get() = target.substringAfterLast('.')
 }
 
 class JKUnresolvedMethod(
@@ -274,7 +275,7 @@ class JKUnresolvedMethod(
     override val parameterTypes: List<JKType>
         get() = TODO(target) //To change initializer of created properties use File | Settings | File Templates.
     override val name: String
-        get() = target
+        get() = target.substringAfterLast('.')
 }
 
 class JKUnresolvedClassSymbol(override val target: String) : JKClassSymbol, JKUnresolvedSymbol {

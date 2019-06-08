@@ -29,7 +29,7 @@ class ArrayInitializerConversion(private val context: NewJ2kConverterContext) : 
                 if (primitiveArrayType == null) JKTypeArgumentListImpl(listOf(element::type.detached()))
                 else JKTypeArgumentListImpl()
             newElement = JKJavaMethodCallExpressionImpl(
-                context.symbolProvider.provideByFqName("kotlin.$arrayConstructorName"),
+                context.symbolProvider.provideMethodSymbol("kotlin.$arrayConstructorName"),
                 element.initializer.also { element.initializer = emptyList() }.toArgumentList(),
                 typeArguments
             )
@@ -46,13 +46,13 @@ class ArrayInitializerConversion(private val context: NewJ2kConverterContext) : 
         if (dimensions.size == 1) {
             return if (type !is JKJavaPrimitiveType) {
                 JKJavaMethodCallExpressionImpl(
-                    context.symbolProvider.provideByFqName("kotlin/arrayOfNulls"),
+                    context.symbolProvider.provideMethodSymbol("kotlin.arrayOfNulls"),
                     JKArgumentListImpl(dimensions[0]),
                     JKTypeArgumentListImpl(listOf(JKTypeElementImpl(type)))
                 )
             } else {
                 JKJavaNewExpressionImpl(
-                    context.symbolProvider.provideByFqName(type.arrayFqName()),
+                    context.symbolProvider.provideClassSymbol(type.arrayFqName()),
                     JKArgumentListImpl(dimensions[0]),
                     JKTypeArgumentListImpl(emptyList())
                 )
@@ -62,8 +62,8 @@ class ArrayInitializerConversion(private val context: NewJ2kConverterContext) : 
             val arrayType = dimensions.drop(1).fold(type) { currentType, _ ->
                 JKJavaArrayTypeImpl(currentType)
             }
-            return JKJavaMethodCallExpressionImpl(
-                context.symbolProvider.provideByFqName("kotlin.Array"),
+            return JKJavaNewExpressionImpl(
+                context.symbolProvider.provideClassSymbol("kotlin.Array"),
                 JKArgumentListImpl(
                     dimensions[0],
                     JKLambdaExpressionImpl(
@@ -75,19 +75,19 @@ class ArrayInitializerConversion(private val context: NewJ2kConverterContext) : 
             )
         }
         var resultType = JKClassTypeImpl(
-            context.symbolProvider.provideByFqName(type.arrayFqName()),
+            context.symbolProvider.provideClassSymbol(type.arrayFqName()),
             if (type is JKJavaPrimitiveType) emptyList() else listOf(type),
             Nullability.Default
         )
         for (i in 0 until dimensions.size - 2) {
             resultType = JKClassTypeImpl(
-                context.symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.array.asString()),
+                context.symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.array.toSafe()),
                 listOf(resultType),
                 Nullability.Default
             )
         }
         return JKJavaMethodCallExpressionImpl(
-            context.symbolProvider.provideByFqName("kotlin/arrayOfNulls"),
+            context.symbolProvider.provideMethodSymbol("kotlin.arrayOfNulls"),
             JKArgumentListImpl(dimensions[0]),
             JKTypeArgumentListImpl(listOf(JKTypeElementImpl(resultType)))
         )

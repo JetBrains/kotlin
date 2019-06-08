@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.openapi.command.impl.DummyProject
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.*
@@ -28,21 +27,5 @@ data class NewJ2kConverterContext(
 
         override fun inConversionScope(element: PsiElement): Boolean = inConversionContext(element)
     })
-
-    companion object {
-        val DUMMY =
-            NewJ2kConverterContext(
-                JKSymbolProvider(),
-                NewJavaToKotlinConverter(
-                    DummyProject.getInstance(),
-                    ConverterSettings.defaultSettings,
-                    EmptyJavaToKotlinServices
-                ),
-                { false },
-                ImportStorage(),
-                JKElementInfoStorage()
-            )
-    }
-
 }
 

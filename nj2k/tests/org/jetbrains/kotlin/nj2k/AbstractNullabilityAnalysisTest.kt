@@ -23,8 +23,8 @@ abstract class AbstractNullabilityAnalysisTest : KotlinLightCodeInsightFixtureTe
         val text = FileUtil.loadFile(file, true)
         val ktFile = myFixture.configureByText("converterTestFile.kt", text) as KtFile
         NullabilityAnalysisFacade(
-            NewJ2kConverterContext.DUMMY,
-            getTypeElementNullability = { _, _ -> Nullability.UNKNOWN },
+            conversionContext = null,
+            getTypeElementNullability = { Nullability.UNKNOWN },
             prepareTypeElement = ::prepareTypeElementByMakingAllTypesNullable,
             debugPrint = false
         )

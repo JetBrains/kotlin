@@ -5,45 +5,105 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPolyVariantReference
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
-import org.jetbrains.kotlin.nj2k.tree.impl.psi
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.analysisContext
+import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.ImportPath
 
 
-internal fun resolveFqName(classId: ClassId, contextElement: JKTreeElement, context: NewJ2kConverterContext): PsiElement? {
-    val element = contextElement.psi ?: return null
-    return resolveFqName(classId, element)
-}
+class JKResolver(private val project: Project, module: Module, private val contextElement: PsiElement) {
+    private val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
 
-fun resolveFqName(classId: ClassId, element: PsiElement): PsiElement? {
-    return constructImportDirectiveWithContext(classId, element)
-        .getChildOfType<KtDotQualifiedExpression>()
-        ?.selectorExpression
-        ?.let {
-            it.references.mapNotNull { it.resolve() }.firstOrNull()
+    fun resolveDeclaration(fqName: FqName): PsiElement? =
+        resolveFqNameOfKtClassByIndex(fqName)
+            ?: resolveFqNameOfJavaClassByIndex(fqName)
+            ?: resolveFqNameOfKtFunctionByIndex(fqName)
+            ?: resolveFqNameOfKtPropertyByIndex(fqName)
+            ?: resolveFqName(fqName)
+
+    fun resolveClass(fqName: FqName): PsiElement? =
+        resolveFqNameOfKtClassByIndex(fqName)
+            ?: resolveFqNameOfJavaClassByIndex(fqName)
+            ?: resolveFqName(fqName)
+
+    fun resolveMethod(fqName: FqName): PsiElement? =
+        resolveFqNameOfKtFunctionByIndex(fqName)
+            ?: resolveFqName(fqName)
+
+    fun resolveField(fqName: FqName): PsiElement? =
+        resolveFqNameOfKtPropertyByIndex(fqName)
+            ?: resolveFqName(fqName)
+
+    private fun resolveFqNameOfKtClassByIndex(fqName: FqName): KtDeclaration? {
+        val fqNameString = fqName.asString()
+        val classesPsi = KotlinFullClassNameIndex.getInstance()[fqNameString, project, scope]
+        val typeAliasesPsi = KotlinTopLevelTypeAliasFqNameIndex.getInstance()[fqNameString, project, scope]
+
+        return selectNearest(classesPsi, typeAliasesPsi)
+    }
+
+    private fun resolveFqNameOfJavaClassByIndex(fqName: FqName): PsiClass? {
+        val fqNameString = fqName.asString()
+        return JavaFullClassNameIndex.getInstance()[fqNameString.hashCode(), project, scope]
+            .firstOrNull {
+                it.qualifiedName == fqNameString
+            }
+    }
+
+
+    private fun resolveFqNameOfKtFunctionByIndex(fqName: FqName): KtNamedFunction? =
+        KotlinTopLevelFunctionFqnNameIndex.getInstance()[fqName.asString(), project, scope].firstOrNull()
+
+    private fun resolveFqNameOfKtPropertyByIndex(fqName: FqName): KtProperty? =
+        KotlinTopLevelPropertyFqnNameIndex.getInstance()[fqName.asString(), project, scope].firstOrNull()
+
+
+    private fun resolveFqName(fqName: FqName): PsiElement? =
+        constructImportDirectiveWithContext(fqName)
+            .getChildOfType<KtDotQualifiedExpression>()
+            ?.selectorExpression
+            ?.let {
+                it.references.mapNotNull { it.resolve() }.firstOrNull()
+            }
+
+
+    private fun constructImportDirectiveWithContext(fqName: FqName): KtImportDirective {
+        val importDirective = KtPsiFactory(contextElement).createImportDirective(ImportPath(fqName, false))
+        importDirective.containingKtFile.analysisContext = contextElement.containingFile
+        return importDirective
+    }
+
+    private fun selectNearest(classesPsi: Collection<KtDeclaration>, typeAliasesPsi: Collection<KtTypeAlias>): KtDeclaration? =
+        when {
+            typeAliasesPsi.isEmpty() -> classesPsi.firstOrNull()
+            classesPsi.isEmpty() -> typeAliasesPsi.firstOrNull()
+            else -> (classesPsi.asSequence() + typeAliasesPsi.asSequence()).minWith(Comparator { o1, o2 ->
+                scope.compare(o1.containingFile.virtualFile, o2.containingFile.virtualFile)
+            })
         }
-}
 
-private fun constructImportDirectiveWithContext(classId: ClassId, element: PsiElement): KtImportDirective {
-    val importDirective = KtPsiFactory(element).createImportDirective(ImportPath(classId.asSingleFqName(), false))
-    importDirective.containingKtFile.analysisContext = element.containingFile
-    return importDirective
-}
-
-internal fun multiResolveFqName(classId: ClassId, elementForContext: PsiElement): List<PsiElement> {
-    return constructImportDirectiveWithContext(classId, elementForContext)
-        .getChildOfType<KtDotQualifiedExpression>()
-        ?.selectorExpression
-        ?.let {
-            it.references.filterIsInstance<PsiPolyVariantReference>().flatMap { it.multiResolve(false).mapNotNull { it.element } }
-        }.orEmpty()
+    fun multiResolveFqName(fqName: FqName): List<PsiElement> {
+        return constructImportDirectiveWithContext(fqName)
+            .getChildOfType<KtDotQualifiedExpression>()
+            ?.selectorExpression
+            ?.let { selector ->
+                selector.references.filterIsInstance<PsiPolyVariantReference>()
+                    .flatMap { polyVariantReference ->
+                        polyVariantReference
+                            .multiResolve(false)
+                            .mapNotNull { it.element }
+                    }
+            }.orEmpty()
+    }
 }

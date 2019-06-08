@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -57,10 +58,10 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
         is JKClassLiteralExpression -> {
             val symbol = when (literalType) {
                 JKClassLiteralExpression.LiteralType.KOTLIN_CLASS ->
-                    symbolProvider.provideByFqName<JKClassSymbol>("kotlin.reflect.KClass")
+                    symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.kClass.toSafe())
                 JKClassLiteralExpression.LiteralType.JAVA_CLASS,
                 JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS, JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE ->
-                    symbolProvider.provideByFqName("java.lang.Class")
+                    symbolProvider.provideClassSymbol("java.lang.Class")
             }
             JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
         }
@@ -76,7 +77,7 @@ fun ClassId.toKtClassType(
     symbolProvider: JKSymbolProvider,
     nullability: Nullability = Nullability.Default
 ): JKType =
-    JKClassTypeImpl(symbolProvider.provideByFqName(this), emptyList(), nullability)
+    JKClassTypeImpl(symbolProvider.provideClassSymbol(asSingleFqName()), emptyList(), nullability)
 
 
 fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Default): JKType {
@@ -136,14 +137,14 @@ fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean
 
 fun KotlinType.toJK(symbolProvider: JKSymbolProvider): JKClassTypeImpl =
     JKClassTypeImpl(
-        symbolProvider.provideByFqName(getJetTypeFqName(false)),
+        symbolProvider.provideClassSymbol(getJetTypeFqName(false)),
         arguments.map { it.type.toJK(symbolProvider) },
         if (isNullable()) Nullability.Nullable else Nullability.NotNull
     )
 
 
 fun KtTypeReference.toJK(symbolProvider: JKSymbolProvider): JKType? =
-    analyze()
+    analyze(BodyResolveMode.PARTIAL)
         .get(BindingContext.TYPE, this)
         ?.toJK(symbolProvider)
 
@@ -247,7 +248,7 @@ fun JKJavaMethod.returnTypeNullability(context: NewJ2kConverterContext): Nullabi
 
 fun JKType.isCollectionType(symbolProvider: JKSymbolProvider): Boolean {
     if (this !is JKClassType) return false
-    val collectionType = JKClassTypeImpl(symbolProvider.provideByFqName("java.util.Collection"), emptyList())
+    val collectionType = JKClassTypeImpl(symbolProvider.provideClassSymbol("java.util.Collection"), emptyList())
     return this.isSubtypeOf(collectionType, symbolProvider)
 }
 
@@ -382,7 +383,7 @@ fun JKType.replaceJavaClassWithKotlinClassType(symbolProvider: JKSymbolProvider)
     applyRecursive { type ->
         if (type is JKClassType && type.classReference.fqName == "java.lang.Class") {
             JKClassTypeImpl(
-                symbolProvider.provideByFqName(KotlinBuiltIns.FQ_NAMES.kClass),
+                symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.kClass.toSafe()),
                 type.parameters.map { it.replaceJavaClassWithKotlinClassType(symbolProvider) },
                 Nullability.NotNull
             )

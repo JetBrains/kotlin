@@ -76,16 +76,16 @@ internal fun KtTypeElement.classReference(): ClassReference {
 }
 
 class NullabilityAnalysisFacade(
-    private val conversionContext: NewJ2kConverterContext,
-    private val getTypeElementNullability: (KtTypeElement, NewJ2kConverterContext) -> Nullability,
-    private val prepareTypeElement: (KtTypeElement, NewJ2kConverterContext) -> Unit,
+    private val conversionContext: NewJ2kConverterContext?,
+    private val getTypeElementNullability: (KtTypeElement) -> Nullability,
+    private val prepareTypeElement: (KtTypeElement) -> Unit,
     private val debugPrint: Boolean
 ) {
     fun fixNullability(analysisScope: AnalysisScope) {
         CommandProcessor.getInstance().runUndoTransparentAction {
             runWriteAction {
-                analysisScope.prepareTypeElements(prepareTypeElement, conversionContext)
-                val context = ContextCreator(conversionContext, getTypeElementNullability).createContext(analysisScope)
+                analysisScope.prepareTypeElements(prepareTypeElement)
+                val context = ContextCreator(getTypeElementNullability).createContext(analysisScope)
                 if (debugPrint) {
                     with(Printer(context)) {
                         analysisScope.forEach { it.addTypeVariablesNames() }
@@ -101,15 +101,12 @@ class NullabilityAnalysisFacade(
     }
 }
 
-private fun AnalysisScope.prepareTypeElements(
-    prepareTypeElement: (KtTypeElement, NewJ2kConverterContext) -> Unit,
-    conversionContext: NewJ2kConverterContext
-) {
+private fun AnalysisScope.prepareTypeElements(prepareTypeElement: (KtTypeElement) -> Unit) {
     val typeElements = flatMap { it.collectDescendantsOfType<KtTypeReference>() }
     typeElements.forEach { typeReference ->
         val typeElement = typeReference.typeElement ?: return@forEach
         if (typeElement.parentOfType<KtSuperTypeCallEntry>() == null) {
-            prepareTypeElement(typeElement, conversionContext)
+            prepareTypeElement(typeElement)
         }
     }
 }

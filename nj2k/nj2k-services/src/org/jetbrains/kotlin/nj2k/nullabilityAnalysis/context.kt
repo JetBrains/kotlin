@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal class ContextCreator(
-    private val conversionContext: NewJ2kConverterContext,
-    private val getNullability: (KtTypeElement, NewJ2kConverterContext) -> Nullability
-) {
+internal class ContextCreator(private val getNullability: (KtTypeElement) -> Nullability) {
 
     private fun KtCallableDeclaration.typeElement(): KtTypeElement? =
         typeReference?.typeElement
@@ -80,7 +77,7 @@ internal class ContextCreator(
     }
 
     private fun KtTypeElement.asTypeVariable(): TypeVariable {
-        val nullability = getNullability(this, conversionContext)
+        val nullability = getNullability(this)
         val classReference: ClassReference = classReference()
         val typeParameters: List<TypeVariableTypeParameter> =
             typeArgumentsAsTypes.mapIndexed { index, typeRef ->
@@ -142,7 +139,7 @@ fun prepareTypeElementByMakingAllTypesNullableConsideringNullabilityComment(type
     }
 }
 
-fun prepareTypeElementByMakingAllTypesNullable(typeElement: KtTypeElement, conversionContext: NewJ2kConverterContext) {
+fun prepareTypeElementByMakingAllTypesNullable(typeElement: KtTypeElement) {
     typeElement.changeNullability(toNullable = true)
 }
 

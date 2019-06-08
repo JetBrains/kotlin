@@ -13,6 +13,7 @@ abstract class J2kConverterExtension : AbstractExtensionPointBean() {
 
     abstract fun createJavaToKotlinConverter(
         project: Project,
+        targetModule: Module?,
         settings: ConverterSettings,
         services: JavaToKotlinConverterServices
     ): JavaToKotlinConverter

@@ -5,23 +5,22 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.nj2k.conversions.multiResolveFqName
-import org.jetbrains.kotlin.nj2k.conversions.resolveFqName
+import org.jetbrains.kotlin.nj2k.conversions.JKResolver
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class JKSymbolProvider {
-    val symbolsByFqName = mutableMapOf<String, JKSymbol>()
+class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElement) {
+    private val symbolsByFqName = mutableMapOf<String, JKSymbol>()
     val symbolsByPsi = mutableMapOf<PsiElement, JKSymbol>()
     val symbolsByJK = mutableMapOf<JKDeclaration, JKSymbol>()
+    private val resolver = JKResolver(project, module, contextElement)
 
     private val elementVisitor = ElementVisitor()
 
@@ -102,50 +101,36 @@ class JKSymbolProvider {
         JKUniverseMethodSymbol(this).also { it.target = jk }
     } as JKMethodSymbol
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(
-        classId: ClassId,
-        multiResolve: Boolean = false,
-        context: PsiElement = symbolsByPsi.keys.first()
-    ): T {
-        val fqName = classId.asSingleFqName().asString().replace('/', '.')
-        if (fqName in symbolsByFqName) {
-            return symbolsByFqName[fqName] as T
-        }
-        val resolved =
-            if (multiResolve) multiResolveFqName(classId, context).firstOrNull()
-            else resolveFqName(classId, context)
-        val symbol = resolved?.let(::provideDirectSymbol).safeAs<T>()
-        return symbol ?: when {
-            isAssignable<T, JKUnresolvedMethod>() -> JKUnresolvedMethod(fqName)
-            isAssignable<T, JKUnresolvedField>() -> JKUnresolvedField(fqName, this)
-            else -> JKUnresolvedClassSymbol(fqName)
-        } as T
-    }
 
-    @Deprecated("", ReplaceWith("provideByFqName(fqName, true, context)"))
-    internal inline fun <reified T : JKSymbol> provideByFqNameMulti(fqName: String, context: PsiElement = symbolsByPsi.keys.first()): T =
-        provideByFqName(ClassId.fromString(fqName), true, context)
+    fun provideClassSymbol(fqName: FqName): JKClassSymbol =
+        symbolsByFqName.getOrPutIfNotNull(fqName.asString()) {
+            resolver.resolveClass(fqName)?.let {
+                provideDirectSymbol(it) as? JKClassSymbol
+            }
+        } as? JKClassSymbol ?: JKUnresolvedClassSymbol(fqName.asString())
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(
-        fqName: String,
-        multiResolve: Boolean = false,
-        context: PsiElement = symbolsByPsi.keys.first()
-    ): T =
-        provideByFqName(ClassId.fromString(fqName), multiResolve, context)
+    fun provideClassSymbol(fqName: String): JKClassSymbol =
+        provideClassSymbol(FqName(fqName.asSafeFqNameString()))
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(
-        fqName: FqName,
-        multiResolve: Boolean = false,
-        context: PsiElement = symbolsByPsi.keys.first()
-    ): T =
-        provideByFqName(fqName.asString(), multiResolve, context)
+    fun provideMethodSymbol(fqName: FqName): JKMethodSymbol =
+        symbolsByFqName.getOrPutIfNotNull(fqName.asString()) {
+            resolver.resolveMethod(fqName)?.let {
+                provideDirectSymbol(it) as? JKMethodSymbol
+            }
+        } as? JKMethodSymbol ?: JKUnresolvedMethod(fqName.asString())
 
-    internal inline fun <reified T : JKSymbol> provideByFqName(
-        fqName: FqNameUnsafe,
-        multiResolve: Boolean = false,
-        context: PsiElement = symbolsByPsi.keys.first()
-    ): T =
-        provideByFqName(fqName.asString(), multiResolve, context)
+    fun provideMethodSymbol(fqName: String): JKMethodSymbol =
+        provideMethodSymbol(FqName(fqName.asSafeFqNameString()))
+
+    fun provideFieldSymbol(fqName: FqName): JKFieldSymbol =
+        symbolsByFqName.getOrPutIfNotNull(fqName.asString()) {
+            resolver.resolveField(fqName)?.let {
+                provideDirectSymbol(it) as? JKFieldSymbol
+            }
+        } as? JKFieldSymbol ?: JKUnresolvedField(fqName.asString(), this)
+
+    fun provideFieldSymbol(fqName: String): JKFieldSymbol =
+        provideFieldSymbol(FqName(fqName.asSafeFqNameString()))
 
 
     private inner class ElementVisitor : JavaElementVisitor() {
@@ -183,3 +168,17 @@ class JKSymbolProvider {
 
     internal inline fun <reified A, reified B> isAssignable(): Boolean = A::class.java.isAssignableFrom(B::class.java)
 }
+
+private inline fun <K, V : Any> MutableMap<K, V>.getOrPutIfNotNull(key: K, defaultValue: () -> V?): V? {
+    val value = get(key)
+    return if (value == null) {
+        val answer = defaultValue() ?: return null
+        put(key, answer)
+        answer
+    } else {
+        value
+    }
+}
+
+private fun String.asSafeFqNameString() =
+    replace('/', '.')

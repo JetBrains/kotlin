@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class NewJavaToKotlinConverter(
     val project: Project,
+    private val targetModule: Module?,
     val settings: ConverterSettings,
     val oldConverterServices: JavaToKotlinConverterServices
 ) : JavaToKotlinConverter() {
@@ -101,7 +103,9 @@ class NewJavaToKotlinConverter(
         val processor = processor as NewJ2kWithProgressProcessor
 
         val phaseDescription = "Converting Java code to Kotlin code"
-        val symbolProvider = JKSymbolProvider()
+        val module = targetModule ?: error("Module should not be null for new J2K")
+        val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
+        val symbolProvider = JKSymbolProvider(project, module, contextElement)
         symbolProvider.preBuildTree(inputElements)
         val importStorage = ImportStorage()
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices, importStorage)

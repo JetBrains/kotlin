@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.codeInsight.daemon.impl.quickfix.AddTypeArgumentsFix
 import com.intellij.lang.jvm.JvmAnnotatedElement
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
@@ -673,7 +672,7 @@ class JavaToJKTreeBuilder constructor(
         fun PsiDocComment.deprecatedAnnotation(): JKAnnotation? =
             findTagByName("deprecated")?.let { tag ->
                 JKAnnotationImpl(
-                    symbolProvider.provideByFqName("kotlin.Deprecated"),
+                    symbolProvider.provideClassSymbol("kotlin.Deprecated"),
                     listOf(
                         JKAnnotationParameterImpl(stringLiteral(tag.content(), symbolProvider))
                     )

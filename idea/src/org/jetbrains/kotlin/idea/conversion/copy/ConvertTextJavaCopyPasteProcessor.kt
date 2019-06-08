@@ -23,6 +23,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.fileTypes.LanguageFileType
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -94,6 +96,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         val psiDocumentManager = PsiDocumentManager.getInstance(project)
         psiDocumentManager.commitDocument(editor.document)
         val targetFile = psiDocumentManager.getPsiFile(editor.document) as? KtFile ?: return
+        val targetModule = targetFile.module
 
         val pasteTarget = detectPasteTarget(targetFile, bounds.startOffset, bounds.endOffset) ?: return
 
@@ -105,9 +108,9 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         val dataForConversion = DataForConversion.prepare(copiedJavaCode, project)
 
         val additionalImports = dataForConversion.tryResolveImports(targetFile)
-        var convertedImportsText = additionalImports.convertCodeToKotlin(project).text
+        var convertedImportsText = additionalImports.convertCodeToKotlin(project, targetModule).text
 
-        val convertedResult = dataForConversion.convertCodeToKotlin(project)
+        val convertedResult = dataForConversion.convertCodeToKotlin(project, targetModule)
         val convertedText = convertedResult.text
 
         val newBounds = runWriteAction {
@@ -133,8 +136,8 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         conversionPerformed = true
     }
 
-    private fun DataForConversion.convertCodeToKotlin(project: Project): ConversionResult {
-        return elementsAndTexts.convertCodeToKotlin(project)
+    private fun DataForConversion.convertCodeToKotlin(project: Project, targetModule: Module?): ConversionResult {
+        return elementsAndTexts.convertCodeToKotlin(project, targetModule)
     }
 
     private val KtElement.pasteContext: KotlinContext

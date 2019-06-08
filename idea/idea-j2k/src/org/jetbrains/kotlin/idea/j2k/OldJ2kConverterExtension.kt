@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
@@ -10,6 +11,7 @@ class OldJ2kConverterExtension : J2kConverterExtension() {
 
     override fun createJavaToKotlinConverter(
         project: Project,
+        targetModule: Module?,
         settings: ConverterSettings,
         services: JavaToKotlinConverterServices
     ): JavaToKotlinConverter =

@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.tree.JKBlockStatement
+import org.jetbrains.kotlin.nj2k.tree.JKJavaAssignmentExpression
+import org.jetbrains.kotlin.nj2k.tree.JKKtAssignmentStatement
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -18,7 +21,7 @@ class AssignmentAsExpressionToAlsoConversion(val context: NewJ2kConverterContext
         val alsoExpression = JKKtAlsoCallExpressionImpl(
             JKBlockStatementImpl(
                 JKBlockImpl(listOf(JKKtAssignmentStatementImpl(element.field, JKStubExpressionImpl(), element.operator)))
-            ), context.symbolProvider.provideByFqName("kotlin/also")
+            ), context.symbolProvider.provideMethodSymbol("kotlin.also")
         ).also {
             it.statement.cast<JKBlockStatement>().block.statements.first().cast<JKKtAssignmentStatement>().expression =
                     JKFieldAccessExpressionImpl(

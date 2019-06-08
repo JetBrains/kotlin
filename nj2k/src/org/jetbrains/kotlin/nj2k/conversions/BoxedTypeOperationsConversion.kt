@@ -39,7 +39,7 @@ class BoxedTypeOperationsConversion(private val context: NewJ2kConverterContext)
         val primitiveTypeName = boxedTypeToPrimitiveType[boxedJavaType] ?: return null
         if (operationType !in primitiveTypeNames) return null
         return JKKtCallExpressionImpl(
-            context.symbolProvider.provideByFqName(
+            context.symbolProvider.provideMethodSymbol(
                 "kotlin.${primitiveTypeName.capitalize()}.to${operationType.capitalize()}"
             ),
             JKArgumentListImpl()
