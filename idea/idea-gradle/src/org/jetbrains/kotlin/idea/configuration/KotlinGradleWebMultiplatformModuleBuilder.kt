@@ -49,10 +49,6 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
         val jvmResources = jvmRoot.createChildDirectory(this, "resources")
         val logBack = jvmResources.createChildData(this, "logback.xml").bufferedWriter()
 
-        val jsRoot = src.findChild(jsSourceName)!!
-        val jsResources = jsRoot.createChildDirectory(this, "resources")
-        val requireMinJs = jsResources.createChildData(this, "require.min.js").bufferedWriter()
-
         try {
             commonMain.write(
                 """
@@ -93,19 +89,6 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
                 fun main() {
                     embeddedServer(Netty, port = 8080, host = "127.0.0.1") {
-                        val currentDir = File(".").absoluteFile
-                        environment.log.info("Current directory: ${"$"}currentDir")
-
-                        val webDir = listOf(
-                            "web",
-                            "../src/jsMain/web",
-                            "src/jsMain/web"
-                        ).map {
-                            File(currentDir, it)
-                        }.firstOrNull { it.isDirectory }?.absoluteFile ?: error("Can't find 'web' folder for this sample")
-
-                        environment.log.info("Web directory: ${"$"}webDir")
-
                         routing {
                             get("/") {
                                 call.respondHtml {
@@ -113,22 +96,17 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                                         title("Hello from Ktor!")
                                     }
                                     body {
-                                        +"${"$"}{hello()} from Ktor. Check me value: ${"$"}{Sample().checkMe()}"
+                                        +"${'$'}{hello()} from Ktor. Check me value: ${'$'}{Sample().checkMe()}"
                                         div {
                                             id = "js-response"
                                             +"Loading..."
                                         }
-                                        script(src = "/static/require.min.js") {
-                                        }
-                                        script {
-                                            +"require.config({baseUrl: '/static'});\n"
-                                            +"require(['/static/$name.js'], function(js) { js.sample.helloWorld('Hi'); });\n"
-                                        }
+                                        script(src = "/static/$name.js") {}
                                     }
                                 }
                             }
                             static("/static") {
-                                files(webDir)
+                                resource("$name.js")
                             }
                         }
                     }.start(wait = true)
@@ -173,10 +151,14 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                     val message = "${"$"}salutation from Kotlin.JS ${"$"}{hello()}, check me value: ${"$"}{Sample().checkMe()}"
                     document.getElementById("js-response")?.textContent = message
                 }
+                
+                fun main() {
+                    document.addEventListener("DOMContentLoaded", {
+                        helloWorld("Hi!")
+                    })
+                }                
             """.trimIndent()
             )
-
-            requireMinJs.write(requireMinJsContent)
 
             commonTest.write(
                 """
@@ -226,7 +208,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
             """.trimIndent()
             )
         } finally {
-            listOf(commonMain, commonTest, jvmMain, jvmTest, jsMain, jsTest, logBack, requireMinJs).forEach(BufferedWriter::close)
+            listOf(commonMain, commonTest, jvmMain, jvmTest, jsMain, jsTest, logBack).forEach(BufferedWriter::close)
         }
     }
 
@@ -237,7 +219,10 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
             kotlin {
                 jvm()
-                js()
+                js {
+                    browser {
+                    }
+                }
                 sourceSets {
                     $commonSourceName {
                         dependencies {
@@ -277,32 +262,15 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                 }
             }
 
-            def webFolder = new File(project.buildDir, "../src/jsMain/web")
-            def jsCompilations = kotlin.targets.js.compilations
-
-            task populateWebFolder(dependsOn: [jsMainClasses]) {
-                doLast {
-                    copy {
-                        from jsCompilations.main.output
-                        from kotlin.sourceSets.jsMain.resources.srcDirs
-                        jsCompilations.test.runtimeDependencyFiles.each {
-                            if (it.exists() && !it.isDirectory()) {
-                                from zipTree(it.absolutePath).matching { include '*.js' }
-                            }
-                        }
-                        into webFolder
-                    }
-                }
+            jvmJar {
+                dependsOn(jsBrowserWebpack)
+                from(jsBrowserWebpack.outputPath)
             }
-
-            jsJar.dependsOn(populateWebFolder)
-
-            task run(type: JavaExec, dependsOn: [jvmMainClasses, jsJar]) {
-                main = "sample.Sample${jvmTargetName.capitalize()}Kt"
-                classpath { [
-                        kotlin.targets.jvm.compilations.main.output.allOutputs.files,
-                        configurations.jvmRuntimeClasspath,
-                ] }
+            
+            task run(type: JavaExec, dependsOn: [jvmJar]) {
+                group = "application"
+                main = "sample.SampleJvmKt"
+                classpath(configurations.jvmRuntimeClasspath, jvmJar)
                 args = []
             }
         """.trimIndent()
