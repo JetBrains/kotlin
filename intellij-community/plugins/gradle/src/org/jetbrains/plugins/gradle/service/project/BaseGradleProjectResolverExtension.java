@@ -364,7 +364,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
     processSourceSets(resolverCtx, gradleModule, externalProject, ideModule, new SourceSetsProcessor() {
       @Override
       public void process(@NotNull DataNode<? extends ModuleData> dataNode, @NotNull ExternalSourceSet sourceSet) {
-        for (Map.Entry<IExternalSystemSourceType, ExternalSourceDirectorySet> directorySetEntry : sourceSet.getSources().entrySet()) {
+        for (Map.Entry<? extends IExternalSystemSourceType, ? extends ExternalSourceDirectorySet> directorySetEntry : sourceSet.getSources().entrySet()) {
           ExternalSystemSourceType sourceType = ExternalSystemSourceType.from(directorySetEntry.getKey());
           ExternalSourceDirectorySet sourceDirectorySet = directorySetEntry.getValue();
 
@@ -453,7 +453,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
           }
           final ModuleData moduleData = dataNode.getData();
           moduleData.useExternalCompilerOutput(resolverCtx.isDelegatedBuild());
-          for (Map.Entry<IExternalSystemSourceType, ExternalSourceDirectorySet> directorySetEntry : sourceSet.getSources().entrySet()) {
+          for (Map.Entry<? extends IExternalSystemSourceType, ? extends ExternalSourceDirectorySet> directorySetEntry : sourceSet.getSources().entrySet()) {
             ExternalSystemSourceType sourceType = ExternalSystemSourceType.from(directorySetEntry.getKey());
             ExternalSourceDirectorySet sourceDirectorySet = directorySetEntry.getValue();
             File ideOutputDir = getIdeOutputDir(sourceDirectorySet);

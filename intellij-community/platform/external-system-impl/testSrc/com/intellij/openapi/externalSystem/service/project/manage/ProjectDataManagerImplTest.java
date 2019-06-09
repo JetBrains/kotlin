@@ -5,14 +5,12 @@ import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.Key;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
-import com.intellij.openapi.externalSystem.model.project.*;
+import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
-import com.intellij.openapi.externalSystem.test.ExternalSystemTestUtil;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.testFramework.PlatformTestCase;
-import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,31 +52,6 @@ public class ProjectDataManagerImplTest extends PlatformTestCase {
                         "importDataAfter",
                         "computeOrphanDataAfter",
                         "removeDataAfter");
-  }
-
-  public void testBrokenDataNodePreparation() {
-    final LibraryDependencyData data = new LibraryDependencyData(new ModuleData("id",
-                                                                                ExternalSystemTestUtil.TEST_EXTERNAL_SYSTEM_ID,
-                                                                                "typeId",
-                                                                                "module_name",
-                                                                                "fake_path",
-                                                                                "fake_path"),
-                                                                 new LibraryData(ExternalSystemTestUtil.TEST_EXTERNAL_SYSTEM_ID,
-                                                                                 "library_name"),
-                                                                 LibraryLevel.PROJECT);
-
-    final DataNode<LibraryDependencyData> badNode =
-      new DataNode<LibraryDependencyData>(ProjectKeys.LIBRARY_DEPENDENCY, data, null) {
-        @Override
-        public void deserializeData(@NotNull Collection<? extends ClassLoader> loaders) {
-          // mock a node that failed to deserialize it's data.
-          ReflectionUtil.resetField(this, "myData");
-          throw new RuntimeException("Broken node can not be prepared properly");
-        }
-      };
-
-    new ProjectDataManagerImpl(new LibraryDependencyDataService())
-      .ensureTheDataIsReadyToUse(badNode);
   }
 
   @Order(1)

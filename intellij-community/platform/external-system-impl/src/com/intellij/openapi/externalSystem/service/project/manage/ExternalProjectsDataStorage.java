@@ -339,28 +339,15 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
     return projectDataNode;
   }
 
-  private static void doSave(@NotNull Project project, @NotNull Collection<InternalExternalProjectInfo> externalProjects)
-    throws IOException {
+  private static void doSave(@NotNull Project project, @NotNull Collection<InternalExternalProjectInfo> externalProjects) throws IOException {
     for (Iterator<InternalExternalProjectInfo> iterator = externalProjects.iterator(); iterator.hasNext(); ) {
       InternalExternalProjectInfo externalProject = iterator.next();
       if (!validate(externalProject)) {
         iterator.remove();
-        continue;
       }
-
-      WriteAndCompressSession buffer = new WriteAndCompressSession();
-      ExternalSystemApiUtil.visit(externalProject.getExternalProjectStructure(), dataNode -> {
-        try {
-          dataNode.serializeData(buffer);
-        }
-        catch (Exception e) {
-          LOG.warn(e);
-          dataNode.clear(true);
-        }
-      });
     }
 
-    getCacheFile(project).writeList(externalProjects, InternalExternalProjectInfo.class);
+    getCacheFile(project).writeList(externalProjects, InternalExternalProjectInfo.class, SerializationKt.createCacheWriteConfiguration());
   }
 
   @SuppressWarnings("unchecked")
@@ -388,7 +375,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
       LOG.debug("External projects data storage was invalidated");
       return null;
     }
-    return cacheFile.readList(InternalExternalProjectInfo.class, SerializationKt.getExternalSystemBeanConstructed());
+    return cacheFile.readList(InternalExternalProjectInfo.class, SerializationKt.createCacheReadConfiguration(LOG));
   }
 
   private static boolean isInvalidated(@NotNull Path configurationFile, @NotNull BasicFileAttributes fileAttributes) throws IOException {

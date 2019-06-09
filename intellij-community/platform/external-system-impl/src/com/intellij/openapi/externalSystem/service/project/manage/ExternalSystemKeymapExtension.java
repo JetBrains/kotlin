@@ -148,7 +148,7 @@ public class ExternalSystemKeymapExtension implements KeymapExtension {
     return result;
   }
 
-  public static void updateActions(Project project, Collection<? extends DataNode<TaskData>> taskData) {
+  public static void updateActions(Project project, @NotNull Collection<? extends DataNode<TaskData>> taskData) {
     clearActions(project, taskData);
     createActions(project, taskData);
   }

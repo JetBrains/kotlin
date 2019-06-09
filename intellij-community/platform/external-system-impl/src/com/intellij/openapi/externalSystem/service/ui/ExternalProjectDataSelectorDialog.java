@@ -18,7 +18,6 @@ import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ModuleDependencyData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
-import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil;
@@ -111,13 +110,12 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
   }
 
   private void init(@NotNull ExternalProjectInfo projectInfo) {
-    ProjectDataManagerImpl.getInstance().ensureTheDataIsReadyToUse(projectInfo.getExternalProjectStructure());
     myProjectInfo = projectInfo;
     myExternalSystemUiAware = ExternalSystemUiUtil.getUiAware(myProjectInfo.getProjectSystemId());
     myTree = createTree();
     updateSelectionState();
 
-    myTree.addCheckboxTreeListener(new CheckboxTreeAdapter() {
+    myTree.addCheckboxTreeListener(new CheckboxTreeListener() {
       @Override
       public void nodeStateChanged(@NotNull CheckedTreeNode node) {
         updateSelectionState();

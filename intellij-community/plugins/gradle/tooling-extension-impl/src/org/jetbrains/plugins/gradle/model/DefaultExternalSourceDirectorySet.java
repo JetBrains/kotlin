@@ -18,15 +18,15 @@ public final class DefaultExternalSourceDirectorySet implements ExternalSourceDi
   private Set<File> srcDirs;
   private File outputDir;
   private final List<File> gradleOutputDirs;
-  private final FilePatternSet patterns;
+  private final FilePatternSetImpl patterns;
   @NotNull
-  private List<ExternalFilter> filters;
+  private List<DefaultExternalFilter> filters;
 
   private boolean inheritedCompilerOutput;
 
   public DefaultExternalSourceDirectorySet() {
     srcDirs = new HashSet<File>();
-    filters = new ArrayList<ExternalFilter>();
+    filters = new ArrayList<DefaultExternalFilter>();
     gradleOutputDirs = new ArrayList<File>();
     patterns = new FilePatternSetImpl(new LinkedHashSet<String>(), new LinkedHashSet<String>());
   }
@@ -132,11 +132,11 @@ public final class DefaultExternalSourceDirectorySet implements ExternalSourceDi
 
   @NotNull
   @Override
-  public List<ExternalFilter> getFilters() {
+  public List<? extends ExternalFilter> getFilters() {
     return filters;
   }
 
-  public void setFilters(@NotNull List<ExternalFilter> filters) {
+  public void setFilters(@NotNull List<DefaultExternalFilter> filters) {
     this.filters = filters;
   }
 }
