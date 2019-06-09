@@ -32,12 +32,12 @@ internal open class TCServiceMessagesClient(
     val settings: TCServiceMessagesClientSettings,
     val log: Logger
 ) : ServiceMessageParserCallback {
-    lateinit var rootOperationId: Any
+    lateinit var rootOperationId: OperationIdentifier
 
     inline fun root(operation: OperationIdentifier, actions: () -> Unit) {
-        rootOperationId = operation.id
+        rootOperationId = operation
 
-        RootNode(operation.id).open {
+        RootNode(operation).open {
             actions()
         }
     }
@@ -351,10 +351,12 @@ internal open class TCServiceMessagesClient(
         abstract fun requireReportingNode(): TestDescriptorInternal
     }
 
-    inner class RootNode(val ownerBuildOperationId: Any) : GroupNode(null, settings.rootNodeName) {
+    inner class RootNode(val ownerBuildOperationId: OperationIdentifier) : GroupNode(null, settings.rootNodeName) {
         override val descriptor: TestDescriptorInternal = object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId) {
             override fun getOwnerBuildOperationId(): Any? = this@RootNode.ownerBuildOperationId
             override fun getParent(): TestDescriptorInternal? = null
+            override fun isRoot(): Boolean = true
+            override fun toString(): String = name
         }
 
         override fun requireReportingNode(): TestDescriptorInternal = descriptor
@@ -401,6 +403,7 @@ internal open class TCServiceMessagesClient(
                 override fun getDisplayName(): String = fullNameWithoutRoot
                 override fun getOwnerBuildOperationId(): Any? = rootOperationId
                 override fun getParent(): TestDescriptorInternal = reportingParent.descriptor
+                override fun toString(): String = displayName
             }
 
             shouldReportComplete = true
