@@ -173,13 +173,6 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
     }
   }
 
-  public static class TypeFactory extends FileTypeFactory {
-    @Override
-    public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-      consumer.consume(ScratchFileType.INSTANCE);
-    }
-  }
-
   public static class Substitutor extends LanguageSubstitutor {
     @Nullable
     @Override
