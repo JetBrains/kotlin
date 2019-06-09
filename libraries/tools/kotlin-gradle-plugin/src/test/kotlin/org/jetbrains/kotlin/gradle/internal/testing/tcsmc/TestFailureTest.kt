@@ -80,8 +80,7 @@ AssertionError: Expected value to be true.
     at mpplib2/build/js_test_node_modules/mpplib2_test.js:59:38
     at Object.fn [as test] (mpplib2/build/tmp/expandedArchives/src/KotlinTestRunner.ts:12:25)
     at Object.test (mpplib2/build/tmp/expandedArchives/src/KotlinTestTeamCityReporter.ts:80:28)
-    at test (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/TestApi.kt:57:15)
- // root//Test
+    at test (mpplib2/build/tmp/expandedArchives/kotlin-test-js-1.3-SNAPSHOT.jar_d60f1e6d0dd94843a03bf98a569bbb73/src/main/kotlin/kotlin/test/TestApi.kt:57:15) // root//Test
     COMPLETED FAILURE // root//Test
   COMPLETED FAILURE // root/
 COMPLETED FAILURE // root
