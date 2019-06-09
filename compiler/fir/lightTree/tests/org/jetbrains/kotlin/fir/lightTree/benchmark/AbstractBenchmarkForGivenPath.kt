@@ -5,19 +5,12 @@
 
 package org.jetbrains.kotlin.fir.lightTree.benchmark
 
-import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.TreeGenerator
 import org.openjdk.jmh.annotations.*
-import java.util.concurrent.TimeUnit
 
-@Warmup(iterations = 10, batchSize = 1)
-@Measurement(iterations = 10, batchSize = 1)
-@State(Scope.Benchmark)
 abstract class AbstractBenchmarkForGivenPath(
     private val path: String,
     private val ignoreTestData: Boolean = true
 ) : AbstractBenchmark() {
-    abstract val generator: TreeGenerator
-
     @Setup
     fun setUp() {
         generator.setUp()
@@ -31,12 +24,12 @@ abstract class AbstractBenchmarkForGivenPath(
     }
 
     @Benchmark
-    fun testTotalKotlinOnlyBaseTree() {
+    fun testBuildOnlyBaseTreeForGivenPath() {
         forEachFile { text, file -> generator.generateBaseTree(text, file) }
     }
 
     @Benchmark
-    fun testTotalKotlinFir() {
+    fun testBuildFirForGivenPath() {
         forEachFile { text, file -> generator.generateFir(text, file) }
     }
 }

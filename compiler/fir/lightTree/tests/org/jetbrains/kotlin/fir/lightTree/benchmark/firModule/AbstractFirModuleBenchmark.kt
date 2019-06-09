@@ -17,11 +17,11 @@ abstract class AbstractFirModuleBenchmark :
         true
     )
 
-open class LightTree2FirFirModuleBenchmark(override val generator: TreeGenerator = LightTree2FirGenerator()) :
+open class LightTree2FirBenchmarkFirModule(override val generator: TreeGenerator = LightTree2FirGenerator()) :
     AbstractFirModuleBenchmark()
 
-open class Psi2FirFirModuleBenchmark(override val generator: TreeGenerator = Psi2FirGenerator()) :
+open class Psi2FirBenchmarkFirModule(override val generator: TreeGenerator = Psi2FirGenerator()) :
     AbstractFirModuleBenchmark()
 
-open class Antlr2FirFirModuleBenchmark(override val generator: TreeGenerator = Antlr2FirGenerator()) :
+open class Antlr2FirBenchmarkFirModule(override val generator: TreeGenerator = Antlr2FirGenerator()) :
     AbstractFirModuleBenchmark()

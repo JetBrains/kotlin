@@ -18,7 +18,11 @@ import org.jetbrains.kotlin.parsing.MyKotlinParser
 import java.io.File
 import java.nio.file.Path
 
-class LightTree2Fir(private val stubMode: Boolean, private val parserDefinition: ParserDefinition, private val lexer: Lexer) {
+class LightTree2Fir(
+    private val stubMode: Boolean,
+    private val parserDefinition: ParserDefinition,
+    private val lexer: Lexer
+) {
     fun buildFirFile(path: Path): FirFile {
         return buildFirFile(path.toFile())
     }
@@ -37,6 +41,7 @@ class LightTree2Fir(private val stubMode: Boolean, private val parserDefinition:
     fun buildFirFile(code: String, fileName: String): FirFile {
         val lightTree = buildLightTree(code)
 
-        return Converter(object : FirSessionBase() {}, stubMode, lightTree).convertFile(lightTree.root, fileName)
+        return Converter(object : FirSessionBase() {}, stubMode, lightTree)
+            .convertFile(lightTree.root, fileName)
     }
 }
