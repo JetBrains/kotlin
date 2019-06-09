@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.List;
 
 import static com.intellij.execution.services.ServiceViewActionProvider.getSelectedView;
 
@@ -18,8 +17,7 @@ public class SplitToNewTabsAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     ServiceView serviceView = getSelectedView(e);
-    List<ServiceViewItem> items = serviceView == null ? Collections.emptyList() : serviceView.getSelectedItems();
-    boolean enabled = !items.isEmpty() && items.stream().allMatch(item -> item instanceof ServiceModel.ServiceNode);
+    boolean enabled = serviceView != null && !serviceView.getSelectedItems().isEmpty();
     e.getPresentation().setEnabled(enabled);
     e.getPresentation().setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
   }
