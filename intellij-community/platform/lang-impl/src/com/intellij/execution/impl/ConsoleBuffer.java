@@ -12,7 +12,7 @@ public class ConsoleBuffer {
   public static int getCycleBufferSize() {
     UISettings uiSettings = UISettings.getInstance();
     if (uiSettings.getOverrideConsoleCycleBufferSize()) {
-      return uiSettings.getConsoleCycleBufferSizeKb() * 1024;
+      return Math.min(Integer.MAX_VALUE / 1024, uiSettings.getConsoleCycleBufferSizeKb()) * 1024;
     }
     return getLegacyCycleBufferSize();
   }
