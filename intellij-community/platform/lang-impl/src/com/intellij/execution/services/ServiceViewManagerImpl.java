@@ -362,6 +362,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       if (item != null && !viewModel.getChildren(item).isEmpty()) {
         AppUIUtil.invokeOnEdt(() -> {
           int index = myContentManager.getIndexOfContent(content);
+          if (index < 0) return;
+
           myContentManager.removeContent(content, true);
           ServiceListModel listModel = new ServiceListModel(myModel, myModelFilter, ContainerUtil.newSmartList(item),
                                                             viewModel.getFilter().getParent());
