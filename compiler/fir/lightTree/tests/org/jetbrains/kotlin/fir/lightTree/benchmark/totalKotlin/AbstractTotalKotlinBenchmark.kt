@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.Psi2FirGenerator
 import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.TreeGenerator
 import org.openjdk.jmh.annotations.*
 
-@State(Scope.Benchmark)
 abstract class AbstractTotalKotlinBenchmark :
     AbstractBenchmarkForGivenPath(System.getProperty("user.dir"))
 

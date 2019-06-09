@@ -16,15 +16,15 @@ import java.io.File
 
 @State(Scope.Benchmark)
 open class LightTree2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase() {
-    private var lightTreeConverter: LightTree2Fir? = null
+    private lateinit var lightTreeConverter: LightTree2Fir
 
     override fun generateBaseTree(text: String, file: File) {
-        val lightTree = lightTreeConverter!!.buildLightTree(text)
+        val lightTree = lightTreeConverter.buildLightTree(text)
         DebugUtil.lightTreeToString(lightTree, false)
     }
 
     override fun generateFir(text: String, file: File) {
-        val firFile = lightTreeConverter!!.buildFirFile(text, file.name)
+        val firFile = lightTreeConverter.buildFirFile(text, file.name)
         StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
     }
 

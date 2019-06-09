@@ -13,12 +13,7 @@ import org.openjdk.jmh.annotations.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-@Warmup(iterations = 10, batchSize = 1, timeUnit = TimeUnit.NANOSECONDS)
-@Measurement(iterations = 10, batchSize = 1, timeUnit = TimeUnit.NANOSECONDS)
-@State(Scope.Benchmark)
 abstract class AbstractKotlinBenchmark : AbstractBenchmark() {
-    abstract val generator: TreeGenerator
-
     @Param(
         /* CLASSES */
         "1Class", "10Classes", "100Classes", "1000Classes", "10_000Classes", "100_000Classes",
