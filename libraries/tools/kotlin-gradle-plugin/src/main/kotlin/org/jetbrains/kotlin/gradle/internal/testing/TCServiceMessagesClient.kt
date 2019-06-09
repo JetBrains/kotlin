@@ -24,7 +24,8 @@ data class TCServiceMessagesClientSettings(
     val prependSuiteName: Boolean = false,
     val treatFailedTestOutputAsStacktrace: Boolean = false,
     val stackTraceParser: (String) -> ParsedStackTrace? = { null },
-    val ignoreOutOfRootNodes: Boolean = false
+    val ignoreOutOfRootNodes: Boolean = false,
+    val ignoreLineEndingAfterMessage: Boolean = true
 )
 
 internal open class TCServiceMessagesClient(
@@ -33,6 +34,7 @@ internal open class TCServiceMessagesClient(
     val log: Logger
 ) : ServiceMessageParserCallback {
     lateinit var rootOperationId: OperationIdentifier
+    var afterMessage = false
 
     inline fun root(operation: OperationIdentifier, actions: () -> Unit) {
         rootOperationId = operation
@@ -68,20 +70,25 @@ internal open class TCServiceMessagesClient(
             is TestSuiteFinished -> close(message.ts, getSuiteName(message))
             else -> Unit
         }
+
+        afterMessage = true
     }
 
     protected open fun getSuiteName(message: BaseTestSuiteMessage) = message.suiteName
 
     override fun regularText(text: String) {
-        log.kotlinDebug { "TCSM stdout captured: $text" }
-        val actualText = text + "\n"
+        val actualText = if (afterMessage && settings.ignoreLineEndingAfterMessage) text.removePrefix("\n") else text
+        if (actualText.isNotEmpty()) {
+            log.kotlinDebug { "TCSM stdout captured: $actualText" }
 
-        val test = leaf as? TestNode
-        if (test != null) {
-            test.output(StdOut, actualText)
-        } else {
-            printNonTestOutput(actualText)
+            val test = leaf as? TestNode
+            if (test != null) {
+                test.output(StdOut, actualText)
+            } else {
+                printNonTestOutput(actualText)
+            }
         }
+        afterMessage = false
     }
 
     protected open fun printNonTestOutput(actualText: String) {
