@@ -145,6 +145,10 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
       if (disabledAction != null) {
         allActions.add(disabledAction);
       }
+      AnAction showAllAction = uiContributor.createShowAllAction(psiFile.getProject());
+      if (showAllAction != null) {
+        allActions.add(showAllAction);
+      }
     }
     return allActions.toArray(AnAction.EMPTY_ARRAY);
   }
