@@ -87,14 +87,19 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
             constructors[context.symbolProvider.provideUniverseSymbol(constructor)] = true
         }
 
+        val constructorsToInitialize = mutableListOf<JKMethodSymbol>()
 
         for ((constructor, initialized) in constructors) {
             if (initialized) continue
             val parentConstructors =
                 generateSequence(constructor) { it.parentConstructor() }
             if (parentConstructors.any { constructors[it] == true }) {
-                parentConstructors.forEach { constructors[it] = true }
+                constructorsToInitialize += parentConstructors
             }
+        }
+
+        for (constructor in constructorsToInitialize) {
+            constructors[constructor] = true
         }
 
         val initializedInConstructorsCount = constructors.values.count { it }
