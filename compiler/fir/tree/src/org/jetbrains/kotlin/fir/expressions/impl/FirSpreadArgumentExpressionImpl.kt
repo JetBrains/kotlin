@@ -11,20 +11,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirSpreadArgumentExpressionImpl(
     session: FirSession,
     psi: PsiElement?,
     override var expression: FirExpression
-) : FirSpreadArgumentExpression, FirAbstractExpression(session, psi) {
-    override var typeRef: FirTypeRef
-        get() = super<FirSpreadArgumentExpression>.typeRef
-        set(_) {}
-
+) : FirSpreadArgumentExpression, FirAbstractStatement(session, psi) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         expression = expression.transformSingle(transformer, data)
-        return super<FirAbstractExpression>.transformChildren(transformer, data)
+        return super<FirAbstractStatement>.transformChildren(transformer, data)
     }
 }

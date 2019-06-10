@@ -17,6 +17,10 @@ interface FirWrappedArgumentExpression : FirExpression {
     override val typeRef: FirTypeRef
         get() = expression.typeRef
 
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        throw AssertionError("We should not try to replace type reference in ${this::class}")
+    }
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitWrappedArgumentExpression(this, data)
 
