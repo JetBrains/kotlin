@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import kotlinx.coroutines.runBlocking
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.postProcessing.processings.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -288,6 +290,13 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
                     val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
                     if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
                         exclExclExpr.replace(baseExpression)
+                    }
+                },
+                diagnosticBasedProcessing<LeafPsiElement>(
+                    Errors.WRONG_MODIFIER_TARGET
+                ) { element, _ ->
+                    if (element.elementType == KtTokens.OPEN_KEYWORD) {
+                        element.parentOfType<KtModifierListOwner>()?.removeModifier(KtTokens.OPEN_KEYWORD)
                     }
                 },
                 RemoveForExpressionLoopParameterTypeProcessing()
