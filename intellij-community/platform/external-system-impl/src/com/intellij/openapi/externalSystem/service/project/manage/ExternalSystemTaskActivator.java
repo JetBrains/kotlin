@@ -1,14 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileTask;
-import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
@@ -27,6 +24,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.task.ModuleBuildTask;
+import com.intellij.task.ProjectTaskContext;
+import com.intellij.task.ProjectTaskManager;
+import com.intellij.task.ProjectTaskResult;
+import com.intellij.task.impl.ProjectTaskManagerImpl;
+import com.intellij.task.impl.ProjectTaskManagerListener;
+import com.intellij.task.impl.ProjectTaskScope;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
@@ -55,27 +59,22 @@ public class ExternalSystemTaskActivator {
   }
 
   public void init() {
-    CompilerManager compilerManager = CompilerManager.getInstance(myProject);
-    // todo extract to "java" external system module
-    if (compilerManager == null) {
-      return;
-    }
-
-    class MyCompileTask implements CompileTask {
-      private final boolean myBefore;
-
-      MyCompileTask(boolean before) {
-        myBefore = before;
+    ProjectTaskManagerImpl projectTaskManager = (ProjectTaskManagerImpl)ProjectTaskManager.getInstance(myProject);
+    projectTaskManager.addListener(new ProjectTaskManagerListener() {
+      @Override
+      public void beforeRun(@NotNull ProjectTaskContext context) throws ExecutionException {
+        if (!doExecuteBuildPhaseTriggers(true, context)) {
+          throw new ExecutionException("Before build triggering task failed");
+        }
       }
 
       @Override
-      public boolean execute(@NotNull CompileContext context) {
-        return doExecuteCompileTasks(myBefore, context);
+      public void afterRun(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult result) throws ExecutionException {
+        if (!doExecuteBuildPhaseTriggers(false, context)) {
+          throw new ExecutionException("After build triggering task failed");
+        }
       }
-    }
-
-    compilerManager.addBeforeTask(new MyCompileTask(true));
-    compilerManager.addAfterTask(new MyCompileTask(false));
+    });
 
     fireTasksChanged();
   }
@@ -97,25 +96,43 @@ public class ExternalSystemTaskActivator {
     return StringUtil.join(result, ", ");
   }
 
-  private boolean doExecuteCompileTasks(boolean myBefore, @NotNull CompileContext context) {
-    List<String> modules = ReadAction.compute(
-      () -> ContainerUtil.mapNotNull(context.getCompileScope().getAffectedModules(),
-                                     module -> ExternalSystemApiUtil.getExternalProjectPath(module)));
+  private boolean doExecuteBuildPhaseTriggers(boolean myBefore, @NotNull ProjectTaskContext context) {
+    ProjectTaskScope taskScope = context.getUserData(ProjectTaskScope.KEY);
+    if (taskScope == null) {
+      return true;
+    }
 
-    final Collection<Phase> phases = new ArrayList<>();
-    if (myBefore) {
-      if(context.isRebuild()) {
-        phases.add(Phase.BEFORE_REBUILD);
+    Set<String> modulesToBuild = new LinkedHashSet<>();
+    Set<String> modulesToRebuild = new LinkedHashSet<>();
+    for (ModuleBuildTask task : taskScope.getRequestedTasks(ModuleBuildTask.class)) {
+      String projectPath = ExternalSystemApiUtil.getExternalProjectPath(task.getModule());
+      if (projectPath == null) continue;
+      if (task.isIncrementalBuild()) {
+        modulesToBuild.add(projectPath);
       }
-      phases.add(Phase.BEFORE_COMPILE);
+      else {
+        modulesToRebuild.add(projectPath);
+      }
+    }
+
+    boolean result = true;
+    if (myBefore) {
+      if (!modulesToBuild.isEmpty()) {
+        result = runTasks(modulesToBuild, Phase.BEFORE_COMPILE);
+      }
+      if (result && !modulesToRebuild.isEmpty()) {
+        result = runTasks(modulesToRebuild, Phase.BEFORE_COMPILE, Phase.BEFORE_REBUILD);
+      }
     }
     else {
-      phases.add(Phase.AFTER_COMPILE);
-      if(context.isRebuild()) {
-        phases.add(Phase.AFTER_REBUILD);
+      if (!modulesToBuild.isEmpty()) {
+        result = runTasks(modulesToBuild, Phase.AFTER_COMPILE);
+      }
+      if (result && !modulesToRebuild.isEmpty()) {
+        result = runTasks(modulesToRebuild, Phase.AFTER_COMPILE, Phase.AFTER_REBUILD);
       }
     }
-    return runTasks(modules, phases.toArray(new Phase[0]));
+    return result;
   }
 
   public boolean runTasks(@NotNull String modulePath, @NotNull Phase... phases) {
