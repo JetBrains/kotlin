@@ -39,6 +39,9 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
         programParametersList.checkParameter("-script") { it.contains("simpleScript.kts") }
         programParametersList.checkParameter("-kotlin-home") { it == PathUtil.kotlinPathsForIdeaPlugin.homePath.path }
+
+        Assert.assertTrue(!programParametersList.contains("-cp"))
+
     }
 
     fun testOnFileRename() {
