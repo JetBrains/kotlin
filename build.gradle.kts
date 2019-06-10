@@ -733,6 +733,8 @@ fun jdkPath(version: String): String {
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     tasks.withType<JavaCompile> {
         if (name != "compileJava9Java") {
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
             options.isFork = true
             options.forkOptions.javaHome = file(javaHome)
             options.compilerArgs.add("-proc:none")
