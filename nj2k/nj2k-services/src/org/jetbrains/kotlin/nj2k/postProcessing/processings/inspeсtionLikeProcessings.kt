@@ -352,7 +352,7 @@ class RemoveRedundantModalityModifierProcessing : ApplicabilityBasedInspectionLi
     }
 
     override fun apply(element: KtDeclaration) {
-        element.removeModifierSmart(element.modalityModifierType()!!)
+        element.removeModifier(element.modalityModifierType()!!)
     }
 }
 
@@ -371,7 +371,7 @@ class RemoveRedundantVisibilityModifierProcessing : ApplicabilityBasedInspection
     }
 
     override fun apply(element: KtDeclaration) {
-        element.removeModifierSmart(element.visibilityModifierType()!!)
+        element.removeModifier(element.visibilityModifierType()!!)
     }
 }
 

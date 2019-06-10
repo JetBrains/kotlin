@@ -75,14 +75,5 @@ fun KtElement.hasUsagesOutsideOf(inElement: KtElement, outsideElements: List<KtE
         outsideElements.none { it.isAncestor(reference.element) }
     }
 
-
-//hack until KT-30804 is fixed
-fun KtModifierListOwner.removeModifierSmart(modifierToken: KtModifierKeywordToken) {
-    val newElement = copy() as KtModifierListOwner
-    newElement.removeModifier(modifierToken)
-    replace(newElement)
-    containingFile.commitAndUnblockDocument()
-}
-
 inline fun <reified T : PsiElement> List<PsiElement>.descendantsOfType(): List<T> =
     flatMap { it.collectDescendantsOfType() }
