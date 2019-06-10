@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
-import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.configurationStore.StateStorageManagerKt;
 import com.intellij.history.LocalHistory;
 import com.intellij.history.LocalHistoryAction;
@@ -11,10 +10,12 @@ import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider;
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalSettings;
@@ -23,7 +24,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
@@ -38,7 +38,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
-import com.intellij.pom.java.LanguageLevel;
 import com.intellij.ui.CheckBoxList;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
@@ -77,6 +76,9 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
 
   private static final Logger LOG = Logger.getInstance(AbstractModuleDataService.class);
 
+  private final static ExtensionPointName<ModuleDataServiceExtension> EP_NAME =
+    ExtensionPointName.create("com.intellij.externalSystem.moduleDataServiceExtension");
+
   @Override
   public void importData(@NotNull final Collection<DataNode<E>> toImport,
                          @Nullable ProjectData projectData,
@@ -104,10 +106,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
         ModifiableRootModel modifiableRootModel = modelsProvider.getModifiableRootModel(module);
         syncPaths(module, modifiableRootModel, node.getData());
 
-        if(ModuleTypeId.JAVA_MODULE.equals(module.getModuleTypeName()) && ExternalSystemApiUtil.isJavaCompatibleIde()) {
-          // todo [Vlad, IDEA-187832]: extract to `external-system-java` module
-          setLanguageLevel(modifiableRootModel, node.getData());
-        }
+        EP_NAME.forEachExtensionSafe(extension -> extension.importModule(modelsProvider, module, node.getData()));
         setSdk(modifiableRootModel, node.getData());
       }
     }
@@ -409,7 +408,6 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       if (orderAwareMap != null) {
         rearrangeOrderEntries(orderAwareMap, modelsProvider.getModifiableRootModel(module));
       }
-      setBytecodeTargetLevel(project, module, moduleDataNode.getData());
       moduleDataNode.putUserData(MODULE_KEY, null);
       moduleDataNode.putUserData(ORDERED_DATA_MAP_KEY, null);
     }
@@ -475,18 +473,6 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
     return idx;
   }
 
-  private void setLanguageLevel(@NotNull ModifiableRootModel modifiableRootModel, E data) {
-    LanguageLevel level = LanguageLevel.parse(data.getSourceCompatibility());
-    if (level != null) {
-      try {
-        modifiableRootModel.getModuleExtension(LanguageLevelModuleExtension.class).setLanguageLevel(level);
-      }
-      catch (IllegalArgumentException e) {
-        LOG.debug(e);
-      }
-    }
-  }
-
   private void setSdk(@NotNull ModifiableRootModel modifiableRootModel, E data) {
     String skdName = data.getSdkName();
     if (skdName != null) {
@@ -496,16 +482,8 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
         modifiableRootModel.setSdk(sdk);
       }
       else {
-        modifiableRootModel.setInvalidSdk(skdName, JavaSdk.getInstance().getName());
+        modifiableRootModel.setInvalidSdk(skdName, ExternalSystemJdkProvider.getInstance().getJavaSdkType().getName());
       }
-    }
-  }
-
-  private void setBytecodeTargetLevel(@NotNull Project project, @NotNull Module module, @NotNull E data) {
-    String targetLevel = data.getTargetCompatibility();
-    if (targetLevel != null) {
-      CompilerConfiguration configuration = CompilerConfiguration.getInstance(project);
-      configuration.setBytecodeTargetLevel(module, targetLevel);
     }
   }
 }

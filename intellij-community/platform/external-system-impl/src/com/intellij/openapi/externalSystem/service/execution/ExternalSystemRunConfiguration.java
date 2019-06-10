@@ -11,7 +11,6 @@ import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.console.DuplexConsoleView;
-import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.process.ProcessHandler;
@@ -34,6 +33,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.FoldingModel;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.execution.ExternalSystemExecutionConsoleManager;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
@@ -58,6 +58,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.ArrayUtil;
@@ -83,12 +84,16 @@ import static com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHel
 import static com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.DEBUG_SETUP_PREFIX;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.convert;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.getConsoleManagerFor;
+import static com.intellij.openapi.util.text.StringUtil.nullize;
 
 /**
  * @author Denis Zhdanov
  */
 public class ExternalSystemRunConfiguration extends LocatableConfigurationBase implements SearchScopeProvidingRunProfile,
                                                                                           SMRunnerConsolePropertiesProvider {
+  private static final ExtensionPointName<ExternalSystemRunConfigurationExtension> EP_NAME
+    = ExtensionPointName.create("com.intellij.externalSystem.runConfigurationExtension");
+
   public static final Key<InputStream> RUN_INPUT_KEY = Key.create("RUN_INPUT_KEY");
   public static final Key<Class<? extends BuildProgressListener>> PROGRESS_LISTENER_KEY = Key.create("PROGRESS_LISTENER_KEY");
 
@@ -132,10 +137,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
     if (e != null) {
       mySettings = XmlSerializer.deserialize(e, ExternalSystemTaskExecutionSettings.class);
     }
-    JavaRunConfigurationExtensionManager javaRunConfigurationExtensionManager = JavaRunConfigurationExtensionManager.getInstanceOrNull();
-    if (javaRunConfigurationExtensionManager != null) {
-      javaRunConfigurationExtensionManager.readExternal(this, element);
-    }
+    EP_NAME.forEachExtensionSafe(extension -> extension.readExternal(this, element));
   }
 
   @Override
@@ -155,10 +157,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
         }
       }
     }));
-    JavaRunConfigurationExtensionManager javaRunConfigurationExtensionManager = JavaRunConfigurationExtensionManager.getInstanceOrNull();
-    if (javaRunConfigurationExtensionManager != null) {
-      javaRunConfigurationExtensionManager.writeExternal(this, element);
-    }
+    EP_NAME.forEachExtensionSafe(extension -> extension.writeExternal(this, element));
   }
 
   @NotNull
@@ -172,10 +171,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
     SettingsEditorGroup<ExternalSystemRunConfiguration> group = new SettingsEditorGroup<>();
     group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"),
                     new ExternalSystemRunConfigurationEditor(getProject(), mySettings.getExternalSystemId()));
-    JavaRunConfigurationExtensionManager javaRunConfigurationExtensionManager = JavaRunConfigurationExtensionManager.getInstanceOrNull();
-    if (javaRunConfigurationExtensionManager != null) {
-      javaRunConfigurationExtensionManager.appendEditors(this, group);
-    }
+    EP_NAME.forEachExtensionSafe(extension -> extension.appendEditors(this, group));
     group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<>());
     return group;
   }
@@ -183,8 +179,9 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
   @Nullable
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    MyRunnableState runnableState =
-      new MyRunnableState(mySettings, getProject(), DefaultDebugExecutor.EXECUTOR_ID.equals(executor.getId()), this, env);
+    // DebugExecutor ID  - com.intellij.execution.executors.DefaultDebugExecutor.EXECUTOR_ID
+    String debugExecutorId = ToolWindowId.DEBUG;
+    MyRunnableState runnableState = new MyRunnableState(mySettings, getProject(), debugExecutorId.equals(executor.getId()), this, env);
     copyUserDataTo(runnableState);
     return runnableState;
   }
@@ -313,10 +310,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
         progressListenerClazz != null ? ServiceManager.getService(myProject, progressListenerClazz)
                                       : createBuildView(task.getId(), executionName, task.getExternalProjectPath(), consoleView);
 
-      JavaRunConfigurationExtensionManager javaRunConfigurationExtensionManager = JavaRunConfigurationExtensionManager.getInstanceOrNull();
-      if (javaRunConfigurationExtensionManager != null) {
-        javaRunConfigurationExtensionManager.attachExtensionsToProcess(myConfiguration, processHandler, myEnv.getRunnerSettings());
-      }
+      EP_NAME.forEachExtensionSafe(extension -> extension.attachToProcess(myConfiguration, processHandler, myEnv.getRunnerSettings()));
 
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
         final String startDateTime = DateFormatUtil.formatTimeWithSeconds(System.currentTimeMillis());
@@ -341,9 +335,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
                   new BuildViewSettingsProviderAdapter((BuildViewSettingsProvider)consoleView) : null;
                 progressListener.onEvent(id,
                   new StartBuildEventImpl(new DefaultBuildDescriptor(id, executionName, workingDir, eventTime), "running...")
-                    .withProcessHandler(processHandler, view -> {
-                      foldGreetingOrFarewell(consoleView, greeting, true);
-                    })
+                    .withProcessHandler(processHandler, view -> foldGreetingOrFarewell(consoleView, greeting, true))
                     .withContentDescriptorSupplier(() -> myContentDescriptor)
                     .withRestartAction(rerunTaskAction)
                     .withRestartActions(restartActions)
@@ -426,16 +418,10 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
 
     @Nullable
     private String getJvmAgentSetup() throws ExecutionException {
-      // todo [Vlad, IDEA-187832]: extract to `external-system-java` module
-      if(!ExternalSystemApiUtil.isJavaCompatibleIde()) return null;
-
-      final JavaParameters extensionsJP = new JavaParameters();
-      for (RunConfigurationExtension ext : RunConfigurationExtension.EP_NAME.getExtensionList()) {
-        ext.updateJavaParameters(myConfiguration, extensionsJP, myEnv.getRunnerSettings(), myEnv.getExecutor());
-      }
-
+      final SimpleJavaParameters extensionsJP = new SimpleJavaParameters();
+      EP_NAME.forEachExtensionSafe(
+        extension -> extension.updateVMParameters(myConfiguration, extensionsJP, myEnv.getRunnerSettings(), myEnv.getExecutor()));
       String jvmAgentSetup;
-
       if (myDebugPort > 0) {
         jvmAgentSetup = DEBUG_SETUP_PREFIX + myDebugPort;
         if (getForkSocket() != null) {
@@ -456,7 +442,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
         }
         jvmAgentSetup = parametersList.getParametersString();
       }
-      return jvmAgentSetup;
+      return nullize(jvmAgentSetup);
     }
 
     private BuildProgressListener createBuildView(ExternalSystemTaskId id,

@@ -3,7 +3,6 @@ package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.CommonBundle;
 import com.intellij.configurationStore.StorageUtilKt;
-import com.intellij.debugger.ui.DebuggerView;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -116,7 +115,6 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
         List<String> classPath = new ArrayList<>(PathManager.getUtilClassPath());
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ProjectBundle.class));
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(PlaceHolder.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(DebuggerView.class));
         ExternalSystemApiUtil.addBundle(params.getClassPath(), "messages.ProjectBundle", ProjectBundle.class);
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(PsiBundle.class));
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(Alarm.class));
