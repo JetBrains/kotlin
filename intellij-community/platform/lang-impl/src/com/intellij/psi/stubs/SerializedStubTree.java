@@ -21,19 +21,15 @@ package com.intellij.psi.stubs;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.ThreadLocalCachedValue;
+import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.CompressionUtil;
-import com.intellij.util.io.DataInputOutputUtil;
-import com.intellij.util.io.DigestUtil;
-import com.intellij.util.io.PersistentHashMapValueStorage;
-import com.intellij.util.io.UnsyncByteArrayInputStream;
+import com.intellij.util.io.*;
 import one.util.streamex.IntStreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.*;
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -80,6 +76,14 @@ public class SerializedStubTree {
     else {
       CompressionUtil.writeCompressed(out, myBytes, 0, myLength);
     }
+  }
+
+  @NotNull
+  public SerializedStubTree reSerialize(@NotNull SerializationManagerImpl currentSerializationManager,
+                                        @NotNull SerializationManagerImpl newSerializationManager) throws IOException {
+    BufferExposingByteArrayOutputStream outStub = new BufferExposingByteArrayOutputStream();
+    currentSerializationManager.reSerialize(new ByteArrayInputStream(myBytes, 0, myLength), outStub, newSerializationManager);
+    return new SerializedStubTree(outStub.getInternalBuffer(), outStub.size(), null);
   }
 
   // willIndexStub is one time optimization hint, once can safely pass false
