@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -15,7 +16,10 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(
     KtIfExpression::class.java
@@ -46,7 +50,10 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
         val valueArguments = call.valueArguments
         if (valueArguments.size > 1) return false
         if (calleeText != ILLEGAL_STATE_EXCEPTION && calleeText != ILLEGAL_ARGUMENT_EXCEPTION) return false
-        val fqName = call.resolveToCall()?.resultingDescriptor?.fqNameSafe?.parent()
+        val context = call.analyze(BodyResolveMode.PARTIAL)
+        val argumentType = valueArguments.firstOrNull()?.getArgumentExpression()?.getType(context)
+        if (argumentType != null && !KotlinBuiltIns.isStringOrNullableString(argumentType)) return false
+        val fqName = call.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe?.parent()
         return fqName == FqName("kotlin.$calleeText") || fqName == FqName("java.lang.$calleeText")
     }
 
