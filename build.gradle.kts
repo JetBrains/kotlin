@@ -122,30 +122,19 @@ extra["JDK_9"] = jdkPath("9")
 extra["JDK_10"] = jdkPath("10")
 extra["JDK_11"] = jdkPath("11")
 
-gradle.taskGraph.beforeTask() {
+// allow opening the project without setting up all env variables (see KT-26413)
+if (!kotlinBuildProperties.isInIdeaSync) {
     checkJDK()
 }
 
-var jdkChecked: Boolean = false
 fun checkJDK() {
-    if (jdkChecked) {
-        return
+    val missingEnvVars = JdkMajorVersion.values()
+        .filter { it.isMandatory() && extra[it.name] == jdkNotFoundConst }
+        .mapTo(ArrayList()) { it.name }
+
+    if (missingEnvVars.isNotEmpty()) {
+        throw GradleException("Required environment variables are missing: ${missingEnvVars.joinToString()}")
     }
-
-    val unpresentJdks = JdkMajorVersion.values()
-        .filter { it.isMandatory() }
-        .map { it.name }
-        .filter { extra[it] == jdkNotFoundConst }
-        .toList()
-
-    if (unpresentJdks.isNotEmpty()) {
-        throw GradleException("Please set environment variable" +
-                                      (if (unpresentJdks.size > 1) "s" else "") +
-                                      ": " + unpresentJdks.joinToString() +
-                                      " to point to corresponding JDK installation.")
-    }
-
-    jdkChecked = true
 }
 
 rootProject.apply {
