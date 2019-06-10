@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerService
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.types.SubstitutingScopeProviderImpl
+
 
 fun createTopDownAnalyzerProviderForKonan(
         moduleContext: ModuleContext,
@@ -32,7 +32,6 @@ fun createTopDownAnalyzerProviderForKonan(
 
         CompilerEnvironment.configure(this)
 
-        useImpl<SubstitutingScopeProviderImpl>()
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.SerializedIr
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.isSerializableExpectClass
