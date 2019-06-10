@@ -23,7 +23,7 @@ class FirComponentCallImpl(
     psi: PsiElement?,
     override val componentIndex: Int,
     override var explicitReceiver: FirExpression
-) : FirAbstractCall(session, psi), FirComponentCall {
+) : FirComponentCall(session, psi) {
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
         explicitReceiver = explicitReceiver.transformSingle(transformer, data)
         return this
@@ -43,6 +43,6 @@ class FirComponentCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         calleeReference = calleeReference.transformSingle(transformer, data)
         explicitReceiver = explicitReceiver.transformSingle(transformer, data)
-        return super<FirAbstractCall>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

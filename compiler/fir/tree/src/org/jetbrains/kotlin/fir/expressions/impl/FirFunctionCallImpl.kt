@@ -18,7 +18,7 @@ class FirFunctionCallImpl(
     session: FirSession,
     psi: PsiElement?,
     override var safe: Boolean = false
-) : FirAbstractCall(session, psi), FirFunctionCall, FirModifiableQualifiedAccess {
+) : FirFunctionCall(session, psi), FirModifiableQualifiedAccess {
     override val typeArguments = mutableListOf<FirTypeProjection>()
 
     override lateinit var calleeReference: FirNamedReference
@@ -29,7 +29,7 @@ class FirFunctionCallImpl(
         typeArguments.transformInplace(transformer, data)
         calleeReference = calleeReference.transformSingle(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
-        return super<FirAbstractCall>.transformChildren(transformer, data)
+        return super<FirFunctionCall>.transformChildren(transformer, data)
     }
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {

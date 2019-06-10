@@ -5,13 +5,19 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirNamedReference
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractCall
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionContainer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirFunctionCall : @VisitedSupertype FirCall, FirQualifiedAccess, FirTypeProjectionContainer {
-    override val calleeReference: FirNamedReference
+abstract class FirFunctionCall(
+    session: FirSession,
+    psi: PsiElement?
+) : FirAbstractCall(session, psi), @VisitedSupertype FirCall, FirQualifiedAccess, FirTypeProjectionContainer {
+    abstract override val calleeReference: FirNamedReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitFunctionCall(this, data)
