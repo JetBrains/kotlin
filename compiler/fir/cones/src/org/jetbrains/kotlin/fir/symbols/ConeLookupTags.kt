@@ -35,7 +35,7 @@ abstract class ConeTypeAliasLookupTag : ConeClassLikeLookupTag()
 abstract class ConeClassLookupTag : ConeClassLikeLookupTag()
 
 class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag() {
-    var boundSymbol: Pair<*, *>? = null
+    var boundSymbol: Pair<*, ConeClassifierSymbol?>? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

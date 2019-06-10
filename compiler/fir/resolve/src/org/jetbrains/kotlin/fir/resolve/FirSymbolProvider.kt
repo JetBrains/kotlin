@@ -23,7 +23,7 @@ abstract class FirSymbolProvider {
         return when (lookupTag) {
             is ConeClassLikeLookupTag -> {
                 (lookupTag as? ConeClassLikeLookupTagImpl)
-                    ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second as ConeClassifierSymbol? }
+                    ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second }
 
                 getClassLikeSymbolByFqName(lookupTag.classId).also {
                     (lookupTag as? ConeClassLikeLookupTagImpl)
