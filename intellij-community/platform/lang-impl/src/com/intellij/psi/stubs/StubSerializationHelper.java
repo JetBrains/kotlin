@@ -1,11 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
+import com.intellij.ReviseWhenPortedToJDK;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.LogUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
+import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ConcurrentIntObjectMap;
@@ -327,6 +330,17 @@ class StubSerializationHelper {
 
   String intern(String str) {
     return myStringInterner.get(str);
+  }
+
+  void reSerializeStub(@NotNull DataInputStream inStub,
+                       @NotNull DataOutputStream outStub,
+                       @NotNull StubSerializationHelper newSerializationHelper) throws IOException {
+    IntEnumerator currentSerializerEnumerator = IntEnumerator.read(inStub);
+    currentSerializerEnumerator.dump(outStub, id -> {
+      String name = myIdToName.get(id);
+      return name == null ? 0 : newSerializationHelper.myNameToId.get(name);
+    });
+    StreamUtil.copyStreamContent(inStub, outStub);
   }
 
   @SuppressWarnings("unchecked")

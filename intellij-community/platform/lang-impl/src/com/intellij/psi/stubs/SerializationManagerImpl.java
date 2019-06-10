@@ -21,14 +21,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.util.io.IOUtil;
+import com.intellij.util.io.PersistentEnumeratorBase;
 import com.intellij.util.io.PersistentStringEnumerator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.ObjIntConsumer;
 
 /*
  * @author max
@@ -177,5 +177,27 @@ public class SerializationManagerImpl extends SerializationManagerEx implements 
       LOG.info(e);
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public void reSerialize(@NotNull InputStream inStub,
+                          @NotNull OutputStream outStub,
+                          @NotNull SerializationManager newSerializationManager) throws IOException {
+    initSerializers();
+    newSerializationManager.initSerializers();
+    myStubSerializationHelper.reSerializeStub(new DataInputStream(inStub),
+                                              new DataOutputStream(outStub),
+                                              ((SerializationManagerImpl)newSerializationManager).myStubSerializationHelper);
+  }
+
+  @TestOnly
+  public void acceptSerializerId(ObjIntConsumer<? super String> consumer) throws IOException {
+    myNameStorage.traverseAllRecords(new PersistentEnumeratorBase.RecordsProcessor() {
+      @Override
+      public boolean process(int record) throws IOException {
+        consumer.accept(myNameStorage.valueOf(record), record);
+        return true;
+      }
+    });
   }
 }
