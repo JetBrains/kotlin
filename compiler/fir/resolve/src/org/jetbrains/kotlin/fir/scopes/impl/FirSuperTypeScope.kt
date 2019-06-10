@@ -19,8 +19,8 @@ class FirSuperTypeScope(
 ) : AbstractFirOverrideScope(session) {
 
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
-        val accepted = mutableSetOf<ConeFunctionSymbol>()
-        val pending = mutableSetOf<ConeFunctionSymbol>()
+        val accepted = HashSet<ConeFunctionSymbol>()
+        val pending = mutableListOf<ConeFunctionSymbol>()
         for (scope in scopes) {
             if (scope.processFunctionsByName(name) {
 
@@ -41,8 +41,8 @@ class FirSuperTypeScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
-        val accepted = mutableSetOf<ConeCallableSymbol>()
-        val pending = mutableSetOf<ConeVariableSymbol>()
+        val accepted = HashSet<ConeCallableSymbol>()
+        val pending = mutableListOf<ConeVariableSymbol>()
         for (scope in scopes) {
             if (scope.processPropertiesByName(name) {
                     if (it !in accepted && it.isOverridden(accepted) == null) {
