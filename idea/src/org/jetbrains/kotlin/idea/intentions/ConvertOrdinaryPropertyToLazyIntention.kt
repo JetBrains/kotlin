@@ -17,7 +17,7 @@ class ConvertOrdinaryPropertyToLazyIntention : SelfTargetingIntention<KtProperty
     KtProperty::class.java, "Convert to lazy property"
 ) {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
-        return !element.isVar && element.initializer != null
+        return !element.isVar && element.initializer != null && element.getter == null
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {

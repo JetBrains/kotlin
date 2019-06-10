@@ -5308,6 +5308,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertOrdinaryPropertyToLazy/basic.kt");
         }
 
+        @TestMetadata("hasGetter.kt")
+        public void testHasGetter() throws Exception {
+            runTest("idea/testData/intentions/convertOrdinaryPropertyToLazy/hasGetter.kt");
+        }
+
         @TestMetadata("noInitializer.kt")
         public void testNoInitializer() throws Exception {
             runTest("idea/testData/intentions/convertOrdinaryPropertyToLazy/noInitializer.kt");
