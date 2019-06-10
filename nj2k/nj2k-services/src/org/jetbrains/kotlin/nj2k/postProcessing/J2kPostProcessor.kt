@@ -67,10 +67,12 @@ class NewJ2kPostProcessor : PostProcessor {
         onPhaseChanged: ((Int, String) -> Unit)?
     ) {
         runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-            for ((i, processing) in processings.withIndex()) {
-                onPhaseChanged?.invoke(i, processing.description)
-                processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
-                commitFile(file)
+            for ((i, group) in processings.withIndex()) {
+                onPhaseChanged?.invoke(i + 1, group.description)
+                for (processing in group.processings) {
+                    processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
+                    commitFile(file)
+                }
             }
         }
     }
@@ -86,199 +88,221 @@ class NewJ2kPostProcessor : PostProcessor {
     }
 }
 
-private val processings: List<GeneralPostProcessing> = listOf(
-    nullabilityProcessing,
-    formatCodeProcessing,
-    shortenReferencesProcessing,
-    InspectionLikeProcessingGroup(ConvertGettersAndSettersToPropertyProcessing.DESCRIPTION, VarToValProcessing()),
-    ConvertGettersAndSettersToPropertyProcessing(),
-    InspectionLikeProcessingGroup(
-        ConvertGettersAndSettersToPropertyProcessing.DESCRIPTION,
-        MoveGetterAndSetterAnnotationsToPropertyProcessing()
+private val processings: List<NamedPostProcessingGroup> = listOf(
+    NamedPostProcessingGroup(
+        "Inferring declarations nullability",
+        listOf(nullabilityProcessing)
     ),
-    InspectionLikeProcessingGroup(
-        ConvertGettersAndSettersToPropertyProcessing.DESCRIPTION,
-        generalInspectionBasedProcessing(RedundantGetterInspection()),
-        generalInspectionBasedProcessing(RedundantSetterInspection())
+    NamedPostProcessingGroup(
+        "Formatting code",
+        listOf(formatCodeProcessing)
     ),
-    ConvertToDataClassProcessing(),
-    InspectionLikeProcessingGroup(
+    NamedPostProcessingGroup(
+        "Shortening fully-qualified references",
+        listOf(shortenReferencesProcessing)
+    ),
+    NamedPostProcessingGroup(
+        "Converting POJOs to data classes",
+        listOf(
+            InspectionLikeProcessingGroup(VarToValProcessing()),
+            ConvertGettersAndSettersToPropertyProcessing(),
+            InspectionLikeProcessingGroup(MoveGetterAndSetterAnnotationsToPropertyProcessing()),
+            InspectionLikeProcessingGroup(
+                generalInspectionBasedProcessing(RedundantGetterInspection()),
+                generalInspectionBasedProcessing(RedundantSetterInspection())
+            ),
+            ConvertToDataClassProcessing()
+        )
+    ),
+    NamedPostProcessingGroup(
         "Cleaning up Kotlin code",
-        RemoveRedundantVisibilityModifierProcessing(),
-        RemoveRedundantModalityModifierProcessing(),
-        RemoveRedundantConstructorKeywordProcessing(),
-        diagnosticBasedProcessing(Errors.REDUNDANT_OPEN_IN_INTERFACE) { element: KtDeclaration, _ ->
-            element.removeModifier(KtTokens.OPEN_KEYWORD)
-        },
-        RemoveExplicitOpenInInterfaceProcessing(),
-        generalInspectionBasedProcessing(ExplicitThisInspection()),
-        RemoveExplicitTypeArgumentsProcessing(),
-        RemoveRedundantOverrideVisibilityProcessing(),
-        inspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
-        generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
-        FixObjectStringConcatenationProcessing(),
-        ConvertToStringTemplateProcessing(),
-        UsePropertyAccessSyntaxProcessing(),
-        UninitializedVariableReferenceFromInitializerToThisReferenceProcessing(),
-        UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing(),
-        RemoveRedundantSamAdaptersProcessing(),
-        RemoveRedundantCastToNullableProcessing(),
-        inspectionBasedProcessing(ReplacePutWithAssignmentInspection()),
-        UseExpressionBodyProcessing(),
-        inspectionBasedProcessing(UnnecessaryVariableInspection()),
-        RemoveExplicitPropertyTypeWithInspectionProcessing(),
-        generalInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
-        JavaObjectEqualsToEqOperatorProcessing(),
-        RemoveExplicitPropertyTypeProcessing(),
-        RemoveRedundantNullabilityProcessing(),
-        generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
-        inspectionBasedProcessing(FoldInitializerAndIfToElvisInspection()),
-        generalInspectionBasedProcessing(RedundantSemicolonInspection()),
-        intentionBasedProcessing(RemoveEmptyClassBodyIntention()),
-        intentionBasedProcessing(
-            RemoveRedundantCallsOfConversionMethodsIntention()
-        ),
-        inspectionBasedProcessing(JavaMapForEachInspection()),
+        listOf(
+            InspectionLikeProcessingGroup(
+                RemoveRedundantVisibilityModifierProcessing(),
+                RemoveRedundantModalityModifierProcessing(),
+                RemoveRedundantConstructorKeywordProcessing(),
+                diagnosticBasedProcessing(Errors.REDUNDANT_OPEN_IN_INTERFACE) { element: KtDeclaration, _ ->
+                    element.removeModifier(KtTokens.OPEN_KEYWORD)
+                },
+                RemoveExplicitOpenInInterfaceProcessing(),
+                generalInspectionBasedProcessing(ExplicitThisInspection()),
+                RemoveExplicitTypeArgumentsProcessing(),
+                RemoveRedundantOverrideVisibilityProcessing(),
+                inspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
+                generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
+                FixObjectStringConcatenationProcessing(),
+                ConvertToStringTemplateProcessing(),
+                UsePropertyAccessSyntaxProcessing(),
+                UninitializedVariableReferenceFromInitializerToThisReferenceProcessing(),
+                UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing(),
+                RemoveRedundantSamAdaptersProcessing(),
+                RemoveRedundantCastToNullableProcessing(),
+                inspectionBasedProcessing(ReplacePutWithAssignmentInspection()),
+                UseExpressionBodyProcessing(),
+                inspectionBasedProcessing(UnnecessaryVariableInspection()),
+                RemoveExplicitPropertyTypeWithInspectionProcessing(),
+                generalInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
+                JavaObjectEqualsToEqOperatorProcessing(),
+                RemoveExplicitPropertyTypeProcessing(),
+                RemoveRedundantNullabilityProcessing(),
+                generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
+                inspectionBasedProcessing(FoldInitializerAndIfToElvisInspection()),
+                generalInspectionBasedProcessing(RedundantSemicolonInspection()),
+                intentionBasedProcessing(RemoveEmptyClassBodyIntention()),
+                intentionBasedProcessing(
+                    RemoveRedundantCallsOfConversionMethodsIntention()
+                ),
+                inspectionBasedProcessing(JavaMapForEachInspection()),
 
-        intentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() },
-        intentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) {
-            it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(
-                it
-            ) as KtReturnExpression).returnedExpression.isTrivialStatementBody()
-        },
+                intentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() },
+                intentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) {
+                    it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(
+                        it
+                    ) as KtReturnExpression).returnedExpression.isTrivialStatementBody()
+                },
 
-        inspectionBasedProcessing(IfThenToSafeAccessInspection()),
-        inspectionBasedProcessing(IfThenToSafeAccessInspection()),
-        inspectionBasedProcessing(IfThenToElvisInspection(true)),
-        inspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection()),
-        inspectionBasedProcessing(ReplaceGetOrSetInspection()),
-        inspectionBasedProcessing(AddOperatorModifierInspection()),
-        intentionBasedProcessing(ObjectLiteralToLambdaIntention()),
-        intentionBasedProcessing(AnonymousFunctionToLambdaIntention()),
-        intentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()),
-        intentionBasedProcessing(DestructureIntention()),
-        inspectionBasedProcessing(SimplifyAssertNotNullInspection()),
-        intentionBasedProcessing(
-            RemoveRedundantCallsOfConversionMethodsIntention()
-        ),
-        generalInspectionBasedProcessing(LiftReturnOrAssignmentInspection(skipLongExpressions = false)),
-        generalInspectionBasedProcessing(MayBeConstantInspection()),
-        intentionBasedProcessing(RemoveEmptyPrimaryConstructorIntention()),
-        diagnosticBasedProcessing(Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { element: KtDotQualifiedExpression, _ ->
-            val parent = element.parent as? KtImportDirective ?: return@diagnosticBasedProcessing
-            parent.delete()
-        },
+                inspectionBasedProcessing(IfThenToSafeAccessInspection()),
+                inspectionBasedProcessing(IfThenToSafeAccessInspection()),
+                inspectionBasedProcessing(IfThenToElvisInspection(true)),
+                inspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection()),
+                inspectionBasedProcessing(ReplaceGetOrSetInspection()),
+                inspectionBasedProcessing(AddOperatorModifierInspection()),
+                intentionBasedProcessing(ObjectLiteralToLambdaIntention()),
+                intentionBasedProcessing(AnonymousFunctionToLambdaIntention()),
+                intentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()),
+                intentionBasedProcessing(DestructureIntention()),
+                inspectionBasedProcessing(SimplifyAssertNotNullInspection()),
+                intentionBasedProcessing(
+                    RemoveRedundantCallsOfConversionMethodsIntention()
+                ),
+                generalInspectionBasedProcessing(LiftReturnOrAssignmentInspection(skipLongExpressions = false)),
+                generalInspectionBasedProcessing(MayBeConstantInspection()),
+                intentionBasedProcessing(RemoveEmptyPrimaryConstructorIntention()),
+                diagnosticBasedProcessing(Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { element: KtDotQualifiedExpression, _ ->
+                    val parent = element.parent as? KtImportDirective ?: return@diagnosticBasedProcessing
+                    parent.delete()
+                },
 
-        diagnosticBasedProcessing(
-            Errors.UNSAFE_CALL,
-            Errors.UNSAFE_INFIX_CALL,
-            Errors.UNSAFE_OPERATOR_CALL
-        ) { element: PsiElement, diagnostic ->
-            val action =
-                AddExclExclCallFix.createActions(diagnostic).singleOrNull()
-                    ?: return@diagnosticBasedProcessing
-            action.invoke(element.project, null, element.containingFile)
-        },
+                diagnosticBasedProcessing(
+                    Errors.UNSAFE_CALL,
+                    Errors.UNSAFE_INFIX_CALL,
+                    Errors.UNSAFE_OPERATOR_CALL
+                ) { element: PsiElement, diagnostic ->
+                    val action =
+                        AddExclExclCallFix.createActions(diagnostic).singleOrNull()
+                            ?: return@diagnosticBasedProcessing
+                    action.invoke(element.project, null, element.containingFile)
+                },
 
-        diagnosticBasedProcessingWithFixFactory(
-            MissingIteratorExclExclFixFactory,
-            Errors.ITERATOR_ON_NULLABLE
-        ),
-        diagnosticBasedProcessingWithFixFactory(
-            SmartCastImpossibleExclExclFixFactory,
-            Errors.SMARTCAST_IMPOSSIBLE
-        ),
-        diagnosticBasedProcessing(Errors.TYPE_MISMATCH) { element: PsiElement, diagnostic ->
-            @Suppress("UNCHECKED_CAST")
-            val diagnosticWithParameters =
-                diagnostic as? DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType>
-                    ?: return@diagnosticBasedProcessing
-            val expectedType = diagnosticWithParameters.a
-            val realType = diagnosticWithParameters.b
-            when {
-                realType.makeNotNullable().isSubtypeOf(expectedType.makeNotNullable())
-                        && realType.isNullable()
-                        && !expectedType.isNullable()
-                -> {
-                    val factory = KtPsiFactory(element)
-                    element.replace(factory.createExpressionByPattern("($0)!!", element.text))
-                }
-                element is KtExpression
-                        && realType.isSignedOrUnsignedNumberType()
-                        && expectedType.isSignedOrUnsignedNumberType() -> {
-                    val fix = NumberConversionFix(element, expectedType, disableIfAvailable = null)
-                    fix.invoke(element.project, null, element.containingFile)
-                }
-            }
-        },
-
-        diagnosticBasedProcessingWithFixFactory(
-            ReplacePrimitiveCastWithNumberConversionFix,
-            Errors.CAST_NEVER_SUCCEEDS
-        ),
-        diagnosticBasedProcessingWithFixFactory(
-            ChangeCallableReturnTypeFix.ReturnTypeMismatchOnOverrideFactory,
-            Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
-        ),
-
-        diagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
-            if (element.left.isNullExpression()) return@diagnosticBasedProcessing
-            val expression = RemoveUselessCastFix.invoke(element)
-
-            val variable = expression.parent as? KtProperty
-            if (variable != null && expression == variable.initializer && variable.isLocal) {
-                val ref = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll().singleOrNull()
-                if (ref != null && ref.element is KtSimpleNameExpression) {
-                    ref.element.replace(expression)
-                    variable.delete()
-                }
-            }
-        },
-
-        diagnosticBasedProcessingWithFixFactory(
-            RemoveModifierFix.createRemoveProjectionFactory(true),
-            Errors.REDUNDANT_PROJECTION
-        ),
-        diagnosticBasedProcessingWithFixFactory(
-            AddModifierFix.createFactory(KtTokens.OVERRIDE_KEYWORD),
-            Errors.VIRTUAL_MEMBER_HIDDEN
-        ),
-        diagnosticBasedProcessingWithFixFactory(
-            RemoveModifierFix.createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD),
-            Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, Errors.NON_FINAL_MEMBER_IN_OBJECT
-        ),
-        diagnosticBasedProcessingWithFixFactory(
-            MakeVisibleFactory,
-            Errors.INVISIBLE_MEMBER
-        ),
-
-        diagnosticBasedProcessingFactory(
-            Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
-        ) { element: KtSimpleNameExpression, _: Diagnostic ->
-            val property = element.mainReference.resolve() as? KtProperty
-            if (property == null) {
-                null
-            } else {
-                val action = {
-                    if (!property.isVar) {
-                        property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
+                diagnosticBasedProcessingWithFixFactory(
+                    MissingIteratorExclExclFixFactory,
+                    Errors.ITERATOR_ON_NULLABLE
+                ),
+                diagnosticBasedProcessingWithFixFactory(
+                    SmartCastImpossibleExclExclFixFactory,
+                    Errors.SMARTCAST_IMPOSSIBLE
+                ),
+                diagnosticBasedProcessing(Errors.TYPE_MISMATCH) { element: PsiElement, diagnostic ->
+                    @Suppress("UNCHECKED_CAST")
+                    val diagnosticWithParameters =
+                        diagnostic as? DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType>
+                            ?: return@diagnosticBasedProcessing
+                    val expectedType = diagnosticWithParameters.a
+                    val realType = diagnosticWithParameters.b
+                    when {
+                        realType.makeNotNullable().isSubtypeOf(expectedType.makeNotNullable())
+                                && realType.isNullable()
+                                && !expectedType.isNullable()
+                        -> {
+                            val factory = KtPsiFactory(element)
+                            element.replace(factory.createExpressionByPattern("($0)!!", element.text))
+                        }
+                        element is KtExpression
+                                && realType.isSignedOrUnsignedNumberType()
+                                && expectedType.isSignedOrUnsignedNumberType() -> {
+                            val fix = NumberConversionFix(element, expectedType, disableIfAvailable = null)
+                            fix.invoke(element.project, null, element.containingFile)
+                        }
                     }
-                }
-                action
-            }
-        },
+                },
 
-        diagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
-            val exclExclExpr = element.parent as KtUnaryExpression
-            val baseExpression = exclExclExpr.baseExpression!!
-            val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-            if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
-                exclExclExpr.replace(baseExpression)
-            }
-        },
-        RemoveForExpressionLoopParameterTypeProcessing()
+                diagnosticBasedProcessingWithFixFactory(
+                    ReplacePrimitiveCastWithNumberConversionFix,
+                    Errors.CAST_NEVER_SUCCEEDS
+                ),
+                diagnosticBasedProcessingWithFixFactory(
+                    ChangeCallableReturnTypeFix.ReturnTypeMismatchOnOverrideFactory,
+                    Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
+                ),
+
+                diagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
+                    if (element.left.isNullExpression()) return@diagnosticBasedProcessing
+                    val expression = RemoveUselessCastFix.invoke(element)
+
+                    val variable = expression.parent as? KtProperty
+                    if (variable != null && expression == variable.initializer && variable.isLocal) {
+                        val ref = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll().singleOrNull()
+                        if (ref != null && ref.element is KtSimpleNameExpression) {
+                            ref.element.replace(expression)
+                            variable.delete()
+                        }
+                    }
+                },
+
+                diagnosticBasedProcessingWithFixFactory(
+                    RemoveModifierFix.createRemoveProjectionFactory(true),
+                    Errors.REDUNDANT_PROJECTION
+                ),
+                diagnosticBasedProcessingWithFixFactory(
+                    AddModifierFix.createFactory(KtTokens.OVERRIDE_KEYWORD),
+                    Errors.VIRTUAL_MEMBER_HIDDEN
+                ),
+                diagnosticBasedProcessingWithFixFactory(
+                    RemoveModifierFix.createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD),
+                    Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, Errors.NON_FINAL_MEMBER_IN_OBJECT
+                ),
+                diagnosticBasedProcessingWithFixFactory(
+                    MakeVisibleFactory,
+                    Errors.INVISIBLE_MEMBER
+                ),
+
+                diagnosticBasedProcessingFactory(
+                    Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
+                ) { element: KtSimpleNameExpression, _: Diagnostic ->
+                    val property = element.mainReference.resolve() as? KtProperty
+                    if (property == null) {
+                        null
+                    } else {
+                        val action = {
+                            if (!property.isVar) {
+                                property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
+                            }
+                        }
+                        action
+                    }
+                },
+
+                diagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
+                    val exclExclExpr = element.parent as KtUnaryExpression
+                    val baseExpression = exclExclExpr.baseExpression!!
+                    val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+                    if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
+                        exclExclExpr.replace(baseExpression)
+                    }
+                },
+                RemoveForExpressionLoopParameterTypeProcessing()
+            )
+        )
     ),
-    formatCodeProcessing,
-    optimizeImportsProcessing,
-    shortenReferencesProcessing
+    NamedPostProcessingGroup(
+        "Optimizing imports",
+        listOf(
+            optimizeImportsProcessing,
+            shortenReferencesProcessing
+        )
+    ),
+    NamedPostProcessingGroup(
+        "Formatting code",
+        listOf(formatCodeProcessing)
+    )
 )

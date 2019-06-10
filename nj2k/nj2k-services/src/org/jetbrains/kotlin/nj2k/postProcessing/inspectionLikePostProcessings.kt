@@ -41,13 +41,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 
-class InspectionLikeProcessingGroup(
-    override val description: String,
-    val inspectionLikeProcessings: List<InspectionLikeProcessing>
-) : ProcessingGroup {
+class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<InspectionLikeProcessing>) : ProcessingGroup {
 
-    constructor(description: String, vararg inspectionLikeProcessings: InspectionLikeProcessing) :
-            this(description, inspectionLikeProcessings.toList())
+    constructor(vararg inspectionLikeProcessings: InspectionLikeProcessing) : this(inspectionLikeProcessings.toList())
 
     private val processingsToPriorityMap = inspectionLikeProcessings.mapToIndex()
     fun priority(processing: InspectionLikeProcessing): Int = processingsToPriorityMap.getValue(processing)

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.mapToIndex
 
-class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing(DESCRIPTION) {
+class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing() {
     private fun KtNamedFunction.hasOverrides(): Boolean =
         toLightMethods().singleOrNull()?.let { lightMethod ->
             OverridingMethodsSearch.search(lightMethod).findFirst()
@@ -524,9 +524,6 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
                 ktProperty.addModifier(KtTokens.OPEN_KEYWORD)
             }
         }
-    }
-    companion object {
-        const val DESCRIPTION = "Converting POJOs to data classes"
     }
 }
 

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 
 val formatCodeProcessing =
-    postProcessing("Formating code") { file, rangeMarker, _ ->
+    postProcessing { file, rangeMarker, _ ->
         file.commitAndUnblockDocument()
         val codeStyleManager = CodeStyleManager.getInstance(file.project)
         if (rangeMarker != null) {
@@ -35,7 +35,7 @@ val formatCodeProcessing =
     }
 
 val nullabilityProcessing =
-    postProcessing("Inferring declarations nullability") { file, rangeMarker, converterContext ->
+    postProcessing { file, rangeMarker, converterContext ->
         NullabilityAnalysisFacade(
             converterContext,
             getTypeElementNullability = { nullabilityByUndefinedNullabilityComment(it, converterContext) },
@@ -45,7 +45,7 @@ val nullabilityProcessing =
     }
 
 val shortenReferencesProcessing =
-    postProcessing("Shortening fully-qualified references") { file, rangeMarker, _ ->
+    postProcessing { file, rangeMarker, _ ->
         if (rangeMarker != null) {
             ShortenReferences.DEFAULT.process(file, rangeMarker.startOffset, rangeMarker.endOffset)
         } else {
@@ -54,7 +54,7 @@ val shortenReferencesProcessing =
     }
 
 val optimizeImportsProcessing =
-    postProcessing("Optimizing imports") { file, rangeMarker, _ ->
+    postProcessing { file, rangeMarker, _ ->
         val elements = if (rangeMarker != null) {
             file.elementsInRange(TextRange(rangeMarker.startOffset, rangeMarker.endOffset))
         } else file.children.asList()
