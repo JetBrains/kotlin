@@ -137,11 +137,7 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
     }
 
     private fun JKClassSymbol.kotlinStandardType(): String? =
-        fqName.takeIf {
-            it !in ignoredJavaFqNames
-        }?.let {
-            JavaToKotlinClassMap.mapJavaToKotlin(FqName(it))?.asString()
-        } ?: fqName
+        JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqName))?.asString()
 
     private fun JKJavaPrimitiveType.mapPrimitiveType(): JKClassType {
         val fqName = jvmPrimitiveType.primitiveType.typeFqName
@@ -159,11 +155,5 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
             is JKMethod -> typeFlavorCalculator.methodMutability(psi as PsiMethod) == Mutability.Mutable
             else -> false
         }
-    }
-
-    companion object {
-        val ignoredJavaFqNames = setOf(
-            "java.lang.String"
-        )
     }
 }

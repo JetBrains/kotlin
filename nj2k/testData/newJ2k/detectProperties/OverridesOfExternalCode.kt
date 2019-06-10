@@ -86,8 +86,5 @@ internal class D : JavaClassDerivedFromKotlinClassWithProperties() {
         return "a"
     }
 
-    override var someVar2: String?
-        get() = super.someVar2
-        set(value) {}
-
+    override fun setSomeVar2(value: String?) {}
 }

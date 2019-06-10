@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
@@ -62,6 +63,13 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
                 if (conversion.filter?.invoke(this) == false) return@firstOrNull false
                 true
             }
+
+        is JKJavaNewExpression ->
+            conversions[classSymbol.deepestFqName()]?.firstOrNull { conversion ->
+                if (conversion.from !is NewExpression) return@firstOrNull false
+                if (conversion.filter?.invoke(this) == false) return@firstOrNull false
+                true
+            }
         else -> null
     }
 
@@ -86,6 +94,12 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
                     JKKtCallExpressionImpl(
                         context.symbolProvider.provideMethodSymbol(fqName),
                         JKArgumentListImpl(),
+                        JKTypeArgumentListImpl()
+                    ).withNonCodeElementsFrom(from)
+                is JKJavaNewExpression ->
+                    JKKtCallExpressionImpl(
+                        context.symbolProvider.provideMethodSymbol(fqName),
+                        argumentsProvider(from::arguments.detached()),
                         JKTypeArgumentListImpl()
                     ).withNonCodeElementsFrom(from)
                 else -> error("Bad conversion")
@@ -157,6 +171,7 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
     }
 
     private data class Method(override val fqName: String) : SymbolInfo
+    private data class NewExpression(override val fqName: String) : SymbolInfo
     private data class Field(override val fqName: String) : SymbolInfo
     private data class ExtensionMethod(override val fqName: String) : SymbolInfo
     private data class CustomExpression(val expressionBuilder: (JKExpression) -> JKExpression) : Info
@@ -413,7 +428,17 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
                     )
                 )
             },
+            Method("java.lang.String.format") convertTo CustomExpression { expression ->
+                JKClassAccessExpressionImpl(
+                    context.symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.string)
+                ).callOn(
+                    context.symbolProvider.provideMethodSymbol("kotlin.text.String.format"),
+                    (expression as JKMethodCallExpression).arguments::arguments.detached()
+                )
+            } withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
 
+            NewExpression("java.lang.String") convertTo Method("kotlin.text.String"),
+            NewExpression("kotlin.String") convertTo Method("kotlin.text.String"),
 
             Method("java.util.Collections.singletonList") convertTo Method("kotlin.collections.listOf")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,

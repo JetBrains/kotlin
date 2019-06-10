@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.nj2k.conversions.JKResolver
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
@@ -111,6 +112,9 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
 
     fun provideClassSymbol(fqName: String): JKClassSymbol =
         provideClassSymbol(FqName(fqName.asSafeFqNameString()))
+
+    fun provideClassSymbol(fqName: FqNameUnsafe): JKClassSymbol =
+        provideClassSymbol(fqName.toSafe())
 
     fun provideMethodSymbol(fqName: FqName): JKMethodSymbol =
         symbolsByFqName.getOrPutIfNotNull(fqName.asString()) {

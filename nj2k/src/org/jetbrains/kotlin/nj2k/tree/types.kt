@@ -253,7 +253,11 @@ fun JKType.isCollectionType(symbolProvider: JKSymbolProvider): Boolean {
 }
 
 fun JKType.isStringType(): Boolean =
-    (this as? JKClassType)?.classReference?.name == "String"
+    (this as? JKClassType)?.classReference?.isStringType() == true
+
+fun JKClassSymbol.isStringType(): Boolean =
+    fqName == CommonClassNames.JAVA_LANG_STRING
+            || fqName == KotlinBuiltIns.FQ_NAMES.string.asString()
 
 fun JKLiteralExpression.LiteralType.toPrimitiveType(): JKJavaPrimitiveType? =
     when (this) {
