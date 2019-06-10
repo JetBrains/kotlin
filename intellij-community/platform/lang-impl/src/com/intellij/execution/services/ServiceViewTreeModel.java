@@ -2,7 +2,6 @@
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
-import com.intellij.execution.services.ServiceViewModel.ServiceViewModelListener;
 import com.intellij.ui.tree.BaseTreeModel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -22,18 +21,10 @@ import java.util.List;
 
 class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSupplier {
   private final ServiceViewModel myModel;
-  private final ServiceViewModelListener myListener;
   private final Object myRoot = ObjectUtils.sentinel("services root");
 
   ServiceViewTreeModel(ServiceViewModel model) {
     myModel = model;
-    myListener = new ServiceViewModelListener() {
-      @Override
-      public void rootsChanged() {
-        treeStructureChanged(new TreePath(myRoot), null, null);
-      }
-    };
-    myModel.addModelListener(myListener);
   }
 
   @NotNull
@@ -44,7 +35,6 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
 
   @Override
   public void dispose() {
-    myModel.removeModelListener(myListener);
   }
 
   @Override
@@ -63,6 +53,10 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   @Override
   public Object getRoot() {
     return myRoot;
+  }
+
+  void rootsChanged() {
+    treeStructureChanged(new TreePath(myRoot), null, null);
   }
 
   Promise<TreePath> findPath(@NotNull Object service, @NotNull Class<?> contributorClass) {

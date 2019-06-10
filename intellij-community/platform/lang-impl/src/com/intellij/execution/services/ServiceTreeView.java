@@ -25,6 +25,7 @@ import java.util.*;
 class ServiceTreeView extends ServiceView {
   private final ServiceViewTree myTree;
   private final ServiceViewTreeModel myTreeModel;
+  private final ServiceViewModel.ServiceViewModelListener myListener;
 
   private volatile ServiceViewItem myLastSelection;
   private boolean mySelected;
@@ -36,6 +37,9 @@ class ServiceTreeView extends ServiceView {
     myTree = new ServiceViewTree(myTreeModel, this);
     myTree.setShowsRootHandles(!model.isFlat());
 
+    myListener = new MyViewModelListener();
+    model.addModelListener(myListener);
+
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
     ui.setServiceToolbar(actionProvider);
     ui.setMasterPanel(myTree, actionProvider);
@@ -46,6 +50,12 @@ class ServiceTreeView extends ServiceView {
     model.addModelListener(this::rootsChanged);
 
     state.treeState.applyTo(myTree, myTreeModel.getRoot());
+  }
+
+  @Override
+  public void dispose() {
+    getModel().removeModelListener(myListener);
+    super.dispose();
   }
 
   @Override
@@ -161,6 +171,27 @@ class ServiceTreeView extends ServiceView {
       return ContainerUtil.map(getModel().getChildren(item), ServiceViewItem::getValue);
     }
     return Collections.emptyList();
+  }
+
+  private class MyViewModelListener implements ServiceViewModel.ServiceViewModelListener {
+    @Override
+    public void rootsChanged() {
+      AppUIUtil.invokeOnEdt(() -> {
+        List<ServiceViewItem> selectedItems = getSelectedItems();
+        myTreeModel.rootsChanged();
+        if (selectedItems.isEmpty()) return;
+
+        myTreeModel.getInvoker().invokeLater(() -> {
+          List<Promise<TreePath>> pathPromises =
+            ContainerUtil.map(selectedItems, item -> myTreeModel.findPath(item.getValue(), item.getRootContributor().getClass()));
+          Promises.collectResults(pathPromises, true).onProcessed(paths -> {
+            if (paths != null) {
+              TreeUtil.promiseSelect(myTree, paths.stream().map(PathSelectionVisitor::new));
+            }
+          });
+        });
+      }, myProject.getDisposed());
+    }
   }
 
   private static class PathSelectionVisitor implements TreeVisitor {
