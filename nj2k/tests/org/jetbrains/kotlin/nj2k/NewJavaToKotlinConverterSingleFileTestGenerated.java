@@ -4744,6 +4744,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         public void testEllipsisTypeSingleParams() throws Exception {
             runTest("nj2k/testData/newJ2k/varArg/ellipsisTypeSingleParams.java");
         }
+
+        @TestMetadata("varargLengthAccess.java")
+        public void testVarargLengthAccess() throws Exception {
+            runTest("nj2k/testData/newJ2k/varArg/varargLengthAccess.java");
+        }
     }
 
     @TestMetadata("nj2k/testData/newJ2k/whileStatement")
