@@ -178,5 +178,5 @@ class KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider :
 class KotlinDslGradleKotlinJSNodeFrameworkSupportProvider :
     AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider("KOTLIN_JS_NODE", "Kotlin/JS for Node.js") {
     override val jsSubTargetName: String
-        get() = "Node.js"
+        get() = "nodejs"
 }
