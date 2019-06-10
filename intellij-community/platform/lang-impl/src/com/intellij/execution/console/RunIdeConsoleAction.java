@@ -10,6 +10,8 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.actions.CloseAction;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.script.IdeConsoleScriptBindings;
 import com.intellij.openapi.actionSystem.*;
@@ -61,34 +63,43 @@ public class RunIdeConsoleAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     IdeScriptEngineManager manager = IdeScriptEngineManager.getInstance();
     e.getPresentation().setVisible(e.getProject() != null);
-    e.getPresentation().setEnabled(manager.isInitialized() && !manager.getLanguages().isEmpty());
+    e.getPresentation().setEnabled(manager.isInitialized() && !manager.getEngineInfos().isEmpty());
   }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    List<String> languages = IdeScriptEngineManager.getInstance().getLanguages();
+    List<IdeScriptEngineManager.EngineInfo> languages = IdeScriptEngineManager.getInstance().getEngineInfos();
     if (languages.size() == 1) {
       runConsole(e, languages.iterator().next());
       return;
     }
 
     DefaultActionGroup actions = new DefaultActionGroup(
-      ContainerUtil.map(languages, (NotNullFunction<String, AnAction>)language -> new DumbAwareAction(language) {
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e1) {
-          runConsole(e1, language);
-        }
+      ContainerUtil.map(languages, (NotNullFunction<IdeScriptEngineManager.EngineInfo, AnAction>)info -> {
+        String name = info.languageName.equals(info.engineName) ? info.languageName :
+                      info.languageName + " (" + info.engineName + ")";
+        IdeaPluginDescriptor plugin = info.pluginId == null ? null : PluginManager.getPlugin(info.pluginId);
+        String description = info.engineName.equals(info.languageName) ? info.engineName :
+                             info.languageName + " (" + info.engineName +
+                             (plugin == null ? ", bundled" : " by " + plugin.getName()) + ")";
+        return new DumbAwareAction(name, description, null) {
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e1) {
+            runConsole(e1, info);
+          }
+        };
       })
     );
-    JBPopupFactory.getInstance().createActionGroupPopup("Script Engine", actions, e.getDataContext(), JBPopupFactory.ActionSelectionAid.NUMBERING, false).
-      showInBestPositionFor(e.getDataContext());
+    JBPopupFactory.getInstance().createActionGroupPopup(
+      "Script Engine", actions, e.getDataContext(), JBPopupFactory.ActionSelectionAid.NUMBERING, false)
+      .showInBestPositionFor(e.getDataContext());
   }
 
-  protected void runConsole(@NotNull AnActionEvent e, @NotNull String language) {
+  protected void runConsole(@NotNull AnActionEvent e, @NotNull IdeScriptEngineManager.EngineInfo info) {
     Project project = e.getProject();
     if (project == null) return;
 
-    List<String> extensions = IdeScriptEngineManager.getInstance().getFileExtensions(language);
+    List<String> extensions = info.fileExtensions;
     try {
       String pathName = PathUtil.makeFileName(DEFAULT_FILE_NAME, ContainerUtil.getFirstItem(extensions));
       VirtualFile virtualFile = IdeConsoleRootType.getInstance().findFile(project, pathName, ScratchFileService.Option.create_if_missing);
@@ -253,7 +264,7 @@ public class RunIdeConsoleAction extends DumbAwareAction {
 
       String extension = virtualFile.getExtension();
       if (extension != null && (engine == null || !engine.getFileExtensions().contains(extension))) {
-        engine = IdeScriptEngineManager.getInstance().getEngineForFileExtension(extension, null);
+        engine = IdeScriptEngineManager.getInstance().getEngineByFileExtension(extension, null);
       }
       if (engine == null) {
         LOG.warn("Script engine not found for: " + virtualFile.getName());

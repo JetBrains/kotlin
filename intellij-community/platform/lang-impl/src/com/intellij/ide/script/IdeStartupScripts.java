@@ -71,7 +71,7 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
     List<Pair<File, IdeScriptEngine>> result = new ArrayList<>();
     for (File script : scripts) {
       String extension = FileUtilRt.getExtension(script.getName());
-      IdeScriptEngine engine = extension.isEmpty() ? null : scriptEngineManager.getEngineForFileExtension(extension, null);
+      IdeScriptEngine engine = extension.isEmpty() ? null : scriptEngineManager.getEngineByFileExtension(extension, null);
       result.add(Pair.create(script, engine));
     }
     return result;
