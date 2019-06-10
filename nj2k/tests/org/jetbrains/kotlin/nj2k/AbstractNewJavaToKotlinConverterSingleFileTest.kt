@@ -21,12 +21,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModificator
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
+import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.nj2k.postProcessing.NewJ2kPostProcessor
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -58,10 +61,18 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
         File(javaPath.replace(".java", ".new.kt")).takeIf { it.exists() }
             ?: super.provideExpectedFile(javaPath)
 
+    private fun projectDescriptorByFileDirective(): LightProjectDescriptor {
+        if (isAllFilesPresentInTest()) return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+        val fileText = FileUtil.loadFile(File(testDataPath, fileName()), true)
+        return if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_FULL_JDK"))
+            KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+        else KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    }
+
     override fun getProjectDescriptor(): KotlinWithJdkAndRuntimeLightProjectDescriptor =
         object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
             override fun getSdk(): Sdk? {
-                val sdk = super@AbstractNewJavaToKotlinConverterSingleFileTest.getProjectDescriptor().sdk ?: return null
+                val sdk = projectDescriptorByFileDirective().sdk ?: return null
                 runWriteAction {
                     val modificator: SdkModificator = sdk.sdkModificator
                     JavaSdkImpl.attachJdkAnnotations(modificator)
