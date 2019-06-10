@@ -19,7 +19,6 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.PathUtil
 import com.intellij.util.PathUtilRt
 import com.intellij.util.SmartList
 import com.intellij.util.containers.computeIfAny
@@ -150,16 +149,15 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       }
     }
 
-    val productSpecificWorkspaceParentDir = if (isUnitTestMode) {
-      if (scheme == StorageScheme.DEFAULT) PathUtil.getParentPath(filePath) else "$filePath/${Project.DIRECTORY_STORE_FOLDER}"
-    }
-    else {
-      "${FileUtil.toSystemIndependentName(PathManager.getConfigPath())}/workspace"
-    }
-
     val cacheFileName = project.getProjectCacheFileName(extensionWithDot = ".xml")
     storageManager.addMacro(StoragePathMacros.CACHE_FILE, appSystemDir.resolve("workspace").resolve(cacheFileName).systemIndependentPath)
 
+    if (isUnitTestMode) {
+      storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, storageManager.expandMacro(StoragePathMacros.WORKSPACE_FILE))
+      return
+    }
+
+    val productSpecificWorkspaceParentDir = "${FileUtil.toSystemIndependentName(PathManager.getConfigPath())}/workspace"
     val projectIdManager = ProjectIdManager.getInstance(project)
     var projectId = projectIdManager.state.id
     if (projectId == null) {
@@ -167,19 +165,17 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       projectId = Ksuid.generate()
       projectIdManager.state.id = projectId
 
-      if (!isUnitTestMode) {
-        try {
-          val oldFile = Paths.get("$productSpecificWorkspaceParentDir/$cacheFileName")
-          if (oldFile.exists()) {
-            oldFile.move(Paths.get("$productSpecificWorkspaceParentDir/$projectId.xml"))
-          }
+      try {
+        val oldFile = Paths.get("$productSpecificWorkspaceParentDir/$cacheFileName")
+        if (oldFile.exists()) {
+          oldFile.move(Paths.get("$productSpecificWorkspaceParentDir/$projectId.xml"))
         }
-        catch (e: Exception) {
-          LOG.error(e)
-        }
-
-        SaveAndSyncHandler.getInstance().scheduleSave(SaveAndSyncHandler.SaveTask(project, saveDocuments = false, forceSavingAllSettings = true))
       }
+      catch (e: Exception) {
+        LOG.error(e)
+      }
+
+      SaveAndSyncHandler.getInstance().scheduleSave(SaveAndSyncHandler.SaveTask(project, saveDocuments = false, forceSavingAllSettings = true))
     }
 
     storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, "$productSpecificWorkspaceParentDir/$projectId.xml")
@@ -193,6 +189,13 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
     if (isDirectoryBased) {
       var result: MutableList<Storage>? = null
+
+      if (storages.size == 2 && ApplicationManager.getApplication().isUnitTestMode &&
+          isSpecialStorage(storages.first()) &&
+          storages.get(1).path == StoragePathMacros.WORKSPACE_FILE) {
+        return listOf(storages.first())
+      }
+
       for (storage in storages) {
         if (storage.path != PROJECT_FILE) {
           if (result == null) {
