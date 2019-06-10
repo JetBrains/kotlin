@@ -4524,6 +4524,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/simpleIfWithoutTerminatingAssignment.kt");
             }
 
+            @TestMetadata("subTypes.kt")
+            public void testSubTypes() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/subTypes.kt");
+            }
+
             @TestMetadata("typeMismatch.kt")
             public void testTypeMismatch() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch.kt");
