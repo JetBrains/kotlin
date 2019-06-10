@@ -117,10 +117,10 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
         val previousPresentation = renderer.presentation
         @Suppress("UNCHECKED_CAST")
         newPresentation.addListener(InlayListener(inlay as Inlay<PresentationRenderer>))
+        renderer.presentation = newPresentation
         if (newPresentation.updateState(previousPresentation)) {
           newPresentation.fireUpdateEvent(previousPresentation.dimension())
         }
-        renderer.presentation = newPresentation
         hints.remove(offset)
       }
     }
