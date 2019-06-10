@@ -22,7 +22,7 @@ package com.jetbrains.completion.feature
 interface CategoricalFeature : Feature {
     val categories: Set<String>
 
-    val otherCategoryIndex: Int
+    val otherCategoryIndex: Int?
 
-    fun indexByCategory(category: String): Int
+    fun indexByCategory(category: String): Int?
 }

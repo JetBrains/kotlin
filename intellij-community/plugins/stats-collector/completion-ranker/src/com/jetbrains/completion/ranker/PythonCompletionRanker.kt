@@ -2,7 +2,6 @@
 package com.jetbrains.completion.ranker
 
 import com.completion.ranker.model.python.MLWhiteBox
-import com.jetbrains.completion.feature.impl.FeatureTransformer
 
 class PythonCompletionRanker : RankerBase("python_features") {
   override fun rank(features: DoubleArray?): Double {

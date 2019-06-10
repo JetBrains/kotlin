@@ -2,8 +2,6 @@
 package com.jetbrains.completion.ranker
 
 import com.completion.ranker.model.java.MLWhiteBox
-import com.jetbrains.completion.feature.ModelMetadataEx
-import com.jetbrains.completion.feature.impl.*
 
 class JavaCompletionRanker : RankerBase("java_features") {
     override fun rank(features: DoubleArray): Double {

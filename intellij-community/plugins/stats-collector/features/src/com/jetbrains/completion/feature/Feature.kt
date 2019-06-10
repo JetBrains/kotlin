@@ -22,7 +22,7 @@ package com.jetbrains.completion.feature
 interface Feature {
     val name: String
 
-    val undefinedIndex: Int
+    val undefinedIndex: Int?
 
     fun process(value: Any, featureArray: DoubleArray)
 

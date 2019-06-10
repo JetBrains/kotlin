@@ -28,6 +28,8 @@ object FeatureUtils {
     const val BEFORE_ORDER: String = "before_rerank_order"
 
     const val DEFAULT: String = "default"
+    const val USE_UNDEFINED: String = "use_undefined"
+
 
     fun getOtherCategoryFeatureName(name: String): String = "$name=$OTHER"
     fun getUndefinedFeatureName(name: String): String = "$name=$UNDEFINED"

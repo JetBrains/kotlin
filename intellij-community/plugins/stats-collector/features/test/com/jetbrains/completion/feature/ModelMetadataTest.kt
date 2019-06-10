@@ -97,8 +97,10 @@ abstract class ModelMetadataTest {
     fun `test features fill features array properly`() {
         val metadata = modelMetadata()
         val revertedFeatureOrder = mutableMapOf<Int, Feature>()
-        fun MutableMap<Int, Feature>.checkAndPut(index: Int, feature: Feature) {
-            assertFeaturesNotStoreValueBySameIndex(index, put(index, feature), feature)
+        fun MutableMap<Int, Feature>.checkAndPut(index: Int?, feature: Feature) {
+            if (index != null) {
+              assertFeaturesNotStoreValueBySameIndex(index, put(index, feature), feature)
+            }
         }
         for (feature in metadata.binary) {
             revertedFeatureOrder.checkAndPut(feature.index, feature)

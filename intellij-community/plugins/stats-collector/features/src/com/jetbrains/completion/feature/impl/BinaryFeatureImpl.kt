@@ -23,31 +23,35 @@ import com.jetbrains.completion.feature.BinaryFeature
  */
 class BinaryFeatureImpl(override val name: String,
                         override val index: Int,
-                        override val undefinedIndex: Int,
+                        override val undefinedIndex: Int?,
                         override val defaultValue: Double,
                         private val firstValue: BinaryFeature.BinaryValueDescriptor,
                         private val secondValue: BinaryFeature.BinaryValueDescriptor) : BinaryFeature {
-    override val availableValues: Pair<String, String> = firstValue.key to secondValue.key
+  override val availableValues: Pair<String, String> = firstValue.key to secondValue.key
 
-    override fun process(value: Any, featureArray: DoubleArray) {
-        val transformed = transform(value.toString())
-        if (transformed != null) {
-            featureArray[undefinedIndex] = 0.0
-            featureArray[index] = transformed
-        }
-        else {
-            setDefaults(featureArray)
-        }
+  override fun process(value: Any, featureArray: DoubleArray) {
+    val transformed = transform(value.toString())
+    if (transformed != null) {
+      if (undefinedIndex != null) {
+        featureArray[undefinedIndex] = 0.0
+      }
+      featureArray[index] = transformed
     }
+    else {
+      setDefaults(featureArray)
+    }
+  }
 
-    override fun setDefaults(featureArray: DoubleArray) {
-        featureArray[undefinedIndex] = 1.0
-        featureArray[index] = defaultValue
+  override fun setDefaults(featureArray: DoubleArray) {
+    if (undefinedIndex != null) {
+      featureArray[undefinedIndex] = 1.0
     }
+    featureArray[index] = defaultValue
+  }
 
-    private fun transform(value: String): Double? = when (value) {
-        firstValue.key -> firstValue.mapped
-        secondValue.key -> secondValue.mapped
-        else -> null
-    }
+  private fun transform(value: String): Double? = when (value) {
+    firstValue.key -> firstValue.mapped
+    secondValue.key -> secondValue.mapped
+    else -> null
+  }
 }

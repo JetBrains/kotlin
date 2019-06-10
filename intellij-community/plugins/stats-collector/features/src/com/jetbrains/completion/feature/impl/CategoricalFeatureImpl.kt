@@ -19,23 +19,42 @@ package com.jetbrains.completion.feature.impl
 import com.jetbrains.completion.feature.CategoricalFeature
 
 class CategoricalFeatureImpl(override val name: String,
-                             override val undefinedIndex: Int,
-                             override val otherCategoryIndex: Int,
                              private val categoryToIndex: Map<String, Int>)
-    : CategoricalFeature {
-    override fun indexByCategory(category: String): Int = categoryToIndex[category] ?: otherCategoryIndex
+  : CategoricalFeature {
+  override val undefinedIndex: Int? = categoryToIndex[FeatureUtils.UNDEFINED]
+  override val otherCategoryIndex: Int? = categoryToIndex[FeatureUtils.OTHER]
 
-    override val categories: Set<String> = categoryToIndex.keys
+  override fun indexByCategory(category: String): Int? = categoryToIndex[category]
 
-    override fun process(value: Any, featureArray: DoubleArray) {
-        setDefaults(featureArray)
-        featureArray[indexByCategory(value.toString())] = 1.0
-        featureArray[undefinedIndex] = 0.0
+  override val categories: Set<String> = categoryToIndex.keys
+
+  override fun process(value: Any, featureArray: DoubleArray) {
+    setDefaults(featureArray)
+    setUndefined(0.0, featureArray)
+    val index = indexByCategory(value.toString())
+    if (index == null) {
+      setOther(1.0, featureArray)
     }
-
-    override fun setDefaults(featureArray: DoubleArray) {
-        categories.forEach { featureArray[indexByCategory(it)] = 0.0 }
-        featureArray[undefinedIndex] = 1.0
-        featureArray[otherCategoryIndex] = 0.0
+    else {
+      featureArray[index] = 1.0
     }
+  }
+
+  override fun setDefaults(featureArray: DoubleArray) {
+    categoryToIndex.values.forEach { featureArray[it] = 0.0 }
+    setUndefined(1.0, featureArray)
+    setOther(0.0, featureArray)
+  }
+
+  private fun setUndefined(value: Double, featureArray: DoubleArray) {
+    if (undefinedIndex != null) {
+      featureArray[undefinedIndex] = value
+    }
+  }
+
+  private fun setOther(value: Double, featureArray: DoubleArray) {
+    if (otherCategoryIndex != null) {
+      featureArray[otherCategoryIndex] = value
+    }
+  }
 }
