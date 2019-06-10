@@ -308,34 +308,6 @@ class StubSerializationHelper {
     return tempBuffer.size() == 0 ? ArrayUtilRt.EMPTY_BYTE_ARRAY : tempBuffer.toByteArray();
   }
 
-  private static class ByteArrayInterner {
-    private static final TObjectHashingStrategy<byte[]> BYTE_ARRAY_STRATEGY = new TObjectHashingStrategy<byte[]>() {
-      @Override
-      public int computeHashCode(byte[] object) {
-        return Arrays.hashCode(object);
-      }
-
-      @Override
-      public boolean equals(byte[] o1, byte[] o2) {
-        return Arrays.equals(o1, o2);
-      }
-    };
-    private final TObjectIntHashMap<byte[]> arrayToStart = new TObjectIntHashMap<>(BYTE_ARRAY_STRATEGY);
-    final BufferExposingByteArrayOutputStream joinedBuffer = new BufferExposingByteArrayOutputStream();
-
-    int internBytes(byte[] bytes) {
-      if (bytes.length == 0) return 0;
-
-      int start = arrayToStart.get(bytes);
-      if (start == 0) {
-        start = joinedBuffer.size() + 1; // should be positive
-        arrayToStart.put(bytes, start);
-        joinedBuffer.write(bytes, 0, bytes.length);
-      }
-      return start;
-    }
-  }
-
   private byte[] readByteArray(StubInputStream inputStream) throws IOException {
     int length = DataInputOutputUtil.readINT(inputStream);
     if (length == 0) return ArrayUtilRt.EMPTY_BYTE_ARRAY;
