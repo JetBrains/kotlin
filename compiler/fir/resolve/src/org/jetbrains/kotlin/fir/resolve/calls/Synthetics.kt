@@ -26,7 +26,7 @@ class FirSyntheticPropertiesScope(
     val session: FirSession,
     private val baseScope: FirScope,
     private val typeCalculator: ReturnTypeCalculator
-) : FirScope {
+) : FirScope() {
 
     val synthetic: MutableMap<ConeCallableSymbol, ConeVariableSymbol> = mutableMapOf()
 

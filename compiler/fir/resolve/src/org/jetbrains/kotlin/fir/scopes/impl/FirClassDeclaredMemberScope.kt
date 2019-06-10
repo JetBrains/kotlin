@@ -36,7 +36,7 @@ fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
         .declaredMemberScope(klass)
 }
 
-class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope {
+class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
     private val callablesIndex: Map<Name, List<FirCallableSymbol>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol>>()
         for (declaration in klass.declarations) {

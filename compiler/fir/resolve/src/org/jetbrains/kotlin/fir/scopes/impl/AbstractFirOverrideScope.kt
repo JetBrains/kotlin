@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope {
+abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
     //base symbol as key
     val overrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol?>()
 

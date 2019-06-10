@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 class FirNestedClassifierScope(
     val classId: ClassId,
     private val symbolProvider: FirSymbolProvider
-) : FirScope {
+) : FirScope() {
 
     override fun processClassifiersByName(
         name: Name,

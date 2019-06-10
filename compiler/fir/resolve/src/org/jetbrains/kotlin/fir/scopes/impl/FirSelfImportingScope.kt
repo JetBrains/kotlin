@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirScope {
+class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirScope() {
 
     private val symbolProvider = FirSymbolProvider.getInstance(session)
 

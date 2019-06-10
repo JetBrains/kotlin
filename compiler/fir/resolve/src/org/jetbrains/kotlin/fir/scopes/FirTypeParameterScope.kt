@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.name.Name
 
-interface FirTypeParameterScope : FirScope {
-    val typeParameters: Map<Name, List<FirTypeParameter>>
+abstract class FirTypeParameterScope : FirScope() {
+    abstract val typeParameters: Map<Name, List<FirTypeParameter>>
 
     override fun processClassifiersByName(
         name: Name,

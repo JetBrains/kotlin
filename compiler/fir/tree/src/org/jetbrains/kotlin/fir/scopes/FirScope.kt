@@ -12,23 +12,23 @@ import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-interface FirScope {
+abstract class FirScope {
     @Deprecated(
         "obsolete",
         replaceWith = ReplaceWith("processClassifiersByNameWithAction(name, position) { if (processor()) ProcessorAction.NEXT else ProcessorAction.STOP }.next()")
     )
-    fun processClassifiersByName(
+    open fun processClassifiersByName(
         name: Name,
         position: FirPosition,
         processor: (ConeClassifierSymbol) -> Boolean
     ): Boolean = true
 
-    fun processFunctionsByName(
+    open fun processFunctionsByName(
         name: Name,
         processor: (ConeFunctionSymbol) -> ProcessorAction
     ): ProcessorAction = NEXT
 
-    fun processPropertiesByName(
+    open fun processPropertiesByName(
         name: Name,
         processor: (ConeVariableSymbol) -> ProcessorAction
     ): ProcessorAction = NEXT

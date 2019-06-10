@@ -28,7 +28,7 @@ class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteScope: FirScope,
     substitution: Map<ConeTypeParameterSymbol, ConeKotlinType>
-) : FirScope {
+) : FirScope() {
 
     private val fakeOverrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol>()
 

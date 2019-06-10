@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 class FirCompositeScope(
     val scopes: MutableList<FirScope>,
     private val reversedPriority: Boolean = false
-) : FirScope {
+) : FirScope() {
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,

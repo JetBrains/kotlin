@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirLocalScope : FirScope {
+class FirLocalScope : FirScope() {
 
     val properties = mutableMapOf<Name, ConeVariableSymbol>()
     val functions = mutableMapOf<Name, ConeFunctionSymbol>()
