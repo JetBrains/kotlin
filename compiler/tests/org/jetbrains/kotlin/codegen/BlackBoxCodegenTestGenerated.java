@@ -6054,6 +6054,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/coroutines/kt30858.kt");
         }
 
+        @TestMetadata("kt31784.kt")
+        public void testKt31784() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt31784.kt");
+        }
+
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt", "kotlin.coroutines.experimental");
@@ -10942,6 +10947,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("intCountDownLatchExtension.kt")
         public void testIntCountDownLatchExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fullJdk/intCountDownLatchExtension.kt");
+        }
+
+        @TestMetadata("kt31757.kt")
+        public void testKt31757() throws Exception {
+            runTest("compiler/testData/codegen/box/fullJdk/kt31757.kt");
         }
 
         @TestMetadata("kt434.kt")
