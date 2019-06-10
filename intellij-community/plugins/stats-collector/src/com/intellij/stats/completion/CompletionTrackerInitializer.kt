@@ -24,7 +24,13 @@ import kotlin.random.Random
 class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposable {
   companion object {
     var isEnabledInTests: Boolean = false
-    private const val LOGGED_SESSIONS_RATIO: Double = 0.1
+    private val LOGGED_SESSIONS_RATIO: Map<String, Double> = mapOf(
+      "python" to 0.5,
+      "scala" to 0.3,
+      "php" to 0.3,
+      "kotlin" to 0.2,
+      "java" to 0.1
+    )
   }
 
   private val actionListener = LookupActionsListener()
@@ -71,11 +77,12 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     if (!application.isEAP) return false
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
 
-    if (language != null && language.displayName.toLowerCase() != "java") {
-      return true
+    var logSessionChance = 0.0
+    if (language != null) {
+      logSessionChance = LOGGED_SESSIONS_RATIO.getOrDefault(language.displayName.toLowerCase(), 1.0)
     }
 
-    return Random.nextDouble() < LOGGED_SESSIONS_RATIO
+    return Random.nextDouble() < logSessionChance
   }
 
   private fun processUserFactors(lookup: LookupImpl) {
