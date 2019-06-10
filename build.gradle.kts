@@ -720,11 +720,14 @@ fun jdkPath(version: String): String {
 
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
+    val currentJavaHome = File(System.getProperty("java.home")!!).canonicalPath
+    val shouldFork = !currentJavaHome.startsWith(File(javaHome).canonicalPath)
+
     tasks.withType<JavaCompile> {
         if (name != "compileJava9Java") {
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
-            options.isFork = true
+            options.isFork = shouldFork
             options.forkOptions.javaHome = file(javaHome)
             options.compilerArgs.add("-proc:none")
             options.encoding = "UTF-8"
