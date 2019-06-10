@@ -9,12 +9,9 @@ import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.util.TipAndTrickBean
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.extensions.impl.ExtensionComponentAdapter
 import com.intellij.task.ProjectTaskRunner
 import com.intellij.task.impl.JpsProjectTaskRunner
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import java.util.function.BiPredicate
-import java.util.function.Predicate
 import kotlin.reflect.KClass
 
 /**
@@ -51,21 +48,21 @@ class KotlinNativeIdeInitializer {
 
     private fun <T : Any> unregisterExtensionClass(extensionPointName: ExtensionPointName<T>, extensionClass: KClass<out T>) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
-        val extensionClassesToUnregister: Set<String> = extensionPoint.extensions.filter { extensionClass.isInstance(it) }.map { it::class.java.name }.toSet()
+        val extensionClassesToUnregister: List<Class<out T>> = extensionPoint.extensions.filter { extensionClass.isInstance(it) }.map { it::class.java }
 
-        val negatedPredicate = BiPredicate<String, ExtensionComponentAdapter> { className, _ ->
-            className in extensionClassesToUnregister
-        }.negate()
-
-        extensionPoint.unregisterExtensions(negatedPredicate, false)
+        extensionClassesToUnregister.forEach {
+            extensionPoint.unregisterExtension(it)
+            extensionPoint.extensionList // to re-initialize caches after removal of one element
+        }
     }
 
     private fun <T : Any> unregisterExtensionInstances(extensionPointName: ExtensionPointName<T>, predicate: (T) -> Boolean) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
-        val negatedPredicate = Predicate<T> { predicate(it) }.negate()
+        val extensionInstancesToUnregister: List<T> = extensionPoint.extensionList.filter(predicate)
 
-        // TODO: how to avoid dependency on deprecated method?
-        @Suppress("DEPRECATION")
-        extensionPoint.unregisterExtensions(negatedPredicate)
+        extensionInstancesToUnregister.forEach {
+            extensionPoint.unregisterExtension(it)
+            extensionPoint.extensionList // to re-initialize caches after removal of one element
+        }
     }
 }
