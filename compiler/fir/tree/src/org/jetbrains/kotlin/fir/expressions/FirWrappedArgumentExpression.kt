@@ -5,13 +5,19 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirWrappedArgumentExpression : FirExpression {
-    val expression: FirExpression
+abstract class FirWrappedArgumentExpression(
+    session: FirSession,
+    psi: PsiElement?
+) : FirAbstractStatement(session, psi), FirExpression {
+    abstract val expression: FirExpression
 
-    val isSpread: Boolean
+    open val isSpread: Boolean
         get() = false
 
     override val typeRef: FirTypeRef
@@ -26,6 +32,6 @@ interface FirWrappedArgumentExpression : FirExpression {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         expression.accept(visitor, data)
-        super.acceptChildren(visitor, data)
+        super<FirExpression>.acceptChildren(visitor, data)
     }
 }

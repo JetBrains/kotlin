@@ -64,6 +64,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitFunction(propertyAccessor, null)
     }
 
+    open fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor) {
+        visitPropertyAccessor(defaultPropertyAccessor, null)
+    }
+
     open fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration) {
         visitDeclaration(errorDeclaration, null)
     }
@@ -498,6 +502,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: Nothing?) {
         visitDeclarationWithBody(declarationWithBody)
+    }
+
+    final override fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: Nothing?) {
+        visitDefaultPropertyAccessor(defaultPropertyAccessor)
     }
 
     final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: Nothing?) {

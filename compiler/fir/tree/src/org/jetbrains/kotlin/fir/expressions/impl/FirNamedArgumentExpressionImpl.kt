@@ -20,9 +20,9 @@ class FirNamedArgumentExpressionImpl(
     override val name: Name,
     override val isSpread: Boolean,
     override var expression: FirExpression
-) : FirNamedArgumentExpression, FirAbstractStatement(session, psi) {
+) : FirNamedArgumentExpression(session, psi) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         expression = expression.transformSingle(transformer, data)
-        return super<FirAbstractStatement>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

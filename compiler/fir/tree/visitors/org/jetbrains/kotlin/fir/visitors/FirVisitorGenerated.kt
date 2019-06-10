@@ -64,6 +64,10 @@ abstract class FirVisitor<out R, in D> {
         return visitFunction(propertyAccessor, data)
     }
 
+    open fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: D): R {
+        return visitPropertyAccessor(defaultPropertyAccessor, data)
+    }
+
     open fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration, data: D): R {
         return visitDeclaration(errorDeclaration, data)
     }

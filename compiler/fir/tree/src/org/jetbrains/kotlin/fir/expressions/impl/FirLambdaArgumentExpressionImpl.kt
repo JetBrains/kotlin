@@ -17,9 +17,9 @@ class FirLambdaArgumentExpressionImpl(
     session: FirSession,
     psi: PsiElement?,
     override var expression: FirExpression
-) : FirLambdaArgumentExpression, FirAbstractStatement(session, psi) {
+) : FirLambdaArgumentExpression(session, psi) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         expression = expression.transformSingle(transformer, data)
-        return super<FirAbstractStatement>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }
