@@ -136,8 +136,10 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
         else toKotlinTypesMap[fqName]
     }
 
-    private fun JKClassSymbol.kotlinStandardType(): String? =
-        JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqName))?.asString()
+    private fun JKClassSymbol.kotlinStandardType(): String? {
+        if (isKtFunction(fqName)) return fqName
+        return JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqName))?.asString()
+    }
 
     private fun JKJavaPrimitiveType.mapPrimitiveType(): JKClassType {
         val fqName = jvmPrimitiveType.primitiveType.typeFqName
@@ -155,5 +157,11 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
             is JKMethod -> typeFlavorCalculator.methodMutability(psi as PsiMethod) == Mutability.Mutable
             else -> false
         }
+    }
+
+    companion object {
+        private val ktFunctionRegex = "kotlin\\.jvm\\.functions\\.Function\\d+".toRegex()
+        private fun isKtFunction(fqName: String) =
+            ktFunctionRegex.matches(fqName)
     }
 }
