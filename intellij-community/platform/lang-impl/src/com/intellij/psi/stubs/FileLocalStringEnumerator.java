@@ -8,6 +8,7 @@ import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ class FileLocalStringEnumerator implements AbstractStringEnumerator {
     return myStrings.get(idx - 1);
   }
 
-  void write(@NotNull DataOutputStream stream) throws IOException {
+  void write(@NotNull DataOutput stream) throws IOException {
     assert myEnumerates != null;
     DataInputOutputUtil.writeINT(stream, myStrings.size());
     byte[] buffer = IOUtil.allocReadWriteUTFBuffer();
