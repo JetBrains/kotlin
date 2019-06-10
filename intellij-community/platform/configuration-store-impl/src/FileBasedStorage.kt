@@ -57,7 +57,7 @@ open class FileBasedStorage(file: Path,
 
   protected open val isUseXmlProlog = false
 
-  final override val isUseVfsForWrite: Boolean
+  override val isUseVfsForWrite: Boolean
     get() = configuration.isUseVfsForWrite
 
   private val isUseUnixLineSeparator: Boolean

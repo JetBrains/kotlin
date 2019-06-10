@@ -4,12 +4,14 @@ package com.intellij.configurationStore
 import com.intellij.ide.highlighter.ProjectFileType
 import com.intellij.ide.highlighter.WorkspaceFileType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.appSystemDir
 import com.intellij.openapi.components.*
 import com.intellij.openapi.components.impl.stores.IProjectStore
 import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectCoreUtil
-import com.intellij.openapi.project.getProjectCachePath
+import com.intellij.openapi.project.getProjectCacheFileName
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.registry.Registry
@@ -144,7 +146,9 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       }
     }
 
-    storageManager.addMacro(StoragePathMacros.CACHE_FILE, project.getProjectCachePath(cacheDirName = "workspace", extensionWithDot = ".xml").systemIndependentPath)
+    val cacheFileName = project.getProjectCacheFileName(extensionWithDot = ".xml")
+    storageManager.addMacro(StoragePathMacros.CACHE_FILE, appSystemDir.resolve("workspace").resolve(cacheFileName).systemIndependentPath)
+    storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, "${FileUtil.toSystemIndependentName(PathManager.getConfigPath())}/workspace/$cacheFileName")
   }
 
   override fun <T> getStorageSpecs(component: PersistentStateComponent<T>, stateSpec: State, operation: StateStorageOperation): List<Storage> {
@@ -180,7 +184,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
         // if we create project from default, component state written not to own storage file, but to project file,
         // we don't have time to fix it properly, so, ancient hack restored
-        if (result.first().path != StoragePathMacros.CACHE_FILE) {
+        if (!isSpecialStorage(result.first())) {
           result.add(DEPRECATED_PROJECT_FILE_STORAGE_ANNOTATION)
         }
         return result
@@ -192,7 +196,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       var hasOnlyDeprecatedStorages = true
       for (storage in storages) {
         @Suppress("DEPRECATION")
-        if (storage.path == PROJECT_FILE || storage.path == StoragePathMacros.WORKSPACE_FILE || storage.path == StoragePathMacros.CACHE_FILE) {
+        if (storage.path == PROJECT_FILE || storage.path == StoragePathMacros.WORKSPACE_FILE || isSpecialStorage(storage)) {
           if (result == null) {
             result = SmartList()
           }
@@ -244,3 +248,9 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 }
 
 private fun composeFileBasedProjectWorkSpacePath(filePath: String) = "${FileUtilRt.getNameWithoutExtension(filePath)}${WorkspaceFileType.DOT_DEFAULT_EXTENSION}"
+
+private fun isSpecialStorage(storage: Storage) = isSpecialStorage(storage.path)
+
+internal fun isSpecialStorage(collapsedPath: String): Boolean {
+  return collapsedPath == StoragePathMacros.CACHE_FILE || collapsedPath == StoragePathMacros.PRODUCT_WORKSPACE_FILE
+}

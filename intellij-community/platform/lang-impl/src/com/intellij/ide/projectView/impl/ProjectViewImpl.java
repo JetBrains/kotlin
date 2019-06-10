@@ -91,7 +91,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-@State(name = "ProjectView", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
+@State(name = "ProjectView", storages = {
+  @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE),
+  @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
+})
 public class ProjectViewImpl extends ProjectView implements PersistentStateComponent<Element>, Disposable, QuickActionProvider, BusyObject  {
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.projectView.impl.ProjectViewImpl");
   private static final Key<String> ID_KEY = Key.create("pane-id");

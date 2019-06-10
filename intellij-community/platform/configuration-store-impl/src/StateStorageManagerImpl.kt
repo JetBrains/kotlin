@@ -305,7 +305,10 @@ open class StateStorageManagerImpl(private val rootTagName: String,
                                                                                           roamingType,
                                                                                           provider), StorageVirtualFileTracker.TrackedStorage {
     override val isUseXmlProlog: Boolean
-      get() = rootElementName != null && storageManager.isUseXmlProlog
+      get() = rootElementName != null && storageManager.isUseXmlProlog && !isSpecialStorage(fileSpec)
+
+    override val isUseVfsForWrite: Boolean
+      get() = super.isUseVfsForWrite && !isSpecialStorage(fileSpec)
 
     override val configuration: FileBasedStorageConfiguration
       get() = storageManager
@@ -450,7 +453,7 @@ internal val Storage.path: String
   get() = if (value.isEmpty()) file else value
 
 internal fun getEffectiveRoamingType(roamingType: RoamingType, collapsedPath: String): RoamingType {
-  if (roamingType != RoamingType.DISABLED && (collapsedPath == StoragePathMacros.WORKSPACE_FILE || collapsedPath == StoragePathMacros.NON_ROAMABLE_FILE || collapsedPath == StoragePathMacros.CACHE_FILE)) {
+  if (roamingType != RoamingType.DISABLED && (collapsedPath == StoragePathMacros.WORKSPACE_FILE || collapsedPath == StoragePathMacros.NON_ROAMABLE_FILE || isSpecialStorage(collapsedPath))) {
     return RoamingType.DISABLED
   }
   else {

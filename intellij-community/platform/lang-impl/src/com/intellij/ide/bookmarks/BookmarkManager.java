@@ -43,8 +43,11 @@ import java.awt.event.InputEvent;
 import java.util.List;
 import java.util.*;
 
-@State(name = "BookmarkManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
-public class BookmarkManager implements PersistentStateComponent<Element> {
+@State(name = "BookmarkManager", storages = {
+  @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE),
+  @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
+})
+public final class BookmarkManager implements PersistentStateComponent<Element> {
   private static final int MAX_AUTO_DESCRIPTION_SIZE = 50;
   private final MultiMap<VirtualFile, Bookmark> myBookmarks = MultiMap.createConcurrentSet();
   private final Map<Trinity<VirtualFile, Integer, String>, Bookmark> myDeletedDocumentBookmarks = new HashMap<>();
