@@ -78,6 +78,7 @@ object ConversionsRunner {
             +StaticsToCompanionExtractConversion()
             +InterfaceWithFieldConversion()
             +ClassToObjectPromotionConversion(context)
+            +RemoveWrongExtraModifiersForSingleFunctionsConversion()
             +MethodReferenceToLambdaConversion(context)
             +BuiltinMembersConversion(context)
             +ImplicitCastsConversion(context)
