@@ -9,9 +9,11 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.AbstractExternalEntityData
 import com.intellij.openapi.externalSystem.model.project.AbstractNamedData
+import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Key
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
@@ -52,5 +54,11 @@ class KotlinTargetData(name: String) : AbstractNamedData(GradleConstants.SYSTEM_
 
     companion object {
         val KEY = ExternalKey.create(KotlinTargetData::class.java, ProjectKeys.MODULE.processingWeight + 1)
+    }
+}
+
+class KotlinOutputPathsData(val paths: MultiMap<ExternalSystemSourceType, String>) : AbstractExternalEntityData(GradleConstants.SYSTEM_ID) {
+    companion object {
+        val KEY = ExternalKey.create(KotlinOutputPathsData::class.java, ProjectKeys.CONTENT_ROOT.processingWeight + 1)
     }
 }

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.util.sourceRoots
@@ -63,6 +65,37 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
                 moduleDependency("project_commonTest", DependencyScope.TEST)
                 moduleDependency("project_jvmMain", DependencyScope.TEST)
             }
+        }
+    }
+
+    @Test
+    fun testRuntimeClasspath() {
+        configureByFiles()
+
+        val projectPath = this.projectPath
+
+        val expectedRoots = listOf(
+            "build/tmp/kapt3/classes/main",
+            "build/classes/java/main",
+            "build/classes/kotlin/jvm/main",
+            "build/processedResources/jvm/main"
+        ).map {
+            File(projectPath, it).apply { mkdirs() }
+        }
+
+        importProject()
+
+        val jvmMainModule = ModuleManager.getInstance(project).modules.first { it.name == "project_jvmMain" }
+
+        val enumerator = ModulesOrderEnumerator(listOf(jvmMainModule))
+        val roots = enumerator.classesRoots
+
+        fun isRootPresent(file: File) = roots.any { it.path == file.path }
+
+        val missingRoots = expectedRoots.filter { !isRootPresent(it) }
+
+        assert(missingRoots.isEmpty()) {
+            "Missing roots found: " + missingRoots.joinToString()
         }
     }
 

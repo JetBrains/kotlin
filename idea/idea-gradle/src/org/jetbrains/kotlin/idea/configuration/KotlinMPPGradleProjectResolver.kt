@@ -110,6 +110,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     recordOutputDir(it, it, compilation.resourceType, moduleData, moduleOutputsMap, gradleOutputMap)
                 }
             }
+
+            dataNode.createChild(KotlinOutputPathsData.KEY, KotlinOutputPathsData(gradleOutputMap.copy()))
         }
         if (outputDirs.any { FileUtil.isAncestor(ideaOutDir, File(it), false) }) {
             excludeOutDir(ideModule, ideaOutDir)
