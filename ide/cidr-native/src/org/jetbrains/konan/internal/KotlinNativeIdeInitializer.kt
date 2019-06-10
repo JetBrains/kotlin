@@ -8,6 +8,8 @@ package org.jetbrains.konan.internal
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.util.TipAndTrickBean
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.task.ProjectTaskRunner
+import com.intellij.task.impl.JpsProjectTaskRunner
 
 /**
  * @author Vladislav.Soroka
@@ -17,6 +19,7 @@ class KotlinNativeIdeInitializer {
     init {
         unregisterGroovyInspections()
         suppressKotlinJvmTipsAndTricks()
+        disableJps()
     }
 
     // There are groovy local inspections which should not be loaded w/o groovy plugin enabled.
@@ -35,6 +38,13 @@ class KotlinNativeIdeInitializer {
             TipAndTrickBean.findByFileName(name)?.let {
                 extensionPoint.unregisterExtension(it)
             }
+        }
+    }
+
+    private fun disableJps() {
+        val extensionPoint = Extensions.getRootArea().getExtensionPoint(ProjectTaskRunner.EP_NAME)
+        extensionPoint.extensions.filterIsInstance<JpsProjectTaskRunner>().forEach {
+            extensionPoint.unregisterExtension(it::class.java)
         }
     }
 }
