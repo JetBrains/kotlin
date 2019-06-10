@@ -339,8 +339,6 @@ allprojects {
         internalKotlinRepo?.let(::maven)
     }
 
-    configureJvmProject(javaHome!!, jvmTarget!!)
-
     val commonCompilerArgs = listOfNotNull(
         "-Xallow-kotlin-package",
         "-Xread-deserialized-contracts",
@@ -381,10 +379,8 @@ allprojects {
     task("listDistJar") { listConfigurationContents("distJar") }
 
     afterEvaluate {
-        if (javaHome != defaultJavaHome || jvmTarget != defaultJvmTarget) {
-            logger.info("configuring project $name to compile to the target jvm version $jvmTarget using jdk: $javaHome")
-            configureJvmProject(javaHome!!, jvmTarget!!)
-        } // else we will actually fail during the first task execution. We could not fail before configuration is done due to impact on import in IDE
+        logger.info("configuring project $name to compile to the target jvm version $jvmTarget using jdk: $javaHome")
+        configureJvmProject(javaHome!!, jvmTarget!!)
 
         fun File.toProjectRootRelativePathOrSelf() = (relativeToOrNull(rootDir)?.takeUnless { it.startsWith("..") } ?: this).path
 
