@@ -140,7 +140,7 @@ public class ConsoleHistoryController implements Disposable {
     busConnection.subscribe(ProjectEx.ProjectSaved.TOPIC, new ProjectEx.ProjectSaved() {
       @Override
       public void duringSave(@NotNull Project project) {
-        ApplicationManager.getApplication().invokeAndWait(() -> saveHistory());
+        saveHistory();
       }
     });
     busConnection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new FileDocumentManagerListener() {
@@ -379,7 +379,7 @@ public class ConsoleHistoryController implements Disposable {
             StringUtil.convertLineSeparators(text), false, true);
           VirtualFile virtualFile = psiFile.getViewProvider().getVirtualFile();
           if (virtualFile instanceof LightVirtualFile) ((LightVirtualFile)virtualFile).setWritable(false);
-          Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+          Document document = ObjectUtils.notNull(FileDocumentManager.getInstance().getDocument(virtualFile));
           EditorFactory editorFactory = EditorFactory.getInstance();
           EditorEx editor = (EditorEx)editorFactory.createViewer(document, project);
           editor.getSettings().setFoldingOutlineShown(false);
