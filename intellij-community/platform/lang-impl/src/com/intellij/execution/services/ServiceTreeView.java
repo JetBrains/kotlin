@@ -177,15 +177,20 @@ class ServiceTreeView extends ServiceView {
     @Override
     public void rootsChanged() {
       AppUIUtil.invokeOnEdt(() -> {
-        List<ServiceViewItem> selectedItems = getSelectedItems();
+        TreePath[] currentPaths = myTree.getSelectionPaths();
+        List<TreePath> selectedPaths =
+          currentPaths == null || currentPaths.length == 0 ? Collections.emptyList() : Arrays.asList(currentPaths);
         myTreeModel.rootsChanged();
-        if (selectedItems.isEmpty()) return;
+        if (selectedPaths.isEmpty()) return;
 
         myTreeModel.getInvoker().invokeLater(() -> {
           List<Promise<TreePath>> pathPromises =
-            ContainerUtil.map(selectedItems, item -> myTreeModel.findPath(item.getValue(), item.getRootContributor().getClass()));
+            ContainerUtil.mapNotNull(selectedPaths, path -> {
+              ServiceViewItem item = ObjectUtils.tryCast(path.getLastPathComponent(), ServiceViewItem.class);
+              return item == null ? null : myTreeModel.findPath(item.getValue(), item.getRootContributor().getClass());
+            });
           Promises.collectResults(pathPromises, true).onProcessed(paths -> {
-            if (paths != null) {
+            if (paths != null && !paths.isEmpty() && !paths.equals(selectedPaths)) {
               TreeUtil.promiseSelect(myTree, paths.stream().map(PathSelectionVisitor::new));
             }
           });
