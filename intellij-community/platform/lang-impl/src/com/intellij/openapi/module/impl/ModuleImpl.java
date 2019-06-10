@@ -78,7 +78,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     if (beforeComponentCreation != null) {
       beforeComponentCreation.run();
     }
-    init((ProgressIndicator)null);
+    createComponents(null);
   }
 
   @Nullable
