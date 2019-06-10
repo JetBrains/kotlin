@@ -838,7 +838,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return super.transformConstExpression(constExpression, data)
     }
 
-    private var FirExpression.resultType: FirTypeRef
+    private inline var FirExpression.resultType: FirTypeRef
         get() = typeRef
         set(type) {
             replaceTypeRef(type)
