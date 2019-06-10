@@ -122,7 +122,8 @@ fun AbstractSerialGenerator.findTypeSerializerOrContext(
     module: ModuleDescriptor,
     kType: KotlinType,
     sourceElement: PsiElement? = null
-): ClassDescriptor {
+): ClassDescriptor? {
+    if (kType.isTypeParameter()) return null
     return findTypeSerializerOrContextUnchecked(module, kType) ?: throw CompilationException(
         "Serializer for element of type $kType has not been found.\n" +
                 "To use context serializer as fallback, explicitly annotate element with @ContextualSerialization",
