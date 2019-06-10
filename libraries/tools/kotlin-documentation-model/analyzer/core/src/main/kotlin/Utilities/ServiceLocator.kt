@@ -67,7 +67,7 @@ object ServiceLocator {
                 "jar" -> {
                     val file = JarFile(URL(it.file.substringBefore("!")).toFile())
                     try {
-                        val jarPath = it.file.substringAfterLast("!").removePrefix("/") // TODO: revision b265a9ffacb8f8e8e6226a9458a92697b02355a8 - removeSurrounding for Ant breaks Gradle
+                        val jarPath = it.file.substringAfterLast("!").removePrefix("/").removeSuffix("/")
                         file.entries()
                                 .asSequence()
                                 .filter { entry -> !entry.isDirectory && entry.path == jarPath && entry.extension == "properties" }
