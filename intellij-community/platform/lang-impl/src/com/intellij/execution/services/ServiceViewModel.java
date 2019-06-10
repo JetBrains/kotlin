@@ -160,6 +160,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
       for (ServiceViewItem root : model.getRoots()) {
         if (contributor == root.getContributor()) {
           contributorRoot = root;
+          break;
         }
       }
       if (contributorRoot != null && contributorRoot.getChildren().equals(items)) {
