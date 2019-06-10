@@ -136,13 +136,15 @@ object ExpectedActualResolver {
 
         return when (this) {
             is FunctionDescriptor -> scopes.flatMap {
-                it.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, { it == name })
-                    .filter { it.name == name } as Collection<CallableMemberDescriptor>
+                it.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS) { it == name }
+                    .filter { it.name == name }
+                    .filterIsInstance<CallableMemberDescriptor>()
             }
 
             is PropertyDescriptor -> scopes.flatMap {
-                it.getContributedDescriptors(DescriptorKindFilter.VARIABLES, { it == name })
-                    .filter { it.name == name } as Collection<CallableMemberDescriptor>
+                it.getContributedDescriptors(DescriptorKindFilter.VARIABLES) { it == name }
+                    .filter { it.name == name }
+                    .filterIsInstance<CallableMemberDescriptor>()
             }
 
             else -> throw AssertionError("Unsupported declaration: $this")
