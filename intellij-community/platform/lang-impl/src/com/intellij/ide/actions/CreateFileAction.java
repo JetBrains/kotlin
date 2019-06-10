@@ -14,7 +14,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -84,7 +84,7 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
     public final PsiDirectory directory;
 
     public MkDirs(@NotNull String newName, @NotNull PsiDirectory directory) {
-      if (SystemInfoRt.isWindows) {
+      if (SystemInfo.isWindows) {
         newName = newName.replace('\\', '/');
       }
       if (newName.contains("/")) {

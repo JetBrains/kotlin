@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
@@ -364,7 +364,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     public void mouseClicked(@NotNull final EditorMouseEvent e) {
       if (e.getArea() != EditorMouseEventArea.LINE_MARKERS_AREA) return;
       if (e.getMouseEvent().isPopupTrigger()) return;
-      if ((e.getMouseEvent().getModifiers() & (SystemInfoRt.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK)) == 0) return;
+      if ((e.getMouseEvent().getModifiers() & (SystemInfo.isMac ? InputEvent.META_MASK : InputEvent.CTRL_MASK)) == 0) return;
 
       Editor editor = e.getEditor();
       int line = editor.xyToLogicalPosition(new Point(e.getMouseEvent().getX(), e.getMouseEvent().getY())).line;

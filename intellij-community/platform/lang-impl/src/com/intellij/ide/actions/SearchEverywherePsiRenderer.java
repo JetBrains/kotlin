@@ -6,7 +6,7 @@ import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.ide.util.gotoByName.GotoFileCellRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -113,7 +113,7 @@ public class SearchEverywherePsiRenderer extends PsiElementListCellRenderer<PsiE
     int fullWidth = fm.stringWidth(adjustedText);
     if (fullWidth < maxWidth) return adjustedText;
     String separator = text.contains("/") ? "/" :
-                       SystemInfoRt.isWindows && text.contains("\\") ? "\\" :
+                       SystemInfo.isWindows && text.contains("\\") ? "\\" :
                        text.contains(".") ? "." :
                        text.contains("-") ? "-" : " ";
     LinkedList<String> parts = new LinkedList<>(StringUtil.split(text, separator));

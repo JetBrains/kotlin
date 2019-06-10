@@ -8,7 +8,7 @@ import com.intellij.openapi.fileTypes.INativeFileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
@@ -29,7 +29,7 @@ public class NativeIconProvider extends IconProvider implements DumbAware {
   private final Map<Ext, Icon> myIconCache = new HashMap<>();
   // on Windows .exe and .ico files provide their own icons which can differ for each file, cache them by full file path
   private final Set<Ext> myCustomIconExtensions =
-    SystemInfoRt.isWindows ? new HashSet<>(Arrays.asList(new Ext("exe"), new Ext("ico"))) : new HashSet<>();
+    SystemInfo.isWindows ? new HashSet<>(Arrays.asList(new Ext("exe"), new Ext("ico"))) : new HashSet<>();
   private final Map<String, Icon> myCustomIconCache = new HashMap<>();
 
   private static final Ext NO_EXT = new Ext(null);

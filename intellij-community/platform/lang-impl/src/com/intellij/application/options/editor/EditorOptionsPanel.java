@@ -33,7 +33,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsApplicationSettings;
 import com.intellij.openapi.vcs.impl.LineStatusTrackerSettingListener;
@@ -115,7 +115,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private final ErrorHighlightingPanel myErrorHighlightingPanel = new ErrorHighlightingPanel(getConfigurables());
 
   public EditorOptionsPanel() {
-    if (SystemInfoRt.isMac) {
+    if (SystemInfo.isMac) {
       myCbEnableWheelFontChange.setText(ApplicationBundle.message("checkbox.enable.ctrl.mousewheel.changes.font.size.macos"));
     }
 

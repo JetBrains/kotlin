@@ -20,7 +20,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -248,13 +248,13 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
   }
 
   protected static String getRoot() {
-    if (SystemInfoRt.isWindows) return "c:";
+    if (SystemInfo.isWindows) return "c:";
     return "";
   }
 
   protected static String getEnvVar() {
-    if (SystemInfoRt.isWindows) return "TEMP";
-    else if (SystemInfoRt.isLinux) return "HOME";
+    if (SystemInfo.isWindows) return "TEMP";
+    else if (SystemInfo.isLinux) return "HOME";
     return "TMPDIR";
   }
 

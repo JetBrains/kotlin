@@ -371,7 +371,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       myGradleJdkLabel.setLabelFor(myGradleJdkComboBox);
 
       content.add(myGradleJdkLabel, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
-      myGradleJdkPanel = new JPanel(new BorderLayout(SystemInfoRt.isMac ? 0 : 2, indentLevel));
+      myGradleJdkPanel = new JPanel(new BorderLayout(SystemInfo.isMac ? 0 : 2, indentLevel));
       myGradleJdkPanel.setFocusable(false);
       myGradleJdkPanel.add(myGradleJdkComboBox, BorderLayout.CENTER);
       myGradleJdkSetUpButton = new FixedSizeButton(myGradleJdkComboBox);
@@ -892,7 +892,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     @NotNull
     private static SimpleTextAttributes getCommentAttributes(boolean selected) {
-      return SystemInfoRt.isMac && selected
+      return SystemInfo.isMac && selected
              ? new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.WHITE)
              : SimpleTextAttributes.GRAY_ATTRIBUTES;
     }

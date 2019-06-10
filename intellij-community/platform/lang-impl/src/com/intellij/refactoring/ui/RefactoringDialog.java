@@ -11,7 +11,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.RefactoringBundle;
@@ -150,7 +150,7 @@ public abstract class RefactoringDialog extends DialogWrapper {
     if (hasHelpAction()) {
       actions.add(getHelpAction());
     }
-    if (SystemInfoRt.isMac) {
+    if (SystemInfo.isMac) {
       Collections.reverse(actions);
     }
     return actions.toArray(new Action[0]);
@@ -175,7 +175,7 @@ public abstract class RefactoringDialog extends DialogWrapper {
   private class PreviewAction extends AbstractAction {
     PreviewAction() {
       super(RefactoringBundle.message("preview.button"));
-      if (SystemInfoRt.isMac) {
+      if (SystemInfo.isMac) {
         putValue(FOCUSED_ACTION, Boolean.TRUE);
       }
     }

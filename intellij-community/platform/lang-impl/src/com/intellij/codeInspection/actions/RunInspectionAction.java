@@ -30,7 +30,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.*;
@@ -225,7 +225,7 @@ public class RunInspectionAction extends GotoActionBase implements DataProvider 
           });
         }
         actions.add(getCancelAction());
-        if (SystemInfoRt.isMac) {
+        if (SystemInfo.isMac) {
           Collections.reverse(actions);
         }
         return actions.toArray(new Action[0]);

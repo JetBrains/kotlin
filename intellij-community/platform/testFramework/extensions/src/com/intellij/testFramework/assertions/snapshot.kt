@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.testFramework.assertions
 
-import com.intellij.openapi.util.SystemInfoRt
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.rt.execution.junit.FileComparisonFailure
@@ -52,7 +52,7 @@ private class DumpRepresenter : Representer() {
   }
 }
 
-internal fun loadSnapshotContent(snapshotFile: Path, convertLineSeparators: Boolean = SystemInfoRt.isWindows): CharSequence {
+internal fun loadSnapshotContent(snapshotFile: Path, convertLineSeparators: Boolean = SystemInfo.isWindows): CharSequence {
   // because developer can open file and depending on editor settings, newline maybe added to the end of file
   var content = snapshotFile.readChars().trimEnd()
   if (convertLineSeparators) {
@@ -96,7 +96,7 @@ fun compareFileContent(actual: Any, snapshotFile: Path, updateIfMismatch: Boolea
 
 private fun getNormalizedActualContent(actual: CharSequence): CharSequence {
   var actualContent = actual
-  if (SystemInfoRt.isWindows) {
+  if (SystemInfo.isWindows) {
     actualContent = StringUtilRt.convertLineSeparators(actualContent, "\n")
   }
   return actualContent.trimEnd()

@@ -319,7 +319,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   public String getGroupName(@NotNull OptionDescription description) {
     String name = description.getGroupName();
     if (name == null) name = myConfigurablesNames.getValue().get(description.getConfigurableId());
-    String settings = SystemInfoRt.isMac ? "Preferences" : "Settings";
+    String settings = SystemInfo.isMac ? "Preferences" : "Settings";
     if (name == null || name.equals(description.getHit())) return settings;
     return settings + " > " + name;
   }

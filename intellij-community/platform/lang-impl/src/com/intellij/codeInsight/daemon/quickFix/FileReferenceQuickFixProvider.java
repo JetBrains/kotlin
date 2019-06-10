@@ -14,7 +14,7 @@ import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
@@ -48,7 +48,7 @@ public class FileReferenceQuickFixProvider {
         newFileName.indexOf('\\') != -1 ||
         newFileName.indexOf('*') != -1 ||
         newFileName.indexOf('?') != -1 ||
-        SystemInfoRt.isWindows && newFileName.indexOf(':') != -1) {
+        SystemInfo.isWindows && newFileName.indexOf(':') != -1) {
       return Collections.emptyList();
     }
 

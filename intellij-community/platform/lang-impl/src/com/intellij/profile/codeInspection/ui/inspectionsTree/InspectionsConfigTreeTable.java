@@ -13,7 +13,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.ui.InspectionsAggregationUtil;
 import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel;
@@ -60,7 +60,7 @@ public class InspectionsConfigTreeTable extends TreeTable {
   private static final int IS_ENABLED_COLUMN = 2;
 
   public static int getAdditionalPadding() {
-    return SystemInfoRt.isMac ? 16 : 0;
+    return SystemInfo.isMac ? 16 : 0;
   }
 
   public static InspectionsConfigTreeTable create(final InspectionsConfigTreeTableSettings settings, @NotNull Disposable parentDisposable) {

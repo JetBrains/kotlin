@@ -13,7 +13,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.BooleanGetter;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
@@ -326,7 +326,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
                                                        addTextToRecent(mySearchTextComponent);
                                                      }
                                                    }
-                                                 }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, SystemInfoRt.isMac
+                                                 }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, SystemInfo.isMac
                                                                                               ? META_DOWN_MASK : CTRL_DOWN_MASK),
                                                  JComponent.WHEN_FOCUSED);
 

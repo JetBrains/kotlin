@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.jps.model.java.impl;
 
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -27,7 +27,7 @@ public class JavaSdkUtil {
   @NotNull
   public static List<File> getJdkClassesRoots(@NotNull File home, boolean isJre) {
     File[] jarDirs;
-    if (SystemInfoRt.isMac && !home.getName().startsWith("mockJDK")) {
+    if (SystemInfo.isMac && !home.getName().startsWith("mockJDK")) {
       File openJdkRtJar = new File(home, "jre/lib/rt.jar");
       if (openJdkRtJar.isFile()) {
         File libDir = new File(home, "lib");

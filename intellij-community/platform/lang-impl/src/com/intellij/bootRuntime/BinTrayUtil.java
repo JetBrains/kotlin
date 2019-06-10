@@ -6,7 +6,7 @@ import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ public class BinTrayUtil {
         Throwable var4 = null;
 
         try {
-          File jdkPath = SystemInfoRt.isMac ? new File(directoryToExtractFile, "jdk") : directoryToExtractFile;
+          File jdkPath = SystemInfo.isMac ? new File(directoryToExtractFile, "jdk") : directoryToExtractFile;
           String jdk = jdkPath.getPath();
           fooWriter.write(jdk);
         } catch (Throwable var15) {
@@ -107,14 +107,14 @@ public class BinTrayUtil {
 
   public static boolean isInstalled(String selectedItem) {
     File jdkBundleDirFile = new File(getJdkStoragePathFile(), archveToDirectoryName(selectedItem));
-    File bundlePathFromItem = SystemInfoRt.isMac ? new File(jdkBundleDirFile, "jdk") : jdkBundleDirFile;
+    File bundlePathFromItem = SystemInfo.isMac ? new File(jdkBundleDirFile, "jdk") : jdkBundleDirFile;
     return bundlePathFromItem.exists() && isActiveBundle(selectedItem);
   }
 
   public static boolean isActiveBundle(String selectedItem) {
     File jdkConfigFilePath = getJdkConfigFilePath();
     File jdkBundleDirFile = new File(getJdkStoragePathFile(), archveToDirectoryName(selectedItem));
-    File bundlePathFromItem = SystemInfoRt.isMac ? new File(jdkBundleDirFile, "jdk") : jdkBundleDirFile;
+    File bundlePathFromItem = SystemInfo.isMac ? new File(jdkBundleDirFile, "jdk") : jdkBundleDirFile;
     if (jdkConfigFilePath != null && jdkConfigFilePath.exists()) {
       try {
         Stream<String> lines = Files.lines(jdkConfigFilePath.toPath(), Charset.defaultCharset());
@@ -151,7 +151,7 @@ public class BinTrayUtil {
   }
 
   static {
-    productJdkConfigFileName = getExecutable() + (SystemInfoRt.isWindows ? (SystemInfo.is64Bit ? "64.exe.jdk" : ".exe.jdk") : ".jdk");
+    productJdkConfigFileName = getExecutable() + (SystemInfo.isWindows ? (SystemInfo.is64Bit ? "64.exe.jdk" : ".exe.jdk") : ".jdk");
     pathsSelector = PathManager.getPathsSelector();
     productJdkConfigDir = new File(pathsSelector != null ? PathManager.getDefaultConfigPathFor(pathsSelector) : PathManager.getConfigPath());
     productJdkConfigFile = new File(productJdkConfigDir, productJdkConfigFileName);

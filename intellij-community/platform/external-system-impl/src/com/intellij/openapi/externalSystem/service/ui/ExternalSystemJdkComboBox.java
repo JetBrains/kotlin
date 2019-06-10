@@ -19,7 +19,7 @@ import com.intellij.openapi.ui.ComboBoxWithWidePopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.JBColor;
@@ -70,7 +70,7 @@ public class ExternalSystemJdkComboBox extends ComboBoxWithWidePopup<ExternalSys
             textAttributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
           }
           else {
-            textAttributes = SystemInfoRt.isMac && selected
+            textAttributes = SystemInfo.isMac && selected
                              ? new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.WHITE)
                              : SimpleTextAttributes.GRAY_ATTRIBUTES;
           }

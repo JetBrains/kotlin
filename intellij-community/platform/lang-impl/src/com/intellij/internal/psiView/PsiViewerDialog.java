@@ -34,7 +34,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -443,7 +443,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
   }
 
   private void registerCustomKeyboardActions() {
-    final int mask = SystemInfoRt.isMac ? InputEvent.META_DOWN_MASK : InputEvent.ALT_DOWN_MASK;
+    final int mask = SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.ALT_DOWN_MASK;
 
     registerKeyboardAction(new ActionListener() {
       @Override

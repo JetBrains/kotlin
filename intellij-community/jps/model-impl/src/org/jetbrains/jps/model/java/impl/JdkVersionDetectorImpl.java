@@ -3,7 +3,7 @@ package org.jetbrains.jps.model.java.impl;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Bitness;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.io.BaseOutputReader;
@@ -68,7 +68,7 @@ public class JdkVersionDetectorImpl extends JdkVersionDetector {
           String versionString = manifest.getMainAttributes().getValue("Implementation-Version");
           if (versionString != null) {
             JavaVersion version = JavaVersion.parse(versionString);
-            boolean x64 = SystemInfoRt.isMac || new File(rtFile.getParent(), "amd64").isDirectory();
+            boolean x64 = SystemInfo.isMac || new File(rtFile.getParent(), "amd64").isDirectory();
             return new JdkVersionInfo(version, x64 ? Bitness.x64 : Bitness.x32);
           }
         }
@@ -79,7 +79,7 @@ public class JdkVersionDetectorImpl extends JdkVersionDetector {
     }
 
     // last resort
-    File javaExe = new File(homePath, "bin/" + (SystemInfoRt.isWindows ? "java.exe" : "java"));
+    File javaExe = new File(homePath, "bin/" + (SystemInfo.isWindows ? "java.exe" : "java"));
     if (javaExe.canExecute()) {
       try {
         Process process = new ProcessBuilder(javaExe.getPath(), "-version").redirectErrorStream(true).start();

@@ -8,7 +8,7 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ContentFolder;
 import com.intellij.openapi.roots.ExcludeFolder;
 import com.intellij.openapi.roots.SourceFolder;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -319,7 +319,7 @@ public abstract class ContentRootPanel extends JPanel {
       }
       */
       final Stroke saved = g.getStroke();
-      if (!SystemInfoRt.isMac && !UIUtil.isUnderDarcula()) {
+      if (!SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
         g.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, DASH, y1 % 2));
       }
 

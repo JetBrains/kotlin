@@ -1097,7 +1097,7 @@ public class BuildManager implements Disposable {
       cmdLine.addParameter("-Xmx" + heapSize + "m");
     }
 
-    if (SystemInfoRt.isMac && sdkVersion != null && JavaSdkVersion.JDK_1_6.equals(sdkVersion) && Registry.is("compiler.process.32bit.vm.on.mac")) {
+    if (SystemInfo.isMac && sdkVersion != null && JavaSdkVersion.JDK_1_6.equals(sdkVersion) && Registry.is("compiler.process.32bit.vm.on.mac")) {
       // unfortunately -d32 is supported on jdk 1.6 only
       cmdLine.addParameter("-d32");
     }

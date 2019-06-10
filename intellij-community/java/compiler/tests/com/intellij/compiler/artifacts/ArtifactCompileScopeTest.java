@@ -3,7 +3,7 @@ package com.intellij.compiler.artifacts;
 
 import com.intellij.compiler.CompilerTestUtil;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -161,7 +161,7 @@ public class ArtifactCompileScopeTest extends ArtifactCompilerTestCase {
 
   private static void ensureTimeChanged() {
     //ensure that compiler will threat the file as changed. On Linux system timestamp may be rounded to multiple of 1000
-    if (SystemInfoRt.isLinux) {
+    if (SystemInfo.isLinux) {
       TimeoutUtil.sleep(1100);
     }
   }

@@ -8,7 +8,7 @@ import com.intellij.openapi.components.impl.stores.FileStorageCoreUtil
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.openapi.util.SystemInfoRt
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.openapi.vfs.LargeFileWriteRequestor
 import com.intellij.openapi.vfs.SafeWriteRequestor
@@ -250,7 +250,7 @@ internal class XmlDataWriter(private val rootElementName: String?,
         writer.append('"')
         var value = entry.value
         if (replacePathMap != null) {
-          value = replacePathMap.substitute(JDOMUtil.escapeText(value, false, true), SystemInfoRt.isFileSystemCaseSensitive)
+          value = replacePathMap.substitute(JDOMUtil.escapeText(value, false, true), SystemInfo.isFileSystemCaseSensitive)
         }
         writer.append(JDOMUtil.escapeText(value, false, true))
         writer.append('"')

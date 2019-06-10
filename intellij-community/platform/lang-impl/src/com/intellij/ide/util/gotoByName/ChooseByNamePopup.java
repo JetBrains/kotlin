@@ -14,7 +14,7 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.statistics.StatisticsInfo;
@@ -158,7 +158,7 @@ public class ChooseByNamePopup extends ChooseByNameBase implements ChooseByNameP
       preferredScrollPaneSize.width = screen.width;
       if (model.getSize() <= myList.getVisibleRowCount()) {
         JScrollBar hsb = myListScrollPane.getHorizontalScrollBar();
-        if (hsb != null && (!SystemInfoRt.isMac || hsb.isOpaque())) {
+        if (hsb != null && (!SystemInfo.isMac || hsb.isOpaque())) {
           Dimension size = hsb.getPreferredSize();
           if (size != null) preferredScrollPaneSize.height += size.height;
         }

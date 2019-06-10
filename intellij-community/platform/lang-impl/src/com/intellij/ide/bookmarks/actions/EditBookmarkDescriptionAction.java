@@ -11,7 +11,7 @@ import com.intellij.openapi.actionSystem.CustomShortcutSet;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -26,7 +26,7 @@ class EditBookmarkDescriptionAction extends DumbAwareAction {
     setEnabledInModalContext(true);
     myProject = project;
     myList = list;
-    registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(SystemInfoRt.isMac ? "meta ENTER" : "control ENTER")), list);
+    registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(SystemInfo.isMac ? "meta ENTER" : "control ENTER")), list);
   }
 
   @Override

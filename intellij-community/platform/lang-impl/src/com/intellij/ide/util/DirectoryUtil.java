@@ -2,7 +2,7 @@
 
 package com.intellij.ide.util;
 
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -49,7 +49,7 @@ public class DirectoryUtil {
 
       if (StringUtil.endsWithChar(existingPath, '/')) {
         existingPath = existingPath.substring(0, existingPath.length() - 1);
-        if (SystemInfoRt.isWindows && existingPath.length() == 2 && existingPath.charAt(1) == ':') {
+        if (SystemInfo.isWindows && existingPath.length() == 2 && existingPath.charAt(1) == ':') {
           return null;
         }
       }

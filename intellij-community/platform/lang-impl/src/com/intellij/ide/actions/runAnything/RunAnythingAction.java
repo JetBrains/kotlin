@@ -18,7 +18,7 @@ import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.keymap.impl.ModifierKeyDoubleClickHandler;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.FontUtil;
 import org.jetbrains.annotations.NotNull;
@@ -133,7 +133,7 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
   private String getShortcut() {
     if (myIsDoubleCtrlRegistered) {
       return " " + IdeBundle
-        .message("run.anything.double.ctrl.shortcut", SystemInfoRt.isMac ? FontUtil.thinSpace() + MacKeymapUtil.CONTROL : " Ctrl");
+        .message("run.anything.double.ctrl.shortcut", SystemInfo.isMac ? FontUtil.thinSpace() + MacKeymapUtil.CONTROL : " Ctrl");
     }
     //keymap shortcut is added automatically
     return "";
