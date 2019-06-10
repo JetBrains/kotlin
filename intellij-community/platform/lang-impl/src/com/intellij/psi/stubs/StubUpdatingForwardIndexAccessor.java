@@ -1,73 +1,41 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
-import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 class StubUpdatingForwardIndexAccessor extends AbstractForwardIndexAccessor<Integer, SerializedStubTree, IndexedStubs> {
-  StubUpdatingForwardIndexAccessor() {super(new DataExternalizer<IndexedStubs>() {
-    private volatile boolean myEnsuredStubElementTypesLoaded;
-
+  StubUpdatingForwardIndexAccessor() {super(new StubForwardIndexExternalizer<Void>() {
     @Override
-    public void save(@NotNull DataOutput out, IndexedStubs indexedStubs) throws IOException {
-      byte[] hash = indexedStubs.getStubTreeHash();
-      DataInputOutputUtil.writeINT(out, hash.length);
-      out.write(hash);
-      Map<StubIndexKey, Map<Object, StubIdList>> stubIndicesValueMap = indexedStubs.getStubIndicesValueMap();
-      DataInputOutputUtil.writeINT(out, stubIndicesValueMap.size());
-      if (!stubIndicesValueMap.isEmpty()) {
-        StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
-
-        for (StubIndexKey stubIndexKey : stubIndicesValueMap.keySet()) {
-          DataInputOutputUtil.writeINT(out, stubIndexKey.getUniqueId());
-          Map<Object, StubIdList> map = stubIndicesValueMap.get(stubIndexKey);
-          stubIndex.serializeIndexValue(out, stubIndexKey, map);
-        }
-      }
+    protected void writeStubIndexKey(@NotNull DataOutput out, @NotNull StubIndexKey key, Void aVoid) throws IOException {
+      DataInputOutputUtil.writeINT(out, key.getUniqueId());
     }
 
     @Override
-    public IndexedStubs read(@NotNull DataInput in) throws IOException {
-      byte[] hash = new byte[DataInputOutputUtil.readINT(in)];
-      in.readFully(hash);
-      if (!myEnsuredStubElementTypesLoaded) {
-        ProgressManager.getInstance().executeNonCancelableSection(() -> {
-          SerializationManager.getInstance().initSerializers();
-          StubIndexImpl.initExtensions();
-        });
-        myEnsuredStubElementTypesLoaded = true;
-      }
-      int stubIndicesValueMapSize = DataInputOutputUtil.readINT(in);
-      if (stubIndicesValueMapSize > 0) {
-        THashMap<StubIndexKey, Map<Object, StubIdList>> stubIndicesValueMap = new THashMap<>(stubIndicesValueMapSize);
-        StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
+    protected Void createStubIndexKeySerializationState(@NotNull DataOutput out, @NotNull Set<StubIndexKey> set) {
+      return null;
+    }
 
-        for (int i = 0; i < stubIndicesValueMapSize; ++i) {
-          int stubIndexId = DataInputOutputUtil.readINT(in);
-          ID<Object, ?> indexKey = (ID<Object, ?>)ID.findById(stubIndexId);
-          if (indexKey instanceof StubIndexKey) { // indexKey can be ID in case of removed index
-            StubIndexKey<Object, ?> stubIndexKey = (StubIndexKey<Object, ?>)indexKey;
-            stubIndicesValueMap.put(stubIndexKey, stubIndex.deserializeIndexValue(in, stubIndexKey));
-          }
-        }
-        return new IndexedStubs(hash, stubIndicesValueMap);
-      }
-      return new IndexedStubs(hash, Collections.emptyMap());
+    @Override
+    protected ID<?, ?> readStubIndexKey(@NotNull DataInput input, Void aVoid) throws IOException {
+      return ID.findById(DataInputOutputUtil.readINT(input));
+    }
+
+    @Override
+    protected Void createStubIndexKeySerializationState(@NotNull DataInput input, int stubIndexKeyCount) {
+      return null;
     }
   });}
 
