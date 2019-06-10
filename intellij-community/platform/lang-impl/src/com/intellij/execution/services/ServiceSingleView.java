@@ -82,7 +82,7 @@ class ServiceSingleView extends ServiceView {
         if (newValue != null) {
           ServiceViewDescriptor descriptor = newValue.getViewDescriptor();
           if (oldValue == null) {
-            onNodeSelected(descriptor);
+            onViewSelected(descriptor);
           }
           myUi.setDetailsComponent(descriptor.getContentComponent());
         }
@@ -97,7 +97,7 @@ class ServiceSingleView extends ServiceView {
     ServiceViewItem item = myRef.get();
     if (item != null) {
       ServiceViewDescriptor descriptor = item.getViewDescriptor();
-      onNodeSelected(descriptor);
+      onViewSelected(descriptor);
 
       myUi.setDetailsComponent(descriptor.getContentComponent());
     }

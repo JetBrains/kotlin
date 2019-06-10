@@ -7,6 +7,7 @@ import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.ui.AppUIUtil;
+import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -103,7 +104,7 @@ class ServiceTreeView extends ServiceView {
     mySelected = true;
     if (myLastSelection != null) {
       ServiceViewDescriptor descriptor = myLastSelection.getViewDescriptor();
-      onNodeSelected(descriptor);
+      onViewSelected(descriptor);
       myUi.setDetailsComponent(descriptor.getContentComponent());
     }
     else {
@@ -140,7 +141,7 @@ class ServiceTreeView extends ServiceView {
 
     ServiceViewDescriptor newDescriptor = newSelection == null ? null : newSelection.getViewDescriptor();
     if (newDescriptor != null) {
-      onNodeSelected(newDescriptor);
+      newDescriptor.onNodeSelected();
     }
     myUi.setDetailsComponent(newDescriptor == null ? null : newDescriptor.getContentComponent());
   }
@@ -151,10 +152,18 @@ class ServiceTreeView extends ServiceView {
       ServiceViewItem updatedItem = ContainerUtil.getOnlyItem(selected);
       if (Comparing.equal(updatedItem, myLastSelection)) {
         myLastSelection = updatedItem;
-        ServiceViewDescriptor descriptor = updatedItem == null ? null : updatedItem.getViewDescriptor();
-        myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
+        if (mySelected) {
+          ServiceViewDescriptor descriptor = updatedItem == null ? null : updatedItem.getViewDescriptor();
+          myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
+        }
       }
     }, myProject.getDisposed());
+  }
+
+  @Override
+  void setAutoScrollToSourceHandler(@NotNull AutoScrollToSourceHandler autoScrollToSourceHandler) {
+    super.setAutoScrollToSourceHandler(autoScrollToSourceHandler);
+    autoScrollToSourceHandler.install(myTree);
   }
 
   @Override
