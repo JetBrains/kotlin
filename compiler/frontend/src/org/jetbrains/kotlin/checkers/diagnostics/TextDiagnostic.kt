@@ -81,7 +81,7 @@ class TextDiagnostic(
 
         if (renderParameters && parameters != null) {
             result.append("(")
-            result.append(StringUtil.join(parameters, { "\"${it.replace('\n', ' ')}\"" }, ", "))
+            result.append(StringUtil.join(parameters, { "\"" + crossPlatformLineBreak.matcher(it).replaceAll(" ") + "\"" }, ", "))
             result.append(")")
         }
         return result.toString()
@@ -92,6 +92,8 @@ class TextDiagnostic(
     }
 
     companion object {
+        private val crossPlatformLineBreak = Pattern.compile("""\r?\n""")
+
         fun parseDiagnostic(text: String): TextDiagnostic {
             val matcher = CheckerTestUtil.individualDiagnosticPattern.matcher(text)
             if (!matcher.find())
