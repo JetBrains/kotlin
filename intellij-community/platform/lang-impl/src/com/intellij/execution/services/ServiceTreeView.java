@@ -75,7 +75,8 @@ class ServiceTreeView extends ServiceView {
 
   @Override
   Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass) {
-    if (myLastSelection == null || !myLastSelection.getValue().equals(service)) {
+    ServiceViewItem selectedItem = myLastSelection;
+    if (selectedItem == null || !selectedItem.getValue().equals(service)) {
       AsyncPromise<Void> result = new AsyncPromise<>();
       myTreeModel.findPath(service, contributorClass)
         .onError(result::setError)
@@ -94,6 +95,9 @@ class ServiceTreeView extends ServiceView {
       ServiceViewDescriptor descriptor = myLastSelection.getViewDescriptor();
       onNodeSelected(descriptor);
       myUi.setDetailsComponent(descriptor.getContentComponent());
+    }
+    else {
+      myUi.setDetailsComponent(null);
     }
   }
 
@@ -122,24 +126,21 @@ class ServiceTreeView extends ServiceView {
     }
 
     myLastSelection = newSelection;
-    ServiceViewDescriptor newDescriptor = newSelection == null ? null : newSelection.getViewDescriptor();
+    if (!mySelected) return;
 
+    ServiceViewDescriptor newDescriptor = newSelection == null ? null : newSelection.getViewDescriptor();
     if (newDescriptor != null) {
       onNodeSelected(newDescriptor);
     }
-
     myUi.setDetailsComponent(newDescriptor == null ? null : newDescriptor.getContentComponent());
   }
 
   private void rootsChanged() {
-    ServiceViewItem lastSelection = myLastSelection;
-    if (lastSelection == null) return;
-
-    ServiceViewItem updatedItem = getModel().findItem(lastSelection);
-    myLastSelection = updatedItem;
-
     AppUIUtil.invokeOnEdt(() -> {
-      if (mySelected && updatedItem == myLastSelection) {
+      List<ServiceViewItem> selected = getSelectedItems();
+      ServiceViewItem updatedItem = ContainerUtil.getOnlyItem(selected);
+      if (Comparing.equal(updatedItem, myLastSelection)) {
+        myLastSelection = updatedItem;
         ServiceViewDescriptor descriptor = updatedItem == null ? null : updatedItem.getViewDescriptor();
         myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
       }

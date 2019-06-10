@@ -6,9 +6,12 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.util.Function;
 import com.intellij.util.concurrency.Invoker;
 import com.intellij.util.concurrency.InvokerSupplier;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.JBTreeTraverser;
+import com.intellij.util.containers.TreeTraversal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.CancellablePromise;
@@ -61,6 +64,16 @@ class ServiceModel implements Disposable, InvokerSupplier {
       }
     }
     return result;
+  }
+
+  @Nullable
+  ServiceViewItem findItem(Object service, Class<?> contributorClass) {
+    return JBTreeTraverser.from((Function<ServiceViewItem, List<ServiceViewItem>>)node ->
+      contributorClass.isInstance(node.getRootContributor()) ? new ArrayList<>(node.getChildren()) : null)
+      .withRoots(myRoots)
+      .traverse(TreeTraversal.PLAIN_BFS)
+      .filter(node -> node.getValue().equals(service))
+      .first();
   }
 
   @Nullable
