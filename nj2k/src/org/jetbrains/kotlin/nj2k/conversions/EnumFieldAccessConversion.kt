@@ -30,7 +30,7 @@ class EnumFieldAccessConversion(private val context: NewJ2kConverterContext) : R
     private fun JKFieldSymbol.enumClassSymbol(): JKClassSymbol? =
         when {
             this is JKMultiverseFieldSymbol && target is PsiEnumConstant ->
-                context.symbolProvider.provideUniverseSymbol(target.containingClass!!) as JKClassSymbol
+                context.symbolProvider.provideDirectSymbol(target.containingClass!!) as JKClassSymbol
             this is JKMultiverseKtEnumEntrySymbol ->
                 context.symbolProvider.provideDirectSymbol(target.containingClass()!!) as JKClassSymbol
             this is JKUniverseFieldSymbol && target is JKEnumConstant ->
