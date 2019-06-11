@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.getOrCreateCompainonObject
+import org.jetbrains.kotlin.nj2k.getOrCreateCompanionObject
 import org.jetbrains.kotlin.nj2k.tree.*
 
 
@@ -23,7 +23,7 @@ class InterfaceWithFieldConversion : RecursiveApplicableConversionBase() {
             }
         if (fieldsToMoveToCompanion.isNotEmpty()) {
             element.classBody.declarations -= fieldsToMoveToCompanion
-            val companion = element.getOrCreateCompainonObject()
+            val companion = element.getOrCreateCompanionObject()
             companion.classBody.declarations += fieldsToMoveToCompanion
         }
         return recurse(element)

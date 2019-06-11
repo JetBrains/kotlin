@@ -103,17 +103,8 @@ private fun JKKtOperatorToken.unaryExpressionMethodType(
     }
 }
 
-fun JKOperator.isComparationOperator() =
-    (token as? JKKtSingleValueOperatorToken)?.psiToken in comparationOperators
-
 fun JKOperator.isEquals() =
     (token as? JKKtSingleValueOperatorToken)?.psiToken in equalsOperators
-
-fun JKOperator.isArithmetic() =
-    (token as? JKKtSingleValueOperatorToken)?.psiToken in arithmeticOperators
-
-fun JKOperator.isLessOrGreater() =
-    (token as? JKKtSingleValueOperatorToken)?.psiToken in lessGreaterOperators
 
 private val equalsOperators =
     TokenSet.create(
@@ -131,7 +122,7 @@ private val lessGreaterOperators =
         KtTokens.GTEQ
     )
 
-private val comparationOperators =
+private val comparisonOperators =
     TokenSet.orSet(
         lessGreaterOperators,
         equalsOperators
@@ -139,7 +130,7 @@ private val comparationOperators =
 
 private val booleanOperators =
     TokenSet.orSet(
-        comparationOperators,
+        comparisonOperators,
         TokenSet.create(
             KtTokens.ANDAND,
             KtTokens.OROR
@@ -239,9 +230,6 @@ fun downToExpression(
         "downTo",
         conversionContext
     )
-
-fun List<JKExpression>.toExpressionList() =
-    JKExpressionListImpl(this)
 
 fun JKExpression.parenthesizeIfBinaryExpression() =
     when (this) {
@@ -362,12 +350,6 @@ fun JKFieldAccessExpression.asAssignmentFromTarget(): JKKtAssignmentStatement? =
 fun JKFieldAccessExpression.isInDecrementOrIncrement(): Boolean =
     (parent as? JKUnaryExpression)?.operator?.token?.text in listOf("++", "--")
 
-fun JKExpression.bangedBangedExpr(symbolProvider: JKSymbolProvider): JKExpression =
-    JKPostfixExpressionImpl(
-        this,
-        JKKtOperatorImpl(KtTokens.EXCLEXCL, type(symbolProvider)!!)
-    )
-
 fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: NewJ2kConverterContext): Boolean =
     findUsages(scope, context).any {
         it.asAssignmentFromTarget() != null
@@ -398,7 +380,7 @@ fun createCompanion(declarations: List<JKDeclaration>): JKClass =
 fun JKClass.getCompanion(): JKClass? =
     declarationList.firstOrNull { it is JKClass && it.classKind == JKClass.ClassKind.COMPANION } as? JKClass
 
-fun JKClass.getOrCreateCompainonObject(): JKClass =
+fun JKClass.getOrCreateCompanionObject(): JKClass =
     getCompanion()
         ?: JKClassImpl(
             JKNameIdentifierImpl(""),

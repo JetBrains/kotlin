@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.kotlinTypeByName
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClass
@@ -41,7 +40,7 @@ fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
         }
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
-        is JKQualifiedExpressionImpl -> this.selector.type(symbolProvider)
+        is JKQualifiedExpressionImpl -> selector.type(symbolProvider)
         is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), symbolProvider)
         is JKClassAccessExpression ->
             JKClassTypeImpl(identifier, emptyList(), Nullability.NotNull)
@@ -157,14 +156,13 @@ fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType? =
                 symbolProvider
             ).toKtType(symbolProvider)
         else -> null
-//        else -> TODO(this::class.java.toString())
     }
 
 infix fun JKJavaPrimitiveType.isStrongerThan(other: JKJavaPrimitiveType) =
-    jvmPrimitivePrioritypriority.getValue(this.jvmPrimitiveType.primitiveType) >
-            jvmPrimitivePrioritypriority.getValue(other.jvmPrimitiveType.primitiveType)
+    jvmPrimitiveTypesPriority.getValue(this.jvmPrimitiveType.primitiveType) >
+            jvmPrimitiveTypesPriority.getValue(other.jvmPrimitiveType.primitiveType)
 
-private val jvmPrimitivePrioritypriority =
+private val jvmPrimitiveTypesPriority =
     mapOf(
         PrimitiveType.BOOLEAN to -1,
         PrimitiveType.CHAR to 0,
@@ -241,15 +239,6 @@ fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T 
             else -> null
         }
     } as T
-
-fun JKJavaMethod.returnTypeNullability(context: NewJ2kConverterContext): Nullability =
-    context.typeFlavorCalculator.methodNullability(psi()!!)
-
-fun JKType.isCollectionType(symbolProvider: JKSymbolProvider): Boolean {
-    if (this !is JKClassType) return false
-    val collectionType = JKClassTypeImpl(symbolProvider.provideClassSymbol("java.util.Collection"), emptyList())
-    return this.isSubtypeOf(collectionType, symbolProvider)
-}
 
 fun JKType.isStringType(): Boolean =
     (this as? JKClassType)?.classReference?.isStringType() == true
@@ -363,10 +352,6 @@ fun JKType.arrayInnerType(): JKType? =
             else null
         else -> null
     }
-
-val namesOfPrimitiveTypes by lazy {
-    KotlinBuiltIns.FQ_NAMES.primitiveTypeShortNames.map { it.identifier.decapitalize() }
-}
 
 fun JKClassSymbol.isInterface(): Boolean {
     val target = target

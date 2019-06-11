@@ -16,16 +16,7 @@ data class NewJ2kConverterContext(
     val importStorage: ImportStorage,
     val elementsInfoStorage: JKElementInfoStorage
 ) : ConverterContext {
-    val project: Project get() = converter.project
-    val typeFlavorCalculator = TypeFlavorCalculator(object : TypeFlavorConverterFacade {
-        override val referenceSearcher: ReferenceSearcher
-            get() = converter.converterServices.oldServices.referenceSearcher
-        override val javaDataFlowAnalyzerFacade: JavaDataFlowAnalyzerFacade
-            get() = converter.converterServices.oldServices.javaDataFlowAnalyzerFacade
-        override val resolverForConverter: ResolverForConverter
-            get() = converter.converterServices.oldServices.resolverForConverter
-
-        override fun inConversionScope(element: PsiElement): Boolean = inConversionContext(element)
-    })
+    val project: Project
+        get() = converter.project
 }
 

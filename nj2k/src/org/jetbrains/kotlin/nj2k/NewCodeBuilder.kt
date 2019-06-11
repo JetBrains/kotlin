@@ -986,16 +986,6 @@ private fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
 }
 
 
-private fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKType): Boolean {
-    return when (type) {
-        is JKClassType -> {
-            val symbol = type.classReference as? JKClassSymbol ?: return false
-            this.identifier.name == symbol.name && this.identifier.declaredIn == symbol
-        }
-        else -> false
-    }
-}
-
 private val mappedToKotlinFqNames =
     setOf(
         "java.util.ArrayList",

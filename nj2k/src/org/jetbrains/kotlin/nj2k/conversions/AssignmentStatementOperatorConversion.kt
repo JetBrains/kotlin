@@ -17,7 +17,7 @@ class AssignmentStatementOperatorConversion : RecursiveApplicableConversionBase(
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKKtAssignmentStatement) return recurse(element)
         val operator = element.operator as? JKJavaOperatorImpl ?: return recurse(element)
-        operator.token.correnspondingBinaryOperation()
+        operator.token.correspondingBinaryOperation()
             ?.apply {
                 val expression = element.expression.copyTreeAndDetach()
                 element.expression =
@@ -31,7 +31,7 @@ class AssignmentStatementOperatorConversion : RecursiveApplicableConversionBase(
         return recurse(element)
     }
 
-    private fun JKJavaOperatorToken.correnspondingBinaryOperation() =
+    private fun JKJavaOperatorToken.correspondingBinaryOperation() =
         when (psiToken) {
             JavaTokenType.OREQ -> JavaTokenType.OR
             JavaTokenType.ANDEQ -> JavaTokenType.AND
