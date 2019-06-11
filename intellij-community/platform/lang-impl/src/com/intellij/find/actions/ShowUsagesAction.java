@@ -39,6 +39,8 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -557,8 +559,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
                                           @NotNull final FindUsagesOptions options,
                                           @NotNull final JBPopup[] popup,
                                           @NotNull DefaultActionGroup pinGroup) {
+    Icon icon = ToolWindowManagerEx.getInstanceEx(handler.getProject()).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
     final AnAction pinAction =
-      new AnAction("Open Find Usages Toolwindow", "Show all usages in a separate toolwindow", AllIcons.General.Pin_tab) {
+      new AnAction("Open Find Usages Toolwindow", "Show all usages in a separate toolwindow", icon) {
         {
           AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
           setShortcutSet(action.getShortcutSet());

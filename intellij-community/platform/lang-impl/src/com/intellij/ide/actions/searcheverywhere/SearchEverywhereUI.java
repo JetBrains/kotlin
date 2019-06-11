@@ -37,6 +37,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.psi.codeStyle.NameUtil;
@@ -1440,6 +1442,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     public void update(@NotNull AnActionEvent e) {
       SearchEverywhereContributor<?> contributor = mySelectedTab == null ? null : mySelectedTab.contributor;
       e.getPresentation().setEnabled(contributor == null || contributor.showInFindResults());
+      e.getPresentation().setIcon(
+        ToolWindowManagerEx.getInstanceEx(myProject).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab));
     }
   }
 
