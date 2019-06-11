@@ -22,6 +22,7 @@ import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.lang.JavaVersion;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
 import org.gradle.internal.impldep.com.google.common.collect.Multimap;
 import org.gradle.tooling.BuildActionExecuter;
@@ -31,6 +32,7 @@ import org.gradle.tooling.internal.consumer.DefaultGradleConnector;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.util.GradleVersion;
+import org.hamcrest.CustomMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
@@ -97,6 +99,7 @@ public abstract class AbstractModelBuilderTest {
   @Before
   public void setUp() throws Exception {
     assumeThat(gradleVersion, versionMatcherRule.getMatcher());
+    assumeGradleCompatibleWithJava(gradleVersion);
 
     ensureTempDirCreated();
 
@@ -164,6 +167,20 @@ public abstract class AbstractModelBuilderTest {
       assertNotNull(allModels);
     } finally {
       connection.close();
+    }
+  }
+
+  public static void assumeGradleCompatibleWithJava(@NotNull String gradleVersion) {
+    if (GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.8")) < 0) {
+      Properties properties = System.getProperties();
+      String javaVersionString = properties.getProperty("java.runtime.version", properties.getProperty("java.version", "unknown"));
+      JavaVersion javaVersion = JavaVersion.tryParse(javaVersionString);
+      assumeThat(javaVersion.feature, new CustomMatcher<Integer>("Java version older than 9") {
+        @Override
+        public boolean matches(Object item) {
+          return item instanceof Integer && ((Integer)item).compareTo(9) < 0;
+        }
+      });
     }
   }
 

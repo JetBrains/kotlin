@@ -53,8 +53,7 @@ import java.util.*;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import static org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest.DistributionLocator;
-import static org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS;
+import static org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest.*;
 import static org.junit.Assume.assumeThat;
 
 @RunWith(value = Parameterized.class)
@@ -75,17 +74,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   @Override
   public void setUp() throws Exception {
     assumeThat(gradleVersion, versionMatcherRule.getMatcher());
-    if (isGradleOlderThen_4_8()) {
-      Properties properties = System.getProperties();
-      String javaVersionString = properties.getProperty("java.runtime.version", properties.getProperty("java.version", "unknown"));
-      JavaVersion javaVersion = JavaVersion.tryParse(javaVersionString);
-      assumeThat(javaVersion.feature, new CustomMatcher<Integer>("Java version older than 9") {
-        @Override
-        public boolean matches(Object item) {
-          return item instanceof Integer && ((Integer)item).compareTo(9) < 0;
-        }
-      });
-    }
+    assumeGradleCompatibleWithJava(gradleVersion);
     myJdkHome = IdeaTestUtil.requireRealJdkHome();
     super.setUp();
     WriteAction.runAndWait(() -> {
