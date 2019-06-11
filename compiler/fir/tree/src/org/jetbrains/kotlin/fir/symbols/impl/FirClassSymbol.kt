@@ -18,9 +18,5 @@ class FirClassSymbol(override val classId: ClassId) : ConeClassSymbol, AbstractF
     override fun equals(other: Any?): Boolean =
         other is FirClassSymbol && fir == other.fir
 
-    override fun hashCode(): Int {
-        var result = 31
-        result = result * 19 + fir.hashCode()
-        return result
-    }
+    override fun hashCode(): Int = fir.hashCode()
 }
