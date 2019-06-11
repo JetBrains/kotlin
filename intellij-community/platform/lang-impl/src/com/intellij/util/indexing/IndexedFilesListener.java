@@ -49,14 +49,14 @@ public abstract class IndexedFilesListener implements BulkFileListener {
   protected void buildIndicesForFileRecursively(@NotNull final VirtualFile file, final boolean contentChange) {
     if (file.isDirectory()) {
       final ContentIterator iterator = fileOrDir -> {
-        buildIndicesForFile(fileOrDir, contentChange);
+        myEventMerger.recordFileEvent(fileOrDir, contentChange);
         return true;
       };
 
       iterateIndexableFiles(file, iterator);
     }
     else {
-      buildIndicesForFile(file, contentChange);
+      myEventMerger.recordFileEvent(file, contentChange);
     }
   }
 
@@ -64,17 +64,11 @@ public abstract class IndexedFilesListener implements BulkFileListener {
     if (isUnderConfigOrSystem(file)) {
       return false;
     }
-    final int fileId = Math.abs(FileBasedIndexImpl.getIdMaskingNonIdBasedFile(file));
-    myEventMerger.recordBeforeFileEvent(fileId, file, contentChange);
+    myEventMerger.recordBeforeFileEvent(file, contentChange);
     return !file.isDirectory() || FileBasedIndexImpl.isMock(file) || myManagingFS.wereChildrenAccessed(file);
   }
 
   protected abstract void iterateIndexableFiles(@NotNull VirtualFile file, @NotNull ContentIterator iterator);
-
-  private void buildIndicesForFile(@NotNull VirtualFile file, boolean contentChange) {
-    int fileId = FileBasedIndexImpl.getIdMaskingNonIdBasedFile(file);
-    myEventMerger.recordFileEvent(fileId, file, contentChange);
-  }
 
   void invalidateIndicesRecursively(@NotNull final VirtualFile file, final boolean contentChange) {
     VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
