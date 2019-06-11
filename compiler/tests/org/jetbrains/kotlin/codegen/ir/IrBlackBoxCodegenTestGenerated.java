@@ -10089,9 +10089,39 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/finally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("breakAndOuterFinally.kt")
+        public void testBreakAndOuterFinally() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/breakAndOuterFinally.kt");
+        }
+
+        @TestMetadata("continueAndOuterFinally.kt")
+        public void testContinueAndOuterFinally() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/continueAndOuterFinally.kt");
+        }
+
         @TestMetadata("finallyAndFinally.kt")
         public void testFinallyAndFinally() throws Exception {
             runTest("compiler/testData/codegen/box/finally/finallyAndFinally.kt");
+        }
+
+        @TestMetadata("kt31923_break.kt")
+        public void testKt31923_break() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/kt31923_break.kt");
+        }
+
+        @TestMetadata("kt31923_continue.kt")
+        public void testKt31923_continue() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/kt31923_continue.kt");
+        }
+
+        @TestMetadata("kt31923_return.kt")
+        public void testKt31923_return() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/kt31923_return.kt");
+        }
+
+        @TestMetadata("kt31923_wrong.kt")
+        public void testKt31923_wrong() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/kt31923_wrong.kt");
         }
 
         @TestMetadata("kt3549.kt")
@@ -10127,6 +10157,26 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("loopAndFinally.kt")
         public void testLoopAndFinally() throws Exception {
             runTest("compiler/testData/codegen/box/finally/loopAndFinally.kt");
+        }
+
+        @TestMetadata("nestedFinallyAndNonFinallyTry.kt")
+        public void testNestedFinallyAndNonFinallyTry() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/nestedFinallyAndNonFinallyTry.kt");
+        }
+
+        @TestMetadata("nestedFinallyAndNonFinallyTry2.kt")
+        public void testNestedFinallyAndNonFinallyTry2() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/nestedFinallyAndNonFinallyTry2.kt");
+        }
+
+        @TestMetadata("nestedFinallyAndNonFinallyTry3.kt")
+        public void testNestedFinallyAndNonFinallyTry3() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/nestedFinallyAndNonFinallyTry3.kt");
+        }
+
+        @TestMetadata("nestedFinallyAndNonFinallyTry4.kt")
+        public void testNestedFinallyAndNonFinallyTry4() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/nestedFinallyAndNonFinallyTry4.kt");
         }
 
         @TestMetadata("notChainCatch.kt")

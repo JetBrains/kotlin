@@ -186,17 +186,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    static class FinallyBlockStackElement extends BlockStackElement {
+    static class TryBlockStackElement extends BlockStackElement {
         List<Label> gaps = new ArrayList<>();
 
+        void addGapLabel(Label label){
+            gaps.add(label);
+        }
+    }
+
+    static class TryWithFinallyBlockStackElement extends TryBlockStackElement {
         final KtTryExpression expression;
 
-        FinallyBlockStackElement(KtTryExpression expression) {
+        TryWithFinallyBlockStackElement(KtTryExpression expression) {
             this.expression = expression;
-        }
-
-        private void addGapLabel(Label label){
-            gaps.add(label);
         }
     }
 
@@ -701,19 +703,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitBreakExpression(@NotNull KtBreakExpression expression, StackValue receiver) {
-        return generateBreakOrContinueExpression(expression, true, new Label());
+        return generateBreakOrContinueExpression(expression, true, new Label(), new ArrayList<>());
     }
 
     @Override
     public StackValue visitContinueExpression(@NotNull KtContinueExpression expression, StackValue receiver) {
-        return generateBreakOrContinueExpression(expression, false, new Label());
+        return generateBreakOrContinueExpression(expression, false, new Label(), new ArrayList<>());
     }
 
     @NotNull
     private StackValue generateBreakOrContinueExpression(
             @NotNull KtExpressionWithLabel expression,
             boolean isBreak,
-            @NotNull Label afterBreakContinueLabel
+            @NotNull Label afterBreakContinueLabel,
+            @NotNull List<TryBlockStackElement> nestedTryBlocksWithoutFinally
     ) {
         assert expression instanceof KtContinueExpression || expression instanceof KtBreakExpression;
 
@@ -723,9 +726,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         BlockStackElement stackElement = blockStackElements.peek();
 
-        if (stackElement instanceof FinallyBlockStackElement) {
-            FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
-            genFinallyBlockOrGoto(finallyBlockStackElement, null, afterBreakContinueLabel);
+        if (stackElement instanceof TryWithFinallyBlockStackElement) {
+            TryWithFinallyBlockStackElement tryWithFinallyBlockStackElement = (TryWithFinallyBlockStackElement) stackElement;
+            genFinallyBlockOrGoto(tryWithFinallyBlockStackElement, null, afterBreakContinueLabel, nestedTryBlocksWithoutFinally);
+            nestedTryBlocksWithoutFinally.clear();
+        }
+        else if (stackElement instanceof TryBlockStackElement) {
+            nestedTryBlocksWithoutFinally.add((TryBlockStackElement) stackElement);
         }
         else if (stackElement instanceof LoopBlockStackElement) {
             LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
@@ -748,7 +755,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         blockStackElements.pop();
-        StackValue result = generateBreakOrContinueExpression(expression, isBreak, afterBreakContinueLabel);
+        StackValue result = generateBreakOrContinueExpression(expression, isBreak, afterBreakContinueLabel, nestedTryBlocksWithoutFinally);
         blockStackElements.push(stackElement);
         return result;
     }
@@ -1508,12 +1515,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return myLastLineNumber;
     }
 
-    private void doFinallyOnReturn(@NotNull Label afterReturnLabel) {
+    private boolean doFinallyOnReturn(@NotNull Label afterReturnLabel, @NotNull List<TryBlockStackElement> nestedTryBlocksWithoutFinally) {
         if(!blockStackElements.isEmpty()) {
             BlockStackElement stackElement = blockStackElements.peek();
-            if (stackElement instanceof FinallyBlockStackElement) {
-                FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
-                genFinallyBlockOrGoto(finallyBlockStackElement, null, afterReturnLabel);
+            if (stackElement instanceof TryWithFinallyBlockStackElement) {
+                TryWithFinallyBlockStackElement tryWithFinallyBlockStackElement = (TryWithFinallyBlockStackElement) stackElement;
+                genFinallyBlockOrGoto(tryWithFinallyBlockStackElement, null, afterReturnLabel, nestedTryBlocksWithoutFinally);
+                nestedTryBlocksWithoutFinally.clear();
+            }
+            else if (stackElement instanceof TryBlockStackElement)  {
+                nestedTryBlocksWithoutFinally.add((TryBlockStackElement) stackElement);
             }
             else if (stackElement instanceof LoopBlockStackElement) {
 
@@ -1522,14 +1533,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
 
             blockStackElements.pop();
-            doFinallyOnReturn(afterReturnLabel);
-            blockStackElements.push(stackElement);
+            try {
+                return doFinallyOnReturn(afterReturnLabel, nestedTryBlocksWithoutFinally);
+            } finally {
+                blockStackElements.push(stackElement);
+            }
         }
+        return false;
     }
 
     public boolean hasFinallyBlocks() {
         for (BlockStackElement element : blockStackElements) {
-            if (element instanceof FinallyBlockStackElement) {
+            if (element instanceof TryWithFinallyBlockStackElement) {
                 return true;
             }
         }
@@ -1537,21 +1552,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void genFinallyBlockOrGoto(
-            @Nullable FinallyBlockStackElement finallyBlockStackElement,
+            @Nullable TryWithFinallyBlockStackElement tryWithFinallyBlockStackElement,
             @Nullable Label tryCatchBlockEnd,
-            @Nullable Label afterJumpLabel
+            @Nullable Label afterJumpLabel,
+            @NotNull List<TryBlockStackElement> nestedTryBlocksWithoutFinally
     ) {
-        if (finallyBlockStackElement != null) {
+        if (tryWithFinallyBlockStackElement != null) {
             finallyDepth++;
-            assert finallyBlockStackElement.gaps.size() % 2 == 0 : "Finally block gaps are inconsistent";
+            assert tryWithFinallyBlockStackElement.gaps.size() % 2 == 0 : "Finally block gaps are inconsistent";
 
             BlockStackElement topOfStack = blockStackElements.pop();
-            assert topOfStack == finallyBlockStackElement : "Top element of stack doesn't equals processing finally block";
+            assert topOfStack == tryWithFinallyBlockStackElement : "Top element of stack doesn't equals processing finally block";
 
-            KtTryExpression jetTryExpression = finallyBlockStackElement.expression;
+            KtTryExpression jetTryExpression = tryWithFinallyBlockStackElement.expression;
             Label finallyStart = new Label();
             v.mark(finallyStart);
-            finallyBlockStackElement.addGapLabel(finallyStart);
+            tryWithFinallyBlockStackElement.addGapLabel(finallyStart);
+            addGapLabelsForNestedTryCatchWithoutFinally(state, nestedTryBlocksWithoutFinally, finallyStart);
             if (isFinallyMarkerRequired(context)) {
                 generateFinallyMarker(v, finallyDepth, true);
             }
@@ -1564,22 +1581,35 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         if (tryCatchBlockEnd != null) {
-            if (finallyBlockStackElement != null) {
-                markLineNumber(finallyBlockStackElement.expression, true);
+            if (tryWithFinallyBlockStackElement != null) {
+                markLineNumber(tryWithFinallyBlockStackElement.expression, true);
             }
 
             v.goTo(tryCatchBlockEnd);
         }
 
-        if (finallyBlockStackElement != null) {
+        if (tryWithFinallyBlockStackElement != null) {
             finallyDepth--;
             Label finallyEnd = afterJumpLabel != null ? afterJumpLabel : new Label();
             if (afterJumpLabel == null) {
                 v.mark(finallyEnd);
             }
-            finallyBlockStackElement.addGapLabel(finallyEnd);
+            tryWithFinallyBlockStackElement.addGapLabel(finallyEnd);
+            addGapLabelsForNestedTryCatchWithoutFinally(state, nestedTryBlocksWithoutFinally, finallyEnd);
 
-            blockStackElements.push(finallyBlockStackElement);
+            blockStackElements.push(tryWithFinallyBlockStackElement);
+        }
+    }
+
+    private static void addGapLabelsForNestedTryCatchWithoutFinally(
+            @NotNull GenerationState state,
+            @NotNull List<TryBlockStackElement> nestedTryBlocksWithoutFinally,
+            @NotNull Label label
+    ) {
+        if (state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperFinally)) {
+            for (TryBlockStackElement tryBlock : nestedTryBlocksWithoutFinally) {
+                tryBlock.addGapLabel(label);
+            }
         }
     }
 
@@ -1637,12 +1667,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 int returnValIndex = myFrameMap.enterTemp(returnType);
                 StackValue.Local localForReturnValue = StackValue.local(returnValIndex, returnType, returnKotlinType);
                 localForReturnValue.store(StackValue.onStack(returnType, returnKotlinType), v);
-                doFinallyOnReturn(afterReturnLabel);
+                doFinallyOnReturn(afterReturnLabel, new ArrayList<>());
                 localForReturnValue.put(returnType, null, v);
                 myFrameMap.leaveTemp(returnType);
             }
             else {
-                doFinallyOnReturn(afterReturnLabel);
+                doFinallyOnReturn(afterReturnLabel, new ArrayList<>());
             }
         }
     }
@@ -4703,10 +4733,16 @@ The "returned" value of try expression with no finally is either the last expres
 
         return StackValue.operation(expectedAsmType, expectedKotlinType, v -> {
             KtFinallySection finallyBlock = expression.getFinallyBlock();
-            FinallyBlockStackElement finallyBlockStackElement = null;
+            TryWithFinallyBlockStackElement tryWithFinallyBlockStackElement = null;
+            TryBlockStackElement element;
             if (finallyBlock != null) {
-                finallyBlockStackElement = new FinallyBlockStackElement(expression);
-                blockStackElements.push(finallyBlockStackElement);
+                tryWithFinallyBlockStackElement = new TryWithFinallyBlockStackElement(expression);
+                element = tryWithFinallyBlockStackElement;
+                blockStackElements.push(tryWithFinallyBlockStackElement);
+            }
+            else {
+                element = new TryBlockStackElement();
+                blockStackElements.push(element);
             }
 
             //PseudoInsnsPackage.saveStackBeforeTryExpr(v);
@@ -4727,11 +4763,11 @@ The "returned" value of try expression with no finally is either the last expres
             v.mark(tryEnd);
 
             //do it before finally block generation
-            List<Label> tryBlockRegions = getCurrentCatchIntervals(finallyBlockStackElement, tryStart, tryEnd);
+            List<Label> tryBlockRegions = getCurrentCatchIntervals(element, tryStart, tryEnd);
 
             Label end = new Label();
 
-            genFinallyBlockOrGoto(finallyBlockStackElement, end, null);
+            genFinallyBlockOrGoto(tryWithFinallyBlockStackElement, end, null, new ArrayList<>());
 
             List<KtCatchClause> clauses = expression.getCatchClauses();
             for (int i = 0, size = clauses.size(); i < size; i++) {
@@ -4769,7 +4805,7 @@ The "returned" value of try expression with no finally is either the last expres
                 v.visitLocalVariable(descriptor.getName().asString(), descriptorType.getDescriptor(), null,
                                      catchVariableStart, clauseEnd, index);
 
-                genFinallyBlockOrGoto(finallyBlockStackElement, i != size - 1 || finallyBlock != null ? end : null, null);
+                genFinallyBlockOrGoto(tryWithFinallyBlockStackElement, i != size - 1 || finallyBlock != null ? end : null, null, new ArrayList<>());
 
                 generateExceptionTable(clauseStart, tryBlockRegions, descriptorType.getInternalName());
             }
@@ -4787,10 +4823,10 @@ The "returned" value of try expression with no finally is either the last expres
 
                 //do it before finally block generation
                 //javac also generates entry in exception table for default catch clause too!!!! so defaultCatchEnd as end parameter
-                List<Label> defaultCatchRegions = getCurrentCatchIntervals(finallyBlockStackElement, tryStart, defaultCatchEnd);
+                List<Label> defaultCatchRegions = getCurrentCatchIntervals(tryWithFinallyBlockStackElement, tryStart, defaultCatchEnd);
 
 
-                genFinallyBlockOrGoto(finallyBlockStackElement, null, null);
+                genFinallyBlockOrGoto(tryWithFinallyBlockStackElement, null, null, new ArrayList<>());
 
                 v.load(savedException, JAVA_THROWABLE_TYPE);
                 myFrameMap.leaveTemp(JAVA_THROWABLE_TYPE);
@@ -4808,9 +4844,9 @@ The "returned" value of try expression with no finally is either the last expres
                 myFrameMap.leaveTemp(expectedAsmType);
             }
 
-            if (finallyBlock != null) {
-                blockStackElements.pop();
-            }
+
+            blockStackElements.pop();
+
             return Unit.INSTANCE;
         });
     }
@@ -4830,7 +4866,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     @NotNull
     private static List<Label> getCurrentCatchIntervals(
-            @Nullable FinallyBlockStackElement finallyBlockStackElement,
+            @Nullable TryBlockStackElement finallyBlockStackElement,
             @NotNull Label blockStart,
             @NotNull Label blockEnd
     ) {

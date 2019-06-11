@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -59,17 +60,19 @@ sealed class ExpressionInfo
 
 class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label) : ExpressionInfo()
 
-class TryInfo(val onExit: IrExpression) : ExpressionInfo() {
+open class TryInfo : ExpressionInfo() {
     // Regions corresponding to copy-pasted contents of the `finally` block.
     // These should not be covered by `catch` clauses.
     val gaps = mutableListOf<Pair<Label, Label>>()
 }
 
+class TryWithFinallyInfo(val onExit: IrExpression) : TryInfo()
+
 class BlockInfo(val parent: BlockInfo? = null) {
     val variables = mutableListOf<VariableInfo>()
     private val infos: Stack<ExpressionInfo> = parent?.infos ?: Stack()
 
-    fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryInfo>() != null
+    fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryWithFinallyInfo>() != null
 
     internal inline fun <T : ExpressionInfo, R> withBlock(info: T, f: (T) -> R): R {
         infos.add(info)
@@ -735,11 +738,20 @@ class ExpressionCodegen(
         return immaterialUnitValue
     }
 
-    private fun unwindBlockStack(endLabel: Label, data: BlockInfo, stop: (ExpressionInfo) -> Boolean = { false }): ExpressionInfo? {
+    private fun unwindBlockStack(
+        endLabel: Label,
+        data: BlockInfo,
+        nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf(),
+        stop: (ExpressionInfo) -> Boolean = { false }
+    ): ExpressionInfo? {
         return data.handleBlock {
-            if (it is TryInfo)
-                genFinallyBlock(it, null, endLabel, data)
-            return if (stop(it)) it else unwindBlockStack(endLabel, data, stop)
+            if (it is TryWithFinallyInfo) {
+                genFinallyBlock(it, null, endLabel, data, nestedTryWithoutFinally)
+                nestedTryWithoutFinally.clear()
+            } else if (it is TryInfo) {
+                nestedTryWithoutFinally.add(it)
+            }
+            return if (stop(it)) it else unwindBlockStack(endLabel, data, nestedTryWithoutFinally, stop)
         }
     }
 
@@ -755,13 +767,13 @@ class ExpressionCodegen(
 
     override fun visitTry(aTry: IrTry, data: BlockInfo): PromisedValue {
         aTry.markLineNumber(startOffset = true)
-        return if (aTry.finallyExpression != null)
-            data.withBlock(TryInfo(aTry.finallyExpression!!)) { visitTryWithInfo(aTry, data, it) }
-        else
-            visitTryWithInfo(aTry, data, null)
+        return data.withBlock(if (aTry.finallyExpression != null) TryWithFinallyInfo(aTry.finallyExpression!!) else TryInfo()) {
+            visitTryWithInfo(aTry, data, it)
+        }
+
     }
 
-    private fun visitTryWithInfo(aTry: IrTry, data: BlockInfo, tryInfo: TryInfo?): PromisedValue {
+    private fun visitTryWithInfo(aTry: IrTry, data: BlockInfo, tryInfo: TryInfo): PromisedValue {
         val tryBlockStart = markNewLabel()
         mv.nop()
         val tryAsmType = aTry.asmType
@@ -777,9 +789,9 @@ class ExpressionCodegen(
         }
 
         val tryBlockEnd = markNewLabel()
-        val tryBlockGaps = tryInfo?.gaps?.toList() ?: listOf()
+        val tryBlockGaps = tryInfo.gaps.toList()
         val tryCatchBlockEnd = Label()
-        if (tryInfo != null) {
+        if (tryInfo is TryWithFinallyInfo) {
             data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
         } else {
             mv.goTo(tryCatchBlockEnd)
@@ -812,7 +824,7 @@ class ExpressionCodegen(
                 index
             )
 
-            if (tryInfo != null) {
+            if (tryInfo is TryWithFinallyInfo) {
                 data.handleBlock { genFinallyBlock(tryInfo, tryCatchBlockEnd, null, data) }
             } else if (clause != catches.last()) {
                 mv.goTo(tryCatchBlockEnd)
@@ -821,7 +833,7 @@ class ExpressionCodegen(
             genTryCatchCover(clauseStart, tryBlockStart, tryBlockEnd, tryBlockGaps, descriptorType.internalName)
         }
 
-        if (tryInfo != null) {
+        if (tryInfo is TryWithFinallyInfo) {
             // Generate `try { ... } catch (e: Any?) { <finally>; throw e }` around every part of
             // the try-catch that is not a copy-pasted `finally` block.
             val defaultCatchStart = markNewLabel()
@@ -860,22 +872,34 @@ class ExpressionCodegen(
         mv.visitTryCatchBlock(lastRegionStart, tryEnd, catchStart, type)
     }
 
-    private fun genFinallyBlock(tryInfo: TryInfo, tryCatchBlockEnd: Label?, afterJumpLabel: Label?, data: BlockInfo) {
+    private fun genFinallyBlock(
+        tryWithFinallyInfo: TryWithFinallyInfo,
+        tryCatchBlockEnd: Label?,
+        afterJumpLabel: Label?,
+        data: BlockInfo,
+        nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf()
+    ) {
         val gapStart = markNewLabel()
         finallyDepth++
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, true)
         }
-        tryInfo.onExit.accept(this, data).discard()
+        tryWithFinallyInfo.onExit.accept(this, data).discard()
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, false)
         }
         finallyDepth--
         if (tryCatchBlockEnd != null) {
-            tryInfo.onExit.markLineNumber(startOffset = false)
+            tryWithFinallyInfo.onExit.markLineNumber(startOffset = false)
             mv.goTo(tryCatchBlockEnd)
         }
-        tryInfo.gaps.add(gapStart to (afterJumpLabel ?: markNewLabel()))
+        val gapEnd = afterJumpLabel ?: markNewLabel()
+        tryWithFinallyInfo.gaps.add(gapStart to gapEnd)
+        if (state.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)) {
+            for (it in nestedTryWithoutFinally) {
+                it.gaps.add(gapStart to gapEnd)
+            }
+        }
     }
 
     fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
