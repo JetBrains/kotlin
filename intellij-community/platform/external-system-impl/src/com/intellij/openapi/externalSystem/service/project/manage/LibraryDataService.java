@@ -162,7 +162,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     // do not cleanup orphan project libraries if import runs from Project Structure Dialog
     // since libraries order entries cannot be imported for modules in that case
     // and hence orphans will be detected incorrectly
-    if (modelsProvider.getClass().getSimpleName().equals("IdeUIModifiableModelsProvider")) return;
+    if (modelsProvider instanceof ProjectStructureModifiableModelsProvider) return;
 
     final List<Library> orphanIdeLibraries = ContainerUtil.newSmartList();
     final LibraryTable.ModifiableModel librariesModel = modelsProvider.getModifiableProjectLibrariesModel();
