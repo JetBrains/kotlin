@@ -67,14 +67,14 @@ class MLSorter : CompletionFinalSorter() {
     score?.mlRank == null
   }
 
-  override fun sort(items: MutableIterable<LookupElement>, parameters: CompletionParameters): Iterable<LookupElement> {
+  override fun sort(items: MutableIterable<LookupElement?>, parameters: CompletionParameters): Iterable<LookupElement?> {
     val languageRanker = RankingSupport.getRanker(parameters.language())
     if (languageRanker == null || !shouldSortByMlRank()) return items
 
     val lookup = LookupManager.getActiveLookup(parameters.editor) as? LookupImpl ?: return items
 
     val startTime = System.currentTimeMillis()
-    val sorted = sortByMLRanking(languageRanker, parameters, items, lookup) ?: return items
+    val sorted = sortByMLRanking(languageRanker, parameters, items.filterNotNull(), lookup) ?: return items
     val timeSpent = System.currentTimeMillis() - startTime
 
     if (ApplicationManager.getApplication().isDispatchThread) {
@@ -101,7 +101,7 @@ class MLSorter : CompletionFinalSorter() {
    */
   private fun sortByMLRanking(ranker: RankingSupport.LanguageRanker,
                               parameters: CompletionParameters,
-                              items: MutableIterable<LookupElement>,
+                              items: Iterable<LookupElement>,
                               lookup: LookupImpl): Iterable<LookupElement>? {
     val relevanceObjects = lookup.getRelevanceObjects(items, false)
     val prefixLength = lookup.prefixLength()
