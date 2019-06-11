@@ -23,7 +23,6 @@ import com.intellij.util.containers.computeIfAny
 import com.intellij.util.io.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.CalledInAny
 import java.nio.file.AccessDeniedException
@@ -46,9 +45,7 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(PathMacroManager.getInstance(project)), project)
 
   override fun setPath(path: String) {
-    runBlocking {
-      setPath(path, true)
-    }
+    setPath(path, true)
   }
 
   override fun getProjectName(): String {
