@@ -177,13 +177,17 @@ private fun suggestGradleHome(): String? {
 
 private fun suggestGradleJvm(project: Project, projectSdk: Sdk?, gradleVersion: GradleVersion): String? {
   with(SettingsContext(project, projectSdk, gradleVersion)) {
-    return getGradleJdk() ?: getProjectJdk() ?: getMostRecentJdk() ?: getJavaHomeJdk() ?: getAndAddExternalJdk()
+    return getGradleJdkReference()
+           ?: getProjectJdkReference()
+           ?: getMostRecentJdkReference()
+           ?: getJavaHomeJdkReference()
+           ?: getAndAddExternalJdkReference()
   }
 }
 
 private class SettingsContext(val project: Project, val projectSdk: Sdk?, val gradleVersion: GradleVersion)
 
-private fun SettingsContext.getGradleJdk(): String? {
+private fun SettingsContext.getGradleJdkReference(): String? {
   val settings = ExternalSystemApiUtil.getSettings(project, SYSTEM_ID)
   return settings.getLinkedProjectsSettings()
     .filterIsInstance<GradleProjectSettings>()
@@ -191,7 +195,7 @@ private fun SettingsContext.getGradleJdk(): String? {
     .firstOrNull()
 }
 
-private fun SettingsContext.getJavaHomeJdk(): String? {
+private fun SettingsContext.getJavaHomeJdkReference(): String? {
   val javaHome = EnvironmentUtil.getEnvironmentMap()["JAVA_HOME"] ?: return null
   val jdk = GradleJdk.valueOf(javaHome) ?: return null
   if (!jdk.isSupported(gradleVersion)) return null
@@ -201,14 +205,14 @@ private fun SettingsContext.getJavaHomeJdk(): String? {
   return ExternalSystemJdkUtil.USE_JAVA_HOME
 }
 
-private fun SettingsContext.getProjectJdk(): String? {
+private fun SettingsContext.getProjectJdkReference(): String? {
   val projectSdk = projectSdk ?: ProjectRootManager.getInstance(project).projectSdk
   val projectJdk = projectSdk?.let(GradleJdk.Companion::valueOf) ?: return null
   if (!projectJdk.isSupported(gradleVersion)) return null
   return ExternalSystemJdkUtil.USE_PROJECT_JDK
 }
 
-private fun SettingsContext.getMostRecentJdk(): String? {
+private fun SettingsContext.getMostRecentJdkReference(): String? {
   val projectJdkTable = ProjectJdkTable.getInstance()
   val javaSdkType = ExternalSystemJdkUtil.getJavaSdkType()
   val jdk = projectJdkTable.getSdksOfType(javaSdkType)
@@ -218,7 +222,7 @@ private fun SettingsContext.getMostRecentJdk(): String? {
   return jdk?.name
 }
 
-private fun SettingsContext.getAndAddExternalJdk(): String? {
+private fun SettingsContext.getAndAddExternalJdkReference(): String? {
   val jdk = ExternalSystemJdkUtil.suggestJdkHomePaths()
     .mapNotNull { GradleJdk.valueOf(it) }
     .filter { it.isSupported(gradleVersion) }
