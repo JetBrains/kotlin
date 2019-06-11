@@ -33,12 +33,17 @@ import java.util.List;
 
 public abstract class IndexedFilesListener implements BulkFileListener {
   private final ManagingFS myManagingFS = ManagingFS.getInstance();
+  private final VfsEventsMerger myEventMerger = new VfsEventsMerger();
   @Nullable private final VirtualFile myConfig;
   @Nullable private final VirtualFile myLog;
 
   public IndexedFilesListener() {
     myConfig = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getConfigPath()));
     myLog = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getLogPath()));
+  }
+
+  protected VfsEventsMerger getEventMerger() {
+    return myEventMerger;
   }
 
   protected void buildIndicesForFileRecursively(@NotNull final VirtualFile file, final boolean contentChange) {
@@ -59,13 +64,17 @@ public abstract class IndexedFilesListener implements BulkFileListener {
     if (isUnderConfigOrSystem(file)) {
       return false;
     }
-    doInvalidateIndicesForFile(file, contentChange);
+    final int fileId = Math.abs(FileBasedIndexImpl.getIdMaskingNonIdBasedFile(file));
+    myEventMerger.recordBeforeFileEvent(fileId, file, contentChange);
     return !file.isDirectory() || FileBasedIndexImpl.isMock(file) || myManagingFS.wereChildrenAccessed(file);
   }
 
   protected abstract void iterateIndexableFiles(@NotNull VirtualFile file, @NotNull ContentIterator iterator);
-  protected abstract void buildIndicesForFile(@NotNull VirtualFile file, boolean contentChange);
-  protected abstract void doInvalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange);
+
+  private void buildIndicesForFile(@NotNull VirtualFile file, boolean contentChange) {
+    int fileId = FileBasedIndexImpl.getIdMaskingNonIdBasedFile(file);
+    myEventMerger.recordFileEvent(fileId, file, contentChange);
+  }
 
   void invalidateIndicesRecursively(@NotNull final VirtualFile file, final boolean contentChange) {
     VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
