@@ -13,7 +13,7 @@ public class CppComponentImpl implements CppComponent {
   private final Set<CppBinary> binaries;
 
   @PropertyMapping({"name", "baseName", "binaries"})
-  private CppComponentImpl(String name, String baseName, Set<? extends CppBinary> binaries) {
+  protected CppComponentImpl(String name, String baseName, Set<? extends CppBinary> binaries) {
     this(name, baseName);
     for (CppBinary binary : binaries) {
       this.binaries.add(newCopy(binary));
