@@ -57,6 +57,10 @@ open class DescriptorReferenceSerializer(
         val isEnumSpecial = declaration.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
         val isTypeParameter = declaration is IrTypeParameter && declaration.parent is IrClass
 
+        // The corresponding descriptor in deserialized metadata has constructors = emptyList() etc.
+        if (containingDeclaration is ClassDescriptor &&
+            containingDeclaration.kind == ClassKind.ENUM_ENTRY &&
+            !isFakeOverride) return null
 
         val realDeclaration = if (isFakeOverride) {
             when (declaration) {
