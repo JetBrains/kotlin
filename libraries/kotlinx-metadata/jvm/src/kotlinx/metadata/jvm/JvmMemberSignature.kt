@@ -4,6 +4,7 @@
  */
 
 package kotlinx.metadata.jvm
+
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature as JvmMemberSignatureImpl
 
 /**
@@ -30,7 +31,9 @@ sealed class JvmMemberSignature {
 }
 
 /**
- * A signature of a JVM method.
+ * A signature of a JVM method in the JVM-based format.
+ *
+ * Example: `JvmMethodSignature("equals", "(Ljava/lang/Object;)Z")`.
  *
  * @see JvmMemberSignature
  */
@@ -39,12 +42,14 @@ data class JvmMethodSignature(override val name: String, override val desc: Stri
 }
 
 /**
- * A signature of a JVM field.
+ * A signature of a JVM field in the JVM-based format.
+ *
+ * Example: `JvmFieldSignature("value", "Ljava/lang/String;")`.
  *
  * @see JvmMemberSignature
  */
 data class JvmFieldSignature(override val name: String, override val desc: String) : JvmMemberSignature() {
-    override fun asString() = name + ":" + desc
+    override fun asString() = "$name:$desc"
 }
 
 

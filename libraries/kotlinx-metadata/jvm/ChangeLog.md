@@ -1,5 +1,9 @@
 # kotlinx-metadata-jvm
 
+## 0.1.0
+
+- [`KT-26602`](https://youtrack.jetbrains.com/issue/KT-26602) Provide a value-based API
+
 ## 0.0.6
 
 - [`KT-31308`](https://youtrack.jetbrains.com/issue/KT-31308) Add module name extensions to kotlinx-metadata-jvm

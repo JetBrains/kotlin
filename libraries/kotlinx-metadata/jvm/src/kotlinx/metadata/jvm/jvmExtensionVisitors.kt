@@ -119,8 +119,7 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
         get() = TYPE
 
     /**
-     * Visits the JVM signature of the function in the JVM-based format,
-     * or null if the JVM signature of this function is unknown.
+     * Visits the JVM signature of the function, or null if the JVM signature of this function is unknown.
      *
      * Example: `JvmMethodSignature("equals", "(Ljava/lang/Object;)Z")`
      *
@@ -169,10 +168,10 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
      * Visits JVM signatures of field and accessors generated for the property.
      *
      * @param jvmFlags JVM-specific flags of the property, consisting of [JvmFlag.Property] flags
-     * @param fieldSignature the signature of the field, or `null` if this property has no field.
+     * @param fieldSignature the signature of the backing field of the property, or `null` if this property has no backing field.
      *                       Example: `JvmFieldSignature("X", "Ljava/lang/Object;")`
      * @param getterSignature the signature of the property getter, or `null` if this property has no getter or its signature is unknown.
-     *                        Example: `JvmMethodSignature("getX()", "Ljava/lang/Object;")`
+     *                        Example: `JvmMethodSignature("getX", "()Ljava/lang/Object;")`
      * @param setterSignature the signature of the property setter, or `null` if this property has no setter or its signature is unknown.
      *                        Example: `JvmMethodSignature("setX", "(Ljava/lang/Object;)V")`
      */

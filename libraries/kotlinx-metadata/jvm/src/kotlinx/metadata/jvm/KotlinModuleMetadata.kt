@@ -157,8 +157,18 @@ abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
     // TODO: JvmPackageName
 }
 
+/**
+ * Represents a Kotlin JVM module file.
+ */
 class KmModule : KmModuleVisitor() {
+    /**
+     * Table of all single- and multi-file facades declared in some package of this module, where keys are '.'-separated package names.
+     */
     val packageParts: MutableMap<String, KmPackageParts> = LinkedHashMap()
+
+    /**
+     * Annotations on the module.
+     */
     val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
@@ -169,6 +179,11 @@ class KmModule : KmModuleVisitor() {
         annotations.add(annotation)
     }
 
+    /**
+     * Populates the given visitor with data in this module.
+     *
+     * @param visitor the visitor which will visit data in this module.
+     */
     fun accept(visitor: KmModuleVisitor) {
         for ((fqName, parts) in packageParts) {
             visitor.visitPackageParts(fqName, parts.fileFacades, parts.multiFileClassParts)
@@ -177,6 +192,15 @@ class KmModule : KmModuleVisitor() {
     }
 }
 
+/**
+ * Collection of all single- and multi-file facades in a package of some module.
+ *
+ * Packages are separated by '/' in the names of file facades.
+ *
+ * @property fileFacades the list of single-file facades in this package
+ * @property multiFileClassParts the map of multi-file classes where keys are names of multi-file class parts,
+ *   and values are names of the corresponding multi-file facades
+ */
 class KmPackageParts(
     val fileFacades: MutableList<String>,
     val multiFileClassParts: MutableMap<String, String>

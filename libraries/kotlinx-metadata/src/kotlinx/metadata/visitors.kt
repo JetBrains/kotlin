@@ -406,7 +406,7 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
 
     /**
      * Visits the expanded type of the type alias, i.e. the full expansion of the underlying type, where all type aliases are substituted
-     * with their expanded types. If not type aliases are used in the underlying type, expanded type is equal to the underlying type.
+     * with their expanded types. If no type aliases are used in the underlying type, expanded type is equal to the underlying type.
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
@@ -468,7 +468,7 @@ abstract class KmValueParameterVisitor @JvmOverloads constructor(private val del
 }
 
 /**
- * A visitor to visit a type parameter of a Kotlin class, function or property.
+ * A visitor to visit a type parameter of a Kotlin class, function, property or type alias.
  *
  * When using this class, zero or more [visitUpperBound] calls must be done first, followed by [visitEnd].
  */
