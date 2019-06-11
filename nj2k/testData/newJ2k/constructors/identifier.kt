@@ -1,4 +1,3 @@
-// ERROR: Property must be initialized or be abstract
 class Identifier {
     val name: String
     private var myHasDollar = false

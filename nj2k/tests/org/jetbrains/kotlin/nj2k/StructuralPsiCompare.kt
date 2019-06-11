@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportDirective
 
 internal fun KtFile.dumpStructureText(): String {
     val sb = StringBuilder()
@@ -21,9 +19,6 @@ internal fun KtFile.dumpStructureText(): String {
                 if (sb.lastOrNull() !in listOf(' ', '{', '}', '(', ')')) {
                     sb.append(" ")
                 }
-                return
-            }
-            if (element is PsiComment && (element.text.startsWith("// ERROR") || element.text.startsWith("// !"))) {
                 return
             }
             if (element is LeafPsiElement) {

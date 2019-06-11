@@ -1,3 +1,6 @@
+// ERROR: Type mismatch: inferred type is Any but String was expected
+// ERROR: Type mismatch: inferred type is Any but String was expected
+// ERROR: Type mismatch: inferred type is Array<String> but Array<Any> was expected
 import java.util.Arrays
 
 class Foo {

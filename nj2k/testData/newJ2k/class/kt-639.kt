@@ -1,5 +1,3 @@
-// ERROR: Type inference failed: Not enough information to infer parameter K in constructor HashMap<K : Any!, V : Any!>(initialCapacity: Int) Please specify it explicitly.
-// ERROR: Type inference failed: Not enough information to infer parameter K in constructor HashMap<K : Any!, V : Any!>(initialCapacity: Int) Please specify it explicitly.
 package demo
 
 import java.util.HashMap

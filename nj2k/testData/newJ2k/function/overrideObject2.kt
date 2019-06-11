@@ -1,4 +1,3 @@
-// ERROR: Unresolved reference: clone
 internal open class Base
 
 internal class X : Base(), Cloneable {

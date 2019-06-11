@@ -1,6 +1,5 @@
 // ERROR: Type mismatch: inferred type is String but Charset was expected
 // ERROR: Type mismatch: inferred type is String but Charset was expected
-// ERROR: Type mismatch: inferred type is kotlin.Comparator<String> /* = java.util.Comparator<String> */ but java.util.Comparator<String?> was expected
 import java.nio.charset.Charset
 import java.util.Comparator
 import java.util.Locale
