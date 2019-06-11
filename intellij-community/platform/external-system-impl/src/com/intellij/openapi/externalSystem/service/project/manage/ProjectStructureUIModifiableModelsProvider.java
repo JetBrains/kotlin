@@ -4,5 +4,5 @@ package com.intellij.openapi.externalSystem.service.project.manage;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
-public interface ProjectStructureModifiableModelsProvider {
+public interface ProjectStructureUIModifiableModelsProvider {
 }
