@@ -66,6 +66,12 @@ public class VfsEventsMerger {
     }
   }
 
+  public void applyMergedEvents(VfsEventsMerger merger) {
+    for(ChangeInfo info:merger.myChangeInfos.values()) {
+      updateChange(info.getFileId(), info.file, info.eventMask);
+    }
+  }
+
   @FunctionalInterface
   public interface VfsEventProcessor {
     boolean process(@NotNull ChangeInfo changeInfo);
