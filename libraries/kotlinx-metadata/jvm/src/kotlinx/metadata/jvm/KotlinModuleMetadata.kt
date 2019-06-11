@@ -125,13 +125,12 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
  */
 abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
     /**
-     * Visits the table of single- and multi-file facades declared in some package of this module. Note that the same package may be split
-     * in several "chunks", in which case this method is called several times for one package, once for each chunk.
+     * Visits the table of all single- and multi-file facades declared in some package of this module.
      *
      * Packages are separated by '/' in the names of file facades.
      *
-     * @param fqName the fully qualified name of the package
-     * @param fileFacades the list of single-file facades in this chunk of the package
+     * @param fqName the fully qualified name of the package, separated by '.'
+     * @param fileFacades the list of single-file facades in this package
      * @param multiFileClassParts the map of multi-file classes where keys are names of multi-file class parts,
      *   and values are names of the corresponding multi-file facades
      */
