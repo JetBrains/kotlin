@@ -23,7 +23,6 @@ import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.PooledThreadExecutor;
 import org.jetbrains.ide.script.IdeScriptEngine;
 import org.jetbrains.ide.script.IdeScriptEngineManager;
 import org.jetbrains.ide.script.IdeScriptException;
@@ -50,7 +49,7 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
       @Override
       public void projectOpened(@NotNull Project project) {
         if (future == null) {
-          future = PooledThreadExecutor.INSTANCE.submit(() -> prepareScriptsAndEngines());
+          future = ApplicationManager.getApplication().executeOnPooledThread(() -> prepareScriptsAndEngines());
         }
         StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
           if (!project.isOpen()) return;
