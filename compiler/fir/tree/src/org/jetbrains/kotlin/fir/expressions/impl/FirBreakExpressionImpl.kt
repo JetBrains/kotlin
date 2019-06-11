@@ -12,4 +12,4 @@ import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
 class FirBreakExpressionImpl(
     session: FirSession,
     psi: PsiElement?
-) : FirAbstractLoopJump(session, psi), FirBreakExpression
+) : FirBreakExpression(session, psi)

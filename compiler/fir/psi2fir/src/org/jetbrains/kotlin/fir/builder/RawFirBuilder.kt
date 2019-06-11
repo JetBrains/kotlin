@@ -314,7 +314,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             }
         }
 
-        private fun KtCallElement.extractArgumentsTo(container: FirAbstractCall) {
+        private fun KtCallElement.extractArgumentsTo(container: FirCallWithArgumentList) {
             for (argument in this.valueArguments) {
                 val argumentExpression = argument.toFirExpression()
                 container.arguments += when (argument) {
@@ -1124,7 +1124,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             }
         }
 
-        private fun FirAbstractLoopJump.bindLabel(expression: KtExpressionWithLabel): FirAbstractLoopJump {
+        private fun FirLoopJump.bindLabel(expression: KtExpressionWithLabel): FirLoopJump {
             val labelName = expression.getLabelName()
             target = FirLoopTarget(labelName)
             val lastLoop = firLoops.lastOrNull()
@@ -1301,7 +1301,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val selector = expression.selectorExpression
                 ?: return FirErrorExpressionImpl(session, expression, "Qualified expression without selector")
             val firSelector = selector.toFirExpression("Incorrect selector expression")
-            if (firSelector is FirModifiableQualifiedAccess) {
+            if (firSelector is FirModifiableQualifiedAccess<*>) {
                 firSelector.safe = expression is KtSafeQualifiedExpression
                 firSelector.explicitReceiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
             }

@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 class FirBlockImpl(
     session: FirSession,
     psi: PsiElement?
-) : FirAbstractBlock(session, psi), FirBlock {
+) : FirBlock(session, psi) {
     override val statements = mutableListOf<FirStatement>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         statements.transformInplace(transformer, data)
-        return super<FirAbstractBlock>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

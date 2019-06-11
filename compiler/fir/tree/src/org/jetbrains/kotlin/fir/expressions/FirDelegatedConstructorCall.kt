@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirDelegatedConstructorCall : @VisitedSupertype FirCall, FirQualifiedAccess {
+abstract class FirDelegatedConstructorCall(
+    session: FirSession,
+    psi: PsiElement?
+) : @VisitedSupertype FirCallWithArgumentList(session, psi), FirQualifiedAccess {
     // Do we need 'constructedType: FirType' here?
-    val constructedTypeRef: FirTypeRef
+    abstract val constructedTypeRef: FirTypeRef
 
-    val isThis: Boolean
+    abstract val isThis: Boolean
 
     val isSuper: Boolean
         get() = !isThis
@@ -24,6 +30,6 @@ interface FirDelegatedConstructorCall : @VisitedSupertype FirCall, FirQualifiedA
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         constructedTypeRef.accept(visitor, data)
         calleeReference.accept(visitor, data)
-        super<FirCall>.acceptChildren(visitor, data)
+        super<FirCallWithArgumentList>.acceptChildren(visitor, data)
     }
 }

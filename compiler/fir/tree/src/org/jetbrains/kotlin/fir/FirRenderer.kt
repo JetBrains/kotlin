@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.expressions.impl.FirLoopJump
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
@@ -587,8 +588,8 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         whileLoop.block.accept(this)
     }
 
-    private fun visitLoopJump(jump: FirJump<FirLoop>) {
-        val target = jump.target
+    override fun visitLoopJump(loopJump: FirLoopJump) {
+        val target = loopJump.target
         val labeledElement = target.labeledElement
         print("@@@[")
         labeledElement.condition.accept(this)

@@ -13,4 +13,4 @@ class FirErrorExpressionImpl(
     session: FirSession,
     psi: PsiElement?,
     override val reason: String
-) : FirAbstractExpression(session, psi), FirErrorExpression
+) : FirErrorExpression(session, psi)

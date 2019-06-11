@@ -17,9 +17,9 @@ class FirClassReferenceExpressionImpl(
     session: FirSession,
     psi: PsiElement?,
     override var classTypeRef: FirTypeRef
-) : FirAbstractExpression(session, psi), FirClassReferenceExpression {
+) : FirClassReferenceExpression(session, psi) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         classTypeRef = classTypeRef.transformSingle(transformer, data)
-        return super<FirAbstractExpression>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

@@ -16,7 +16,7 @@ abstract class FirAbstractLoop(
     session: FirSession,
     psi: PsiElement?,
     override var condition: FirExpression
-) : FirAbstractStatement(session, psi), FirLoop {
+) : FirAnnotatedStatement(session, psi), FirLoop {
     override lateinit var block: FirBlock
 
     override var label: FirLabel? = null
@@ -25,6 +25,6 @@ abstract class FirAbstractLoop(
         condition = condition.transformSingle(transformer, data)
         block = block.transformSingle(transformer, data)
         label = label?.transformSingle(transformer, data)
-        return super<FirAbstractStatement>.transformChildren(transformer, data)
+        return super<FirAnnotatedStatement>.transformChildren(transformer, data)
     }
 }

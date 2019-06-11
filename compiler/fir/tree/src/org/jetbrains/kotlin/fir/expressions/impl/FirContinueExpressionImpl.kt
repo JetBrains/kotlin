@@ -12,4 +12,4 @@ import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 class FirContinueExpressionImpl(
     session: FirSession,
     psi: PsiElement?
-) : FirAbstractLoopJump(session, psi), FirContinueExpression
+) : FirContinueExpression(session, psi)

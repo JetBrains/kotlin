@@ -5,16 +5,23 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-interface FirResolvedQualifier : FirExpression {
+abstract class FirResolvedQualifier(
+    session: FirSession,
+    psi: PsiElement?
+) : FirUnknownTypeExpression(session, psi) {
+    abstract val packageFqName: FqName
+
+    abstract val relativeClassFqName: FqName?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)
 
-    val packageFqName: FqName
-    val relativeClassFqName: FqName?
     val classId
         get() = relativeClassFqName?.let {
             ClassId(packageFqName, it, false)

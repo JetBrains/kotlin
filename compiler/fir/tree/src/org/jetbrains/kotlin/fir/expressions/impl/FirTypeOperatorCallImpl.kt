@@ -19,9 +19,9 @@ class FirTypeOperatorCallImpl(
     psi: PsiElement?,
     operation: FirOperation,
     override var conversionTypeRef: FirTypeRef
-) : FirAbstractOperationBasedCall(session, psi, operation), FirTypeOperatorCall {
+) : FirTypeOperatorCall(session, psi, operation) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         conversionTypeRef = conversionTypeRef.transformSingle(transformer, data)
-        return super<FirAbstractOperationBasedCall>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

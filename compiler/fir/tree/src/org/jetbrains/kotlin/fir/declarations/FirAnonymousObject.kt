@@ -5,12 +5,18 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirAnonymousObject : @VisitedSupertype FirClass, FirExpression {
+abstract class FirAnonymousObject(
+    session: FirSession,
+    psi: PsiElement?
+) : @VisitedSupertype FirClass, FirUnknownTypeExpression(session, psi) {
     override val classKind: ClassKind
         get() = ClassKind.OBJECT
 
@@ -19,6 +25,6 @@ interface FirAnonymousObject : @VisitedSupertype FirClass, FirExpression {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super<FirClass>.acceptChildren(visitor, data)
-        super<FirExpression>.acceptChildren(visitor, data)
+        super<FirUnknownTypeExpression>.acceptChildren(visitor, data)
     }
 }

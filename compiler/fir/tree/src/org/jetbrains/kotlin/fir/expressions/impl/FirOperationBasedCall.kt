@@ -6,20 +6,33 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
+import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-abstract class FirAbstractOperationBasedCall(
+abstract class FirOperationBasedCall(
     session: FirSession,
     psi: PsiElement?,
-    val operation: FirOperation
-) : FirAbstractCall(session, psi) {
+    final override val operation: FirOperation
+) : FirOperatorCall(session, psi) {
     override var typeRef: FirTypeRef = if (operation in FirOperation.BOOLEANS) {
         FirImplicitBooleanTypeRef(session, null)
     } else {
         FirImplicitTypeRefImpl(session, null)
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        typeRef = typeRef.transformSingle(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

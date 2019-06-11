@@ -5,15 +5,22 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirQualifiedAccessExpression : @VisitedSupertype FirQualifiedAccess, FirExpression {
+abstract class FirQualifiedAccessExpression(
+    session: FirSession,
+    psi: PsiElement?
+) : FirQualifiedAccess, @VisitedSupertype FirUnknownTypeExpression(session, psi) {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitQualifiedAccessExpression(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirQualifiedAccess>.acceptChildren(visitor, data)
-        typeRef.accept(visitor, data)
+        calleeReference.accept(visitor, data)
+        explicitReceiver?.accept(visitor, data)
+        super<FirUnknownTypeExpression>.acceptChildren(visitor, data)
     }
 }

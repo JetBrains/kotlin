@@ -12,4 +12,4 @@ import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 class FirArrayOfCallImpl(
     session: FirSession,
     psi: PsiElement?
-) : FirAbstractCall(session, psi), FirArrayOfCall
+) : FirArrayOfCall(session, psi)

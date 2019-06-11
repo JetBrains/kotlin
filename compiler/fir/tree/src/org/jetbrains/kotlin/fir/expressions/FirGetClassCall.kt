@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeCallWithArgumentList
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirGetClassCall : FirCall {
+abstract class FirGetClassCall(
+    session: FirSession,
+    psi: PsiElement?
+) : FirUnknownTypeCallWithArgumentList(session, psi) {
     val argument: FirExpression get() = arguments.first()
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

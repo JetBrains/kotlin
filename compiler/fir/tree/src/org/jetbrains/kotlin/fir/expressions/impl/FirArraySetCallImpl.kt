@@ -6,22 +6,30 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.transformInplace
-import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirArraySetCallImpl(
     session: FirSession,
     psi: PsiElement?,
-    value: FirExpression,
-    operation: FirOperation
-) : FirAbstractAssignment(session, psi, value, operation, false), FirArraySetCall {
+    override var rValue: FirExpression,
+    override val operation: FirOperation
+) : FirArraySetCall(session, psi), FirModifiableQualifiedAccess<FirReference> {
+    override lateinit var calleeReference: FirReference
+
+    override var lValue: FirReference
+        get() = calleeReference
+        set(value) {
+            calleeReference = value
+        }
+
+    override var explicitReceiver: FirExpression?
+        get() = null
+        set(_) {}
+
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(session, null)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
@@ -30,19 +38,23 @@ class FirArraySetCallImpl(
 
     override val indexes = mutableListOf<FirExpression>()
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        super<FirArraySetCall>.accept(visitor, data)
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        typeRef = typeRef.transformSingle(transformer, data)
-        indexes.transformInplace(transformer, data)
-
-        return super<FirAbstractAssignment>.transformChildren(transformer, data)
+    override fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirAssignment {
+        rValue = rValue.transformSingle(transformer, data)
+        return this
     }
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirCall {
         rValue = rValue.transformSingle(transformer, data)
         indexes.transformInplace(transformer, data)
         return this
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        calleeReference = calleeReference.transformSingle(transformer, data)
+        rValue = rValue.transformSingle(transformer, data)
+        typeRef = typeRef.transformSingle(transformer, data)
+        indexes.transformInplace(transformer, data)
+
+        return super<FirArraySetCall>.transformChildren(transformer, data)
     }
 }

@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeCallWithArgumentList
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirUncheckedNotNullCast : FirCall {
+abstract class FirUncheckedNotNullCast(
+    session: FirSession,
+    psi: PsiElement?
+) : FirUnknownTypeCallWithArgumentList(session, psi) {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitUncheckedNotNullCast(this, data)
 
     val expression: FirExpression get() = arguments[0]

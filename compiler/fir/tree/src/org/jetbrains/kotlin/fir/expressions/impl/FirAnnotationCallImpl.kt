@@ -19,10 +19,10 @@ class FirAnnotationCallImpl(
     psi: PsiElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef
-) : FirAbstractCall(session, psi), FirAnnotationCall {
+) : FirAnnotationCall(session, psi) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         annotationTypeRef = annotationTypeRef.transformSingle(transformer, data)
 
-        return super<FirAbstractCall>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

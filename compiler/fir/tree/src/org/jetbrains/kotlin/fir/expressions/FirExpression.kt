@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotatedStatement
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirExpression : FirStatement {
-    val typeRef: FirTypeRef
+abstract class FirExpression(
+    session: FirSession,
+    psi: PsiElement?
+) : FirAnnotatedStatement(session, psi) {
+    abstract val typeRef: FirTypeRef
 
-    fun replaceTypeRef(newTypeRef: FirTypeRef)
+    abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitExpression(this, data)

@@ -474,7 +474,7 @@ internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression
 ): FirVariable = generateTemporaryVariable(session, psi, Name.special("<$specialName>"), initializer)
 
-private fun FirModifiableQualifiedAccess.initializeLValue(
+private fun FirModifiableQualifiedAccess<*>.initializeLValue(
     session: FirSession,
     left: KtExpression?,
     convertQualified: KtQualifiedExpression.() -> FirQualifiedAccess?

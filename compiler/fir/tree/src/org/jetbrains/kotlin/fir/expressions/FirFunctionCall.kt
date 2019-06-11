@@ -9,27 +9,25 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirNamedReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeCallWithArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionContainer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirFunctionCall(
     session: FirSession,
     psi: PsiElement?
-) : FirAbstractCall(session, psi), @VisitedSupertype FirCall, FirQualifiedAccess, FirTypeProjectionContainer {
+) : @VisitedSupertype FirUnknownTypeCallWithArgumentList(session, psi), FirQualifiedAccess, FirTypeProjectionContainer {
     abstract override val calleeReference: FirNamedReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitFunctionCall(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        for (argument in arguments) {
-            argument.accept(visitor, data)
-        }
+        calleeReference.accept(visitor, data)
+        explicitReceiver?.accept(visitor, data)
         for (typeArgument in typeArguments) {
             typeArgument.accept(visitor, data)
         }
-        typeRef.accept(visitor, data)
-        super<FirQualifiedAccess>.acceptChildren(visitor, data)
+        super<FirUnknownTypeCallWithArgumentList>.acceptChildren(visitor, data)
     }
 }

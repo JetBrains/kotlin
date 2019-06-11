@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-abstract class FirAbstractBlock(
+abstract class FirUnknownTypeCallWithArgumentList(
     session: FirSession,
     psi: PsiElement?
-) : FirAbstractAnnotatedElement(session, psi), FirBlock {
+) : FirCallWithArgumentList(session, psi) {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(session, null)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
@@ -27,6 +26,6 @@ abstract class FirAbstractBlock(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         typeRef = typeRef.transformSingle(transformer, data)
 
-        return super<FirAbstractAnnotatedElement>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

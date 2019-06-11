@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirJump<E : FirTargetElement> : FirExpression {
-    val target: FirTarget<E>
+abstract class FirJump<E : FirTargetElement>(
+    session: FirSession,
+    psi: PsiElement?
+) : FirExpression(session, psi) {
+    abstract val target: FirTarget<E>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitJump(this, data)

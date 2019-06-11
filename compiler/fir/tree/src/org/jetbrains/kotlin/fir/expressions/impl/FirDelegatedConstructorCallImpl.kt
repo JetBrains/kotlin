@@ -23,7 +23,7 @@ class FirDelegatedConstructorCallImpl(
     psi: PsiElement?,
     override var constructedTypeRef: FirTypeRef,
     override val isThis: Boolean
-) : FirAbstractCall(session, psi), FirDelegatedConstructorCall {
+) : FirDelegatedConstructorCall(session, psi) {
     override var calleeReference: FirReference =
         if (isThis) FirExplicitThisReference(session, psi, null) else FirExplicitSuperReference(session, psi, constructedTypeRef)
 
@@ -35,8 +35,9 @@ class FirDelegatedConstructorCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         constructedTypeRef = constructedTypeRef.transformSingle(transformer, data)
         calleeReference = calleeReference.transformSingle(transformer, data)
+        typeRef = typeRef.transformSingle(transformer, data)
 
-        return super<FirAbstractCall>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
@@ -44,4 +45,6 @@ class FirDelegatedConstructorCallImpl(
     }
 
     override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

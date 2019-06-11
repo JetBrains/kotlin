@@ -15,7 +15,7 @@ class FirConstExpressionImpl<T>(
     psi: PsiElement?,
     override val kind: IrConstKind<T>,
     override val value: T
-) : FirAbstractExpression(session, psi), FirConstExpression<T>
+) : FirConstExpression<T>(session, psi)
 
 fun <T> FirConstExpressionImpl(session: FirSession, psi: PsiElement?, kind: IrConstKind<T>, value: T?, errorReason: String) =
     value?.let { FirConstExpressionImpl(session, psi, kind, it) } ?: FirErrorExpressionImpl(session, psi, errorReason)

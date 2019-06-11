@@ -14,4 +14,4 @@ class FirWhenSubjectExpressionImpl(
     session: FirSession,
     psi: PsiElement?,
     override val whenSubject: FirWhenSubject
-) : FirAbstractExpression(session, psi), FirWhenSubjectExpression
+) : FirWhenSubjectExpression(session, psi)

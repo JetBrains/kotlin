@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.BaseTransformedType
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirEnumEntry : @VisitedSupertype FirRegularClass, FirCall {
+abstract class FirEnumEntry(
+    session: FirSession,
+    psi: PsiElement?
+) : @VisitedSupertype FirRegularClass, FirCall(session, psi) {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitEnumEntry(this, data)
 
