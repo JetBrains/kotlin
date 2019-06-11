@@ -124,6 +124,8 @@ open class IrModuleSerializer(
                 KotlinIr.IrSymbolKind.FIELD_SYMBOL
         is IrPropertySymbol ->
             KotlinIr.IrSymbolKind.PROPERTY_SYMBOL
+        is IrLocalDelegatedPropertySymbol ->
+            KotlinIr.IrSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL
         else ->
             TODO("Unexpected symbol kind: $symbol")
     }

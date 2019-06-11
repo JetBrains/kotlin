@@ -341,6 +341,35 @@ open class WrappedVariableDescriptor(
     }
 }
 
+open class WrappedVariableDescriptorWithAccessor() : VariableDescriptorWithAccessors, WrappedCallableDescriptor<IrLocalDelegatedProperty>(Annotations.EMPTY, SourceElement.NO_SOURCE) {
+    override fun getName(): Name = owner.name
+
+    override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun isVar() = owner.isVar
+
+    override fun getCompileTimeInitializer(): ConstantValue<*>? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getType(): KotlinType = owner.type.toKotlinType()
+
+    override fun isConst(): Boolean = false
+
+    override fun getContainingDeclaration() = (owner.parent as IrFunction).descriptor
+
+    override fun isLateInit(): Boolean = false
+
+    override val getter: VariableAccessorDescriptor?
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val setter: VariableAccessorDescriptor?
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val isDelegated: Boolean = true
+
+}
+
 open class WrappedSimpleFunctionDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE

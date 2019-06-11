@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrDeserializer
@@ -133,6 +130,8 @@ abstract class KotlinIrLinker(
                 symbolTable.referenceProperty(
                     descriptor as PropertyDescriptor? ?: WrappedPropertyDescriptor()
                 )
+            KotlinIr.IrSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
+                IrLocalDelegatedPropertySymbolImpl(descriptor as? VariableDescriptorWithAccessors ?: WrappedVariableDescriptorWithAccessor())
             else -> TODO("Unexpected classifier symbol kind: ${proto.kind}")
         }
 

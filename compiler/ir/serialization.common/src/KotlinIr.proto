@@ -125,6 +125,7 @@ enum IrSymbolKind {
   STANDALONE_FIELD_SYMBOL = 11; // For fields without properties. WrappedFieldDescriptor, rather than WrappedPropertyDescriptor.
   RECEIVER_PARAMETER_SYMBOL = 12; // ReceiverParameterDescriptor rather than ValueParameterDescriptor.
   PROPERTY_SYMBOL = 13;
+  LOCAL_DELEGATED_PROPERTY_SYMBOL = 14;
 }
 
 message IrSymbolData {

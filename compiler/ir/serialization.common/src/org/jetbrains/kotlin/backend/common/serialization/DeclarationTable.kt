@@ -43,7 +43,8 @@ abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: D
             !value.isExported()
             || value is IrVariable
             || value is IrValueParameter
-            || value is IrAnonymousInitializerImpl
+            || value is IrAnonymousInitializer
+            || value is IrLocalDelegatedProperty
         ) {
             UniqId(currentIndex++, true)
         } else {
