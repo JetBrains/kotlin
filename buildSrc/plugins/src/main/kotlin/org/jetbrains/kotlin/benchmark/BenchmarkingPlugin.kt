@@ -68,6 +68,8 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var linkerOpts: Collection<String> = emptyList()
 }
 
+// TODO: Override kotlin compiler with a correct version.
+
 /**
  * A plugin configuring a benchmark Kotlin/Native project.
  */
@@ -197,10 +199,9 @@ open class BenchmarkingPlugin: Plugin<Project> {
                 val jarPath = (tasks.getByName("jvmJar") as Jar).archiveFile.get().asFile
                 val jvmCompileTime = getJvmCompileTime(applicationName)
                 val benchContents = buildDir.resolve(jvmBenchResults).readText()
-                
+
                 val properties: Map<String, Any> = commonBenchmarkProperties + mapOf(
                     "type" to "jvm",
-                    // TODO: We had buildKotlinVersion here!!!!
                     "compilerVersion" to kotlinVersion,
                     "benchmarks" to benchContents,
                     "compileTime" to listOf(jvmCompileTime),

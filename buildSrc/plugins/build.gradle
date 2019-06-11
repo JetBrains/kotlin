@@ -63,8 +63,12 @@ compileGroovy {
 gradlePlugin {
     plugins {
         benchmarkPlugin {
-            id = 'benchmarking'
-            implementationClass = 'org.jetbrains.kotlin.benchmark.BenchmarkingPlugin'
+            id = "benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.BenchmarkingPlugin"
+        }
+        compileBenchmarking {
+            id = "compile-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.CompileBenchmarkingPlugin"
         }
     }
 }
