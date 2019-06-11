@@ -1024,7 +1024,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       return null;
     }
 
-    String title = StringUtil.escapeXmlEntities(manager.getTitle(element));
+    String title = manager.getTitle(element);
+    if (title == null) return null;
+    title = StringUtil.escapeXmlEntities(title);
     if (externalUrl == null) {
       List<String> urls = provider.getUrlFor(element, originalElement);
       if (urls != null) {
