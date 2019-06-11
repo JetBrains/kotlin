@@ -941,7 +941,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             val type = FirErrorTypeRefImpl(session, expression.psi, "Type calculating for ${expression::class} is not supported")
             expression.resultType = type
         }
-        return super.transformExpression(expression, data)
+        return (expression.transformChildren(this, data) as FirStatement).compose()
     }
 
     fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {
