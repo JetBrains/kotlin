@@ -16,12 +16,9 @@
 package com.intellij.util.indexing;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.*;
@@ -31,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 
-public abstract class IndexedFilesListener implements BulkFileListener {
+public abstract class IndexedFilesListener implements AsyncFileListener {
   private final ManagingFS myManagingFS = ManagingFS.getInstance();
   private final VfsEventsMerger myEventMerger = new VfsEventsMerger();
   @Nullable private final VirtualFile myConfig;
@@ -60,21 +57,22 @@ public abstract class IndexedFilesListener implements BulkFileListener {
     }
   }
 
-  private boolean invalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange) {
+  private boolean invalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange, VfsEventsMerger eventMerger) {
     if (isUnderConfigOrSystem(file)) {
       return false;
     }
-    myEventMerger.recordBeforeFileEvent(file, contentChange);
+    ProgressManager.checkCanceled();
+    eventMerger.recordBeforeFileEvent(file, contentChange);
     return !file.isDirectory() || FileBasedIndexImpl.isMock(file) || myManagingFS.wereChildrenAccessed(file);
   }
 
   protected abstract void iterateIndexableFiles(@NotNull VirtualFile file, @NotNull ContentIterator iterator);
 
-  void invalidateIndicesRecursively(@NotNull final VirtualFile file, final boolean contentChange) {
+  void invalidateIndicesRecursively(@NotNull VirtualFile file, boolean contentChange, VfsEventsMerger eventMerger) {
     VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
-        return invalidateIndicesForFile(file, contentChange);
+        return invalidateIndicesForFile(file, contentChange, eventMerger);
       }
 
       @Override
@@ -85,13 +83,15 @@ public abstract class IndexedFilesListener implements BulkFileListener {
   }
 
   @Override
-  public void before(@NotNull List<? extends VFileEvent> events) {
+  @NotNull
+  public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    VfsEventsMerger tempMerger = new VfsEventsMerger();
     for (VFileEvent event : events) {
       if (event instanceof VFileContentChangeEvent) {
-        invalidateIndicesRecursively(((VFileContentChangeEvent)event).getFile(), true);
+        invalidateIndicesRecursively(((VFileContentChangeEvent)event).getFile(), true, tempMerger);
       }
       else if (event instanceof VFileDeleteEvent) {
-        invalidateIndicesRecursively(((VFileDeleteEvent)event).getFile(), false);
+        invalidateIndicesRecursively(((VFileDeleteEvent)event).getFile(), false, tempMerger);
       }
       else if (event instanceof VFilePropertyChangeEvent) {
         final VFilePropertyChangeEvent pce = (VFilePropertyChangeEvent)event;
@@ -100,16 +100,26 @@ public abstract class IndexedFilesListener implements BulkFileListener {
           // indexes may depend on file name
           // name change may lead to filetype change so the file might become not indexable
           // in general case have to 'unindex' the file and index it again if needed after the name has been changed
-          invalidateIndicesRecursively(pce.getFile(), false);
+          invalidateIndicesRecursively(pce.getFile(), false, tempMerger);
         } else if (propertyName.equals(VirtualFile.PROP_ENCODING)) {
-          invalidateIndicesRecursively(pce.getFile(), true);
+          invalidateIndicesRecursively(pce.getFile(), true, tempMerger);
         }
       }
     }
+    return new ChangeApplier() {
+      @Override
+      public void beforeVfsChange() {
+        myEventMerger.applyMergedEvents(tempMerger);
+      }
+
+      @Override
+      public void afterVfsChange() {
+        processAfterEvents(events);
+      }
+    };
   }
 
-  @Override
-  public void after(@NotNull List<? extends VFileEvent> events) {
+  private void processAfterEvents(@NotNull List<? extends VFileEvent> events) {
     for (VFileEvent event : events) {
       if (event instanceof VFileContentChangeEvent) {
         buildIndicesForFileRecursively(((VFileContentChangeEvent)event).getFile(), true);

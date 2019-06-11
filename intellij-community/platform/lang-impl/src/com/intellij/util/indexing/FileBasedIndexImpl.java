@@ -36,10 +36,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileWithId;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -262,7 +259,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     myChangedFilesCollector = new ChangedFilesCollector();
     myConnection = connection;
 
-    connection.subscribe(VirtualFileManager.VFS_CHANGES, myChangedFilesCollector);
+    VirtualFileManager.getInstance().addAsyncFileListener(myChangedFilesCollector, this);
 
     initComponent();
   }
@@ -311,7 +308,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     // but it is more costly than current code, see IDEA-192192
     //myChangedFilesCollector.invalidateIndicesRecursively(file, false);
     //myChangedFilesCollector.buildIndicesForFileRecursively(file, false);
-    myChangedFilesCollector.invalidateIndicesRecursively(file, true);
+    myChangedFilesCollector.invalidateIndicesRecursively(file, true, myChangedFilesCollector.getEventMerger());
     if (myInitialized) myChangedFilesCollector.ensureUpToDateAsync();
   }
 
@@ -1939,14 +1936,26 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     }
 
     @Override
-    public void before(@NotNull List<? extends VFileEvent> events) {
-      for (VFileEvent event : events) {
-        if (memoryStorageCleaningNeeded(event)) {
-          cleanupMemoryStorage(false);
-          break;
+    @NotNull
+    public AsyncFileListener.ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+      boolean shouldCleanup = ContainerUtil.exists(events, this::memoryStorageCleaningNeeded);
+      ChangeApplier superApplier = super.prepareChange(events);
+
+      return new AsyncFileListener.ChangeApplier() {
+        @Override
+        public void beforeVfsChange() {
+          if (shouldCleanup) {
+            cleanupMemoryStorage(false);
+          }
+          superApplier.beforeVfsChange();
         }
-      }
-      super.before(events);
+
+        @Override
+        public void afterVfsChange() {
+          superApplier.afterVfsChange();
+          if (myInitialized) ensureUpToDateAsync();
+        }
+      };
     }
 
     private boolean memoryStorageCleaningNeeded(VFileEvent event) {
@@ -1954,13 +1963,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       return requestor instanceof FileDocumentManager ||
           requestor instanceof PsiManager ||
           requestor == LocalHistory.VFS_EVENT_REQUESTOR;
-    }
-
-    @Override
-    public void after(@NotNull List<? extends VFileEvent> events) {
-      super.after(events);
-
-      if (myInitialized) ensureUpToDateAsync();
     }
 
     boolean isScheduledForUpdate(VirtualFile file) {
