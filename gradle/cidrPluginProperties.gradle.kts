@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 import java.lang.Boolean.parseBoolean
 import java.net.URL
 import java.util.*
@@ -35,79 +37,75 @@ val prepareDepsPath: File = propertiesFile.parentFile.resolve("buildSrc/prepare-
 fun externalDepsDir(depsProjectName: String, suffix: String): File =
         prepareDepsPath.resolve(depsProjectName).resolve("build/external-deps").resolve(suffix)
 
-val clionVersion: String = rootProject.extra["versions.clion"] as String
-rootProject.extra["clionVersion"] = clionVersion
-rootProject.extra["clionFriendlyVersion"] = cidrProductFriendlyVersion("CLion", clionVersion)
-rootProject.extra["clionRepo"] = rootProject.extra["versions.clion.repo"] as String
-rootProject.extra["clionVersionStrict"] = rootProject.extra["versions.clion.strict"].toBoolean()
-rootProject.extra["clionPlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-platform-deps-$clionVersion")
-rootProject.extra["clionUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion")
-rootProject.extra["clionUseJavaPlugin"] = cidrProductBranch(clionVersion) >= 192
+val clionVersion: String by rootProject.extra(rootProject.extra["versions.clion"] as String)
+val clionFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("CLion", clionVersion))
+val clionRepo: String by rootProject.extra(rootProject.extra["versions.clion.repo"] as String)
+val clionVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.clion.strict"].toBoolean())
+val clionPlatformDepsDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "clion-platform-deps-$clionVersion"))
+val clionUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion"))
+val clionUseJavaPlugin: Boolean by rootProject.extra(cidrProductBranch(clionVersion) >= 192)
 
-val appcodeVersion: String = rootProject.extra["versions.appcode"] as String
-rootProject.extra["appcodeVersion"] = appcodeVersion
-rootProject.extra["appcodeFriendlyVersion"] = cidrProductFriendlyVersion("AppCode", appcodeVersion)
-rootProject.extra["appcodeRepo"] = rootProject.extra["versions.appcode.repo"] as String
-rootProject.extra["appcodeVersionStrict"] = rootProject.extra["versions.appcode.strict"].toBoolean()
-rootProject.extra["appcodePlatformDepsDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-platform-deps-$appcodeVersion")
-rootProject.extra["appcodeUnscrambledJarDir"] = externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion")
-rootProject.extra["appcodeUseJavaPlugin"] = false // not supported yet
+val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
+val appcodeFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("AppCode", appcodeVersion))
+val appcodeRepo: String by rootProject.extra(rootProject.extra["versions.appcode.repo"] as String)
+val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
+val appcodePlatformDepsDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "appcode-platform-deps-$appcodeVersion"))
+val appcodeUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion"))
+val appcodeUseJavaPlugin: Boolean by rootProject.extra(false) // not supported yet
 
-val artifactsForCidrDir: File = rootProject.rootDir.resolve("dist/artifacts")
-rootProject.extra["artifactsForCidrDir"] = artifactsForCidrDir
-rootProject.extra["clionPluginDir"] = artifactsForCidrDir.resolve("clionPlugin/Kotlin")
-rootProject.extra["appcodePluginDir"] = artifactsForCidrDir.resolve("appcodePlugin/Kotlin")
-
-rootProject.extra["cidrUnscrambledJarDir"] = rootProject.extra["clionUnscrambledJarDir"]
+val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("dist/artifacts"))
+val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
+val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
 
 if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:
     val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
     if (useAppCodeForCommon) {
-        rootProject.extra["cidrIdeDir"] = externalDepsDir("cidr", "appcode-$appcodeVersion")
-        rootProject.extra["cidrIdeArtifact"] = "${rootProject.extra["appcodeRepo"]}:$appcodeVersion:AppCode-$appcodeVersion.sit"
-        rootProject.extra["cidrPlatformDepsDir"] = rootProject.extra["appcodePlatformDepsDir"]
-        rootProject.extra["cidrUnscrambledJarDir"] = rootProject.extra["appcodeUnscrambledJarDir"]
-    } 
+        val cidrIdeDir: File by rootProject.extra(externalDepsDir("cidr", "appcode-$appcodeVersion"))
+        val cidrIdeArtifact: String by rootProject.extra("$appcodeRepo:$appcodeVersion:AppCode-$appcodeVersion.sit")
+        val cidrPlatformDepsDir: File by rootProject.extra(appcodePlatformDepsDir)
+        val cidrUnscrambledJarDir: File by rootProject.extra(appcodeUnscrambledJarDir)
+    }
     else {
-        rootProject.extra["cidrIdeDir"] = externalDepsDir("cidr", "clion-$clionVersion")
-        rootProject.extra["cidrIdeArtifact"] = "${rootProject.extra["clionRepo"]}:$clionVersion:CLion-$clionVersion.tar.gz"
-        rootProject.extra["cidrPlatformDepsDir"] = rootProject.extra["clionPlatformDepsDir"]
+        val cidrIdeDir: File by rootProject.extra(externalDepsDir("cidr", "clion-$clionVersion"))
+        val cidrIdeArtifact: String by rootProject.extra("$clionRepo:$clionVersion:CLion-$clionVersion.tar.gz")
+        val cidrPlatformDepsDir: File by rootProject.extra(clionPlatformDepsDir)
+        val cidrUnscrambledJarDir: File by rootProject.extra(clionUnscrambledJarDir)
     }
 
-    val ideaPluginForCidrVersion: String = rootProject.extra["versions.ideaPluginForCidr"] as String
-    val ideaPluginForCidrBuildNumber: String = ideaPluginForCidrVersion
-            .split("-release", limit = 2)
-            .takeIf { it.size == 2 }
-            ?.let { "${it[0]}-release" } ?: ideaPluginForCidrVersion
-    val ideaPluginForCidrIde: String = rootProject.extra["versions.ideaPluginForCidr.ide"] as String
+    val ideaPluginForCidrVersion: String by rootProject.extra(rootProject.extra["versions.ideaPluginForCidr"] as String)
+    val ideaPluginForCidrBuildNumber: String by rootProject.extra(
+            ideaPluginForCidrVersion.split("-release", limit = 2).takeIf { it.size == 2 }?.let { "${it[0]}-release" }
+                    ?: ideaPluginForCidrVersion
+    )
+    val ideaPluginForCidrIde: String by rootProject.extra(rootProject.extra["versions.ideaPluginForCidr.ide"] as String)
+    val ideaPluginForCidrRepo: String by rootProject.extra(rootProject.extra["versions.ideaPluginForCidr.repo"] as String)
 
-    rootProject.extra["ideaPluginForCidrVersion"] = ideaPluginForCidrVersion
-    rootProject.extra["ideaPluginForCidrBuildNumber"] = ideaPluginForCidrBuildNumber
-    rootProject.extra["ideaPluginForCidrIde"] = ideaPluginForCidrIde
-    rootProject.extra["ideaPluginForCidrRepo"] = rootProject.extra["versions.ideaPluginForCidr.repo"]
-
-    rootProject.extra["ideaPluginForCidrDir"] = externalDepsDir("idea-plugin", "ideaPlugin-$ideaPluginForCidrBuildNumber-$ideaPluginForCidrIde")
+    val ideaPluginForCidrDir: File by rootProject.extra(externalDepsDir("idea-plugin", "ideaPlugin-$ideaPluginForCidrBuildNumber-$ideaPluginForCidrIde"))
 }
 
-// Note: "appcodePluginNumber" Gradle property can be used to override the default plugin number (SNAPSHOT)
+// Note:
+// - "appcodePluginNumber" Gradle property can be used to override the default plugin number (SNAPSHOT)
+// - "appcodePluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
+// - "appcodePluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
 val appcodePluginNumber: String = findProperty("appcodePluginNumber")?.toString() ?: "SNAPSHOT"
-val appcodePluginVersionFull: String = cidrPluginVersionFull("AppCode", appcodeVersion, appcodePluginNumber)
-rootProject.extra["appcodePluginVersionFull"] = appcodePluginVersionFull
-// Note: "appcodePluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
-val appcodePluginZipPath: File = propertyAsPath("appcodePluginZipPath") ?: defaultCidrPluginZipPath(appcodePluginVersionFull)
-rootProject.extra["appcodePluginZipPath"] = appcodePluginZipPath
-// Note: "appcodePluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
-rootProject.extra["appcodeCustomPluginRepoUrl"] = cidrCustomPluginRepoUrl("appcodePluginRepoUrl", appcodePluginZipPath)
+val appcodePluginVersionFull: String by rootProject.extra(cidrPluginVersionFull("AppCode", appcodeVersion, appcodePluginNumber))
+val appcodePluginZipPath: File by rootProject.extra(
+        propertyAsPath("appcodePluginZipPath")
+                ?: defaultCidrPluginZipPath(appcodePluginVersionFull)
+)
+val appcodeCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("appcodePluginRepoUrl", appcodePluginZipPath))
 
-// Note: "clionPluginNumber" Gradle property can be used to override the default plugin number (SNAPSHOT)
+// Note:
+// - "clionPluginNumber" Gradle property can be used to override the default plugin number (SNAPSHOT)
+// - "clionPluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
+// - "clionPluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
 val clionPluginNumber: String = findProperty("clionPluginNumber")?.toString() ?: "SNAPSHOT"
-val clionPluginVersionFull: String = cidrPluginVersionFull("CLion", clionVersion, clionPluginNumber)
-rootProject.extra["clionPluginVersionFull"] = clionPluginVersionFull
-// Note: "clionPluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
-val clionPluginZipPath: File = propertyAsPath("clionPluginZipPath") ?: defaultCidrPluginZipPath(clionPluginVersionFull)
-rootProject.extra["clionPluginZipPath"] = clionPluginZipPath
-// Note: "clionPluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
-rootProject.extra["clionCustomPluginRepoUrl"] = cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath)
+val clionPluginVersionFull: String by rootProject.extra(cidrPluginVersionFull("CLion", clionVersion, clionPluginNumber))
+val clionPluginZipPath: File by rootProject.extra(
+        propertyAsPath("clionPluginZipPath")
+                ?: defaultCidrPluginZipPath(clionPluginVersionFull)
+)
+val clionCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
 
 fun cidrProductBranch(productVersion: String): Int {
     return productVersion.substringBefore('.').toIntOrNull()
