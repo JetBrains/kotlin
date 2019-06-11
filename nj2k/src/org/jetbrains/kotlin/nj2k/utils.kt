@@ -11,7 +11,6 @@ import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtFunction
 
 fun <T> List<T>.replace(element: T, replacer: T): List<T> {
     val mutableList = toMutableList()

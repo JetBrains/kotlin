@@ -33,5 +33,5 @@ class FunctionAsAnonymousObjectToLambdaConversion : RecursiveApplicableConversio
 
     private fun JKClassSymbol.isKtFunction() =
         fqName.matches("""kotlin\.Function(\d+)""".toRegex())
-                ||  fqName.matches("""kotlin\.jvm\.functions\.Function(\d+)""".toRegex())
+                || fqName.matches("""kotlin\.jvm\.functions\.Function(\d+)""".toRegex())
 }

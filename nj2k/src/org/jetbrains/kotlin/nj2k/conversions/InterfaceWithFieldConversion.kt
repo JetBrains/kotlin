@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.nj2k.getOrCreateCompainonObject
 import org.jetbrains.kotlin.nj2k.tree.*
 
 

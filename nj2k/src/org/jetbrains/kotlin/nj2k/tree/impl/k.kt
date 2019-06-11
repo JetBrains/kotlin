@@ -249,7 +249,8 @@ class JKKtValueWhenLabelImpl(expression: JKExpression) : JKKtValueWhenLabel, JKB
 }
 
 
-class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKtIsExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKtIsExpression, JKBranchElementBase(),
+    PsiOwner by PsiOwnerImpl() {
     override var type by child(type)
     override var expression by child(expression)
 
@@ -281,7 +282,7 @@ class JKKtTryExpressionImpl(
     tryBlock: JKBlock,
     finallyBlock: JKBlock,
     catchSections: List<JKKtTryCatchSection>
-) : JKKtTryExpression, JKBranchElementBase(){
+) : JKKtTryExpression, JKBranchElementBase() {
     override var tryBlock: JKBlock by child(tryBlock)
     override var finallyBlock: JKBlock by child(finallyBlock)
     override var catchSections: List<JKKtTryCatchSection> by children(catchSections)

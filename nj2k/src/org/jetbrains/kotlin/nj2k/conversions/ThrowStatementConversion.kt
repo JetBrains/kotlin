@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.tree.JKExpressionStatement
 import org.jetbrains.kotlin.nj2k.tree.JKJavaThrowStatement
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.detached

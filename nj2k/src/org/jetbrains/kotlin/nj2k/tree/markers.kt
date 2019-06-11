@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.tree.impl.JKBranchElementBase
 import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import kotlin.reflect.KProperty0
 import kotlin.jvm.internal.CallableReference
+import kotlin.reflect.KProperty0
 
 interface JKOperator {
     val token: JKOperatorToken

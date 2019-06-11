@@ -37,7 +37,7 @@ class AssignmentStatementValCreationConversion(val context: NewJ2kConverterConte
                                 JKMutabilityModifierElementImpl(Mutability.UNKNOWN)
                             ).also {
                                 assignableExpr.indexExpression =
-                                        JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
+                                    JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
                             }
                         )
                     )

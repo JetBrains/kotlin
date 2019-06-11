@@ -134,7 +134,6 @@ fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean
         ?.let { otherType -> this.toKtType(symbolProvider)?.isSubtypeOf(otherType) } == true
 
 
-
 fun KotlinType.toJK(symbolProvider: JKSymbolProvider): JKClassTypeImpl =
     JKClassTypeImpl(
         symbolProvider.provideClassSymbol(getJetTypeFqName(false)),

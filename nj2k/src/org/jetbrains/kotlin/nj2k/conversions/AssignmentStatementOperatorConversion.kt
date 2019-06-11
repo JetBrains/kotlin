@@ -9,8 +9,9 @@ import com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.JKKtAssignmentStatement
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
-import org.jetbrains.kotlin.nj2k.tree.detached
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKBinaryExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaOperatorImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaOperatorToken
 
 class AssignmentStatementOperatorConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -20,11 +21,11 @@ class AssignmentStatementOperatorConversion : RecursiveApplicableConversionBase(
             ?.apply {
                 val expression = element.expression.copyTreeAndDetach()
                 element.expression =
-                        JKBinaryExpressionImpl(
-                            element.field.copyTreeAndDetach(),
-                            expression,
-                            this
-                        )
+                    JKBinaryExpressionImpl(
+                        element.field.copyTreeAndDetach(),
+                        expression,
+                        this
+                    )
                 element.operator = JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!
             }
         return recurse(element)

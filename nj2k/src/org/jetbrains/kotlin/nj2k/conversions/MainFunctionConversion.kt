@@ -29,10 +29,10 @@ class MainFunctionConversion(private val context: NewJ2kConverterContext) : Recu
                 type = JKTypeElementImpl(newType)
             }
             element.annotationList.annotations +=
-                    JKAnnotationImpl(
-                        context.symbolProvider.provideClassSymbol("kotlin.jvm.JvmStatic"),
-                        emptyList()
-                    )
+                JKAnnotationImpl(
+                    context.symbolProvider.provideClassSymbol("kotlin.jvm.JvmStatic"),
+                    emptyList()
+                )
         }
         return recurse(element)
     }
