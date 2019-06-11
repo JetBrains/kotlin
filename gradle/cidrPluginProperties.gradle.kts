@@ -39,19 +39,29 @@ fun externalDepsDir(depsProjectName: String, suffix: String): File =
 
 val clionVersion: String by rootProject.extra(rootProject.extra["versions.clion"] as String)
 val clionFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("CLion", clionVersion))
+val clionUseJavaPlugin: Boolean by rootProject.extra(cidrProductBranch(clionVersion) >= 192)
 val clionRepo: String by rootProject.extra(rootProject.extra["versions.clion.repo"] as String)
 val clionVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.clion.strict"].toBoolean())
-val clionPlatformDepsDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "clion-platform-deps-$clionVersion"))
+val clionPlatformDepsOrJavaPluginDir: File by rootProject.extra(
+        externalDepsDir(
+                "kotlin-native-platform-deps",
+                if (clionUseJavaPlugin) "clion-java-plugin-$clionVersion" else "clion-platform-deps-$clionVersion"
+        )
+)
 val clionUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion"))
-val clionUseJavaPlugin: Boolean by rootProject.extra(cidrProductBranch(clionVersion) >= 192)
 
 val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
 val appcodeFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("AppCode", appcodeVersion))
+val appcodeUseJavaPlugin: Boolean by rootProject.extra(false) // not supported yet
 val appcodeRepo: String by rootProject.extra(rootProject.extra["versions.appcode.repo"] as String)
 val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
-val appcodePlatformDepsDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "appcode-platform-deps-$appcodeVersion"))
+val appcodePlatformDepsOrJavaPluginDir: File by rootProject.extra(
+        externalDepsDir(
+                "kotlin-native-platform-deps",
+                if (appcodeUseJavaPlugin) "appcode-java-plugin-$appcodeVersion" else "appcode-platform-deps-$appcodeVersion"
+        )
+)
 val appcodeUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion"))
-val appcodeUseJavaPlugin: Boolean by rootProject.extra(false) // not supported yet
 
 val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("dist/artifacts"))
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
@@ -62,13 +72,13 @@ if (isStandaloneBuild) { // setup additional properties that are required only w
     if (useAppCodeForCommon) {
         val cidrIdeDir: File by rootProject.extra(externalDepsDir("cidr", "appcode-$appcodeVersion"))
         val cidrIdeArtifact: String by rootProject.extra("$appcodeRepo:$appcodeVersion:AppCode-$appcodeVersion.sit")
-        val cidrPlatformDepsDir: File by rootProject.extra(appcodePlatformDepsDir)
+        val cidrPlatformDepsOrJavaPluginDir: File by rootProject.extra(appcodePlatformDepsOrJavaPluginDir)
         val cidrUnscrambledJarDir: File by rootProject.extra(appcodeUnscrambledJarDir)
     }
     else {
         val cidrIdeDir: File by rootProject.extra(externalDepsDir("cidr", "clion-$clionVersion"))
         val cidrIdeArtifact: String by rootProject.extra("$clionRepo:$clionVersion:CLion-$clionVersion.tar.gz")
-        val cidrPlatformDepsDir: File by rootProject.extra(clionPlatformDepsDir)
+        val cidrPlatformDepsOrJavaPluginDir: File by rootProject.extra(clionPlatformDepsOrJavaPluginDir)
         val cidrUnscrambledJarDir: File by rootProject.extra(clionUnscrambledJarDir)
     }
 

@@ -150,12 +150,12 @@ fun addIdeaNativeModuleDeps(project: Project) = with(project) {
             add("compile", cidrPlugins)
 
             // Java APIs (private artifact that goes together with CIDR IDEs)
-            val cidrPlatformDepsDir: String by rootProject.extra
-            val cidrPlatformDeps = fileTree(cidrPlatformDepsDir) {
+            val cidrPlatformDepsOrJavaPluginDir: String by rootProject.extra
+            val cidrPlatformDepsOrJavaPlugin = fileTree(cidrPlatformDepsOrJavaPluginDir) {
                 include(platformDepsJarName)
                 javaApiArtifacts.forEach { include("$it*.jar") }
             }
-            add("compile", cidrPlatformDeps)
+            add("compile", cidrPlatformDepsOrJavaPlugin)
         } else {
             // Gradle projects with Kotlin/Native-specific logic
             // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)

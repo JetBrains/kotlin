@@ -22,13 +22,13 @@ repositories {
 
 val clionRepo: String by rootProject.extra
 val clionVersion: String by rootProject.extra
-val clionPlatformDepsDir: File by rootProject.extra
+val clionPlatformDepsOrJavaPluginDir: File by rootProject.extra
 val clionUnscrambledJarDir: File by rootProject.extra
 val clionUseJavaPlugin: Boolean by rootProject.extra
 
 val appcodeRepo: String by rootProject.extra
 val appcodeVersion: String by rootProject.extra
-val appcodePlatformDepsDir: File by rootProject.extra
+val appcodePlatformDepsOrJavaPluginDir: File by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
 val appcodeUseJavaPlugin: Boolean by rootProject.extra
 
@@ -49,14 +49,14 @@ dependencies {
 val downloadCLionUnscrambledJar: Task by downloading(clionUnscrambledJar, clionUnscrambledJarDir)
 val downloadCLionPlatformDeps: Task by downloading(
         clionPlatformDepsZip,
-        clionPlatformDepsDir,
+        clionPlatformDepsOrJavaPluginDir,
         pathRemap = { it.substringAfterLast('/') }
 ) { zipTree(it.singleFile) }
 
 val downloadAppCodeUnscrambledJar: Task by downloading(appcodeUnscrambledJar, appcodeUnscrambledJarDir)
 val downloadAppCodePlatformDeps: Task by downloading(
         appcodePlatformDepsZip,
-        appcodePlatformDepsDir,
+        appcodePlatformDepsOrJavaPluginDir,
         pathRemap = { it.substringAfterLast('/') }
 ) { zipTree(it.singleFile) }
 

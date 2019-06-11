@@ -17,7 +17,7 @@ val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> Task by cidrPlug
 val clionVersion: String by rootProject.extra
 val clionFriendlyVersion: String by rootProject.extra
 val clionVersionStrict: Boolean by rootProject.extra
-val clionPlatformDepsDir: File by rootProject.extra
+val clionPlatformDepsOrJavaPluginDir: File by rootProject.extra
 val clionPluginDir: File by rootProject.extra
 val clionPluginVersionFull: String by rootProject.extra
 val clionPluginZipPath: File by rootProject.extra
@@ -45,8 +45,8 @@ val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXml
 val jarTasks = if (clionUseJavaPlugin)
     listOf(pluginJarTask)
 else {
-    val patchedPlatformDepsJar: Task = patchedPlatformDepsJar(project, clionPlatformDepsDir)
-    val otherPlatformDepsJars: Task = otherPlatformDepsJars(project, clionPlatformDepsDir)
+    val patchedPlatformDepsJar: Task = patchedPlatformDepsJar(project, clionPlatformDepsOrJavaPluginDir)
+    val otherPlatformDepsJars: Task = otherPlatformDepsJars(project, clionPlatformDepsOrJavaPluginDir)
     listOf(pluginJarTask, patchedPlatformDepsJar, otherPlatformDepsJars)
 }
 

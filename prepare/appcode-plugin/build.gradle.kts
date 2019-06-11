@@ -21,7 +21,7 @@ val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> Task by cidrPlug
 val appcodeVersion: String by rootProject.extra
 val appcodeFriendlyVersion: String by rootProject.extra
 val appcodeVersionStrict: Boolean by rootProject.extra
-val appcodePlatformDepsDir: File by rootProject.extra
+val appcodePlatformDepsOrJavaPluginDir: File by rootProject.extra
 val appcodePluginDir: File by rootProject.extra
 val appcodePluginVersionFull: String by rootProject.extra
 val appcodePluginZipPath: File by rootProject.extra
@@ -49,8 +49,8 @@ val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXml
 val jarTasks = if (appcodeUseJavaPlugin)
     listOf(pluginJarTask)
 else {
-    val patchedPlatformDepsJar: Task = patchedPlatformDepsJar(project, appcodePlatformDepsDir)
-    val otherPlatformDepsJars: Task = otherPlatformDepsJars(project, appcodePlatformDepsDir)
+    val patchedPlatformDepsJar: Task = patchedPlatformDepsJar(project, appcodePlatformDepsOrJavaPluginDir)
+    val otherPlatformDepsJars: Task = otherPlatformDepsJars(project, appcodePlatformDepsOrJavaPluginDir)
     listOf(pluginJarTask, patchedPlatformDepsJar, otherPlatformDepsJars)
 }
 
