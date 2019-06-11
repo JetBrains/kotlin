@@ -1,4 +1,7 @@
 internal class Test {
     val int: Int
-        get() = 10
+        get() {
+            val b: Byte = 10
+            return b.toInt()
+        }
 }

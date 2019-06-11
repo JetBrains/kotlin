@@ -88,8 +88,6 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
         context: NewJ2kConverterContext,
         rangeMarker: RangeMarker?
     ): List<ActionData> {
-        val diagnostics = analyzeFileRange(file, rangeMarker)
-
         val availableActions = ArrayList<ActionData>()
 
         file.accept(object : PsiRecursiveElementVisitor() {
@@ -101,7 +99,7 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
 
                 if (rangeResult == RangeFilterResult.PROCESS) {
                     inspectionLikeProcessings.forEach { processing ->
-                        val action = processing.createAction(element, diagnostics, context.converter.settings)
+                        val action = processing.createAction(element, context.converter.settings)
                         if (action != null) {
                             availableActions.add(
                                 ActionData(
@@ -119,17 +117,6 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
         return availableActions
     }
 
-    private fun analyzeFileRange(file: KtFile, rangeMarker: RangeMarker?): Diagnostics {
-        val elements = if (rangeMarker == null)
-            listOf(file)
-        else
-            file.elementsInRange(rangeMarker.range!!).filterIsInstance<KtElement>()
-
-        return if (elements.isNotEmpty())
-            file.getResolutionFacade().analyzeWithAllCompilerChecks(elements).bindingContext.diagnostics
-        else
-            Diagnostics.EMPTY
-    }
 
     private fun rangeFilter(element: PsiElement, rangeMarker: RangeMarker?): RangeFilterResult {
         if (rangeMarker == null) return RangeFilterResult.PROCESS
@@ -145,7 +132,7 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
 }
 
 interface InspectionLikeProcessing {
-    fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)?
+    fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)?
 
     val writeActionNeeded: Boolean
 }
@@ -154,7 +141,7 @@ abstract class ApplicabilityBasedInspectionLikeProcessing<E : PsiElement>(privat
     protected abstract fun isApplicableTo(element: E, settings: ConverterSettings?): Boolean
     protected abstract fun apply(element: E)
 
-    final override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    final override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (!element::class.isSubclassOf(classTag)) return null
         @Suppress("UNCHECKED_CAST")
         if (!isApplicableTo(element as E, settings)) return null
@@ -176,7 +163,7 @@ inline fun <reified TElement : PsiElement, TIntention : SelfTargetingRangeIntent
     // Intention can either need or not need write apply
     override val writeActionNeeded = intention.startInWriteAction()
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (!TElement::class.java.isInstance(element)) return null
         val tElement = element as TElement
         if (intention.applicabilityRange(tElement) == null) return null
@@ -238,7 +225,7 @@ fun <TInspection : AbstractKotlinInspection> generalInspectionBasedProcessing(
         }
     }
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         val holder = ProblemsHolder(InspectionManager.getInstance(element.project), element.containingFile, false)
         val visitor = inspection.buildVisitor(
             holder,
@@ -271,7 +258,7 @@ inline fun <reified TElement : PsiElement, TInspection : AbstractApplicabilityBa
             return acceptInformationLevel || inspection.inspectionHighlightType(element) != ProblemHighlightType.INFORMATION
         }
 
-        override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+        override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
             if (!TElement::class.java.isInstance(element)) return null
             val tElement = element as TElement
             if (!isApplicable(tElement)) return null
@@ -282,41 +269,3 @@ inline fun <reified TElement : PsiElement, TInspection : AbstractApplicabilityBa
             }
         }
     }
-
-fun diagnosticBasedProcessingWithFixFactory(
-    fixFactory: KotlinIntentionActionsFactory,
-    vararg diagnosticFactory: DiagnosticFactory<*>
-): InspectionLikeProcessing =
-    diagnosticBasedProcessing(*diagnosticFactory) { element: PsiElement, diagnostic: Diagnostic ->
-        fixFactory.createActions(diagnostic).singleOrNull()
-            ?.invoke(element.project, null, element.containingFile)
-    }
-
-
-inline fun <reified TElement : PsiElement> diagnosticBasedProcessing(
-    vararg diagnosticFactory: DiagnosticFactory<*>,
-    crossinline fix: (TElement, Diagnostic) -> Unit
-) = object : InspectionLikeProcessing {
-    override val writeActionNeeded = true
-
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
-        if (!TElement::class.java.isInstance(element)) return null
-        val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
-        return {
-            fix(element as TElement, diagnostic)
-        }
-    }
-}
-
-inline fun <reified TElement : PsiElement> diagnosticBasedProcessingFactory(
-    vararg diagnosticFactory: DiagnosticFactory<*>,
-    crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
-) = object : InspectionLikeProcessing {
-    override val writeActionNeeded = true
-
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
-        if (!TElement::class.java.isInstance(element)) return null
-        val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory in diagnosticFactory } ?: return null
-        return fixFactory(element as TElement, diagnostic)
-    }
-}

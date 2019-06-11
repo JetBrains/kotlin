@@ -1,8 +1,9 @@
 internal class C {
     fun foo(o: Any?) {
         if (o is String) {
-            val l = o.length
-            val substring = o.substring(l - 2)
+            val s = o
+            val l = s.length
+            val substring = s.substring(l - 2)
         }
     }
 }

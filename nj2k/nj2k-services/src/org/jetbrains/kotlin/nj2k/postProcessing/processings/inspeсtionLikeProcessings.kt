@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -19,8 +17,13 @@ import org.jetbrains.kotlin.idea.core.implicitModality
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
-import org.jetbrains.kotlin.idea.inspections.*
-import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.inspections.RedundantExplicitTypeInspection
+import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
+import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
+import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxIntention
+import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -30,13 +33,14 @@ import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.parentOfType
-import org.jetbrains.kotlin.nj2k.parentsOfType
-import org.jetbrains.kotlin.nj2k.postProcessing.*
+import org.jetbrains.kotlin.nj2k.postProcessing.ApplicabilityBasedInspectionLikeProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.InspectionLikeProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.generalInspectionBasedProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.resolve
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -63,7 +67,7 @@ class RemoveExplicitPropertyTypeProcessing : ApplicabilityBasedInspectionLikePro
     }
 }
 
-class RemoveRedundantNullabilityProcessing: ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class)  {
+class RemoveRedundantNullabilityProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class) {
     override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean {
         if (!element.isLocal) return false
         val typeReference = element.typeReference
@@ -101,7 +105,7 @@ class RemoveExplicitTypeArgumentsProcessing : ApplicabilityBasedInspectionLikePr
 class RemoveRedundantOverrideVisibilityProcessing : InspectionLikeProcessing {
     override val writeActionNeeded = true
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element !is KtCallableDeclaration || !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
         val modifier = element.visibilityModifierType() ?: return null
         return { element.setVisibility(modifier) }
@@ -113,7 +117,7 @@ class ConvertToStringTemplateProcessing : InspectionLikeProcessing {
 
     val intention = ConvertToStringTemplateIntention()
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(
                 element
             )
@@ -130,7 +134,7 @@ class UsePropertyAccessSyntaxProcessing : InspectionLikeProcessing {
 
     val intention = UsePropertyAccessSyntaxIntention()
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element !is KtCallExpression) return null
         val propertyName = intention.detectPropertyNameToUse(element) ?: return null
         return { intention.applyTo(element, propertyName, reformat = true) }
@@ -140,7 +144,7 @@ class UsePropertyAccessSyntaxProcessing : InspectionLikeProcessing {
 class RemoveRedundantSamAdaptersProcessing : InspectionLikeProcessing {
     override val writeActionNeeded = true
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element !is KtCallExpression) return null
 
         val expressions = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
@@ -156,7 +160,7 @@ class RemoveRedundantSamAdaptersProcessing : InspectionLikeProcessing {
 class UseExpressionBodyProcessing : InspectionLikeProcessing {
     override val writeActionNeeded = true
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element !is KtPropertyAccessor) return null
 
         val inspection = UseExpressionBodyInspection(convertEmptyToUnit = false)
@@ -173,7 +177,7 @@ class UseExpressionBodyProcessing : InspectionLikeProcessing {
 class RemoveRedundantCastToNullableProcessing : InspectionLikeProcessing {
     override val writeActionNeeded = true
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element !is KtBinaryExpressionWithTypeRHS) return null
 
         val context = element.analyze()
@@ -191,42 +195,12 @@ class RemoveRedundantCastToNullableProcessing : InspectionLikeProcessing {
     }
 }
 
-class FixObjectStringConcatenationProcessing : InspectionLikeProcessing {
-    override val writeActionNeeded = true
-
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtBinaryExpression ||
-            element.operationToken != KtTokens.PLUS ||
-            diagnostics.forElement(element.operationReference).none {
-                it.factory == Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
-                        || it.factory == Errors.NONE_APPLICABLE
-            }
-        )
-            return null
-
-        val bindingContext = element.analyze()
-        val rightType = element.right?.getType(bindingContext) ?: return null
-
-        if (KotlinBuiltIns.isString(rightType)) {
-            return {
-                val factory = KtPsiFactory(element)
-                element.left!!.replace(factory.buildExpression {
-                    appendFixedText("(")
-                    appendExpression(element.left)
-                    appendFixedText(").toString()")
-                })
-            }
-        }
-        return null
-    }
-}
-
 class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing :
     InspectionLikeProcessing {
     override val writeActionNeeded = true
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNINITIALIZED_VARIABLE }) return null
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
+        if (element !is KtSimpleNameExpression || element.mainReference.resolve() == null) return null
 
         val resolved = element.mainReference.resolve() ?: return null
         if (resolved.isAncestor(element, strict = true)) {
@@ -246,8 +220,8 @@ class UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing :
     InspectionLikeProcessing {
     override val writeActionNeeded = true
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtSimpleNameExpression || diagnostics.forElement(element).none { it.factory == Errors.UNRESOLVED_REFERENCE }) return null
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
+        if (element !is KtSimpleNameExpression || element.mainReference.resolve() != null) return null
 
         val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
 
@@ -381,10 +355,10 @@ class RemoveExplicitPropertyTypeWithInspectionProcessing :
     private val processing =
         generalInspectionBasedProcessing(RedundantExplicitTypeInspection())
 
-    override fun createAction(element: PsiElement, diagnostics: Diagnostics, settings: ConverterSettings?): (() -> Unit)? {
+    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (settings?.specifyLocalVariableTypeByDefault == true) return null
 
-        return processing.createAction(element, diagnostics, settings)
+        return processing.createAction(element, settings)
     }
 }
 
