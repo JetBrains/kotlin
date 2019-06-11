@@ -2235,7 +2235,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
             VirtualFile virtualFile = file.getVirtualFile();
 
             if (virtualFile instanceof VirtualFileWithId) {
-              myChangedFilesCollector.getEventMerger().recordTransientStateChangeEvent(getFileId(virtualFile), virtualFile);
+              myChangedFilesCollector.getEventMerger().recordTransientStateChangeEvent(virtualFile);
             }
           }
         }
