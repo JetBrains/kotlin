@@ -98,6 +98,9 @@
 - [`KT-31606`](https://youtrack.jetbrains.com/issue/KT-31606) Rewrite at slice on using callable reference with array access operator
 - [`KT-31620`](https://youtrack.jetbrains.com/issue/KT-31620) False-positive "not enough information" for coroutine-inference when target method is assigned to a variable
 - [`KT-31624`](https://youtrack.jetbrains.com/issue/KT-31624) Type from declared upper bound in Java is considered more specific than Nothing producing type mismatch later
+- [`KT-31860`](https://youtrack.jetbrains.com/issue/KT-31860) Explicit type argument isn't considered as input type causing errors about "only input types"
+- [`KT-31866`](https://youtrack.jetbrains.com/issue/KT-31866) Problems with using star-projections on LHS of callable reference
+- [`KT-31868`](https://youtrack.jetbrains.com/issue/KT-31868) No type mismatch error when using NoInfer annotation
 
 ### IDE
 
@@ -136,6 +139,9 @@
 - [`KT-31332`](https://youtrack.jetbrains.com/issue/KT-31332) Kotlin AnnotatedElementsSearch does't support Kotlin `object`
 - [`KT-31129`](https://youtrack.jetbrains.com/issue/KT-31129) Call only Kotlin-specific reference contributors for getting Kotlin references from PSI
 - [`KT-31693`](https://youtrack.jetbrains.com/issue/KT-31693) Project with no Kotlin: JPS rebuild fails with NCDFE for GradleSettingsService at KotlinMPPGradleProjectTaskRunner.canRun()
+- [`KT-31466`](https://youtrack.jetbrains.com/issue/KT-31466) SOE in Java highlighting when a Kotlin ultra-light method is invoked
+- [`KT-31723`](https://youtrack.jetbrains.com/issue/KT-31723) Exception from UAST for attempt to infer types inside unresolved call
+- [`KT-31842`](https://youtrack.jetbrains.com/issue/KT-31842) UOE: no descriptor for type constructor of TypeVariable(T)
 
 ### IDE. Completion
 
@@ -154,6 +160,7 @@
 - [`KT-30714`](https://youtrack.jetbrains.com/issue/KT-30714) Breakpoints are shown as invalid for classes that are not loaded yet
 - [`KT-30934`](https://youtrack.jetbrains.com/issue/KT-30934) "InvocationException: Exception occurred in target VM" on debugger breakpoint hit (with kotlintest)
 - [`KT-31266`](https://youtrack.jetbrains.com/issue/KT-31266) Kotlin debugger incompatibility with latest 192 nightly: KotlinClassWithDelegatedPropertyRenderer
+- [`KT-31785`](https://youtrack.jetbrains.com/issue/KT-31785) Exception on attempt to evaluate local function
 
 ### IDE. Gradle
 
@@ -162,6 +169,7 @@
 - [`KT-30767`](https://youtrack.jetbrains.com/issue/KT-30767) Kotlin import uses too much memory when working with big projects
 - [`KT-29564`](https://youtrack.jetbrains.com/issue/KT-29564) kotlin.parallel.tasks.in.project=true causes idea to create kotlin modules with target JVM 1.6
 - [`KT-31014`](https://youtrack.jetbrains.com/issue/KT-31014) Gradle, JS: Webpack watch mode
+- [`KT-31843`](https://youtrack.jetbrains.com/issue/KT-31843) Memory leak caused by KOTLIN_TARGET_DATA_NODE on project reimport
 
 ### IDE. Gradle. Script
 
@@ -249,11 +257,21 @@
 - [`KT-30879`](https://youtrack.jetbrains.com/issue/KT-30879) False positive "Redundant qualifier name"
 - [`KT-31415`](https://youtrack.jetbrains.com/issue/KT-31415) UI hangs due to long computations for "Use property access syntax" intention with new inference
 - [`KT-31441`](https://youtrack.jetbrains.com/issue/KT-31441) False positive "Remove explicit type arguments" inspection for projection type
+- [`KT-30970`](https://youtrack.jetbrains.com/issue/KT-30970) No warning for empty `if` operator and `also`method
+- [`KT-31855`](https://youtrack.jetbrains.com/issue/KT-31855) IDE + new inference: Java SAM conversion is not suggested by IDE services
+
+### IDE. JS
+
+- [`KT-31895`](https://youtrack.jetbrains.com/issue/KT-31895) New Project wizard: Kotlin Gradle + Kotlin/JS for Node.js: incorrect DSL is inserted
 
 ### IDE. Libraries
 
 - [`KT-30790`](https://youtrack.jetbrains.com/issue/KT-30790) Unstable IDE navigation behavior to `expect`/`actual` symbols in stdlib
 - [`KT-30821`](https://youtrack.jetbrains.com/issue/KT-30821) K/N: Navigation downwards the hierarchy in stdlib source code opens to stubs
+
+### IDE. Misc
+
+- [`KT-31364`](https://youtrack.jetbrains.com/issue/KT-31364) IntelliJ routinely hangs and spikes CPU / Memory usage when editing kotlin files
 
 ### IDE. Navigation
 
@@ -276,19 +294,31 @@
 
 - [`KT-30295`](https://youtrack.jetbrains.com/issue/KT-30295) Resolver for 'completion/highlighting in  ScriptDependenciesSourceInfo...' does not know how to resolve [] or [Library(null)]
 - [`KT-30690`](https://youtrack.jetbrains.com/issue/KT-30690) Highlighting for scripts in diff view doesn't work for left part
+- [`KT-31452`](https://youtrack.jetbrains.com/issue/KT-31452) IDE editor: MISSING_SCRIPT_STANDARD_TEMPLATE is reported inconsistently with the single line in script
 
 ### IDE. Tests Support
 
 - [`KT-30995`](https://youtrack.jetbrains.com/issue/KT-30995) Gradle test runner: "No tasks available" for a test class in non-MPP project
 
+### IDE. Ultimate
+
+- [`KT-30886`](https://youtrack.jetbrains.com/issue/KT-30886) KotlinIdeaResolutionException in Velocity template (.ft) with Kotlin code
+
 ### IDE. Wizards
 
 - [`KT-30645`](https://youtrack.jetbrains.com/issue/KT-30645) Update New Project Wizard templates related to Kotlin/JS
+- [`KT-31099`](https://youtrack.jetbrains.com/issue/KT-31099) Remove Gradle configuration boilerplate for JS from multiplatform New Project Wizard templates related to Kotlin/JS
+- [`KT-31695`](https://youtrack.jetbrains.com/issue/KT-31695) Gradle, JS: update wizard templates
 
 ### JS. Tools
 
 - [`KT-31563`](https://youtrack.jetbrains.com/issue/KT-31563) Gradle/JS: npmResolve fails with "Invalid version" when user project's version does not match npm rules
 - [`KT-31566`](https://youtrack.jetbrains.com/issue/KT-31566) Gradle/JS: with explicit call to `nodejs { testTask { useNodeJs() } }` configuration fails : "Could not find which method to invoke"
+- [`KT-31560`](https://youtrack.jetbrains.com/issue/KT-31560) Gradle: provide descriptions for JS tasks
+- [`KT-31564`](https://youtrack.jetbrains.com/issue/KT-31564) Gradle/JS: npmResolve reports warning "karma-webpack@3.0.5 has unmet peer dependency"
+- [`KT-31662`](https://youtrack.jetbrains.com/issue/KT-31662) Gradle/JS: with empty `useKarma {}` lambda the execution of `jsBrowserTest` never stops
+- [`KT-31686`](https://youtrack.jetbrains.com/issue/KT-31686) Gradle/JS: useKarma { useConfigDirectory() } fails to configure
+- [`KT-31694`](https://youtrack.jetbrains.com/issue/KT-31694) Gradle, NPM, windows: creating symlink requires administrator privilege
 
 ## JavaScript
 
@@ -303,6 +333,7 @@
 - [`KT-29265`](https://youtrack.jetbrains.com/issue/KT-29265) String.toCharArray() is not available in common stdlib
 - [`KT-31194`](https://youtrack.jetbrains.com/issue/KT-31194) assertFails and assertFailsWith don't work with suspend functions
 - [`KT-31639`](https://youtrack.jetbrains.com/issue/KT-31639) 'Iterbale.drop' drops too much because of overflow
+- [`KT-28933`](https://youtrack.jetbrains.com/issue/KT-28933) capitalize() with Locale argument in the JDK stdlib
 
 ### Reflection
 
@@ -354,6 +385,9 @@
 - [`KT-30340`](https://youtrack.jetbrains.com/issue/KT-30340) kotlin("multiplatform") plugin is not working properly with Spring Boot
 - [`KT-30784`](https://youtrack.jetbrains.com/issue/KT-30784) Deprecation warning "API 'variant.getPackageLibrary()' is obsolete and has been replaced with 'variant.getPackageLibraryProvider()'" for a multiplatform library with Android target
 - [`KT-31027`](https://youtrack.jetbrains.com/issue/KT-31027) java.lang.NoSuchMethodError: No static method hashCode(Z)I in class Ljava/lang/Boolean; or its super classes (declaration of 'java.lang.Boolean' appears in /system/framework/core-libart.jar)
+- [`KT-31696`](https://youtrack.jetbrains.com/issue/KT-31696) Gradle, NPM: select one version between tools and all of compile configurations
+- [`KT-31697`](https://youtrack.jetbrains.com/issue/KT-31697) Gradle, NPM: report about clashes in packages_imported
+- [`KT-31891`](https://youtrack.jetbrains.com/issue/KT-31891) Gradle: JS or Native tests execution: `build --scan` fails with ISE "Expected attachment of type ... but did not find it"
 
 ### Tools. Incremental Compile
 
@@ -364,6 +398,14 @@
 - [`KT-23023`](https://youtrack.jetbrains.com/issue/KT-23023) J2K: Inspection to convert Arrays.copyOf(a, size) to a.copyOf(size)
 - [`KT-26550`](https://youtrack.jetbrains.com/issue/KT-26550) J2K: Check context/applicability of conversion, don't suggest for libraries, jars, etc.
 - [`KT-29568`](https://youtrack.jetbrains.com/issue/KT-29568) Disabled "Convert Java File to Kotlin File" action is shown in project view context menu for XML files
+
+### Tools. JPS
+
+- [`KT-13563`](https://youtrack.jetbrains.com/issue/KT-13563) Kotlin jps-plugin should allow to instrument bytecode from Intellij IDEA.
+
+### Tools. REPL
+
+- [`KT-21443`](https://youtrack.jetbrains.com/issue/KT-21443) Kotlin's JSR223 script engine does not work when used by a fat jar 
 
 ### Tools. Scripts
 
@@ -376,6 +418,9 @@
 - [`KT-31064`](https://youtrack.jetbrains.com/issue/KT-31064) Periodically build crash when using incremental kapt
 - [`KT-23880`](https://youtrack.jetbrains.com/issue/KT-23880) Kapt: Support incremental annotation processors
 - [`KT-31322`](https://youtrack.jetbrains.com/issue/KT-31322) Kapt does not run annotation processing when sources change.
+- [`KT-30979`](https://youtrack.jetbrains.com/issue/KT-30979) Issue with Dagger2 providers MissingBinding with 1.3.30
+- [`KT-31127`](https://youtrack.jetbrains.com/issue/KT-31127) Kotlin-generating processor which uses Filer API breaks JavaCompile task
+- [`KT-31714`](https://youtrack.jetbrains.com/issue/KT-31714) incremental kapt: FileSystemException: Too many open files
 
 ## Previous releases
 This release also includes the fixes and improvements from the [previous releases](https://github.com/JetBrains/kotlin/releases/tag/v1.3.31).
