@@ -15,7 +15,9 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import kotlin.test.Ignore
 
+@Ignore(value = "[VD] disabled temporary for further investigation: too much noise, have no clue how to handle it")
 class WholeProjectJavaInspectionTest : WholeProjectInspectionTest() {
 
     override fun provideFiles(project: Project): Collection<VirtualFile> {

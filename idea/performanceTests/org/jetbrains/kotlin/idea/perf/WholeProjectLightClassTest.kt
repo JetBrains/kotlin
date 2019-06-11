@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import java.util.*
 import kotlin.system.measureNanoTime
+import kotlin.test.Ignore
 
+@Ignore(value = "[VD] disabled temporary for further investigation: too much noise, have no clue how to handle it")
 class WholeProjectLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotlinFileProvider {
 
     override fun doTest(file: VirtualFile): PerFileTestResult {

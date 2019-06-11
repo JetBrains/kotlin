@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.fir.IdeFirDependenciesSymbolProvider
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
+import kotlin.test.Ignore
 
+@Ignore(value = "[Simon Ogorodnik] turned off as it is suppose to be run manually")
 class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
     private val projectRootFile = File(".")
 

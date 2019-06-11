@@ -6,27 +6,79 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
+import com.intellij.codeInsight.daemon.ImplicitUsageProvider
+import com.intellij.codeInsight.daemon.ProblemHighlightFilter
+import com.intellij.codeInsight.intention.IntentionManager
 import com.intellij.ide.impl.ProjectUtil
+import com.intellij.idea.IdeaTestApplication
+import com.intellij.lang.ExternalAnnotatorsFilter
+import com.intellij.lang.LanguageAnnotators
+import com.intellij.lang.StdLanguages
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationEx
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import java.io.File
-import java.io.PrintWriter
-import java.io.StringWriter
+import com.intellij.psi.impl.search.IndexPatternBuilder
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
+import com.intellij.psi.xml.XmlFileNSInfoProvider
+import com.intellij.xml.XmlSchemaProvider
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import java.io.*
 
 abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProjectFileProvider {
 
     private val rootProjectFile: File = File("../perfTestProject").absoluteFile
-    private val statsFile: File = File("build/stats.csv").absoluteFile
+    private val perfStats: Stats = Stats()
     private val tmp = rootProjectFile
 
+    override fun isStressTest(): Boolean = false
+
+    override fun setUp() {
+
+        IdeaTestApplication.getInstance()
+        // to prevent leaked SDKs: 1.8 and Kotlin SDK
+        ApplicationManager.getApplication().runWriteAction {
+            val jdkTableImpl = JavaAwareProjectJdkTableImpl.getInstanceEx()
+            val homePath = if (jdkTableImpl.internalJdk.homeDirectory!!.name == "jre") {
+                jdkTableImpl.internalJdk.homeDirectory!!.parent.path
+            } else {
+                jdkTableImpl.internalJdk.homePath!!
+            }
+
+            val javaSdk = JavaSdk.getInstance()
+            val j8 = javaSdk.createJdk("1.8", homePath)
+
+            val jdkTable = ProjectJdkTable.getInstance()
+            jdkTable.addJdk(j8, testRootDisposable)
+            KotlinSdkType.setUpIfNeeded()
+        }
+
+        super.setUp()
+
+        // fix due to stress test disabled
+        IntentionManager.getInstance().availableIntentionActions  // hack to avoid slowdowns in PyExtensionFactory
+        // don't need test data
+        //PathManagerEx.getTestDataPath() // to cache stuff
+        ReferenceProvidersRegistry.getInstance() // pre-load tons of classes
+        InjectedLanguageManager.getInstance(project) // zillion of Dom Sem classes
+        LanguageAnnotators.INSTANCE.allForLanguage(JavaLanguage.INSTANCE) // pile of annotator classes loads
+        LanguageAnnotators.INSTANCE.allForLanguage(StdLanguages.XML)
+        ProblemHighlightFilter.EP_NAME.extensions
+        ImplicitUsageProvider.EP_NAME.extensionList
+        XmlSchemaProvider.EP_NAME.extensionList
+        XmlFileNSInfoProvider.EP_NAME.extensionList
+        ExternalAnnotatorsFilter.EXTENSION_POINT_NAME.extensionList
+        IndexPatternBuilder.EP_NAME.extensionList
+    }
+
     override fun setUpProject() {
-
         println("Using project in $tmp")
-
-        tmp.resolve(".idea").deleteRecursively()
 
         (ApplicationManager.getApplication() as ApplicationEx).doNotSave()
         myProject = ProjectUtil.openOrImport(tmp.path, null, false)
@@ -41,24 +93,15 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
         tcSuite(this::class.simpleName ?: "Unknown") {
             val totals = mutableMapOf<String, Long>()
 
-            val statsOutput = statsFile.bufferedWriter()
-
-            statsOutput.appendln("File, ProcessID, Time")
-
             fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
                 totals.merge(id, nanoTime) { a, b -> a + b }
 
-                statsOutput.appendln(buildString {
-                    append(file)
-                    append(", ")
-                    append(id)
-                    append(", ")
-                    append(nanoTime.nsToMs)
-                })
+                perfStats.append(file, id, nanoTime)
             }
 
             tcSuite("TotalPerFile") {
-                val files = provideFiles(project)
+                // TODO: [VD] temp to limit number of files (and total time to run)
+                val files = provideFiles(project).sortedBy { it.name }.take(10)
 
                 files.forEach {
                     val filePath = File(it.path).relativeTo(tmp).path.replace(File.separatorChar, '/')
@@ -72,10 +115,6 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
                 }
             }
 
-            statsOutput.flush()
-            statsOutput.close()
-
-
             tcSuite("Total") {
                 totals.forEach { (k, v) ->
                     tcTest(k) {
@@ -84,39 +123,6 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
                 }
             }
         }
-    }
-
-    inline fun tcSuite(name: String, block: () -> Unit) {
-        println("##teamcity[testSuiteStarted name='$name']")
-        block()
-        println("##teamcity[testSuiteFinished name='$name']")
-    }
-
-    inline fun tcTest(name: String, block: () -> Pair<Long, List<Throwable>>) {
-        println("##teamcity[testStarted name='$name' captureStandardOutput='true']")
-        val (time, errors) = block()
-        if (errors.isNotEmpty()) {
-            val detailsWriter = StringWriter()
-            val errorDetailsPrintWriter = PrintWriter(detailsWriter)
-            errors.forEach {
-                it.printStackTrace(errorDetailsPrintWriter)
-                errorDetailsPrintWriter.println()
-            }
-            errorDetailsPrintWriter.close()
-            val details = detailsWriter.toString()
-            println("##teamcity[testFailed name='$name' message='Exceptions reported' details='${details.tcEscape()}']")
-        }
-        println("##teamcity[testFinished name='$name' duration='$time']")
-    }
-
-    fun String.tcEscape(): String {
-        return this
-            .replace("|", "||")
-            .replace("[", "|[")
-            .replace("]", "|]")
-            .replace("\r", "|r")
-            .replace("\n", "|n")
-            .replace("'", "|'")
     }
 
     protected fun PsiElement.acceptRecursively(visitor: PsiElementVisitor) {
