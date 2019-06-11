@@ -69,9 +69,6 @@ fun getNativeProgramExtension(): String = when {
     else -> error("Unknown host")
 }
 
-fun getKotlinNativeExecutable(target: KotlinNativeTarget, buildType: String) =
-        target.binaries.getExecutable("benchmark", buildType).outputFile.getAbsolutePath()
-
 fun getFileSize(filePath: String): Long? {
     val file = File(filePath)
     return if (file.exists()) file.length() else null

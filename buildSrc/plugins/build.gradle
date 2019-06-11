@@ -30,6 +30,7 @@ buildscript {
 
 apply plugin: 'kotlin'
 apply plugin: 'kotlinx-serialization'
+apply plugin: 'java-gradle-plugin'
 
 /* don't use repositories: gradle will ignore it anyway, but may confuse gradle build engineer, see outer build.gradle */
 
@@ -57,4 +58,13 @@ rootProject.dependencies {
 compileGroovy {
     // Add Kotlin classes to a classpath for the Groovy compiler
     classpath += project.files(compileKotlin.destinationDir)
+}
+
+gradlePlugin {
+    plugins {
+        benchmarkPlugin {
+            id = 'benchmarking'
+            implementationClass = 'org.jetbrains.kotlin.benchmark.BenchmarkingPlugin'
+        }
+    }
 }

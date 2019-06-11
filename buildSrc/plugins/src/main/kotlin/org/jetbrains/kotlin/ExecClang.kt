@@ -26,7 +26,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.file.*
 
-internal class ExecClang(private val project: Project) {
+class ExecClang(private val project: Project) {
 
     private val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
 
