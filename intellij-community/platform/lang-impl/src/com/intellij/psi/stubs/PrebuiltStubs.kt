@@ -114,6 +114,4 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
 }
 
 @TestOnly
-fun PrebuiltStubsProviderBase.reset() {
-  this.init()
-}
+fun PrebuiltStubsProviderBase.reset(): Boolean = this.init()
