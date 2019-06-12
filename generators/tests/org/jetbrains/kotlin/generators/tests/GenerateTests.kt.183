@@ -1173,7 +1173,7 @@ fun main(args: Array<String>) {
             model("codegen")
         }
     }
-/*
+
     testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
         testClass<AbstractAndroidCompletionTest> {
             model("android/completion", recursive = false, extension = null)
