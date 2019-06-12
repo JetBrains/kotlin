@@ -21,6 +21,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeStructure;
 import com.intellij.ide.util.treeView.IndexComparator;
 import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -30,8 +31,8 @@ import gnu.trove.THashSet;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -299,7 +300,7 @@ public abstract class AbstractListBuilder {
 
     boolean canceled = future.cancel(false);
     if (!canceled) {
-      AppExecutorUtil.getAppExecutorService().execute(() -> myList.setCursor(Cursor.getDefaultCursor()));
+      ApplicationManager.getApplication().executeOnPooledThread(() -> myList.setCursor(Cursor.getDefaultCursor()));
     }
   }
 

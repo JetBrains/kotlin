@@ -6,6 +6,7 @@ import com.intellij.codeInsight.navigation.DocPreviewUtil;
 import com.intellij.concurrency.SensitiveProgressWrapper;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -25,7 +26,6 @@ import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SingleAlarm;
-import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -158,7 +158,7 @@ public class QuickDocUtil {
         component.replaceText(newText, element);
       }
     }, 100, alarmDisposable);
-    AppExecutorUtil.getAppExecutorService().submit(() -> {
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
         provider.consume(str -> {
           ProgressManager.checkCanceled();
