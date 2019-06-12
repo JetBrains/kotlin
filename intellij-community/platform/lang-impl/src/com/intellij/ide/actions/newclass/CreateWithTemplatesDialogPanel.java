@@ -59,13 +59,15 @@ public class CreateWithTemplatesDialogPanel extends JBPanel implements Disposabl
     selectTemplate(selectedItem);
     add(myNameField, BorderLayout.NORTH);
 
-    JBScrollPane scrollPane = new JBScrollPane(myTemplatesList);
-    scrollPane.setBorder(JBUI.Borders.empty());
-    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    Box listHolder = new Box(BoxLayout.Y_AXIS);
-    listHolder.setBorder(JBUI.Borders.emptyTop(JBUI.CurrentTheme.NewClassDialog.fieldsSeparatorWidth()));
-    listHolder.add(scrollPane);
-    add(listHolder, BorderLayout.CENTER);
+    if (templates.size() > 1) {
+      JBScrollPane scrollPane = new JBScrollPane(myTemplatesList);
+      scrollPane.setBorder(JBUI.Borders.empty());
+      scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      Box listHolder = new Box(BoxLayout.Y_AXIS);
+      listHolder.setBorder(JBUI.Borders.emptyTop(JBUI.CurrentTheme.NewClassDialog.fieldsSeparatorWidth()));
+      listHolder.add(scrollPane);
+      add(listHolder, BorderLayout.CENTER);
+    }
   }
 
   public JTextField getNameField() {
