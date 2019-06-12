@@ -2,6 +2,7 @@ package com.intellij.compiler;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.IoTestUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -184,6 +185,10 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
 
 
   public void testSymlinksInSources() throws IOException {
+    if (!IoTestUtil.isSymLinkCreationSupported) {
+      System.out.println("Test " + getTestName(false) + " skipped because symlink creation is not supported on this machine");
+      return;
+    }
     final VirtualFile file = createFile("src/A.java", "public class A {}");
     VirtualFile srcRoot = file.getParent();
     final File linkFile = new File(srcRoot.getParent().getPath(), "src-link");
