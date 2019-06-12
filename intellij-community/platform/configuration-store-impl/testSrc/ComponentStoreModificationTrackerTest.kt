@@ -169,9 +169,9 @@ internal class ComponentStoreModificationTrackerTest {
 
 private class MyComponentStore(testAppConfigPath: Path) : ChildlessComponentStore() {
   private class MyStorageManager(private val rootDir: Path) : StateStorageManagerImpl("application") {
-    override val isUseXmlProlog = false
+    override fun getFileBasedStorageConfiguration(fileSpec: String) = appFileBasedStorageConfiguration
 
-    override val isUseVfsForWrite = false
+    override val isUseXmlProlog = false
 
     override fun normalizeFileSpec(fileSpec: String) = removeMacroIfStartsWith(super.normalizeFileSpec(fileSpec), APP_CONFIG)
 

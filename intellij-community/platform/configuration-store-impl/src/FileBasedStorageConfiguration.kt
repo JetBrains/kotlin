@@ -9,17 +9,13 @@ interface FileBasedStorageConfiguration {
 
   val isUseVfsForWrite: Boolean
 
-  fun resolveVirtualFile(path: String): VirtualFile?
+  fun resolveVirtualFile(path: String): VirtualFile? = LocalFileSystem.getInstance().findFileByPath(path)
 }
 
-internal val defaultFileBasedStorageConfiguration: FileBasedStorageConfiguration = object: FileBasedStorageConfiguration {
+internal val defaultFileBasedStorageConfiguration: FileBasedStorageConfiguration = object : FileBasedStorageConfiguration {
   override val isUseVfsForRead: Boolean
     get() = false
 
   override val isUseVfsForWrite: Boolean
     get() = true
-
-  override fun resolveVirtualFile(path: String): VirtualFile? {
-    return LocalFileSystem.getInstance().findFileByPath(path)
-  }
 }

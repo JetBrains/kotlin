@@ -65,12 +65,11 @@ internal class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubs
   override val isExternalSystemStorageEnabled: Boolean
     get() = (componentManager as Module).project.isExternalStorageEnabled
 
-  override fun createFileBasedStorage(path: String, collapsedPath: String, roamingType: RoamingType, rootTagName: String?): StateStorage
-    = ModuleFileStorage(this, Paths.get(path), collapsedPath, rootTagName, roamingType, getMacroSubstitutor(collapsedPath), if (roamingType == RoamingType.DISABLED) null else compoundStreamProvider)
+  override fun createFileBasedStorage(path: String, collapsedPath: String, roamingType: RoamingType, rootTagName: String?): StateStorage {
+    return ModuleFileStorage(this, Paths.get(path), collapsedPath, rootTagName, roamingType, getMacroSubstitutor(collapsedPath), if (roamingType == RoamingType.DISABLED) null else compoundStreamProvider)
+  }
 
-  // use VFS to load module file because it is refreshed and loaded into VFS in any case
-  override val isUseVfsForRead: Boolean
-    get() = true
+  override fun getFileBasedStorageConfiguration(fileSpec: String) = moduleFileBasedStorageConfiguration
 
   private class ModuleFileStorage(storageManager: ModuleStateStorageManager,
                                   file: Path,
@@ -85,4 +84,13 @@ internal class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubs
       }
     }
   }
+}
+
+private val moduleFileBasedStorageConfiguration = object : FileBasedStorageConfiguration {
+  override val isUseVfsForWrite: Boolean
+    get() = true
+
+  // use VFS to load module file because it is refreshed and loaded into VFS in any case
+  override val isUseVfsForRead: Boolean
+    get() = true
 }

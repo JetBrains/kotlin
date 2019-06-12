@@ -21,6 +21,28 @@ open class ProjectStateStorageManager(macroSubstitutor: PathMacroSubstitutor,
     const val ROOT_TAG_NAME = "project"
   }
 
+  private val fileBasedStorageConfiguration = object : FileBasedStorageConfiguration {
+    override val isUseVfsForWrite: Boolean
+      get() = true
+
+    override val isUseVfsForRead: Boolean
+      get() = project is VirtualFileResolver
+
+    override fun resolveVirtualFile(path: String): VirtualFile? {
+      return when (project) {
+        is VirtualFileResolver -> project.resolveVirtualFile(path)
+        else -> super.resolveVirtualFile(path)
+      }
+    }
+  }
+
+  override fun getFileBasedStorageConfiguration(fileSpec: String): FileBasedStorageConfiguration {
+    return when {
+      isSpecialStorage(fileSpec) -> appFileBasedStorageConfiguration
+      else -> fileBasedStorageConfiguration
+    }
+  }
+
   override fun normalizeFileSpec(fileSpec: String) = removeMacroIfStartsWith(super.normalizeFileSpec(fileSpec), PROJECT_CONFIG_DIR)
 
   override fun expandMacros(path: String): String {
@@ -46,16 +68,6 @@ open class ProjectStateStorageManager(macroSubstitutor: PathMacroSubstitutor,
 
   override val isExternalSystemStorageEnabled: Boolean
     get() = project.isExternalStorageEnabled
-
-  override val isUseVfsForRead: Boolean
-    get() = project is VirtualFileResolver
-
-  override fun resolveVirtualFile(path: String): VirtualFile? {
-    return when (project) {
-      is VirtualFileResolver -> project.resolveVirtualFile(path)
-      else -> super.resolveVirtualFile(path)
-    }
-  }
 }
 
 // for upsource

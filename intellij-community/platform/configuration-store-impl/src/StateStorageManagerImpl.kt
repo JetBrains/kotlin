@@ -36,8 +36,7 @@ private val MACRO_PATTERN = Pattern.compile("(\\$[^$]*\\$)")
 open class StateStorageManagerImpl(private val rootTagName: String,
                                    final override val macroSubstitutor: PathMacroSubstitutor? = null,
                                    override val componentManager: ComponentManager? = null,
-                                   private val virtualFileTracker: StorageVirtualFileTracker? = createDefaultVirtualTracker(componentManager)) : StateStorageManager,
-                                                                                                                                                 FileBasedStorageConfiguration by defaultFileBasedStorageConfiguration {
+                                   private val virtualFileTracker: StorageVirtualFileTracker? = createDefaultVirtualTracker(componentManager)) : StateStorageManager {
   private val macros: MutableList<Macro> = ContainerUtil.createLockFreeCopyOnWriteList()
   private val storageLock = ReentrantReadWriteLock()
   private val storages = THashMap<String, StateStorage>()
@@ -62,12 +61,14 @@ open class StateStorageManagerImpl(private val rootTagName: String,
 
   // access under storageLock
   @Suppress("LeakingThis")
-  private var isUseVfsListener = if (componentManager == null || !isUseVfsForWrite) ThreeState.NO else ThreeState.UNSURE // unsure because depends on stream provider state
+  private var isUseVfsListener = when {
+    componentManager == null || componentManager is Application -> ThreeState.NO
+    else -> ThreeState.UNSURE // unsure because depends on stream provider state
+  }
+
+  open fun getFileBasedStorageConfiguration(fileSpec: String): FileBasedStorageConfiguration = defaultFileBasedStorageConfiguration
 
   protected open val isUseXmlProlog: Boolean
-    get() = true
-
-  override val isUseVfsForWrite: Boolean
     get() = true
 
   companion object {
@@ -307,11 +308,8 @@ open class StateStorageManagerImpl(private val rootTagName: String,
     override val isUseXmlProlog: Boolean
       get() = rootElementName != null && storageManager.isUseXmlProlog && !isSpecialStorage(fileSpec)
 
-    override val isUseVfsForWrite: Boolean
-      get() = super.isUseVfsForWrite && !isSpecialStorage(fileSpec)
-
     override val configuration: FileBasedStorageConfiguration
-      get() = storageManager
+      get() = storageManager.getFileBasedStorageConfiguration(fileSpec)
 
     override fun beforeElementSaved(elements: MutableList<Element>, rootAttributes: MutableMap<String, String>) {
       if (rootElementName != null) {

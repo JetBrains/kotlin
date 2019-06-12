@@ -52,8 +52,17 @@ class ApplicationStoreImpl(private val application: Application, pathMacroManage
   override fun toString() = "app"
 }
 
+internal val appFileBasedStorageConfiguration = object: FileBasedStorageConfiguration {
+  override val isUseVfsForRead: Boolean
+    get() = false
+
+  override val isUseVfsForWrite: Boolean
+    get() = false
+}
+
 class ApplicationStorageManager(application: Application?, pathMacroManager: PathMacroManager? = null)
   : StateStorageManagerImpl("application", pathMacroManager?.createTrackingSubstitutor(), application) {
+  override fun getFileBasedStorageConfiguration(fileSpec: String) = appFileBasedStorageConfiguration
 
   override fun getOldStorageSpec(component: Any, componentName: String, operation: StateStorageOperation): String? {
     return when (component) {
@@ -70,9 +79,6 @@ class ApplicationStorageManager(application: Application?, pathMacroManager: Pat
   }
 
   override val isUseXmlProlog: Boolean
-    get() = false
-
-  override val isUseVfsForWrite: Boolean
     get() = false
 
   override fun providerDataStateChanged(storage: FileBasedStorage, writer: DataWriter?, type: DataStateChanged) {
