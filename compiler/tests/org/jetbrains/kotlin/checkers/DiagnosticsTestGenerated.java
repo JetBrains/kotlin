@@ -9867,6 +9867,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/overApproximationForOutCaptured.kt");
                 }
 
+                @TestMetadata("propagateNullailityOnSupertypesWhenCaptureTypes.kt")
+                public void testPropagateNullailityOnSupertypesWhenCaptureTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/propagateNullailityOnSupertypesWhenCaptureTypes.kt");
+                }
+
                 @TestMetadata("starProjectionRegression.kt")
                 public void testStarProjectionRegression() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/starProjectionRegression.kt");
