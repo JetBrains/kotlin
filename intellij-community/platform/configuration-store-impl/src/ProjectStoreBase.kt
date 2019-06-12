@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
-import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.highlighter.ProjectFileType
 import com.intellij.ide.highlighter.WorkspaceFileType
 import com.intellij.openapi.application.ApplicationManager
@@ -169,8 +168,6 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       catch (e: Exception) {
         LOG.error(e)
       }
-
-      SaveAndSyncHandler.getInstance().scheduleSave(SaveAndSyncHandler.SaveTask(project, saveDocuments = false, forceSavingAllSettings = true))
     }
 
     storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, "$productSpecificWorkspaceParentDir/$projectId.xml")
