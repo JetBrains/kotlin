@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -44,7 +45,7 @@ private class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : Cl
         val invokeFunctions = irClass.filterDeclarations<IrSimpleFunction> { it.name.toString() == "invoke" }
         if (invokeFunctions.isEmpty() ||
             invokeFunctions.any { it.valueParameters.size > 0 && it.valueParameters.last().varargElementType != null } ||
-            invokeFunctions.all { it.valueParameters.size + (if (it.extensionReceiverParameter != null) 1 else 0) <= CallableReferenceLowering.MAX_ARGCOUNT_WITHOUT_VARARG }
+            invokeFunctions.all { it.valueParameters.size + (if (it.extensionReceiverParameter != null) 1 else 0) < FunctionInvokeDescriptor.Factory.BIG_ARITY }
         ) {
             // No need to add a new vararg invoke method
             return
