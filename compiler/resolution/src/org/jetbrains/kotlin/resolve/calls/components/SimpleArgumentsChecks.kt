@@ -25,14 +25,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosi
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ReceiverConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.NotNullTypeVariable
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
-import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.types.upperIfFlexible
 
 
 fun checkSimpleArgument(
@@ -147,7 +144,11 @@ private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedTy
                     it.unwrap().hasSupertypeWithGivenTypeConstructor(expectedTypeConstructor)
         }
         if (chosenSupertype != null) {
-            return captureFromExpression(chosenSupertype.unwrap()) ?: argumentType
+            val capturedType = captureFromExpression(chosenSupertype.unwrap())
+            return if (capturedType != null && argumentType.isDefinitelyNotNullType)
+                capturedType.makeDefinitelyNotNullOrNotNull()
+            else
+                capturedType ?: argumentType
         }
     }
 
