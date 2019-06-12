@@ -33,7 +33,7 @@ internal class TCServiceMessageOutputStreamHandler(
     @Throws(IOException::class)
     override fun close() {
         closed = true
-        flush()
+        flushLine()
     }
 
     override fun write(b: ByteArray, off: Int, len: Int) {
@@ -75,10 +75,6 @@ internal class TCServiceMessageOutputStreamHandler(
             parse(text)
             buffer.reset()
         }
-    }
-
-    override fun flush() {
-        flushLine()
     }
 
     private fun overflow() {
