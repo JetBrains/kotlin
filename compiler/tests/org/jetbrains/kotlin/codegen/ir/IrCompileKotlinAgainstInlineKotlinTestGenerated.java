@@ -2433,16 +2433,6 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
                     KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
                 }
 
-                @TestMetadata("31929.kt")
-                public void test31929() throws Exception {
-                    runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/31929.kt");
-                }
-
-                @TestMetadata("31929_2.kt")
-                public void test31929_2() throws Exception {
-                    runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/31929_2.kt");
-                }
-
                 public void testAllFilesPresentInExceptionTable() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
                 }
@@ -2482,6 +2472,16 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
                     runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternalSimple.kt");
                 }
 
+                @TestMetadata("kt31653.kt")
+                public void testKt31653() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31653.kt");
+                }
+
+                @TestMetadata("kt31653_2.kt")
+                public void testKt31653_2() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31653_2.kt");
+                }
+
                 @TestMetadata("kt31923.kt")
                 public void testKt31923() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31923.kt");
@@ -2490,6 +2490,11 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
                 @TestMetadata("kt31923_2.kt")
                 public void testKt31923_2() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31923_2.kt");
+                }
+
+                @TestMetadata("kt31923_wrong.kt")
+                public void testKt31923_wrong() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/kt31923_wrong.kt");
                 }
 
                 @TestMetadata("nested.kt")
