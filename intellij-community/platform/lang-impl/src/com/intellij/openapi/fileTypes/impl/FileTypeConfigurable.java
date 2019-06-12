@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.fileTypes.impl;
 
 import com.intellij.CommonBundle;
@@ -42,7 +41,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   private RecognizedFileTypes myRecognizedFileType;
   private PatternsPanel myPatterns;
   private FileTypePanel myFileTypePanel;
-  private HashSet<FileType> myTempFileTypes;
+  private Set<FileType> myTempFileTypes;
   private final FileTypeManagerImpl myManager;
   private FileTypeAssocTable<FileType> myTempPatternsTable;
   private FileTypeAssocTable<Language> myTempTemplateDataLanguages;
@@ -76,7 +75,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   }
 
   @NotNull
-  private static HashSet<FileType> getRegisteredFilesTypes() {
+  private static Set<FileType> getRegisteredFilesTypes() {
     return new HashSet<>(Arrays.asList(FileTypeManager.getInstance().getRegisteredFileTypes()));
   }
 
@@ -163,9 +162,10 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   private void editFileType() {
     FileType fileType = myRecognizedFileType.getSelectedFileType();
     if (!canBeModified(fileType)) return;
-    UserFileType ftToEdit = myOriginalToEditedMap.get(fileType);
+
+    UserFileType ftToEdit = myOriginalToEditedMap.get((UserFileType)fileType);
     if (ftToEdit == null) ftToEdit = ((UserFileType)fileType).clone();
-    TypeEditor editor = new TypeEditor(myRecognizedFileType.myFileTypesList, ftToEdit, FileTypesBundle.message("filetype.edit.existing.title"));
+    @SuppressWarnings("unchecked") TypeEditor editor = new TypeEditor(myRecognizedFileType.myFileTypesList, ftToEdit, FileTypesBundle.message("filetype.edit.existing.title"));
     if (editor.showAndGet()) {
       myOriginalToEditedMap.put((UserFileType)fileType, ftToEdit);
     }
@@ -174,9 +174,11 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   private void removeFileType() {
     FileType fileType = myRecognizedFileType.getSelectedFileType();
     if (fileType == null) return;
-    myTempFileTypes.remove(fileType);
-    myOriginalToEditedMap.remove(fileType);
 
+    myTempFileTypes.remove(fileType);
+    if (fileType instanceof UserFileType) {
+      myOriginalToEditedMap.remove((UserFileType)fileType);
+    }
     myTempPatternsTable.removeAllAssociations(fileType);
 
     updateFileTypeList();
@@ -190,8 +192,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   private void addFileType() {
     //TODO: support adding binary file types...
     AbstractFileType type = new AbstractFileType(new SyntaxTable());
-    TypeEditor<AbstractFileType> editor =
-      new TypeEditor<>(myRecognizedFileType.myFileTypesList, type, FileTypesBundle.message("filetype.edit.new.title"));
+    TypeEditor<AbstractFileType> editor = new TypeEditor<>(myRecognizedFileType.myFileTypesList, type, FileTypesBundle.message("filetype.edit.new.title"));
     if (editor.showAndGet()) {
       myTempFileTypes.add(type);
       updateFileTypeList();
@@ -302,6 +303,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myPatterns.myPatternsList, true));
   }
 
+  @NotNull
   @Override
   public String getHelpTopic() {
     return "preferences.fileTypes";
@@ -318,7 +320,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       myFileTypesList = new JBList<>(new DefaultListModel<>());
       myFileTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       myFileTypesList.setCellRenderer(new FileTypeRenderer(() -> {
-        ArrayList<FileType> result = new ArrayList<>();
+        List<FileType> result = new ArrayList<>();
         for (int i = 0; i < myFileTypesList.getModel().getSize(); i++) {
           result.add(myFileTypesList.getModel().getElementAt(i));
         }
@@ -351,14 +353,14 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     }
 
     private static class MySpeedSearch extends SpeedSearchBase<JList> {
-      private final List<Condition<Pair<Object, String>>> myOrderedConvertors;
+      private final List<Condition<Pair<Object, String>>> myOrderedConverters;
       private FileTypeConfigurable myController;
       private Object myCurrentType;
       private String myExtension;
 
       private MySpeedSearch(JList component) {
         super(component);
-        myOrderedConvertors = Arrays.asList(
+        myOrderedConverters = Arrays.asList(
           // simple
           p -> {
             String value = p.first.toString();
@@ -374,7 +376,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
 
       @Override
       protected boolean isMatchingElement(Object element, String pattern) {
-        for (Condition<Pair<Object, String>> convertor : myOrderedConvertors) {
+        for (Condition<Pair<Object, String>> convertor : myOrderedConverters) {
           boolean matched = convertor.value(pair(element, pattern));
           if (matched) return true;
         }
@@ -579,13 +581,14 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     }
 
     @Override
+    @SuppressWarnings("SpellCheckingInspection")
     protected String getHelpId() {
       return "reference.dialogs.newfiletype";
     }
   }
 
-  @Override
   @NotNull
+  @Override
   public String getId() {
     return getHelpTopic();
   }
