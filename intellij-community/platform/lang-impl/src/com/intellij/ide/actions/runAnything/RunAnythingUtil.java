@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything;
 
-import com.intellij.execution.Executor;
-import com.intellij.execution.ExecutorRegistry;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -16,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollingUtil;
@@ -33,9 +30,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-
-import static com.intellij.ide.actions.runAnything.RunAnythingAction.EXECUTOR_KEY;
 
 public class RunAnythingUtil {
   public static final Logger LOG = Logger.getInstance(RunAnythingUtil.class);
@@ -44,7 +38,6 @@ public class RunAnythingUtil {
   public static final String AD_CONTEXT_TEXT =
     IdeBundle.message("run.anything.ad.run.in.context", KeymapUtil.getShortcutText(KeyboardShortcut.fromString("pressed ALT")));
   private static final Key<Collection<Pair<String, String>>> RUN_ANYTHING_WRAPPED_COMMANDS = Key.create("RUN_ANYTHING_WRAPPED_COMMANDS");
-  private static final String SHIFT_HOLD_USAGE = RunAnythingAction.RUN_ANYTHING + " - " + "SHIFT_HOLD";
 
   static Font getTitleFont() {
     return UIUtil.getLabelFont().deriveFont(UIUtil.getFontSize(UIUtil.FontSize.SMALL));
@@ -80,15 +73,6 @@ public class RunAnythingUtil {
       }
       ScrollingUtil.ensureIndexIsVisible(list, more, forward ? 1 : -1);
       ScrollingUtil.ensureIndexIsVisible(list, newIndex, forward ? 1 : -1);
-    }
-  }
-
-  static void triggerShiftStatistics(@NotNull DataContext dataContext) {
-    Project project = Objects.requireNonNull(CommonDataKeys.PROJECT.getData(dataContext));
-    Executor executor = Objects.requireNonNull(EXECUTOR_KEY.getData(dataContext));
-
-    if (ExecutorRegistry.getInstance().getExecutorById(ToolWindowId.DEBUG) == executor) {
-      RunAnythingUsageCollector.Companion.trigger(project, SHIFT_HOLD_USAGE);
     }
   }
 
