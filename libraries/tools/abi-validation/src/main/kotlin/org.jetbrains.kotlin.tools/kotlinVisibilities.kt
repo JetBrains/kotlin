@@ -26,7 +26,7 @@ fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVisibility?
     members[signature] ?: partVisibilities.mapNotNull { it.members[signature] }.firstOrNull()
 
 
-data class MemberVisibility(val member: JvmMemberSignature, val visibility: Flags?)
+data class MemberVisibility(val member: JvmMemberSignature, val visibility: Flags?, val isReified: Boolean)
 
 private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
     visibility == null
@@ -35,8 +35,9 @@ private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
             || (isPublishedApi && Flag.IS_INTERNAL(visibility))
 
 fun ClassVisibility.isPublic(isPublishedApi: Boolean) = isPublic(visibility, isPublishedApi)
-fun MemberVisibility.isPublic(isPublishedApi: Boolean) = isPublic(visibility, isPublishedApi)
-
+fun MemberVisibility.isPublic(isPublishedApi: Boolean) =
+    // Assuming isReified implies inline
+    !isReified && isPublic(visibility, isPublishedApi)
 
 
 

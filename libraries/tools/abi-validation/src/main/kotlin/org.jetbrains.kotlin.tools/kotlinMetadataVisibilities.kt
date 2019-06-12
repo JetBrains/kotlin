@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.tools
 
-import kotlinx.metadata.Flag
-import kotlinx.metadata.Flags
-import kotlinx.metadata.KmDeclarationContainer
-import kotlinx.metadata.flagsOf
+import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
 import org.objectweb.asm.tree.ClassNode
 
@@ -42,9 +39,9 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
 
-    fun addMember(signature: JvmMemberSignature?, flags: Flags) {
+    fun addMember(signature: JvmMemberSignature?, flags: Flags, isReified: Boolean) {
         if (signature != null) {
-            members.add(MemberVisibility(signature, flags))
+            members.add(MemberVisibility(signature, flags, isReified))
         }
     }
 
@@ -54,7 +51,7 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
                 flags = klass.flags
 
                 for (constructor in klass.constructors) {
-                    addMember(constructor.signature, constructor.flags)
+                    addMember(constructor.signature, constructor.flags, isReified = false)
                 }
             }
         is KotlinClassMetadata.FileFacade ->
@@ -65,20 +62,23 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
     }
 
     if (container != null) {
+        fun List<KmTypeParameter>.containsReified() = any { Flag.TypeParameter.IS_REIFIED(it.flags) }
+
         for (function in container.functions) {
-            addMember(function.signature, function.flags)
+            addMember(function.signature, function.flags, function.typeParameters.containsReified())
         }
 
         for (property in container.properties) {
-            addMember(property.getterSignature, property.getterFlags)
-            addMember(property.setterSignature, property.setterFlags)
+            val isReified = property.typeParameters.containsReified()
+            addMember(property.getterSignature, property.getterFlags, isReified)
+            addMember(property.setterSignature, property.setterFlags, isReified)
 
             val fieldVisibility = when {
                 Flag.Property.IS_LATEINIT(property.flags) -> property.setterFlags
                 property.getterSignature == null && property.setterSignature == null -> property.flags // JvmField or const case
                 else -> flagsOf(Flag.IS_PRIVATE)
             }
-            addMember(property.fieldSignature, fieldVisibility)
+            addMember(property.fieldSignature, fieldVisibility, isReified = false)
         }
     }
 
