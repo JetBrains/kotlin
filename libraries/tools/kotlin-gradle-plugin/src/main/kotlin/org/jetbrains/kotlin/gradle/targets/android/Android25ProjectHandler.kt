@@ -191,6 +191,7 @@ class Android25ProjectHandler(
             javaTask: AbstractCompile
         ) {
             val kaptSourceOutput = project.fileTree(kaptTask.destinationDir).builtBy(kaptTask)
+            kaptSourceOutput.include("**/*.java")
             variantData.registerExternalAptJavaOutput(kaptSourceOutput)
             variantData.dataBindingDependencyArtifactsIfSupported?.let { kaptTask.dependsOn(it) }
         }

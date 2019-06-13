@@ -1,11 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.AGPVersion
-import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
     override fun kaptOptions(): KaptOptions =
@@ -34,6 +33,44 @@ open class Kapt3Android33IT : Kapt3AndroidIT() {
             assertSuccessful()
             assertFileExists("build/generated/source/navigation-args/debug/test/androidx/navigation/StartFragmentDirections.java")
             assertFileExists("build/tmp/kotlin-classes/debug/test/androidx/navigation/StartFragmentKt.class")
+        }
+    }
+
+    /** Regression test for Android projects and KT-31127. */
+    @Test
+    fun testKotlinProcessorUsingFiler() {
+        val project = Project("AndroidLibraryKotlinProject").apply {
+            setupWorkingDir()
+            gradleBuildScript().appendText(
+                """
+                apply plugin: 'kotlin-kapt'
+                android {
+                    defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = false
+
+                    libraryVariants.all {
+                        it.generateBuildConfig.enabled = false
+                    }
+                }
+
+                dependencies {
+                    kapt "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                    implementation "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                }
+            """.trimIndent()
+            )
+
+            // The test must not contain any java sources in order to detect the issue.
+            Assert.assertEquals(emptyList<File>(), projectDir.allJavaFiles().toList())
+            projectDir.getFileByName("Dummy.kt").modify {
+                it.replace("class Dummy", "@example.KotlinFilerGenerated class Dummy")
+            }
+        }
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/kapt/debug/demo/DummyGenerated.kt")
+            assertTasksExecuted(":compileDebugKotlin")
+            assertTasksSkipped(":compileDebugJavaWithJavac")
         }
     }
 }
