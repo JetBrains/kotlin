@@ -78,6 +78,7 @@ object LibraryUtils {
         return manifestFound && irFound
     }
 
+    @JvmStatic
     fun isKotlinJavascriptIrLibrary(candidate: File): Boolean {
         return when {
             FileUtil.isJarOrZip(candidate) -> isZippedKlib(candidate)
