@@ -52,7 +52,7 @@ import static com.intellij.codeInsight.documentation.DocumentationComponent.COLO
 public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupCellRenderer");
 
-  private Icon myEmptyIcon = JBUI.scale(EmptyIcon.create(5));
+  private Icon myEmptyIcon = EmptyIcon.ICON_0;
   private final Font myNormalFont;
   private final Font myBoldFont;
   private final FontMetrics myNormalMetrics;
@@ -87,7 +87,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     myLookup = lookup;
     myNameComponent = new MySimpleColoredComponent();
     myNameComponent.setIconTextGap(JBUIScale.scale(4));
-    myNameComponent.setIpad(JBUI.insetsLeft(6));
+    myNameComponent.setIpad(JBUI.insetsLeft(1));
     myNameComponent.setMyBorder(null);
 
     myTailComponent = new MySimpleColoredComponent();
@@ -471,7 +471,10 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   int updateMaximumWidth(final LookupElementPresentation p, LookupElement item) {
     final Icon icon = p.getIcon();
     if (icon != null && (icon.getIconWidth() > myEmptyIcon.getIconWidth() || icon.getIconHeight() > myEmptyIcon.getIconHeight())) {
-      myEmptyIcon = EmptyIcon.create(Math.max(icon.getIconWidth(), myEmptyIcon.getIconWidth()), Math.max(icon.getIconHeight(), myEmptyIcon.getIconHeight()));
+      myEmptyIcon = EmptyIcon.create(Math.max(icon.getIconWidth(), myEmptyIcon.getIconWidth()),
+                                     Math.max(icon.getIconHeight(), myEmptyIcon.getIconHeight()));
+
+      myNameComponent.setIpad(JBUI.insetsLeft(6));
     }
 
     return RealLookupElementPresentation.calculateWidth(p, getRealFontMetrics(item, false), getRealFontMetrics(item, true)) +
