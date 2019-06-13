@@ -5,10 +5,11 @@ import com.intellij.codeInsight.hints.*
 import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
 import javax.swing.JComponent
 
-class SingleLanguageInlayHintsConfigurable(project: Project, val language: Language) : Configurable {
+class SingleLanguageInlayHintsConfigurable(project: Project, val language: Language) : Configurable, SearchableConfigurable {
   private val panel: SingleLanguageInlayHintsSettingsPanel by lazy {
     val settings = ServiceManager.getService(InlayHintsSettings::class.java)
     // All configurables operate with copy of settings, that is why we can do live preview
@@ -20,6 +21,10 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     val keyToProvider = providers.associateBy { it.provider.key }
     val settingsWrappers = providers.map { it.toSettingsWrapper(settings, language) }
     SingleLanguageInlayHintsSettingsPanel(project, language, keyToProvider, settingsWrappers, providers.first(), options)
+  }
+
+  override fun getId(): String {
+    return "inlay.hints." + language.id
   }
 
 
