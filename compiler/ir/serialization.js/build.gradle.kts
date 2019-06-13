@@ -14,6 +14,8 @@ dependencies {
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:util"))
+
+    testRuntime(intellijDep()) { includeJars("picocontainer", "trove4j", "guava", "jdom", rootProject = rootProject) }
 }
 
 sourceSets {
