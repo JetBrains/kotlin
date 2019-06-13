@@ -1,11 +1,13 @@
 @file:Suppress("PropertyName", "HasPlatformType", "UnstableApiUsage")
 
-import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter
 import org.gradle.internal.os.OperatingSystem
+import java.io.Closeable
 import java.io.FileWriter
+import java.io.OutputStreamWriter
 import java.net.URI
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.xml.stream.XMLOutputFactory
-import javax.xml.stream.XMLStreamWriter
 
 plugins {
     base
@@ -312,66 +314,62 @@ fun writeIvyXml(
 
     val ivyFile = targetDir.resolve("$fileName.ivy.xml")
     ivyFile.parentFile.mkdirs()
-    FileWriter(ivyFile).use {
-        val xmlWriter = IndentingXMLStreamWriter(XMLOutputFactory.newInstance().createXMLStreamWriter(it))
-        with(xmlWriter) {
-            document("UTF-8", "1.0") {
-                element("ivy-module") {
-                    attribute("version", "2.0")
-                    attribute("xmlns:m", "http://ant.apache.org/ivy/maven")
+    with(XMLWriter(FileWriter(ivyFile))) {
+        document("UTF-8", "1.0") {
+            element("ivy-module") {
+                attribute("version", "2.0")
+                attribute("xmlns:m", "http://ant.apache.org/ivy/maven")
 
-                    emptyElement("info") {
-                        attributes(
-                            "organisation" to organization,
-                            "module" to moduleName,
-                            "revision" to version,
-                            "publication" to ""
-                        )
+                emptyElement("info") {
+                    attributes(
+                        "organisation" to organization,
+                        "module" to moduleName,
+                        "revision" to version,
+                        "publication" to SimpleDateFormat("yyyyMMddHHmmss").format(Date())
+                    )
+                }
+
+                element("configurations") {
+                    listOf("default", "sources").forEach { configurationName ->
+                        emptyElement("conf") {
+                            attributes("name" to configurationName, "visibility" to "public")
+                        }
                     }
+                }
 
-                    element("configurations") {
-                        listOf("default", "sources").forEach { configurationName ->
-                            emptyElement("conf") {
-                                attributes("name" to configurationName, "visibility" to "public")
-                            }
+                element("publications") {
+                    artifactDir.listFiles()?.filter(::shouldIncludeIntellijJar)?.forEach { jarFile ->
+                        val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
+                        emptyElement("artifact") {
+                            attributes(
+                                "name" to relativeName,
+                                "type" to "jar",
+                                "ext" to "jar",
+                                "conf" to "default"
+                            )
                         }
                     }
 
-                    element("publications") {
-                        artifactDir.listFiles()?.filter(::shouldIncludeIntellijJar)?.forEach { jarFile ->
-                            val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
-                            emptyElement("artifact") {
-                                attributes(
-                                    "name" to relativeName,
-                                    "type" to "jar",
-                                    "ext" to "jar",
-                                    "conf" to "default"
-                                )
-                            }
-                        }
+                    sourcesJar.forEach { jarFile ->
+                        emptyElement("artifact") {
+                            val sourcesArtifactName = jarFile.name
+                                .substringBeforeLast("-")
+                                .substringBeforeLast("-")
 
-                        sourcesJar.forEach { jarFile ->
-                            emptyElement("artifact") {
-                                val sourcesArtifactName = jarFile.name
-                                    .substringBeforeLast("-")
-                                    .substringBeforeLast("-")
-
-                                attributes(
-                                    "name" to sourcesArtifactName,
-                                    "type" to "jar",
-                                    "ext" to "jar",
-                                    "conf" to "sources",
-                                    "m:classifier" to "sources"
-                                )
-                            }
+                            attributes(
+                                "name" to sourcesArtifactName,
+                                "type" to "jar",
+                                "ext" to "jar",
+                                "conf" to "sources",
+                                "m:classifier" to "sources"
+                            )
                         }
                     }
                 }
             }
-
-            flush()
-            close()
         }
+
+        close()
     }
 }
 
@@ -379,25 +377,55 @@ fun skipToplevelDirectory(path: String) = path.substringAfter('/')
 
 fun skipContentsDirectory(path: String) = path.substringAfter("Contents/")
 
-fun XMLStreamWriter.document(encoding: String, version: String, init: XMLStreamWriter.() -> Unit) = apply {
-    writeStartDocument(encoding, version)
-    init()
-    writeEndDocument()
-}
+class XMLWriter(private val outputStreamWriter: OutputStreamWriter) : Closeable {
 
-fun XMLStreamWriter.element(name: String, init: XMLStreamWriter.() -> Unit) = apply {
-    writeStartElement(name)
-    init()
-    writeEndElement()
-}
+    private val xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStreamWriter)
 
-fun XMLStreamWriter.emptyElement(name: String, init: XMLStreamWriter.() -> Unit) = apply {
-    writeEmptyElement(name)
-    init()
-}
+    private var depth = 0
+    private val indent = "  "
 
-fun XMLStreamWriter.attribute(name: String, value: String): Unit = writeAttribute(name, value)
+    fun document(encoding: String, version: String, init: XMLWriter.() -> Unit) = apply {
+        xmlStreamWriter.writeStartDocument(encoding, version)
 
-fun XMLStreamWriter.attributes(vararg attributes: Pair<String, String>) {
-    attributes.forEach { attribute(it.first, it.second) }
+        init()
+
+        xmlStreamWriter.writeEndDocument()
+    }
+
+    fun element(name: String, init: XMLWriter.() -> Unit) = apply {
+        writeIndent()
+        xmlStreamWriter.writeStartElement(name)
+        depth += 1
+
+        init()
+
+        depth -= 1
+        writeIndent()
+        xmlStreamWriter.writeEndElement()
+    }
+
+    fun emptyElement(name: String, init: XMLWriter.() -> Unit) = apply {
+        writeIndent()
+        xmlStreamWriter.writeEmptyElement(name)
+        init()
+    }
+
+    fun attribute(name: String, value: String): Unit = xmlStreamWriter.writeAttribute(name, value)
+
+    fun attributes(vararg attributes: Pair<String, String>) {
+        attributes.forEach { attribute(it.first, it.second) }
+    }
+
+    private fun writeIndent() {
+        xmlStreamWriter.writeCharacters("\n")
+        repeat(depth) {
+            xmlStreamWriter.writeCharacters(indent)
+        }
+    }
+
+    override fun close() {
+        xmlStreamWriter.flush()
+        xmlStreamWriter.close()
+        outputStreamWriter.close()
+    }
 }
