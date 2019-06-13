@@ -11,13 +11,18 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil.getExternalPr
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.util.PathUtilRt
+import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.idea.caches.project.isMPPModule
 import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.configuration.KotlinOutputPathsData
 import org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler
+import org.jetbrains.plugins.gradle.model.ExternalProject
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
+import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 open class KotlinGradleOrderEnumerationHandler(module: Module) : GradleOrderEnumeratorHandler(module) {
