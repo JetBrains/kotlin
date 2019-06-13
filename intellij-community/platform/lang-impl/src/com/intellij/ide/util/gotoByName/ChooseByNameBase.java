@@ -859,6 +859,9 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
     else if (window instanceof JDialog) {
       layeredPane = ((JDialog)window).getLayeredPane();
     }
+    else if (window instanceof JWindow) {
+      layeredPane = ((JWindow)window).getLayeredPane();
+    }
     else {
       throw new IllegalStateException("cannot find parent window: project=" + myProject +
                                       (myProject != null ? "; open=" + myProject.isOpen() : "") +
