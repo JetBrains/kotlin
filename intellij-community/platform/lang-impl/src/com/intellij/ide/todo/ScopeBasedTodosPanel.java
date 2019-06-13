@@ -65,8 +65,9 @@ public class ScopeBasedTodosPanel extends TodoPanel {
     scopesLabel.setLabelFor(myScopes);
     final GridBagConstraints gc =
       new GridBagConstraints(GridBagConstraints.RELATIVE, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                             JBUI.insets(2), 0, 0);
+                             JBUI.insets(2, 8, 2, 4), 0, 0);
     chooserPanel.add(scopesLabel, gc);
+    gc.insets = JBUI.insets(2);
     chooserPanel.add(myScopes, gc);
 
     gc.fill = GridBagConstraints.HORIZONTAL;
