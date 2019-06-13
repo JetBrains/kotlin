@@ -20,5 +20,17 @@ project.buildscript.repositories {
 }
 
 project.buildscript.dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$buildKotlinVersion"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+}
+configurations {
+    kotlinCompilerClasspath
+}
+project.repositories {
+    maven {
+        url kotlinCompilerRepo
+    }
+}
+
+project.dependencies {
+    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$buildKotlinVersion")
 }
