@@ -151,6 +151,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "See https://youtrack.jetbrains.com/issue/KT-18053 for more details";
         MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
         MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
+        MAP.put(TAILREC_WITH_DEFAULTS, "Computation order of non-constant default arguments in tail-recursive functions will change in 1.4. See KT-31540 for more details");
     }
 
     @NotNull

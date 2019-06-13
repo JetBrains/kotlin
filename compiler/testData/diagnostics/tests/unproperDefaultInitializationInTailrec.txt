@@ -1,0 +1,30 @@
+package
+
+public const val Z: kotlin.String = "123"
+public tailrec fun foo(/*0*/ i: kotlin.Int = ..., /*1*/ c: kotlin.Char = ..., /*2*/ s: kotlin.String = ..., /*3*/ b: kotlin.Boolean = ..., /*4*/ d: kotlin.Double = ..., /*5*/ l: kotlin.Long = ..., /*6*/ y: kotlin.String = ...): kotlin.Unit
+public tailrec fun foo2(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ..., /*2*/ z: kotlin.String = ...): kotlin.Unit
+public tailrec fun foo3(/*0*/ y: kotlin.String = ...): kotlin.Unit
+public tailrec fun foo4(/*0*/ x: kotlin.String = ..., /*1*/ y: kotlin.String = ...): kotlin.Unit
+public tailrec fun foo5(/*0*/ x: kotlin.String = ..., /*1*/ y: kotlin.String = ..., /*2*/ z: kotlin.String = ...): kotlin.Unit
+public tailrec fun foo6(/*0*/ x: kotlin.String = ..., /*1*/ y: EnumA = ...): kotlin.Unit
+public tailrec fun foo7(/*0*/ x: kotlin.String = ..., /*1*/ y: kotlin.reflect.KClass<out EnumA> = ...): kotlin.Unit
+public fun withEffects(): kotlin.String
+
+public final enum class EnumA : kotlin.Enum<EnumA> {
+    enum entry A
+
+    private constructor EnumA()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumA): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<EnumA!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumA
+    public final /*synthesized*/ fun values(): kotlin.Array<EnumA>
+}
