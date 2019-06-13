@@ -1,12 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
-import com.intellij.ReviseWhenPortedToJDK;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.LogUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.psi.tree.IElementType;
@@ -16,7 +14,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.RecentStringInterner;
 import com.intellij.util.io.AbstractStringEnumerator;
 import com.intellij.util.io.DataInputOutputUtil;
-import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentStringEnumerator;
 import gnu.trove.*;
 import org.jetbrains.annotations.NotNull;
@@ -161,7 +158,7 @@ class StubSerializationHelper {
     FileLocalStringEnumerator storage = new FileLocalStringEnumerator(false);
     StubInputStream inputStream = new StubInputStream(stream, storage);
     IntEnumerator serializerLocalEnumerator = IntEnumerator.read(inputStream);
-    readEnumeratedStrings(storage, inputStream);
+    FileLocalStringEnumerator.readEnumeratedStrings(storage, inputStream, this::intern);
 
     final int stubFilesCount = DataInputOutputUtil.readINT(inputStream);
     if (stubFilesCount <= 0) {
@@ -396,19 +393,6 @@ class StubSerializationHelper {
         ((ObjectStubBase) child).markDangling();
       }
       deserializeChildren(stream, child, serializerLocalEnumerator);
-    }
-  }
-
-  private void readEnumeratedStrings(FileLocalStringEnumerator enumerator, @NotNull DataInputStream stream) throws IOException {
-    final int numberOfStrings = DataInputOutputUtil.readINT(stream);
-    byte[] buffer = IOUtil.allocReadWriteUTFBuffer();
-    enumerator.myStrings.ensureCapacity(numberOfStrings);
-
-    int i = 0;
-    while(i < numberOfStrings) {
-      String s = intern(IOUtil.readUTFFast(buffer, stream));
-      enumerator.myStrings.add(s);
-      ++i;
     }
   }
 }

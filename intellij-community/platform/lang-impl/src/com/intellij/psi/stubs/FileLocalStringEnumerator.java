@@ -8,10 +8,9 @@ import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.function.UnaryOperator;
 
 class FileLocalStringEnumerator implements AbstractStringEnumerator {
   private final TObjectIntHashMap<String> myEnumerates;
@@ -63,5 +62,18 @@ class FileLocalStringEnumerator implements AbstractStringEnumerator {
 
   @Override
   public void force() {
+  }
+
+  static void readEnumeratedStrings(@NotNull FileLocalStringEnumerator enumerator, @NotNull DataInput stream, @NotNull UnaryOperator<String> interner) throws IOException {
+    final int numberOfStrings = DataInputOutputUtil.readINT(stream);
+    byte[] buffer = IOUtil.allocReadWriteUTFBuffer();
+    enumerator.myStrings.ensureCapacity(numberOfStrings);
+
+    int i = 0;
+    while(i < numberOfStrings) {
+      String s = interner.apply(IOUtil.readUTFFast(buffer, stream));
+      enumerator.myStrings.add(s);
+      ++i;
+    }
   }
 }
