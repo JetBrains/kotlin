@@ -76,12 +76,14 @@ public class RunIdeConsoleAction extends DumbAwareAction {
 
     DefaultActionGroup actions = new DefaultActionGroup(
       ContainerUtil.map(languages, (NotNullFunction<IdeScriptEngineManager.EngineInfo, AnAction>)info -> {
-        String name = info.languageName.equals(info.engineName) ? info.languageName :
-                      info.languageName + " (" + info.engineName + ")";
+        String lang = info.languageName;
+        String eng = info.engineName;
+        if (StringUtil.toLowerCase(lang).equals(lang)) lang = StringUtil.capitalize(lang);
+        if (StringUtil.toLowerCase(eng).equals(eng)) eng = StringUtil.capitalize(eng);
+        String name = lang + " (" + eng + ")";
         IdeaPluginDescriptor plugin = info.pluginId == null ? null : PluginManager.getPlugin(info.pluginId);
-        String description = info.engineName.equals(info.languageName) ? info.engineName :
-                             info.languageName + " (" + info.engineName +
-                             (plugin == null ? ", bundled" : " by " + plugin.getName()) + ")";
+        String description = lang + " (engine: " + eng +
+                             (plugin == null ? "" : ", plugin: " + plugin.getName()) + ")";
         return new DumbAwareAction(name, description, null) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e1) {
