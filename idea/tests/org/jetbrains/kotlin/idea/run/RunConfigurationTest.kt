@@ -147,7 +147,9 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
         val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
         val commandLine = javaParameters.toCommandLine().commandLineString
-        Assert.assertTrue(commandLine.length < javaParameters.classPath.pathList.joinToString().length)
+        assert(commandLine.length > javaParameters.classPath.pathList.joinToString(File.pathSeparator).length) {
+            "Wrong command line length: \ncommand line = $commandLine, \nclasspath = ${javaParameters.classPath.pathList.joinToString()}"
+        }
     }
 
     fun testClassesAndObjects() {
