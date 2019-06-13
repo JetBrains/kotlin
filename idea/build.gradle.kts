@@ -7,6 +7,49 @@ repositories {
     maven("https://jetbrains.bintray.com/markdown")
 }
 
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDirs(
+            "idea-completion/src",
+            "idea-live-templates/src",
+            "idea-repl/src"
+        )
+        resources.srcDirs(
+            "idea-completion/resources",
+            "idea-live-templates/resources",
+            "idea-repl/resources"
+        )
+    }
+    "test" {
+        projectDefault()
+        java.srcDirs(
+            "idea-completion/tests",
+            "idea-live-templates/tests"
+        )
+    }
+
+    "performanceTest" {
+        java.srcDirs("performanceTests")
+    }
+
+}
+
+val performanceTestCompile by configurations
+performanceTestCompile.apply {
+    extendsFrom(configurations["testCompile"])
+}
+
+val performanceTestCompileOnly by configurations
+performanceTestCompile.apply {
+    extendsFrom(configurations["testCompileOnly"])
+}
+
+val performanceTestRuntime by configurations
+performanceTestRuntime.apply {
+    extendsFrom(configurations["testRuntime"])
+}
+
 dependencies {
     testRuntime(intellijDep())
     testRuntime(intellijRuntimeAnnotations())
@@ -129,49 +172,9 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
-}
 
-sourceSets {
-    "main" {
-        projectDefault()
-        java.srcDirs(
-            "idea-completion/src",
-            "idea-live-templates/src",
-            "idea-repl/src"
-        )
-        resources.srcDirs(
-            "idea-completion/resources",
-            "idea-live-templates/resources",
-            "idea-repl/resources"
-        )
-    }
-    "test" {
-        projectDefault()
-        java.srcDirs(
-            "idea-completion/tests",
-            "idea-live-templates/tests"
-        )
-    }
-
-}
-
-
-val performanceTestCompile by configurations.creating {
-    extendsFrom(configurations["testCompile"])
-}
-
-val performanceTestRuntime by configurations.creating {
-    extendsFrom(configurations["testRuntime"])
-}
-
-val performanceTest by run {
-    sourceSets.creating {
-        compileClasspath += sourceSets["test"].output
-        compileClasspath += sourceSets["main"].output
-        runtimeClasspath += sourceSets["test"].output
-        runtimeClasspath += sourceSets["main"].output
-        java.srcDirs("performanceTests")
-    }
+    performanceTestCompile(sourceSets["test"].output)
+    performanceTestCompile(sourceSets["main"].output)
 }
 
 projectTest(parallel = true) {
@@ -179,12 +182,12 @@ projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-
 projectTest(taskName = "performanceTest") {
     dependsOn(":dist")
-    dependsOn(performanceTest.output)
-    testClassesDirs = performanceTest.output.classesDirs
-    classpath = performanceTest.runtimeClasspath
+    dependsOn(performanceTestRuntime)
+
+    testClassesDirs = sourceSets["performanceTest"].output.classesDirs
+    classpath = performanceTestRuntime
     workingDir = rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
