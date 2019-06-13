@@ -127,7 +127,7 @@ abstract class DeprecatedSymbolUsageFixBase(
                 val receiver = classLiteral.receiverExpression ?: return this
                 val typeParameterText = (descriptor as? CallableDescriptor)?.typeParameters?.firstOrNull()?.name?.asString() ?: return this
                 if (receiver.text != typeParameterText) return this
-                val typeReference = (element.parent as KtCallExpression).typeArguments.firstOrNull()?.typeReference ?: return this
+                val typeReference = (element.parent as? KtCallExpression)?.typeArguments?.firstOrNull()?.typeReference ?: return this
                 val type = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
                 if (type != null && KotlinBuiltIns.isArray(type)) {
                     receiver.replace(typeReference)
