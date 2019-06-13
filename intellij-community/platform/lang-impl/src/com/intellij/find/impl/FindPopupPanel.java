@@ -785,8 +785,12 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     add(myFileMaskField, "gapleft 4, gapright 16");
     if (Registry.is("ide.find.as.popup.allow.pin") || ApplicationManager.getApplication().isInternal()) {
       myIsPinned.set(UISettings.getInstance().getPinFindInPath());
-      JPanel twoButtons = new JPanel(new GridLayout(1, 2, 4, 0));
+      JPanel twoButtons = new JPanel(new MigLayout("flowx, ins 0, gap 4, fillx, hidemode 3"));
       twoButtons.add(myFilterContextButton);
+      JComponent separatorComponent = (JComponent)Box.createRigidArea(new JBDimension(1, 24));
+      separatorComponent.setOpaque(true);
+      separatorComponent.setBackground(JBUI.CurrentTheme.CustomFrameDecorations.separatorForeground());
+      twoButtons.add(separatorComponent);
       twoButtons.add(myPinButton);
       add(twoButtons, "wrap");
     }
