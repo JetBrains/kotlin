@@ -1,7 +1,7 @@
 fun test() = true
 
 fun foo() {
-    val b = !when (test()) {
+    val b = !when (<caret>test()) {
         true -> true
         else -> false
     }

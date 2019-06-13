@@ -1,7 +1,7 @@
 fun foo() {
 
     // comment
-    when (1) {
+    when (<caret>1) {
         1 -> {
         }
         else -> {

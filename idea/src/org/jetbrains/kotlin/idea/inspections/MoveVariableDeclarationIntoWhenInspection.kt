@@ -15,6 +15,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPsiElementPointer
+import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.countUsages
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class MoveVariableDeclarationIntoWhenInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
@@ -115,7 +117,10 @@ private class VariableDeclarationIntoWhenFix(
             lastChild.delete()
         }
 
-        subjectExpression.replace(newElement)
+        val resultElement = subjectExpression.replace(newElement)
         property.delete()
+
+        val editor = resultElement.findExistingEditor() ?: return
+        editor.moveCaret((resultElement as? KtProperty)?.nameIdentifier?.startOffset ?: resultElement.startOffset)
     }
 }

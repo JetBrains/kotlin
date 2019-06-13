@@ -1,7 +1,7 @@
 fun test() = true
 
 fun foo(): Int {
-    return when (test()) {
+    return when (<caret>test()) {
         true -> 42
         else -> null
     } ?: 55
