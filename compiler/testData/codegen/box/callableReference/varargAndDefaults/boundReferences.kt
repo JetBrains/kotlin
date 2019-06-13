@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JS, JVM_IR
+// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals
