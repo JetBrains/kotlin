@@ -8,16 +8,16 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.util.Consumer
 import org.jetbrains.annotations.ApiStatus.Experimental
+import java.util.function.Consumer
 
 fun chooseTarget(editor: Editor, title: String, targets: List<NavigationTarget>, handler: (NavigationTarget) -> Unit) {
   chooseTarget(editor, title, targets, Consumer(handler))
 }
 
-fun chooseTarget(editor: Editor, title: String, targets: List<NavigationTarget>, consumer: Consumer<NavigationTarget>) {
+fun chooseTarget(editor: Editor, title: String, targets: List<NavigationTarget>, consumer: Consumer<in NavigationTarget>) {
   targets.singleOrNull()?.let {
-    consumer.consume(it)
+    consumer.accept(it)
     return
   }
   chooseTargetPopup(title, targets, NavigationTarget::getPresentationIfValid, consumer).showInBestPositionFor(editor)
@@ -26,7 +26,7 @@ fun chooseTarget(editor: Editor, title: String, targets: List<NavigationTarget>,
 fun <T> chooseTargetPopup(title: String,
                           targets: List<T>,
                           presentation: (T) -> TargetPresentation?,
-                          consumer: Consumer<T>): JBPopup {
+                          consumer: Consumer<in T>): JBPopup {
   val renderer = createTargetPresentationRenderer(presentation)
   return JBPopupFactory.getInstance()
     .createPopupChooserBuilder(targets)
@@ -34,7 +34,7 @@ fun <T> chooseTargetPopup(title: String,
     .setNamerForFiltering(renderer::getItemSearchString)
     .setFont(EditorUtil.getEditorFont())
     .setTitle(title)
-    .setItemChosenCallback(consumer)
+    .setItemChosenCallback(com.intellij.util.Consumer(consumer::accept))
     .withHintUpdateSupply()
     .createPopup()
 }
