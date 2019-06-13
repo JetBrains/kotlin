@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.google.com' }
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath('com.android.tools.build:gradle:' + android_tools_version)
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'https://maven.google.com' }
+    jcenter()
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "25.0.2"
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
