@@ -91,6 +91,8 @@ if (isStandaloneBuild) { // setup additional properties that are required only w
     val ideaPluginForCidrRepo: String by rootProject.extra(rootProject.extra["versions.ideaPluginForCidr.repo"] as String)
 
     val ideaPluginForCidrDir: File by rootProject.extra(externalDepsDir("idea-plugin", "ideaPlugin-$ideaPluginForCidrBuildNumber-$ideaPluginForCidrIde"))
+} else {
+    val cidrUnscrambledJarDir: File by rootProject.extra(clionUnscrambledJarDir)
 }
 
 // Note:
