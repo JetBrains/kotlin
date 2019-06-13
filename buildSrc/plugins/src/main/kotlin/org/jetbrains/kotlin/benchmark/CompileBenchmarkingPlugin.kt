@@ -35,6 +35,9 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
         // Aggregate task.
         val konanRun = tasks.create("konanRun") { task ->
             task.dependsOn("configureBuild")
+
+            task.group = BenchmarkingPlugin.BENCHMARKING_GROUP
+            task.description = "Runs the compile only benchmark for Kotlin/Native."
         }
 
         // Compile tasks.
@@ -55,6 +58,10 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
 
         // Report task.
         tasks.create("konanJsonReport").apply {
+
+            group = BenchmarkingPlugin.BENCHMARKING_GROUP
+            description = "Builds the benchmarking report for Kotlin/Native."
+
             doLast {
                 val nativeCompileTime = getCompileBenchmarkTime(
                     applicationName,
@@ -81,10 +88,14 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
         benchmarkExtension: CompileBenchmarkExtension
     ) {
         val jvmRun = tasks.create("jvmRun") {
+            it.group = BenchmarkingPlugin.BENCHMARKING_GROUP
+            it.description = "Runs the compile only benchmark for Kotlin/JVM."
             it.doLast { println("JVM run isn't supported") }
         }
 
         tasks.create("jvmJsonReport") {
+            it.group = BenchmarkingPlugin.BENCHMARKING_GROUP
+            it.description = "Builds the benchmarking report for Kotlin/Native."
             it.doLast { println("JVM run isn't supported") }
             jvmRun.finalizedBy(it)
         }

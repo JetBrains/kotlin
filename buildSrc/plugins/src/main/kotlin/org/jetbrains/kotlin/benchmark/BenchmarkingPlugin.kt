@@ -51,6 +51,9 @@ internal val Project.konanVersion: String
 internal val Project.nativeJson: String
     get() = project.property("nativeJson") as String
 
+internal val Project.jvmJson: String
+    get() = project.property("jvmJson") as String
+
 internal val Project.commonBenchmarkProperties: Map<String, Any>
     get() = mapOf(
         "cpu" to System.getProperty("os.arch"),
@@ -148,7 +151,10 @@ open class BenchmarkingPlugin: Plugin<Project> {
         // Native run task.
         val nativeTarget = kotlin.targets.getByName(NATIVE_TARGET_NAME) as KotlinNativeTarget
         val nativeExecutable = nativeTarget.binaries.getExecutable(NATIVE_EXECUTABLE_NAME, NativeBuildType.RELEASE)
-        val konanRun = createRunTask(this, "konanRun", nativeExecutable.runTask!!)
+        val konanRun = createRunTask(this, "konanRun", nativeExecutable.runTask!!).apply {
+            group = BENCHMARKING_GROUP
+            description = "Runs the benchmark for Kotlin/Native."
+        }
 
         // JVM run task.
         val jvmRun = tasks.create("jvmRun", RunJvmTask::class.java) { task ->
@@ -157,6 +163,9 @@ open class BenchmarkingPlugin: Plugin<Project> {
             val runtimeDependencies = configurations.getByName(mainCompilation.runtimeDependencyConfigurationName)
             task.classpath(files(mainCompilation.output.allOutputs, runtimeDependencies))
             task.main = "MainKt"
+
+            task.group = BENCHMARKING_GROUP
+            task.description = "Runs the benchmark for Kotlin/JVM."
 
             // Specify settings configured by a user in the benchmark extension.
             afterEvaluate {
@@ -171,6 +180,10 @@ open class BenchmarkingPlugin: Plugin<Project> {
 
         // Native report task.
         val konanJsonReport = tasks.create("konanJsonReport") {
+
+            it.group = BENCHMARKING_GROUP
+            it.description = "Builds the benchmarking report for Kotlin/Native."
+
             it.doLast {
                 val applicationName = benchmark.applicationName
                 val nativeCompileTime = getNativeCompileTime(applicationName)
@@ -192,6 +205,10 @@ open class BenchmarkingPlugin: Plugin<Project> {
 
         // JVM report task.
         val jvmJsonReport = tasks.create("jvmJsonReport") {
+
+            it.group = BENCHMARKING_GROUP
+            it.description = "Builds the benchmarking report for Kotlin/JVM."
+
             it.doLast {
                 val applicationName = benchmark.applicationName
                 val jarPath = (tasks.getByName("jvmJar") as Jar).archiveFile.get().asFile
@@ -207,7 +224,7 @@ open class BenchmarkingPlugin: Plugin<Project> {
                 )
 
                 val output = createJsonReport(properties)
-                buildDir.resolve(project.property("jvmJson") as String).writeText(output)
+                buildDir.resolve(jvmJson).writeText(output)
             }
 
             jvmRun.finalizedBy(it)
@@ -230,5 +247,7 @@ open class BenchmarkingPlugin: Plugin<Project> {
         const val NATIVE_TARGET_NAME = "native"
         const val NATIVE_EXECUTABLE_NAME = "benchmark"
         const val BENCHMARK_EXTENSION_NAME = "benchmark"
+
+        const val BENCHMARKING_GROUP = "benchmarking"
     }
 }
