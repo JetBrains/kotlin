@@ -114,7 +114,8 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
                 int tokenBeforeBraceOffset = iterator.getStart();
 
-                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                Document document = editor.getDocument();
+                PsiDocumentManager.getInstance(project).commitDocument(document);
 
                 PsiElement leaf = file.findElementAt(offset);
                 if (leaf != null) {
@@ -127,6 +128,13 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
                             return Result.STOP;
                         }
+                    }
+                    if (leaf.getText().equals("}")
+                        && parent instanceof KtFunctionLiteral
+                        && document.getLineNumber(offset) == document.getLineNumber(parent.getTextRange().getStartOffset())) {
+                        EditorModificationUtil.insertStringAtCaret(editor, "{} ", false, false);
+                        editor.getCaretModel().moveToOffset(offset + 1);
+                        return Result.STOP;
                     }
                 }
 
