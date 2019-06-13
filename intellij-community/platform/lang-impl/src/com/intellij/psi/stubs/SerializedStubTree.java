@@ -120,7 +120,7 @@ public class SerializedStubTree {
       }
     }
 
-    myIndexedStubs = new IndexedStubs(calculateHash(myBytes), (Map)map);
+    myIndexedStubs = new IndexedStubs(calculateHash(myBytes, myLength), (Map)map);
   }
 
   @NotNull
@@ -180,9 +180,9 @@ public class SerializedStubTree {
   }
 
   @NotNull
-  private static byte[] calculateHash(@NotNull byte[] content) {
+  private static byte[] calculateHash(@NotNull byte[] content, int length) {
     MessageDigest digest = HASHER.getValue();
-    digest.update(content);
+    digest.update(content, 0, length);
     return digest.digest();
   }
 
