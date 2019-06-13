@@ -160,7 +160,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         if (produceKind == ProduceKind.KLIB || (produceKind == ProduceKind.DEFAULT && arguments.metaInfo)) {
             val outputKlibPath =
-                if (arguments.irLegacyGradlePluginCompatimbility)
+                if (arguments.irLegacyGradlePluginCompatibility)
                     File(outputFilePath).parent
                 else
                     "$outputFilePath.klib"
@@ -172,7 +172,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 allDependencies = dependencies,
                 friendDependencies = friendDependencies,
                 outputKlibPath = outputKlibPath,
-                nopack = arguments.irLegacyGradlePluginCompatimbility
+                nopack = arguments.irLegacyGradlePluginCompatibility
             )
         }
 

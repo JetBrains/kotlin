@@ -118,7 +118,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         value = "-Xir-legacy-gradle-plugin-compatibility",
         description = "Make KLIB generation compatible with legacy gradle plugin"
     )
-    var irLegacyGradlePluginCompatimbility: Boolean by FreezableVar(false)
+    var irLegacyGradlePluginCompatibility: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
