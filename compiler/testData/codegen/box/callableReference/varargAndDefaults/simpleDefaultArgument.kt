@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JVM_IR
 
 fun foo(x: String, y: String = "K"): String = x + y
 
