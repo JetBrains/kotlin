@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
@@ -375,6 +374,7 @@ open class WrappedSimpleFunctionDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
 ) : SimpleFunctionDescriptor, WrappedCallableDescriptor<IrSimpleFunction>(annotations, sourceElement) {
+    private val userDataMap = mutableMapOf<CallableDescriptor.UserDataKey<*>, Any?>()
 
     // TODO: Remove as soon as all IR declarations have their originalDescriptor.
     constructor(originalDescriptor: FunctionDescriptor) : this(originalDescriptor.annotations, originalDescriptor.source) {
@@ -423,7 +423,7 @@ open class WrappedSimpleFunctionDescriptor(
     }
 
     override fun setOverriddenDescriptors(overriddenDescriptors: MutableCollection<out CallableMemberDescriptor>) {
-        TODO("not implemented")
+        if (!isSuspend) TODO("not implemented")
     }
 
     override fun getKind() =
@@ -450,21 +450,15 @@ open class WrappedSimpleFunctionDescriptor(
 
     override fun getInitialSignatureDescriptor() = null
 
-    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
+    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? =
+        userDataMap[key as CallableDescriptor.UserDataKey<*>] as V?
 
     override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out SimpleFunctionDescriptor> {
-        return SimpleFunctionDescriptorImpl
-            .create(containingDeclaration, annotations, name, kind, source)
-            .initialize(
-                extensionReceiverParameter,
-                dispatchReceiverParameter,
-                typeParameters,
-                valueParameters,
-                returnType,
-                modality,
-                visibility,
-                null
-            ).newCopyBuilder()
+        // KotlinTypeMapper uses getOrCreateJvmSuspendFunctionView extensively, but since
+        // after AddContinuationLowering all suspend descriptors are views anyway, return original
+        // one as a copy (with user data changed)
+        if (isSuspend) return ChangeUserDataCopyBuilder()
+        else TODO("not implemented")
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) =
@@ -472,6 +466,96 @@ open class WrappedSimpleFunctionDescriptor(
 
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         visitor!!.visitFunctionDescriptor(this, null)
+    }
+
+    inner class ChangeUserDataCopyBuilder : FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+        override fun setOwner(owner: DeclarationDescriptor): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setModality(modality: Modality): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setVisibility(visibility: Visibility): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setKind(kind: CallableMemberDescriptor.Kind): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setCopyOverrides(copyOverrides: Boolean): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setName(name: Name): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setValueParameters(parameters: MutableList<ValueParameterDescriptor>): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setTypeParameters(parameters: MutableList<TypeParameterDescriptor>): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setReturnType(type: KotlinType): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setExtensionReceiverParameter(extensionReceiverParameter: ReceiverParameterDescriptor?): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setDispatchReceiverParameter(dispatchReceiverParameter: ReceiverParameterDescriptor?): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setOriginal(original: CallableMemberDescriptor?): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setSignatureChange(): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setPreserveSourceElement(): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setDropOriginalInContainingParts(): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setHiddenToOvercomeSignatureClash(): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setHiddenForResolutionEverywhereBesideSupercalls(): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setAdditionalAnnotations(additionalAnnotations: Annotations): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun setSubstitution(substitution: TypeSubstitution): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            return this
+        }
+
+        override fun <V : Any?> putUserData(
+            userDataKey: CallableDescriptor.UserDataKey<V>,
+            value: V
+        ): FunctionDescriptor.CopyBuilder<WrappedSimpleFunctionDescriptor> {
+            this@WrappedSimpleFunctionDescriptor.userDataMap[userDataKey] = value
+            return this
+        }
+
+        override fun build(): WrappedSimpleFunctionDescriptor? {
+            return this@WrappedSimpleFunctionDescriptor
+        }
     }
 }
 

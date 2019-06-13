@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
@@ -30,6 +31,10 @@ fun IrType.isFunction() = this.isNameInPackage("Function", kotlinPackageFqn)
 fun IrType.isKClass() = this.isNameInPackage("KClass", kotlinReflectionPackageFqn)
 fun IrType.isKFunction() = this.isNameInPackage("KFunction", kotlinReflectionPackageFqn)
 fun IrType.isSuspendFunction() = this.isNameInPackage("SuspendFunction", kotlinCoroutinesPackageFqn)
+
+fun IrType.isKotlinResult(): Boolean = isNameInPackage("Result", kotlinPackageFqn)
+fun IrType.isContinuation(): Boolean = isNameInPackage("Continuation", kotlinCoroutinesPackageFqn)
+fun IrType.isNullableContinuation(): Boolean = isContinuation() && this is IrSimpleType && hasQuestionMark
 
 fun IrType.isNameInPackage(prefix: String, packageFqName: FqName): Boolean {
     val classifier = classifierOrNull ?: return false

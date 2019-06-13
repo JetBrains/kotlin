@@ -65,8 +65,8 @@ open class FunctionCodegen(
         } else {
             val frameMap = createFrameMapWithReceivers(signature)
             val irClass = classCodegen.context.suspendFunctionContinuations[irFunction]
-            val element = irFunction.symbol.descriptor.psiElement as? KtElement
-                ?: classCodegen.context.suspendLambdaClasses[classCodegen.context.suspendLambdaClasses.keys.find { it == irFunction.parent }]
+            val element = (irFunction.symbol.descriptor.psiElement
+                ?: classCodegen.context.suspendLambdaToOriginalFunctionMap[irFunction.parent]?.symbol?.descriptor?.psiElement) as? KtElement
             val continuationClassBuilder = classCodegen.context.continuationClassBuilders[irClass]
             methodVisitor = when {
                 irFunction.isSuspend -> generateStateMachineForNamedFunction(
@@ -206,7 +206,9 @@ fun generateParameterAnnotations(
     state: GenerationState
 ) {
     val iterator = irFunction.valueParameters.iterator()
-    val kotlinParameterTypes = jvmSignature.valueParameters
+    val kotlinParameterTypes =
+        if (irFunction.isSuspend) jvmSignature.valueParameters.dropLast(1) // do not generate annotation for continuation parameter
+        else jvmSignature.valueParameters
     var syntheticParameterCount = 0
     kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
         val kind = parameterSignature.kind

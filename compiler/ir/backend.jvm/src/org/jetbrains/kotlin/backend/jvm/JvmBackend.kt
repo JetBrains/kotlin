@@ -23,15 +23,10 @@ class JvmBackend(val context: JvmBackendContext) {
     }
 
     fun generateLoweredFile(irFile: IrFile) {
-        for (loweredClass in context.suspendFunctionContinuations.values) {
-            codegen.generateClass(loweredClass)
-        }
-
         for (loweredClass in irFile.declarations) {
             if (loweredClass !is IrClass) {
                 throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
             }
-            if (loweredClass in context.suspendFunctionContinuations.values) continue
 
             codegen.generateClass(loweredClass)
         }

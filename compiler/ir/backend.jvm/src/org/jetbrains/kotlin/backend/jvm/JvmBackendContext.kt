@@ -53,9 +53,8 @@ class JvmBackendContext(
     override val internalPackageFqn = FqName("kotlin.jvm")
 
     val suspendFunctionContinuations = mutableMapOf<IrFunction, IrClass>()
-    val suspendLambdaClasses = mutableMapOf<IrClass, KtElement>()
+    val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrClass, IrFunction>()
     val continuationClassBuilders = mutableMapOf<IrClass, ClassBuilder>()
-    var functionReferenceAndContinuationsCount = 0
 
     internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(

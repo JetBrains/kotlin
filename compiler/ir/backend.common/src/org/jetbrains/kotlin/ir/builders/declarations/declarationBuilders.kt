@@ -167,7 +167,7 @@ fun IrDeclarationContainer.addFunction(
 fun IrDeclarationContainer.addFunctionOverride(function: IrSimpleFunction, modality: Modality = Modality.FINAL): IrSimpleFunction =
     addFunction(function.name.asString(), function.returnType, modality).apply {
         overriddenSymbols.add(function.symbol)
-        valueParameters.addAll(function.valueParameters.map { it.copyTo(this) })
+        function.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
     }
 
 inline fun buildConstructor(b: IrFunctionBuilder.() -> Unit): IrConstructor =

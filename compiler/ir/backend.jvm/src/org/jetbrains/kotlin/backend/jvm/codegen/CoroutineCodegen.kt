@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
-import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 fun generateStateMachineForNamedFunction(
@@ -32,11 +31,7 @@ fun generateStateMachineForNamedFunction(
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     return CoroutineTransformerMethodVisitor(
         methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, null, null,
-        obtainClassBuilderForCoroutineState = {
-            continuationClassBuilder.sure {
-                "continuationClassBuilder is null"
-            }
-        },
+        obtainClassBuilderForCoroutineState = { continuationClassBuilder!! },
         element = element,
         diagnostics = state.diagnostics,
         languageVersionSettings = languageVersionSettings,
@@ -72,4 +67,4 @@ fun generateStateMachineForLambda(
 }
 
 fun IrFunction.isInvokeSuspendOfLambda(context: JvmBackendContext): Boolean =
-    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parent in context.suspendLambdaClasses
+    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parent in context.suspendLambdaToOriginalFunctionMap

@@ -95,15 +95,22 @@ open class ClassCodegen protected constructor(
             signature.interfaces.toTypedArray()
         )
         AnnotationCodegen(this, context.state, visitor.visitor::visitAnnotation).genAnnotations(irClass, null)
-        /* TODO: Temporary workaround: ClassBuilder needs a pathless name. */
-        val shortName = File(fileEntry.name).name
-        visitor.visitSource(shortName, null)
 
         val nestedClasses = irClass.declarations.mapNotNull { declaration ->
-            if (declaration is IrClass && declaration !in context.suspendFunctionContinuations.values) {
+            if (declaration is IrClass) {
                 ClassCodegen(declaration, context, this)
             } else null
         }
+
+        // Suspend function state-machine builder requires half-built continuation class
+        val continuationCodegens = nestedClasses.filter { it.irClass in context.suspendFunctionContinuations.values }
+        for (continuationCodegen in continuationCodegens) {
+            continuationCodegen.generate()
+        }
+
+        /* TODO: Temporary workaround: ClassBuilder needs a pathless name. */
+        val shortName = File(fileEntry.name).name
+        visitor.visitSource(shortName, null)
 
         val companionObjectCodegen = nestedClasses.firstOrNull { it.irClass.isCompanion }
 
@@ -113,7 +120,7 @@ open class ClassCodegen protected constructor(
 
         // Generate nested classes at the end, to ensure that codegen for companion object will have the necessary JVM signatures in its
         // trace for properties moved to the outer class
-        for (codegen in nestedClasses) {
+        for (codegen in (nestedClasses - continuationCodegens)) {
             codegen.generate()
         }
 
