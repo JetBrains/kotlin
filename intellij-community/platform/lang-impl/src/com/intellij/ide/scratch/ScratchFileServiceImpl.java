@@ -226,7 +226,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
 
     @Override
     public boolean isWritable(@NotNull VirtualFile file) {
-      return file.getFileType() == ScratchFileType.INSTANCE;
+      return FileTypeRegistry.getInstance().isFileOfType(file, ScratchFileType.INSTANCE);
     }
   }
 
@@ -318,7 +318,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
     @Override
     public UsageType getUsageType(PsiElement element) {
       VirtualFile file = PsiUtilCore.getVirtualFile(element);
-      RootType rootType = file != null && file.getFileType() == ScratchFileType.INSTANCE ?
+      RootType rootType = file != null && FileTypeRegistry.getInstance().isFileOfType(file, ScratchFileType.INSTANCE) ?
                           ScratchFileService.getInstance().getRootType(file) : null;
       return rootType == null ? null : ourUsageTypes.get(rootType);
     }

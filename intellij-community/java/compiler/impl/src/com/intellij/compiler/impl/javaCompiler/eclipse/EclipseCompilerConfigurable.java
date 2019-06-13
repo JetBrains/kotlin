@@ -6,6 +6,7 @@ import com.intellij.compiler.options.ComparingUtils;
 import com.intellij.ide.highlighter.ArchiveFileType;
 import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -38,7 +39,7 @@ public class EclipseCompilerConfigurable implements Configurable {
     myAdditionalOptionsField.setDescriptor(null, false);
     myPathToEcjField.addBrowseFolderListener(
       "Path to ecj compiler tool", null, project,
-      new FileChooserDescriptor(true, false, true, true, false, false).withFileFilter(file -> file.getFileType() == ArchiveFileType.INSTANCE)
+      new FileChooserDescriptor(true, false, true, true, false, false).withFileFilter(file -> FileTypeRegistry.getInstance().isFileOfType(file, ArchiveFileType.INSTANCE))
     );
   }
 

@@ -19,6 +19,7 @@ import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -458,7 +459,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
       boolean accepted = myFileType == null || psiFile.getFileType() == myFileType;
       VirtualFile virtualFile = psiFile.getVirtualFile();
       if (virtualFile != null && !accepted) {
-        accepted = virtualFile.getFileType() == myFileType;
+        accepted = FileTypeRegistry.getInstance().isFileOfType(virtualFile, myFileType);
       }
       return accepted;
     };
