@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.ide.highlighter.JavaClassFileType
-import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
+
+inline fun <T> runReadAction(crossinline runnable: () -> T): T {
+    return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
+}
 
 fun PsiFile.findScriptDefinition(): ScriptDefinition? {
     // Do not use psiFile.script, see comments in findScriptDefinition
