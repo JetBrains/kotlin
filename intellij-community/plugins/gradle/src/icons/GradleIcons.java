@@ -5,6 +5,8 @@ import com.intellij.ui.IconManager;
 
 import javax.swing.*;
 
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
 /**
  * NOTE THIS FILE IS AUTO-GENERATED
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
@@ -26,20 +28,24 @@ public final class GradleIcons {
   /** @deprecated to be removed in IDEA 2020 */
   @SuppressWarnings("unused")
   @Deprecated
+  @ScheduledForRemoval
   public static final Icon GradleImport = load("/icons/gradleImport.png");
 
   /** @deprecated to be removed in IDEA 2020 - use GradleIcons.Gradle */
   @SuppressWarnings("unused")
   @Deprecated
+  @ScheduledForRemoval
   public static final Icon GradlePlugin = GradleIcons.Gradle;
 
   /** @deprecated to be removed in IDEA 2020 */
   @SuppressWarnings("unused")
   @Deprecated
+  @ScheduledForRemoval
   public static final Icon GradleSync = load("/icons/gradleSync.png");
 
   /** @deprecated to be removed in IDEA 2020 - use AllIcons.Actions.OfflineMode */
   @SuppressWarnings("unused")
   @Deprecated
+  @ScheduledForRemoval
   public static final Icon OfflineMode = load("/actions/offlineMode.svg", com.intellij.icons.AllIcons.class);
 }
