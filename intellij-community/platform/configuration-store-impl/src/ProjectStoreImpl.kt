@@ -45,7 +45,7 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(PathMacroManager.getInstance(project)), project)
 
   override fun setPath(path: String) {
-    setPath(path, true)
+    setPath(path, true, null)
   }
 
   override fun getProjectName(): String {

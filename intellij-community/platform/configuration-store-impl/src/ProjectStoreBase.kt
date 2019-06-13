@@ -72,7 +72,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     storageManager.clearStorages()
   }
 
-  final override fun loadProjectFromTemplate(defaultProject: Project) {
+  private fun loadProjectFromTemplate(defaultProject: Project) {
     runBlocking { defaultProject.stateStore.save() }
 
     val element = (defaultProject.stateStore as DefaultProjectStoreImpl).getStateCopy() ?: return
@@ -104,7 +104,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     }
   }
 
-  override fun setPath(filePath: String, isRefreshVfsNeeded: Boolean) {
+  override fun setPath(filePath: String, isRefreshVfsNeeded: Boolean, template: Project?) {
     val storageManager = storageManager
     val fs = LocalFileSystem.getInstance()
     val isUnitTestMode = ApplicationManager.getApplication().isUnitTestMode
@@ -141,6 +141,10 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       if (isRefreshVfsNeeded) {
         VfsUtil.markDirtyAndRefresh(false, true, true, fs.refreshAndFindFileByPath(configDir))
       }
+    }
+
+    if (template != null) {
+      loadProjectFromTemplate(template)
     }
 
     val cacheFileName = project.getProjectCacheFileName(extensionWithDot = ".xml")
