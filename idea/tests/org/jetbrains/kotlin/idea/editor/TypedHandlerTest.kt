@@ -398,7 +398,13 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             "    if (some.hello (12) {<caret>})\n" +
             "}"
     )
-
+    
+    fun testInsertSpaceAfterRightBraceOfNestedLambda() = doTypeTest(
+        '{',
+        "val t = Array(100) { Array(200) <caret>}",
+        "val t = Array(100) { Array(200) {<caret>} }"
+    )
+    
     fun testAutoInsertParenInStringLiteral() = doTypeTest(
             '(',
             """fun f() { println("$dollar{f<caret>}") }""",
