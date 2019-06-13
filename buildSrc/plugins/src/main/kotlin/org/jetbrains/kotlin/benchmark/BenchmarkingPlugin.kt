@@ -68,8 +68,6 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var linkerOpts: Collection<String> = emptyList()
 }
 
-// TODO: Override kotlin compiler with a correct version.
-
 /**
  * A plugin configuring a benchmark Kotlin/Native project.
  */
@@ -218,6 +216,10 @@ open class BenchmarkingPlugin: Plugin<Project> {
 
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("kotlin-multiplatform")
+
+        // Use Kotlin compiler version specified by the project property.
+        dependencies.add("kotlinCompilerClasspath", "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+
         extensions.create(BENCHMARK_EXTENSION_NAME, BenchmarkExtension::class.java, this)
         configureMPPExtension()
         addTimeListener(this)
