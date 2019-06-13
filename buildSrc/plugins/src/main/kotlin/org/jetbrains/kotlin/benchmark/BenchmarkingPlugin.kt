@@ -48,6 +48,12 @@ internal val Project.kotlinVersion: String
 internal val Project.konanVersion: String
     get() = property("konanVersion") as String
 
+internal val Project.kotlinStdlibVersion: String
+    get() = property("kotlinStdlibVersion") as String
+
+internal val Project.kotlinStdlibRepo: String
+    get() = property("kotlinStdlibRepo") as String
+
 internal val Project.nativeJson: String
     get() = project.property("nativeJson") as String
 
@@ -86,11 +92,15 @@ open class BenchmarkingPlugin: Plugin<Project> {
     private fun Project.configureSourceSets(kotlinVersion: String) {
         with(kotlin.sourceSets) {
             commonMain.dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion")
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinStdlibVersion")
             }
 
             jvmMain.dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinStdlibVersion")
+            }
+
+            repositories.maven {
+                it.setUrl(kotlinStdlibRepo)
             }
 
             // Add sources specified by a user in the benchmark DSL.
