@@ -8941,6 +8941,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffects2.kt");
                 }
 
+                @TestMetadata("defaultArgsWithSideEffectsOld.kt")
+                public void testDefaultArgsWithSideEffectsOld() throws Exception {
+                    runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffectsOld.kt");
+                }
+
                 @TestMetadata("extensionTailCall.kt")
                 public void testExtensionTailCall() throws Exception {
                     runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/extensionTailCall.kt");

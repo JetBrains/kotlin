@@ -471,6 +471,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             runTest("compiler/testData/diagnostics/tests/ProjectionsInSupertypes.kt");
         }
 
+        @TestMetadata("properDefaultInitializationInTailrec.kt")
+        public void testProperDefaultInitializationInTailrec() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/properDefaultInitializationInTailrec.kt");
+        }
+
         @TestMetadata("Properties.kt")
         public void testProperties() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Properties.kt");
@@ -689,6 +694,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
         @TestMetadata("UnitValue.kt")
         public void testUnitValue() throws Exception {
             runTest("compiler/testData/diagnostics/tests/UnitValue.kt");
+        }
+
+        @TestMetadata("unproperDefaultInitializationInTailrec.kt")
+        public void testUnproperDefaultInitializationInTailrec() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/unproperDefaultInitializationInTailrec.kt");
         }
 
         @TestMetadata("Unresolved.kt")
@@ -24043,6 +24053,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("defaultArgsWithSideEffects2.kt")
                 public void testDefaultArgsWithSideEffects2() throws Exception {
                     runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffects2.kt");
+                }
+
+                @TestMetadata("defaultArgsWithSideEffectsOld.kt")
+                public void testDefaultArgsWithSideEffectsOld() throws Exception {
+                    runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffectsOld.kt");
                 }
 
                 @TestMetadata("extensionTailCall.kt")

@@ -469,6 +469,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
         runTest("compiler/testData/diagnostics/tests/ProjectionsInSupertypes.kt");
     }
 
+    @TestMetadata("properDefaultInitializationInTailrec.kt")
+    public void testProperDefaultInitializationInTailrec() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/properDefaultInitializationInTailrec.kt");
+    }
+
     @TestMetadata("Properties.kt")
     public void testProperties() throws Exception {
         runTest("compiler/testData/diagnostics/tests/Properties.kt");
@@ -687,6 +692,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
     @TestMetadata("UnitValue.kt")
     public void testUnitValue() throws Exception {
         runTest("compiler/testData/diagnostics/tests/UnitValue.kt");
+    }
+
+    @TestMetadata("unproperDefaultInitializationInTailrec.kt")
+    public void testUnproperDefaultInitializationInTailrec() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/unproperDefaultInitializationInTailrec.kt");
     }
 
     @TestMetadata("Unresolved.kt")
