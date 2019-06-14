@@ -1118,9 +1118,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType captureReceiver = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiver != null) {
-            StackValue capturedReceiver =
-                    functionReferenceReceiver != null ? functionReferenceReceiver :
-                    generateExtensionReceiver(unwrapOriginalReceiverOwnerForSuspendLambda(context));
+            StackValue capturedReceiver = functionReferenceReceiver;
+            if (capturedReceiver == null) {
+                CallableDescriptor descriptor = unwrapOriginalReceiverOwnerForSuspendLambda(context);
+                if (descriptor.getExtensionReceiverParameter() != null) {
+                    capturedReceiver = generateExtensionReceiver(descriptor);
+                }
+            }
+            if (capturedReceiver == null) {
+                CallableDescriptor descriptor = closure.getEnclosingCallableDescriptorWithReceiver();
+                if (descriptor != null) {
+                    capturedReceiver = generateExtensionReceiver(descriptor);
+                }
+            }
+            assert capturedReceiver != null : "Captured receiver is null for closure " + closure;
             callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
         }
 

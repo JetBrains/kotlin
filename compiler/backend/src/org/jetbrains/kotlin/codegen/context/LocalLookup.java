@@ -138,7 +138,10 @@ public interface LocalLookup {
                     MutableClosure closure,
                     Type classType
             ) {
-                ReceiverParameterDescriptor enclosingReceiverDescriptor = closure.getEnclosingReceiverDescriptor();
+                CallableDescriptor enclosingCallableWithReceiver = closure.getEnclosingCallableDescriptorWithReceiver();
+                ReceiverParameterDescriptor enclosingReceiverDescriptor =
+                        enclosingCallableWithReceiver != null ? enclosingCallableWithReceiver.getExtensionReceiverParameter() : null;
+
                 if (enclosingReceiverDescriptor != d) {
                     return null;
                 }
