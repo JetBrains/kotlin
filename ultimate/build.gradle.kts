@@ -80,7 +80,7 @@ dependencies {
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-script-runtime"))
-    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
