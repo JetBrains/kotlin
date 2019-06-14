@@ -196,9 +196,10 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
     if (e.parent != null) {
       ServiceViewItem parent = findItem(e.parent, e.contributorClass);
-      if (parent == null) return;
+      ServiceViewContributor<?> parentContributor = parent instanceof ServiceNode ? ((ServiceNode)parent).getProvidingContributor() : null;
+      if (parentContributor == null) return;
 
-      addService(e.target, parent.getChildren(), myProject, parent, (ServiceViewContributor<?>)e.parent, e.index);
+      addService(e.target, parent.getChildren(), myProject, parent, parentContributor, e.index);
       return;
     }
 
@@ -296,7 +297,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
       parent.getChildren().remove(item);
     }
 
-    addService(e.target, parent.getChildren(), myProject, parent, (ServiceViewContributor<?>)parent.getContributor(), index);
+    addService(e.target, parent.getChildren(), myProject, parent, (ServiceViewContributor<?>)item.getContributor(), index);
     if (group != null && group.getChildren().isEmpty()) {
       parent.getChildren().remove(group);
     }
@@ -542,6 +543,11 @@ class ServiceModel implements Disposable, InvokerSupplier {
     @Override
     protected List<ServiceViewItem> doGetChildren() {
       return myProvidingContributor == null ? Collections.emptyList() : getContributorChildren(myProject, this, myProvidingContributor);
+    }
+
+    @Nullable
+    private ServiceViewContributor<?> getProvidingContributor() {
+      return myProvidingContributor;
     }
   }
 
