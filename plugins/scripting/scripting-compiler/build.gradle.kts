@@ -27,6 +27,9 @@ dependencies {
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
+
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijDep()) { includeJars("jps-model") }
 }
 
 sourceSets {
