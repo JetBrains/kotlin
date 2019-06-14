@@ -104,7 +104,7 @@ fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, bo
 
     var subProjectTempRoot: Path? = null
     doFirst {
-        val teamcity = rootProject.findProperty("teamcity") as? Map<*, *>
+        val teamcity = rootProject.findProperty("teamcity") as? Map<Any?, *>
         val systemTempRoot =
             // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
             // Should be fixed soon on Teamcity side

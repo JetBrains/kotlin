@@ -172,7 +172,8 @@ private fun getArtifactElements(
             is PDependency.Library -> artifacts += ProjectLibrary(dependency.name)
             is PDependency.ModuleLibrary -> {
                 val files = dependency.library.classes
-                artifacts += files.map(if (extractDependencies) ::ExtractedDirectory else ::FileCopy)
+                if (extractDependencies) files.mapTo(artifacts) { ExtractedDirectory(it) }
+                else  files.mapTo(artifacts) { FileCopy(it) }
             }
         }
     }

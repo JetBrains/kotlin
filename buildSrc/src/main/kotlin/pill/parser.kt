@@ -235,53 +235,56 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
 
     val sourceRoots = mutableListOf<PSourceRoot>()
 
-    for (sourceSet in (project.sourceSets ?: emptyList())) {
-        val kotlinCompileTask = kotlinTasksBySourceSet[sourceSet.name]
-        val kind = if (sourceSet.isTestSourceSet) Kind.TEST else Kind.PRODUCTION
+    val sourceSets = project.sourceSets
+    if (sourceSets != null) {
+        for (sourceSet in sourceSets) {
+            val kotlinCompileTask = kotlinTasksBySourceSet[sourceSet.name]
+            val kind = if (sourceSet.isTestSourceSet) Kind.TEST else Kind.PRODUCTION
 
-        fun Any.getKotlin(): SourceDirectorySet {
-            val kotlinMethod = javaClass.getMethod("getKotlin")
-            val oldIsAccessible = kotlinMethod.isAccessible
-            try {
-                kotlinMethod.isAccessible = true
-                return kotlinMethod(this) as SourceDirectorySet
-            } finally {
-                kotlinMethod.isAccessible = oldIsAccessible
+            fun Any.getKotlin(): SourceDirectorySet {
+                val kotlinMethod = javaClass.getMethod("getKotlin")
+                val oldIsAccessible = kotlinMethod.isAccessible
+                try {
+                    kotlinMethod.isAccessible = true
+                    return kotlinMethod(this) as SourceDirectorySet
+                } finally {
+                    kotlinMethod.isAccessible = oldIsAccessible
+                }
             }
-        }
 
-        val kotlinSourceDirectories = (sourceSet as HasConvention).convention
-            .plugins["kotlin"]?.getKotlin()?.srcDirs
+            val kotlinSourceDirectories = (sourceSet as HasConvention).convention
+                .plugins["kotlin"]?.getKotlin()?.srcDirs
                 ?: emptySet()
 
-        val directories = (sourceSet.java.sourceDirectories.files + kotlinSourceDirectories).toList()
-            .filter { it.exists() }
-            .takeIf { it.isNotEmpty() }
+            val directories = (sourceSet.java.sourceDirectories.files + kotlinSourceDirectories).toList()
+                .filter { it.exists() }
+                .takeIf { it.isNotEmpty() }
                 ?: continue
 
-        val kotlinOptions = kotlinCompileTask?.let { getKotlinOptions(it) }
+            val kotlinOptions = kotlinCompileTask?.let { getKotlinOptions(it) }
 
-        for (resourceRoot in sourceSet.resources.sourceDirectories.files) {
-            if (!resourceRoot.exists() || resourceRoot in directories) {
-                continue
+            for (resourceRoot in sourceSet.resources.sourceDirectories.files) {
+                if (!resourceRoot.exists() || resourceRoot in directories) {
+                    continue
+                }
+
+                val resourceRootKind = when (kind) {
+                    Kind.PRODUCTION -> Kind.RESOURCES
+                    Kind.TEST -> Kind.TEST_RESOURCES
+                    else -> error("Invalid source root kind $kind")
+                }
+
+                sourceRoots += PSourceRoot(resourceRoot, resourceRootKind, kotlinOptions)
             }
 
-            val resourceRootKind = when (kind) {
-                Kind.PRODUCTION -> Kind.RESOURCES
-                Kind.TEST -> Kind.TEST_RESOURCES
-                else -> error("Invalid source root kind $kind")
+            for (directory in directories) {
+                sourceRoots += PSourceRoot(directory, kind, kotlinOptions)
             }
 
-            sourceRoots += PSourceRoot(resourceRoot, resourceRootKind, kotlinOptions)
-        }
-
-        for (directory in directories) {
-            sourceRoots += PSourceRoot(directory, kind, kotlinOptions)
-        }
-
-        for (root in parseResourceRootsProcessedByProcessResourcesTask(project, sourceSet)) {
-            if (sourceRoots.none { it.path == root.path }) {
-                sourceRoots += root
+            for (root in parseResourceRootsProcessedByProcessResourcesTask(project, sourceSet)) {
+                if (sourceRoots.none { it.path == root.path }) {
+                    sourceRoots += root
+                }
             }
         }
     }
