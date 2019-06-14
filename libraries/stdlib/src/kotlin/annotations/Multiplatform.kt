@@ -17,6 +17,7 @@ import kotlin.internal.RequireKotlinVersionKind
  * or by using the compiler argument `-Xuse-experimental=kotlin.ExperimentalMultiplatform`.
  */
 @Experimental
+@MustBeDocumented
 @Target(
     CLASS,
     ANNOTATION_CLASS,

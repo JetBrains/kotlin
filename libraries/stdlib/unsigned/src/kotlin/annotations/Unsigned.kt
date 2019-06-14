@@ -20,6 +20,7 @@ import kotlin.internal.RequireKotlinVersionKind
  * It's recommended to propagate the experimental status to the API that depends on unsigned types by annotating it with this annotation.
  */
 @Experimental(level = Experimental.Level.WARNING)
+@MustBeDocumented
 @Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
 @Retention(AnnotationRetention.BINARY)
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)

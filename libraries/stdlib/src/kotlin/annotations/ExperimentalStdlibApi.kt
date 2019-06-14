@@ -29,6 +29,7 @@ import kotlin.annotation.AnnotationTarget.*
     PROPERTY_SETTER,
     TYPEALIAS
 )
+@MustBeDocumented
 @ExperimentalStdlibApi
 @SinceKotlin("1.3")  // TODO: Remove experimental status from itself and advance SinceKotlin to 1.4
 public annotation class ExperimentalStdlibApi
