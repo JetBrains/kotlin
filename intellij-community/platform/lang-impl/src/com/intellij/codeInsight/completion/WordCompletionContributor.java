@@ -100,9 +100,12 @@ public class WordCompletionContributor extends CompletionContributor implements 
     if (manipulator == null) {
       return;
     }
-    int offset = manipulator.getRangeInElement(localString).getStartOffset();
+    int valueStart = manipulator.getRangeInElement(localString).getStartOffset() + localString.getTextRange().getStartOffset();
+    if (valueStart > parameters.getOffset()) {
+      return;
+    }
     PsiFile file = position.getContainingFile();
-    String prefix = file.getText().substring(offset + localString.getTextRange().getStartOffset(), parameters.getOffset());
+    String prefix = file.getViewProvider().getContents().subSequence(valueStart, parameters.getOffset()).toString();
     CompletionResultSet fullStringResult = result.withPrefixMatcher(new PlainPrefixMatcher(prefix));
     file.accept(new PsiRecursiveElementWalkingVisitor() {
       @Override
