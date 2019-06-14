@@ -9,31 +9,34 @@ package kotlin.native
 /**
  * Converts an UTF-8 array into a [String]. Replaces invalid input sequences with a default character.
  */
-@Deprecated("Use decodeToString instead", ReplaceWith("decodeToString()"))
 public fun ByteArray.stringFromUtf8() : String {
-    @Suppress("DEPRECATION")
     return this.stringFromUtf8(0, this.size)
 }
 
 /**
  * Converts an UTF-8 array into a [String]. Replaces invalid input sequences with a default character.
  */
-@Deprecated("Use decodeToString instead", ReplaceWith("decodeToString(start, start + size)"))
 public fun ByteArray.stringFromUtf8(start: Int = 0, size: Int = this.size) : String {
     checkBoundsIndexes(start, start + size, this.size)
-    return stringFromUtf8Impl(start, size)
+    return stringFromUtf8Impl(start, realSize(this, size))
 }
 
 @SymbolName("Kotlin_ByteArray_stringFromUtf8")
 internal external fun ByteArray.stringFromUtf8Impl(start: Int, size: Int) : String
 
+private fun realSize(byteArray: ByteArray, size: Int): Int {
+    var realSize = 0
+    while (realSize < size && byteArray[realSize] != 0.toByte()) {
+        realSize++
+    }
+    return realSize
+}
+
 /**
  * Converts an UTF-8 array into a [String].
  * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
-@Deprecated("Use decodeToString instead", ReplaceWith("decodeToString(throwOnInvalidSequence = true)"))
 public fun ByteArray.stringFromUtf8OrThrow() : String {
-    @Suppress("DEPRECATION")
     return this.stringFromUtf8OrThrow(0, this.size)
 }
 
@@ -41,13 +44,11 @@ public fun ByteArray.stringFromUtf8OrThrow() : String {
  * Converts an UTF-8 array into a [String].
  * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
-@Deprecated("Use decodeToString instead", ReplaceWith("decodeToString(start, start + size, throwOnInvalidSequence = true)"))
 public fun ByteArray.stringFromUtf8OrThrow(start: Int = 0, size: Int = this.size) : String {
     checkBoundsIndexes(start, start + size, this.size)
     try {
-        return stringFromUtf8OrThrowImpl(start, size)
+        return stringFromUtf8OrThrowImpl(start, realSize(this, size))
     } catch (e: CharacterCodingException) {
-        @Suppress("DEPRECATION")
         throw IllegalCharacterConversionException()
     }
 }
@@ -96,7 +97,6 @@ public fun String.toUtf8OrThrow(start: Int = 0, size: Int = this.length) : ByteA
     try {
         return toUtf8OrThrowImpl(start, size)
     } catch (e: CharacterCodingException) {
-        @Suppress("DEPRECATION")
         throw IllegalCharacterConversionException()
     }
 }
