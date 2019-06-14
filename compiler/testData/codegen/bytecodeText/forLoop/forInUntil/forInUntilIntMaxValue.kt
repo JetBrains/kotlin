@@ -1,12 +1,12 @@
 // IGNORE_BACKEND: JVM_IR
-const val N = 42L
+const val M = Int.MAX_VALUE
 
-fun test(): Long {
-    var sum = 0L
-    for (i in 1L .. N) {
-        sum += i
+fun f(a: Int): Int {
+    var n = 0
+    for (i in a until M) {
+        n++
     }
-    return sum
+    return n
 }
 
 // JVM non-IR uses while.
@@ -18,8 +18,5 @@ fun test(): Long {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 LCMP
-// 1 IFGT
+// 1 IF_ICMPGE
 // 1 IF
-// 0 L2I
-// 0 I2L

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 import kotlin.test.*
 
 fun box(): String {
@@ -22,6 +23,9 @@ fun box(): String {
     return "OK"
 }
 
+// JVM non-IR uses while.
+// JVM IR uses if + do-while. The surrounding "if" gets optimized in this test (constant condition), except for Long.
+
 // 0 reversed
 // 0 iterator
 // 0 getStart
@@ -29,7 +33,7 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 2 IF_ICMP[LG]T
-// 1 IF[LG]T
+// 2 IF_ICMPLT
+// 1 IFLT
 // 3 IF
 // 1 LCMP

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 const val M = Char.MAX_VALUE
 
 fun f(a: Char): Int {
@@ -7,6 +8,9 @@ fun f(a: Char): Int {
     }
     return n
 }
+
+// JVM non-IR uses while.
+// JVM IR uses if + do-while.
 
 // 0 iterator
 // 0 getStart

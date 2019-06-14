@@ -1,10 +1,10 @@
-// IGNORE_BACKEND: JVM_IR
-const val N = 'Z'
+// TARGET_BACKEND: JVM_IR
+const val N = 42
 
 fun test(): Int {
     var sum = 0
-    for (i in 'A' .. N) {
-        sum += i.toInt()
+    for (i in 1 .. N) {
+        sum += i
     }
     return sum
 }
@@ -18,5 +18,5 @@ fun test(): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IF_ICMPGT
+// 1 IF_ICMPLE
 // 1 IF

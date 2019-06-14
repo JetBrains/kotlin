@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test(a: Int, b: Int): Int {
     var sum = 0
     for (i in a until b) {
@@ -5,6 +6,9 @@ fun test(a: Int, b: Int): Int {
     }
     return sum
 }
+
+// JVM non-IR uses while.
+// JVM IR uses if + do-while. In addition, for "until" progressions, there is a check that the range is not empty: upper bound != MIN_VALUE.
 
 // 0 iterator
 // 0 getStart
