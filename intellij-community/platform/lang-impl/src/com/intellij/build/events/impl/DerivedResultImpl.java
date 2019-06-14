@@ -2,8 +2,8 @@
 package com.intellij.build.events.impl;
 
 import com.intellij.build.events.DerivedResult;
+import com.intellij.build.events.EventResult;
 import com.intellij.build.events.FailureResult;
-import com.intellij.build.events.SuccessResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,15 +11,15 @@ import java.util.function.Supplier;
 
 public class DerivedResultImpl implements DerivedResult {
 
-  @NotNull private final Supplier<SuccessResult> mySuccess;
+  @NotNull private final Supplier<EventResult> myOnDefault;
   @NotNull private final Supplier<FailureResult> myFail;
 
   public DerivedResultImpl() {
     this(null, null);
   }
 
-  public DerivedResultImpl(@Nullable Supplier<SuccessResult> onSuccess, @Nullable Supplier<FailureResult> onFail) {
-    mySuccess = onSuccess != null ? onSuccess : SuccessResultImpl::new;
+  public DerivedResultImpl(@Nullable Supplier<EventResult> onDefault, @Nullable Supplier<FailureResult> onFail) {
+    myOnDefault = onDefault != null ? onDefault : SuccessResultImpl::new;
     myFail = onFail != null ? onFail : FailureResultImpl::new;
   }
 
@@ -35,8 +35,8 @@ public class DerivedResultImpl implements DerivedResult {
 
   @NotNull
   @Override
-  public SuccessResult createSuccessResult() {
-    SuccessResult result = mySuccess.get();
+  public EventResult createDefaultResult() {
+    EventResult result = myOnDefault.get();
     if (result == null) {
       return new SuccessResultImpl();
     }
