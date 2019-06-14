@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.openapi.editor.Editor;
@@ -12,21 +12,22 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface MultiCharQuoteHandler extends QuoteHandler {
   /**
-   * returns closing quote by opening quote which is placed immediately before offset. If there is no quote the method should return null
+   * Returns a closing quote for an opening quote placed immediately before offset, or {@code null} when there is no matching quote.
    */
   @Nullable
   CharSequence getClosingQuote(@NotNull HighlighterIterator iterator, int offset);
 
   /**
-   * Should insert <code>closingQuote</code> returned from {@link #getClosingQuote(HighlighterIterator, int)} in the document. 
+   * Should insert the {@code closingQuote} returned from {@link #getClosingQuote(HighlighterIterator, int)} into the document.
+   * Override this method for languages with multi-root PSI.
    */
-  default void insertClosingQuote(@NotNull Editor editor, int offset, PsiFile file, @NotNull CharSequence closingQuote) {
+  default void insertClosingQuote(@NotNull Editor editor, int offset, @NotNull PsiFile file, @NotNull CharSequence closingQuote) {
     insertClosingQuote(editor, offset, closingQuote);
   }
 
   /**
-   * Should insert <code>closingQuote</code> returned from {@link #getClosingQuote(HighlighterIterator, int)} in the document.
-   * API compatibility method
+   * Should insert the {@code closingQuote} returned from {@link #getClosingQuote(HighlighterIterator, int)} into the document.
+   * Override this method for languages with single-root PSI.
    */
   default void insertClosingQuote(@NotNull Editor editor, int offset, @NotNull CharSequence closingQuote) {
     editor.getDocument().insertString(offset, closingQuote);
