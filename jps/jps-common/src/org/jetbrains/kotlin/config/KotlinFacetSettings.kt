@@ -239,6 +239,7 @@ class KotlinFacetSettings {
     var isTestModule: Boolean = false
 
     var externalProjectId: String = ""
+    var isHmppEnabled: Boolean = false
 }
 
 interface KotlinFacetSettingsProvider {
