@@ -5,6 +5,8 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.testframework.sm.runner.SMRunnerConsolePropertiesProvider;
+import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
@@ -15,10 +17,11 @@ import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.GradleIdeManager;
 import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
-public class GradleRunConfiguration extends ExternalSystemRunConfiguration {
+public class GradleRunConfiguration extends ExternalSystemRunConfiguration implements SMRunnerConsolePropertiesProvider {
 
   public static final String DEBUG_FLAG_NAME = "GradleScriptDebugEnabled";
   public static final Key<Boolean> DEBUG_FLAG_KEY = Key.create("DEBUG_GRADLE_SCRIPT");
@@ -70,5 +73,10 @@ public class GradleRunConfiguration extends ExternalSystemRunConfiguration {
       group.addEditor(GradleBundle.message("gradle.settings.title.debug"), new GradleDebugSettingsEditor());
     }
     return editor;
+  }
+
+  @Override
+  public SMTRunnerConsoleProperties createTestConsoleProperties(Executor executor) {
+    return GradleIdeManager.getInstance().createTestConsoleProperties(getProject(), executor, this);
   }
 }

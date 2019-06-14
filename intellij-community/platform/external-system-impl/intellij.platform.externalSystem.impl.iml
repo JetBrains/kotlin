@@ -16,7 +16,6 @@
     <orderEntry type="module" module-name="intellij.platform.vcs" />
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testRunner" />
-    <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
     <orderEntry type="module" module-name="intellij.platform.configurationStore.impl" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer" />

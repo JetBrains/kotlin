@@ -19,6 +19,7 @@
     <orderEntry type="module" module-name="intellij.gradle.toolingExtension.impl" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
     <orderEntry type="library" exported="" name="Gradle" level="project" />
     <orderEntry type="library" name="Kryo" level="project" />
