@@ -221,6 +221,9 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinIconProviderService"
+                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinIdeFileIconProviderService"/>
+
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.stubs.elements.StubIndexService"
                         serviceImplementation="org.jetbrains.kotlin.idea.stubindex.IdeStubIndexService"/>
 

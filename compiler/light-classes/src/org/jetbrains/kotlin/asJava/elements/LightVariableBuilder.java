@@ -19,14 +19,12 @@ package org.jetbrains.kotlin.asJava.elements;
 import com.intellij.lang.Language;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.ElementPresentationUtil;
 import com.intellij.psi.impl.light.LightElement;
 import com.intellij.psi.impl.light.LightModifierList;
-import com.intellij.ui.RowIcon;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.KotlinIconProviderService;
 
 import javax.swing.*;
 
@@ -112,7 +110,6 @@ public class LightVariableBuilder extends LightElement implements PsiVariable, N
 
     @Override
     public Icon getElementIcon(int flags) {
-        RowIcon baseIcon = ElementPresentationUtil.createLayeredIcon(PlatformIcons.VARIABLE_ICON, this, false);
-        return ElementPresentationUtil.addVisibilityIcon(this, flags, baseIcon);
+        return KotlinIconProviderService.getInstance().getLightVariableIcon(this, flags);
     }
 }
