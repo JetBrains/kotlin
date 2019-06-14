@@ -18,6 +18,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.search.TodoItem;
 import com.intellij.ui.HighlightedRegion;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,17 +32,17 @@ import java.util.List;
 public final class TodoItemNode extends BaseToDoNode<SmartTodoItemPointer> implements HighlightedRegionProvider {
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.toDo.TodoItemNodeDescriptor");
 
-  private final ArrayList<HighlightedRegion> myHighlightedRegions;
+  private final List<HighlightedRegion> myHighlightedRegions;
   private final List<HighlightedRegionProvider> myAdditionalLines;
 
   public TodoItemNode(Project project,
                       @NotNull SmartTodoItemPointer value,
                       TodoTreeBuilder builder) {
     super(project, value, builder);
-    RangeMarker rangeMarker = getValue().getRangeMarker();
+    RangeMarker rangeMarker = value.getRangeMarker();
     LOG.assertTrue(rangeMarker.isValid());
 
-    myHighlightedRegions = new ArrayList<>();
+    myHighlightedRegions = ContainerUtil.createConcurrentList();
     myAdditionalLines = new ArrayList<>();
   }
 
@@ -68,7 +69,7 @@ public final class TodoItemNode extends BaseToDoNode<SmartTodoItemPointer> imple
   }
 
   @Override
-  public ArrayList<HighlightedRegion> getHighlightedRegions() {
+  public List<HighlightedRegion> getHighlightedRegions() {
     return myHighlightedRegions;
   }
 
