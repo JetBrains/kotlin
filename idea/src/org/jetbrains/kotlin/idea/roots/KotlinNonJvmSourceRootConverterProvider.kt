@@ -11,7 +11,6 @@ import com.intellij.conversion.impl.ModuleSettingsImpl
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.ContentEntryImpl
-import com.intellij.openapi.roots.impl.OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR
 import com.intellij.openapi.roots.impl.SourceFolderImpl
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
@@ -115,7 +114,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
         private fun findProjectLibrary(name: String) = projectLibrariesByName[name]?.firstOrNull()
 
         private fun createLibInfo(orderEntryElement: Element, moduleSettings: ModuleSettings): LibInfo? {
-            return when (orderEntryElement.getAttributeValue(ORDER_ENTRY_TYPE_ATTR)) {
+            return when (orderEntryElement.getAttributeValue("type")) {
                 MODULE_LIBRARY_TYPE -> {
                     orderEntryElement.getChild(LIBRARY_TAG)?.let { LibInfo.ByXml(it, context, moduleSettings) }
                 }
