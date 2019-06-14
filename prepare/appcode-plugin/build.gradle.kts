@@ -16,8 +16,9 @@ val patchedPlatformDepsJar: (Project, File) -> Zip by cidrPluginTools
 val otherPlatformDepsJars: (Project, File) -> Task by cidrPluginTools
 val packageCidrPlugin: (Project, String, File, List<Task>) -> Copy by cidrPluginTools
 val zipCidrPlugin: (Project, Task, File) -> Zip by cidrPluginTools
-val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> Task by cidrPluginTools
+val cidrUpdatePluginsXml: (Project, Task, String, File, URL, URL?) -> Task by cidrPluginTools
 
+val appcodeRepo: String by rootProject.extra
 val appcodeVersion: String by rootProject.extra
 val appcodeFriendlyVersion: String by rootProject.extra
 val appcodeVersionStrict: Boolean by rootProject.extra
@@ -68,7 +69,8 @@ val appcodeUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         preparePluginXmlTask,
         appcodeFriendlyVersion,
         appcodePluginZipPath,
-        appcodeCustomPluginRepoUrl
+        appcodeCustomPluginRepoUrl,
+        if (appcodeUseJavaPlugin) URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$appcodeRepo/$appcodeVersion/OC-plugins/java.zip") else null
 )
 
 enableTasksIfAtLeast(project, appcodeVersion, 191)

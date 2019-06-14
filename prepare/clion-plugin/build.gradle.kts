@@ -12,8 +12,9 @@ val patchedPlatformDepsJar: (Project, File) -> Zip by cidrPluginTools
 val otherPlatformDepsJars: (Project, File) -> Task by cidrPluginTools
 val packageCidrPlugin: (Project, String, File, List<Task>) -> Copy by cidrPluginTools
 val zipCidrPlugin: (Project, Task, File) -> Zip by cidrPluginTools
-val cidrUpdatePluginsXml: (Project, Task, String, File, URL) -> Task by cidrPluginTools
+val cidrUpdatePluginsXml: (Project, Task, String, File, URL, URL?) -> Task by cidrPluginTools
 
+val clionRepo: String by rootProject.extra
 val clionVersion: String by rootProject.extra
 val clionFriendlyVersion: String by rootProject.extra
 val clionVersionStrict: Boolean by rootProject.extra
@@ -64,5 +65,7 @@ val clionUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         preparePluginXmlTask,
         clionFriendlyVersion,
         clionPluginZipPath,
-        clionCustomPluginRepoUrl
+        clionCustomPluginRepoUrl,
+        if (clionUseJavaPlugin) URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$clionRepo/$clionVersion/CL-plugins/java.zip") else null
+
 )

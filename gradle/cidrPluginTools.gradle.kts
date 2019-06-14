@@ -56,6 +56,8 @@ val pluginXmlPath = "META-INF/plugin.xml"
 
 val javaApiArtifacts = listOf("java-api", "java-impl")
 
+val javaPluginId = "com.intellij.java"
+
 val Project.isStandaloneBuild: Boolean
     get() = rootProject.findProject(":idea") == null
 
@@ -253,7 +255,8 @@ fun cidrUpdatePluginsXml(
         pluginXmlTask: Task,
         cidrProductFriendlyVersion: String,
         cidrPluginZipPath: File,
-        cidrCustomPluginRepoUrl: URL
+        cidrCustomPluginRepoUrl: URL,
+        javaPluginRepoUrl: URL?
 ): Task = with(project) {
     task<Task>(guessCidrProductNameFromProject(true) + "UpdatePluginsXml") {
         dependsOn(pluginXmlTask)
@@ -263,6 +266,25 @@ fun cidrUpdatePluginsXml(
 
         val cidrPluginZipDeploymentUrl = URL(cidrCustomPluginRepoUrl, cidrPluginZipPath.name)
         inputs.property("${project.name}-$name-cidrPluginZipDeploymentUrl", cidrPluginZipDeploymentUrl)
+
+        fun generatePluginDescription(
+                id: String,
+                url: URL,
+                version: String,
+                sinceBuild: String,
+                untilBuild: String,
+                description: String,
+                dependency: String?
+        ) = """
+                |    <plugin
+                |           id="$id"
+                |           url="$url"
+                |           version="$version">
+                |        <idea-version since-build="$sinceBuild" until-build="$untilBuild"/>
+                |        <description>$description</description>
+                |        ${dependency?.let { "<depends>$it</depends>" } ?: ""}
+                |    </plugin>
+                """.trimMargin()
 
         doLast {
             val extractedData = pluginXmlTask.outputs
@@ -279,14 +301,35 @@ fun cidrUpdatePluginsXml(
             val sinceBuild = ideaVersion.getValue("since-build")
             val untilBuild = ideaVersion.getValue("until-build")
 
+            val kotlinPluginDescription = generatePluginDescription(
+                    id.first,
+                    cidrPluginZipDeploymentUrl,
+                    version.first,
+                    sinceBuild,
+                    untilBuild,
+                    description.first,
+                    if (javaPluginRepoUrl != null) javaPluginId else null
+            )
+
+            val javaPluginDescription = if (javaPluginRepoUrl != null) {
+                generatePluginDescription(
+                        javaPluginId,
+                        javaPluginRepoUrl,
+                        sinceBuild,
+                        sinceBuild,
+                        untilBuild,
+                        "Kotlin/Native Platform Deps for " + guessCidrProductNameFromProject(false),
+                        null
+                )
+            } else
+                ""
+
             updatePluginsXmlFile.writeText("""
-            <plugins>
-                <plugin id="${id.first}" url="$cidrPluginZipDeploymentUrl" version="${version.first}">
-                    <idea-version since-build="$sinceBuild" until-build="$untilBuild"/>
-                    <description>${description.first}</description>
-                </plugin>
-            </plugins>
-           """.trimIndent()
+                    |<plugins>
+                    |$kotlinPluginDescription
+                    |$javaPluginDescription
+                    |</plugins>
+                   """.trimMargin().lines().filter(String::isNotBlank).joinToString(separator = "\n")
             )
 
             logger.lifecycle("Custom plugin repository XML descriptor written to $updatePluginsXmlFile")
