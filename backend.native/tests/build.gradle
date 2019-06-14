@@ -2097,7 +2097,6 @@ task string_builder0(type: KonanLocalTest) {
 }
 
 task string_builder1(type: KonanLocalTest) {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "HelloKotlin\n42\n0.1\ntrue\n\n"
     source = "runtime/text/string_builder1.kt"
 }
@@ -3300,7 +3299,6 @@ interopTest("interop_bitfields") {
 
 interopTest("interop_funptr") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    expectedFail = (project.testTarget == 'linux_mips32') // fails because of big-endiannes
     goldValue = "42\n17\n1\n0\n42\n42\n"
     source = "interop/basics/funptr.kt"
     interop = 'cfunptr'
