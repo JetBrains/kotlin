@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 const val N = 42
 
 fun test(): Int {
@@ -7,6 +8,9 @@ fun test(): Int {
     }
     return sum
 }
+
+// JVM non-IR uses while.
+// JVM IR uses if + do-while. The surrounding "if" gets optimized in this test (constant condition).
 
 // 0 iterator
 // 0 getStart

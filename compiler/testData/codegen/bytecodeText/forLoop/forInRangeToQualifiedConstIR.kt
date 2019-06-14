@@ -1,12 +1,15 @@
-// IGNORE_BACKEND: JVM_IR
-const val N = 'Z'
+// TARGET_BACKEND: JVM_IR
+object Host {
+    const val M = 1
+    const val N = 4
+}
 
 fun test(): Int {
-    var sum = 0
-    for (i in 'A' .. N) {
-        sum += i.toInt()
+    var s = 0
+    for (i in Host.M .. Host.N) {
+        s += i
     }
-    return sum
+    return s
 }
 
 // JVM non-IR uses while.
@@ -18,5 +21,5 @@ fun test(): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IF_ICMPGT
+// 1 IF_ICMPLE
 // 1 IF
