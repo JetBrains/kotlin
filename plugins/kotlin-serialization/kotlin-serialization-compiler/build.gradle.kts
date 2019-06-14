@@ -20,6 +20,8 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0")
+
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {
