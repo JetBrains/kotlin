@@ -1,27 +1,29 @@
 package capturedValues2
 
 fun main() {
-    1000.foo()
-}
+    val a = 1
 
-fun Int.foo() {
     block {
-        val b = 1
-        val b2 = 2
-        block("x") foo@ {
-            //Breakpoint!
-            this@foo + b
+        foo(a)
+        val a = 2
+
+        block {
+            foo(a)
+
+            val a = 3
+            block {
+                //Breakpoint!
+                foo(a)
+            }
         }
     }
 }
 
-fun block(block: () -> Unit) {
+inline fun block(block: () -> Unit) {
     block()
 }
 
-fun <T> block(obj: T, block: T.() -> Unit) {
-    obj.block()
-}
+fun foo(foo: Int) {}
 
 // SHOW_KOTLIN_VARIABLES
 // PRINT_FRAME

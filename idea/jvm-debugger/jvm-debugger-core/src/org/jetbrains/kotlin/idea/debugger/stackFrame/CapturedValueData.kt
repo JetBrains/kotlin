@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiExpression
 import com.intellij.xdebugger.frame.XValueModifier
 import com.sun.jdi.*
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 data class CapturedValueData(
     val valueName: String,
