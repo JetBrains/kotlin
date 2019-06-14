@@ -7,8 +7,6 @@
       Collects data about your usage of code completion, anonymizes and sends it to JetBrains.
       Note, the plugin doesn't send any of your personal data or code. All it sends is just numbers
       calculated based on your completion usage patterns. The plugin does not send more than 15MB of data per day.
-      It will not send anything until you explicitly allow it in the settings/preferences: Editor | General | Code Completion,
-      "Machine Learning Assistant Code Completion" section.
     ]]></description>
 
   <depends>com.intellij.modules.lang</depends>
