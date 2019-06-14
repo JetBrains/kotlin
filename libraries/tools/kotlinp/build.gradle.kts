@@ -27,6 +27,8 @@ dependencies {
 
     testRuntime(project(":kotlinx-metadata-jvm", configuration = "runtime"))
 
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
     shadows(project(":kotlinx-metadata-jvm", configuration = "runtime"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 }
