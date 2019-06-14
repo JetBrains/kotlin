@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isEnum
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinEqualsBetweenInconvertibleTypesInspection : AbstractKotlinInspection() {
@@ -32,14 +33,15 @@ class KotlinEqualsBetweenInconvertibleTypesInspection : AbstractKotlinInspection
 
     companion object {
         fun BindingContext.isInconvertibleTypes(expr1: KtExpression?, expr2: KtExpression?): Boolean {
-            if (expr1 == null || expr2 == null) return false
-            val type1 = getType(expr1)?.takeIf { it.isTargetType() } ?: return false
-            val type2 = getType(expr2)?.takeIf { it.isTargetType() } ?: return false
+            val type1 = expr1?.getTargetType(this) ?: return false
+            val type2 = expr2?.getTargetType(this) ?: return false
             return type1 != type2
         }
 
-        private fun KotlinType.isTargetType(): Boolean {
-            return KotlinBuiltIns.isPrimitiveType(this) || KotlinBuiltIns.isString(this) || isEnum()
+        private fun KtExpression.getTargetType(context: BindingContext): KotlinType? {
+            return context.getType(this)?.takeIf {
+                KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(it) || KotlinBuiltIns.isStringOrNullableString(it) || it.isEnum()
+            }?.makeNotNullable()
         }
     }
 }

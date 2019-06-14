@@ -3675,6 +3675,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/intEqUserType.kt");
         }
 
+        @TestMetadata("nullableEnumEqString.kt")
+        public void testNullableEnumEqString() throws Exception {
+            runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/nullableEnumEqString.kt");
+        }
+
+        @TestMetadata("nullableIntEqString.kt")
+        public void testNullableIntEqString() throws Exception {
+            runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/nullableIntEqString.kt");
+        }
+
+        @TestMetadata("nullableStringEqInt.kt")
+        public void testNullableStringEqInt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/nullableStringEqInt.kt");
+        }
+
+        @TestMetadata("nullableStringEqString.kt")
+        public void testNullableStringEqString() throws Exception {
+            runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/nullableStringEqString.kt");
+        }
+
         @TestMetadata("stringEqEnum.kt")
         public void testStringEqEnum() throws Exception {
             runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/stringEqEnum.kt");
@@ -3683,6 +3703,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("stringEqInt.kt")
         public void testStringEqInt() throws Exception {
             runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/stringEqInt.kt");
+        }
+
+        @TestMetadata("stringEqNullableEnum.kt")
+        public void testStringEqNullableEnum() throws Exception {
+            runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/stringEqNullableEnum.kt");
+        }
+
+        @TestMetadata("stringEqNullableInt.kt")
+        public void testStringEqNullableInt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/stringEqNullableInt.kt");
+        }
+
+        @TestMetadata("stringEqNullableString.kt")
+        public void testStringEqNullableString() throws Exception {
+            runTest("idea/testData/inspectionsLocal/equalsBetweenInconvertibleTypes/stringEqNullableString.kt");
         }
 
         @TestMetadata("stringEqString.kt")
