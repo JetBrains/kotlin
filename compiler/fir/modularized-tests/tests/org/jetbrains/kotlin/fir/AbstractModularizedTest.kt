@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
@@ -32,6 +33,16 @@ private fun NodeList.toList(): List<Node> {
 private val Node.childNodesList get() = childNodes.toList()
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
+    override fun setUp() {
+        super.setUp()
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = false
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
+    }
+
     private fun loadModule(file: File): ModuleData {
 
         val factory = DocumentBuilderFactory.newInstance()

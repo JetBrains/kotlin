@@ -144,6 +144,8 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
 }
 
 object AbstractTypeChecker {
+    @JvmField
+    var RUN_SLOW_ASSERTIONS = false
 
     fun isSubtypeOf(context: TypeCheckerProviderContext, subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
         return AbstractTypeChecker.isSubtypeOf(context.newBaseTypeCheckerContext(true), subType, superType)
@@ -223,11 +225,13 @@ object AbstractTypeChecker {
         }
 
     private fun AbstractTypeCheckerContext.isSubtypeOfForSingleClassifierType(subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean {
-        assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || subType.isAllowedTypeVariable) {
-            "Not singleClassifierType and not intersection subType: $subType"
-        }
-        assert(superType.isSingleClassifierType() || superType.isAllowedTypeVariable) {
-            "Not singleClassifierType superType: $superType"
+        if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || subType.isAllowedTypeVariable) {
+                "Not singleClassifierType and not intersection subType: $subType"
+            }
+            assert(superType.isSingleClassifierType() || superType.isAllowedTypeVariable) {
+                "Not singleClassifierType superType: $superType"
+            }
         }
 
         if (!AbstractNullabilityChecker.isPossibleSubtype(this, subType, superType)) return false
@@ -469,12 +473,14 @@ object AbstractNullabilityChecker {
         }
 
     private fun AbstractTypeCheckerContext.runIsPossibleSubtype(subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean {
-        // it makes for case String? & Any <: String
-        assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || subType.isAllowedTypeVariable) {
-            "Not singleClassifierType and not intersection subType: $subType"
-        }
-        assert(superType.isSingleClassifierType() || superType.isAllowedTypeVariable) {
-            "Not singleClassifierType superType: $superType"
+        if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            // it makes for case String? & Any <: String
+            assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || subType.isAllowedTypeVariable) {
+                "Not singleClassifierType and not intersection subType: $subType"
+            }
+            assert(superType.isSingleClassifierType() || superType.isAllowedTypeVariable) {
+                "Not singleClassifierType superType: $superType"
+            }
         }
 
         // superType is actually nullable

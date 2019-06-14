@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.test.testFramework;
 
-import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -51,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.IdeaSystemPropertiesForParallelRunConfigurator;
 import org.jetbrains.kotlin.testFramework.MockComponentManagerCreationTracer;
+import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
@@ -100,6 +99,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         System.setProperty("apple.awt.UIElement", "true");
 
         FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true;
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true;
     }
 
     protected boolean shouldContainTempFiles() {

@@ -88,13 +88,15 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                         "original lower type: '${capturedType.lowerType}"
             )
 
-            typeConstructor.supertypes.forEach { supertype ->
-                substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
-                    throw IllegalStateException(
-                        "Illegal type substitutor: $this, " +
-                                "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
-                                "original supertype: '$supertype'"
-                    )
+            if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                typeConstructor.supertypes.forEach { supertype ->
+                    substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
+                        throw IllegalStateException(
+                            "Illegal type substitutor: $this, " +
+                                    "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
+                                    "original supertype: '$supertype'"
+                        )
+                    }
                 }
             }
 

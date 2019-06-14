@@ -18,17 +18,38 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeIntersector
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 
-class FlexibleTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
+class SlowTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
 
-    fun testAssertionsAreOn() {
+    fun testAssertionsForFlexibleTypesAreOn() {
         val builtIns = DefaultBuiltIns.Instance
 
         try {
             KotlinTypeFactory.flexibleType(builtIns.intType, builtIns.stringType).arguments
         } catch (e: AssertionError) {
             assertEquals("Lower bound Int of a flexible type must be a subtype of the upper bound String", e.message)
+            return
+        }
+
+        fail("Assertion error expected")
+    }
+
+    fun testAssertionsForTypeCheckerAreOn() {
+        val builtIns = DefaultBuiltIns.Instance
+
+        try {
+            val superType = TypeIntersector.intersectTypes(listOf(builtIns.charSequence.defaultType, builtIns.comparable.defaultType))
+            AbstractNullabilityChecker.isPossibleSubtype(
+                ClassicTypeCheckerContext(errorTypeEqualsToAnything = true), builtIns.annotationType,
+                superType as SimpleType
+            )
+        } catch (e: AssertionError) {
+            assertEquals("Not singleClassifierType superType: {CharSequence & Comparable<T>}", e.message)
             return
         }
 
