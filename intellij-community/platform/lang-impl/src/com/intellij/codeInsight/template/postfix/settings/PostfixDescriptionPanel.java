@@ -14,9 +14,10 @@ import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.HintHint;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,11 +33,18 @@ class PostfixDescriptionPanel implements Disposable {
   private JPanel myAfterPanel;
   private JPanel myBeforePanel;
   private JEditorPane myDescriptionBrowser;
+  private JBLabel myDescriptionLabel;
+  private JBLabel myBeforeLabel;
+  private JBLabel myAfterLabel;
 
   PostfixDescriptionPanel() {
     myDescriptionBrowser.setMargin(JBUI.insets(5));
     initializeExamplePanel(myAfterPanel);
     initializeExamplePanel(myBeforePanel);
+
+    myDescriptionLabel.setBorder(JBUI.Borders.emptyBottom(3));
+    myBeforeLabel.setBorder(JBUI.Borders.empty(7, 0, 3, 0));
+    myAfterLabel.setBorder(JBUI.Borders.empty(7, 0, 3, 0));
   }
 
   public void reset(@NotNull BeforeAfterMetaData actionMetaData) {
@@ -54,7 +62,7 @@ class PostfixDescriptionPanel implements Disposable {
 
   private void readHtml(@NotNull BeforeAfterMetaData actionMetaData, boolean isEmpty) {
     final HintHint hintHint = new HintHint(myDescriptionBrowser, new Point(0, 0));
-    hintHint.setFont(UIUtil.getLabelFont());
+    hintHint.setFont(StartupUiUtil.getLabelFont());
     String description = isEmpty ? CodeInsightBundle.message("templates.postfix.settings.category.text")
                                  : getDescription(actionMetaData.getDescription());
     try {
