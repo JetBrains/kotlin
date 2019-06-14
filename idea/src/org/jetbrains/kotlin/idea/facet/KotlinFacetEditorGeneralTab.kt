@@ -61,6 +61,7 @@ class KotlinFacetEditorGeneralTab(
         lateinit var useProjectSettingsCheckBox: ThreeStateCheckBox
 
         lateinit var platformToCheckbox: Map<SimplePlatform, ThreeStateCheckBox>
+        lateinit var hmppCheckbox: ThreeStateCheckBox
 
         private lateinit var projectSettingsLink: HoverHyperlinkLabel
 
@@ -111,12 +112,16 @@ class KotlinFacetEditorGeneralTab(
                 targetPlatformsPanel.add(it)
                 it.isEnabled = true //TODO(auskov): think about enabling/disabling editing facet settings
             }
+            hmppCheckbox = ThreeStateCheckBox().apply {
+                this.isEnabled = false
+            }
             val contentPanel = FormBuilder
                     .createFormBuilder()
                     .addComponent(JPanel(BorderLayout()).apply {
                         add(useProjectSettingsCheckBox, BorderLayout.WEST)
                         add(projectSettingsLink, BorderLayout.EAST)
                     }).addLabeledComponent("Selected target platforms:", targetPlatformsPanel)
+                    .addLabeledComponent("HMPP enabled:", hmppCheckbox)
                     .addComponent(compilerConfigurable.createComponent()!!.apply {
                         border = null
                     })
@@ -307,6 +312,7 @@ class KotlinFacetEditorGeneralTab(
             editor.platformToCheckbox.forEach {
                 it.value.isSelected = configuration.settings.targetPlatform?.contains(it.key) ?: false
             }
+            editor.hmppCheckbox.isSelected = configuration.settings.isHmppEnabled
             editor.compilerConfigurable.reset()
             editor.updateCompilerConfigurable()
         }

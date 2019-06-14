@@ -360,6 +360,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
 
             mainModuleNode.coroutines = mppModel.extraFeatures.coroutinesState
+            mainModuleNode.isHmpp = mppModel.extraFeatures.isHMPPEnabled
         }
 
         fun populateContentRoots(

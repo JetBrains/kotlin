@@ -147,7 +147,8 @@ data class KotlinTargetImpl(
 }
 
 data class ExtraFeaturesImpl(
-    override val coroutinesState: String?
+    override val coroutinesState: String?,
+    override val isHMPPEnabled: Boolean
 ) : ExtraFeatures
 
 data class KotlinMPPGradleModelImpl(
@@ -169,7 +170,7 @@ data class KotlinMPPGradleModelImpl(
                 cloningCache[initialTarget] = it
             }
         }.toList(),
-        ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState),
+        ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState, mppModel.extraFeatures.isHMPPEnabled),
         mppModel.kotlinNativeHome
     )
 }

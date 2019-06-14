@@ -52,7 +52,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val coroutinesState = getCoroutinesState(project)
         reportUnresolvedDependencies(targets)
         val kotlinNativeHome = KotlinNativeHomeEvaluator.getKotlinNativeHome(project) ?: NO_KOTLIN_NATIVE_HOME
-        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState), kotlinNativeHome)
+        return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState, isHMPPEnabled(project)), kotlinNativeHome)
     }
 
     private fun isHMPPEnabled(project: Project): Boolean {
