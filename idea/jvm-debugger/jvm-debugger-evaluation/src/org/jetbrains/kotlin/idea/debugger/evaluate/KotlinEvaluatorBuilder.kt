@@ -120,8 +120,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
     }
 
     private fun evaluateWithStatus(context: EvaluationContextImpl, status: EvaluationStatus): Any? {
-        if (DumbService.getInstance(codeFragment.project).isDumb) {
-            evaluationException("Code fragment evaluation is not available in the dumb mode")
+        runReadAction {
+            if (DumbService.getInstance(codeFragment.project).isDumb) {
+                evaluationException("Code fragment evaluation is not available in the dumb mode")
+            }
         }
 
         val frameProxy = context.frameProxy ?: run {
