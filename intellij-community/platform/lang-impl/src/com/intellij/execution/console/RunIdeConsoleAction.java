@@ -30,14 +30,17 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.NotNullFunction;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.script.IdeScriptEngine;
@@ -48,16 +51,20 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.ref.WeakReference;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author gregsh
  */
 public class RunIdeConsoleAction extends DumbAwareAction {
+  private static final Logger LOG = Logger.getInstance(RunIdeConsoleAction.class);
+
   private static final String DEFAULT_FILE_NAME = "ide-scripting";
 
-  private static final Key<WeakReference<RunContentDescriptor>> DESCRIPTOR_KEY = Key.create("DESCRIPTOR_KEY");
-  private static final Logger LOG = Logger.getInstance(RunIdeConsoleAction.class);
+  private static final Key<IdeScriptEngineManager.EngineInfo> ENGINE_INFO_KEY = Key.create("ENGINE_INFO_KEY");
+  private static final Key<Map<VirtualFile, RunContentDescriptor>> DESCRIPTOR_MAP_KEY = Key.create("DESCRIPTOR_MAP_KEY");
 
   @Override
   public void update(@NotNull AnActionEvent e) {
@@ -68,32 +75,33 @@ public class RunIdeConsoleAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    List<IdeScriptEngineManager.EngineInfo> languages = IdeScriptEngineManager.getInstance().getEngineInfos();
-    if (languages.size() == 1) {
-      runConsole(e, languages.iterator().next());
+    List<IdeScriptEngineManager.EngineInfo> infos = IdeScriptEngineManager.getInstance().getEngineInfos();
+    if (infos.size() == 1) {
+      runConsole(e, infos.iterator().next());
       return;
     }
 
-    DefaultActionGroup actions = new DefaultActionGroup(
-      ContainerUtil.map(languages, (NotNullFunction<IdeScriptEngineManager.EngineInfo, AnAction>)info -> {
-        String lang = info.languageName;
-        String eng = info.engineName;
-        if (StringUtil.toLowerCase(lang).equals(lang)) lang = StringUtil.capitalize(lang);
-        if (StringUtil.toLowerCase(eng).equals(eng)) eng = StringUtil.capitalize(eng);
-        String name = lang + " (" + eng + ")";
-        IdeaPluginDescriptor plugin = info.pluginId == null ? null : PluginManager.getPlugin(info.pluginId);
-        String description = lang + " (engine: " + eng +
-                             (plugin == null ? "" : ", plugin: " + plugin.getName()) + ")";
-        return new DumbAwareAction(name, description, null) {
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e1) {
-            runConsole(e1, info);
-          }
-        };
-      })
-    );
+    List<? extends AnAction> actions = JBIterable.from(infos).map(info -> {
+      String lang = info.languageName;
+      String eng = info.engineName;
+      if (StringUtil.toLowerCase(lang).equals(lang)) lang = StringUtil.capitalize(lang);
+      if (StringUtil.toLowerCase(eng).equals(eng)) eng = StringUtil.capitalize(eng);
+      String name = lang + " (" + eng + ")";
+      IdeaPluginDescriptor plugin = info.pluginId == null ? null : PluginManager.getPlugin(info.pluginId);
+      String description = lang + " (engine: " + eng +
+                           (plugin == null ? "" : ", plugin: " + plugin.getName()) + ")";
+      return new DumbAwareAction(name, description, null) {
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e1) {
+          runConsole(e1, info);
+        }
+      };
+    })
+      .sort(Comparator.comparing(o -> o.getTemplatePresentation().getText()))
+      .toList();
+    DefaultActionGroup actionGroup = new DefaultActionGroup(actions);
     JBPopupFactory.getInstance().createActionGroupPopup(
-      "Script Engine", actions, e.getDataContext(), JBPopupFactory.ActionSelectionAid.NUMBERING, false)
+      "Script Engine", actionGroup, e.getDataContext(), JBPopupFactory.ActionSelectionAid.NUMBERING, false)
       .showInBestPositionFor(e.getDataContext());
   }
 
@@ -106,6 +114,7 @@ public class RunIdeConsoleAction extends DumbAwareAction {
       String pathName = PathUtil.makeFileName(DEFAULT_FILE_NAME, ContainerUtil.getFirstItem(extensions));
       VirtualFile virtualFile = IdeConsoleRootType.getInstance().findFile(project, pathName, ScratchFileService.Option.create_if_missing);
       if (virtualFile != null) {
+        virtualFile.putUserData(ENGINE_INFO_KEY, info);
         FileEditorManager.getInstance(project).openFile(virtualFile, true);
       }
     }
@@ -209,18 +218,21 @@ public class RunIdeConsoleAction extends DumbAwareAction {
 
   @NotNull
   private static RunContentDescriptor getConsoleView(@NotNull Project project, @NotNull VirtualFile file) {
-    PsiFile psiFile = ObjectUtils.assertNotNull(PsiManager.getInstance(project).findFile(file));
-    WeakReference<RunContentDescriptor> ref = psiFile.getCopyableUserData(DESCRIPTOR_KEY);
-    RunContentDescriptor descriptor = ref == null ? null : ref.get();
+    Map<VirtualFile, RunContentDescriptor> map = project.getUserData(DESCRIPTOR_MAP_KEY);
+    if (map == null) {
+      map = ContainerUtil.createWeakKeyWeakValueMap();
+      project.putUserData(DESCRIPTOR_MAP_KEY, map);
+    }
+    RunContentDescriptor descriptor = map.get(file);
     if (descriptor == null || descriptor.getExecutionConsole() == null) {
-      descriptor = createConsoleView(project, psiFile);
-      psiFile.putCopyableUserData(DESCRIPTOR_KEY, new WeakReference<>(descriptor));
+      descriptor = createConsoleView(project, file);
+      map.put(file, descriptor);
     }
     return descriptor;
   }
 
   @NotNull
-  private static RunContentDescriptor createConsoleView(@NotNull Project project, @NotNull PsiFile psiFile) {
+  private static RunContentDescriptor createConsoleView(@NotNull Project project, @NotNull VirtualFile file) {
     ConsoleView consoleView = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
 
     DefaultActionGroup toolbarActions = new DefaultActionGroup();
@@ -230,7 +242,7 @@ public class RunIdeConsoleAction extends DumbAwareAction {
     toolbar.setTargetComponent(consoleView.getComponent());
     panel.add(toolbar.getComponent(), BorderLayout.WEST);
 
-    final RunContentDescriptor descriptor = new RunContentDescriptor(consoleView, null, panel, psiFile.getName()) {
+     RunContentDescriptor descriptor = new RunContentDescriptor(consoleView, null, panel, file.getName()) {
       @Override
       public boolean isContentReuseProhibited() {
         return true;
@@ -247,6 +259,7 @@ public class RunIdeConsoleAction extends DumbAwareAction {
   private static class MyRunAction extends DumbAwareAction {
 
     private IdeScriptEngine engine;
+    private IdeScriptEngineManager.EngineInfo engineInfo;
 
     @Override
     public void update(@NotNull AnActionEvent e) {
@@ -264,9 +277,14 @@ public class RunIdeConsoleAction extends DumbAwareAction {
       if (project == null || editor == null || virtualFile == null) return;
       PsiDocumentManager.getInstance(project).commitAllDocuments();
 
+      IdeScriptEngineManager.EngineInfo info = virtualFile.getUserData(ENGINE_INFO_KEY);
       String extension = virtualFile.getExtension();
-      if (extension != null && (engine == null || !engine.getFileExtensions().contains(extension))) {
-        engine = IdeScriptEngineManager.getInstance().getEngineByFileExtension(extension, null);
+      if (engine == null || info != null && engineInfo != info ||
+          extension != null && !engine.getFileExtensions().contains(extension)) {
+        IdeScriptEngineManager engineManager = IdeScriptEngineManager.getInstance();
+        engineInfo = info;
+        engine = info != null ? engineManager.getEngine(info, null) :
+                 extension != null ? engineManager.getEngineByFileExtension(extension, null) : null;
       }
       if (engine == null) {
         LOG.warn("Script engine not found for: " + virtualFile.getName());
