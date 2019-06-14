@@ -22,12 +22,10 @@ abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCa
         return items.filter { it.`object` is KeywordLookupObject }.toTypedArray()
     }
 
-    override fun getProjectDescriptor(): KotlinLightProjectDescriptor {
-        when {
-            "LangLevel10" in fileName() -> return KotlinProjectDescriptorWithFacet.KOTLIN_10
-            "LangLevel11" in fileName() -> return KotlinProjectDescriptorWithFacet.KOTLIN_11
-            else -> return KotlinProjectDescriptorWithFacet.KOTLIN_STABLE_WITH_MULTIPLATFORM
-        }
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = when {
+        "LangLevel10" in fileName() -> KotlinProjectDescriptorWithFacet.KOTLIN_10
+        "LangLevel11" in fileName() -> KotlinProjectDescriptorWithFacet.KOTLIN_11
+        else -> KotlinProjectDescriptorWithFacet.KOTLIN_STABLE_WITH_MULTIPLATFORM
     }
 
     override fun defaultInvocationCount() = 1

@@ -39,11 +39,11 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.TypeUtils
@@ -53,28 +53,28 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
 class CompletionSessionConfiguration(
-        val useBetterPrefixMatcherForNonImportedClasses: Boolean,
-        val nonAccessibleDeclarations: Boolean,
-        val javaGettersAndSetters: Boolean,
-        val javaClassesNotToBeUsed: Boolean,
-        val staticMembers: Boolean,
-        val dataClassComponentFunctions: Boolean
+    val useBetterPrefixMatcherForNonImportedClasses: Boolean,
+    val nonAccessibleDeclarations: Boolean,
+    val javaGettersAndSetters: Boolean,
+    val javaClassesNotToBeUsed: Boolean,
+    val staticMembers: Boolean,
+    val dataClassComponentFunctions: Boolean
 )
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
-        useBetterPrefixMatcherForNonImportedClasses = parameters.invocationCount < 2,
-        nonAccessibleDeclarations = parameters.invocationCount >= 2,
-        javaGettersAndSetters = parameters.invocationCount >= 2,
-        javaClassesNotToBeUsed = parameters.invocationCount >= 2,
-        staticMembers = parameters.invocationCount >= 2,
-        dataClassComponentFunctions = parameters.invocationCount >= 2
+    useBetterPrefixMatcherForNonImportedClasses = parameters.invocationCount < 2,
+    nonAccessibleDeclarations = parameters.invocationCount >= 2,
+    javaGettersAndSetters = parameters.invocationCount >= 2,
+    javaClassesNotToBeUsed = parameters.invocationCount >= 2,
+    staticMembers = parameters.invocationCount >= 2,
+    dataClassComponentFunctions = parameters.invocationCount >= 2
 )
 
 abstract class CompletionSession(
-        protected val configuration: CompletionSessionConfiguration,
-        protected val parameters: CompletionParameters,
-        protected val toFromOriginalFileMapper: ToFromOriginalFileMapper,
-        resultSet: CompletionResultSet
+    protected val configuration: CompletionSessionConfiguration,
+    protected val parameters: CompletionParameters,
+    protected val toFromOriginalFileMapper: ToFromOriginalFileMapper,
+    resultSet: CompletionResultSet
 ) {
     init {
         CompletionBenchmarkSink.instance.onCompletionStarted(this)
@@ -97,13 +97,11 @@ abstract class CompletionSession(
             if (reference.expression is KtLabelReferenceExpression) {
                 this.nameExpression = null
                 this.expression = reference.expression.parent.parent as? KtExpressionWithLabel
-            }
-            else {
+            } else {
                 this.nameExpression = reference.expression
                 this.expression = nameExpression
             }
-        }
-        else {
+        } else {
             this.nameExpression = null
             this.expression = null
         }
@@ -116,29 +114,36 @@ abstract class CompletionSession(
     private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart().andNot(singleCharPattern('$'))
 
     protected val prefix = CompletionUtil.findIdentifierPrefix(
-            parameters.position.containingFile,
-            parameters.offset,
-            kotlinIdentifierPartPattern or singleCharPattern('@'),
-            kotlinIdentifierStartPattern)!!
+        parameters.position.containingFile,
+        parameters.offset,
+        kotlinIdentifierPartPattern or singleCharPattern('@'),
+        kotlinIdentifierStartPattern
+    )!!
 
     protected val prefixMatcher = CamelHumpMatcher(prefix)
 
     protected val descriptorNameFilter: (String) -> Boolean = prefixMatcher.asStringNameFilter()
 
-    protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = configuration.nonAccessibleDeclarations) }
-    protected val isVisibleFilterCheckAlways: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = false) }
+    protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean =
+        { isVisibleDescriptor(it, completeNonAccessible = configuration.nonAccessibleDeclarations) }
+    protected val isVisibleFilterCheckAlways: (DeclarationDescriptor) -> Boolean =
+        { isVisibleDescriptor(it, completeNonAccessible = false) }
 
-    protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext,
-                                                                    resolutionFacade,
-                                                                    moduleDescriptor,
-                                                                    isVisibleFilter,
-                                                                    NotPropertiesService.getNotProperties(position))
+    protected val referenceVariantsHelper = ReferenceVariantsHelper(
+        bindingContext,
+        resolutionFacade,
+        moduleDescriptor,
+        isVisibleFilter,
+        NotPropertiesService.getNotProperties(position)
+    )
 
-    protected val callTypeAndReceiver = if (nameExpression == null) CallTypeAndReceiver.UNKNOWN else CallTypeAndReceiver.detect(nameExpression)
+    protected val callTypeAndReceiver =
+        if (nameExpression == null) CallTypeAndReceiver.UNKNOWN else CallTypeAndReceiver.detect(nameExpression)
     protected val receiverTypes = nameExpression?.let { detectReceiverTypes(bindingContext, nameExpression, callTypeAndReceiver) }
 
 
-    protected val basicLookupElementFactory = BasicLookupElementFactory(project, InsertHandlerProvider(callTypeAndReceiver.callType) { expectedInfos })
+    protected val basicLookupElementFactory =
+        BasicLookupElementFactory(project, InsertHandlerProvider(callTypeAndReceiver.callType) { expectedInfos })
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
     protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
@@ -155,12 +160,14 @@ abstract class CompletionSession(
 
     protected fun indicesHelper(mayIncludeInaccessible: Boolean): KotlinIndicesHelper {
         val filter = if (mayIncludeInaccessible) isVisibleFilter else isVisibleFilterCheckAlways
-        return KotlinIndicesHelper(resolutionFacade,
-                                   searchScope,
-                                   filter,
-                                   filterOutPrivate = !mayIncludeInaccessible,
-                                   declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) },
-                                   file = file)
+        return KotlinIndicesHelper(
+            resolutionFacade,
+            searchScope,
+            filter,
+            filterOutPrivate = !mayIncludeInaccessible,
+            declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) },
+            file = file
+        )
     }
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor, completeNonAccessible: Boolean): Boolean {
@@ -253,20 +260,22 @@ abstract class CompletionSession(
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
 
-        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, PreferGetSetMethodsToPropertyWeigher,
-                                    NotImportedWeigher(importableFqNameClassifier),
-                                    NotImportedStaticMemberWeigher(importableFqNameClassifier),
-                                    KindWeigher, CallableWeigher)
+        sorter = sorter.weighBefore(
+            "stats", DeprecatedWeigher, PriorityWeigher, PreferGetSetMethodsToPropertyWeigher,
+            NotImportedWeigher(importableFqNameClassifier),
+            NotImportedStaticMemberWeigher(importableFqNameClassifier),
+            KindWeigher, CallableWeigher
+        )
 
         sorter = sorter.weighAfter("stats", VariableOrFunctionWeigher, ImportedWeigher(importableFqNameClassifier))
 
         val preferContextElementsWeigher = PreferContextElementsWeigher(inDescriptor)
-        sorter = if (callTypeAndReceiver is CallTypeAndReceiver.SUPER_MEMBERS) { // for completion after "super." strictly prefer the current member
-            sorter.weighBefore("kotlin.deprecated", preferContextElementsWeigher)
-        }
-        else {
-            sorter.weighBefore("kotlin.proximity", preferContextElementsWeigher)
-        }
+        sorter =
+            if (callTypeAndReceiver is CallTypeAndReceiver.SUPER_MEMBERS) { // for completion after "super." strictly prefer the current member
+                sorter.weighBefore("kotlin.deprecated", preferContextElementsWeigher)
+            } else {
+                sorter.weighBefore("kotlin.proximity", preferContextElementsWeigher)
+            }
 
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
@@ -275,10 +284,10 @@ abstract class CompletionSession(
 
         sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
 
-        if (expectedInfos.all { it.fuzzyType?.type?.isUnit() == true }) {
-            sorter = sorter.weighBefore("prefix", PreferDslMembers)
+        sorter = if (expectedInfos.all { it.fuzzyType?.type?.isUnit() == true }) {
+            sorter.weighBefore("prefix", PreferDslMembers)
         } else {
-            sorter = sorter.weighAfter("kotlin.preferContextElements", PreferDslMembers)
+            sorter.weighAfter("kotlin.preferContextElements", PreferDslMembers)
         }
 
         return sorter
@@ -288,28 +297,29 @@ abstract class CompletionSession(
         if (expectedInfos.isEmpty()) return null
 
         var context = expectedInfos
-                .mapNotNull { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
-                .distinct()
-                .singleOrNull()
-                ?.let { "expectedType=$it" }
+            .mapNotNull { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
+            .distinct()
+            .singleOrNull()
+            ?.let { "expectedType=$it" }
 
         if (context == null) {
             context = expectedInfos
-                    .mapNotNull { it.expectedName }
-                    .distinct()
-                    .singleOrNull()
-                    ?.let { "expectedName=$it" }
+                .mapNotNull { it.expectedName }
+                .distinct()
+                .singleOrNull()
+                ?.let { "expectedName=$it" }
         }
 
         return context
     }
 
     protected val referenceVariantsCollector = if (nameExpression != null) {
-        ReferenceVariantsCollector(referenceVariantsHelper, indicesHelper(true), prefixMatcher,
-                                   nameExpression, callTypeAndReceiver, resolutionFacade, bindingContext,
-                                   importableFqNameClassifier, configuration)
-    }
-    else {
+        ReferenceVariantsCollector(
+            referenceVariantsHelper, indicesHelper(true), prefixMatcher,
+            nameExpression, callTypeAndReceiver, resolutionFacade, bindingContext,
+            importableFqNameClassifier, configuration
+        )
+    } else {
         null
     }
 
@@ -319,7 +329,9 @@ abstract class CompletionSession(
 
     protected fun referenceVariantsWithSingleFunctionTypeParameter(): ReferenceVariants? {
         val variants = referenceVariantsCollector?.allCollected ?: return null
-        val filter = { descriptor: DeclarationDescriptor -> descriptor is FunctionDescriptor && LookupElementFactory.hasSingleFunctionTypeParameter(descriptor) }
+        val filter = { descriptor: DeclarationDescriptor ->
+            descriptor is FunctionDescriptor && LookupElementFactory.hasSingleFunctionTypeParameter(descriptor)
+        }
         return ReferenceVariants(variants.imported.filter(filter), variants.notImportedExtensions.filter(filter))
     }
 
@@ -336,20 +348,21 @@ abstract class CompletionSession(
 
         val expressionReceiver = ExpressionReceiver.create(explicitReceiver, runtimeType, bindingContext)
         val (variants, notImportedExtensions) = ReferenceVariantsCollector(
-                referenceVariantsHelper, indicesHelper(true), prefixMatcher,
-                nameExpression!!, callTypeAndReceiver, resolutionFacade, bindingContext,
-                importableFqNameClassifier, configuration, runtimeReceiver = expressionReceiver
+            referenceVariantsHelper, indicesHelper(true), prefixMatcher,
+            nameExpression!!, callTypeAndReceiver, resolutionFacade, bindingContext,
+            importableFqNameClassifier, configuration, runtimeReceiver = expressionReceiver
         ).collectReferenceVariants(descriptorKindFilter!!)
         val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants.imported)
-        val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
+        val filteredNotImportedExtensions =
+            filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
 
         val runtimeVariants = ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
         return Pair(runtimeVariants, lookupElementFactory.copy(receiverTypes = listOf(ReceiverType(runtimeType, 0))))
     }
 
     private fun <TDescriptor : DeclarationDescriptor> filterVariantsForRuntimeReceiverType(
-            runtimeVariants: Collection<TDescriptor>,
-            baseVariants: Collection<TDescriptor>
+        runtimeVariants: Collection<TDescriptor>,
+        baseVariants: Collection<TDescriptor>
     ): Collection<TDescriptor> {
         val baseVariantsByName = baseVariants.groupBy { it.name }
         val result = ArrayList<TDescriptor>()
@@ -371,12 +384,11 @@ abstract class CompletionSession(
 
     protected fun processTopLevelCallables(processor: (CallableDescriptor) -> Unit) {
         val shadowedFilter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
-                ?.createNonImportedDeclarationsFilter<CallableDescriptor>(referenceVariantsCollector!!.allCollected.imported)
+            ?.createNonImportedDeclarationsFilter<CallableDescriptor>(referenceVariantsCollector!!.allCollected.imported)
         indicesHelper(true).processTopLevelCallables({ prefixMatcher.prefixMatches(it) }) {
             if (shadowedFilter != null) {
                 shadowedFilter(listOf(it)).singleOrNull()?.let(processor)
-            }
-            else {
+            } else {
                 processor(it)
             }
         }
@@ -395,13 +407,17 @@ abstract class CompletionSession(
     }
 
     protected open fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
-        return LookupElementFactory(basicLookupElementFactory, receiverTypes,
-                                    callTypeAndReceiver.callType, inDescriptor, contextVariablesProvider)
+        return LookupElementFactory(
+            basicLookupElementFactory, receiverTypes,
+            callTypeAndReceiver.callType, inDescriptor, contextVariablesProvider
+        )
     }
 
-    protected fun detectReceiverTypes(bindingContext: BindingContext,
-                                      nameExpression: KtSimpleNameExpression,
-                                      callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<ReceiverType>? {
+    protected fun detectReceiverTypes(
+        bindingContext: BindingContext,
+        nameExpression: KtSimpleNameExpression,
+        callTypeAndReceiver: CallTypeAndReceiver<*, *>
+    ): Collection<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
             bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
             stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */

@@ -45,18 +45,20 @@ import kotlin.math.min
 
 @Throws(IntroduceRefactoringException::class)
 fun selectElement(
-        editor: Editor,
-        file: KtFile,
-        elementKinds: Collection<CodeInsightUtils.ElementKind>,
-        callback: (PsiElement?) -> Unit
+    editor: Editor,
+    file: KtFile,
+    elementKinds: Collection<CodeInsightUtils.ElementKind>,
+    callback: (PsiElement?) -> Unit
 ) = selectElement(editor, file, true, elementKinds, callback)
 
 @Throws(IntroduceRefactoringException::class)
-fun selectElement(editor: Editor,
-                  file: KtFile,
-                  failOnEmptySuggestion: Boolean,
-                  elementKinds: Collection<CodeInsightUtils.ElementKind>,
-                  callback: (PsiElement?) -> Unit) {
+fun selectElement(
+    editor: Editor,
+    file: KtFile,
+    failOnEmptySuggestion: Boolean,
+    elementKinds: Collection<CodeInsightUtils.ElementKind>,
+    callback: (PsiElement?) -> Unit
+) {
     if (editor.selectionModel.hasSelection()) {
         var selectionStart = editor.selectionModel.selectionStart
         var selectionEnd = editor.selectionModel.selectionEnd
@@ -64,8 +66,17 @@ fun selectElement(editor: Editor,
         var firstElement: PsiElement = file.findElementAt(selectionStart)!!
         var lastElement: PsiElement = file.findElementAt(selectionEnd - 1)!!
 
-        if (PsiTreeUtil.getParentOfType(firstElement, KtLiteralStringTemplateEntry::class.java, KtEscapeStringTemplateEntry::class.java) == null
-            && PsiTreeUtil.getParentOfType(lastElement, KtLiteralStringTemplateEntry::class.java, KtEscapeStringTemplateEntry::class.java) == null) {
+        if (PsiTreeUtil.getParentOfType(
+                firstElement,
+                KtLiteralStringTemplateEntry::class.java,
+                KtEscapeStringTemplateEntry::class.java
+            ) == null
+            && PsiTreeUtil.getParentOfType(
+                lastElement,
+                KtLiteralStringTemplateEntry::class.java,
+                KtEscapeStringTemplateEntry::class.java
+            ) == null
+        ) {
             firstElement = firstElement.getNextSiblingIgnoringWhitespaceAndComments(true)!!
             lastElement = lastElement.getPrevSiblingIgnoringWhitespaceAndComments(true)!!
             selectionStart = firstElement.textRange.startOffset
@@ -73,11 +84,10 @@ fun selectElement(editor: Editor,
         }
 
         val element = elementKinds.asSequence()
-                .mapNotNull { findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, it) }
-                .firstOrNull()
+            .mapNotNull { findElement(file, selectionStart, selectionEnd, failOnEmptySuggestion, it) }
+            .firstOrNull()
         callback(element)
-    }
-    else {
+    } else {
         val offset = editor.caretModel.offset
         smartSelectElement(editor, file, offset, failOnEmptySuggestion, elementKinds, callback)
     }
@@ -85,9 +95,9 @@ fun selectElement(editor: Editor,
 
 @Throws(IntroduceRefactoringException::class)
 fun getSmartSelectSuggestions(
-        file: PsiFile,
-        offset: Int,
-        elementKind: CodeInsightUtils.ElementKind
+    file: PsiFile,
+    offset: Int,
+    elementKind: CodeInsightUtils.ElementKind
 ): List<KtElement> {
     if (offset < 0) return emptyList()
 
@@ -97,41 +107,38 @@ fun getSmartSelectSuggestions(
 
     val elements = ArrayList<KtElement>()
     while (element != null && !(element is KtBlockExpression && element.parent !is KtFunctionLiteral) &&
-           element !is KtNamedFunction
-           && element !is KtClassBody) {
+        element !is KtNamedFunction
+        && element !is KtClassBody
+    ) {
         var addElement = false
         var keepPrevious = true
 
         if (element is KtTypeElement) {
             addElement =
-                    elementKind == CodeInsightUtils.ElementKind.TYPE_ELEMENT
-                    && element.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } == null
+                elementKind == CodeInsightUtils.ElementKind.TYPE_ELEMENT
+                        && element.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } == null
             if (!addElement) {
                 keepPrevious = false
             }
-        }
-        else if (element is KtExpression && element !is KtStatementExpression) {
+        } else if (element is KtExpression && element !is KtStatementExpression) {
             addElement = elementKind == CodeInsightUtils.ElementKind.EXPRESSION
 
             if (addElement) {
                 if (element is KtParenthesizedExpression) {
                     addElement = false
-                }
-                else if (KtPsiUtil.isLabelIdentifierExpression(element)) {
+                } else if (KtPsiUtil.isLabelIdentifierExpression(element)) {
                     addElement = false
-                }
-                else if (element.parent is KtQualifiedExpression) {
+                } else if (element.parent is KtQualifiedExpression) {
                     val qualifiedExpression = element.parent as KtQualifiedExpression
                     if (qualifiedExpression.receiverExpression !== element) {
                         addElement = false
                     }
-                }
-                else if (element.parent is KtCallElement
-                         || element.parent is KtThisExpression
-                         || PsiTreeUtil.getParentOfType(element, KtSuperExpression::class.java) != null) {
+                } else if (element.parent is KtCallElement
+                    || element.parent is KtThisExpression
+                    || PsiTreeUtil.getParentOfType(element, KtSuperExpression::class.java) != null
+                ) {
                     addElement = false
-                }
-                else if (element.parent is KtOperationExpression) {
+                } else if (element.parent is KtOperationExpression) {
                     val operationExpression = element.parent as KtOperationExpression
                     if (operationExpression.operationReference === element) {
                         addElement = false
@@ -162,12 +169,12 @@ fun getSmartSelectSuggestions(
 
 @Throws(IntroduceRefactoringException::class)
 private fun smartSelectElement(
-        editor: Editor,
-        file: PsiFile,
-        offset: Int,
-        failOnEmptySuggestion: Boolean,
-        elementKinds: Collection<CodeInsightUtils.ElementKind>,
-        callback: (PsiElement?) -> Unit
+    editor: Editor,
+    file: PsiFile,
+    offset: Int,
+    failOnEmptySuggestion: Boolean,
+    elementKinds: Collection<CodeInsightUtils.ElementKind>,
+    callback: (PsiElement?) -> Unit
 ) {
     val elements = elementKinds.flatMap { getSmartSelectSuggestions(file, offset, it) }
     if (elements.isEmpty()) {
@@ -189,7 +196,13 @@ private fun smartSelectElement(
     val list = JBList<PsiElement>(model)
 
     list.cellRenderer = object : DefaultListCellRenderer() {
-        override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+        override fun getListCellRendererComponent(
+            list: JList<*>,
+            value: Any?,
+            index: Int,
+            isSelected: Boolean,
+            cellHasFocus: Boolean
+        ): Component {
             val rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
             val element = value as KtElement?
             if (element!!.isValid) {
@@ -210,28 +223,28 @@ private fun smartSelectElement(
 
     var title = "Elements"
     if (elementKinds.size == 1) {
-        when (elementKinds.iterator().next()) {
-            CodeInsightUtils.ElementKind.EXPRESSION -> title = "Expressions"
-            CodeInsightUtils.ElementKind.TYPE_ELEMENT, CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR -> title = "Types"
+        title = when (elementKinds.iterator().next()) {
+            CodeInsightUtils.ElementKind.EXPRESSION -> "Expressions"
+            CodeInsightUtils.ElementKind.TYPE_ELEMENT, CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR -> "Types"
         }
     }
 
     JBPopupFactory.getInstance()
-            .createListPopupBuilder(list)
-            .setTitle(title)
-            .setMovable(false)
-            .setResizable(false)
-            .setRequestFocus(true)
-            .setItemChoosenCallback { callback(list.selectedValue as KtElement) }
-            .addListener(
-                    object : JBPopupAdapter() {
-                        override fun onClosed(event: LightweightWindowEvent) {
-                            highlighter.dropHighlight()
-                        }
-                    }
-            )
-            .createPopup()
-            .showInBestPositionFor(editor)
+        .createListPopupBuilder(list)
+        .setTitle(title)
+        .setMovable(false)
+        .setResizable(false)
+        .setRequestFocus(true)
+        .setItemChoosenCallback { callback(list.selectedValue as KtElement) }
+        .addListener(
+            object : JBPopupAdapter() {
+                override fun onClosed(event: LightweightWindowEvent) {
+                    highlighter.dropHighlight()
+                }
+            }
+        )
+        .createPopup()
+        .showInBestPositionFor(editor)
 }
 
 fun getExpressionShortText(element: KtElement): String {
@@ -244,11 +257,11 @@ fun getExpressionShortText(element: KtElement): String {
 
 @Throws(IntroduceRefactoringException::class)
 private fun findElement(
-        file: KtFile,
-        startOffset: Int,
-        endOffset: Int,
-        failOnNoExpression: Boolean,
-        elementKind: CodeInsightUtils.ElementKind
+    file: KtFile,
+    startOffset: Int,
+    endOffset: Int,
+    failOnNoExpression: Boolean,
+    elementKind: CodeInsightUtils.ElementKind
 ): PsiElement? {
     var element = CodeInsightUtils.findElement(file, startOffset, endOffset, elementKind)
     if (element == null && elementKind == CodeInsightUtils.ElementKind.EXPRESSION) {
