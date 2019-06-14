@@ -24,6 +24,8 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
+
+    testRuntimeOnly(intellijDep()) { includeJars("jps-model") }
 }
 
 sourceSets {
