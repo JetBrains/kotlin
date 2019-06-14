@@ -11,7 +11,7 @@ import com.intellij.find.SearchReplaceComponent;
 import com.intellij.largeFilesEditor.Utils;
 import com.intellij.largeFilesEditor.editor.EditorManager;
 import com.intellij.largeFilesEditor.search.actions.*;
-import com.intellij.largeFilesEditor.search.searchResultsPanel.SearchResultsToolWindow;
+import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
 import com.intellij.largeFilesEditor.search.searchTask.*;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -23,9 +23,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -43,7 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
+public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callback {
   private static final int CONTEXT_ONE_SIDE_LENGTH = 100;
   private static final long STATUS_TEXT_LIFE_TIME = 3000;
 
@@ -52,12 +49,12 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
 
   private final EditorManager editorManager;
   private final FileDataProviderForSearch fileDataProviderForSearch;
-  private final SearchResultsPanelManagerAccessor searchResultsPanelManagerAccessor;
+  private final RangeSearchCreator myRangeSearchCreator;
 
-  // TODO: 2019-05-21 need to implement using this for oprimization of "close" searching
+  // TODO: 2019-05-21 need to implement using this for optimization of "close" searching
   private final JBList<SearchResult> closeSearchResultsList;
 
-  private SearchTaskBase lastExecutedSearchTask;
+  private CloseSearchTask lastExecutedCloseSearchTask;
   private boolean notFoundState;
   private long lastProgressStatusUpdateTime = System.currentTimeMillis();
 
@@ -77,10 +74,10 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
 
   public SearchManagerImpl(@NotNull EditorManager editorManager,
                            FileDataProviderForSearch fileDataProviderForSearch,
-                           @NotNull SearchResultsPanelManagerAccessor searchResultsPanelManagerAccessor) {
+                           @NotNull RangeSearchCreator rangeSearchCreator) {
     this.editorManager = editorManager;
     this.fileDataProviderForSearch = fileDataProviderForSearch;
-    this.searchResultsPanelManagerAccessor = searchResultsPanelManagerAccessor;
+    this.myRangeSearchCreator = rangeSearchCreator;
 
     createActions();
     createSearchManageGUI();
@@ -88,7 +85,7 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
 
     closeSearchResultsList = createCloseSearchResultsList();
 
-    lastExecutedSearchTask = null;
+    lastExecutedCloseSearchTask = null;
     notFoundState = false;
 
     statusText = "";
@@ -102,8 +99,8 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
   }
 
   @Override
-  public SearchTaskBase getLastExecutedSearchTask() {
-    return lastExecutedSearchTask;
+  public CloseSearchTask getLastExecutedCloseSearchTask() {
+    return lastExecutedCloseSearchTask;
   }
 
   @Override
@@ -121,48 +118,6 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
 
   @Override
   public void launchNewRangeSearch(long fromPageNumber, long toPageNumber, boolean forwardDirection) {
-
-    SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-      true,
-      editorManager.getProject(), editorManager.getVirtualFile());
-
-    if (searchResultsToolWindow == null) {
-      logger.warn("launchNewRangeSearch(...): searchResultsToolWindow is null, however it shouldn't be.");
-      Messages.showWarningDialog("Can't show tool window with search results. " +
-                                 "Unexpected problem. Search is stopped.", "Error");
-      return;
-    }
-
-    searchResultsPanelManagerAccessor.showSearchResultsToolWindow(searchResultsToolWindow);
-
-    searchResultsToolWindow.clearAllResults();
-
-    long pageNumber;
-    if (forwardDirection) {
-      pageNumber = fromPageNumber;
-      if (pageNumber == SearchTaskOptions.NO_LIMIT) {
-        pageNumber = 0;
-      }
-    }
-    else {
-      pageNumber = toPageNumber;
-      if (pageNumber == SearchTaskOptions.NO_LIMIT) {
-        try {
-          pageNumber = fileDataProviderForSearch.getPagesAmount();
-        }
-        catch (IOException e) {
-          logger.warn(e);
-          Messages.showWarningDialog(
-            "Can't launch range search because of error of working with file.", "Error");
-          return;
-        }
-      }
-    }
-    searchResultsToolWindow.setLeftBorderPageNumber(pageNumber);
-    searchResultsToolWindow.setRightBorderPageNumber(pageNumber);
-    // TODO: 2019-05-08 add line below???
-    //searchResultsToolWindow.updateSearchFurtherBtns();
-
     SearchTaskOptions options = new SearchTaskOptions()
       .setStringToFind(searchManageGUI.getSearchTextComponent().getText())
       .setSearchDirectionForward(forwardDirection)
@@ -172,31 +127,18 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
       .setWholeWords(toggleWholeWordsAction.isSelected(null))
       .setContextOneSideLength(CONTEXT_ONE_SIDE_LENGTH);
 
-    searchResultsToolWindow.setSearchTaskOptions(options);
-    searchResultsToolWindow.updateTabName();
-
-    launchRangeSearch(options, true);
+    launchNewRangeSearch(options);
   }
 
-  @Override
-  public void launchRangeSearch(SearchTaskOptions searchTaskOptions, boolean needToClearPrevSearchResults) {
+  private void launchNewRangeSearch(SearchTaskOptions searchTaskOptions) {
     stopSearchTaskIfItExists();
 
-    SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-      true,
-      editorManager.getProject(), editorManager.getVirtualFile());
+    RangeSearch rangeSearch = myRangeSearchCreator.createContent(
+      editorManager.getProject(), editorManager.getVirtualFile(),
+      editorManager.getVirtualFile().getName(), fileDataProviderForSearch);
 
-    if (searchResultsToolWindow == null) {
-      logger.warn("launchRangeSearch(...): searchResultsToolWindow is null, however it shouldn't be.");
-      Messages.showWarningDialog("Can't show tool window with search results. " +
-                                 "Unexpected problem. Search is stopped.", "Error");
-      return;
-    }
-
-    searchResultsPanelManagerAccessor.showSearchResultsToolWindow(searchResultsToolWindow);
-
-    searchResultsToolWindow.setSearchTaskOptions(searchTaskOptions);
-    searchResultsToolWindow.setAdditionalStatusText(null);
+    rangeSearch.setAdditionalStatusText(null);
+    rangeSearch.updateTabName();
 
     long pagesAmount;
     try {
@@ -208,27 +150,14 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
       return;
     }
 
-    if (needToClearPrevSearchResults) {
-      searchResultsToolWindow.clearAllResults();
-      searchResultsToolWindow.setLeftBorderPageNumber(searchTaskOptions.leftBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
-                                                      0 : searchTaskOptions.leftBoundPageNumber);
-      searchResultsToolWindow.setRightBorderPageNumber(searchTaskOptions.rightBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
-                                                       pagesAmount - 1 : searchTaskOptions.rightBoundPageNumber);
-      searchResultsToolWindow.updateSearchFurtherBtns();
-    }
+    rangeSearch.clearAllResults();
+    rangeSearch.setLeftBorderPageNumber(searchTaskOptions.leftBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
+                                        0 : searchTaskOptions.leftBoundPageNumber);
+    rangeSearch.setRightBorderPageNumber(searchTaskOptions.rightBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
+                                         pagesAmount - 1 : searchTaskOptions.rightBoundPageNumber);
+    rangeSearch.update();
 
-    final RangeSearchTask newRangeSearchTask = new RangeSearchTask(
-      searchTaskOptions, editorManager.getProject(), fileDataProviderForSearch, this);
-    lastExecutedSearchTask = newRangeSearchTask;
-    String title = newRangeSearchTask.getTitleForBackgroundableTask();
-    Task.Backgroundable task = new Task.Backgroundable(null, title, true) {
-      @Override
-      public void run(@NotNull ProgressIndicator indicator) {
-        newRangeSearchTask.setProgressIndicator(indicator);
-        newRangeSearchTask.run();
-      }
-    };
-    ProgressManager.getInstance().run(task);
+    rangeSearch.runSearch(searchTaskOptions);
   }
 
   @Override
@@ -267,20 +196,17 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
     }
 
     stopSearchTaskIfItExists();
-    lastExecutedSearchTask = new CloseSearchTask(
+    lastExecutedCloseSearchTask = new CloseSearchTask(
       options, editorManager.getProject(), fileDataProviderForSearch, this);
-    ApplicationManager.getApplication().executeOnPooledThread(lastExecutedSearchTask);
+    ApplicationManager.getApplication().executeOnPooledThread(lastExecutedCloseSearchTask);
   }
 
   private boolean launchLoopedCloseSearchTaskIfNeeded(SearchTaskOptions normalCloseSearchOptions) {
-    if (!(lastExecutedSearchTask instanceof CloseSearchTask)) {
-      return false;
-    }
-    if (!lastExecutedSearchTask.isFinished()) {
+    if (lastExecutedCloseSearchTask == null || !lastExecutedCloseSearchTask.isFinished()) {
       return false;
     }
 
-    SearchTaskOptions oldOptions = lastExecutedSearchTask.getOptions();
+    SearchTaskOptions oldOptions = lastExecutedCloseSearchTask.getOptions();
     if (oldOptions.loopedPhase) {
       return false;
     }
@@ -322,8 +248,8 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
     return true;
   }
 
+  // TODO: 2019-06-12 remove "onlyOnePageSearch" at all
   private SearchTaskOptions generateOptionsForNormalCloseSearch(boolean directionForward, boolean onlyOnePageSearch) {
-
     SearchTaskOptions options = new SearchTaskOptions()
       .setOnlyOnePageSearch(onlyOnePageSearch)
       .setSearchDirectionForward(directionForward)
@@ -367,51 +293,7 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
   }
 
   @Override
-  public void tellFrameSearchResultsFound(RangeSearchTask caller,
-                                          ArrayList<SearchResult> allMatchesAtFrame) {
-    if (!allMatchesAtFrame.isEmpty()) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        SearchTaskOptions options = caller.getOptions();
-        if (!caller.isShouldStop()) {
-          SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-            false,
-            editorManager.getProject(), editorManager.getVirtualFile());
-
-          if (searchResultsToolWindow == null) {
-            caller.shouldStop();
-            logger.warn("tellFrameSearchResultsFound(...): searchResultsToolWindow is null, " +
-                        "however it should be created when the searching was launched.");
-            Messages.showWarningDialog("Can't show tool window with search results. " +
-                                       "Unexpected problem. Search is stopped.", "Error");
-            return;
-          }
-
-          if (options.searchForwardDirection) {
-            searchResultsToolWindow.addSearchResultsIntoEnd(allMatchesAtFrame);
-          }
-          else {
-            searchResultsToolWindow.addSearchResultsIntoBeginning(allMatchesAtFrame);
-          }
-
-          if (searchResultsToolWindow.getAmountOfStoredSearchResults() > options.criticalAmountOfSearchResults) {
-            stopSearchTaskIfItExists();
-            if (options.searchForwardDirection) {
-              searchResultsToolWindow.setRightBorderPageNumber(allMatchesAtFrame.get(0).startPosition.pageNumber);
-            }
-            else {
-              searchResultsToolWindow.setLeftBorderPageNumber(allMatchesAtFrame.get(0).startPosition.pageNumber);
-            }
-            searchResultsToolWindow.setAdditionalStatusText("Search stopped because too many results were found.");
-            searchResultsToolWindow.updateSearchFurtherBtns();
-          }
-        }
-      });
-    }
-  }
-
-
-  @Override
-  public void tellSearchProgress(SearchTaskBase caller, long curPageNumber, long pagesAmount) {
+  public void tellSearchProgress(CloseSearchTask caller, long curPageNumber, long pagesAmount) {
     long time = System.currentTimeMillis();
     if (time - lastProgressStatusUpdateTime > PROGRESS_STATUS_UPDATE_PERIOD
         || curPageNumber == 0
@@ -419,23 +301,7 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
       lastProgressStatusUpdateTime = time;
       ApplicationManager.getApplication().invokeLater(() -> {
         if (!caller.isShouldStop()) {
-          if (caller instanceof CloseSearchTask) {
-            setNewStatusText("Searching at " + Utils.calculatePagePositionPercent(curPageNumber, pagesAmount) + "% of file ...");
-          }
-          else {
-            // caller is instance of RangeSearchTask
-            SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-              false, editorManager.getProject(), editorManager.getVirtualFile());
-            if (searchResultsToolWindow != null) {
-              if (caller.getOptions().searchForwardDirection) {
-                searchResultsToolWindow.setRightBorderPageNumber(curPageNumber);
-              }
-              else {
-                searchResultsToolWindow.setLeftBorderPageNumber(curPageNumber);
-              }
-              searchResultsToolWindow.updateSearchFurtherBtns();
-            }
-          }
+          setNewStatusText("Searching at " + Utils.calculatePagePositionPercent(curPageNumber, pagesAmount) + "% of file ...");
         }
       });
     }
@@ -455,63 +321,45 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
   }
 
   @Override
-  public void tellSearchIsFinished(SearchTaskBase caller, long lastScannedPageNumber) {
+  public void tellSearchIsFinished(CloseSearchTask caller, long lastScannedPageNumber) {
     ApplicationManager.getApplication().invokeLater(() -> {
 
       SearchTaskOptions options = caller.getOptions();
       if (!caller.isShouldStop()) {
-        if (caller instanceof CloseSearchTask) {
-          if (options.loopedPhase) {
-            setNewStatusText("Search complete. No more matches.");
-            searchManageGUI.setNotFoundBackground();
-            if (!(editorManager.getEditor().getHeaderComponent() instanceof SearchReplaceComponent)) {
-              String message = "\"" + options.stringToFind + "\" not found";
-              showSimpleHintInEditor(message, editorManager.getEditor());
-            }
-          }
-          else {
-            if (options.onlyOnePageSearch) {
-              if (!closeSearchResultsList.isEmpty()
-                  && closeSearchResultsList.getModel().getElementAt(0).startPosition.pageNumber
-                     != lastScannedPageNumber) {
-                ((CollectionListModel<SearchResult>)closeSearchResultsList.getModel()).removeAll();
-              }
-            }
-            else {
-              notFoundState = true;
-
-              AnAction action = ActionManager.getInstance().getAction(
-                options.searchForwardDirection ? IdeActions.ACTION_FIND_NEXT : IdeActions.ACTION_FIND_PREVIOUS);
-              String shortcutsText = KeymapUtil.getFirstKeyboardShortcutText(action);
-              String findAgainFromText = options.searchForwardDirection ? "start" : "end";
-              String message;
-              setNewStatusText("");
-              if (!shortcutsText.isEmpty()) {
-                message = String.format("\"%s\" not found, press %s to search from the %s",
-                                        options.stringToFind, shortcutsText, findAgainFromText);
-              }
-              else {
-                message = String.format("\"%s\" not found, perform \"%s\" action again to search from the %s",
-                                        options.stringToFind, action.getTemplatePresentation().getText(), findAgainFromText);
-              }
-              showSimpleHintInEditor(message, editorManager.getEditor());
-            }
+        if (options.loopedPhase) {
+          setNewStatusText("Search complete. No more matches.");
+          searchManageGUI.setNotFoundBackground();
+          if (!(editorManager.getEditor().getHeaderComponent() instanceof SearchReplaceComponent)) {
+            String message = "\"" + options.stringToFind + "\" not found";
+            showSimpleHintInEditor(message, editorManager.getEditor());
           }
         }
         else {
-          // caller is instance of RangeSearchTask
-          SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-            false,
-            editorManager.getProject(), editorManager.getVirtualFile());
-          if (searchResultsToolWindow != null) {
-            if (options.searchForwardDirection) {
-              searchResultsToolWindow.setRightBorderPageNumber(lastScannedPageNumber);
+          if (options.onlyOnePageSearch) {
+            if (!closeSearchResultsList.isEmpty()
+                && closeSearchResultsList.getModel().getElementAt(0).startPosition.pageNumber
+                   != lastScannedPageNumber) {
+              ((CollectionListModel<SearchResult>)closeSearchResultsList.getModel()).removeAll();
+            }
+          }
+          else {
+            notFoundState = true;
+
+            AnAction action = ActionManager.getInstance().getAction(
+              options.searchForwardDirection ? IdeActions.ACTION_FIND_NEXT : IdeActions.ACTION_FIND_PREVIOUS);
+            String shortcutsText = KeymapUtil.getFirstKeyboardShortcutText(action);
+            String findAgainFromText = options.searchForwardDirection ? "start" : "end";
+            String message;
+            setNewStatusText("");
+            if (!shortcutsText.isEmpty()) {
+              message = String.format("\"%s\" not found, press %s to search from the %s",
+                                      options.stringToFind, shortcutsText, findAgainFromText);
             }
             else {
-              searchResultsToolWindow.setLeftBorderPageNumber(lastScannedPageNumber);
+              message = String.format("\"%s\" not found, perform \"%s\" action again to search from the %s",
+                                      options.stringToFind, action.getTemplatePresentation().getText(), findAgainFromText);
             }
-            searchResultsToolWindow.setAdditionalStatusText("Search complete.");
-            searchResultsToolWindow.updateSearchFurtherBtns();
+            showSimpleHintInEditor(message, editorManager.getEditor());
           }
         }
       }
@@ -531,52 +379,30 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
   }
 
   @Override
-  public void tellSearchWasStopped(SearchTaskBase caller, long curPageNumber) {
-    if (caller instanceof RangeSearchTask) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-          false,
-          editorManager.getProject(), editorManager.getVirtualFile());
-        if (searchResultsToolWindow != null) {
-          searchResultsToolWindow.updateSearchFurtherBtns();
-        }
-      });
-    }
+  public void tellSearchWasStopped(CloseSearchTask caller, long curPageNumber) {
   }
 
   @Override
-  public void tellSearchWasCatchedException(SearchTaskBase caller, IOException e) {
+  public void tellSearchWasCatchedException(CloseSearchTask caller, IOException e) {
     ApplicationManager.getApplication().invokeLater(() -> {
       if (!caller.isShouldStop()) {
-        if (caller instanceof CloseSearchTask) {
-          setNewStatusText("Search stopped because something went wrong.");
-        }
-        else {
-          SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-            false,
-            editorManager.getProject(), editorManager.getVirtualFile());
-          if (searchResultsToolWindow != null) {
-            searchResultsToolWindow.setAdditionalStatusText("Search stopped because something went wrong.");
-          }
-        }
+        setNewStatusText("Search stopped because something went wrong.");
       }
     });
   }
 
   @Override
   public void onEscapePressed() {
-    if (lastExecutedSearchTask != null
-        && !lastExecutedSearchTask.isShouldStop()
-        && !lastExecutedSearchTask.isFinished()) {
+    if (lastExecutedCloseSearchTask != null
+        && !lastExecutedCloseSearchTask.isShouldStop()
+        && !lastExecutedCloseSearchTask.isFinished()) {
       stopSearchTaskIfItExists();
-      if (lastExecutedSearchTask instanceof CloseSearchTask) {
+      if (lastExecutedCloseSearchTask != null) {
         setNewStatusText("Stopped by user.");
       }
     }
     else {
       stopSearchTaskIfItExists();
-      //((CollectionListModel<SearchResult>)closeSearchResultsList.getModel()).removeAll();
-      //editorManager.setSearchPanelsViewState(EditorGui.SearchPanelsViewState.ALL_HIDDEN);
       IdeFocusManager
         .getInstance(editorManager.getProject())
         .requestFocus(editorManager.getEditor().getContentComponent(), false);
@@ -618,11 +444,10 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
   @CalledInAwt
   @Override
   public void onSearchParametersChanged() {
-    if (lastExecutedSearchTask instanceof CloseSearchTask) {
-      lastExecutedSearchTask.shouldStop();
+    if (lastExecutedCloseSearchTask != null) {
+      lastExecutedCloseSearchTask.shouldStop();
       setNewStatusText("");
     }
-    //((CollectionListModel<SearchResult>)closeSearchResultsList.getModel()).removeAll();
     searchManageGUI.setRegularBackground();
     editorManager.getEditorModel().setHighlightingCloseSearchResultsEnabled(false);
 
@@ -642,24 +467,7 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
 
   @Override
   public void dispose() {
-    if (lastExecutedSearchTask instanceof RangeSearchTask
-        && !lastExecutedSearchTask.isShouldStop()
-        && !lastExecutedSearchTask.isFinished()) {
-      SearchResultsToolWindow searchResultsToolWindow = searchResultsPanelManagerAccessor.getSearchResultsToolWindow(
-        false,
-        editorManager.getProject(), editorManager.getVirtualFile());
-      if (searchResultsToolWindow != null) {
-        searchResultsToolWindow.setAdditionalStatusText("Search stopped because the editor was closed.");
-      }
-    }
     stopSearchTaskIfItExists();
-  }
-
-  @Override
-  public void tellSearchResultsToolWindowWasClosed() {
-    if (lastExecutedSearchTask instanceof RangeSearchTask) {
-      lastExecutedSearchTask.shouldStop();
-    }
   }
 
   @Override
@@ -690,7 +498,7 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
 
   @Override
   public boolean isSearchWorkingNow() {
-    return (lastExecutedSearchTask != null && !lastExecutedSearchTask.isFinished());
+    return (lastExecutedCloseSearchTask != null && !lastExecutedCloseSearchTask.isFinished());
   }
 
   private void createActions() {
@@ -747,8 +555,8 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
   }
 
   private void stopSearchTaskIfItExists() {
-    if (lastExecutedSearchTask != null) {
-      lastExecutedSearchTask.shouldStop();
+    if (lastExecutedCloseSearchTask != null) {
+      lastExecutedCloseSearchTask.shouldStop();
     }
   }
 

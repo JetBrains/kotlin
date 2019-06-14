@@ -4,7 +4,6 @@ package com.intellij.largeFilesEditor.actions;
 import com.intellij.largeFilesEditor.editor.EditorManager;
 import com.intellij.largeFilesEditor.search.SearchManager;
 import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
-import com.intellij.largeFilesEditor.search.searchTask.SearchTaskBase;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -35,8 +34,8 @@ public class LfeEditorActionSearchAgainHandler extends LfeBaseEditorActionHandle
                                    @NotNull Caret caret,
                                    DataContext dataContext) {
     SearchManager searchManager = editorManager.getSearchManager();
-    SearchTaskBase task = searchManager.getLastExecutedSearchTask();
-    return !(task instanceof CloseSearchTask && !task.isFinished());
+    CloseSearchTask task = searchManager.getLastExecutedCloseSearchTask();
+    return task == null || task.isFinished();
   }
 
   protected boolean isForwardDirection() {

@@ -6,7 +6,6 @@ import com.intellij.find.editorHeaderActions.ContextAwareShortcutProvider;
 import com.intellij.find.editorHeaderActions.Utils;
 import com.intellij.largeFilesEditor.search.SearchManager;
 import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
-import com.intellij.largeFilesEditor.search.searchTask.SearchTaskBase;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +44,8 @@ public class PrevNextOccurrenceAction extends DumbAwareAction implements Context
   }
 
   private boolean isEnabled() {
-    SearchTaskBase task = mySearchManager.getLastExecutedSearchTask();
-    return !(task instanceof CloseSearchTask) || task.isFinished();
+    CloseSearchTask task = mySearchManager.getLastExecutedCloseSearchTask();
+    return task == null || task.isFinished();
   }
 
   @Nullable

@@ -12,7 +12,7 @@ import com.intellij.largeFilesEditor.file.ReadingPageResultHandler;
 import com.intellij.largeFilesEditor.search.SearchManager;
 import com.intellij.largeFilesEditor.search.SearchManagerImpl;
 import com.intellij.largeFilesEditor.search.SearchResult;
-import com.intellij.largeFilesEditor.search.SearchResultsPanelManagerAccessorImpl;
+import com.intellij.largeFilesEditor.search.RangeSearchCreatorImpl;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.undo.UndoUtil;
@@ -83,7 +83,7 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
 
 
     searchManager = new SearchManagerImpl(
-      this, fileManager.getFileDataProviderForSearch(), new SearchResultsPanelManagerAccessorImpl());
+      this, fileManager.getFileDataProviderForSearch(), new RangeSearchCreatorImpl());
 
     createAndAddSpecialWidgetIfNeed(project);
     PlatformActionsReplacer.makeAdaptingOfPlatformActionsIfNeed();

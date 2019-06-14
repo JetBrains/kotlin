@@ -11,13 +11,18 @@ import java.util.ArrayList;
 
 public class RangeSearchTask extends SearchTaskBase {
   private static final Logger logger = Logger.getInstance(RangeSearchTask.class);
+
+  private final Callback myCallback;
+
   private ProgressIndicator myProgressIndicator;
+
 
   public RangeSearchTask(SearchTaskOptions options,
                          Project project,
                          FileDataProviderForSearch fileDataProviderForSearch,
-                         SearchTaskCallback callback) {
-    super(options, project, fileDataProviderForSearch, callback);
+                         Callback callback) {
+    super(options, project, fileDataProviderForSearch);
+    myCallback = callback;
   }
 
   public String getTitleForBackgroundableTask() {
@@ -48,7 +53,6 @@ public class RangeSearchTask extends SearchTaskBase {
     long pagesAmount;
     int tailLength;
     long curPageNumber;
-    //int offset;
     ArrayList<SearchResult> allMatchesAtFrame;
 
     searcher = createFrameSearcher(options, project);
@@ -61,7 +65,7 @@ public class RangeSearchTask extends SearchTaskBase {
 
       /* checking if it is the end... */
       if (isTheEndOfSearchingCycle(curPageNumber, pagesAmount, options)) {
-        callback.tellSearchIsFinished(this, curPageNumber);
+        myCallback.tellSearchIsFinished(this, curPageNumber);
         return;
       }
 
@@ -76,25 +80,25 @@ public class RangeSearchTask extends SearchTaskBase {
 
 
       while (true) {
-        callback.tellSearchProgress(this, curPageNumber, pagesAmount);
+        myCallback.tellSearchProgress(this, curPageNumber, pagesAmount);
 
         /* searching result in current page */
         searcher.setFrame(curPageNumber, prefixSymbol, curPageText, tailText, postfixSymbol);
         allMatchesAtFrame = searcher.findAllMatchesAtFrame();
         if (allMatchesAtFrame.size() > 0) {
-          callback.tellFrameSearchResultsFound(this, allMatchesAtFrame);
+          myCallback.tellFrameSearchResultsFound(this, allMatchesAtFrame);
         }
 
         if (isShouldStop()) {
           if (myProgressIndicator != null) {
             myProgressIndicator.cancel();
           }
-          callback.tellSearchWasStopped(this, curPageNumber);
+          myCallback.tellSearchIsStopped(curPageNumber);
           return;
         }
         if (myProgressIndicator != null && myProgressIndicator.isCanceled()) {
           this.shouldStop();
-          callback.tellSearchWasStopped(this, curPageNumber);
+          myCallback.tellSearchIsStopped(curPageNumber);
           return;
         }
 
@@ -118,19 +122,19 @@ public class RangeSearchTask extends SearchTaskBase {
 
         /* checking if it is the end... */
         if (isTheEndOfSearchingCycle(curPageNumber, pagesAmount, options)) {
-          callback.tellSearchIsFinished(this, getPreviousPageNumber(curPageNumber, options));
+          myCallback.tellSearchIsFinished(this, getPreviousPageNumber(curPageNumber, options));
           return;
         }
         if (isShouldStop()) {
           if (myProgressIndicator != null) {
             myProgressIndicator.cancel();
           }
-          callback.tellSearchWasStopped(this, curPageNumber);
+          myCallback.tellSearchIsStopped(curPageNumber);
           return;
         }
         if (myProgressIndicator != null && myProgressIndicator.isCanceled()) {
           this.shouldStop();
-          callback.tellSearchWasStopped(this, curPageNumber);
+          myCallback.tellSearchIsStopped(curPageNumber);
           return;
         }
 
@@ -142,7 +146,7 @@ public class RangeSearchTask extends SearchTaskBase {
     }
     catch (IOException e) {
       logger.warn(e);
-      callback.tellSearchWasCatchedException(this, e);
+      myCallback.tellSearchCatchedException(this, e);
     }
   }
 
@@ -154,5 +158,18 @@ public class RangeSearchTask extends SearchTaskBase {
     else {
       return whatToCut;
     }
+  }
+
+  public interface Callback {
+
+    void tellSearchIsFinished(RangeSearchTask caller, long lastScannedPageNumber);
+
+    void tellSearchProgress(RangeSearchTask caller, long curPageNumber, long pagesAmount);
+
+    void tellFrameSearchResultsFound(RangeSearchTask caller, ArrayList<SearchResult> allMatchesAtFrame);
+
+    void tellSearchIsStopped(long curPageNumber);
+
+    void tellSearchCatchedException(RangeSearchTask caller, IOException e);
   }
 }

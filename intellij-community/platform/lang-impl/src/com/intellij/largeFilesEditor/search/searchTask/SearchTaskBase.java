@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil;
 public abstract class SearchTaskBase implements Runnable {
 
   protected final FileDataProviderForSearch fileDataProviderForSearch;
-  protected final SearchTaskCallback callback;
   protected final SearchTaskOptions options;
   protected final Project project;
 
@@ -19,10 +18,8 @@ public abstract class SearchTaskBase implements Runnable {
 
   public SearchTaskBase(SearchTaskOptions options,
                         Project project,
-                        FileDataProviderForSearch fileDataProviderForSearch,
-                        SearchTaskCallback callback) {
+                        FileDataProviderForSearch fileDataProviderForSearch) {
     this.project = project;
-    this.callback = callback;
     this.options = options;
     this.fileDataProviderForSearch = fileDataProviderForSearch;
   }

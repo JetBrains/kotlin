@@ -2,7 +2,7 @@
 package com.intellij.largeFilesEditor.search.actions;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.largeFilesEditor.search.searchResultsPanel.SearchResultsToolWindow;
+import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
@@ -36,12 +36,12 @@ public class FindFurtherAction extends AnAction implements DumbAware {
 
   private final boolean directionForward;
   private final boolean additionMode;
-  private final SearchResultsToolWindow searchResultsToolWindow;
+  private final RangeSearch myRangeSearch;
 
-  public FindFurtherAction(boolean directionForward, boolean additionMode, SearchResultsToolWindow searchResultsToolWindow) {
+  public FindFurtherAction(boolean directionForward, boolean additionMode, RangeSearch rangeSearch) {
     this.directionForward = directionForward;
     this.additionMode = additionMode;
-    this.searchResultsToolWindow = searchResultsToolWindow;
+    this.myRangeSearch = rangeSearch;
 
     String text;
     String description;
@@ -79,12 +79,12 @@ public class FindFurtherAction extends AnAction implements DumbAware {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    boolean enabled = searchResultsToolWindow.isButtonFindFurtherEnabled(directionForward);
+    boolean enabled = myRangeSearch.isButtonFindFurtherEnabled(directionForward);
     e.getPresentation().setEnabled(enabled);
   }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    searchResultsToolWindow.onClickSearchFurther(directionForward, additionMode);
+    myRangeSearch.onClickSearchFurther(directionForward, additionMode);
   }
 }

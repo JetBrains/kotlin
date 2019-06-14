@@ -5,19 +5,22 @@ import com.intellij.largeFilesEditor.GuiUtils;
 import com.intellij.largeFilesEditor.Utils;
 import com.intellij.largeFilesEditor.editor.EditorManager;
 import com.intellij.largeFilesEditor.editor.EditorManagerAccessor;
-import com.intellij.largeFilesEditor.search.SearchManager;
+import com.intellij.largeFilesEditor.search.SearchManagerImpl;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.actions.FindFurtherAction;
 import com.intellij.largeFilesEditor.search.actions.StopRangeSearchAction;
+import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.largeFilesEditor.search.searchTask.RangeSearchTask;
-import com.intellij.largeFilesEditor.search.searchTask.SearchTaskBase;
 import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SingleSelectionModel;
@@ -40,22 +43,25 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultsToolWindow extends SimpleToolWindowPanel {
+public class RangeSearch implements RangeSearchTask.Callback {
 
-  public static final Key<SearchResultsToolWindow> KEY = new Key<>("lfe.searchResultsToolWindow");
+  public static final Key<RangeSearch> KEY = new Key<>("lfe.searchResultsToolWindow");
 
-  private static final Logger logger = Logger.getInstance(SearchResultsToolWindow.class);
+  private static final Logger logger = Logger.getInstance(RangeSearch.class);
   private static final String ACTION_TOOLBAR_PLACE_ID = "lfe.searchResultsToolWindow.actionToolbar";
   private static final long UNDEFINED = -1;
+  private static final int PROGRESS_STATUS_UPDATE_PERIOD = 150;
 
   private final Project myProject;
   private final VirtualFile myVirtualFile;
   private final EditorManagerAccessor myEditorManagerAccessor;
+  private final FileDataProviderForSearch myFileDataProviderForSearch;
 
-  private Content myRelativeTab = null;
-  private SearchTaskOptions mySearchTaskOptions = null;
+  private Content myContent = null;
+  private final JComponent myComponent;
   private long myLeftBorderPageNumber = UNDEFINED;
   private long myRightBorderPageNumber = UNDEFINED;
   private final CollectionListModel<SearchResult> myResultsListModel;
@@ -66,6 +72,11 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
   private final SimpleColoredComponent lblSearchStatusCenter;
   private final AnimatedProgressIcon progressIcon;
   private final ActionToolbar myActionToolbar;
+
+  private RangeSearchTask lastExecutedRangeSearchTask;
+
+  // TODO: 12.08.19 code duplicated like in class SearchManagerImpl
+  private long lastProgressStatusUpdateTime = System.currentTimeMillis();
 
   public boolean isButtonFindFurtherEnabled(boolean directionForward) {
     if (directionForward) {
@@ -86,13 +97,14 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     launchSearchingFurther(directionForward, additionMode);
   }
 
-  public SearchResultsToolWindow(@NotNull VirtualFile virtualFile, @NotNull Project project,
-                                 @NotNull EditorManagerAccessor editorManagerAccessor) {
-    super(false, true);
-
+  public RangeSearch(@NotNull VirtualFile virtualFile,
+                     @NotNull Project project,
+                     @NotNull EditorManagerAccessor editorManagerAccessor,
+                     FileDataProviderForSearch fileDataProviderForSearch) {
     myVirtualFile = virtualFile;
     myProject = project;
     myEditorManagerAccessor = editorManagerAccessor;
+    myFileDataProviderForSearch = fileDataProviderForSearch;
 
     lblSearchStatusLeft = new SimpleColoredComponent();
     lblSearchStatusLeft.setBorder(JBUI.Borders.emptyLeft(5));
@@ -155,18 +167,9 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     myActionToolbar = ActionManager.getInstance().createActionToolbar(
       ACTION_TOOLBAR_PLACE_ID, actionGroup, false);
 
-    JPanel mainPanel = new JPanel();
-    JPanel panelResultsList = new JPanel();
+    myComponent = new JPanel();
+
     JPanel panelHeader = new JPanel();
-    JPanel actionToolbarPanel = new JPanel();
-
-    setContent(mainPanel);
-
-    mainPanel.setLayout(new BorderLayout());
-    mainPanel.add(panelHeader, BorderLayout.NORTH);
-    mainPanel.add(actionToolbarPanel, BorderLayout.WEST);
-    mainPanel.add(panelResultsList, BorderLayout.CENTER);
-
     FlowLayout panelHeaderFlowLayout = new FlowLayout();
     panelHeaderFlowLayout.setAlignment(FlowLayout.LEFT);
     panelHeaderFlowLayout.setHgap(0);
@@ -175,22 +178,27 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     panelHeader.add(lblSearchStatusCenter);
     panelHeader.add(progressIcon);
 
-    actionToolbarPanel.setLayout(new BorderLayout());
-    actionToolbarPanel.add(myActionToolbar.getComponent());
+    myActionToolbar.setTargetComponent(myComponent);
 
+    JPanel panelResultsList = new JPanel();
     JBScrollPane resultsListScrollPane = new JBScrollPane();
     resultsListScrollPane.setViewportView(myShowingResultsList);
     panelResultsList.setLayout(new BorderLayout());
     panelResultsList.add(resultsListScrollPane, BorderLayout.CENTER);
 
+    myComponent.setLayout(new BorderLayout());
+    myComponent.add(panelHeader, BorderLayout.NORTH);
+    myComponent.add(myActionToolbar.getComponent(), BorderLayout.WEST);
+    myComponent.add(panelResultsList, BorderLayout.CENTER);
+
+    UIUtil.removeScrollBorder(resultsListScrollPane);
     GuiUtils.setStandardSizeForPanel(panelHeader, true);
-    GuiUtils.setStandardSizeForPanel(actionToolbarPanel, false);
     GuiUtils.setStandardLineBorderToPanel(panelHeader, 0, 0, 1, 0);
-    GuiUtils.setStandardLineBorderToPanel(actionToolbarPanel, 0, 0, 0, 1);
+    GuiUtils.setStandardLineBorderToPanel(panelResultsList, 0, 1, 0, 0);
   }
 
-  public void setRelativeTab(Content content) {
-    this.myRelativeTab = content;
+  public void setContent(Content content) {
+    this.myContent = content;
   }
 
   public VirtualFile getVirtualFile() {
@@ -203,10 +211,6 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
 
   public int getAmountOfStoredSearchResults() {
     return myResultsListModel.getSize();
-  }
-
-  public void setSearchTaskOptions(SearchTaskOptions searchTaskOptions) {
-    mySearchTaskOptions = searchTaskOptions;
   }
 
   public void setLeftBorderPageNumber(long leftBorderPageNumber) {
@@ -275,15 +279,24 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
   }
 
   public void updateTabName() {
-    if (myRelativeTab != null && mySearchTaskOptions != null && mySearchTaskOptions.stringToFind != null) {
-      String name = "\"" + mySearchTaskOptions.stringToFind + "\" in " + myVirtualFile.getName();
-      myRelativeTab.setDisplayName(name);
-      myRelativeTab.setDescription(name);
+    if (myContent != null && lastExecutedRangeSearchTask != null) {
+      String name = "\"" + lastExecutedRangeSearchTask.getOptions().stringToFind + "\" in " + myVirtualFile.getName();
+      myContent.setDisplayName(name);
+      myContent.setDescription(name);
+    }
+  }
+
+  public void update() {
+    if (ApplicationManager.getApplication().isDispatchThread()) {
+      updateInEdt();
+    }
+    else {
+      ApplicationManager.getApplication().invokeLater(() -> updateInEdt());
     }
   }
 
   @CalledInAwt
-  public void updateSearchFurtherBtns() {
+  private void updateInEdt() {
     try {
       EditorManager editorManager =
         myEditorManagerAccessor.getEditorManager(false, myProject, myVirtualFile);
@@ -308,14 +321,6 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
     progressIcon.update();
   }
 
-  public void tellWasClosed() {
-    EditorManager editorManager =
-      myEditorManagerAccessor.getEditorManager(false, myProject, myVirtualFile);
-    if (editorManager != null) {
-      editorManager.getSearchManager().tellSearchResultsToolWindowWasClosed();
-    }
-  }
-
   private boolean canFindFurtherBackward() {
     return myLeftBorderPageNumber != UNDEFINED && myLeftBorderPageNumber > 0;
   }
@@ -336,7 +341,7 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
 
     SearchTaskOptions newOptions;
     try {
-      newOptions = mySearchTaskOptions.clone();
+      newOptions = lastExecutedRangeSearchTask.getOptions().clone();
     }
     catch (CloneNotSupportedException e) {
       logger.warn(e);
@@ -365,7 +370,7 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
                          myLeftBorderPageNumber - 1, SearchTaskOptions.NO_LIMIT);
     }
 
-    editorManager.getSearchManager().launchRangeSearch(newOptions, !additionMode);
+    runSearch(newOptions);
   }
 
   private void updateStatusStringInfo() {
@@ -398,6 +403,134 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
       lblSearchStatusLeft.append("% to ");
       lblSearchStatusLeft.append(String.valueOf(Utils.calculatePagePositionPercent(myRightBorderPageNumber, pagesAmount)));
       lblSearchStatusLeft.append("% of file.");
+    }
+  }
+
+  public JComponent getComponent() {
+    return myComponent;
+  }
+
+  public void runSearch(SearchTaskOptions searchTaskOptions) {
+    final RangeSearchTask newRangeSearchTask = new RangeSearchTask(
+      searchTaskOptions, myProject, myFileDataProviderForSearch, this);
+    lastExecutedRangeSearchTask = newRangeSearchTask;
+    String title = newRangeSearchTask.getTitleForBackgroundableTask();
+    Task.Backgroundable task = new Task.Backgroundable(null, title, true) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        newRangeSearchTask.setProgressIndicator(indicator);
+        newRangeSearchTask.run();
+      }
+    };
+    ProgressManager.getInstance().run(task);
+
+    setAdditionalStatusText(null);
+  }
+
+  @Override
+  public void tellSearchIsFinished(RangeSearchTask caller, long lastScannedPageNumber) {
+    //final RangeSearchTask caller = lastExecutedSearchTask;
+    ApplicationManager.getApplication().invokeLater(() -> {
+      SearchTaskOptions options = caller.getOptions();
+      if (!caller.isShouldStop()) {
+        if (options.searchForwardDirection) {
+          setRightBorderPageNumber(lastScannedPageNumber);
+        }
+        else {
+          setLeftBorderPageNumber(lastScannedPageNumber);
+        }
+        setAdditionalStatusText("Search complete.");
+      }
+      update();
+    });
+  }
+
+  @Override
+  public void tellSearchProgress(RangeSearchTask caller,
+                                 long curPageNumber,
+                                 long pagesAmount) {
+    long time = System.currentTimeMillis();
+    if (time - lastProgressStatusUpdateTime > PROGRESS_STATUS_UPDATE_PERIOD
+        || curPageNumber == 0
+        || curPageNumber == pagesAmount - 1) {
+      lastProgressStatusUpdateTime = time;
+      ApplicationManager.getApplication().invokeLater(() -> {
+        if (!caller.isShouldStop()) {
+          // caller is instance of RangeSearchTask
+            if (caller.getOptions().searchForwardDirection) {
+              setRightBorderPageNumber(curPageNumber);
+            }
+            else {
+              setLeftBorderPageNumber(curPageNumber);
+            }
+            update();
+        }
+      });
+    }
+  }
+
+  @Override
+  public void tellFrameSearchResultsFound(RangeSearchTask caller,
+                                          ArrayList<SearchResult> allMatchesAtFrame) {
+    if (!allMatchesAtFrame.isEmpty()) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        if (caller != lastExecutedRangeSearchTask) {
+          return; // means new search was launched
+        }
+        SearchTaskOptions options = caller.getOptions();
+        if (!caller.isShouldStop()) {
+
+          if (options.searchForwardDirection) {
+            addSearchResultsIntoEnd(allMatchesAtFrame);
+          }
+          else {
+            addSearchResultsIntoBeginning(allMatchesAtFrame);
+          }
+
+          if (getAmountOfStoredSearchResults() > options.criticalAmountOfSearchResults) {
+            stopSearchTaskIfItExists();
+            if (options.searchForwardDirection) {
+              setRightBorderPageNumber(allMatchesAtFrame.get(0).startPosition.pageNumber);
+            }
+            else {
+              setLeftBorderPageNumber(allMatchesAtFrame.get(0).startPosition.pageNumber);
+            }
+            setAdditionalStatusText("Search stopped because too many results were found.");
+            update();
+          }
+        }
+      });
+    }
+  }
+
+  @Override
+  public void tellSearchIsStopped(long curPageNumber) {
+    update();
+  }
+
+  @Override
+  public void tellSearchCatchedException(RangeSearchTask caller, IOException e) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      if (!caller.isShouldStop()) {
+        setAdditionalStatusText("Search stopped because something went wrong.");
+        logger.warn(e);
+      }
+    });
+  }
+
+  private void stopSearchTaskIfItExists() {
+    if (lastExecutedRangeSearchTask != null) {
+      lastExecutedRangeSearchTask.shouldStop();
+    }
+  }
+
+  public RangeSearchTask getLastExecutedRangeSearchTask() {
+    return lastExecutedRangeSearchTask;
+  }
+
+  public void dispose() {
+    if (lastExecutedRangeSearchTask != null) {
+      lastExecutedRangeSearchTask.shouldStop();
     }
   }
 
@@ -552,23 +685,16 @@ public class SearchResultsToolWindow extends SimpleToolWindowPanel {
 
     void update() {
       boolean enabled = false;
-      EditorManager editorManager =
-        myEditorManagerAccessor.getEditorManager(false, getProject(), getVirtualFile());
-      if (editorManager != null) {
-        SearchManager searchManager = editorManager.getSearchManager();
-        SearchTaskBase task = searchManager.getLastExecutedSearchTask();
-        if (task instanceof RangeSearchTask
-            && !task.isFinished()
-            && !task.isShouldStop()) {
-          enabled = true;
-        }
+      if (lastExecutedRangeSearchTask != null
+          && !lastExecutedRangeSearchTask.isFinished()
+          && !lastExecutedRangeSearchTask.isShouldStop()) {
+        enabled = true;
       }
+      setVisible(enabled);
       if (enabled) {
-        setVisible(true);
         resume();
       }
       else {
-        setVisible(false);
         suspend();
       }
     }

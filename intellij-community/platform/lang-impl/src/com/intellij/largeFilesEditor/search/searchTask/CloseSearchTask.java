@@ -11,11 +11,14 @@ import java.util.ArrayList;
 public class CloseSearchTask extends SearchTaskBase {
   private static final Logger logger = Logger.getInstance(CloseSearchTask.class);
 
+  private final Callback myCallback;
+
   public CloseSearchTask(SearchTaskOptions options,
                          Project project,
                          FileDataProviderForSearch fileDataProviderForSearch,
-                         SearchTaskCallback callback) {
-    super(options, project, fileDataProviderForSearch, callback);
+                         Callback callback) {
+    super(options, project, fileDataProviderForSearch);
+    myCallback = callback;
   }
 
   @Override
@@ -43,7 +46,7 @@ public class CloseSearchTask extends SearchTaskBase {
 
       /* checking if it is the end... */
       if (isTheEndOfSearchingCycle(curPageNumber, pagesAmount, options)) {
-        callback.tellSearchIsFinished(this, curPageNumber);
+        myCallback.tellSearchIsFinished(this, curPageNumber);
         return;
       }
 
@@ -56,7 +59,7 @@ public class CloseSearchTask extends SearchTaskBase {
       prefixSymbol = getPrefixSymbol(prevPageText);
       postfixSymbol = getPostfixSymbol(nextPageText, tailLength);
 
-      callback.tellSearchProgress(this, curPageNumber, pagesAmount);
+      myCallback.tellSearchProgress(this, curPageNumber, pagesAmount);
 
       /* searching in start page... */
       searcher.setFrame(curPageNumber, prefixSymbol, curPageText, tailText, postfixSymbol);
@@ -64,12 +67,12 @@ public class CloseSearchTask extends SearchTaskBase {
 
       index = tryGetClosestResult(allMatchesAtFrame, options);
       if (index != -1) {
-        callback.tellClosestResultFound(this, allMatchesAtFrame, index);
+        myCallback.tellClosestResultFound(this, allMatchesAtFrame, index);
         return;
       }
 
       if (options.onlyOnePageSearch) {
-        callback.tellSearchIsFinished(this, curPageNumber);
+        myCallback.tellSearchIsFinished(this, curPageNumber);
         return;
       }
 
@@ -95,11 +98,11 @@ public class CloseSearchTask extends SearchTaskBase {
 
         /* checking if it is the end... */
         if (isTheEndOfSearchingCycle(curPageNumber, pagesAmount, options)) {
-          callback.tellSearchIsFinished(this, getPreviousPageNumber(curPageNumber, options));
+          myCallback.tellSearchIsFinished(this, getPreviousPageNumber(curPageNumber, options));
           return;
         }
         if (isShouldStop()) {
-          callback.tellSearchWasStopped(this, curPageNumber);
+          myCallback.tellSearchWasStopped(this, curPageNumber);
           return;
         }
 
@@ -108,13 +111,13 @@ public class CloseSearchTask extends SearchTaskBase {
         prefixSymbol = getPrefixSymbol(prevPageText);
         postfixSymbol = getPostfixSymbol(nextPageText, tailLength);
 
-        callback.tellSearchProgress(this, curPageNumber, pagesAmount);
+        myCallback.tellSearchProgress(this, curPageNumber, pagesAmount);
 
         /* searching for result in current page */
         searcher.setFrame(curPageNumber, prefixSymbol, curPageText, tailText, postfixSymbol);
         allMatchesAtFrame = searcher.findAllMatchesAtFrame();
         if (allMatchesAtFrame.size() > 0) {
-          callback.tellClosestResultFound(this, allMatchesAtFrame,
+          myCallback.tellClosestResultFound(this, allMatchesAtFrame,
                                           options.searchForwardDirection ? 0 : allMatchesAtFrame.size() - 1);
           return;
         }
@@ -122,7 +125,7 @@ public class CloseSearchTask extends SearchTaskBase {
     }
     catch (IOException e) {
       logger.warn(e);
-      callback.tellSearchWasCatchedException(this, e);
+      myCallback.tellSearchWasCatchedException(this, e);
     }
   }
 
@@ -168,5 +171,18 @@ public class CloseSearchTask extends SearchTaskBase {
       }
     }
     return -1;
+  }
+
+  public interface Callback {
+
+    void tellSearchIsFinished(CloseSearchTask caller, long curPageNumber);
+
+    void tellSearchProgress(CloseSearchTask caller, long curPageNumber, long pagesAmount);
+
+    void tellSearchWasStopped(CloseSearchTask caller, long curPageNumber);
+
+    void tellSearchWasCatchedException(CloseSearchTask caller, IOException e);
+
+    void tellClosestResultFound(CloseSearchTask caller, ArrayList<SearchResult> allMatchesAtFrame, int index);
   }
 }
