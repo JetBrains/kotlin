@@ -16,12 +16,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -194,7 +199,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression =
                 cachedKProperty(expression)
 
-            private fun cachedKProperty(expression: IrMemberAccessExpression): IrExpression {
+            private fun cachedKProperty(expression: IrCallableReference): IrExpression {
                 // Reflected implementation does not support partial application; also, cannot cache instances with arguments.
                 if (expression.dispatchReceiver != null || expression.extensionReceiver != null)
                     return createSpecializedKProperty(expression)
@@ -220,7 +225,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             // Create an instance of KProperty that uses Java reflection to locate the getter and the setter. This kind of reference
             // does not support local variables or bound receivers (e.g. `Class()::field`) and is slower, but takes up less space.
             // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
-            private fun createReflectedKProperty(expression: IrMemberAccessExpression): IrExpression {
+            private fun createReflectedKProperty(expression: IrCallableReference): IrExpression {
                 val referenceKind = propertyReferenceKindFor(expression)
                 return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
                     irCall(referenceKind.wrapper).apply {
@@ -247,7 +252,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             //
             // and then `C()::property` -> `C$property$0(C())`.
             //
-            private fun createSpecializedKProperty(expression: IrMemberAccessExpression): IrExpression {
+            private fun createSpecializedKProperty(expression: IrCallableReference): IrExpression {
                 val bound = expression.dispatchReceiver != null || expression.extensionReceiver != null
                 val referenceClass = kPropertyClasses.getOrPut(PropertyClassCacheKey(expression.symbol, bound)) {
                     createKPropertySubclass(expression)
@@ -261,7 +266,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 }
             }
 
-            private fun createKPropertySubclass(expression: IrMemberAccessExpression): IrClass {
+            private fun createKPropertySubclass(expression: IrCallableReference): IrClass {
                 val superClass = propertyReferenceKindFor(expression).interfaceSymbol.owner
                 val referenceClass = buildClass {
                     setSourceRange(expression)
@@ -271,7 +276,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     parent = irClass
                     superTypes += IrSimpleTypeImpl(superClass.symbol, false, listOf(), listOf())
                     createImplicitParameterDeclarationWithWrappedDescriptor()
-                }
+                }.copyAttributes(expression)
 
                 // See propertyReferenceKindFor -- only one of them could ever be present.
                 val numOfSuperArgs = if (expression.dispatchReceiver != null || expression.extensionReceiver != null) 1 else 0

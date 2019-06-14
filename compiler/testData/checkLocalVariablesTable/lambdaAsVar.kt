@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun foo() {
     var a = {
 

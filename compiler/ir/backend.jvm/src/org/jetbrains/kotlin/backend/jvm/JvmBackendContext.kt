@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -24,8 +22,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
 class JvmBackendContext(
@@ -45,6 +41,18 @@ class JvmBackendContext(
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
     val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
+
+    // TODO: also store info for EnclosingMethod
+    internal class LocalClassInfo(val internalName: String)
+
+    private val localClassInfo = mutableMapOf<IrAttributeContainer, LocalClassInfo>()
+
+    internal fun getLocalClassInfo(container: IrAttributeContainer): LocalClassInfo? =
+        localClassInfo[container.attributeOwnerId]
+
+    internal fun putLocalClassInfo(container: IrAttributeContainer, value: LocalClassInfo) {
+        localClassInfo[container.attributeOwnerId] = value
+    }
 
     override var inVerbosePhase: Boolean = false
 
