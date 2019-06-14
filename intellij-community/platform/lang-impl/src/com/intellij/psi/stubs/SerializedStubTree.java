@@ -83,7 +83,9 @@ public class SerializedStubTree {
                                         @NotNull SerializationManagerImpl newSerializationManager) throws IOException {
     BufferExposingByteArrayOutputStream outStub = new BufferExposingByteArrayOutputStream();
     currentSerializationManager.reSerialize(new ByteArrayInputStream(myBytes, 0, myLength), outStub, newSerializationManager);
-    return new SerializedStubTree(outStub.getInternalBuffer(), outStub.size(), null);
+    SerializedStubTree reSerialized = new SerializedStubTree(outStub.getInternalBuffer(), outStub.size(), null);
+    reSerialized.setIndexedStubs(getIndexedStubs());
+    return reSerialized;
   }
 
   // willIndexStub is one time optimization hint, once can safely pass false
@@ -104,28 +106,18 @@ public class SerializedStubTree {
     return serializationManager.deserialize(new UnsyncByteArrayInputStream(myBytes));
   }
 
-  void indexTree() throws SerializerNotFoundException {
+  public void indexTree() throws SerializerNotFoundException {
     ObjectStubBase root = (ObjectStubBase)getStub(true);
-    ObjectStubTree objectStubTree = root instanceof PsiFileStub ? new StubTree((PsiFileStub)root, false) :
-                                    new ObjectStubTree(root, false);
-    Map<StubIndexKey, Map<Object, int[]>> map = objectStubTree.indexStubTree();
-
-    // xxx:fix refs inplace
-    for (StubIndexKey key : map.keySet()) {
-      Map<Object, int[]> value = map.get(key);
-      for (Object k : value.keySet()) {
-        int[] ints = value.get(k);
-        StubIdList stubList = ints.length == 1 ? new StubIdList(ints[0]) : new StubIdList(ints, ints.length);
-        ((Map<Object, StubIdList>)(Map)value).put(k, stubList);
-      }
-    }
-
-    myIndexedStubs = new IndexedStubs(calculateHash(myBytes, myLength), (Map)map);
+    myIndexedStubs = new IndexedStubs(calculateHash(myBytes, myLength), indexTree(root));
   }
 
   @NotNull
   IndexedStubs getIndexedStubs() {
     return myIndexedStubs;
+  }
+
+  void setIndexedStubs(@NotNull IndexedStubs indexedStubs) {
+    myIndexedStubs = indexedStubs;
   }
 
   public boolean equals(final Object that) {
@@ -177,6 +169,24 @@ public class SerializedStubTree {
       deserialized = "error while stub deserialization: " + e.getMessage();
     }
     return deserialized + "\n bytes: " + toHexString(myBytes, myLength);
+  }
+
+  @NotNull
+  static Map<StubIndexKey, Map<Object, StubIdList>> indexTree(@NotNull Stub root) {
+    ObjectStubTree objectStubTree = root instanceof PsiFileStub ? new StubTree((PsiFileStub)root, false) :
+                                    new ObjectStubTree((ObjectStubBase)root, false);
+    Map<StubIndexKey, Map<Object, int[]>> map = objectStubTree.indexStubTree();
+
+    // xxx:fix refs inplace
+    for (StubIndexKey key : map.keySet()) {
+      Map<Object, int[]> value = map.get(key);
+      for (Object k : value.keySet()) {
+        int[] ints = value.get(k);
+        StubIdList stubList = ints.length == 1 ? new StubIdList(ints[0]) : new StubIdList(ints, ints.length);
+        ((Map<Object, StubIdList>)(Map)value).put(k, stubList);
+      }
+    }
+    return (Map<StubIndexKey, Map<Object, StubIdList>>)(Map)map;
   }
 
   @NotNull

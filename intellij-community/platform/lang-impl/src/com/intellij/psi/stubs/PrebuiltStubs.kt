@@ -9,13 +9,17 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeExtension
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtilRt
+import com.intellij.psi.PsiElement
 import com.intellij.util.indexing.FileContent
+import com.intellij.util.indexing.ID
 import com.intellij.util.io.*
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
+import java.io.IOException
+import java.util.function.UnaryOperator
 
 const val EP_NAME = "com.intellij.filetype.prebuiltStubsProvider"
 
@@ -23,7 +27,7 @@ object PrebuiltStubsProviders : FileTypeExtension<PrebuiltStubsProvider>(EP_NAME
 
 @ApiStatus.Experimental
 interface PrebuiltStubsProvider {
-  fun findStub(fileContent: FileContent): Stub?
+  fun findStub(fileContent: FileContent): SerializedStubTree?
 }
 
 class FileContentHashing {
@@ -57,23 +61,55 @@ open class HashCodeExternalizers : DataExternalizer<HashCode> {
   }
 }
 
-class StubTreeExternalizer : DataExternalizer<SerializedStubTree> {
+class FullStubExternalizer : DataExternalizer<SerializedStubTree> {
+  private val stubForwardIndexExternalizer = FileLocalStubForwardIndexExternalizer()
+
   override fun save(out: DataOutput, value: SerializedStubTree) {
     value.write(out)
+    stubForwardIndexExternalizer.save(out, value.indexedStubs)
   }
 
-  override fun read(`in`: DataInput): SerializedStubTree = SerializedStubTree(`in`)
+  override fun read(`in`: DataInput): SerializedStubTree {
+    val tree = SerializedStubTree(`in`)
+    tree.indexedStubs = stubForwardIndexExternalizer.read(`in`)
+    return tree
+  }
+}
+
+private class FileLocalStubForwardIndexExternalizer : StubForwardIndexExternalizer<FileLocalStringEnumerator>() {
+  override fun createStubIndexKeySerializationState(out: DataOutput,
+                                                    set: MutableSet<StubIndexKey<Any, PsiElement>>): FileLocalStringEnumerator {
+    val enumerator = FileLocalStringEnumerator(true)
+    set.map { it.name }.forEach { enumerator.enumerate(it)}
+    enumerator.write(out)
+    return enumerator
+  }
+
+  override fun writeStubIndexKey(out: DataOutput, key: StubIndexKey<*, *>, state: FileLocalStringEnumerator?) {
+    DataInputOutputUtil.writeINT(out, state!!.enumerate(key.name))
+  }
+
+  override fun createStubIndexKeySerializationState(input: DataInput, stubIndexKeyCount: Int): FileLocalStringEnumerator {
+    val enumerator = FileLocalStringEnumerator(false)
+    FileLocalStringEnumerator.readEnumeratedStrings(enumerator, input, UnaryOperator.identity())
+    return enumerator
+  }
+
+  override fun readStubIndexKey(input: DataInput, stubKeySerializationState: FileLocalStringEnumerator?): ID<*, *> {
+    return ID.findByName<Any, Any>(stubKeySerializationState!!.valueOf(DataInputOutputUtil.readINT(input))!!)!!
+  }
 }
 
 abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedStubTree>(), PrebuiltStubsProvider {
 
   private var mySerializationManager: SerializationManagerImpl? = null
+  private val myIdeSerializationManager = SerializationManager.getInstance() as SerializationManagerImpl
 
   protected abstract val stubVersion: Int
 
   override val indexName: String get() = SDK_STUBS_STORAGE_NAME
 
-  override val indexExternalizer: StubTreeExternalizer get() = StubTreeExternalizer()
+  override val indexExternalizer: FullStubExternalizer get() = FullStubExternalizer()
 
   companion object {
     const val PREBUILT_INDICES_PATH_PROPERTY: String = "prebuilt_indices_path"
@@ -94,22 +130,18 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
     }
   }
 
-  override fun findStub(fileContent: FileContent): Stub? {
-    var stub: Stub? = null
+
+  override fun findStub(fileContent: FileContent): SerializedStubTree? {
     try {
       val stubTree = get(fileContent)
       if (stubTree != null) {
-        stub = stubTree.getStub(false, mySerializationManager!!)
+        return stubTree.reSerialize(mySerializationManager!!, myIdeSerializationManager)
       }
     }
-    catch (e: SerializerNotFoundException) {
-      LOG.error("Can't deserialize stub tree", e)
+    catch (e: IOException) {
+      LOG.error("Can't re-serialize stub tree", e)
     }
-
-    if (stub is PsiFileStubImpl<*>) {
-      stub.psi = fileContent.psiFile
-    }
-    return stub
+    return null
   }
 }
 

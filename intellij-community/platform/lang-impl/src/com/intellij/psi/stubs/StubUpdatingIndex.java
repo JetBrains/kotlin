@@ -110,27 +110,51 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       @Nullable
       public SerializedStubTree computeValue(@NotNull final FileContent inputData) {
         return ReadAction.compute(() -> {
-          Stub rootStub = null;
+          SerializedStubTree serializedStubTree = null;
 
-          if (Registry.is("use.prebuilt.indices")) {
-            final PrebuiltStubsProvider prebuiltStubsProvider =
-              PrebuiltStubsProviders.INSTANCE.forFileType(inputData.getFileType());
-            if (prebuiltStubsProvider != null) {
-              rootStub = prebuiltStubsProvider.findStub(inputData);
-              if (PrebuiltIndexProviderBase.DEBUG_PREBUILT_INDICES) {
-                Stub stub = StubTreeBuilder.buildStubTree(inputData);
-                if (rootStub != null && stub != null) {
-                  check(rootStub, stub);
+          try {
+            if (Registry.is("use.prebuilt.indices")) {
+              final PrebuiltStubsProvider prebuiltStubsProvider =
+                PrebuiltStubsProviders.INSTANCE.forFileType(inputData.getFileType());
+              if (prebuiltStubsProvider != null) {
+                serializedStubTree = prebuiltStubsProvider.findStub(inputData);
+                if (PrebuiltIndexProviderBase.DEBUG_PREBUILT_INDICES) {
+                  Stub stub = StubTreeBuilder.buildStubTree(inputData);
+                  if (serializedStubTree != null && stub != null) {
+                    check(serializedStubTree.getStub(false), stub);
+                    checkStubIndexes(serializedStubTree, stub);
+                  }
+                }
+              }
+            }
+
+            if (serializedStubTree == null) {
+              Stub rootStub;
+              rootStub = StubTreeBuilder.buildStubTree(inputData);
+              if (rootStub != null) {
+                final BufferExposingByteArrayOutputStream bytes = new BufferExposingByteArrayOutputStream();
+                SerializationManagerEx.getInstanceEx().serialize(rootStub, bytes);
+                serializedStubTree = new SerializedStubTree(bytes.getInternalBuffer(), bytes.size(), rootStub);
+                serializedStubTree.indexTree();
+                if (DebugAssertions.DEBUG) {
+
+                  Stub deserialized = SerializationManagerEx.getInstanceEx().deserialize(bytes.toInputStream());
+                  check(deserialized, rootStub);
                 }
               }
             }
           }
-
-          if (rootStub == null) {
-            rootStub = StubTreeBuilder.buildStubTree(inputData);
+          catch (ProcessCanceledException pce) {
+            throw pce;
+          }
+          catch (SerializerNotFoundException e) {
+            throw new RuntimeException(e);
+          }
+          catch (Throwable t) {
+            LOG.error("Error indexing:" + inputData.getFile(), t);
           }
 
-          if (rootStub == null) return null;
+          if (serializedStubTree == null) return null;
 
           VirtualFile file = inputData.getFile();
           boolean isBinary = file.getFileType().isBinary();
@@ -138,37 +162,18 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
           long byteLength = file.getLength();
           rememberIndexingStamp(file, isBinary, byteLength, contentLength);
 
-          final BufferExposingByteArrayOutputStream bytes = new BufferExposingByteArrayOutputStream();
-          SerializationManagerEx.getInstanceEx().serialize(rootStub, bytes);
-
-          if (DebugAssertions.DEBUG) {
-            try {
-              Stub deserialized =
-                SerializationManagerEx.getInstanceEx().deserialize(bytes.toInputStream());
-              check(deserialized, rootStub);
-            }
-            catch (ProcessCanceledException pce) {
-              throw pce;
-            }
-            catch (Throwable t) {
-              LOG.error("Error indexing:" + file, t);
-            }
-          }
-          SerializedStubTree serializedStubTree =
-            new SerializedStubTree(bytes.getInternalBuffer(), bytes.size(), rootStub);
           if (LOG.isDebugEnabled()) {
             LOG.debug("Indexing " + file + "; " + IndexingStampInfo.dumpSize(byteLength, contentLength));
-          }
-          try {
-            serializedStubTree.indexTree();
-          }
-          catch (SerializerNotFoundException ex) {
-            throw new RuntimeException(ex);
           }
           return serializedStubTree;
         });
       }
     };
+  }
+
+  private static void checkStubIndexes(@NotNull SerializedStubTree prebuiltSerializedTree, @NotNull Stub calculatedStub) {
+    Map<StubIndexKey, Map<Object, StubIdList>> calculatedStubIndexes = SerializedStubTree.indexTree(calculatedStub);
+    assert calculatedStubIndexes.equals(prebuiltSerializedTree.getIndexedStubs().getStubIndicesValueMap());
   }
 
   private static void check(@NotNull Stub stub, @NotNull Stub stub2) {
