@@ -79,10 +79,10 @@ object KotlinEvaluatorBuilder : EvaluatorBuilder {
             return EvaluatorBuilderImpl.getInstance().build(codeFragment, position)
         }
 
-        val context = codeFragment.context ?: evaluationException("Cannot evaluate an expression without a context")
-        val file = context.containingFile
+        val context = codeFragment.context
+        val file = context?.containingFile
 
-        if (file !is KtFile) {
+        if (file != null && file !is KtFile) {
             reportError(codeFragment, position, "Unknown context${codeFragment.context?.javaClass}")
             evaluationException("Couldn't evaluate Kotlin expression in this context")
         }
