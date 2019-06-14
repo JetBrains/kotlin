@@ -151,7 +151,7 @@ public abstract class ColorSchemeActions extends AbstractSchemeActions<EditorCol
       }
     }
     if (schemeFiles.isEmpty()) {
-      throw new SchemeImportException("The are no color schemes in the chosen file.");
+      throw new SchemeImportException("There are no color schemes in the chosen file.");
     }
     return schemeFiles;
   }
