@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
+import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -103,8 +104,28 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
 
 abstract class AbstractHierarchicalExpectActualTest : AbstractMultiModuleIdeResolveTest() {
     override fun getTestDataPath(): String = "${PluginTestCaseBase.getTestDataPathBase()}/hierarchicalExpectActual"
+
+    override fun setUp() {
+        super.setUp()
+        KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.COMPOSITE)
+    }
+
+    override fun tearDown() {
+        KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.SEPARATE)
+        super.tearDown()
+    }
 }
 
 abstract class AbstractMultiplatformAnalysisTest : AbstractMultiModuleIdeResolveTest() {
     override fun getTestDataPath(): String = "${PluginTestCaseBase.getTestDataPathBase()}/multiplatform"
+
+    override fun setUp() {
+        super.setUp()
+        KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.COMPOSITE)
+    }
+
+    override fun tearDown() {
+        KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.SEPARATE)
+        super.tearDown()
+    }
 }
