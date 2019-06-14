@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -89,8 +92,19 @@ fun deserializeClassToSymbol(
             classProto.enumEntryList.mapNotNull { enumEntryProto ->
                 val enumEntryName = nameResolver.getName(enumEntryProto.name)
                 val enumEntryId = classId.createNestedClassId(enumEntryName)
-                val deserializedClassSymbol = deserializeNestedClass(enumEntryId, context)
-                deserializedClassSymbol?.fir
+
+                val symbol = FirClassSymbol(enumEntryId)
+                FirEnumEntryImpl(session, null, symbol, enumEntryId.shortClassName).apply {
+                    superTypeRefs += FirResolvedTypeRefImpl(
+                        session,
+                        null,
+                        ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false),
+                        emptyList()
+                    )
+                }
+
+
+                symbol.fir
             }
         )
     }

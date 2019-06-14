@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberPropertyImpl
@@ -330,23 +327,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
         if (kotlinJvmBinaryClass == null) {
             val outerClassId = classId.outerClassId ?: return null
-            val outerJvmBinaryClass = kotlinClassFinder.findKotlinClass(outerClassId) ?: return null
-            if (outerJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
-            val (nameResolver, outerClassProto) = outerJvmBinaryClass.readClassDataFrom() ?: return null
-            if (outerClassProto.enumEntryList.none { nameResolver.getName(it.name) == classId.shortClassName }) {
-                return null
-            }
-
-            val symbol = FirClassSymbol(classId)
-            FirEnumEntryImpl(session, null, symbol, classId.shortClassName).apply {
-                superTypeRefs += FirResolvedTypeRefImpl(
-                    session,
-                    null,
-                    ConeClassTypeImpl(ConeClassLikeLookupTagImpl(outerClassId), emptyArray(), false),
-                    emptyList()
-                )
-            }
-            classesCache[classId] = symbol
+            findAndDeserializeClass(outerClassId) ?: return null
         } else {
             if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
             val (nameResolver, classProto) = kotlinJvmBinaryClass.readClassDataFrom() ?: return null
@@ -357,6 +338,9 @@ class KotlinDeserializedJvmSymbolsProvider(
                 JvmBinaryAnnotationDeserializer(session),
                 parentContext, this::findAndDeserializeClass
             )
+            symbol.fir.declarations.filterIsInstance<FirEnumEntryImpl>().forEach {
+                classesCache[it.symbol.classId] = it.symbol
+            }
             classesCache[classId] = symbol
             val annotations = mutableListOf<FirAnnotationCall>()
             kotlinJvmBinaryClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {

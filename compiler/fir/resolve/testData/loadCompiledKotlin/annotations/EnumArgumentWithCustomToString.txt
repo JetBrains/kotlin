@@ -1,9 +1,7 @@
 public final enum class E : R|kotlin/Enum<test/E>| {
     private constructor(): R|test/E|
 
-    public final enum entry CAKE : R|test/E| {
-        public open fun toString(): R|kotlin/String|
-
+    public? final enum entry CAKE : R|test/E| {
     }
 
 }

@@ -365,13 +365,13 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel>| {
     private constructor(): R|kotlin/DeprecationLevel|
 
-    public? final enum entry WARNING {
+    public? final enum entry WARNING : R|kotlin/DeprecationLevel| {
     }
 
-    public? final enum entry ERROR {
+    public? final enum entry ERROR : R|kotlin/DeprecationLevel| {
     }
 
-    public? final enum entry HIDDEN {
+    public? final enum entry HIDDEN : R|kotlin/DeprecationLevel| {
     }
 
 }
