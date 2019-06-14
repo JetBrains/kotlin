@@ -112,7 +112,7 @@ private fun openPlatformProject(projectDirectory: VirtualFile, projectToClose: P
   }
 }
 
-fun attachGradleProjectAndRefresh(settings: ExternalProjectSettings, project: Project) {
+private fun attachGradleProjectAndRefresh(settings: ExternalProjectSettings, project: Project) {
   val externalProjectPath = settings.externalProjectPath
   ExternalProjectsManagerImpl.getInstance(project).runWhenInitialized {
     DumbService.getInstance(project).runWhenSmart {
@@ -156,9 +156,7 @@ private fun GradleSettings.setupGradleSettings() {
   gradleVmOptions = GRADLE_VM_OPTIONS ?: gradleVmOptions
   isOfflineWork = GRADLE_OFFLINE?.toBoolean() ?: isOfflineWork
   serviceDirectoryPath = GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
-  if (ExternalSystemUtil.isNewProject(project) && linkedProjectsSettings.isEmpty()) {
-    storeProjectFilesExternally = true
-  }
+  storeProjectFilesExternally = true
 }
 
 private fun GradleProjectSettings.setupGradleProjectSettings(projectDirectory: String, project: Project, projectSdk: Sdk? = null) {
