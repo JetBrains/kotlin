@@ -66,7 +66,6 @@ open class PodspecTask : DefaultTask() {
             |    spec.license                  = '${settings.license.orEmpty()}'
             |    spec.summary                  = '${settings.summary.orEmpty()}'
             |
-            |    spec.static_framework         = true
             |    spec.vendored_frameworks      = "$frameworkDir/#{spec.name}.framework"
             |    spec.libraries                = "c++"
             |    spec.module_name              = "#{spec.name}_umbrella"

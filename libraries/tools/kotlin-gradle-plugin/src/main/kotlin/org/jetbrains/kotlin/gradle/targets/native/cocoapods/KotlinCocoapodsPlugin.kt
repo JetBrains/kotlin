@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -65,7 +66,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
     private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
         kotlinExtension.supportedTargets().all { target ->
             target.binaries.framework {
-                isStatic = true
+                isStatic = false
             }
         }
     }
@@ -224,6 +225,13 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
                         }
                     }
 
+                }
+
+                target.binaries.withType(Framework::class.java) {
+                    it.linkerOpts("-framework", pod.moduleName)
+                    project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
+                        it.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
+                    }
                 }
             }
         }
