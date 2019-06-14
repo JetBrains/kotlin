@@ -79,7 +79,7 @@ private fun mergePlatformModules(
                 listOf(module to module.expectedBy)
             else emptyList()
         }.map { (module, expectedBys) ->
-            PlatformModuleInfo(module, expectedBys.closure { it.expectedBy }.toList())
+            PlatformModuleInfo(module, expectedBys.closure(preserveOrder = true) { it.expectedBy }.toList())
         }
 
     val rest = allModules - platformModules.flatMap { it.containedModules }

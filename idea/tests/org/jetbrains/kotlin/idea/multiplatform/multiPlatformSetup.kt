@@ -75,7 +75,7 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
     }.toMap()
 
     for ((resolveModule, ideaModule) in resolveModulesToIdeaModules.entries) {
-        resolveModule.dependencies.closure { it.to.dependencies }.forEach {
+        resolveModule.dependencies.closure(preserveOrder = true) { it.to.dependencies }.forEach {
             when (val to = it.to) {
                 FullJdk -> ConfigLibraryUtil.configureSdk(ideaModule, PluginTestCaseBase.addJdk(testRootDisposable) {
                     PluginTestCaseBase.jdk(TestJdkKind.FULL_JDK)
