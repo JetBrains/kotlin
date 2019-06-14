@@ -64,7 +64,7 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
             val lambda = call.lambdaArguments.singleOrNull() ?: return null
             val literal = lambda.getLambdaExpression()?.functionLiteral ?: return null
 
-            return OnExitUsagesHandler(editor, file, literal)
+            return OnExitUsagesHandler(editor, file, literal, highlightReferences = true)
         }
     }
 
@@ -73,7 +73,7 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
             ?: getOnLambdaCallUsageHandler(editor, file, target)
     }
 
-    private class OnExitUsagesHandler(editor: Editor, file: PsiFile, val target: KtExpression) :
+    private class OnExitUsagesHandler(editor: Editor, file: PsiFile, val target: KtExpression, val highlightReferences: Boolean = false) :
         HighlightUsagesHandlerBase<PsiElement>(editor, file) {
 
         override fun getTargets() = listOf(target)
@@ -140,6 +140,8 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
                 }
             })
         }
+
+        override fun highlightReferences() = highlightReferences
     }
 }
 
