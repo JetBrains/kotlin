@@ -291,7 +291,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                         definition {
                             it.inherit()
                             ordinal?.let {
-                                append("Enum constant ordinal: $ordinal")
+                                append("<br>Enum constant ordinal: $ordinal")
                             }
                         }
                     }
