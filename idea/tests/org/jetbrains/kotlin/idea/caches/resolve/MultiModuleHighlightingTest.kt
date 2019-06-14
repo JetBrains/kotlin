@@ -296,6 +296,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     private fun Module.makeJsModule() {
         setupKotlinFacet {
             settings.compilerArguments = K2JSCompilerArguments()
+            settings.targetPlatform = JSLibraryKind.compilerPlatform
         }
     }
 }
