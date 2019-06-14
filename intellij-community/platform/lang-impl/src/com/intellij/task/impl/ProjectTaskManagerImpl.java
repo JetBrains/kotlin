@@ -162,8 +162,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     });
     myEventPublisher.started(context);
 
-    // do not run before tasks on EDT
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+    Runnable runnable = () -> {
       for (ProjectTaskManagerListener listener : myListeners) {
         try {
           listener.beforeRun(context);
@@ -187,10 +186,17 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
           sendSuccessNotify(notification);
         }
         else {
-          ApplicationManager.getApplication().invokeLater(() -> pair.first.run(myProject, context, notification, pair.second));
+          pair.first.run(myProject, context, notification, pair.second);
         }
       }
-    });
+    };
+    // do not run before tasks on EDT
+    if (ApplicationManager.getApplication().isDispatchThread()) {
+      ApplicationManager.getApplication().executeOnPooledThread(runnable);
+    }
+    else {
+      runnable.run();
+    }
   }
 
   public final void addListener(@NotNull ProjectTaskManagerListener listener) {
