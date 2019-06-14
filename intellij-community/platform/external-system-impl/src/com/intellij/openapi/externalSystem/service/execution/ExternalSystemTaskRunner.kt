@@ -24,7 +24,7 @@ import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.GenericProgramRunner
 import com.intellij.execution.runners.RunContentBuilder
-import com.intellij.execution.testframework.sm.runner.history.ImportedTestRunnableState
+import com.intellij.execution.testframework.HistoryTestRunnableState
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 
@@ -43,14 +43,14 @@ class ExternalSystemTaskRunner : GenericProgramRunner<RunnerSettings>() {
 
   @Throws(ExecutionException::class)
   override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
-    if (state !is ExternalSystemRunConfiguration.MyRunnableState && state !is ImportedTestRunnableState) {
+    if (state !is ExternalSystemRunConfiguration.MyRunnableState && state !is HistoryTestRunnableState) {
       return null
     }
 
     val executionResult = state.execute(environment.executor, this) ?: return null
     val runContentDescriptor = RunContentBuilder(executionResult, environment).showRunContent(environment.contentToReuse) ?: return null
 
-    if (state is ImportedTestRunnableState) {
+    if (state is HistoryTestRunnableState) {
       return runContentDescriptor
     }
 
