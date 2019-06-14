@@ -160,7 +160,7 @@ class LookupUi {
       ApplicationManager.getApplication().invokeLater(() -> {
         myProcessIcon.setVisible(calculating);
 
-        if (!calculating) {
+        if (!calculating && !myLookup.isLookupDisposed()) {
           updateHint();
         }
       }, myModalityState);
