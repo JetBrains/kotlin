@@ -171,8 +171,6 @@ internal val KotlinType.overridenSerializer: KotlinType?
     get() {
         val desc = this.toClassDescriptor ?: return null
         desc.serializableWith?.let { return it }
-        if (desc.annotations.hasAnnotation(SerializationAnnotations.polymorphicFqName))
-            return desc.module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer).defaultType
         return null
     }
 
