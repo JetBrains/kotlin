@@ -161,8 +161,15 @@ public class InspectionsConfigTreeTable extends TreeTable {
       }
     });
 
+    setTableHeader(new InvisibleResizableHeader() {
+      @Override
+      protected boolean canMoveOrResizeColumn(int modelIndex) {
+        return false;
+      }
+    });
     getTableHeader().setReorderingAllowed(false);
     getTableHeader().setResizingAllowed(false);
+
     registerKeyboardAction(__ -> {
       model.swapInspectionEnableState();
       updateUI();
