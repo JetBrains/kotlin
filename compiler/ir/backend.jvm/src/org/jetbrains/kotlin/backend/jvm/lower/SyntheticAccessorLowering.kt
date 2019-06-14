@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -156,7 +156,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName()
             visibility = Visibilities.PUBLIC
-            isSuspend = source.isSuspend
+            isSuspend = false // do not generate state-machine for synthetic accessors
         }.also { accessor ->
             accessor.parent = if ((source.parent as? IrClass)?.isInterface == true) {
                 // Accessors for interfaces are only for private methods. They should always be placed in DefaultImpls. The only exception
