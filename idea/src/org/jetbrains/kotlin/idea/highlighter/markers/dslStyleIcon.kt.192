@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.util.ScalableIcon
 import com.intellij.ui.LayeredIcon
 import com.intellij.util.ui.ColorsIcon
 import com.intellij.util.ui.JBUI
@@ -16,7 +17,6 @@ import javax.swing.Icon
 // BUNCH: 182
 // BUNCH: as35
 // BUNCH: as34
-// BUNCH: 191
 internal fun createDslStyleIcon(styleId: Int): Icon {
     val globalScheme = EditorColorsManager.getInstance().globalScheme
     val markersColor = globalScheme.getAttributes(DslHighlighterExtension.styleById(styleId)).foregroundColor
@@ -24,7 +24,7 @@ internal fun createDslStyleIcon(styleId: Int): Icon {
     val defaultIcon = KotlinIcons.DSL_MARKER_ANNOTATION
     icon.setIcon(defaultIcon, 0)
     icon.setIcon(
-        ColorsIcon(defaultIcon.iconHeight / 2, markersColor).scale(JBUI.pixScale()),
+        (ColorsIcon(defaultIcon.iconHeight / 2, markersColor) as ScalableIcon).scale(JBUI.pixScale()),
         1,
         defaultIcon.iconHeight / 2,
         defaultIcon.iconWidth / 2
