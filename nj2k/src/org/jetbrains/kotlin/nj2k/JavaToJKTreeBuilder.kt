@@ -639,7 +639,7 @@ class JavaToJKTreeBuilder constructor(
             }
         }
 
-        fun <T : JvmAnnotatedElement> T.annotationList(docCommentOwner: PsiDocCommentOwner?): JKAnnotationList {
+        fun <T : PsiModifierListOwner> T.annotationList(docCommentOwner: PsiDocCommentOwner?): JKAnnotationList {
             val plainAnnotations = annotations.map { it.cast<PsiAnnotation>().toJK() }
             val deprecatedAnnotation = docCommentOwner?.docComment?.deprecatedAnnotation() ?: return JKAnnotationListImpl(plainAnnotations)
             return JKAnnotationListImpl(
