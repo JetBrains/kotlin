@@ -11,6 +11,8 @@ dependencies {
 
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":generators:test-generator"))
+
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {
