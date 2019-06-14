@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GotoNextErrorHandler implements CodeInsightActionHandler {
   private final boolean myGoForward;
@@ -43,10 +44,11 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
       final HighlightSeverity minSeverity = severityRegistrar.getSeverityByIndex(idx);
       HighlightInfo infoToGo = findInfo(project, editor, caretOffset, minSeverity);
       if (infoToGo != null) {
-        navigateToError(project, editor, infoToGo);
-        if (Registry.is("error.navigation.show.tooltip")) {
-          DaemonTooltipUtil.showInfoTooltip(infoToGo, editor, editor.getCaretModel().getOffset(), 0, false, true);
-        }
+        navigateToError(project, editor, infoToGo, () -> {
+          if (Registry.is("error.navigation.show.tooltip")) {
+            DaemonTooltipUtil.showInfoTooltip(infoToGo, editor, editor.getCaretModel().getOffset(), 0, false, true);
+          }
+        });
 
         return;
       }
@@ -101,7 +103,7 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
     HintManager.getInstance().showInformationHint(editor, message);
   }
 
-  static void navigateToError(Project project, final Editor editor, HighlightInfo info) {
+  static void navigateToError(Project project, final Editor editor, HighlightInfo info, @Nullable Runnable postNavigateRunnable) {
     int oldOffset = editor.getCaretModel().getOffset();
 
     final int offset = getNavigationPositionFor(info, editor.getDocument());
@@ -124,6 +126,10 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
         if (maxOffset == -1) return;
         scrollingModel.scrollTo(editor.offsetToLogicalPosition(Math.min(maxOffset, endOffset)), ScrollType.MAKE_VISIBLE);
         scrollingModel.scrollTo(editor.offsetToLogicalPosition(Math.min(maxOffset, offset)), ScrollType.MAKE_VISIBLE);
+
+        if (postNavigateRunnable != null) {
+          postNavigateRunnable.run();
+        }
       }
     );
 
