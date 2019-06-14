@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="kotlin-main-kts.jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/kotlin_main_kts_jar</output-path>
+    <root id="archive" name="kotlin-main-kts.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/libraries/tools/kotlin-main-kts/build/tmp/packJar/MANIFEST.MF" />
+      </element>
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.ivy/ivy/2.4.0/5abe4c24bbe992a9ac07ca563d5bd3e8d569e9ed/ivy-2.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.0.1/f33e8dab753f33d1bbb07cca664fd6f13d993d7e/kotlinx-coroutines-core-1.0.1.jar" path-in-jar="/" />
+      <element id="module-output" name="kotlin.kotlin-main-kts.main" />
+      <element id="module-output" name="kotlin.kotlin-script-runtime.main" />
+      <element id="module-output" name="kotlin.kotlin-script-util.main" />
+      <element id="module-output" name="kotlin.kotlin-scripting-common.main" />
+      <element id="module-output" name="kotlin.kotlin-scripting-jvm.main" />
+    </root>
+  </artifact>
+</component>

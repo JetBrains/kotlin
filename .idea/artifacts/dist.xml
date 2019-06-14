@@ -1,0 +1,27 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="dist">
+    <output-path>$PROJECT_DIR$/dist</output-path>
+    <root id="root">
+      <element id="directory" name="artifacts">
+        <element id="directory" name="ideaPlugin">
+          <element id="artifact" artifact-name="ideaPlugin" />
+        </element>
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/build/build.txt" />
+      <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-minimal-for-test/1.3.50-dev-526/7c531c6c6db03b6ebf0ff0e15027bb6aee5d2452/kotlin-stdlib-minimal-for-test-1.3.50-dev-526.jar" output-file-name="kotlin-stdlib-minimal-for-test.jar" />
+      <element id="directory" name="common">
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.50-dev-526/7a06077a97c805bc4d99aaa17c8e8accf86bfe7c/kotlin-stdlib-common-1.3.50-dev-526.jar" output-file-name="kotlin-stdlib-common.jar" />
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.50-dev-526/784cfd305e170c525b1a6987584dd8bebc4e0e6a/kotlin-stdlib-common-1.3.50-dev-526-sources.jar" output-file-name="kotlin-stdlib-common-sources.jar" />
+      </element>
+      <element id="directory" name="js">
+        <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.3.50-dev-526/8a798b744fdbd46a7d93814f0f0b97c664c064d2/kotlin-stdlib-js-1.3.50-dev-526.jar" path-in-jar="/" />
+      </element>
+      <element id="directory" name="maven">
+        <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.50-dev-526/21e04af851994238d364653c103df336bf45fd4d/kotlin-stdlib-1.3.50-dev-526-sources.jar" output-file-name="kotlin-stdlib-sources.jar" />
+      </element>
+      <element id="directory" name="kotlinc">
+        <element id="artifact" artifact-name="kotlinc" />
+      </element>
+    </root>
+  </artifact>
+</component>

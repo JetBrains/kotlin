@@ -1,0 +1,27 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="kotlin-daemon-client.jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/kotlin_daemon_client_jar</output-path>
+    <root id="archive" name="kotlin-daemon-client.jar">
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform/0.14/48341d68b4456bea76ca952b6d38b877881350f7/native-platform-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-freebsd-amd64-libcpp/0.14/b45561900830d676e9e0040561e68abe86fbc10e/native-platform-freebsd-amd64-libcpp-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-freebsd-amd64-libstdcpp/0.14/bcc4e58ef4db56052fe9512d2d1265f11dc9242f/native-platform-freebsd-amd64-libstdcpp-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-freebsd-i386-libcpp/0.14/50b15724c82808c2b7fefd9b0b7c6dd977623f35/native-platform-freebsd-i386-libcpp-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-freebsd-i386-libstdcpp/0.14/d98be0a75890523a6a70dc93795101145828a5da/native-platform-freebsd-i386-libstdcpp-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-linux-amd64/0.14/d0ac539a32015e91e309c20e493d220aae88811b/native-platform-linux-amd64-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-linux-amd64-ncurses5/0.14/6dece223855317a75c371fb72d826582893351c6/native-platform-linux-amd64-ncurses5-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-linux-amd64-ncurses6/0.14/8effac668ad781893fc33fd86f993c5de559d355/native-platform-linux-amd64-ncurses6-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-linux-i386/0.14/6576c08a9a514a6ae5623e6f8da04502cac23bde/native-platform-linux-i386-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-linux-i386-ncurses5/0.14/80ec77af683abeaa58ed11b9c2cad2d02837e55f/native-platform-linux-i386-ncurses5-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-linux-i386-ncurses6/0.14/615dea7e75ca704bba1de9b671652283a9743894/native-platform-linux-i386-ncurses6-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-osx-amd64/0.14/5e5c113c32c0bac5cf2dcd3a59e4b021023d86a1/native-platform-osx-amd64-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-osx-i386/0.14/fd86b7eedbf5a0df003cf946f0b0c80c06c103ee/native-platform-osx-i386-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-windows-amd64/0.14/bdf519fab10700fadc9953526a07e8104fad1d07/native-platform-windows-amd64-0.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.rubygrapefruit/native-platform-windows-i386/0.14/65b00e123554f42ecd0da054a747033be5da608d/native-platform-windows-i386-0.14.jar" path-in-jar="/" />
+      <element id="module-output" name="kotlin.compiler.daemon-common.main" />
+      <element id="module-output" name="kotlin.kotlin-daemon-client.main" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/compiler/daemon/daemon-client/build/tmp/shadowJar/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
