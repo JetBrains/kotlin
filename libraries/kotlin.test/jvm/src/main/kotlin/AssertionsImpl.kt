@@ -30,18 +30,22 @@ internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<
     )
 }
 
+/** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFails")
 fun assertFailsNoInline(block: () -> Unit): Throwable = assertFails(block)
 
+/** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFails")
 fun assertFailsNoInline(message: String?, block: () -> Unit): Throwable = assertFails(message, block)
 
+/** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFailsWith")
 fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, block)
 
+/** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFailsWith")
 fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
