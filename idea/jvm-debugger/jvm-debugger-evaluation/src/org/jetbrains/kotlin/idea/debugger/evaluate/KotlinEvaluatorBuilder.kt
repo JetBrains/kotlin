@@ -69,6 +69,8 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.kotlin.idea.debugger.evaluate.EvaluationStatus.EvaluationContextLanguage
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.ClassLoadingResult
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.util.*
 
 internal val LOG = Logger.getInstance(KotlinEvaluator::class.java)
@@ -209,10 +211,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         }
 
         val (bindingContext) = runReadAction {
-            DebuggerUtils.analyzeInlinedFunctions(
-                KotlinCacheService.getInstance(codeFragment.project).getResolutionFacade(listOf(codeFragment)),
-                codeFragment, false, analysisResult.bindingContext
-            )
+            val resolutionFacade = getResolutionFacadeForCodeFragment(codeFragment)
+            DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, codeFragment, false, analysisResult.bindingContext)
         }
 
         val moduleDescriptor = analysisResult.moduleDescriptor
@@ -263,12 +263,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 evaluationException(e.message ?: e.toString())
             }
 
-            val filesToAnalyze = listOf(codeFragment)
-            val resolutionFacade = KotlinCacheService.getInstance(codeFragment.project).getResolutionFacade(filesToAnalyze)
+            val resolutionFacade = getResolutionFacadeForCodeFragment(codeFragment)
 
             DebugLabelPropertyDescriptorProvider(codeFragment, debugProcess).supplyDebugLabels()
 
-            val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(filesToAnalyze)
+            val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(listOf(codeFragment))
 
             if (analysisResult.isError()) {
                 status.error(EvaluationError.FrontendException)
@@ -509,3 +508,9 @@ fun createCompiledDataDescriptor(result: CodeFragmentCompiler.CompilationResult,
 
 private fun evaluationException(msg: String): Nothing = throw EvaluateExceptionUtil.createEvaluateException(msg)
 private fun evaluationException(e: Throwable): Nothing = throw EvaluateExceptionUtil.createEvaluateException(e)
+
+internal fun getResolutionFacadeForCodeFragment(codeFragment: KtCodeFragment): ResolutionFacade {
+    val filesToAnalyze = listOf(codeFragment)
+    val kotlinCacheService = KotlinCacheService.getInstance(codeFragment.project)
+    return kotlinCacheService.getResolutionFacade(filesToAnalyze, JvmPlatforms.unspecifiedJvmPlatform)
+}

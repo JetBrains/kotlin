@@ -75,11 +75,22 @@ data class PlatformAnalysisSettings(
 
 class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
-        return getFacadeToAnalyzeFiles(elements.map {
+        val files = getFilesForElements(elements)
+        val platform = TargetPlatformDetector.getPlatform(files.first())
+        return getFacadeToAnalyzeFiles(files, platform)
+    }
+
+    override fun getResolutionFacade(elements: List<KtElement>, platform: TargetPlatform): ResolutionFacade {
+        val files = getFilesForElements(elements)
+        return getFacadeToAnalyzeFiles(files, platform)
+    }
+
+    private fun getFilesForElements(elements: List<KtElement>): List<KtFile> {
+        return elements.map {
             // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
             @Suppress("USELESS_ELVIS")
             it.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $it of ${it.javaClass}")
-        })
+        }
     }
 
     override fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
@@ -416,7 +427,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
     }
 
-    private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
+    private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>, platform: TargetPlatform): ResolutionFacade {
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
         val specialFiles = files.filterNotInProjectSource(moduleInfo)
@@ -431,7 +442,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             return ModuleResolutionFacadeImpl(projectFacade, moduleInfo).createdFor(specialFiles, moduleInfo)
         }
 
-        val platform = TargetPlatformDetector.getPlatform(file)
         return getResolutionFacadeByModuleInfo(moduleInfo, platform).createdFor(emptyList(), moduleInfo, platform)
     }
 

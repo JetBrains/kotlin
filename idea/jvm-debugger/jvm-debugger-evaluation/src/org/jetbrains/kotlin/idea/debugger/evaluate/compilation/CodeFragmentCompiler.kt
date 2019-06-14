@@ -65,7 +65,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
         }
 
         val project = codeFragment.project
-        val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(listOf(codeFragment))
+        val resolutionFacade = getResolutionFacadeForCodeFragment(codeFragment)
         val resolveSession = resolutionFacade.getFrontendService(ResolveSession::class.java)
         val moduleDescriptorWrapper = EvaluatorModuleDescriptor(codeFragment, moduleDescriptor, resolveSession)
 
