@@ -59,16 +59,19 @@ class FirLibrarySession private constructor(
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
+        val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
         _firSymbolProvider =
             FirCompositeSymbolProvider(
                 listOf(
                     FirLibrarySymbolProviderImpl(this),
                     KotlinDeserializedJvmSymbolsProvider(
                         this, sessionProvider.project,
-                        packagePartProvider, kotlinClassFinder,
+                        packagePartProvider,
+                        javaSymbolProvider,
+                        kotlinClassFinder,
                         javaClassFinder
                     ),
-                    JavaSymbolProvider(this, sessionProvider.project, scope),
+                    javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)
                 )
             )

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.createConstant
 import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -61,12 +62,15 @@ class KotlinDeserializedJvmSymbolsProvider(
     val session: FirSession,
     val project: Project,
     private val packagePartProvider: PackagePartProvider,
+    private val javaSymbolProvider: JavaSymbolProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaClassFinder: JavaClassFinder
 ) : AbstractFirSymbolProvider() {
     private val classesCache = HashMap<ClassId, FirClassSymbol>()
     private val typeAliasCache = HashMap<ClassId, FirTypeAliasSymbol?>()
     private val packagePartsCache = HashMap<FqName, Collection<PackagePartsCacheData>>()
+
+    private val handledByJava = HashSet<ClassId>()
 
     private class PackagePartsCacheData(
         val proto: ProtoBuf.Package,
@@ -313,10 +317,17 @@ class KotlinDeserializedJvmSymbolsProvider(
         if (!hasTopLevelClassOf(classId)) return null
         if (classesCache.containsKey(classId)) return classesCache[classId]
 
+        if (classId in handledByJava) return null
 
-//        return classesCache.getOrPut(classId) {
-        //return null
-        val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(classId)
+        val result = kotlinClassFinder.findKotlinClassOrContent(classId)
+        val kotlinJvmBinaryClass = when (result) {
+            is KotlinClassFinder.Result.KotlinClass -> result.kotlinJvmBinaryClass
+            is KotlinClassFinder.Result.ClassFileContent -> {
+                handledByJava.add(classId)
+                return javaSymbolProvider.getFirJavaClass(classId, result) as FirClassSymbol?
+            }
+            null -> null
+        }
         if (kotlinJvmBinaryClass == null) {
             val outerClassId = classId.outerClassId ?: return null
             val outerJvmBinaryClass = kotlinClassFinder.findKotlinClass(outerClassId) ?: return null

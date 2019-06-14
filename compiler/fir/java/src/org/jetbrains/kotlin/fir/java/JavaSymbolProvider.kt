@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -53,7 +54,10 @@ class JavaSymbolProvider(
 
     private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
 
-    private fun findClass(classId: ClassId): JavaClass? = facade.findClass(JavaClassFinder.Request(classId), searchScope)
+    private fun findClass(
+        classId: ClassId,
+        content: KotlinClassFinder.Result.ClassFileContent?
+    ): JavaClass? = facade.findClass(JavaClassFinder.Request(classId, previouslyFoundClassFileContent = content?.content), searchScope)
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> =
         emptyList()
@@ -136,10 +140,12 @@ class JavaSymbolProvider(
             }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? = getFirJavaClass(classId)
+
+    fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): ConeClassLikeSymbol? {
         if (!hasTopLevelClassOf(classId)) return null
         return classCache.lookupCacheOrCalculateWithPostCompute(classId, {
-            val foundClass = findClass(classId)
+            val foundClass = findClass(classId, content)
             if (foundClass == null || foundClass.annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }) {
                 null to null
             } else {
