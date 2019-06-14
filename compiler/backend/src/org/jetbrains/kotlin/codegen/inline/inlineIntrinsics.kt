@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
+import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
@@ -48,7 +49,7 @@ internal fun generateInlineIntrinsic(
             createMethodNodeForIntercepted(descriptor, typeMapper, languageVersionSettings)
         descriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
             createMethodNodeForCoroutineContext(descriptor, languageVersionSettings)
-        descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings) ->
+        descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
             createMethodNodeForSuspendCoroutineUninterceptedOrReturn(descriptor, typeMapper, languageVersionSettings)
         descriptor.isBuiltinAlwaysEnabledAssert() ->
             createMethodNodeForAlwaysEnabledAssert(descriptor, typeMapper)

@@ -206,9 +206,7 @@ fun generateParameterAnnotations(
     state: GenerationState
 ) {
     val iterator = irFunction.valueParameters.iterator()
-    val kotlinParameterTypes =
-        if (irFunction.isSuspend) jvmSignature.valueParameters.dropLast(1) // do not generate annotation for continuation parameter
-        else jvmSignature.valueParameters
+    val kotlinParameterTypes = jvmSignature.valueParameters
     var syntheticParameterCount = 0
     kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
         val kind = parameterSignature.kind

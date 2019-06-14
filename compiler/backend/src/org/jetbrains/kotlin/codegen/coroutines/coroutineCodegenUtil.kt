@@ -391,7 +391,7 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
     typeMapper: KotlinTypeMapper,
     languageVersionSettings: LanguageVersionSettings
 ): MethodNode {
-    assert(functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)) {
+    assert(functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings)) {
         "functionDescriptor must be kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn"
     }
 

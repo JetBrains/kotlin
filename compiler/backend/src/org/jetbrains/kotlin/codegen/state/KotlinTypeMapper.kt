@@ -172,7 +172,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return Type.VOID_TYPE
         }
 
-        if (descriptor.isSuspendFunctionNotSuspensionView()) {
+        if (descriptor.isSuspendFunctionNotSuspensionView() && !isIrBackend) {
             return mapReturnType(
                 getOrCreateJvmSuspendFunctionView(descriptor as SimpleFunctionDescriptor, isReleaseCoroutines),
                 sw
@@ -733,7 +733,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return mapSignature(f.callableFromObject, kind, skipGenericSignature)
         }
 
-        if (f.isSuspendFunctionNotSuspensionView()) {
+        if (f.isSuspendFunctionNotSuspensionView() && !isIrBackend) {
             return mapSignature(
                 getOrCreateJvmSuspendFunctionView(f, isReleaseCoroutines), kind,
                 skipGenericSignature
@@ -1313,10 +1313,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
             // TODO: drop this usage and move IrBuiltinsPackageFragmentDescriptor to IR modules; it shouldn't be used here
             if (descriptor.containingDeclaration is IrBuiltinsPackageFragmentDescriptor) {
                 return descriptor.containingDeclaration.name.asString()
-            }
-
-            if (descriptor.containingDeclaration.fqNameSafe.asString() == "kotlin.coroutines.intrinsics") {
-                return "kotlin.coroutines.IntrinsicsKt" // TODO: why this change is needed in JVM_IR?
             }
 
             if (directMember is FictitiousArrayConstructor) {
