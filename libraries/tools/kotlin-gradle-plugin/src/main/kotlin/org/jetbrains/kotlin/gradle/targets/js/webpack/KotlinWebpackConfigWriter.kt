@@ -200,10 +200,10 @@ data class KotlinWebpackConfigWriter(
             """
                 // entry
                 if (!config.entry) config.entry = [];
-                config.entry.push('${entry.canonicalPath}');
+                config.entry.push(${jsQuotedString(entry.canonicalPath)});
                 config.output = {
-                    path: '${outputPath.canonicalPath}',
-                    filename: '${entry.name}'
+                    path: ${jsQuotedString(outputPath.canonicalPath)},
+                    filename: ${jsQuotedString(entry.name)}
                 };
                 
             """.trimIndent()
