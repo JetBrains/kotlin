@@ -8,6 +8,8 @@ package kotlin.time
 import org.w3c.performance.GlobalPerformance
 import org.w3c.performance.Performance
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 public actual object MonoClock : Clock {
 
     private val actualClock: Clock = run {
@@ -28,6 +30,8 @@ internal external interface Process {
     fun hrtime(time: Array<Double> = definedExternally): Array<Double>
 }
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 internal class HrTimeClock(val process: Process) : Clock {
 
     override fun mark(): ClockMark = object : ClockMark() {
@@ -39,11 +43,15 @@ internal class HrTimeClock(val process: Process) : Clock {
     override fun toString(): String = "Clock(process.hrtime())"
 }
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 internal class PerformanceClock(val performance: Performance) : AbstractDoubleClock(unit = DurationUnit.MILLISECONDS) {
     override fun read(): Double = performance.now()
     override fun toString(): String = "Clock(self.performance.now())"
 }
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 internal object DateNowClock : AbstractDoubleClock(unit = DurationUnit.MILLISECONDS) {
     override fun read(): Double = kotlin.js.Date.now()
     override fun toString(): String = "Clock(Date.now())"

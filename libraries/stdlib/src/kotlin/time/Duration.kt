@@ -7,6 +7,7 @@ package kotlin.time
 
 import kotlin.math.abs
 
+@UseExperimental(ExperimentalTime::class)
 private val storageUnit = DurationUnit.NANOSECONDS
 
 /**
@@ -23,6 +24,8 @@ private val storageUnit = DurationUnit.NANOSECONDS
  * use the functions [toInt], [toLong] and [toDouble]
  * or the properties [inHours], [inMinutes], [inSeconds], [inNanoseconds] and so on.
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 public inline class Duration internal constructor(internal val value: Double) : Comparable<Duration> {
 // TODO: backend fails on init block, wait for KT-28055
@@ -32,8 +35,8 @@ public inline class Duration internal constructor(internal val value: Double) : 
 //    }
 
     companion object {
-        val ZERO: Duration = Duration(0.0)
-        val INFINITE: Duration = Duration(Double.POSITIVE_INFINITY)
+        public val ZERO: Duration = Duration(0.0)
+        public val INFINITE: Duration = Duration(Double.POSITIVE_INFINITY)
 
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
@@ -42,25 +45,25 @@ public inline class Duration internal constructor(internal val value: Double) : 
 
     // arithmetic operators
 
-    operator fun unaryMinus(): Duration = Duration(-value)
-    operator fun plus(other: Duration): Duration = Duration(value + other.value)
-    operator fun minus(other: Duration): Duration = Duration(value - other.value)
+    public operator fun unaryMinus(): Duration = Duration(-value)
+    public operator fun plus(other: Duration): Duration = Duration(value + other.value)
+    public operator fun minus(other: Duration): Duration = Duration(value - other.value)
 
     // should we declare symmetric extension operators?
 
-    operator fun times(scale: Int): Duration = Duration(value * scale)
-    operator fun times(scale: Double): Duration = Duration(value * scale)
+    public operator fun times(scale: Int): Duration = Duration(value * scale)
+    public operator fun times(scale: Double): Duration = Duration(value * scale)
 
-    operator fun div(scale: Int): Duration = Duration(value / scale)
-    operator fun div(scale: Double): Duration = Duration(value / scale)
+    public operator fun div(scale: Int): Duration = Duration(value / scale)
+    public operator fun div(scale: Double): Duration = Duration(value / scale)
 
-    operator fun div(other: Duration): Double = this.value / other.value
+    public operator fun div(other: Duration): Double = this.value / other.value
 
-    fun isNegative(): Boolean = value < 0
-    fun isInfinite(): Boolean = value.isInfinite()
-    fun isFinite(): Boolean = value.isFinite()
+    public fun isNegative(): Boolean = value < 0
+    public fun isInfinite(): Boolean = value.isInfinite()
+    public fun isFinite(): Boolean = value.isFinite()
 
-    val absoluteValue: Duration get() = if (isNegative()) -this else this
+    public val absoluteValue: Duration get() = if (isNegative()) -this else this
 
 
     override fun compareTo(other: Duration): Int = this.value.compareTo(other.value)
@@ -68,16 +71,16 @@ public inline class Duration internal constructor(internal val value: Double) : 
 
     // splitting to components
 
-    inline fun <T> toComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
+    public inline fun <T> toComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
         action(inDays.toInt(), hoursComponent, minutesComponent, secondsComponent, nanosecondsComponent)
 
-    inline fun <T> toComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
+    public inline fun <T> toComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
         action(inHours.toInt(), minutesComponent, secondsComponent, nanosecondsComponent)
 
-    inline fun <T> toComponents(action: (minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
+    public inline fun <T> toComponents(action: (minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
         action(inMinutes.toInt(), secondsComponent, nanosecondsComponent)
 
-    inline fun <T> toComponents(action: (seconds: Long, nanoseconds: Int) -> T): T =
+    public inline fun <T> toComponents(action: (seconds: Long, nanoseconds: Int) -> T): T =
         action(inSeconds.toLong(), nanosecondsComponent)
 
     @PublishedApi
@@ -92,24 +95,24 @@ public inline class Duration internal constructor(internal val value: Double) : 
 
     // conversion to units
 
-    fun toDouble(unit: DurationUnit): Double = convertDurationUnit(value, storageUnit, unit)
-    fun toLong(unit: DurationUnit): Long = toDouble(unit).toLong()
-    fun toInt(unit: DurationUnit): Int = toDouble(unit).toInt()
+    public fun toDouble(unit: DurationUnit): Double = convertDurationUnit(value, storageUnit, unit)
+    public fun toLong(unit: DurationUnit): Long = toDouble(unit).toLong()
+    public fun toInt(unit: DurationUnit): Int = toDouble(unit).toInt()
 
     // option 1: in- properties
 
-    val inDays: Double get() = toDouble(DurationUnit.DAYS)
-    val inHours: Double get() = toDouble(DurationUnit.HOURS)
-    val inMinutes: Double get() = toDouble(DurationUnit.MINUTES)
-    val inSeconds: Double get() = toDouble(DurationUnit.SECONDS)
-    val inMilliseconds: Double get() = toDouble(DurationUnit.MILLISECONDS)
-    val inMicroseconds: Double get() = toDouble(DurationUnit.MICROSECONDS)
-    val inNanoseconds: Double get() = toDouble(DurationUnit.NANOSECONDS)
+    public val inDays: Double get() = toDouble(DurationUnit.DAYS)
+    public val inHours: Double get() = toDouble(DurationUnit.HOURS)
+    public val inMinutes: Double get() = toDouble(DurationUnit.MINUTES)
+    public val inSeconds: Double get() = toDouble(DurationUnit.SECONDS)
+    public val inMilliseconds: Double get() = toDouble(DurationUnit.MILLISECONDS)
+    public val inMicroseconds: Double get() = toDouble(DurationUnit.MICROSECONDS)
+    public val inNanoseconds: Double get() = toDouble(DurationUnit.NANOSECONDS)
 
     // shortcuts
 
-    fun toLongNanoseconds(): Long = toLong(DurationUnit.NANOSECONDS)
-    fun toLongMilliseconds(): Long = toLong(DurationUnit.MILLISECONDS)
+    public fun toLongNanoseconds(): Long = toLong(DurationUnit.NANOSECONDS)
+    public fun toLongMilliseconds(): Long = toLong(DurationUnit.MILLISECONDS)
 
     override fun toString(): String = buildString {
         if (isInfinite()) {
@@ -147,14 +150,14 @@ public inline class Duration internal constructor(internal val value: Double) : 
         else -> 0
     }
 
-    fun toString(unit: DurationUnit, decimals: Int = 0): String {
+    public fun toString(unit: DurationUnit, decimals: Int = 0): String {
         require(decimals >= 0) { "decimals must be not negative, but was $decimals" }
         if (isInfinite()) return value.toString()
         return formatToExactDecimals(toDouble(unit), decimals) + unit.shortName()
     }
 
 
-    fun toIsoString(): String = buildString {
+    public fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append("PT")
         absoluteValue.toComponents { hours, minutes, seconds, nanoseconds ->
@@ -183,47 +186,109 @@ public inline class Duration internal constructor(internal val value: Double) : 
         }
     }
 
-
 }
 
 // constructing from number of units
 // extension functions
 
-fun Int.toDuration(unit: DurationUnit): Duration = toDouble().toDuration(unit)
-fun Long.toDuration(unit: DurationUnit): Duration = toDouble().toDuration(unit)
-fun Double.toDuration(unit: DurationUnit): Duration = Duration(convertDurationUnit(this, unit, storageUnit))
+@SinceKotlin("1.3")
+@ExperimentalTime
+public fun Int.toDuration(unit: DurationUnit): Duration = toDouble().toDuration(unit)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public fun Long.toDuration(unit: DurationUnit): Duration = toDouble().toDuration(unit)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public fun Double.toDuration(unit: DurationUnit): Duration = Duration(convertDurationUnit(this, unit, storageUnit))
 
 // constructing from number of units
 // extension properties
 
-val Int.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
-val Long.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
-val Double.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Int.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 
-val Int.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
-val Long.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
-val Double.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Long.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 
-val Int.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
-val Long.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
-val Double.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Double.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 
-val Int.seconds get() = toDuration(DurationUnit.SECONDS)
-val Long.seconds get() = toDuration(DurationUnit.SECONDS)
-val Double.seconds get() = toDuration(DurationUnit.SECONDS)
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Int.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 
-val Int.minutes get() = toDuration(DurationUnit.MINUTES)
-val Long.minutes get() = toDuration(DurationUnit.MINUTES)
-val Double.minutes get() = toDuration(DurationUnit.MINUTES)
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Long.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 
-val Int.hours get() = toDuration(DurationUnit.HOURS)
-val Long.hours get() = toDuration(DurationUnit.HOURS)
-val Double.hours get() = toDuration(DurationUnit.HOURS)
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Double.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 
-val Int.days get() = toDuration(DurationUnit.DAYS)
-val Long.days get() = toDuration(DurationUnit.DAYS)
-val Double.days get() = toDuration(DurationUnit.DAYS)
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Int.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Long.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Double.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Int.seconds get() = toDuration(DurationUnit.SECONDS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Long.seconds get() = toDuration(DurationUnit.SECONDS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Double.seconds get() = toDuration(DurationUnit.SECONDS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Int.minutes get() = toDuration(DurationUnit.MINUTES)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Long.minutes get() = toDuration(DurationUnit.MINUTES)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Double.minutes get() = toDuration(DurationUnit.MINUTES)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Int.hours get() = toDuration(DurationUnit.HOURS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Long.hours get() = toDuration(DurationUnit.HOURS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Double.hours get() = toDuration(DurationUnit.HOURS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Int.days get() = toDuration(DurationUnit.DAYS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Long.days get() = toDuration(DurationUnit.DAYS)
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+public val Double.days get() = toDuration(DurationUnit.DAYS)
 
 
 internal expect fun formatToExactDecimals(value: Double, decimals: Int): String

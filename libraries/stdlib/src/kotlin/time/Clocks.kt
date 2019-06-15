@@ -10,11 +10,15 @@ import kotlin.js.JsName
 /**
  * The most precise clock available in the platform, whose readings increase monotonically over time.
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public expect object MonoClock : Clock
 
 /**
  * An abstract class used to implement clocks that return their readings as [Long] values in the specified [unit].
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public abstract class AbstractLongClock(protected val unit: DurationUnit) : Clock {
     protected abstract fun read(): Long
 
@@ -29,6 +33,8 @@ public abstract class AbstractLongClock(protected val unit: DurationUnit) : Cloc
 /**
  * An abstract class used to implement clocks that return their readings as [Double] values in the specified [unit].
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public abstract class AbstractDoubleClock(protected val unit: DurationUnit) : Clock {
     protected abstract fun read(): Double
 
@@ -43,9 +49,11 @@ public abstract class AbstractDoubleClock(protected val unit: DurationUnit) : Cl
 /**
  * A clock, whose readings can be preset and changed manually. It is useful as a predictable source of time in tests.
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public class TestClock(
     @JsName("readingValue")
-    var reading: Long = 0L,
+    public var reading: Long = 0L,
     unit: DurationUnit = DurationUnit.NANOSECONDS
 ) : AbstractLongClock(unit) {
     override fun read(): Long = reading

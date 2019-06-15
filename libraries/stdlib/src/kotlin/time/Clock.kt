@@ -13,39 +13,43 @@ package kotlin.time
  * @see [measureTime]
  * @see [measureTimedValue]
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public interface Clock {
     /**
      * Marks a time point on this clock.
      */
-    fun mark(): ClockMark
+    public fun mark(): ClockMark
 }
 
 /**
  * Represents a time point notched on a particular [Clock]. Remains bound to the clock it was taken from
  * and allows querying for the duration of time elapsed from that point (see the function [elapsed]).
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public abstract class ClockMark {
     /**
      * Returns the amount of time passed from this clock mark on the clock from which this mark was taken.
      */
-    abstract fun elapsed(): Duration
+    public abstract fun elapsed(): Duration
 
     /**
      * Returns a clock mark on the same clock that is ahead of this clock mark by the specified [duration].
      *
      * The returned clock mark is more _late_ when the [duration] is positive, and more _early_ when the [duration] is negative.
      */
-    open operator fun plus(duration: Duration): ClockMark = AdjustedClockMark(this, duration)
+    public open operator fun plus(duration: Duration): ClockMark = AdjustedClockMark(this, duration)
 
     /**
      * Returns a clock mark on the same clock that is behind this clock mark by the specified [duration].
      *
      * The returned clock mark is more _early_ when the [duration] is positive, and more _late_ when the [duration] is negative.
      */
-    open operator fun minus(duration: Duration): ClockMark = plus(-duration)
+    public open operator fun minus(duration: Duration): ClockMark = plus(-duration)
 }
 
-
+@ExperimentalTime
 private class AdjustedClockMark(val mark: ClockMark, val adjustment: Duration) : ClockMark() {
     override fun elapsed(): Duration = mark.elapsed() - adjustment
 

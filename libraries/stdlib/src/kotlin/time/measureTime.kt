@@ -12,6 +12,8 @@ import kotlin.contracts.*
  *
  * The elapsed time is measured with [MonoClock].
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public inline fun measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -25,6 +27,8 @@ public inline fun measureTime(block: () -> Unit): Duration {
  *
  * The elapsed time is measured with the specified `this` [Clock] instance.
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public inline fun Clock.measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -42,6 +46,8 @@ public inline fun Clock.measureTime(block: () -> Unit): Duration {
  * @property value the result of the action.
  * @property duration the time elapsed to execute the action.
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public data class TimedValue<T>(val value: T, val duration: Duration)
 
 /**
@@ -50,6 +56,8 @@ public data class TimedValue<T>(val value: T, val duration: Duration)
  *
  * The elapsed time is measured with [MonoClock].
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -64,6 +72,8 @@ public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
  *
  * The elapsed time is measured with the specified `this` [Clock] instance.
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public inline fun <T> Clock.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

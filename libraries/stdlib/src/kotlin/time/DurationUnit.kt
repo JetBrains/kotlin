@@ -14,6 +14,8 @@ package kotlin.time
  *
  * The smallest time unit is [NANOSECONDS] and the largest is [DAYS], which corresponds to exactly 24 [HOURS].
  */
+@SinceKotlin("1.3")
+@ExperimentalTime
 public expect enum class DurationUnit {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
@@ -46,10 +48,13 @@ public expect enum class DurationUnit {
 }
 
 /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
+@SinceKotlin("1.3")
+@ExperimentalTime
 internal expect fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double
 
 
-
+@SinceKotlin("1.3")
+@ExperimentalTime
 internal fun DurationUnit.shortName(): String = when (this) {
     DurationUnit.NANOSECONDS -> "ns"
     DurationUnit.MICROSECONDS -> "us"

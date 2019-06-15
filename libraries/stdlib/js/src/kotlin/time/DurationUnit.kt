@@ -5,7 +5,8 @@
 
 package kotlin.time
 
-
+@SinceKotlin("1.3")
+@ExperimentalTime
 public actual enum class DurationUnit(internal val scale: Double) {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
@@ -37,6 +38,8 @@ public actual enum class DurationUnit(internal val scale: Double) {
     DAYS(86400e9);
 }
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double {
     val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
     return when {

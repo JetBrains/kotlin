@@ -8,8 +8,12 @@
 
 package kotlin.time
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 public actual typealias DurationUnit = java.util.concurrent.TimeUnit
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double {
     val sourceInTargets = targetUnit.convert(1, sourceUnit)
     if (sourceInTargets > 0)

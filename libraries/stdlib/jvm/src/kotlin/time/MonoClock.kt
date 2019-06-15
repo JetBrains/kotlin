@@ -5,6 +5,8 @@
 
 package kotlin.time
 
+@SinceKotlin("1.3")
+@ExperimentalTime
 public actual object MonoClock : AbstractLongClock(unit = DurationUnit.NANOSECONDS), Clock { // TODO: interface should not be required here
     override fun read(): Long = System.nanoTime()
     override fun toString(): String = "Clock(System.nanoTime())"
