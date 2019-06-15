@@ -195,14 +195,17 @@ data class KotlinWebpackConfigWriter(
     private fun Appendable.appendEntry() {
         if (entry == null || outputPath == null) return
 
+        val quotedEntryPath = jsQuotedString(entry.canonicalPath)
+        val quotedOutputPath = jsQuotedString(outputPath.canonicalPath)
+
         //language=JavaScript 1.8
         appendln(
             """
                 // entry
                 if (!config.entry) config.entry = [];
-                config.entry.push('${entry.canonicalPath}');
+                config.entry.push($quotedEntryPath);
                 config.output = {
-                    path: '${outputPath.canonicalPath}',
+                    path: $quotedOutputPath,
                     filename: '${entry.name}'
                 };
                 
