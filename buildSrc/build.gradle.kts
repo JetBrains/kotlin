@@ -122,7 +122,7 @@ allprojects {
     }
 }
 
-// TODO: These classes should be omitted once Gradle plugin supports local.properties
+// TODO: hide these classes in special gradle plugin for kotlin-ultimate which will support local.properties
 class LocalBuildPropertiesProvider(private val project: Project) {
     private val localProperties: Properties = Properties()
 
