@@ -91,7 +91,21 @@ class PresentationFactory(private val editor: EditorImpl) {
   @Contract(pure = true)
   fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
     tooltip.isEmpty() -> base
-    else -> onHover(base, tooltipHandler(tooltip))
+    else -> {
+      var hint: LightweightHint? = null
+      onHover(base, object : HoverListener {
+        override fun onHover(event: MouseEvent) {
+          if (hint?.isVisible != true) {
+            hint = showTooltip(editor, event, tooltip)
+          }
+        }
+
+        override fun onHoverFinished() {
+          hint?.hide()
+          hint = null
+        }
+      })
+    }
   }
 
   @Contract(pure = true)
@@ -113,20 +127,20 @@ class PresentationFactory(private val editor: EditorImpl) {
     collapsed: InlayPresentation,
     expanded: () -> InlayPresentation,
     suffix: InlayPresentation,
-    startWithPlaceholder: Boolean = true
-  ) : InlayPresentation {
+    startWithPlaceholder: Boolean = true): InlayPresentation {
     val (matchingPrefix, matchingSuffix) = matchingBraces(prefix, suffix)
     val prefixExposed = EventExposingPresentation(matchingPrefix)
     val suffixExposed = EventExposingPresentation(matchingSuffix)
     var presentationToChange: BiStatePresentation? = null
+
     val content = BiStatePresentation(first = {
       onClick(collapsed, MouseButton.Left,
-              onClick = { m, p ->
-        presentationToChange?.flipState()
-      })
+              onClick = { _, _ ->
+                presentationToChange?.flipState()
+              })
     }, second = { expanded() }, initialState = startWithPlaceholder)
     presentationToChange = content
-    val listener = object: InputHandler {
+    val listener = object : InputHandler {
       override fun mouseClicked(event: MouseEvent, translated: Point) {
         content.flipState()
       }
@@ -136,18 +150,20 @@ class PresentationFactory(private val editor: EditorImpl) {
     return seq(prefixExposed, content, suffixExposed)
   }
 
+  private fun flipState() {
+    TODO("not implemented")
+  }
+
   @Contract(pure = true)
-  fun matchingBraces(left: InlayPresentation, right: InlayPresentation) : Pair<InlayPresentation, InlayPresentation> {
+  fun matchingBraces(left: InlayPresentation, right: InlayPresentation): Pair<InlayPresentation, InlayPresentation> {
     val (leftMatching, rightMatching) = matching(listOf(left, right))
     return leftMatching to rightMatching
   }
 
   @Contract(pure = true)
-  fun matching(presentations: List<InlayPresentation>) : List<InlayPresentation> {
-    return synchronousOnHover(presentations) { presentation ->
-      attributes(presentation) { base ->
-        base.with(attributesOf(CodeInsightColors.MATCHED_BRACE_ATTRIBUTES))
-      }
+  fun matching(presentations: List<InlayPresentation>): List<InlayPresentation> = synchronousOnHover(presentations) { presentation ->
+    attributes(presentation) { base ->
+      base.with(attributesOf(CodeInsightColors.MATCHED_BRACE_ATTRIBUTES))
     }
   }
 
@@ -156,30 +172,38 @@ class PresentationFactory(private val editor: EditorImpl) {
    * This presentation is stateless.
    */
   @Contract(pure = true)
-  fun synchronousOnHover(presentations: List<InlayPresentation>, decorator: (InlayPresentation) -> InlayPresentation) : List<InlayPresentation> {
+  fun synchronousOnHover(presentations: List<InlayPresentation>,
+                         decorator: (InlayPresentation) -> InlayPresentation): List<InlayPresentation> {
     val forwardings = presentations.map { DynamicDelegatePresentation(it) }
     return forwardings.map {
-      onHover(it) { event ->
-        if (event != null) {
-          for ((index, forwarding) in forwardings.withIndex()) {
-            forwarding.delegate = decorator(presentations[index])
-          }
-        } else {
+      onHover(it, object : HoverListener {
+        override fun onHover(event: MouseEvent) {
           for ((index, forwarding) in forwardings.withIndex()) {
             forwarding.delegate = presentations[index]
           }
         }
-      }
+
+        override fun onHoverFinished() {
+          for ((index, forwarding) in forwardings.withIndex()) {
+            forwarding.delegate = decorator(presentations[index])
+          }
+        }
+      })
     }
+  }
+
+
+  interface HoverListener {
+    fun onHover(event: MouseEvent)
+    fun onHoverFinished()
   }
 
   /**
    * @see OnHoverPresentation
    */
   @Contract(pure = true)
-  fun onHover(base: InlayPresentation, onHover: (MouseEvent?) -> Unit): InlayPresentation {
-    return OnHoverPresentation(base, onHover)
-  }
+  fun onHover(base: InlayPresentation, onHoverListener: HoverListener): InlayPresentation =
+    OnHoverPresentation(base, onHoverListener)
 
   /**
    * @see OnClickPresentation
@@ -233,9 +257,8 @@ class PresentationFactory(private val editor: EditorImpl) {
   }
 
   @Contract(pure = true)
-  fun psiSingleReference(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation {
-    return reference(base) { navigateInternal(resolve) }
-  }
+  fun psiSingleReference(base: InlayPresentation, resolve: () -> PsiElement?): InlayPresentation =
+    reference(base) { navigateInternal(resolve) }
 
   @Contract(pure = true)
   fun seq(vararg presentations: InlayPresentation): InlayPresentation {
@@ -250,9 +273,8 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
     RoundPresentation(presentation, arcWidth, arcHeight)
 
-  private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes): AttributesTransformerPresentation {
-    return AttributesTransformerPresentation(base, transformer)
-  }
+  private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes): AttributesTransformerPresentation =
+    AttributesTransformerPresentation(base, transformer)
 
   private fun withInlayAttributes(base: InlayPresentation): InlayPresentation {
     return AttributesTransformerPresentation(base) {
@@ -290,36 +312,17 @@ class PresentationFactory(private val editor: EditorImpl) {
     return hint
   }
 
-  private fun tooltipHandler(tooltip: String): (MouseEvent?) -> Unit {
-    var hint: LightweightHint? = null
-    return { event ->
-      when (event) {
-        null -> {
-          hint?.hide()
-          hint = null
-        }
-        else -> {
-          if (hint?.isVisible != true) {
-            hint = showTooltip(editor, event, tooltip)
-          }
-        }
-      }
-    }
-  }
-
   private fun locationAt(e: MouseEvent, component: Component): Point {
     val pointOnScreen = component.locationOnScreen
     return Point(e.xOnScreen - pointOnScreen.x, e.yOnScreen - pointOnScreen.y)
   }
 
-  private fun attributesOf(key: TextAttributesKey?) = editor.colorsScheme.getAttributes(key) ?: TextAttributes()
+  private fun attributesOf(key: TextAttributesKey) = editor.colorsScheme.getAttributes(key) ?: TextAttributes()
 
   private fun navigateInternal(resolve: () -> PsiElement?) {
     val target = resolve()
-    if (target != null) {
-      if (target is Navigatable) {
-        CommandProcessor.getInstance().executeCommand(target.project, { target.navigate(true) }, null, null)
-      }
+    if (target is Navigatable) {
+      CommandProcessor.getInstance().executeCommand(target.project, { target.navigate(true) }, null, null)
     }
   }
 
