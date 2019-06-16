@@ -53,8 +53,16 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
 
     fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
         exec.workingDir = dir
-        exec.executable = project.nodeJs.root.environment.nodeExecutable
-        exec.args = listOf(require(tool)) + args
+
+        // Workaround for Windows
+        val environment = project.nodeJs.root.environment
+        if (environment.isWindows) {
+            exec.executable = "${require(tool)}.cmd"
+            exec.args = args.asList()
+        } else {
+            exec.executable = environment.nodeExecutable
+            exec.args = listOf(require(tool)) + args
+        }
     }
 
     /**
