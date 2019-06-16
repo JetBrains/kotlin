@@ -75,7 +75,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         @OutputFile get() = reportDir.resolve("webpack.config.evaluated.js")
 
     @Input
-    var bin: String = "webpack"
+    var bin: String = "webpack/bin/webpack.js"
 
     @Input
     var sourceMaps: Boolean = true

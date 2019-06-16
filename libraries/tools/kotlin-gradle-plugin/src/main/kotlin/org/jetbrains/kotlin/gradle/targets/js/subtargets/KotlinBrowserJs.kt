@@ -59,7 +59,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
                 project.getTasksByName(compilation.processResourcesTaskName, false)
             )
 
-            it.bin = "webpack-dev-server"
+            it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
             it.compilation = compilation
             it.description = "start webpack dev server"
 
