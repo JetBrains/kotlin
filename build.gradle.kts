@@ -158,7 +158,7 @@ extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.kotlin-native-shared"] = "1.0-dev-89"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.3-eap-10661"
+    extra["versions.kotlin-native"] = "1.3-eap-10779"
 }
 
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
