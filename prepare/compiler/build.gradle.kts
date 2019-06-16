@@ -94,11 +94,13 @@ publish()
 noDefaultJar()
 
 val packCompiler by task<ShadowJar> {
-    configurations = listOf(fatJarContents)
+    configurations = emptyList()
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDir = File(buildDir, "libs")
 
     setupPublicJar(compilerBaseName, "before-proguard")
+    
+    from(fatJarContents)
 
     dependsOn(fatJarContentsStripServices)
     from {
