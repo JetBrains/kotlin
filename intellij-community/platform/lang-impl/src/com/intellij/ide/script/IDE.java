@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.script.IdeScriptEngine;
 
 import java.io.IOException;
 import java.io.Writer;

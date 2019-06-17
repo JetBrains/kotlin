@@ -23,9 +23,6 @@ import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.script.IdeScriptEngine;
-import org.jetbrains.ide.script.IdeScriptEngineManager;
-import org.jetbrains.ide.script.IdeScriptException;
 
 import java.io.File;
 import java.io.IOException;
