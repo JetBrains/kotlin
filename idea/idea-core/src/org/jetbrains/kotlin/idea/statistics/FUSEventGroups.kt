@@ -18,7 +18,7 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = hashS
     Refactoring("ide.action.refactoring", refactoringEvents),
     NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
     NPWizards("ide.npwizards", NPWizardsEvents),
-    DebugEval("ide.debugger.eval");
+    DebugEval("ide.debugger.eval", debugEvalEvents);
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
 }
@@ -108,4 +108,18 @@ val NPWizardsEvents = hashSetOf(
     "KotlinDslGradleKotlinJSFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
+)
+val debugEvalEvents = hashSetOf(
+    "Success",
+    "NoFrameProxy",
+    "ThreadNotAvailable",
+    "ThreadNotSuspended",
+    "ProcessCancelledException",
+    "InterpretingException",
+    "EvaluateException",
+    "SpecialException",
+    "GenericException",
+    "FrontendException",
+    "BackendException",
+    "ErrorsInCode"
 )
