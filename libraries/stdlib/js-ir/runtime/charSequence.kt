@@ -21,7 +21,7 @@ internal fun charSequenceGet(a: CharSequence, index: Int): Char {
 @DoNotIntrinsify
 internal fun charSequenceLength(a: CharSequence): Int {
     return if (isString(a)) {
-        js("a.length").unsafeCast<Int>()
+        a.asDynamic().length.unsafeCast<Int>()
     } else {
         a.length
     }
