@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.spring.tests.rename.AbstractSpringRenameTest
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    testGroup("ultimate/tests", "ultimate/testData") {
+    testGroup("kotlin-ultimate/ultimate/tests", "kotlin-ultimate/ultimate/testData") {
         testClass<AbstractSpringInspectionTest> {
             model("inspections/spring", pattern = "^(inspections\\.test)$", singleClass = true)
         }
