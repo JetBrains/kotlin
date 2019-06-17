@@ -179,6 +179,14 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     abstract val getContinuation: IrSimpleFunctionSymbol
 
+    abstract val coroutineContextGetter: IrSimpleFunctionSymbol
+
+    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
+
+    abstract val coroutineGetContext: IrSimpleFunctionSymbol
+
+    abstract val returnIfSuspended: IrSimpleFunctionSymbol
+
     private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunctionSymbol>()
 
     fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrSimpleFunctionSymbol {

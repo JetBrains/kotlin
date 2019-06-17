@@ -187,6 +187,14 @@ class JsIrBackendContext(
                 )
 
             override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
+
+            override val coroutineContextGetter = symbolTable.referenceSimpleFunction(context.coroutineContextProperty.getter!!)
+
+            override val suspendCoroutineUninterceptedOrReturn = symbolTable.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
+
+            override val coroutineGetContext = symbolTable.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
+
+            override val returnIfSuspended = symbolTable.referenceSimpleFunction(getJsInternalFunction("returnIfSuspended"))
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
@@ -213,7 +221,7 @@ class JsIrBackendContext(
 
     // Top-level functions forced to be loaded
 
-    val coroutineSuspendOrReturn = symbolTable.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
+    val coroutineSuspendOrReturn = ir.symbols.suspendCoroutineUninterceptedOrReturn
     val coroutineSuspendGetter = ir.symbols.coroutineSuspendedGetter
     val coroutineGetContext: IrSimpleFunctionSymbol
         get() {
@@ -223,7 +231,9 @@ class JsIrBackendContext(
             return contextGetter.symbol
         }
 
-    val coroutineGetContextJs = symbolTable.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
+    val coroutineGetContextJs
+        get() = ir.symbols.coroutineGetContext
+
     val coroutineEmptyContinuation = symbolTable.referenceField(getProperty(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal", "EmptyContinuation"))))
 
     val coroutineContextProperty: PropertyDescriptor

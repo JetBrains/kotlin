@@ -1,24 +1,19 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FoldInitializerAndIfToElvis")
+package org.jetbrains.kotlin.backend.common.lower.inline
 
-package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
-import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -30,62 +25,47 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-typealias Context = JsIrBackendContext
+class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
 
-// backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/FunctionInlining.kt
-internal class FunctionInlining(val context: Context): IrElementTransformerVoidWithContext() {
-    //-------------------------------------------------------------------------//
-
-    fun inline(irModule: IrModuleFragment): IrElement {
-        return irModule.accept(this, data = null)
-    }
+    fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
-
-        if (!(expression is IrCall || expression is IrConstructorCall) || !expression.symbol.owner.needsInlining)
+        val callee = when (expression) {
+            is IrCall -> expression.symbol.owner
+            is IrConstructorCall -> expression.symbol.owner
+            else -> return expression
+        }
+        if (!callee.needsInlining)
+            return expression
+        if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
             return expression
 
-        val languageVersionSettings = context.configuration.languageVersionSettings
-        when {
-            Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol) ->
-                return expression
-            // Handle coroutine intrinsics
-            // TODO These should actually be inlined.
-            expression.descriptor.isBuiltInIntercepted(languageVersionSettings) ->
-                error("Continuation.intercepted is not available with release coroutines")
-            expression.symbol.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
-                return irCall(expression, context.coroutineSuspendOrReturn)
-            expression.symbol == context.intrinsics.jsCoroutineContext ->
-                return irCall(expression, context.coroutineGetContextJs)
-        }
+        val actualCallee = getFunctionDeclaration(callee.symbol)
 
-        val callee = getFunctionDeclaration(expression.symbol)                   // Get declaration of the function to be inlined.
-        callee.transformChildrenVoid(this)                            // Process recursive inline.
+        actualCallee.transformChildrenVoid(this)                            // Process recursive inline.
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
-        val inliner = Inliner(expression, callee, currentScope!!, parent, context)
+        val inliner = Inliner(expression, actualCallee, currentScope!!, parent, context)
         return inliner.inline()
     }
 
     private fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-//        val descriptor = symbol.descriptor.original
-//        val languageVersionSettings = context.configuration.languageVersionSettings
-//        // TODO: Remove these hacks when coroutine intrinsics are fixed.
-//        return when {
-//            descriptor.isBuiltInIntercepted(languageVersionSettings) ->
-//                error("Continuation.intercepted is not available with release coroutines")
-//
-//            descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
-//                context.ir.symbols.konanSuspendCoroutineUninterceptedOrReturn.owner
-//
-//            descriptor == context.ir.symbols.coroutineContextGetter ->
-//                context.ir.symbols.konanCoroutineContextGetter.owner
-//
-//            else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
-//        }
+        val descriptor = symbol.descriptor.original
+        val languageVersionSettings = context.configuration.languageVersionSettings
+        // TODO: Remove these hacks when coroutine intrinsics are fixed.
+        return when {
+            descriptor.isBuiltInIntercepted(languageVersionSettings) ->
+                error("Continuation.intercepted is not available with release coroutines")
 
-        return (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+            descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
+                context.ir.symbols.suspendCoroutineUninterceptedOrReturn.owner
+
+            symbol == context.ir.symbols.coroutineContextGetter ->
+                context.ir.symbols.coroutineGetContext.owner
+
+            else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+        }
     }
 
     private val IrFunction.needsInlining get() = (this.isInline && !this.isExternal)
@@ -94,7 +74,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
                                 val callee: IrFunction,
                                 val currentScope: ScopeWithIr,
                                 val parent: IrDeclarationParent?,
-                                val context: Context) {
+                                val context: CommonBackendContext) {
 
         val copyIrElement = run {
             val typeParameters =

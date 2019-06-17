@@ -155,6 +155,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 context.continuation
             }
 
+            add(backendContext.ir.symbols.returnIfSuspended) { call, context ->
+                val args = translateCallArguments(call, context)
+                args[0]
+            }
+
             add(intrinsics.jsCoroutineContext) { _, context: JsGenerationContext ->
                 val contextGetter = backendContext.coroutineGetContext
                 val getterName = context.getNameForStaticFunction(contextGetter.owner)

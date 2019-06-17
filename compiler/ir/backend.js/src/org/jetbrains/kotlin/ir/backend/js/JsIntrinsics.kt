@@ -159,7 +159,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // Coroutines
 
-    val jsCoroutineContext = context.symbolTable.referenceSimpleFunction(context.coroutineContextProperty.getter!!)
+    val jsCoroutineContext
+        get() = context.ir.symbols.coroutineContextGetter
 
     val jsGetContinuation = getInternalFunction("getContinuation")
     val jsGetKClass = getInternalWithoutPackage("getKClass")
