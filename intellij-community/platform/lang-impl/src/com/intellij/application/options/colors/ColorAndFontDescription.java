@@ -127,6 +127,10 @@ public abstract class ColorAndFontDescription extends TextAttributes implements 
     }
   }
 
+  public boolean isTransparencyEnabled() {
+    return false;
+  }
+
   @Override
   public final void setBackgroundColor(Color col) {
     super.setBackgroundColor(col);

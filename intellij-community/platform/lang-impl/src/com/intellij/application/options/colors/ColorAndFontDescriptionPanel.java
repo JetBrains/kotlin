@@ -140,6 +140,15 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
                                          boolean isEnabled,
                                          boolean isChecked,
                                          @Nullable Color color) {
+    updateColorChooser(checkBox, colorPanel, isEnabled, isChecked, color, false);
+  }
+
+  private static void updateColorChooser(JCheckBox checkBox,
+                                         ColorPanel colorPanel,
+                                         boolean isEnabled,
+                                         boolean isChecked,
+                                         @Nullable Color color,
+                                         boolean supportTransparency) {
     checkBox.setEnabled(isEnabled);
     checkBox.setSelected(isChecked);
     if (color != null) {
@@ -148,6 +157,7 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     else {
       colorPanel.setSelectedColor(JBColor.WHITE);
     }
+    colorPanel.setSupportTransparency(supportTransparency);
     colorPanel.setEnabled(isChecked);
   }
 
@@ -175,17 +185,17 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
       }
 
       updateColorChooser(myCbForeground, myForegroundChooser, description.isForegroundEnabled(),
-                         description.isForegroundChecked(), description.getForegroundColor());
+                         description.isForegroundChecked(), description.getForegroundColor(), description.isTransparencyEnabled());
 
       updateColorChooser(myCbBackground, myBackgroundChooser, description.isBackgroundEnabled(),
-                         description.isBackgroundChecked(), description.getBackgroundColor());
+                         description.isBackgroundChecked(), description.getBackgroundColor(), description.isTransparencyEnabled());
 
       updateColorChooser(myCbErrorStripe, myErrorStripeColorChooser, description.isErrorStripeEnabled(),
-                         description.isErrorStripeChecked(), description.getErrorStripeColor());
+                         description.isErrorStripeChecked(), description.getErrorStripeColor(), description.isTransparencyEnabled());
 
       EffectType effectType = description.getEffectType();
       updateColorChooser(myCbEffects, myEffectsColorChooser, description.isEffectsColorEnabled(),
-                         description.isEffectsColorChecked(), description.getEffectColor());
+                         description.isEffectsColorChecked(), description.getEffectColor(), description.isTransparencyEnabled());
 
       String name = ContainerUtil.reverseMap(myEffectsMap).get(effectType);
       myEffectsCombo.getModel().setSelectedItem(name);
