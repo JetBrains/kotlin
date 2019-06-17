@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.util
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
+import org.jetbrains.kotlin.idea.project.useCompositeAnalysis
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -26,8 +28,8 @@ private fun GlobalContextImpl.contextWithNewLockAndCompositeExceptionTracker(deb
     )
 }
 
-internal fun GlobalContextImpl.contextWithCompositeExceptionTracker(settings: PlatformAnalysisSettings, debugName: String): GlobalContextImpl =
-    if (settings.isTypeRefinementEnabled) {
+internal fun GlobalContextImpl.contextWithCompositeExceptionTracker(project: Project, debugName: String): GlobalContextImpl =
+    if (project.useCompositeAnalysis) {
         this.contextWithCompositeExceptionTracker(debugName)
     } else {
         this.contextWithNewLockAndCompositeExceptionTracker(debugName)
