@@ -67,6 +67,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   public static final Color BACKGROUND_COLOR = EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY);
   private static final Color SELECTED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionBackground", new JBColor(0xc5dffc, 0x113a5c));
   public static final Color SELECTED_NON_FOCUSED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionInactiveBackground", new JBColor(0xE0E0E0, 0x515457));
+  private static final Color NON_FOCUSED_MASK_COLOR = JBColor.namedColor("CompletionPopup.nonFocusedMask", Gray._0.withAlpha(0));
 
   private final LookupImpl myLookup;
 
@@ -496,7 +497,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     }
   }
 
-  private static class LookupPanel extends JPanel {
+  private class LookupPanel extends JPanel {
     boolean myUpdateExtender;
     LookupPanel() {
       super(new BorderLayout());
@@ -509,6 +510,21 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     @Override
     public Dimension getPreferredSize() {
       return UIUtil.updateListRowHeight(super.getPreferredSize());
+    }
+
+    @Override
+    public void paint(Graphics g) {
+      super.paint(g);
+      if (NON_FOCUSED_MASK_COLOR.getAlpha() > 0 && !myLookup.isFocused() && myLookup.isCompletion()) {
+        g = g.create();
+        try {
+          g.setColor(NON_FOCUSED_MASK_COLOR);
+          g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        finally {
+          g.dispose();
+        }
+      }
     }
   }
 }
