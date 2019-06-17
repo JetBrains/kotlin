@@ -167,16 +167,16 @@ clean {
     }
 }
 
-TaskCollection<KonanTest> tasksOf(Closure<Boolean> filter) {
+TaskCollection<Task> tasksOf(Class<? extends Task> type, Closure<Boolean> filter) {
     String prefix = project.findProperty("prefix")
-    project.tasks.withType(KonanTest)
+    project.tasks.withType(type)
             .matching { filter(it) && it.enabled && (prefix != null ? it.name.startsWith(prefix) : true) }
 }
 
 run {
-    dependsOn(tasksOf { it instanceof KonanLocalTest ||
+    dependsOn(tasksOf(KonanTest.class, { it instanceof KonanLocalTest ||
             it instanceof KonanStandaloneTest // includes driver, interop and library tests
-    })
+    }))
     // Add framework tests
     dependsOn(project.tasks.withType(FrameworkTest))
 }
@@ -187,9 +187,9 @@ task sanity {
             update_external_tests()
         }
     }
-    dependsOn(tasksOf { (it instanceof KonanLocalTest || it instanceof KonanStandaloneTest) &&
-            !it.getDependsOn().contains(':distPlatformLibs') })
-    dependsOn(tasksOf { it instanceof KonanGTest })
+    dependsOn(tasksOf(KonanTest.class, { (it instanceof KonanLocalTest || it instanceof KonanStandaloneTest) &&
+            !it.getDependsOn().contains(':distPlatformLibs') }))
+    dependsOn(tasksOf(KonanTest.class, { it instanceof KonanGTest }))
 }
 
 // Collect reports in one json.
@@ -352,7 +352,7 @@ task run_external () {
     createTestTasks(externalTestsDir, RunExternalTestGroup) { }
 
     // Set up dependencies.
-    dependsOn(tasksOf { it instanceof RunExternalTestGroup || it instanceof KonanGTest })
+    dependsOn(tasksOf(OldKonanTest.class, { it instanceof RunExternalTestGroup || it instanceof KonanGTest }))
 }
 
 task daily() {
