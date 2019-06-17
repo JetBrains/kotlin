@@ -19,11 +19,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.LightweightHint;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ShowParameterInfoHandler implements CodeInsightActionHandler {
@@ -142,7 +142,7 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
 
   @Nullable
   public static ParameterInfoHandler[] getHandlers(Project project, final Language... languages) {
-    Set<ParameterInfoHandler> handlers = new THashSet<>();
+    Set<ParameterInfoHandler> handlers = new LinkedHashSet<>();
     DumbService dumbService = DumbService.getInstance(project);
     for (final Language language : languages) {
       handlers.addAll(dumbService.filterByDumbAwareness(LanguageParameterInfo.INSTANCE.allForLanguage(language)));
