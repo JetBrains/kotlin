@@ -223,10 +223,9 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
 
-        KotlinFUSLogger.log(
-            FUSEventGroups.GradleTarget,
-            gradleModel.kotlinTarget ?: "unknown"
-        )
+        if (gradleModel.hasKotlinPlugin) {
+            KotlinFUSLogger.log(FUSEventGroups.GradleTarget, gradleModel.kotlinTarget ?: "unknown")
+        }
 
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)
 

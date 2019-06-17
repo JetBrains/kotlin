@@ -14,9 +14,15 @@ open class KotlinFUSLogger {
 
     companion object {
         private val context = FeatureUsageData().addData("plugin_version", KotlinPluginUtil.getPluginVersion())
+        private val logger = FUCounterUsageLogger.getInstance()
 
         fun log(group: FUSEventGroups, event: String) {
-            FUCounterUsageLogger.getInstance().logEvent(group.GROUP_ID, event, context)
+            if (group.events.contains(event)) {
+                logger.logEvent(group.GROUP_ID, event, context)
+            } else {
+                logger.logEvent(group.GROUP_ID, "unknown", context)
+            }
+
         }
 
         fun log(group: FUSEventGroups, event: String, eventData: Map<String, String>) {
@@ -24,7 +30,7 @@ open class KotlinFUSLogger {
             for (entry in eventData) {
                 localContext.addData(entry.key, entry.value)
             }
-            FUCounterUsageLogger.getInstance().logEvent(group.GROUP_ID, event, localContext)
+            logger.logEvent(group.GROUP_ID, event, localContext)
         }
     }
 }
