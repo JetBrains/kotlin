@@ -15,6 +15,10 @@ class FirExplicitSuperReference(
     psi: PsiElement?,
     override var superTypeRef: FirTypeRef
 ) : FirAbstractElement(session, psi), FirSuperReference {
+    override fun replaceSuperTypeRef(newSuperTypeRef: FirTypeRef) {
+        superTypeRef = newSuperTypeRef
+    }
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         superTypeRef = superTypeRef.transformSingle(transformer, data)
         return this

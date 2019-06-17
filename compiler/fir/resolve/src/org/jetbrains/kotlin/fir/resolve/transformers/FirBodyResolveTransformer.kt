@@ -376,11 +376,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 qualifiedAccessExpression.resultType = FirResolvedTypeRefImpl(session, null, type, emptyList())
             }
             is FirSuperReference -> {
-                qualifiedAccessExpression.resultType =
-                    callee.superTypeRef as? FirResolvedTypeRef
-                        ?: implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
-                            ?.boundSymbol?.fir?.superTypeRefs?.firstOrNull()
-                                ?: FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "No super type")
+                if (callee.superTypeRef is FirResolvedTypeRef) {
+                    qualifiedAccessExpression.resultType = callee.superTypeRef
+                } else {
+                    val superTypeRef = implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
+                        ?.boundSymbol?.fir?.superTypeRefs?.firstOrNull()
+                        ?: FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "No super type")
+                    qualifiedAccessExpression.resultType = superTypeRef
+                    callee.replaceSuperTypeRef(superTypeRef)
+                }
             }
             is FirResolvedCallableReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 interface FirSuperReference : FirReference {
     val superTypeRef: FirTypeRef
 
+    fun replaceSuperTypeRef(newSuperTypeRef: FirTypeRef)
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitSuperReference(this, data)
 
