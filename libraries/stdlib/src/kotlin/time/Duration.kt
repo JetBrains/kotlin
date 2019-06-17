@@ -279,7 +279,11 @@ public inline class Duration internal constructor(internal val value: Double) : 
     public fun toString(unit: DurationUnit, decimals: Int = 0): String {
         require(decimals >= 0) { "decimals must be not negative, but was $decimals" }
         if (isInfinite()) return value.toString()
-        return formatToExactDecimals(toDouble(unit), decimals) + unit.shortName()
+        val number = toDouble(unit)
+        return when {
+            abs(number) < 1e14 -> formatToExactDecimals(number, decimals.coerceAtMost(12))
+            else -> formatScientific(number)
+        } + unit.shortName()
     }
 
 

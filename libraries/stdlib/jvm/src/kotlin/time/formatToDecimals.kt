@@ -34,4 +34,4 @@ internal actual fun formatUpToDecimals(value: Double, decimals: Int): String =
 
 private val scientificFormat = ThreadLocal<DecimalFormat>()
 internal actual fun formatScientific(value: Double): String =
-    scientificFormat.getOrSet { DecimalFormat("0E0", rootFormatSymbols).apply { maximumFractionDigits = 2 } }.format(value)
+    scientificFormat.getOrSet { DecimalFormat("0E0", rootFormatSymbols).apply { minimumFractionDigits = 2 } }.format(value)

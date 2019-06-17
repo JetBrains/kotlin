@@ -308,12 +308,13 @@ class DurationTest {
         d = (d - 516.nanoseconds) / 17
         test(DurationUnit.NANOSECONDS, "0ns", "0.0ns", "0.02ns", "0.020ns", "0.0202ns")
 
-        testOnJvm {
-            d = Double.MAX_VALUE.nanoseconds
-            // are such long representations ok?
-            test(DurationUnit.DAYS, "20806633505350875${"0".repeat(278)}d")
-            test(DurationUnit.NANOSECONDS, "17976931348623157${"0".repeat(292)}ns")
-        }
+        d = Double.MAX_VALUE.nanoseconds
+        test(DurationUnit.DAYS, "2.08e294d")
+        test(DurationUnit.NANOSECONDS, "1.80e308ns")
+
+        assertEquals("0.500000000000s", 0.5.seconds.toString(DurationUnit.SECONDS, 100))
+        assertEquals("99999000000000.000000000000ns", 99_999.seconds.toString(DurationUnit.NANOSECONDS, 15))
+        assertEquals("1.00e14ns", 100_000.seconds.toString(DurationUnit.NANOSECONDS, 9))
 
         d = Duration.INFINITE
         test(DurationUnit.DAYS, "Infinity", "Infinity")
