@@ -308,6 +308,13 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
     }
 
     override fun apply(project: ProjectInternal): Unit = with(project) {
+        logger.warn("""
+            |The 'kotlin-platform-native' plugin applied in the project '${project.path}' has been deprecated and will not be available since 1.3.50.
+            |Consider using the 'kotlin-multiplatform' plugin.
+            |
+            |See details at: https://kotlinlang.org/docs/reference/native/gradle_plugin.html            
+        """.trimMargin())
+
         // TODO: Deal with compiler downloading.
         // Apply base plugins
         project.pluginManager.apply(LifecycleBasePlugin::class.java)
