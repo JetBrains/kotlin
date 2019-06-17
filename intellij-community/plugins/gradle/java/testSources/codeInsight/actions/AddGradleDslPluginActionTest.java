@@ -18,14 +18,14 @@ package org.jetbrains.plugins.gradle.codeInsight.actions;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 import java.io.File;
 
 /**
  * @author Vladislav.Soroka
  */
-public class AddGradleDslPluginActionTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AddGradleDslPluginActionTest extends BasePlatformTestCase {
 
   public void testApplyPlugin() {
     doTest("testApplyPlugin.gradle", "java");

@@ -3,7 +3,7 @@ package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Pair;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.Alarm;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author mikhail.sokolov
  */
-public class MultiThreadSearchTest extends LightPlatformCodeInsightFixtureTestCase {
+public class MultiThreadSearchTest extends BasePlatformTestCase {
 
   private static final String MORE_ITEM = "...MORE";
   private static final Collection<SEResultsEqualityProvider> ourEqualityProviders = Collections.singleton(new TrivialElementsEqualityProvider());

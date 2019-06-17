@@ -7,11 +7,11 @@ import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.impl.DataManagerImpl;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 import javax.swing.text.JTextComponent;
 
-public abstract class AbstractFindInEditorTest extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class AbstractFindInEditorTest extends BasePlatformTestCase {
   protected void setTextToFind(String text) {
     EditorSearchSession editorSearchSession = getEditorSearchComponent();
     assertNotNull(editorSearchSession);

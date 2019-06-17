@@ -6,7 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.Alarm;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author mikhail.sokolov
  */
-public class MultiThreadSearchDeadlockTest extends LightPlatformCodeInsightFixtureTestCase {
+public class MultiThreadSearchDeadlockTest extends BasePlatformTestCase {
 
   private static final Collection<SEResultsEqualityProvider> ourEqualityProviders = Collections.singleton(new TrivialElementsEqualityProvider());
 

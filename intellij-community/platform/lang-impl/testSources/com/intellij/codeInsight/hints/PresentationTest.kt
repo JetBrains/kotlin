@@ -3,7 +3,7 @@ package com.intellij.codeInsight.hints
 
 import com.intellij.codeInsight.hints.presentation.*
 import com.intellij.openapi.editor.impl.EditorImpl
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import java.awt.Point
 import java.awt.event.MouseEvent
@@ -119,7 +119,7 @@ class PresentationTest : TestCase() {
   }
 }
 
-class HeavyPresentationTest : LightPlatformCodeInsightFixtureTestCase() {
+class HeavyPresentationTest : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
     myFixture.configureByText("__Dummy__.java", "class A {}")
