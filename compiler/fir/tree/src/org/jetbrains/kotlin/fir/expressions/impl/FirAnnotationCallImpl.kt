@@ -20,6 +20,13 @@ class FirAnnotationCallImpl(
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef
 ) : FirAnnotationCall(session, psi) {
+    override val typeRef: FirTypeRef
+        get() = annotationTypeRef
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        throw AssertionError("Attempt to replace type ref for annotation call")
+    }
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         annotationTypeRef = annotationTypeRef.transformSingle(transformer, data)
 

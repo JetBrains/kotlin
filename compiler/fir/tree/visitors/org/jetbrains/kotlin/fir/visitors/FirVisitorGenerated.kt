@@ -196,6 +196,10 @@ abstract class FirVisitor<out R, in D> {
         return visitCall(callWithArgumentList, data)
     }
 
+    open fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: D): R {
+        return visitCallWithArgumentList(annotationCall, data)
+    }
+
     open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): R {
         return visitCallWithArgumentList(delegatedConstructorCall, data)
     }
@@ -218,10 +222,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitUnknownTypeCallWithArgumentList(unknownTypeCallWithArgumentList: FirUnknownTypeCallWithArgumentList, data: D): R {
         return visitCallWithArgumentList(unknownTypeCallWithArgumentList, data)
-    }
-
-    open fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: D): R {
-        return visitUnknownTypeCallWithArgumentList(annotationCall, data)
     }
 
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): R {

@@ -196,6 +196,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformCall(callWithArgumentList, data)
     }
 
+    open fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformCallWithArgumentList(annotationCall, data)
+    }
+
     open fun transformDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): CompositeTransformResult<FirStatement> {
         return transformCallWithArgumentList(delegatedConstructorCall, data)
     }
@@ -218,10 +222,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformUnknownTypeCallWithArgumentList(unknownTypeCallWithArgumentList: FirUnknownTypeCallWithArgumentList, data: D): CompositeTransformResult<FirStatement> {
         return transformCallWithArgumentList(unknownTypeCallWithArgumentList, data)
-    }
-
-    open fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: D): CompositeTransformResult<FirStatement> {
-        return transformUnknownTypeCallWithArgumentList(annotationCall, data)
     }
 
     open fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): CompositeTransformResult<FirStatement> {

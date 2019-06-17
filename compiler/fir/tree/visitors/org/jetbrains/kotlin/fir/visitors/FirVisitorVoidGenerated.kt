@@ -196,6 +196,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCall(callWithArgumentList, null)
     }
 
+    open fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+        visitCallWithArgumentList(annotationCall, null)
+    }
+
     open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
         visitCallWithArgumentList(delegatedConstructorCall, null)
     }
@@ -218,10 +222,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitUnknownTypeCallWithArgumentList(unknownTypeCallWithArgumentList: FirUnknownTypeCallWithArgumentList) {
         visitCallWithArgumentList(unknownTypeCallWithArgumentList, null)
-    }
-
-    open fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
-        visitUnknownTypeCallWithArgumentList(annotationCall, null)
     }
 
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall) {
