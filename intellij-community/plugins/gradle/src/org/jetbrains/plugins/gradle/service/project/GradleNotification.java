@@ -15,6 +15,7 @@
  */
 package org.jetbrains.plugins.gradle.service.project;
 
+import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -27,7 +28,9 @@ import org.jetbrains.annotations.Nullable;
  * @author Vladislav.Soroka
  */
 public class GradleNotification {
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Gradle Notification Group");
+  public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("Gradle Notification Group",
+                                                                                    NotificationDisplayType.STICKY_BALLOON,
+                                                                                    true);
 
   @NotNull private final Project myProject;
 

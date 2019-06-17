@@ -30,11 +30,8 @@ import java.util.List;
  * @author Vladislav.Soroka
  */
 public class RefreshExternalProjectAction extends ExternalSystemNodeAction<AbstractExternalEntityData> implements DumbAware {
-
   public RefreshExternalProjectAction() {
     super(AbstractExternalEntityData.class);
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.refresh.project.text", "external"));
-    getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.refresh.project.description", "external"));
   }
 
   @Override
