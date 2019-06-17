@@ -145,11 +145,14 @@ class KotlinMultiplatformPlugin(
 
     private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") { _ ->
 
-        if (project.multiplatformExtension.run { isGradleMetadataAvailable && isGradleMetadataExperimental }) {
-            SingleWarningPerBuild.show(
-                project,
-                GRADLE_METADATA_WARNING
-            )
+        if (isGradleVersionAtLeast(5, 3) &&
+            project.multiplatformExtension.run { isGradleMetadataExperimental && !isGradleMetadataAvailable }
+        ) {
+            SingleWarningPerBuild.show(project, GRADLE_NO_METADATA_WARNING)
+        }
+
+        if (!isGradleVersionAtLeast(4, 8) && project.multiplatformExtension.isGradleMetadataAvailable) {
+            SingleWarningPerBuild.show(project, GRADLE_OLD_METADATA_WARNING)
         }
 
         val targets = project.multiplatformExtension.targets
@@ -252,12 +255,16 @@ class KotlinMultiplatformPlugin(
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
 
-        const val GRADLE_METADATA_WARNING =
-        // TODO point the user to some MPP docs explaining this in more detail
-            "This build is set up to publish Kotlin multiplatform libraries with experimental Gradle metadata. " +
-                    "Future Gradle versions may fail to resolve dependencies on these publications. " +
-                    "You can disable Gradle metadata usage during publishing and dependencies resolution by removing " +
-                    "`enableFeaturePreview('GRADLE_METADATA')` from the settings.gradle file."
+        internal const val GRADLE_NO_METADATA_WARNING = "This build consumes Gradle module metadata but does not produce " +
+                "it when publishing Kotlin multiplatform libraries. \n" +
+                "To enable Gradle module metadata in publications, add 'enableFeaturePreview(\"GRADLE_METADATA\")' " +
+                "to the settings.gradle file. \n" +
+                "See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode"
+
+        internal const val GRADLE_OLD_METADATA_WARNING = "This build is set up to publish a Kotlin multiplatform library " +
+                "with an outdated Gradle module metadata format, which newer Gradle versions won't be able to consume. \n" +
+                "Please update the Gradle version to 5.3 or newer. \n" +
+                "See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode"
     }
 }
 

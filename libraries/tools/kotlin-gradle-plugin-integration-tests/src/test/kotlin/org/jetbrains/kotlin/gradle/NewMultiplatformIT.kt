@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.internals.GRADLE_NO_METADATA_WARNING
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -1833,5 +1834,21 @@ class NewMultiplatformIT : BaseGradleIT() {
         // Also check that the flag for keeping POMs intact works:
         doTestPomRewriting(mppProjectDependency = false, legacyPublishing = false, keepPomIntact = true)
         doTestPomRewriting(mppProjectDependency = false, legacyPublishing = true, keepPomIntact = true)
+    }
+
+    @Test
+    fun testSuggestionToEnableMetadata() = with(Project("sample-lib", GradleVersionRequired.AtLeast("4.7"), "new-mpp-lib-and-app")) {
+        build {
+            assertNotContains(GRADLE_NO_METADATA_WARNING)
+
+            gradleSettingsScript().modify { it.replace("enableFeaturePreview(", "//") }
+            build {
+                if (testGradleVersionAtLeast("5.3-rc-2")) {
+                    assertContains(GRADLE_NO_METADATA_WARNING)
+                } else {
+                    assertNotContains(GRADLE_NO_METADATA_WARNING)
+                }
+            }
+        }
     }
 }

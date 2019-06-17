@@ -13,3 +13,6 @@ fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProjectStruct
 
 const val MULTIPLATFORM_PROJECT_METADATA_FILE_NAME =
     org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_FILE_NAME
+
+const val GRADLE_NO_METADATA_WARNING =
+    org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.GRADLE_NO_METADATA_WARNING
