@@ -19,7 +19,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.script.IdeScriptEngine;
 
 public class IdeConsoleScriptBindings {
 

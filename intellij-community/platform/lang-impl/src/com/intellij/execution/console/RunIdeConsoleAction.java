@@ -14,6 +14,8 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.script.IdeConsoleScriptBindings;
+import com.intellij.ide.script.IdeScriptEngine;
+import com.intellij.ide.script.IdeScriptEngineManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -47,8 +49,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.script.IdeScriptEngine;
-import org.jetbrains.ide.script.IdeScriptEngineManager;
 
 import javax.swing.*;
 import java.awt.*;
