@@ -2,14 +2,14 @@
 package org.jetbrains.plugins.gradle.util
 
 import com.intellij.psi.*
-import com.intellij.testFramework.PsiTestCase
+import com.intellij.testFramework.JavaPsiTestCase
 import org.jetbrains.plugins.gradle.util.GradleExecutionSettingsUtil.createTestFilterFrom
 import org.jetbrains.plugins.gradle.util.GradleExecutionSettingsUtil.createTestFilterFromClass
 import org.jetbrains.plugins.gradle.util.GradleExecutionSettingsUtil.createTestFilterFromMethod
 import org.jetbrains.plugins.gradle.util.GradleExecutionSettingsUtil.createTestFilterFromPackage
 import org.junit.Test
 
-class GradleExecutionSettingsUtilTest : PsiTestCase() {
+class GradleExecutionSettingsUtilTest : JavaPsiTestCase() {
 
   fun `test filter generation by name`() {
     assertEquals("""--tests *""", createTestFilterFromPackage("", false))

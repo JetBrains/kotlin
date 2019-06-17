@@ -45,7 +45,7 @@ import java.util.function.Consumer;
 /**
  * @author nik
  */
-public abstract class BaseCompilerTestCase extends ModuleTestCase {
+public abstract class BaseCompilerTestCase extends JavaModuleTestCase {
   @Override
   protected void setUpModule() {
   }
