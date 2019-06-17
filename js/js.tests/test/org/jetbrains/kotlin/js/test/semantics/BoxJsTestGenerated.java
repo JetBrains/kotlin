@@ -6789,6 +6789,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
             }
 
+            @TestMetadata("abstractCollectionToArray.kt")
+            public void testAbstractCollectionToArray() throws Exception {
+                runTest("js/js.translator/testData/box/regression/stdlibTestSnippets/abstractCollectionToArray.kt");
+            }
+
             public void testAllFilesPresentInStdlibTestSnippets() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/regression/stdlibTestSnippets"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
             }

@@ -1,3 +1,6 @@
+// Name clashes
+// IGNORE_BACKEND: JS_IR
+
 // EXPECTED_REACHABLE_NODES: 1295
 package foo
 

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 
 class IrNamerImpl(
-    private val memberNameGenerator: LegacyMemberNameGenerator,
     private val newNameTables: NameTables,
     private val rootScope: JsRootScope // TODO: Don't use scopes
 ) : IrNamer {
@@ -32,12 +31,12 @@ class IrNamerImpl(
 
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
         require(function.dispatchReceiverParameter != null)
-        return memberNameGenerator.getNameForMemberFunction(function)
+        return rootScope.declareName(newNameTables.getNameForMemberFunction(function))
     }
 
     override fun getNameForMemberField(field: IrField): JsName {
         require(!field.isStatic)
-        return memberNameGenerator.getNameForMemberField(field)
+        return rootScope.declareName(newNameTables.getNameForMemberField(field))
     }
 
     override fun getNameForField(field: IrField): JsName {

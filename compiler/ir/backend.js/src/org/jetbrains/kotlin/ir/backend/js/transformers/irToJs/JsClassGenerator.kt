@@ -81,12 +81,23 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     if (property.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
                         continue
 
+                    fun IrSimpleFunction.accessorRef(): JsNameRef? =
+                        when (visibility) {
+                            Visibilities.PRIVATE -> null
+                            else -> JsNameRef(
+                                context.getNameForMemberFunction(this),
+                                classPrototypeRef
+                            )
+                        }
+
+                    val getterRef = property.getter?.accessorRef()
+                    val setterRef = property.setter?.accessorRef()
                     classBlock.statements += JsExpressionStatement(
                         defineProperty(
                             classPrototypeRef,
                             context.getNameForProperty(property).ident,
-                            getter = property.getter?.let { JsNameRef(context.getNameForMemberFunction(it), classPrototypeRef) },
-                            setter = property.setter?.let { JsNameRef(context.getNameForMemberFunction(it), classPrototypeRef) }
+                            getter = getterRef,
+                            setter = setterRef
                         )
                     )
                 }
@@ -121,9 +132,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun generateMemberFunction(declaration: IrSimpleFunction): JsStatement? {
 
         val translatedFunction = declaration.run { if (isReal) accept(IrFunctionToJsTransformer(), context) else null }
-        if (declaration.isStaticMethodOfClass) {
-            return translatedFunction?.makeStmt()
-        }
+        assert(!declaration.isStaticMethodOfClass)
 
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
         val memberRef = JsNameRef(memberName, classPrototypeRef)

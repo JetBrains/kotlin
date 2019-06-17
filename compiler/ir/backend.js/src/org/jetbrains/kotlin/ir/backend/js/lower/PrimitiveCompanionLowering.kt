@@ -48,7 +48,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : FileLowering
         val actualFunction =
             actualCompanion.declarations
                 .filterIsInstance<IrSimpleFunction>()
-                .find { it.name == function.name }
+                .single { it.name == function.name }
 
         return actualFunction!!
     }
@@ -69,8 +69,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : FileLowering
             override fun visitCall(expression: IrCall): IrExpression {
                 val newCall = super.visitCall(expression) as IrCall
 
-                val function = expression.symbol.owner as? IrSimpleFunction
-                    ?: return newCall
+                val function = expression.symbol.owner as IrSimpleFunction
 
                 val actualFunction = getActualPrimitiveCompanionPropertyAccessor(function)
                     ?: return newCall

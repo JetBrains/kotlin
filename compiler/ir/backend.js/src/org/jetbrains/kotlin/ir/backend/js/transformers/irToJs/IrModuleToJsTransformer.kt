@@ -135,7 +135,6 @@ class IrModuleToJsTransformer(
         val program = JsProgram()
 
         val nameGenerator = IrNamerImpl(
-            memberNameGenerator = LegacyMemberNameGenerator(program.rootScope),
             newNameTables = namer,
             rootScope = program.rootScope
         )

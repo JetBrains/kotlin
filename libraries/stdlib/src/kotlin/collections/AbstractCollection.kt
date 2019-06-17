@@ -4,6 +4,8 @@
  */
 package kotlin.collections
 
+import kotlin.js.JsName
+
 /**
  * Provides a skeletal implementation of the read-only [Collection] interface.
  *
@@ -28,6 +30,7 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
     /**
      * Returns new array of type `Array<Any?>` with the elements of this collection.
      */
+    @JsName("toArray")
     protected open fun toArray(): Array<Any?> = copyToArrayImpl(this)
 
     /**

@@ -103,7 +103,7 @@ val RESERVED_IDENTIFIERS = setOf(
     // global identifiers usually declared in a typical JS interpreter
     "NaN", "isNaN", "Infinity", "undefined",
 
-    "Error", "Object", "Number",
+    "Error", "Object", "Number", "String",
 
     "Math", "String", "Boolean", "Date", "Array", "RegExp", "JSON", "Map",
 

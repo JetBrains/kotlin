@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.asString
+import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 
 // Constructs bridges for inherited generic functions
@@ -114,7 +113,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
     ): IrFunction {
 
         val origin =
-            if (bridge.isEffectivelyExternal())
+            if (bridge.isEffectivelyExternal() || bridge.getJsName() != null)
                 JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION
             else
                 IrDeclarationOrigin.BRIDGE
@@ -200,26 +199,7 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
     // TODO: Use type-upper-bound-based signature instead of Strings
     // Currently strings are used for compatibility with a hack-based name generator
 
-    private data class Signature(
-        val name: String,
-        val extensionReceiverType: String? = null,
-        val valueParameters: List<String?> = emptyList(),
-        val returnType: String? = null
-    )
-
-    private val jsName = function.getJsName()
-    private val signature = when {
-        jsName != null -> Signature(jsName)
-        function.isEffectivelyExternal() -> Signature(function.name.asString())
-        else -> Signature(
-            function.name.asString(),
-            function.extensionReceiverParameter?.type?.asString(),
-            function.valueParameters.map { it.type.asString() },
-            // Return type used in signature for inline classes and Unit because
-            // they are binary incompatible with supertypes and require bridges.
-            function.returnType.run { if (isInlined() || isUnit()) asString() else null }
-        )
-    }
+    private val signature = functionSignature(function)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
