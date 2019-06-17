@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.psi.formatter.common;
 
 import com.intellij.formatting.*;
@@ -20,9 +19,10 @@ import java.util.List;
 
 public abstract class AbstractBlock implements ASTBlock, ExtraRangesProvider {
   public static final List<Block> EMPTY = Collections.emptyList();
-  @NotNull protected final  ASTNode     myNode;
-  @Nullable protected final Wrap        myWrap;
-  @Nullable protected final Alignment   myAlignment;
+
+  protected final @NotNull ASTNode myNode;
+  protected final @Nullable Wrap myWrap;
+  protected final @Nullable Alignment myAlignment;
 
   private List<Block> mySubBlocks;
   private Boolean myIncomplete;
@@ -54,8 +54,7 @@ public abstract class AbstractBlock implements ASTBlock, ExtraRangesProvider {
   }
 
   /**
-   * Prevents from building injected blocks, which allows to build blocks faster
-   * Initially was made for formatting-based indent detector
+   * Disables building injected blocks, which allows faster formatting-based indent detection.
    */
   public void setBuildIndentsOnly(boolean value) {
     myBuildIndentsOnly = value;
@@ -131,14 +130,14 @@ public abstract class AbstractBlock implements ASTBlock, ExtraRangesProvider {
 
   @Override
   @NotNull
-  public ChildAttributes getChildAttributes(final int newChildIndex) {
+  public ChildAttributes getChildAttributes(int newChildIndex) {
     return new ChildAttributes(getChildIndent(), getFirstChildAlignment());
   }
 
   @Nullable
   private Alignment getFirstChildAlignment() {
     List<Block> subBlocks = getSubBlocks();
-    for (final Block subBlock : subBlocks) {
+    for (Block subBlock : subBlocks) {
       Alignment alignment = subBlock.getAlignment();
       if (alignment != null) {
         return alignment;
@@ -160,22 +159,19 @@ public abstract class AbstractBlock implements ASTBlock, ExtraRangesProvider {
     return myIncomplete;
   }
 
+  /**
+   * @return additional range to reformat, when this block if formatted
+   */
+  @Nullable
+  @Override
+  public List<TextRange> getExtraRangesToFormat(@NotNull FormattingRangesInfo info) {
+    return info.isOnInsertedLine(getTextRange().getStartOffset()) && myNode.textContains('\n')
+           ? new NodeIndentRangesCalculator(myNode).calculateExtraRanges()
+           : null;
+  }
+
   @Override
   public String toString() {
     return myNode.getText() + " " + getTextRange();
   }
-
-  /**
-   * @return additional range to reformat, when this block if formatted
-   */
-  @Override
-  @Nullable
-  public List<TextRange> getExtraRangesToFormat(@NotNull FormattingRangesInfo info) {
-    int startOffset = getTextRange().getStartOffset();
-    if (info.isOnInsertedLine(startOffset) && myNode.textContains('\n')) {
-      return new NodeIndentRangesCalculator(myNode).calculateExtraRanges();
-    }
-    return null;
-  }
-
 }
