@@ -69,10 +69,25 @@ fun <T : Any> separateValues(values: String, valuesContainer: MutableMap<String,
     }
 }
 
-fun getChartData(labels: List<String>, valuesList: Collection<List<*>>, classNames: Array<String>? = null): dynamic {
+fun getChartData(labels: List<String>, valuesList: Collection<List<*>>, stageToShow: Int = 0,
+                 buildsNumber: Int? = null, classNames: Array<String>? = null): dynamic {
     val chartData: dynamic = object{}
-    chartData["labels"] = labels.toTypedArray()
-    chartData["series"] = valuesList.mapIndexed { index, it ->
+    // Show only some part of data.
+    println("BuildsNumber $buildsNumber")
+    val (labelsData, valuesData) = buildsNumber?.let {
+        println("Divide on ${labels.size / buildsNumber}")
+        val labelsGroups = labels.chunked(buildsNumber)
+        val valuesListGroups = valuesList.map { it.chunked(buildsNumber) }
+        val expectedGroup = labelsGroups.size - 1 + stageToShow
+        val index = when {
+            expectedGroup < 0 -> 0
+            expectedGroup >= labelsGroups.size -> labelsGroups.size - 1
+            else -> expectedGroup
+        }
+        Pair(labelsGroups[index], valuesListGroups.map {it[index]})
+    } ?: Pair(labels, valuesList)
+    chartData["labels"] = labelsData.toTypedArray()
+    chartData["series"] = valuesData.mapIndexed { index, it ->
         val series: dynamic = object{}
         series["data"] = it.toTypedArray()
         classNames?.let { series["className"] = classNames[index] }
@@ -196,6 +211,9 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
 
 fun main(args: Array<String>) {
     val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
+    var buildsNumberToShow: Int? = null
+    var stageToShow = 0
+    val zoomRatio = 3
 
     // Get parameters from request.
     val url = window.location.href
@@ -284,7 +302,6 @@ fun main(args: Array<String>) {
     }
     js("$( \"#highligted_build\" )").autocomplete(autocompleteParameters)
     js("$('#highligted_build')").change({ value ->
-        println(value)
         val newValue = js("$(this).val()").toString()
         if (newValue.isEmpty() || newValue in builds.map {it.buildNumber}) {
             val newLink = "http://${window.location.host}/?target=${parameters["target"]}&type=${parameters["type"]}" +
@@ -317,13 +334,13 @@ fun main(args: Array<String>) {
     val sizeClassNames = arrayOf("ct-series-d", "ct-series-e")
 
     // Draw charts.
-    val execChart = Chartist.Line("#exec_chart", getChartData(labels, executionTime.values),
+    val execChart = Chartist.Line("#exec_chart", getChartData(labels, executionTime.values, stageToShow, buildsNumberToShow),
             getChartOptions(executionTime.keys.toTypedArray(), "Normalized time"))
-    val compileChart = Chartist.Line("#compile_chart", getChartData(labels, compileTime.values),
+    val compileChart = Chartist.Line("#compile_chart", getChartData(labels, compileTime.values, stageToShow, buildsNumberToShow),
             getChartOptions(compileTime.keys.toTypedArray(), "Time, milliseconds"))
-    val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, sizeClassNames),
+    val codeSizeChart = Chartist.Line("#codesize_chart", getChartData(labels, codeSize.values, stageToShow, buildsNumberToShow, sizeClassNames),
             getChartOptions(codeSize.keys.toTypedArray(), "Normalized size", arrayOf("ct-series-3", "ct-series-4")))
-    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), sizeClassNames),
+    val bundleSizeChart = Chartist.Line("#bundlesize_chart", getChartData(labels, listOf(bundleSize), stageToShow, buildsNumberToShow, sizeClassNames),
             getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-3")))
 
     // Tooltips and higlights.
@@ -331,6 +348,53 @@ fun main(args: Array<String>) {
     customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)
     customizeChart(codeSizeChart, "codesize_chart", js("$(\"#codesize_chart\")"), builds, parameters)
     customizeChart(bundleSizeChart, "bundlesize_chart", js("$(\"#bundlesize_chart\")"), builds, parameters)
+
+    val updateAllCharts: () -> Unit = {
+        execChart.update(getChartData(labels, executionTime.values, stageToShow, buildsNumberToShow))
+        compileChart.update(getChartData(labels, compileTime.values, stageToShow, buildsNumberToShow))
+        codeSizeChart.update(getChartData(labels, codeSize.values, stageToShow, buildsNumberToShow, sizeClassNames))
+        bundleSizeChart.update(getChartData(labels, listOf(bundleSize), stageToShow, buildsNumberToShow, sizeClassNames))
+    }
+
+    js("$('#plusBtn')").click({
+        buildsNumberToShow = buildsNumberToShow?.let {
+            if (it / zoomRatio > zoomRatio) {
+                it / zoomRatio
+            } else {
+                it
+            }
+        } ?: labels.size / zoomRatio
+        println(buildsNumberToShow)
+        updateAllCharts()
+    })
+
+    js("$('#minusBtn')").click({
+        buildsNumberToShow = buildsNumberToShow?.let {
+            if (it * zoomRatio <= labels.size) {
+                it * zoomRatio
+            } else {
+                null
+            }
+        }
+        updateAllCharts()
+    })
+
+    js("$('#prevBtn')").click({
+        buildsNumberToShow?.let {
+            val bottomBorder = -labels.size / (buildsNumberToShow as Int)
+            if (stageToShow - 1 > bottomBorder) {
+                stageToShow--
+            }
+        } ?: run { stageToShow = 0}
+        updateAllCharts()
+    })
+
+    js("$('#nextBtn')").click({
+        if (stageToShow + 1 <= 0) {
+            stageToShow++
+        }
+        updateAllCharts()
+    })
 
     // Auto reload.
     parameters["refresh"]?.let {
