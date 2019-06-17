@@ -8,21 +8,20 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val constPhase = makeIrFilePhase(
     ::ConstLowering,
     name = "Const",
-    description = "Substitute calls to const properties with constant values"
+    description = "Substitute calls to const properties with constant values",
+    stickyPostconditions = setOf(ConstLowering::checkNoConstReference)
 )
 
 fun IrField.constantValue(implicitConst: Boolean = false): IrConst<*>? {
@@ -48,4 +47,29 @@ class ConstLowering(val context: CommonBackendContext) : IrElementTransformerVoi
 
     override fun visitGetField(expression: IrGetField): IrExpression =
         expression.symbol.owner.constantValue() ?: super.visitGetField(expression)
+
+    companion object {
+        fun checkNoConstReference(element: IrElement) {
+            element.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitCall(expression: IrCall) {
+                    expression.symbol.owner.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.backingField?.constantValue()
+                        ?.let {
+                            error("No constant property references should remain at this point")
+                        }
+                    super.visitCall(expression)
+                }
+
+                override fun visitGetField(expression: IrGetField) {
+                    expression.symbol.owner.constantValue()?.let {
+                        error("No constant property references should remain at this point")
+                    }
+                    super.visitGetField(expression)
+                }
+            })
+        }
+    }
 }

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -18,6 +20,9 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -126,5 +131,26 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
             else -> throw AssertionError("unexpected body type: $this")
         }
         return block
+    }
+
+    companion object {
+        fun checkNoInlineArrayConstructorCalls(element: IrElement) {
+            element.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitConstructorCall(expression: IrConstructorCall) {
+                    val callee = expression.symbol.owner
+                    // We currently don't have context in checkers, so check by name
+                    if ((callee.parentAsClass.parent as? IrExternalPackageFragment)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+                        callee.name.asString().endsWith("Array") && callee.valueParameters.size == 2
+                    ) {
+                        error("No array inline constructor calls should remain at this stage")
+                    }
+                    super.visitConstructorCall(expression)
+                }
+            })
+        }
     }
 }

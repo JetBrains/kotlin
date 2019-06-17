@@ -31,7 +31,12 @@ import org.jetbrains.kotlin.name.NameUtils
 
 private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: CommonBackendContext, input: IrFile): IrFile {
+        override fun invoke(
+            phaseConfig: PhaseConfig,
+            phaserState: PhaserState<IrFile>,
+            context: CommonBackendContext,
+            input: IrFile
+        ): IrFile {
             input.acceptVoid(PatchDeclarationParentsVisitor())
             return input
         }
@@ -44,13 +49,15 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
 private val arrayConstructorPhase = makeIrFilePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into a loop"
+    description = "Transform `Array(size) { index -> value }` into a loop",
+    stickyPostconditions = setOf(ArrayConstructorLowering::checkNoInlineArrayConstructorCalls)
 )
 
 private val expectDeclarationsRemovingPhase = makeIrFilePhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
-    description = "Remove expect declaration from module fragment"
+    description = "Remove expect declaration from module fragment",
+    stickyPostconditions = setOf(ExpectDeclarationsRemoveLowering::checkNoExpect)
 )
 
 private val lateinitPhase = makeIrFilePhase(

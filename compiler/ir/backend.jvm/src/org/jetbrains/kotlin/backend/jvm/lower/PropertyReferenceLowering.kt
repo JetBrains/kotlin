@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -27,6 +28,9 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -35,7 +39,8 @@ import org.jetbrains.kotlin.types.Variance
 internal val propertyReferencePhase = makeIrFilePhase(
     ::PropertyReferenceLowering,
     name = "PropertyReference",
-    description = "Construct KProperty instances returned by expressions such as A::x and A()::x"
+    description = "Construct KProperty instances returned by expressions such as A::x and A()::x",
+    stickyPostconditions = setOf(PropertyReferenceLowering::checkNoPropertyReference)
 )
 
 internal class PropertyReferenceLowering(val context: JvmBackendContext) : ClassLoweringPass {
@@ -360,5 +365,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             })
         }
         irClass.declarations.addAll(0, kPropertyClasses.values)
+    }
+
+    companion object {
+        fun checkNoPropertyReference(element: IrElement) {
+            element.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitPropertyReference(expression: IrPropertyReference) {
+                    error("No property references should survive at this point")
+                }
+            })
+        }
     }
 }
