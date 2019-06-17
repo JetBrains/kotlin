@@ -1666,6 +1666,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
             }
 
+            @TestMetadata("correctInfoAfterArrayLikeCall.kt")
+            public void testCorrectInfoAfterArrayLikeCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt");
+            }
+
             @TestMetadata("ea81649_errorPropertyLHS.kt")
             public void testEa81649_errorPropertyLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/ea81649_errorPropertyLHS.kt");
@@ -1689,6 +1694,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt25433.kt")
             public void testKt25433() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt25433.kt");
+            }
+
+            @TestMetadata("kt31981.kt")
+            public void testKt31981() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt31981.kt");
             }
 
             @TestMetadata("kt7430_wrongClassOnLHS.kt")
