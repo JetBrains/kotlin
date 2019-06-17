@@ -4,9 +4,9 @@ package com.intellij.codeInsight.hints
 import com.intellij.codeInsight.hints.presentation.SpacePresentation
 import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.Inlay
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-class InlayPassTest : LightPlatformCodeInsightFixtureTestCase() {
+class InlayPassTest : BasePlatformTestCase() {
   private val noSettings = SettingsKey<NoSettings>("no")
 
   fun testBlockAndInlineElementMayBeAtSameOffset() {

@@ -2,7 +2,7 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static com.intellij.ide.actions.searcheverywhere.SearchEverywhereUI.SearchListModel;
 
-public class SearchModelTest extends LightPlatformCodeInsightFixtureTestCase {
+public class SearchModelTest extends BasePlatformTestCase {
 
   private final static SearchEverywhereContributor<Object> STUB_CONTRIBUTOR_1 = createStubContributor(100);
   private final static SearchEverywhereContributor<Object> STUB_CONTRIBUTOR_2 = createStubContributor(200);

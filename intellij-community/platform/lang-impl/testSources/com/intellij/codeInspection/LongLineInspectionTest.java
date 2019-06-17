@@ -17,14 +17,14 @@ package com.intellij.codeInspection;
 
 import com.intellij.codeInspection.longLine.LongLineInspection;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 import java.io.File;
 
 /**
  * @author Dmitry Batkovich
  */
-public class LongLineInspectionTest extends LightPlatformCodeInsightFixtureTestCase {
+public class LongLineInspectionTest extends BasePlatformTestCase {
 
   public void testShortLine() {
     doTest("java");
