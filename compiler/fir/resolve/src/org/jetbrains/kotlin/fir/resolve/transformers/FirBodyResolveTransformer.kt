@@ -907,6 +907,9 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                             else -> resultType
                         }
                     )
+                    if (variable is FirProperty) {
+                        variable.getter.transformReturnTypeRef(this, variable.returnTypeRef)
+                    }
                 }
                 variable.delegate != null -> {
                     // TODO: type from delegate
