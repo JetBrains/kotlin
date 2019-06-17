@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// PROBLEM: none
+// HIGHLIGHT: INFORMATION
 
 fun test(list: List<Int>) {
     list.filter { it > 1 }

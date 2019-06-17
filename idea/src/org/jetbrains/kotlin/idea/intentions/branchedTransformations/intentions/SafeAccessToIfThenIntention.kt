@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetIntention
+import org.jetbrains.kotlin.idea.inspections.ReplaceSingleLineLetInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
@@ -87,9 +87,9 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
     private fun KtIfExpression.removeRedundantLetCallIfPossible(editor: Editor?): Boolean {
         val callExpression = (then as? KtQualifiedExpression)?.callExpression ?: return false
         if (callExpression.calleeExpression?.text != "let") return false
-        val replaceSingleLineLetIntention = ReplaceSingleLineLetIntention()
-        if (!replaceSingleLineLetIntention.isApplicableTo(callExpression)) return false
-        replaceSingleLineLetIntention.applyTo(callExpression, editor)
+        val replaceSingleLineLetInspection = ReplaceSingleLineLetInspection()
+        if (!replaceSingleLineLetInspection.isApplicable(callExpression)) return false
+        replaceSingleLineLetInspection.applyTo(callExpression, project, editor)
         return true
     }
 

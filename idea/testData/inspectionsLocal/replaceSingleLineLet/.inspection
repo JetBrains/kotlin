@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetInspection
+org.jetbrains.kotlin.idea.inspections.ReplaceSingleLineLetInspection

@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-// IS_APPLICABLE: true
-
-fun foo(list: List<Int>) {
-    list.filter { it in IntRange(1, 10) }
-}

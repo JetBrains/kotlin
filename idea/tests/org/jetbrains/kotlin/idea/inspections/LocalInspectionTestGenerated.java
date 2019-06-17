@@ -9310,6 +9310,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSingleLineLet"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/assignment.kt");
+        }
+
+        @TestMetadata("binarySafeCall.kt")
+        public void testBinarySafeCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/binarySafeCall.kt");
+        }
+
         @TestMetadata("callChain.kt")
         public void testCallChain() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/callChain.kt");
@@ -9330,9 +9340,274 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/callChainWithLineBreak.kt");
         }
 
+        @TestMetadata("comparisons.kt")
+        public void testComparisons() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/comparisons.kt");
+        }
+
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/destructuringDeclaration.kt");
+        }
+
+        @TestMetadata("destructuringDeclaration2.kt")
+        public void testDestructuringDeclaration2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/destructuringDeclaration2.kt");
+        }
+
+        @TestMetadata("destructuringDeclaration3.kt")
+        public void testDestructuringDeclaration3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/destructuringDeclaration3.kt");
+        }
+
+        @TestMetadata("destructuringDeclaration4.kt")
+        public void testDestructuringDeclaration4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/destructuringDeclaration4.kt");
+        }
+
+        @TestMetadata("destructuringDeclaration5.kt")
+        public void testDestructuringDeclaration5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/destructuringDeclaration5.kt");
+        }
+
+        @TestMetadata("dotWithComparison.kt")
+        public void testDotWithComparison() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/dotWithComparison.kt");
+        }
+
+        @TestMetadata("functionCall1.kt")
+        public void testFunctionCall1() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCall1.kt");
+        }
+
+        @TestMetadata("functionCall2.kt")
+        public void testFunctionCall2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCall2.kt");
+        }
+
+        @TestMetadata("functionCall3.kt")
+        public void testFunctionCall3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCall3.kt");
+        }
+
+        @TestMetadata("functionCall4.kt")
+        public void testFunctionCall4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCall4.kt");
+        }
+
+        @TestMetadata("functionCall5.kt")
+        public void testFunctionCall5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCall5.kt");
+        }
+
+        @TestMetadata("functionCall6.kt")
+        public void testFunctionCall6() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCall6.kt");
+        }
+
+        @TestMetadata("functionCall7.kt")
+        public void testFunctionCall7() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCall7.kt");
+        }
+
+        @TestMetadata("functionCallInExtension.kt")
+        public void testFunctionCallInExtension() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCallInExtension.kt");
+        }
+
+        @TestMetadata("functionCallOnSafeCall.kt")
+        public void testFunctionCallOnSafeCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionCallOnSafeCall.kt");
+        }
+
+        @TestMetadata("functionInVariableCall.kt")
+        public void testFunctionInVariableCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionInVariableCall.kt");
+        }
+
+        @TestMetadata("functionInVariableInvokeCall.kt")
+        public void testFunctionInVariableInvokeCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/functionInVariableInvokeCall.kt");
+        }
+
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/in.kt");
+        }
+
+        @TestMetadata("inWithMultipleParam.kt")
+        public void testInWithMultipleParam() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/inWithMultipleParam.kt");
+        }
+
+        @TestMetadata("inWithRange.kt")
+        public void testInWithRange() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/inWithRange.kt");
+        }
+
+        @TestMetadata("inWithRangeMultipleParam.kt")
+        public void testInWithRangeMultipleParam() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/inWithRangeMultipleParam.kt");
+        }
+
+        @TestMetadata("invokeCall.kt")
+        public void testInvokeCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/invokeCall.kt");
+        }
+
+        @TestMetadata("invokeCall2.kt")
+        public void testInvokeCall2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/invokeCall2.kt");
+        }
+
+        @TestMetadata("invokeCall3.kt")
+        public void testInvokeCall3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/invokeCall3.kt");
+        }
+
+        @TestMetadata("invokeCall4.kt")
+        public void testInvokeCall4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/invokeCall4.kt");
+        }
+
+        @TestMetadata("invokeCall5.kt")
+        public void testInvokeCall5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/invokeCall5.kt");
+        }
+
+        @TestMetadata("lambdaWithBinaryExpression.kt")
+        public void testLambdaWithBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/lambdaWithBinaryExpression.kt");
+        }
+
+        @TestMetadata("lambdaWithBinaryExpression2.kt")
+        public void testLambdaWithBinaryExpression2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/lambdaWithBinaryExpression2.kt");
+        }
+
+        @TestMetadata("let.kt")
+        public void testLet() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/let.kt");
+        }
+
+        @TestMetadata("letMultipleLines.kt")
+        public void testLetMultipleLines() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letMultipleLines.kt");
+        }
+
+        @TestMetadata("letNoSafeCall.kt")
+        public void testLetNoSafeCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letNoSafeCall.kt");
+        }
+
+        @TestMetadata("letNotUseParameterReceiver.kt")
+        public void testLetNotUseParameterReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letNotUseParameterReceiver.kt");
+        }
+
+        @TestMetadata("letNotUseReceiver.kt")
+        public void testLetNotUseReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letNotUseReceiver.kt");
+        }
+
+        @TestMetadata("letUseIt.kt")
+        public void testLetUseIt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseIt.kt");
+        }
+
+        @TestMetadata("letUseItAsParamWithBinaryExpression.kt")
+        public void testLetUseItAsParamWithBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseItAsParamWithBinaryExpression.kt");
+        }
+
+        @TestMetadata("letUseItWithBinaryExpression.kt")
+        public void testLetUseItWithBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseItWithBinaryExpression.kt");
+        }
+
+        @TestMetadata("letUseItWithBinaryExpression2.kt")
+        public void testLetUseItWithBinaryExpression2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseItWithBinaryExpression2.kt");
+        }
+
+        @TestMetadata("letUseItWithMultipleMethodCall1.kt")
+        public void testLetUseItWithMultipleMethodCall1() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseItWithMultipleMethodCall1.kt");
+        }
+
+        @TestMetadata("letUseItWithMultipleMethodCall2.kt")
+        public void testLetUseItWithMultipleMethodCall2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseItWithMultipleMethodCall2.kt");
+        }
+
+        @TestMetadata("letUseItWithMultipleMethodCall3.kt")
+        public void testLetUseItWithMultipleMethodCall3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseItWithMultipleMethodCall3.kt");
+        }
+
+        @TestMetadata("letUseParameter.kt")
+        public void testLetUseParameter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letUseParameter.kt");
+        }
+
+        @TestMetadata("letWithBinaryExpression.kt")
+        public void testLetWithBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letWithBinaryExpression.kt");
+        }
+
+        @TestMetadata("letWithMethodCall.kt")
+        public void testLetWithMethodCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letWithMethodCall.kt");
+        }
+
+        @TestMetadata("letWithMultipleMethodCall.kt")
+        public void testLetWithMultipleMethodCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letWithMultipleMethodCall.kt");
+        }
+
+        @TestMetadata("letWithParameter.kt")
+        public void testLetWithParameter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letWithParameter.kt");
+        }
+
+        @TestMetadata("letWithSimpleBinaryExpression.kt")
+        public void testLetWithSimpleBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letWithSimpleBinaryExpression.kt");
+        }
+
+        @TestMetadata("letWithThisBinaryExpression.kt")
+        public void testLetWithThisBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letWithThisBinaryExpression.kt");
+        }
+
+        @TestMetadata("letWithThisShortBinaryExpression.kt")
+        public void testLetWithThisShortBinaryExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/letWithThisShortBinaryExpression.kt");
+        }
+
         @TestMetadata("longCallChain.kt")
         public void testLongCallChain() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/longCallChain.kt");
+        }
+
+        @TestMetadata("multipleReceiver.kt")
+        public void testMultipleReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/multipleReceiver.kt");
+        }
+
+        @TestMetadata("multipleReceiver2.kt")
+        public void testMultipleReceiver2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/multipleReceiver2.kt");
+        }
+
+        @TestMetadata("multipleReceiver3.kt")
+        public void testMultipleReceiver3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/multipleReceiver3.kt");
+        }
+
+        @TestMetadata("multipleUsages.kt")
+        public void testMultipleUsages() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/multipleUsages.kt");
         }
 
         @TestMetadata("noReceiver.kt")
@@ -9340,9 +9615,49 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/noReceiver.kt");
         }
 
+        @TestMetadata("plusNullable.kt")
+        public void testPlusNullable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/plusNullable.kt");
+        }
+
+        @TestMetadata("receiverWithLambda.kt")
+        public void testReceiverWithLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/receiverWithLambda.kt");
+        }
+
+        @TestMetadata("receiverWithLambda2.kt")
+        public void testReceiverWithLambda2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/receiverWithLambda2.kt");
+        }
+
+        @TestMetadata("sameLets.kt")
+        public void testSameLets() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/sameLets.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/simple.kt");
+        }
+
+        @TestMetadata("smartCastInBody.kt")
+        public void testSmartCastInBody() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/smartCastInBody.kt");
+        }
+
+        @TestMetadata("this.kt")
+        public void testThis() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/this.kt");
+        }
+
+        @TestMetadata("thisShort.kt")
+        public void testThisShort() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/thisShort.kt");
+        }
+
+        @TestMetadata("typeChecks.kt")
+        public void testTypeChecks() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/typeChecks.kt");
         }
     }
 

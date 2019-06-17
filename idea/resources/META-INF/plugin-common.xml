@@ -1350,11 +1350,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.copyConcatenatedStringToClipboard.CopyConcatenatedStringToClipboardIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -2238,12 +2233,12 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceSingleLineLetInspection"
                      displayName="Replace single line .let"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
-                     level="WARNING"
+                     level="INFORMATION"
                      language="kotlin"
     />
 
