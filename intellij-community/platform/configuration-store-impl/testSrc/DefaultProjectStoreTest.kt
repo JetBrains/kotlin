@@ -121,10 +121,9 @@ internal class DefaultProjectStoreTest {
     val element = loadElement(testData.resolve("testData1.xml"))
 
     val tempDir = fsRule.fs.getPath("")
-    moveComponentConfiguration(ProjectManager.getInstance().defaultProject, element) { if (it == "workspace.xml") tempDir.resolve("test.iws") else tempDir.resolve("test.ipr") }
-    assertThat(element).isEqualTo(loadElement(testData.resolve("normalize-ipr.xml")))
-
-    val directoryTree = tempDir.getDirectoryTree()
-    assertThat(directoryTree.trim()).toMatchSnapshot(testData.resolve("testData1-ipr.txt"))
+    val projectFile = tempDir.resolve("test.ipr")
+    moveComponentConfiguration(ProjectManager.getInstance().defaultProject, element, { "" }) { if (it == "workspace.xml") tempDir.resolve("test.iws") else { projectFile } }
+    assertThat(JDOMUtil.isEmpty(element)).isTrue()
+    assertThat(tempDir.getDirectoryTree()).toMatchSnapshot(testData.resolve("testData1-ipr.txt"))
   }
 }

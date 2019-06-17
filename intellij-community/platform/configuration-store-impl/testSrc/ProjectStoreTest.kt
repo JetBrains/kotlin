@@ -2,11 +2,11 @@
 package com.intellij.configurationStore
 
 import com.intellij.ide.highlighter.ProjectFileType
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.project.impl.ProjectImpl
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtilRt
@@ -16,7 +16,9 @@ import com.intellij.project.stateStore
 import com.intellij.testFramework.*
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.PathUtil
+import com.intellij.util.io.readChars
 import com.intellij.util.io.readText
+import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.io.write
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -231,6 +233,27 @@ internal class ProjectStoreTest {
         }
 
         delay(50)
+      }
+    }
+  }
+
+  // heavy test that uses ProjectManagerImpl directly to test (opposite to DefaultProjectStoreTest)
+  @Test
+  fun `create project from default`() {
+    val projectManager = ProjectManagerEx.getInstanceEx()
+
+    val testComponent = TestComponent()
+    testComponent.loadState(TestState(value = "foo"))
+    (projectManager.defaultProject as ComponentManager).stateStore.initComponent(testComponent, null)
+
+    val projectPath = tempDirManager.newPath()
+    val project = projectManager.newProject("foo", projectPath.systemIndependentPath, true, false)!!
+    try {
+      assertThat(projectPath.resolve(".idea/misc.xml").readChars()).contains("AATestComponent")
+    }
+    finally {
+      runInEdt {
+        PlatformTestUtil.forceCloseProjectWithoutSaving(project)
       }
     }
   }
