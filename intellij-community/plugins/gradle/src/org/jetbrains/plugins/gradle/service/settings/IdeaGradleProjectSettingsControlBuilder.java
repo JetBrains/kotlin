@@ -24,7 +24,10 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.ui.*;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -756,7 +759,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
         myDelegateBuildLabel = new JBLabel(GradleBundle.message("gradle.settings.text.build.run"));
         panel.add(myDelegateBuildLabel, getLabelConstraints(indentLevel + 1));
-        panel.add(myDelegateBuildCombobox);
+        panel.add(myDelegateBuildCombobox, getLabelConstraints(0));
         panel.add(Box.createGlue(), ExternalSystemUiUtil.getFillLineConstraints(indentLevel + 1));
 
         myDelegateBuildLabel.setLabelFor(myDelegateBuildCombobox);
@@ -767,9 +770,15 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
         myTestRunnerCombobox.setRenderer(new MyItemCellRenderer<>());
         myTestRunnerCombobox.setSelectedItem(new TestRunnerItem(myInitialSettings.getTestRunner()));
 
+        // make sure that the two adjacent comboboxes have same size
+        myTestRunnerCombobox.setPrototypeDisplayValue(new TestRunnerItem(TestRunner.CHOOSE_PER_TEST));
+        if (myDelegateBuildCombobox != null) {
+          myDelegateBuildCombobox.setPreferredSize(myTestRunnerCombobox.getPreferredSize());
+        }
+
         myTestRunnerLabel = new JBLabel(GradleBundle.message("gradle.settings.text.run.tests"));
         panel.add(myTestRunnerLabel, getLabelConstraints(indentLevel + 1));
-        panel.add(myTestRunnerCombobox);
+        panel.add(myTestRunnerCombobox, getLabelConstraints(0));
         panel.add(Box.createGlue(), ExternalSystemUiUtil.getFillLineConstraints(indentLevel + 1));
 
         myTestRunnerLabel.setLabelFor(myTestRunnerCombobox);
