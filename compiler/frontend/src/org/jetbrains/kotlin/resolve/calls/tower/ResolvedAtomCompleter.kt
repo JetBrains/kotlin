@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -288,7 +289,8 @@ class ResolvedAtomCompleter(
         }
 
         // TODO: probably we should also record key 'DATA_FLOW_INFO_BEFORE', see ExpressionTypingVisitorDispatcher.getTypeInfo
-        topLevelTrace.recordType(callableReferenceExpression, resultType)
+        val typeInfo = createTypeInfo(resultType, resolvedAtom.atom.psiCallArgument.dataFlowInfoAfterThisArgument)
+        topLevelTrace.record(BindingContext.EXPRESSION_TYPE_INFO, callableReferenceExpression, typeInfo)
         topLevelTrace.record(BindingContext.PROCESSED, callableReferenceExpression)
 
         doubleColonExpressionResolver.checkReferenceIsToAllowedMember(
