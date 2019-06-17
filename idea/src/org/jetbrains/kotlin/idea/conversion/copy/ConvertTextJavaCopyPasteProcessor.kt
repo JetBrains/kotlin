@@ -28,17 +28,17 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.*
 import com.intellij.util.LocalTimeCounter
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
+import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.j2k.ConversionType
+import org.jetbrains.kotlin.j2k.logJ2kConversionStatistics
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
+import kotlin.system.measureTimeMillis
 
 class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance(ConvertTextJavaCopyPasteProcessor::class.java)
@@ -107,33 +108,45 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         val copiedJavaCode = prepareCopiedJavaCodeByContext(text, conversionContext, pasteTarget)
         val dataForConversion = DataForConversion.prepare(copiedJavaCode, project)
 
-        val additionalImports = dataForConversion.tryResolveImports(targetFile)
-        var convertedImportsText = additionalImports.convertCodeToKotlin(project, targetModule).text
+        fun convert() {
+            val additionalImports = dataForConversion.tryResolveImports(targetFile)
+            var convertedImportsText = additionalImports.convertCodeToKotlin(project, targetModule).text
 
-        val convertedResult = dataForConversion.convertCodeToKotlin(project, targetModule)
-        val convertedText = convertedResult.text
+            val convertedResult = dataForConversion.convertCodeToKotlin(project, targetModule)
+            val convertedText = convertedResult.text
 
-        val newBounds = runWriteAction {
+            val newBounds = runWriteAction {
+                val importsInsertOffset = targetFile.importList?.endOffset ?: 0
+                if (targetFile.importDirectives.isEmpty() && importsInsertOffset > 0)
+                    convertedImportsText = "\n" + convertedImportsText
+                if (convertedImportsText.isNotBlank())
+                    editor.document.insertString(importsInsertOffset, convertedImportsText)
 
-            val importsInsertOffset = targetFile.importList?.endOffset ?: 0
-            if (targetFile.importDirectives.isEmpty() && importsInsertOffset > 0)
-                convertedImportsText = "\n" + convertedImportsText
-            if (convertedImportsText.isNotBlank())
-                editor.document.insertString(importsInsertOffset, convertedImportsText)
+                val startOffset = bounds.startOffset
+                editor.document.replaceString(startOffset, bounds.endOffset, convertedText)
 
-            val startOffset = bounds.startOffset
-            editor.document.replaceString(startOffset, bounds.endOffset, convertedText)
+                val endOffsetAfterCopy = startOffset + convertedText.length
+                editor.caretModel.moveToOffset(endOffsetAfterCopy)
 
-            val endOffsetAfterCopy = startOffset + convertedText.length
-            editor.caretModel.moveToOffset(endOffsetAfterCopy)
+                TextRange(startOffset, startOffset + convertedText.length)
+            }
 
-            TextRange(startOffset, startOffset + convertedText.length)
+            psiDocumentManager.commitAllDocuments()
+            runPostProcessing(project, targetFile, newBounds, convertedResult.converterContext)
+
+            conversionPerformed = true
         }
 
-        psiDocumentManager.commitAllDocuments()
-        runPostProcessing(project, targetFile, newBounds, convertedResult.converterContext)
-
-        conversionPerformed = true
+        val conversionTime = measureTimeMillis {
+            convert()
+        }
+        logJ2kConversionStatistics(
+            ConversionType.TEXT_EXPRESSION,
+            JavaToKotlinConverterFactory.isNewJ2k,
+            conversionTime,
+            dataForConversion.elementsAndTexts.linesCount(),
+            filesCount = 1
+        )
     }
 
     private fun DataForConversion.convertCodeToKotlin(project: Project, targetModule: Module?): ConversionResult {

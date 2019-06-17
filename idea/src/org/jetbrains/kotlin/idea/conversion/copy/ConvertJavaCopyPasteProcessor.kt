@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
@@ -43,10 +44,7 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.j2k.AfterConversionPass
-import org.jetbrains.kotlin.j2k.ConverterContext
-import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.ParseContext
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -57,6 +55,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.awt.datatransfer.Transferable
 import java.util.*
+import kotlin.system.measureTimeMillis
 
 class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance(ConvertJavaCopyPasteProcessor::class.java)
@@ -98,8 +97,9 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             val converterContext: ConverterContext?
         )
 
+        val dataForConversion = DataForConversion.prepare(data, project)
+
         fun doConversion(): Result {
-            val dataForConversion = DataForConversion.prepare(data, project)
             val result = dataForConversion.elementsAndTexts.convertCodeToKotlin(project, targetModule)
             val referenceData = buildReferenceData(result.text, result.parseContext, dataForConversion.importsAndPackage, targetFile)
             val text = if (result.textChanged) result.text else null
@@ -144,7 +144,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             if (doConversionAndInsertImportsIfUnchanged()) return
         }
 
-        if (confirmConvertJavaOnPaste(project, isPlainText = false)) {
+        fun convert() {
             if (conversionResult == null) {
                 if (doConversionAndInsertImportsIfUnchanged()) return
             }
@@ -152,14 +152,14 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             text!! // otherwise we should get true from doConversionAndInsertImportsIfUnchanged and return above
 
             val boundsAfterReplace =
-                    runWriteAction {
-                        val startOffset = bounds.startOffset
-                        document.replaceString(startOffset, bounds.endOffset, text)
+                runWriteAction {
+                    val startOffset = bounds.startOffset
+                    document.replaceString(startOffset, bounds.endOffset, text)
 
-                        val endOffsetAfterCopy = startOffset + text.length
-                        editor.caretModel.moveToOffset(endOffsetAfterCopy)
-                        TextRange(startOffset, endOffsetAfterCopy)
-                    }
+                    val endOffsetAfterCopy = startOffset + text.length
+                    editor.caretModel.moveToOffset(endOffsetAfterCopy)
+                    TextRange(startOffset, endOffsetAfterCopy)
+                }
 
             val newBounds = insertImports(boundsAfterReplace, referenceData, explicitImports)
 
@@ -167,6 +167,19 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             runPostProcessing(project, targetFile, newBounds, conversionResult?.converterContext)
 
             conversionPerformed = true
+        }
+
+        if (confirmConvertJavaOnPaste(project, isPlainText = false)) {
+            val conversionTime = measureTimeMillis {
+                convert()
+            }
+            logJ2kConversionStatistics(
+                ConversionType.PSI_EXPRESSION,
+                JavaToKotlinConverterFactory.isNewJ2k,
+                conversionTime,
+                dataForConversion.elementsAndTexts.linesCount(),
+                filesCount = 1
+            )
         }
     }
 
@@ -303,6 +316,11 @@ internal fun confirmConvertJavaOnPaste(project: Project, isPlainText: Boolean): 
     return dialog.isOK
 }
 
+
+fun ElementAndTextList.linesCount() =
+    toList()
+        .filterIsInstance<PsiElement>()
+        .sumBy { StringUtil.getLineBreakCount(it.text) }
 
 fun runPostProcessing(project: Project, file: KtFile, bounds: TextRange?, converterContext: ConverterContext?) {
     val postProcessor = JavaToKotlinConverterFactory.createPostProcessor(formatCode = true)

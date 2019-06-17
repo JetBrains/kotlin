@@ -36,6 +36,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ex.MessagesEx
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
@@ -52,13 +53,16 @@ import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
+import org.jetbrains.kotlin.j2k.ConversionType
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.FilesResult
+import org.jetbrains.kotlin.j2k.logJ2kConversionStatistics
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.system.measureTimeMillis
 
 var VirtualFile.pathBeforeJ2K: String? by UserDataProperty(Key.create<String>("PATH_BEFORE_J2K_CONVERSION"))
 
@@ -129,9 +133,23 @@ class JavaToKotlinAction : AnAction() {
                 )
             }
 
+            fun convertWithStatistics() {
+                val conversionTime = measureTimeMillis {
+                    convert()
+                }
+                val linesCount = javaFiles.sumBy { StringUtil.getLineBreakCount(it.text) }
+                logJ2kConversionStatistics(
+                    ConversionType.FILES,
+                    JavaToKotlinConverterFactory.isNewJ2k,
+                    conversionTime,
+                    linesCount,
+                    javaFiles.size
+                )
+            }
+
 
             if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                    ::convert,
+                    ::convertWithStatistics,
                     title,
                     true,
                     project
