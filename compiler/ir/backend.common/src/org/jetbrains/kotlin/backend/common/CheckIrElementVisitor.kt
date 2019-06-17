@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -281,6 +281,19 @@ class CheckIrElementVisitor(
         }
 
         expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitDeclaration(declaration: IrDeclaration) {
+        super.visitDeclaration(declaration)
+
+        if (declaration is IrOverridableDeclaration<*>) {
+            for (overriddenSymbol in declaration.overriddenSymbols) {
+                val overriddenDeclaration = overriddenSymbol.owner as? IrDeclarationWithVisibility ?: continue
+                if (overriddenDeclaration.visibility == Visibilities.PRIVATE) {
+                    reportError(declaration, "Overrides private declaration $overriddenDeclaration")
+                }
+            }
+        }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {

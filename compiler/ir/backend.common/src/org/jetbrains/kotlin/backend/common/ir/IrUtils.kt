@@ -464,6 +464,7 @@ fun IrClass.addFakeOverrides() {
             irClass.declarations
                 .flatMap { it.toList() }
                 .filter { it !in overriddenFunctions }
+                .filter { it.visibility != Visibilities.PRIVATE }
         }
         .toMutableSet()
 
