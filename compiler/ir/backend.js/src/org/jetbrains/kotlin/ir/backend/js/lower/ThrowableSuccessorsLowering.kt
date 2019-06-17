@@ -200,6 +200,7 @@ class ThrowableSuccessorsLowering(val context: JsIrBackendContext) : FileLowerin
             val function = JsIrBuilder.buildFunction(name, fakeAccessor.returnType, fakeAccessor.parent).apply {
                 overriddenSymbols += fakeAccessor.overriddenSymbols
                 correspondingPropertySymbol = fakeAccessor.correspondingPropertySymbol
+                correspondingPropertySymbol!!.owner.getter = this
                 dispatchReceiverParameter = fakeAccessor.dispatchReceiverParameter?.copyTo(this)
             }
 

@@ -154,6 +154,14 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
             }
         }
 
+        // Detach old function from corresponding property
+        val correspondingProperty = function.correspondingPropertySymbol?.owner
+        if (correspondingProperty != null) {
+            when (function) {
+                correspondingProperty.getter -> correspondingProperty.getter = staticFunction
+                correspondingProperty.setter -> correspondingProperty.setter = staticFunction
+            }
+        }
 
         staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
 
