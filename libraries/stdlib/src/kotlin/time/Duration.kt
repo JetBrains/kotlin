@@ -57,8 +57,6 @@ public inline class Duration internal constructor(internal val value: Double) : 
     /** Returns a duration whose value is the difference between this and [other] duration values. */
     public operator fun minus(other: Duration): Duration = Duration(value - other.value)
 
-    // should we declare symmetric extension operators?
-
     /** Returns a duration whose value is this duration value multiplied by the given [scale] number. */
     public operator fun times(scale: Int): Duration = Duration(value * scale)
 
@@ -457,6 +455,19 @@ public val Long.days get() = toDuration(DurationUnit.DAYS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.days get() = toDuration(DurationUnit.DAYS)
+
+
+/** Returns a duration whose value is the specified [duration] value multiplied by this number. */
+@SinceKotlin("1.3")
+@ExperimentalTime
+@kotlin.internal.InlineOnly
+public inline operator fun Int.times(duration: Duration): Duration = duration * this
+
+/** Returns a duration whose value is the specified [duration] value multiplied by this number. */
+@SinceKotlin("1.3")
+@ExperimentalTime
+@kotlin.internal.InlineOnly
+public inline operator fun Double.times(duration: Duration): Duration = duration * this
 
 
 internal expect fun formatToExactDecimals(value: Double, decimals: Int): String

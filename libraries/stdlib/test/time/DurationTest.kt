@@ -233,6 +233,10 @@ class DurationTest {
         assertEquals(1.days, 12.hours * 2)
         assertEquals(1.days, 60.minutes * 24.0)
         assertEquals(1.microseconds, 20.nanoseconds * 50)
+
+        assertEquals(1.days, 2 * 12.hours)
+        assertEquals(12.5.hours, 12.5 * 60.minutes)
+        assertEquals(1.microseconds, 50 * 20.nanoseconds)
     }
 
     @Test
