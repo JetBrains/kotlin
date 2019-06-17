@@ -66,7 +66,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "control alt R",            "org.jetbrains.plugins.ruby.tasks.rake.actions.RakeTasksPopupAction", "Django.RunManageTaskAction"},
     { "control alt UP",           "PreviousOccurence", "Console.TableResult.PreviousPage"},
     { "control alt N",            "Inline", "Console.TableResult.SetNull"},
-    { "control alt M",            "ExtractMethod", "Vcs.ToggleAmendCommitMode", "TodoViewGroupByShowModules", "ChangesView.GroupBy.Module"},
+    { "control alt M",            "ExtractMethod", "TodoViewGroupByShowModules", "ChangesView.GroupBy.Module"},
     { "control alt O",            "OptimizeImports", "TodoViewGroupByFlattenPackage"},
     { "control alt P",            "ChangesView.GroupBy.Directory", "IntroduceParameter", "TodoViewGroupByShowPackages"},
     { "ctrl alt U",               "ShowUmlDiagramPopup", "ChangesView.UnshelveSilently"},
