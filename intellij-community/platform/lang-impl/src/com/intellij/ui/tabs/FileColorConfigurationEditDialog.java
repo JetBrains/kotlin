@@ -3,16 +3,15 @@
 package com.intellij.ui.tabs;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.scope.packageSet.CustomScopesProviderEx;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
-import com.intellij.psi.search.scope.packageSet.NamedScopeManager;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.ComboboxSpeedSearch;
 import com.intellij.ui.FileColorManager;
-import com.intellij.ui.FileColorName;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +71,7 @@ public class FileColorConfigurationEditDialog extends DialogWrapper {
   protected JComponent createNorthPanel() {
     final List<NamedScope> scopeList = new ArrayList<>();
     final Project project = myManager.getProject();
-    final NamedScopesHolder[] scopeHolders = NamedScopeManager.getAllNamedScopeHolders(project);
+    final NamedScopesHolder[] scopeHolders = NamedScopesHolder.getAllNamedScopeHolders(project);
     for (final NamedScopesHolder scopeHolder : scopeHolders) {
       final NamedScope[] scopes = scopeHolder.getScopes();
       Collections.addAll(scopeList, scopes);
@@ -82,7 +81,7 @@ public class FileColorConfigurationEditDialog extends DialogWrapper {
       myScopeNames.put(scope.getName(), scope);
     }
 
-    myScopeComboBox = new JComboBox(ArrayUtilRt.toStringArray(myScopeNames.keySet()));
+    myScopeComboBox = new ComboBox<>(ArrayUtilRt.toStringArray(myScopeNames.keySet()));
     myScopeComboBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -116,7 +115,7 @@ public class FileColorConfigurationEditDialog extends DialogWrapper {
     if (item instanceof String) {
       Color color = myConfiguration == null ? null : ColorUtil.fromHex(myConfiguration.getColorName(), null);
       NamedScope scope = myScopeNames.get(item);
-      String colorName = scope instanceof FileColorName ? ((FileColorName)scope).colorName() : null;
+      String colorName = scope.getDefaultColorName();
 
       if (color == null && StringUtil.isNotEmpty(colorName)) {
         color = myManager.getColor(colorName);
@@ -125,7 +124,8 @@ public class FileColorConfigurationEditDialog extends DialogWrapper {
       if (color != null) {
         if (StringUtil.isNotEmpty(colorName) && color.equals(myManager.getColor(colorName))) {
           myColorSelectionComponent.setSelectedColor(colorName);
-        } else {
+        }
+        else {
           myColorSelectionComponent.setCustomButtonColor(color);
         }
       }
