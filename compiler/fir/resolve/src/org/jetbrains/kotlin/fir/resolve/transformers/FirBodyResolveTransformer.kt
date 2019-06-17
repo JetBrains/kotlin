@@ -9,6 +9,7 @@ import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
@@ -915,6 +916,19 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                             session,
                             null,
                             "Not supported: type from delegate"
+                        )
+                    )
+                }
+                else -> {
+                    variable.transformReturnTypeRef(
+                        this,
+                        FirErrorTypeRefImpl(
+                            session, null,
+                            if (variable is FirProperty && variable.getter !is FirDefaultPropertyAccessor)  {
+                                "Not supported: type from property getter"
+                            } else {
+                                "Cannot infer variable type without initializer / getter / delegate"
+                            }
                         )
                     )
                 }
