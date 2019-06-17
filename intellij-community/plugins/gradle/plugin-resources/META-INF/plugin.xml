@@ -140,7 +140,7 @@
             text="Composite Build Configuration"/>
 
     <action id="Gradle.RefreshDependencies" class="org.jetbrains.plugins.gradle.action.GradleRefreshProjectDependenciesAction"
-            text="Refresh dependencies" description="Refresh dependencies in the Gradle cache using --refresh-dependencies argument"/>
+            text="Refresh Gradle Dependencies" description="Refresh dependencies in the Gradle cache using --refresh-dependencies argument"/>
 
     <group>
       <separator/>
@@ -159,8 +159,10 @@
     </group>
 
     <group>
+      <separator/>
       <reference id="Gradle.RefreshDependencies"/>
-      <add-to-group group-id="ExternalSystemView.BaseProjectMenu" relative-to-action="ExternalSystem.RefreshProject" anchor="after"/>
+      <separator/>
+      <add-to-group group-id="ExternalSystemView.BaseProjectMenu" anchor="last"/>
     </group>
 
     <action id="Gradle.ShowDaemons" class="org.jetbrains.plugins.gradle.internal.daemon.ShowGradleDaemonsAction"/>

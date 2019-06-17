@@ -2,10 +2,12 @@
 package org.jetbrains.plugins.gradle.startup
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.io.FileUtil
@@ -14,7 +16,6 @@ import org.jetbrains.plugins.gradle.service.project.open.importProject
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import javax.swing.event.HyperlinkEvent
 
 class GradleUnlinkedProjectProcessor : StartupActivity {
 
@@ -26,8 +27,6 @@ class GradleUnlinkedProjectProcessor : StartupActivity {
 
   companion object {
     private const val SHOW_UNLINKED_GRADLE_POPUP = "show.inlinked.gradle.project.popup"
-    private const val IMPORT_EVENT_DESCRIPTION = "import"
-    private const val DO_NOT_SHOW_EVENT_DESCRIPTION = "do.not.show"
 
     private fun showNotification(project: Project) {
       if (!GradleSettings.getInstance(project).linkedProjectsSettings.isEmpty()) return
@@ -38,22 +37,27 @@ class GradleUnlinkedProjectProcessor : StartupActivity {
       val kotlinDslGradleFile = externalProjectPath + "/" + GradleConstants.KOTLIN_DSL_SCRIPT_NAME
       if (FileUtil.findFirstThatExist(gradleGroovyDslFile, kotlinDslGradleFile) == null) return
 
-      val message = String.format("%s<br>\n%s",
-                                  GradleBundle.message("gradle.notifications.unlinked.project.found.msg", IMPORT_EVENT_DESCRIPTION),
-                                  GradleBundle.message("gradle.notifications.do.not.show"))
-      val hyperLinkAdapter = object : NotificationListener.Adapter() {
-        override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-          notification.expire()
-          when (e.description) {
-            IMPORT_EVENT_DESCRIPTION -> importProject(externalProjectPath, project)
-            DO_NOT_SHOW_EVENT_DESCRIPTION -> disableNotifications(project)
-          }
-        }
+
+      val notification = GradleNotification.NOTIFICATION_GROUP.createNotification(
+        GradleBundle.message("gradle.notifications.unlinked.project.found.title", ApplicationNamesInfo.getInstance().fullProductName),
+        NotificationType.INFORMATION)
+      notification.addAction(NotificationAction.createSimple(
+        GradleBundle.message("gradle.notifications.unlinked.project.found.import")) {
+        notification.expire();
+        importProject(externalProjectPath, project)
+      })
+      notification.addAction(NotificationAction.createSimple(
+        GradleBundle.message("gradle.notifications.unlinked.project.found.skip")) {
+        notification.expire();
+        disableNotifications(project)
+      })
+
+      notification.contextHelpAction = object : DumbAwareAction(
+        "Help", GradleBundle.message("gradle.notifications.unlinked.project.found.help"), null) {
+        override fun actionPerformed(e: AnActionEvent) {}
       }
-      GradleNotification.getInstance(project).showBalloon(
-        GradleBundle.message("gradle.notifications.unlinked.project.found.title"),
-        message, NotificationType.INFORMATION, hyperLinkAdapter
-      )
+
+      notification.notify(project)
     }
 
     private fun isEnabledNotifications(project: Project): Boolean {

@@ -25,12 +25,6 @@ import java.util.List;
  * @author Vladislav.Soroka
  */
 public class GradleRefreshProjectDependenciesAction extends RefreshExternalProjectAction {
-
-  public GradleRefreshProjectDependenciesAction() {
-    getTemplatePresentation().setText("Refresh dependencies");
-    getTemplatePresentation().setDescription("Refresh dependencies in the Gradle cache using --refresh-dependencies argument");
-  }
-
   @Override
   protected boolean isEnabled(@NotNull AnActionEvent e) {
     if (!GradleConstants.SYSTEM_ID.equals(getSystemId(e))) return false;

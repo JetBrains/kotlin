@@ -145,7 +145,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
         if (indicator != null) {
           String message = ExternalSystemBundle.message(
             "progress.update.text", projectSystemId != null ? projectSystemId.getReadableName() : "",
-            "Refresh " + getReadableText(key));
+            ExternalSystemBundle.message("progress.update.refresh", getReadableText(key)));
           indicator.setText(message);
           indicator.setFraction((double)count++ / size);
         }

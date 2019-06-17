@@ -21,7 +21,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +38,7 @@ public class IgnoreExternalProjectAction extends ExternalSystemToggleAction {
   private static final Logger LOG = Logger.getInstance(IgnoreExternalProjectAction.class);
 
   public IgnoreExternalProjectAction() {
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.ignore.external.projects.text", "external", "project"));
+    getTemplatePresentation().setText(ExternalSystemBundle.message("action.ignore.external.projects.text", "External", 1));
     getTemplatePresentation()
       .setDescription(ExternalSystemBundle.message("action.ignore.external.projects.description", "external", "project"));
   }
@@ -89,14 +88,14 @@ public class IgnoreExternalProjectAction extends ExternalSystemToggleAction {
     boolean selected = super.isSelected(e);
     ProjectSystemId systemId = getSystemId(e);
     final String systemIdName = systemId != null ? systemId.getReadableName() : "external";
-    final String pluralizedProjects = StringUtil.pluralize("project", getProjectNodes(e).size());
+    int size = getProjectNodes(e).size();
     if (selected) {
-      setText(e, ExternalSystemBundle.message("action.unignore.external.projects.text", systemIdName, pluralizedProjects));
-      setDescription(e, ExternalSystemBundle.message("action.unignore.external.projects.description", systemIdName, pluralizedProjects));
+      setText(e, ExternalSystemBundle.message("action.unignore.external.projects.text", systemIdName, size));
+      setDescription(e, ExternalSystemBundle.message("action.unignore.external.projects.description", systemIdName, size));
     }
     else {
-      setText(e, ExternalSystemBundle.message("action.ignore.external.projects.text", systemIdName, pluralizedProjects));
-      setDescription(e, ExternalSystemBundle.message("action.ignore.external.projects.description", systemIdName, pluralizedProjects));
+      setText(e, ExternalSystemBundle.message("action.ignore.external.projects.text", systemIdName, size));
+      setDescription(e, ExternalSystemBundle.message("action.ignore.external.projects.description", systemIdName, size));
     }
     return selected;
   }
