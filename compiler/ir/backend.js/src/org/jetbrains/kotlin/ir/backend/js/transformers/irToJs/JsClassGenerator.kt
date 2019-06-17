@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.backend.common.ir.isStatic
 import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
@@ -37,8 +34,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val classModel = JsClassModel(className, baseClassName)
 
     fun generate(): JsStatement {
-
-        if (irClass.descriptor.isExpect) return JsEmpty // TODO: fix it in Psi2Ir
+        assert(!irClass.descriptor.isExpect)
 
         maybeGeneratePrimaryConstructor()
         val transformer = IrDeclarationToJsTransformer()
@@ -76,7 +72,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             // TODO: Test export properties of throwable subtype
             if (!irClass.isInterface && !irClass.isEnumClass && !irClass.isEnumEntry) {
                 for (property in properties) {
-
                     if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
                         continue
 
