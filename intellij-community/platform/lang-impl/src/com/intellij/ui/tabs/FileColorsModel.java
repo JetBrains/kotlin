@@ -15,7 +15,6 @@ import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.psi.search.scope.packageSet.PackageSet;
 import com.intellij.psi.search.scope.packageSet.PackageSetBase;
 import com.intellij.ui.ColorUtil;
-import com.intellij.ui.FileColorName;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
 import org.jdom.Element;
@@ -60,7 +59,7 @@ public class FileColorsModel implements Cloneable {
   private void initPredefinedAndGlobalScopes() {
     for (NamedScope scope : CustomScopesAggregator.getAllCustomScopes(myProject)) {
       String scopeName = scope.getName();
-      String colorName = scope instanceof FileColorName ? ((FileColorName)scope).colorName() : null;
+      String colorName = scope.getDefaultColorName();
 
       if (StringUtil.isEmpty(colorName)) continue;
 

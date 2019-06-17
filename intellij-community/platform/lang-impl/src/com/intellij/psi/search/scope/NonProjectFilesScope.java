@@ -8,7 +8,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.search.scope.packageSet.FilteredPackageSet;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
-import com.intellij.ui.FileColorName;
 import com.intellij.ui.IdeUICustomization;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Konstantin Bulenkov
  * @author Sergey Malenkov
  */
-public final class NonProjectFilesScope extends NamedScope implements FileColorName {
+public final class NonProjectFilesScope extends NamedScope {
   public static final String NAME = IdeUICustomization.getInstance().getNonProjectFilesScopeTitle();
   public static final NonProjectFilesScope INSTANCE = new NonProjectFilesScope();
 
@@ -39,7 +38,7 @@ public final class NonProjectFilesScope extends NamedScope implements FileColorN
   }
 
   @Override
-  public String colorName() {
+  public String getDefaultColorName() {
     return "Yellow";
   }
 }
