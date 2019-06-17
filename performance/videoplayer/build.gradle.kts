@@ -50,24 +50,31 @@ var includeDirsSdl = when {
 compileBenchmark {
     applicationName = "Videoplayer"
     repeatNumber = 10
-    buildSteps = mapOf(
-        "runCinteropFfmpeg" to listOf("$dist/bin/cinterop$toolSuffix",
-            "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
-            "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/ffmpeg.def"
-        ) + filterDirsFfmpeg + includeDirsFfmpeg,
-
-        "runCinteropSdl" to listOf("$dist/bin/cinterop$toolSuffix",
-            "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
-            "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/sdl.def"
-        ) + includeDirsSdl,
-
-        "runKonanProgram" to listOf("$dist/bin/konanc$toolSuffix",
-            "-ea", "-p", "program",
-            "-o", "${buildDir.absolutePath}/program$binarySuffix",
-            "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
-            "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
-            "-Xmulti-platform", "$dist/../samples/videoplayer/src/videoPlayerMain/kotlin",
-            "-entry", "sample.videoplayer.main"
-        ) + linkerOpts
-    )
+    buildSteps {
+        step("runCinteropFfmpeg") {
+            command = listOf(
+                "$dist/bin/cinterop$toolSuffix",
+                "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
+                "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/ffmpeg.def"
+            ) + filterDirsFfmpeg + includeDirsFfmpeg
+        }
+        step("runCinteropSdl") {
+            command = listOf(
+                "$dist/bin/cinterop$toolSuffix",
+                "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
+                "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/sdl.def"
+            ) + includeDirsSdl
+        }
+        step("runKonanProgram") {
+            command = listOf(
+                "$dist/bin/konanc$toolSuffix",
+                "-ea", "-p", "program",
+                "-o", "${buildDir.absolutePath}/program$binarySuffix",
+                "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
+                "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
+                "-Xmulti-platform", "$dist/../samples/videoplayer/src/videoPlayerMain/kotlin",
+                "-entry", "sample.videoplayer.main"
+            ) + linkerOpts
+        }
+    }
 }

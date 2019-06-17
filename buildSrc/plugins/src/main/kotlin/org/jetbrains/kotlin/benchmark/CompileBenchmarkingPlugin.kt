@@ -1,18 +1,37 @@
 package org.jetbrains.kotlin.benchmark
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import groovy.lang.Closure
+import org.gradle.api.*
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
+import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.*
 import javax.inject.Inject
 
-private typealias CommandList = List<String>
+class BuildStep (private val _name: String): Named  {
+    override fun getName(): String = _name
+    lateinit var command: List<String>
+
+    fun command(vararg command: String) {
+        this.command = command.toList()
+    }
+}
+
+class BuildStepContainer(project: Project): NamedDomainObjectContainer<BuildStep> by project.container(BuildStep::class.java) {
+    fun step(name: String, configure: Action<BuildStep>) =
+        maybeCreate(name).apply { configure.execute(this) }
+    
+    fun step(name: String, configure: Closure<Unit>) =
+        step(name, ConfigureUtil.configureUsing(configure))
+}
 
 open class CompileBenchmarkExtension @Inject constructor(val project: Project) {
     var applicationName = project.name
     var repeatNumber: Int = 1
-    var buildSteps: Map<String, CommandList> = emptyMap()
+    var buildSteps: BuildStepContainer = BuildStepContainer(project)
+
+    fun buildSteps(configure: Action<BuildStepContainer>): Unit = buildSteps.let { configure.execute(it) }
+    fun buildSteps(configure: Closure<Unit>): Unit = buildSteps(ConfigureUtil.configureUsing(configure))
 }
 
 open class CompileBenchmarkingPlugin : Plugin<Project> {
@@ -43,9 +62,10 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
         // Compile tasks.
         afterEvaluate {
             for (number in 1..repeatNumber) {
-                buildSteps.forEach { (taskName, command) ->
+                buildSteps.forEach { step ->
+                    val taskName = step.name
                     tasks.create("$taskName$number", Exec::class.java).apply {
-                        commandLine(command)
+                        commandLine(step.command)
                         isIgnoreExitValue = true
                         konanRun.dependsOn(this)
                         doLast {
@@ -65,7 +85,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
             doLast {
                 val nativeCompileTime = getCompileBenchmarkTime(
                     applicationName,
-                    buildSteps.keys,
+                    buildSteps.names,
                     repeatNumber,
                     exitCodes
                 )

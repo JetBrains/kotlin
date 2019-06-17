@@ -16,7 +16,9 @@ val binarySuffix = getNativeProgramExtension()
 compileBenchmark {
     applicationName = "HelloWorld"
     repeatNumber = 10
-    buildSteps = mapOf(
-        "runKonanc" to listOf("$dist/bin/konanc$toolSuffix", "$projectDir/src/main/kotlin/main.kt", "-o", "$buildDir/program$binarySuffix")
-    )
+    buildSteps {
+        step("runKonanc") {
+            command("$dist/bin/konanc$toolSuffix", "$projectDir/src/main/kotlin/main.kt", "-o", "$buildDir/program$binarySuffix")
+        }
+    }
 }
