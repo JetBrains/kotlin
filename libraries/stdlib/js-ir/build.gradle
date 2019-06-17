@@ -61,6 +61,7 @@ def jsCommonDir = "${buildDir}/common-js-sources"
 
 task prepareCommonJsSources(type: Sync) {
     from("${projectDir}/../js/")
+    exclude 'src/generated/**' // is used for legacy backend
     into jsCommonDir
 }
 
@@ -71,11 +72,7 @@ sourceSets {
             srcDir "${projectDir}/runtime"
             srcDir "${projectDir}/src"
 
-            // "${jsCommonDir}/src/generated" is used for legacy backend
-            srcDir "${jsCommonDir}/src/jquery"
-            srcDir "${jsCommonDir}/src/kotlin"
-            srcDir "${jsCommonDir}/src/org.w3c"
-
+            srcDir "${jsCommonDir}/src"
             srcDir "${jsCommonDir}/runtime"
 
             srcDir builtinsSrcDir
