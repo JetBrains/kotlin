@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -25,6 +27,10 @@ class FirLocalScope : FirScope() {
             is FirVariable -> properties[declaration.name] = declaration.symbol
             is FirNamedFunction -> functions[declaration.name] = declaration.symbol as FirFunctionSymbol
         }
+    }
+
+    fun storeBackingField(property: FirProperty) {
+        properties[FirBackingFieldReference.NAME] = property.backingFieldSymbol
     }
 
     override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {

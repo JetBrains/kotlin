@@ -34,6 +34,11 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/arrayFirstOrNull.kt");
     }
 
+    @TestMetadata("backingField.kt")
+    public void testBackingField() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/backingField.kt");
+    }
+
     @TestMetadata("companionLoad.kt")
     public void testCompanionLoad() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/companionLoad.kt");
@@ -62,6 +67,11 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
     @TestMetadata("functionX.kt")
     public void testFunctionX() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/functionX.kt");
+    }
+
+    @TestMetadata("hashSet.kt")
+    public void testHashSet() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/hashSet.kt");
     }
 
     @TestMetadata("helloWorld.kt")

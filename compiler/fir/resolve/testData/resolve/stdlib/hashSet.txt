@@ -1,0 +1,12 @@
+FILE: hashSet.kt
+    public final val a: R|kotlin/collections/MutableSet<kotlin/String>|? = R|java/util/HashSet.HashSet|<R|kotlin/Any|?>()
+        public get(): R|kotlin/collections/MutableSet<kotlin/String>|?
+    public final var b: R|kotlin/collections/MutableSet<kotlin/String>|? = Null(null)
+        public get(): R|kotlin/collections/MutableSet<kotlin/String>|?
+        public set(_: R|kotlin/collections/MutableSet<kotlin/String>|?): R|kotlin/Unit| {
+            F|/b| = R|java/util/HashSet.HashSet|()
+        }
+    public final fun foo(): R|kotlin/Unit| {
+        lvar c: R|kotlin/collections/MutableSet<kotlin/String>|? = Null(null)
+        R|<local>/c| = R|java/util/HashSet.HashSet|()
+    }

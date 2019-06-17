@@ -1,0 +1,8 @@
+FILE: backingField.kt
+    public final var myProperty: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1), Int(2), Int(3))
+        public get(): R|kotlin/collections/List<kotlin/Int>| {
+            ^ F|/myProperty|.R|kotlin/collections/plus|<R|kotlin/Int|>(F|/myProperty|)
+        }
+        public set(param: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+            F|/myProperty| = R|<local>/param|
+        }

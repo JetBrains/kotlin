@@ -160,6 +160,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitNamedReference(resolvedCallableReference, null)
     }
 
+    open fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {
+        visitResolvedCallableReference(backingFieldReference, null)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference) {
         visitReference(superReference, null)
     }
@@ -462,6 +466,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitAssignment(assignment: FirAssignment, data: Nothing?) {
         visitAssignment(assignment)
+    }
+
+    final override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference, data: Nothing?) {
+        visitBackingFieldReference(backingFieldReference)
     }
 
     final override fun visitBlock(block: FirBlock, data: Nothing?) {
