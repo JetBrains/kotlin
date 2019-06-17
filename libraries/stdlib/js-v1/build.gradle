@@ -308,6 +308,7 @@ task mergedJar(type: Jar, dependsOn: compileJs) {
 task sourcesJar(type: Jar, dependsOn: compileJs) {
     classifier = 'sources'
     includeEmptyDirs false
+    duplicatesStrategy = DuplicatesStrategy.FAIL
     from(sourceSets.builtins.allSource) {
         into 'kotlin'
     }

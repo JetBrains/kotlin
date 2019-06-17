@@ -143,10 +143,12 @@ archivesBaseName = 'kotlin-stdlib-js-ir'
 
 jar {
     manifestAttributes(manifest, project, 'Main')
+    duplicatesStrategy = DuplicatesStrategy.FAIL
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
+    duplicatesStrategy = DuplicatesStrategy.FAIL
     from (sourceSets.main.allSource)
 }
 
