@@ -32,10 +32,16 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), RawType {
+class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: SimpleType, disableAssertion: Boolean) :
+    FlexibleType(lowerBound, upperBound), RawType {
+
+    constructor(lowerBound: SimpleType, upperBound: SimpleType) : this(lowerBound, upperBound, false)
+
     init {
-        assert(KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
-            "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
+        if (!disableAssertion) {
+            assert(KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
+                "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
+            }
         }
     }
 
@@ -87,7 +93,11 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
     @TypeRefinement
     @UseExperimental(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): FlexibleType {
-        return RawTypeImpl(kotlinTypeRefiner.refineType(lowerBound) as SimpleType, kotlinTypeRefiner.refineType(upperBound) as SimpleType)
+        return RawTypeImpl(
+            kotlinTypeRefiner.refineType(lowerBound) as SimpleType,
+            kotlinTypeRefiner.refineType(upperBound) as SimpleType,
+            disableAssertion = true
+        )
     }
 }
 
