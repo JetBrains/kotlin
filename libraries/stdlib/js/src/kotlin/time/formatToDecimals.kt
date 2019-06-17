@@ -24,5 +24,5 @@ internal actual fun formatUpToDecimals(value: Double, decimals: Int): String {
 }
 
 internal actual fun formatScientific(value: Double): String {
-    return value.asDynamic().toExponential(2).unsafeCast<String>().replace("+", "")
+    return value.asDynamic().toExponential(2).unsafeCast<String>()
 }

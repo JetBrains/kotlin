@@ -11,10 +11,11 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.concurrent.getOrSet
 
-private val rootFormatSymbols = DecimalFormatSymbols(Locale.ROOT).apply { exponentSeparator = "e" }
+private val rootNegativeExpFormatSymbols = DecimalFormatSymbols(Locale.ROOT).apply { exponentSeparator = "e" }
+private val rootPositiveExpFormatSymbols = DecimalFormatSymbols(Locale.ROOT).apply { exponentSeparator = "e+" }
 private val precisionFormats = Array(4) { ThreadLocal<DecimalFormat>() }
 
-private fun createFormatForDecimals(decimals: Int) = DecimalFormat("0", rootFormatSymbols).apply {
+private fun createFormatForDecimals(decimals: Int) = DecimalFormat("0", rootNegativeExpFormatSymbols).apply {
     if (decimals > 0) minimumFractionDigits = decimals
     roundingMode = RoundingMode.HALF_UP
 }
@@ -34,4 +35,8 @@ internal actual fun formatUpToDecimals(value: Double, decimals: Int): String =
 
 private val scientificFormat = ThreadLocal<DecimalFormat>()
 internal actual fun formatScientific(value: Double): String =
-    scientificFormat.getOrSet { DecimalFormat("0E0", rootFormatSymbols).apply { minimumFractionDigits = 2 } }.format(value)
+    scientificFormat.getOrSet { DecimalFormat("0E0", rootNegativeExpFormatSymbols).apply { minimumFractionDigits = 2 } }
+        .apply {
+            decimalFormatSymbols = if (value >= 1 || value <= -1) rootPositiveExpFormatSymbols else rootNegativeExpFormatSymbols
+        }
+        .format(value)

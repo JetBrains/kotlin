@@ -309,12 +309,12 @@ class DurationTest {
         test(DurationUnit.NANOSECONDS, "0ns", "0.0ns", "0.02ns", "0.020ns", "0.0202ns")
 
         d = Double.MAX_VALUE.nanoseconds
-        test(DurationUnit.DAYS, "2.08e294d")
-        test(DurationUnit.NANOSECONDS, "1.80e308ns")
+        test(DurationUnit.DAYS, "2.08e+294d")
+        test(DurationUnit.NANOSECONDS, "1.80e+308ns")
 
         assertEquals("0.500000000000s", 0.5.seconds.toString(DurationUnit.SECONDS, 100))
         assertEquals("99999000000000.000000000000ns", 99_999.seconds.toString(DurationUnit.NANOSECONDS, 15))
-        assertEquals("1.00e14ns", 100_000.seconds.toString(DurationUnit.NANOSECONDS, 9))
+        assertEquals("1.00e+14ns", 100_000.seconds.toString(DurationUnit.NANOSECONDS, 9))
 
         d = Duration.INFINITE
         test(DurationUnit.DAYS, "Infinity", "Infinity")
@@ -378,15 +378,15 @@ class DurationTest {
 
         test(Duration.ZERO, "0s")
         test(365.days * 10000, "3650000d")
-        test(300.days * 100000, "3e7d", "3.00e7d")
-        test(365.days * 100000, "3.65e7d")
+        test(300.days * 100000, "3.00e+7d")
+        test(365.days * 100000, "3.65e+7d")
 
         val universeAge = 365.25.days * 13.799e9
         val planckTime = 5.4e-44.seconds
 
-        test(universeAge, "5.04e12d")
-        test(planckTime, "5.4e-44s", "5.40e-44s")
-        test(Double.MAX_VALUE.nanoseconds, "2.08e294d")
+        test(universeAge, "5.04e+12d")
+        test(planckTime, "5.40e-44s")
+        test(Double.MAX_VALUE.nanoseconds, "2.08e+294d")
         test(Duration.INFINITE, "Infinity")
     }
 
