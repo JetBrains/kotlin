@@ -15,9 +15,9 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = hashS
     GradleTarget("gradle.target", gradleTargetEvents),
     MavenTarget("maven.target", mavenTargetEvents),
     JPSTarget("jps.target", JPSTargetEvents),
-    Refactoring("ide.action.refactoring"),
-    NewFileTemplate("ide.newFileTempl"),
-    NPWizards("ide.npwizards"),
+    Refactoring("ide.action.refactoring", refactoringEvents),
+    NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
+    NPWizards("ide.npwizards", NPWizardsEvents),
     DebugEval("ide.debugger.eval");
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
@@ -64,4 +64,48 @@ val JPSTargetEvents = hashSetOf(
     "js",
     "jvm",
     "native"
+)
+val refactoringEvents = hashSetOf(
+    "RenameKotlinFileProcessor",
+    "RenameKotlinFunctionProcessor",
+    "RenameKotlinPropertyProcessor",
+    "RenameKotlinPropertyProcessor",
+    "RenameKotlinClassifierProcessor",
+    "RenameKotlinClassifierProcessor",
+    "RenameKotlinClassifierProcessor",
+    "RenameKotlinParameterProcessor",
+    "JavaMemberByKotlinReferenceInplaceRenameHandler"
+)
+val newFileTemplateEvents = hashSetOf(
+    "Kotlin_File",
+    "Kotlin_Class",
+    "Kotlin_Interface",
+    "Kotlin_Object",
+    "Kotlin_Enum",
+    "Kotlin_Scratch",
+    "Kotlin_Script"
+)
+val NPWizardsEvents = hashSetOf(
+    "KotlinModuleBuilder: JVM (JVM_1_6)",
+    "KotlinModuleBuilder: JVM (JVM_1_8)",
+    "KotlinModuleBuilder: JVM (JVM_9)",
+    "KotlinModuleBuilder: JVM (JVM_10)",
+    "KotlinModuleBuilder: JVM (JVM_11)",
+    "KotlinModuleBuilder: JVM (JVM_12)",
+    "KotlinModuleBuilder: JS",
+    "KotlinGradleNativeMultiplatformModuleBuilder",
+    "KotlinGradleSharedMultiplatformModuleBuilder",
+    "KotlinGradleWebMultiplatformModuleBuilder",
+    "KotlinGradleMobileMultiplatformModuleBuilder",
+    "KotlinGradleMobileSharedMultiplatformModuleBuilder",
+    "KotlinJavaFrameworkSupportProvider",
+    "GradleKotlinJavaFrameworkSupportProvider",
+    "GradleKotlinJSFrameworkSupportProvider",
+    "GradleKotlinJSBrowserFrameworkSupportProvider",
+    "GradleKotlinJSNodeFrameworkSupportProvider",
+    "GradleKotlinMPPFrameworkSupportProvider",
+    "KotlinDslGradleKotlinJavaFrameworkSupportProvider",
+    "KotlinDslGradleKotlinJSFrameworkSupportProvider",
+    "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
+    "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
 )
