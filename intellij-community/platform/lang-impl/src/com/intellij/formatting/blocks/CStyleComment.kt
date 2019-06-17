@@ -36,7 +36,7 @@ class CStyleCommentBlock(comment: ASTNode, private val indent: Indent?): Abstrac
   private val ranges: List<TextRange> by lazy {
     val result = mutableListOf<TextRange>()
 
-    val text = node.text
+    val text = node.chars
     var start = 0
     for (i in 2 until text.length) {
       val c = text[i]
