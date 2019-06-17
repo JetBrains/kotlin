@@ -1,5 +1,5 @@
 FILE: hashSet.kt
-    public final val a: R|kotlin/collections/MutableSet<kotlin/String>|? = R|java/util/HashSet.HashSet|<R|kotlin/Any|?>()
+    public final val a: R|kotlin/collections/MutableSet<kotlin/String>|? = R|java/util/HashSet.HashSet|<R|kotlin/String|>()
         public get(): R|kotlin/collections/MutableSet<kotlin/String>|?
     public final var b: R|kotlin/collections/MutableSet<kotlin/String>|? = Null(null)
         public get(): R|kotlin/collections/MutableSet<kotlin/String>|?
