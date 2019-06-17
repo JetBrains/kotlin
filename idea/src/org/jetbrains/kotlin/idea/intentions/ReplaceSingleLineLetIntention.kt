@@ -62,8 +62,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
 ) {
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
-        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return
-        when (bodyExpression) {
+        when (val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return) {
             is KtDotQualifiedExpression -> bodyExpression.applyTo(element)
             is KtBinaryExpression -> bodyExpression.applyTo(element)
             is KtCallExpression -> bodyExpression.applyTo(element, lambdaExpression.functionLiteral, editor)
@@ -73,8 +72,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     private fun KtBinaryExpression.applyTo(element: KtCallExpression) {
         val left = left ?: return
         val factory = KtPsiFactory(element.project)
-        val parent = element.parent
-        when (parent) {
+        when (val parent = element.parent) {
             is KtQualifiedExpression -> {
                 val receiver = parent.receiverExpression
                 val newLeft = when (left) {
@@ -96,8 +94,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     }
 
     private fun KtDotQualifiedExpression.applyTo(element: KtCallExpression) {
-        val parent = element.parent
-        when (parent) {
+        when (val parent = element.parent) {
             is KtQualifiedExpression -> {
                 val factory = KtPsiFactory(element.project)
                 val receiver = parent.receiverExpression
@@ -126,9 +123,8 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         if (!element.isLetMethodCall()) return false
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return false
         val parameterName = lambdaExpression.getParameterName() ?: return false
-        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
 
-        return when (bodyExpression) {
+        return when (val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false) {
             is KtBinaryExpression ->
                 element.parent !is KtSafeQualifiedExpression && bodyExpression.isApplicable(parameterName)
             is KtDotQualifiedExpression ->
@@ -200,7 +196,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         val context = analyze(BodyResolveMode.PARTIAL)
         val parameterDescriptor = context[BindingContext.FUNCTION, this]?.valueParameters?.singleOrNull() ?: return emptyList()
         val variableDescriptorByName = if (parameterDescriptor is ValueParameterDescriptorImpl.WithDestructuringDeclaration)
-            parameterDescriptor.destructuringVariables.associate { it.name to it }
+            parameterDescriptor.destructuringVariables.associateBy { it.name }
         else
             mapOf(parameterDescriptor.name to parameterDescriptor)
 
