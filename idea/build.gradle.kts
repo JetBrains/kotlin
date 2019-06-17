@@ -175,6 +175,7 @@ dependencies {
 
     performanceTestCompile(sourceSets["test"].output)
     performanceTestCompile(sourceSets["main"].output)
+    performanceTestRuntime(sourceSets["performanceTest"].output)
 }
 
 projectTest(parallel = true) {
