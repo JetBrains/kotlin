@@ -1706,6 +1706,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/memberExtensionsImportedFromObjectsUnsupported.kt");
             }
 
+            @TestMetadata("noExceptionOnRedCodeWithArrayLikeCall.kt")
+            public void testNoExceptionOnRedCodeWithArrayLikeCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/noExceptionOnRedCodeWithArrayLikeCall.kt");
+            }
+
             @TestMetadata("packageInLhs.kt")
             public void testPackageInLhs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/packageInLhs.kt");

@@ -129,7 +129,10 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
 
         fun isNumberedTypeWithOneOrMoreNumber(type: KotlinType): Boolean {
             val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-            if (DescriptorUtils.getFqName(descriptor).parent().toSafe() != KOTLIN_REFLECT_FQ_NAME) return false
+            val fqName = DescriptorUtils.getFqName(descriptor)
+            if (fqName.isRoot) return false
+
+            if (fqName.parent().toSafe() != KOTLIN_REFLECT_FQ_NAME) return false
             val shortName = descriptor.name.asString()
 
             for (prefix in PREFIXES) {
