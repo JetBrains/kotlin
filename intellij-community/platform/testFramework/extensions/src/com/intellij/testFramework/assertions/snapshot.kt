@@ -94,7 +94,7 @@ fun compareFileContent(actual: Any, snapshotFile: Path, updateIfMismatch: Boolea
   }
 }
 
-private fun getNormalizedActualContent(actual: CharSequence): CharSequence {
+internal fun getNormalizedActualContent(actual: CharSequence): CharSequence {
   var actualContent = actual
   if (SystemInfo.isWindows) {
     actualContent = StringUtilRt.convertLineSeparators(actualContent, "\n")

@@ -234,7 +234,7 @@ abstract class ComponentStoreImpl : IComponentStore {
     LOG.debug { "saveComponent is called for ${stateSpec.name}" }
     val saveManager = createSaveSessionProducerManager()
     commitComponent(saveManager, ComponentInfoImpl(component, stateSpec), null)
-    val absolutePath = Paths.get(storageManager.expandMacros(findNonDeprecated(stateSpec.storages).path)).toAbsolutePath().toString()
+    val absolutePath = Paths.get(storageManager.expandMacros(findNonDeprecated(getStorageSpecs(component, stateSpec, StateStorageOperation.WRITE)).path)).toAbsolutePath().toString()
     val newDisposable = Disposer.newDisposable()
     try {
       VfsRootAccess.allowRootAccess(newDisposable, absolutePath)
@@ -564,8 +564,9 @@ abstract class ComponentStoreImpl : IComponentStore {
   override fun toString() = storageManager.componentManager.toString()
 }
 
-private fun findNonDeprecated(storages: Array<Storage>) = storages.firstOrNull { !it.deprecated } ?: throw AssertionError(
-  "All storages are deprecated")
+private fun findNonDeprecated(storages: List<Storage>): Storage {
+  return storages.firstOrNull { !it.deprecated } ?: throw AssertionError("All storages are deprecated")
+}
 
 enum class StateLoadPolicy {
   LOAD, LOAD_ONLY_DEFAULT, NOT_LOAD

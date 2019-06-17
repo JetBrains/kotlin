@@ -81,11 +81,6 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
     return StateMap.fromMap(FileStorageCoreUtil.load(element, pathMacroSubstitutor))
   }
 
-  fun setDefaultState(element: Element) {
-    element.name = rootElementName!!
-    storageDataRef.set(loadState(element))
-  }
-
   final override fun createSaveSessionProducer(): SaveSessionProducer? {
     return if (checkIsSavingDisabled()) null else createSaveSession(getStorageData())
   }
