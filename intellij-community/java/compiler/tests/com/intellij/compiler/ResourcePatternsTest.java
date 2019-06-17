@@ -6,7 +6,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * @author peter
  */
-public class ResourcePatternsTest extends LightCodeInsightFixtureTestCase {
+public class ResourcePatternsTest extends LightJavaCodeInsightFixtureTestCase {
   private String[] oldPatterns;
 
   @NotNull

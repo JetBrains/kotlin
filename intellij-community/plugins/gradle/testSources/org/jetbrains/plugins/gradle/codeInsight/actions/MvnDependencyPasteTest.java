@@ -20,11 +20,11 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.testFramework.LightJavaCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MvnDependencyPasteTest extends LightCodeInsightTestCase {
+public class MvnDependencyPasteTest extends LightJavaCodeInsightTestCase {
 
   public void testPastedGradleDependency() {
     configureFromFileText("pom.xml", getDependency("group", "artifact", "1.0", "runtime", null));

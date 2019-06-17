@@ -2,7 +2,7 @@ package com.intellij.compiler;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.encoding.EncodingProjectManager;
-import com.intellij.testFramework.PsiTestCase;
+import com.intellij.testFramework.JavaPsiTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * @author nik
  */
-public class CompilerEncodingServiceTest extends PsiTestCase {
+public class CompilerEncodingServiceTest extends JavaPsiTestCase {
   private static final Charset WINDOWS_1251 = Charset.forName("windows-1251");
   private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
 

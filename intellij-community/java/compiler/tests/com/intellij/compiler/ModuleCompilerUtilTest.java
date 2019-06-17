@@ -18,7 +18,7 @@ package com.intellij.compiler;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
-import com.intellij.testFramework.ModuleTestCase;
+import com.intellij.testFramework.JavaModuleTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import com.intellij.testFramework.fixtures.impl.TempDirTestFixtureImpl;
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author nik
  */
-public class ModuleCompilerUtilTest extends ModuleTestCase {
+public class ModuleCompilerUtilTest extends JavaModuleTestCase {
   private TempDirTestFixture myTempDirTestFixture;
 
   @Override
