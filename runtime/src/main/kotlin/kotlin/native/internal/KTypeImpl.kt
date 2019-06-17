@@ -21,6 +21,40 @@ internal class KTypeImpl(
     override fun hashCode(): Int {
         return (classifier?.hashCode() ?: 0) * 31 * 31 + this.arguments.hashCode() * 31 + if (isMarkedNullable) 1 else 0
     }
+
+    override fun toString(): String {
+        val classifierString = when (classifier) {
+            is KClass<*> -> classifier.qualifiedName ?: classifier.simpleName
+            else -> null
+        } ?: return "(non-denotable type)"
+
+        return buildString {
+            append(classifierString)
+
+            if (arguments.isNotEmpty()) {
+                append('<')
+
+                arguments.forEachIndexed { index, argument ->
+                    if (index > 0) append(", ")
+
+                    if (argument.variance == null) {
+                        append('*')
+                    } else {
+                        append(when (argument.variance) {
+                            KVariance.INVARIANT -> ""
+                            KVariance.IN -> "in "
+                            KVariance.OUT -> "out "
+                        })
+                        append(argument.type)
+                    }
+                }
+
+                append('>')
+            }
+
+            if (isMarkedNullable) append('?')
+        }
+    }
 }
 
 internal class KTypeImplForGenerics : KType {
