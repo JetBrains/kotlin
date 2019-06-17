@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard;
 
+import com.google.common.collect.Sets;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
@@ -168,11 +169,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
         boolean onAdd = event.getOperation() == ContentManagerEvent.ContentOperation.add;
         Content content = event.getContent();
         if (onAdd) {
-          RunnerLayoutUiImpl ui = getRunnerLayoutUi(RunContentManagerImpl.getRunContentDescriptorByContent(content));
-          if (ui != null) {
-            ui.setLeftToolbarVisible(false);
-            ui.setContentToolbarBefore(false);
-          }
+          updateContentToolbar(content, false);
           updateServiceContent(content);
         }
 
@@ -203,6 +200,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
         if (myContentManager.getContentCount() == 0 && !isShowConfigurations()) {
           setShowConfigurations(true);
         }
+        removeServiceContent(event.getContent());
       }
     });
   }
@@ -323,13 +321,58 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
   @Override
   public void setTypes(@NotNull Set<String> types) {
+    Set<String> removed = new HashSet<>(Sets.difference(myState.configurationTypes, types));
+    Set<String> added = new HashSet<>(Sets.difference(types, myState.configurationTypes));
+
     myState.configurationTypes.clear();
     myState.configurationTypes.addAll(types);
     if (!myState.configurationTypes.isEmpty()) {
       initToolWindowContentListeners();
     }
     syncConfigurations();
+    moveRemovedTypesContent(removed);
+    moveAddedTypesContent(added);
     updateDashboard(true);
+  }
+
+  private void moveRemovedTypesContent(Set<String> removedTypes) {
+    if (removedTypes.isEmpty()) return;
+
+    ExecutionManagerImpl executionManager = (ExecutionManagerImpl)ExecutionManager.getInstance(myProject);
+    RunContentManagerImpl runContentManager = (RunContentManagerImpl)executionManager.getContentManager();
+    for (RunDashboardService service : getRunConfigurations()) {
+      Content content = service.getContent();
+      if (content == null || !removedTypes.contains(service.getSettings().getType().getId())) continue;
+
+      RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
+      if (descriptor == null) continue;
+
+      Executor executor = RunContentManagerImpl.getExecutorByContent(content);
+      if (executor == null) continue;
+
+      descriptor.setContentToolWindowId(null);
+      updateContentToolbar(content, true);
+      runContentManager.moveContent(executor, descriptor);
+    }
+  }
+
+  private void moveAddedTypesContent(Set<String> addedTypes) {
+    if (addedTypes.isEmpty()) return;
+
+    ExecutionManagerImpl executionManager = (ExecutionManagerImpl)ExecutionManager.getInstance(myProject);
+    RunContentManagerImpl runContentManager = (RunContentManagerImpl)executionManager.getContentManager();
+    List<RunContentDescriptor> descriptors =
+      executionManager.getRunningDescriptors(settings -> addedTypes.contains(settings.getType().getId()));
+    for (RunContentDescriptor descriptor : descriptors) {
+      Content content = descriptor.getAttachedContent();
+      if (content == null) continue;
+
+      Executor executor = RunContentManagerImpl.getExecutorByContent(content);
+      if (executor == null) continue;
+
+      descriptor.setContentToolWindowId(getToolWindowId());
+      runContentManager.moveContent(executor, descriptor);
+    }
   }
 
   @Override
@@ -572,22 +615,23 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     myServiceLock.writeLock().lock();
     try {
       doAddServiceContent(settings, content);
-      Disposer.register(content, () -> {
-        RunDashboardServiceImpl service = findService(content);
-        if (service == null) return;
-
-        myServiceLock.writeLock().lock();
-        try {
-          removeServiceContent(service);
-        }
-        finally {
-          myServiceLock.writeLock().unlock();
-          updateDashboard(true);
-        }
-      });
     }
     finally {
       myServiceLock.writeLock().unlock();
+    }
+  }
+
+  private void removeServiceContent(@NotNull Content content) {
+    myServiceLock.writeLock().lock();
+    try {
+      RunDashboardServiceImpl service = findService(content);
+      if (service == null) return;
+
+      doRemoveServiceContent(service);
+    }
+    finally {
+      myServiceLock.writeLock().unlock();
+      updateDashboard(true);
     }
   }
 
@@ -595,13 +639,13 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     RunnerAndConfigurationSettings settings = findSettings(content);
     if (settings == null) return;
 
-    RunDashboardServiceImpl service = findService(content);
-    if (service == null || service.getSettings().equals(settings)) return;
-
     myServiceLock.writeLock().lock();
     try {
+      RunDashboardServiceImpl service = findService(content);
+      if (service == null || service.getSettings().equals(settings)) return;
+
       doAddServiceContent(settings, content);
-      removeServiceContent(service);
+      doRemoveServiceContent(service);
     }
     finally {
       myServiceLock.writeLock().unlock();
@@ -624,7 +668,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     newService.setContent(content);
   }
 
-  private void removeServiceContent(@NotNull RunDashboardServiceImpl service) {
+  private void doRemoveServiceContent(@NotNull RunDashboardServiceImpl service) {
     service.setContent(null);
     RunnerAndConfigurationSettings contentSettings = service.getSettings();
     List<RunDashboardServiceImpl> services = getServices(contentSettings);
@@ -673,6 +717,14 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
       }
     }
     return null;
+  }
+
+  private static void updateContentToolbar(Content content, boolean visible) {
+    RunnerLayoutUiImpl ui = getRunnerLayoutUi(RunContentManagerImpl.getRunContentDescriptorByContent(content));
+    if (ui != null) {
+      ui.setLeftToolbarVisible(visible);
+      ui.setContentToolbarBefore(visible);
+    }
   }
 
   @Nullable
