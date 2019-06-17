@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public class RunDashboardToolWindowFactory implements ToolWindowFactory, Condition<Project>, DumbAware {
   @Override
   public boolean value(Project project) {
-    return !Registry.is("ide.service.view") && !RunDashboardManager.getInstance(project).getTypes().isEmpty();
+    return !Registry.is("ide.service.view");
   }
 
   @Override

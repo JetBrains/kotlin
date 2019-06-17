@@ -46,6 +46,7 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
   public static final Key<Boolean> ALWAYS_USE_DEFAULT_STOPPING_BEHAVIOUR_KEY = Key.create("ALWAYS_USE_DEFAULT_STOPPING_BEHAVIOUR_KEY");
   private static final Logger LOG = Logger.getInstance(RunContentManagerImpl.class);
   private static final Key<Executor> EXECUTOR_KEY = Key.create("Executor");
+  private static final Key<ContentManagerListener> CLOSE_LISTENER_KEY = Key.create("CloseListener");
 
   private final Project myProject;
   private final Map<String, ContentManager> myToolwindowIdToContentManagerMap = new THashMap<>();
@@ -295,19 +296,10 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
         @Override
         public void processTerminated(@NotNull final ProcessEvent event) {
           ApplicationManager.getApplication().invokeLater(() -> {
-            boolean alive = false;
             ContentManager manager = myToolwindowIdToContentManagerMap.get(toolWindowId);
             if (manager == null) return;
-            for (Content content1 : manager.getContents()) {
-              RunContentDescriptor descriptor1 = getRunContentDescriptorByContent(content1);
-              if (descriptor1 != null) {
-                ProcessHandler handler = descriptor1.getProcessHandler();
-                if (handler != null && !handler.isProcessTerminated()) {
-                  alive = true;
-                  break;
-                }
-              }
-            }
+
+            boolean alive = isAlive(manager);
             Icon base = myToolwindowIdToBaseIconMap.get(toolWindowId);
             toolWindow.setIcon(alive ? ExecutionUtil.getLiveIndicator(base) : base);
 
@@ -330,7 +322,8 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
 
     if (oldDescriptor == null) {
       contentManager.addContent(content);
-      new CloseListener(content, executor);
+      CloseListener listener = new CloseListener(content, executor);
+      content.putUserData(CLOSE_LISTENER_KEY, listener);
     }
 
     if (descriptor.isSelectContentWhenAdded()
@@ -600,6 +593,62 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
       }
     }
     return null;
+  }
+
+  public void moveContent(@NotNull Executor executor, @NotNull RunContentDescriptor descriptor) {
+    Content content = descriptor.getAttachedContent();
+    if (content == null) return;
+
+    ContentManager oldContentManager = content.getManager();
+    ContentManager newContentManager = getContentManagerForRunner(executor, descriptor);
+    if (oldContentManager == null || oldContentManager == newContentManager) return;
+
+    ContentManagerListener listener = content.getUserData(CLOSE_LISTENER_KEY);
+    if (listener != null) {
+      oldContentManager.removeContentManagerListener(listener);
+    }
+    oldContentManager.removeContent(content, false);
+    if (isAlive(descriptor)) {
+      if (!isAlive(oldContentManager)) {
+        updateToolWindowIcon(oldContentManager, false);
+      }
+      if (!isAlive(newContentManager)) {
+        updateToolWindowIcon(newContentManager, true);
+      }
+    }
+    newContentManager.addContent(content);
+    if (listener != null) {
+      newContentManager.addContentManagerListener(listener);
+    }
+  }
+
+  private void updateToolWindowIcon(@NotNull ContentManager contentManager, boolean alive) {
+    for (Map.Entry<String, ContentManager> entry : myToolwindowIdToContentManagerMap.entrySet()) {
+      if (entry.getValue().equals(contentManager)) {
+        String toolWindowId = entry.getKey();
+        ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(toolWindowId);
+        if (toolWindow != null) {
+          Icon base = myToolwindowIdToBaseIconMap.get(toolWindowId);
+          toolWindow.setIcon(alive ? ExecutionUtil.getLiveIndicator(base) : base);
+        }
+        return;
+      }
+    }
+  }
+
+  private static boolean isAlive(@NotNull ContentManager contentManager) {
+    for (Content content : contentManager.getContents()) {
+      RunContentDescriptor descriptor = getRunContentDescriptorByContent(content);
+      if (descriptor != null && isAlive(descriptor)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isAlive(@NotNull RunContentDescriptor descriptor) {
+    ProcessHandler handler = descriptor.getProcessHandler();
+    return handler != null && !handler.isProcessTerminated();
   }
 
   private class CloseListener extends BaseContentCloseListener {
