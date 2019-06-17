@@ -180,9 +180,9 @@ public class ParameterHintsPresentationManager implements Disposable {
     private void updateState(Editor editor, String text, HintWidthAdjustment widthAdjustment, boolean animated) {
       setWidthAdjustment(widthAdjustment);
       FontMetrics metrics = getFontMetrics(editor).getMetrics();
-      startWidth = doCalcWidth(getText(), metrics);
+      startWidth = calcHintTextWidth(getText(), metrics);
       setText(text);
-      int endWidth = doCalcWidth(getText(), metrics);
+      int endWidth = calcHintTextWidth(getText(), metrics);
       steps = Math.max(1, Math.abs(endWidth - startWidth) / metrics.charWidth('a') / ANIMATION_CHARS_PER_STEP);
       step = animated ? 1 : steps + 1;
     }
