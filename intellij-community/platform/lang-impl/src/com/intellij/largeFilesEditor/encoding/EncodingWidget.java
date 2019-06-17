@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.encoding;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -21,7 +20,6 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget.Multiframe, CustomStatusBarWidget {
@@ -43,19 +41,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
 
     myUpdateAlarm = new Alarm(this);
 
-    myComponent = new TextPanel.ExtraSize() {
-      @Override
-      protected void paintComponent(@NotNull final Graphics g) {
-        super.paintComponent(g);
-        if (myActionEnabled && getText() != null) {
-          final Rectangle r = getBounds();
-          final Insets insets = getInsets();
-          Icon arrows = AllIcons.Ide.Statusbar_arrows;
-          arrows.paintIcon(this, g, r.width - insets.right - arrows.getIconWidth() - 2,
-                           r.height / 2 - arrows.getIconHeight() / 2);
-        }
-      }
-    };
+    myComponent = new TextPanel.WithIconAndArrows();
 
     myComponent.setBorder(WidgetBorder.WIDE);
 
