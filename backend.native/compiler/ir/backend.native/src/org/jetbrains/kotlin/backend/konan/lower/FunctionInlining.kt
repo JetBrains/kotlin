@@ -47,6 +47,8 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             return expression
         if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
             return expression
+        if (callee.isTypeOfIntrinsic())
+            return expression
 
         val actualCallee = getFunctionDeclaration(callee.symbol)
 

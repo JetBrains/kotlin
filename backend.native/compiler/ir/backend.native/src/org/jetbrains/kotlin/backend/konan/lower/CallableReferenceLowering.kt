@@ -40,6 +40,8 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
 
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
+    private val kTypeGenerator = KTypeGenerator(context)
+
     override fun lower(irFile: IrFile) {
         var generatedClasses = mutableListOf<IrClass>()
         irFile.transform(object: IrElementTransformerVoidWithContext() {
@@ -266,7 +268,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                         val needReceiver = boundFunctionParameters.singleOrNull()?.descriptor is ReceiverParameterDescriptor
                         val receiver = if (needReceiver) irGet(valueParameters.single()) else irNull()
                         putValueArgument(3, receiver)
-                        putValueArgument(4, irKType(this@CallableReferenceLowering.context, referencedFunction.returnType))
+                        putValueArgument(4, with(kTypeGenerator) { irKType(referencedFunction.returnType) })
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
                     // Save all arguments to fields.

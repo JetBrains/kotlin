@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.name.Name
 internal class PropertyDelegationLowering(val context: Context) : FileLoweringPass {
     private var tempIndex = 0
 
+    private val kTypeGenerator = KTypeGenerator(context)
+
     private fun getKPropertyImplConstructor(receiverTypes: List<IrType>,
                                             returnType: IrType,
                                             isLocal: Boolean,
@@ -253,7 +255,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                     isMutable     = setterCallableReference != null)
             val initializer = irCall(symbol.owner, constructorTypeArguments).apply {
                 putValueArgument(0, irString(propertyDescriptor.name.asString()))
-                putValueArgument(1, irKType(this@PropertyDelegationLowering.context, returnType))
+                putValueArgument(1, with(kTypeGenerator) { irKType(returnType) })
                 if (getterCallableReference != null)
                     putValueArgument(2, getterCallableReference)
                 if (setterCallableReference != null)
@@ -274,7 +276,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                     isMutable = false)
             val initializer = irCall(symbol.owner, constructorTypeArguments).apply {
                 putValueArgument(0, irString(propertyDescriptor.name.asString()))
-                putValueArgument(1, irKType(this@PropertyDelegationLowering.context, propertyType))
+                putValueArgument(1, with(kTypeGenerator) { irKType(propertyType) })
             }
             return initializer
         }

@@ -5,21 +5,29 @@
 
 package kotlin.native.internal
 
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
+import kotlin.reflect.*
 
-internal class KTypeImpl(override val classifier: KClassifier?, override val isMarkedNullable: Boolean) : KType {
+internal class KTypeImpl(
+        override val classifier: KClassifier?,
+        override val arguments: List<KTypeProjection>,
+        override val isMarkedNullable: Boolean
+) : KType {
     override fun equals(other: Any?) =
-            other is KTypeImpl && classifier == other.classifier && isMarkedNullable == other.isMarkedNullable
+            other is KTypeImpl &&
+                    this.classifier == other.classifier &&
+                    this.arguments == other.arguments &&
+                    this.isMarkedNullable == other.isMarkedNullable
 
     override fun hashCode(): Int {
-        return (classifier?.hashCode() ?: 0) * 31 + if (isMarkedNullable) 1 else 0
+        return (classifier?.hashCode() ?: 0) * 31 * 31 + this.arguments.hashCode() * 31 + if (isMarkedNullable) 1 else 0
     }
 }
 
 internal class KTypeImplForGenerics : KType {
     override val classifier: KClassifier?
         get() = error("Generic types are not yet supported in reflection")
+
+    override val arguments: List<KTypeProjection> get() = emptyList()
 
     override val isMarkedNullable: Boolean
         get() = error("Generic types are not yet supported in reflection")

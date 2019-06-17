@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.allParameters
 import org.jetbrains.kotlin.backend.konan.ir.containsNull
+import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -434,3 +435,8 @@ fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
 
 fun IrFunction.isRestrictedSuspendFunction(languageVersionSettings: LanguageVersionSettings): Boolean =
         this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver(languageVersionSettings) == true
+
+fun IrFunction.isTypeOfIntrinsic(): Boolean =
+        this.name.asString() == "typeOf" &&
+                this.valueParameters.isEmpty() &&
+                (this.parent as? IrPackageFragment)?.fqName == KOTLIN_REFLECT_FQ_NAME

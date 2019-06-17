@@ -41,6 +41,7 @@ class KonanReflectionTypes(module: ModuleDescriptor, internalPackage: FqName) {
     val kMutableProperty0: ClassDescriptor by ClassLookup(kotlinReflectScope)
     val kMutableProperty1: ClassDescriptor by ClassLookup(kotlinReflectScope)
     val kMutableProperty2: ClassDescriptor by ClassLookup(kotlinReflectScope)
+    val kTypeProjection: ClassDescriptor by ClassLookup(kotlinReflectScope)
 
     val kFunctionImpl: ClassDescriptor by ClassLookup(internalScope)
     val kProperty0Impl: ClassDescriptor by ClassLookup(internalScope)
