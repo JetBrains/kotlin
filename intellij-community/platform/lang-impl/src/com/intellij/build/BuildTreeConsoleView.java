@@ -376,11 +376,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     return result.createDefaultResult();
   }
 
-  private static boolean isFailure(EventResult result) {
-    return result instanceof FailureResult ||
-           (result instanceof MessageEventResult && ((MessageEventResult)result).getKind() == MessageEvent.Kind.ERROR);
-  }
-
   private void reportMessageKind(@NotNull MessageEvent messageEvent, @NotNull ExecutionNode parentNode) {
     final MessageEvent.Kind eventKind = messageEvent.getKind();
     if (eventKind == MessageEvent.Kind.ERROR || eventKind == MessageEvent.Kind.WARNING || eventKind == MessageEvent.Kind.INFO) {
