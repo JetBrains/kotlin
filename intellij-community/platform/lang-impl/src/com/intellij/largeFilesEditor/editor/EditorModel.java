@@ -5,6 +5,7 @@ import com.google.common.collect.EvictingQueue;
 import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.largeFilesEditor.file.ReadingPageResultHandler;
 import com.intellij.largeFilesEditor.search.SearchResult;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
@@ -875,6 +876,14 @@ public class EditorModel {
     editor.getSettings().setLineNumbersShown(false);
     editor.getSettings().setFoldingOutlineShown(false);
     editor.getContentComponent().setBorder(JBUI.Borders.emptyLeft(EDITOR_LINE_BEGINNING_INDENT));
+
+    if (editor instanceof EditorEx) {
+      ((EditorEx)editor).setContextMenuGroupId(IdeActions.GROUP_EDITOR_POPUP);
+    }
+    else {
+      LOG.warn("[Large File Editor Subsystem] com.intellij.largeFilesEditor.editor.EditorModel.createSpecialEditor:"
+               + " 'editor' is not instance of EditorEx. Can't set proper context menu group id.");
+    }
 
     // restrict using old soft-wrapping logic for this editor, because it (old logic) can cause unlimited loading of file into document
     editor.putUserData(SoftWrapApplianceManager.IGNORE_OLD_SOFT_WRAP_LOGIC_REGISTRY_OPTION, new Object());
