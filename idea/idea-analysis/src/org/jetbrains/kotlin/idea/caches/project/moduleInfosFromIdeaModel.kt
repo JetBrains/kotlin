@@ -19,12 +19,16 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.types.typeUtil.closure
 import java.util.concurrent.ConcurrentHashMap
 
-fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
+/** null-platform means that we should get all modules */
+fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform? = null): List<IdeaModuleInfo> {
     val modelInfosCache = project.cacheInvalidatingOnRootModifications {
         collectModuleInfosFromIdeaModel(project)
     }
 
-    return modelInfosCache.forPlatform(platform)
+    return if (platform != null)
+        modelInfosCache.forPlatform(platform)
+    else
+        modelInfosCache.allModules()
 }
 
 private class IdeaModelInfosCache(
@@ -39,6 +43,8 @@ private class IdeaModelInfosCache(
             mergePlatformModules(moduleSourceInfos, platform) + libraryInfos + sdkInfos
         }
     }
+
+    fun allModules(): List<IdeaModuleInfo> = moduleSourceInfos + libraryInfos + sdkInfos
 }
 
 

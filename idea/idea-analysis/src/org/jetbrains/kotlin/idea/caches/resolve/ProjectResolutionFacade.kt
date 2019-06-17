@@ -116,7 +116,8 @@ internal class ProjectResolutionFacade(
             projectContext
         )
 
-        val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, settings.platform)).toMutableSet()
+        val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, (settings as? PlatformAnalysisSettingsImpl)?.platform))
+            .toMutableSet()
 
         val syntheticFilesByModule = syntheticFiles.groupBy(KtFile::getModuleInfo)
         val syntheticFilesModules = syntheticFilesByModule.keys
@@ -166,7 +167,7 @@ internal class ProjectResolutionFacade(
             },
             builtIns = builtIns,
             delegateResolver = delegateResolverForProject,
-            firstDependency = settings.sdk?.let { SdkInfo(project, it) },
+            firstDependency = (settings as PlatformAnalysisSettingsImpl).sdk?.let { SdkInfo(project, it) },
             packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
             invalidateOnOOCB = invalidateOnOOCB,
             isReleaseCoroutines = settings.isReleaseCoroutines
