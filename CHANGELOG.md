@@ -1,3 +1,25 @@
+# v1.3.0 (June 2019)
+  * CoreLocation platform library on macOS (GH-3041)
+  * Converting Unit type to Void during producing framework for Objective-C/Swift (GH-2549, GH-1271)
+  * Support linux/arm64 targets (GH-1709)
+  * Performance improvements of memory manager (GH-2813)
+  * FreezableAtomicReference prototype (GH-2776)
+  * Logging and error messages enhancements 
+  * Interop:
+    * Support nullable String return type in reverse C interop (GH-2956)
+    * Support setting custom exception hook in reverse C interop (GH-2941)
+    * Experimental generics support for produced frameworks for Objective-C/Swift implemented by Kevin Galligan (GH-2850)
+    * Improve support for Objective-C methods clashing with methods of Any (GH-2914)
+    * Support variadic Objective-C functions (GH-2896)
+
+# v1.2.1 (Apr 2019)
+  * Fix Objective-C interop with React (GH-2872)
+  * Fix “not in vtable” compiler crash when generating frameworks (GH-2865)
+  * Implement some optimizations (GH-2854)
+  * Fix release build for 32-bit Windows (GH-2848)
+  * Fix casts to type parameters with multiple bounds (GH-2888)
+  * Fix “could not get descriptor uniq id for deserialized class FlagEnum” compiler crash when generating framework (GH-2874)
+
 # v1.2.0 (Apr 2019)
   * New intermediate representation based library format allowing global optimizations
   * Exception backtraces in debug mode on macOS and iOS targets contains symbolic information
