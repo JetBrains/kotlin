@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.newvfs.VfsPresentationUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.popup.HintUpdateSupply;
@@ -70,7 +71,13 @@ public class ProjectViewTree extends DnDAwareTree {
         super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
         Object object = TreeUtil.getUserObject(value);
         if (object instanceof ProjectViewNode && UISettings.getInstance().getShowInplaceComments()) {
-          VirtualFile file = ((ProjectViewNode)object).getVirtualFile();
+          ProjectViewNode node = (ProjectViewNode)object;
+          AbstractTreeNode parentNode = node.getParent();
+          Object content = node.getValue();
+          VirtualFile file =
+            content instanceof PsiFileSystemItem || content instanceof VirtualFile ||
+            content instanceof PsiElement && parentNode != null && parentNode.getValue() instanceof PsiDirectory
+            ? node.getVirtualFile() : null;
           File ioFile = file == null || file.isDirectory() || !file.isInLocalFileSystem() ? null : VfsUtilCore.virtualToIoFile(file);
           BasicFileAttributes attr = null;
           try {
