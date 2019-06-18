@@ -138,6 +138,7 @@ open class DeepCopyIrTreeWithSymbols(
             }
             thisReceiver = declaration.thisReceiver?.transform()
             declaration.transformDeclarationsTo(this)
+            copyAttributes(declaration)
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =

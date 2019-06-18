@@ -330,6 +330,7 @@ class LocalDeclarationsLowering(
                 ).also {
                     it.fillArguments2(expression, newCallee)
                     it.copyTypeArgumentsFrom(expression)
+                    it.copyAttributes(expression)
                 }
             }
 

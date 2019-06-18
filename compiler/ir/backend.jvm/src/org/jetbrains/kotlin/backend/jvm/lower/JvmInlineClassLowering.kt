@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -234,7 +233,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             expression.origin
         ).apply {
             buildReplacement(expression.symbol.owner, expression, replacement)
-        }
+        }.copyAttributes(expression)
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {

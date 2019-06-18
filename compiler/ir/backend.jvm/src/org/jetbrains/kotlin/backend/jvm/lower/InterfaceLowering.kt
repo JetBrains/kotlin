@@ -140,6 +140,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                         origin
                     ).apply {
                         copyTypeAndValueArgumentsFrom(expression, receiversAsArguments = true)
+                        copyAttributes(expression)
                     }
                 }
             } else {
