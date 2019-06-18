@@ -23,7 +23,7 @@ import org.jetbrains.jps.backwardRefs.JavaCompilerBackwardReferenceIndex;
 import org.jetbrains.jps.backwardRefs.SignatureData;
 import org.jetbrains.jps.backwardRefs.index.CompilerReferenceIndex;
 import org.jetbrains.jps.backwardRefs.index.JavaCompilerIndices;
-import org.jetbrains.jps.incremental.storage.MaybeRelativizer;
+import org.jetbrains.jps.incremental.relativizer.PathRelativizerService;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
 
   public static class BackwardReferenceReader extends CompilerReferenceReader<JavaCompilerBackwardReferenceIndex> {
     protected BackwardReferenceReader(Project project, File buildDir) {
-      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, new MaybeRelativizer(project.getBasePath()), true));
+      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, new PathRelativizerService(project.getBasePath(), buildDir.getPath()), true));
     }
 
     @Override
