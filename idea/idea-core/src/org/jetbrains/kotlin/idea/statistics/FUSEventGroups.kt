@@ -74,7 +74,9 @@ val refactoringEvents = hashSetOf(
     "RenameKotlinClassifierProcessor",
     "RenameKotlinClassifierProcessor",
     "RenameKotlinParameterProcessor",
-    "JavaMemberByKotlinReferenceInplaceRenameHandler"
+    "JavaMemberByKotlinReferenceInplaceRenameHandler",
+    "KotlinPushDownHandler",
+    "KotlinPullUpHandler"
 )
 val newFileTemplateEvents = hashSetOf(
     "Kotlin File",

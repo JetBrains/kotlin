@@ -91,11 +91,11 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
         super.invoke(project, elements, dataContext)
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
+        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this.javaClass.simpleName)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         super.invoke(project, editor, file, dataContext)
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
+        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this.javaClass.simpleName)
     }
 }
