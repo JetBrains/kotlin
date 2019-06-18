@@ -42,13 +42,20 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 
-interface LightMemberOriginForCompiledElement : LightMemberOrigin {
+interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin {
+    val member: T
+
     override val originKind: JvmDeclarationOriginKind
         get() = JvmDeclarationOriginKind.OTHER
+
+    override fun isValid(): Boolean = member.isValid
 }
 
 
-data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: KtClsFile) : LightMemberOriginForCompiledElement {
+data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: KtClsFile) : LightMemberOriginForCompiledElement<PsiField> {
+    override val member: PsiField
+        get() = psiField
+
     override fun copy(): LightMemberOrigin {
         return LightMemberOriginForCompiledField(psiField.copy() as PsiField, file)
     }
@@ -65,7 +72,12 @@ data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: K
     }
 }
 
-data class LightMemberOriginForCompiledMethod(val psiMethod: PsiMethod, val file: KtClsFile) : LightMemberOriginForCompiledElement {
+data class LightMemberOriginForCompiledMethod(val psiMethod: PsiMethod, val file: KtClsFile) :
+    LightMemberOriginForCompiledElement<PsiMethod> {
+
+    override val member: PsiMethod
+        get() = psiMethod
+
     override fun isEquivalentTo(other: LightMemberOrigin?): Boolean {
         if (other !is LightMemberOriginForCompiledMethod) return false
         return psiMethod.isEquivalentTo(other.psiMethod)

@@ -65,6 +65,10 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
 
     override fun isDeprecated() = (clsDelegate as PsiDocCommentOwner).isDeprecated
 
+    override fun isValid(): Boolean {
+        return parent.isValid && lightMemberOrigin?.isValid() != false
+    }
+
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         if (lightMemberOrigin?.originalElement?.isEquivalentTo(another) == true) return true
 
