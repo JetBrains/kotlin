@@ -52,8 +52,7 @@ class AsyncScriptDependenciesLoader internal constructor(project: Project) : Scr
             if (notifyRootChange) return false
 
             if (backgroundTasksQueue == null) {
-                submitMakeRootsChange()
-                return true
+                return submitMakeRootsChange()
             }
 
             notifyRootChange = true
