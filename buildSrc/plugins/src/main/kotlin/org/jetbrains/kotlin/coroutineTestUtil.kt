@@ -101,6 +101,12 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean): String {
             |    var finished = false
             |
             |    var proceed: () -> Unit = {}
+            |    
+            |    fun reset() {
+            |        counter = 0
+            |        finished = false
+            |        proceed = {}
+            |    }
             |
             |    suspend fun suspendHere() = suspendCoroutine<Unit> { c ->
             |        counter++
