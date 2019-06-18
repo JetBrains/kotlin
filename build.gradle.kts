@@ -680,15 +680,15 @@ val zipStdlibTests by task<Zip> {
 
 val zipTestData by task<Zip> {
     dependsOn(zipStdlibTests)
-    destinationDir = file(distDir)
-    archiveName = "kotlin-test-data.zip"
+    destinationDirectory.set(file(distDir))
+    archiveFileName.set("kotlin-test-data.zip")
+    isZip64 = true
     from("compiler/testData") { into("compiler") }
     from("idea/testData") { into("ide") }
     from("idea/idea-completion/testData") { into("ide/completion") }
-    from("libraries/stdlib/common/test") { into("stdlib/common") }
-    from("libraries/stdlib/test") { into("stdlib/test") }
+    from("compiler/tests-common/tests/org/jetbrains/kotlin/coroutineTestUtil.kt") { into("compiler") }
     doLast {
-        logger.lifecycle("Test data packed to $archivePath")
+        logger.lifecycle("Test data packed to ${archiveFile.get()}")
     }
 }
 
