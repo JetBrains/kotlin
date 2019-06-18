@@ -66,7 +66,7 @@ class RedundantNotNullExtensionReceiverOfInlineInspection : AbstractKotlinInspec
                         }
                         is KtThisExpression -> {
                             val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, it]
-                            expectedType != null && !expectedType.isNullable()
+                            it.parent is KtCallExpression || expectedType != null && !expectedType.isNullable()
                         }
                         is KtBinaryExpressionWithTypeRHS -> {
                             val type = context[BindingContext.TYPE, it.right]

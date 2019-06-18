@@ -48,4 +48,12 @@ inline fun Int.bar(x: Int) = x - this // No problem
 inline fun Int.unary() = -this // No problem
 inline fun String.indexed(arg: Int) = this[arg] // No problem
 
+class Foo {
+    operator fun invoke() = Unit
+}
 
+inline fun Foo.bar() = this()
+
+inline fun Foo.bazz() = this.invoke()
+
+inline fun Foo.bazzz() = invoke()
