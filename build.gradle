@@ -404,9 +404,6 @@ task crossDist {
 }
 
 task bundle(type: (isWindows()) ? Zip : Tar) {
-    dependsOn('crossDistPlatformLibs')
-    dependsOn('crossDist')
-    dependsOn('distSources')
     def simpleOsName = HostManager.simpleOsName()
     baseName = "kotlin-native-$simpleOsName-$konanVersionFull"
     from("$project.rootDir/dist") {
@@ -415,6 +412,36 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/testLibrary'
         into baseName
     }
+    if (isWindows()) {
+        zip64 true
+    } else {
+        extension = 'tar.gz'
+        compression = Compression.GZIP
+    }
+}
+
+task bundleRestricted(type: Tar) {
+    def simpleOsName = HostManager.simpleOsName()
+    baseName = "kotlin-native-restricted-$simpleOsName-$konanVersionFull"
+    from("$project.rootDir/dist") {
+        include '**'
+        exclude 'dependencies'
+        exclude 'klib/testLibrary'
+        exclude 'klib/platform/macos_x64'
+        exclude 'klib/platform/ios_x64'
+        exclude 'klib/platform/ios_arm64'
+        exclude 'klib/platform/ios_arm32'
+        into baseName
+    }
+
+    extension = 'tar.gz'
+    compression = Compression.GZIP
+}
+
+configure([bundle, bundleRestricted]) {
+    dependsOn('crossDistPlatformLibs')
+    dependsOn('crossDist')
+    dependsOn('distSources')
     from(project.rootDir) {
         include 'DISTRO_README.md'
         rename {
@@ -432,13 +459,6 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     }
 
     destinationDir = file('.')
-
-    if (isWindows()) {
-        zip64 true
-    } else {
-        extension = 'tar.gz'
-        compression = Compression.GZIP
-    }
 }
 
 task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
@@ -514,6 +534,9 @@ task copySamples(type: CopySamples) {
 
 task uploadBundle {
     dependsOn ':bundle'
+    if (isMac()) {
+        dependsOn ':bundleRestricted'
+    }
     doLast {
         def kind = (konanVersionFull.meta == MetaVersion.DEV) ? "dev" : "releases"
         def ftpSettings = [
@@ -529,6 +552,11 @@ task uploadBundle {
             ftp([action: "mkdir"] + ftpSettings)
             ftp(ftpSettings) {
                 fileset(file: bundle.archivePath)
+            }
+            if (isMac()) {
+                ftp(ftpSettings) {
+                    fileset(file: bundleRestricted.archivePath)
+                }
             }
         }
     }
