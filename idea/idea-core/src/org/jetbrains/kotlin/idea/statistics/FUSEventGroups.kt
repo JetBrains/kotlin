@@ -77,13 +77,13 @@ val refactoringEvents = hashSetOf(
     "JavaMemberByKotlinReferenceInplaceRenameHandler"
 )
 val newFileTemplateEvents = hashSetOf(
-    "Kotlin_File",
-    "Kotlin_Class",
-    "Kotlin_Interface",
-    "Kotlin_Object",
-    "Kotlin_Enum",
-    "Kotlin_Scratch",
-    "Kotlin_Script"
+    "Kotlin File",
+    "Kotlin Class",
+    "Kotlin Interface",
+    "Kotlin Object",
+    "Kotlin Enum",
+    "Kotlin Scratch",
+    "Kotlin Script"
 )
 val NPWizardsEvents = hashSetOf(
     "KotlinModuleBuilder: JVM (JVM_1_6)",
