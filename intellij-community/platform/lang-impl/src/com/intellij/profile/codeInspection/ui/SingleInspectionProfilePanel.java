@@ -955,7 +955,7 @@ public class SingleInspectionProfilePanel extends JPanel {
 
     JPanel descriptionPanel = new JPanel(new BorderLayout());
     descriptionPanel.setBorder(IdeBorderFactory.createTitledBorder(InspectionsBundle.message("inspection.description.title"), false,
-                                                                   new JBInsets(2, 2, 0, 0)));
+                                                                   JBUI.insetsLeft(12)).setShowLine(false));
     descriptionPanel.add(ScrollPaneFactory.createScrollPane(myBrowser), BorderLayout.CENTER);
 
     JBSplitter rightSplitter =
@@ -963,6 +963,7 @@ public class SingleInspectionProfilePanel extends JPanel {
     rightSplitter.setFirstComponent(descriptionPanel);
 
     myOptionsPanel = new JPanel(new GridBagLayout());
+    myOptionsPanel.setBorder(JBUI.Borders.emptyLeft(12));
     initOptionsAndDescriptionPanel();
     rightSplitter.setSecondComponent(myOptionsPanel);
     rightSplitter.setHonorComponentsMinimumSize(true);
