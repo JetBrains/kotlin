@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -92,7 +93,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     fun complete(
         c: KotlinConstraintSystemCompleter.Context,
         completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
-        topLevelAtoms: List<FirExpression>,
+        topLevelAtoms: List<FirStatement>,
         candidateReturnType: ConeKotlinType,
         analyze: (PostponedResolvedAtomMarker) -> Unit
     ) {
@@ -159,7 +160,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
 
     private fun analyzePostponeArgumentIfPossible(
         c: KotlinConstraintSystemCompleter.Context,
-        topLevelAtoms: List<FirExpression>,
+        topLevelAtoms: List<FirStatement>,
         analyze: (PostponedResolvedAtomMarker) -> Unit
     ): Boolean {
         for (argument in getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)) {
@@ -171,8 +172,8 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
         return false
     }
 
-    private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<FirExpression>): List<PostponedResolvedAtomMarker> {
-        fun FirExpression.process(to: MutableList<PostponedResolvedAtomMarker>) {
+    private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<FirStatement>): List<PostponedResolvedAtomMarker> {
+        fun FirStatement.process(to: MutableList<PostponedResolvedAtomMarker>) {
             when (this) {
                 is FirFunctionCall -> {
                     val candidate = (this.calleeReference as? FirNamedReferenceWithCandidate)?.candidate

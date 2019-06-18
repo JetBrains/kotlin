@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:x index:0 type:<root>.Ref? 
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
-        value: CONST Int type=kotlin.Int value=0
+        value: CONST Int type=kotlin.Int? value=0
   FUN name:test5 visibility:public modality:FINAL <> (s:kotlin.String?) returnType:kotlin.Int
     VALUE_PARAMETER name:s index:0 type:kotlin.String? 
     BLOCK_BODY

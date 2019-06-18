@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
@@ -23,8 +23,22 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeProjectionWithVarianceImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.types.Variance
+
+object StoreCalleeReference : FirTransformer<FirResolvedCallableReference>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirResolvedCallableReference): CompositeTransformResult<E> {
+        return element.compose()
+    }
+
+    override fun transformResolvedCallableReference(
+        resolvedCallableReference: FirResolvedCallableReference,
+        data: FirResolvedCallableReference
+    ): CompositeTransformResult<FirNamedReference> {
+        return data.compose()
+    }
+}
 
 class FirCallCompleterTransformer(
     val session: FirSession,
@@ -32,6 +46,22 @@ class FirCallCompleterTransformer(
     private val typeCalculator: ReturnTypeCalculator
 ) : FirAbstractTreeTransformer() {
 
+    override fun transformVariableAssignment(
+        variableAssignment: FirVariableAssignment,
+        data: Nothing?
+    ): CompositeTransformResult<FirStatement> {
+        val calleeReference = variableAssignment.calleeReference as? FirNamedReferenceWithCandidate
+            ?: return variableAssignment.compose()
+        return variableAssignment.transformCalleeReference(
+            StoreCalleeReference,
+            FirResolvedCallableReferenceImpl(
+                calleeReference.session,
+                calleeReference.psi,
+                calleeReference.name,
+                calleeReference.coneSymbol
+            )
+        ).compose()
+    }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): CompositeTransformResult<FirStatement> {
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate ?: return functionCall.compose()

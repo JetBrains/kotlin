@@ -198,7 +198,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         access.resultType = typeFromCallee(access)
     }
 
-    private fun <T> typeFromCallee(access: T): FirResolvedTypeRef where T : FirQualifiedAccess, T : FirExpression {
+    private fun <T> typeFromCallee(access: T): FirResolvedTypeRef where T : FirQualifiedAccess {
         return when (val newCallee = access.calleeReference) {
             is FirErrorNamedReference ->
                 FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
@@ -231,6 +231,12 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 } else {
                     error("WTF ! $symbol")
                 }
+            }
+            is FirThisReference -> {
+                val labelName = newCallee.labelName
+                val types = if (labelName == null) labels.values() else labels[Name.identifier(labelName)]
+                val type = types.lastOrNull() ?: ConeKotlinErrorType("Unresolved this@$labelName")
+                FirResolvedTypeRefImpl(session, null, type, emptyList())
             }
             else -> error("Failed to extract type from: $newCallee")
         }
@@ -402,8 +408,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         variableAssignment: FirVariableAssignment,
         data: Any?
     ): CompositeTransformResult<FirStatement> {
-        val variableAssignment = variableAssignment.transformRValue(this, null)
-        return transformCallee(variableAssignment).compose()
+        val resolvedAssignment = transformCallee(variableAssignment)
+        return if (resolvedAssignment is FirVariableAssignment) {
+            val completeAssignment = completeTypeInference(resolvedAssignment, noExpectedType)
+            val expectedType = typeFromCallee(completeAssignment)
+            completeAssignment.transformRValue(this, expectedType).compose()
+        } else {
+            // This can happen in erroneous code only
+            resolvedAssignment.compose()
+        }
     }
 
     override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
@@ -592,13 +605,15 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     data class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?)
 
-    private fun completeTypeInference(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
-        val typeRef = typeFromCallee(functionCall)
+    private fun <T : FirQualifiedAccess> completeTypeInference(qualifiedAccess: T, expectedTypeRef: FirTypeRef?): T {
+        val typeRef = typeFromCallee(qualifiedAccess)
         if (typeRef.type is ConeKotlinErrorType) {
-            functionCall.resultType = typeRef
-            return functionCall
+            if (qualifiedAccess is FirExpression) {
+                qualifiedAccess.resultType = typeRef
+            }
+            return qualifiedAccess
         }
-        val candidate = functionCall.candidate() ?: return functionCall
+        val candidate = qualifiedAccess.candidate() ?: return qualifiedAccess
         val initialSubstitutor = candidate.substitutor
 
         val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
@@ -637,16 +652,18 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                     else -> null
                 }
 
+
+                val expectedReturnTypeRef = expectedReturnType?.let { lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(it) }
+
                 val newLambdaExpression = lambdaArgument.copy(
                     receiverTypeRef = receiverType?.let { lambdaArgument.receiverTypeRef!!.resolvedTypeFromPrototype(it) },
                     valueParameters = lambdaArgument.valueParameters.mapIndexed { index, parameter ->
                         parameter.transformReturnTypeRef(StoreType, parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index]))
                         parameter
                     } + listOfNotNull(itParam),
-                    returnTypeRef = lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(rawReturnType)
+                    returnTypeRef = expectedReturnTypeRef ?: noExpectedType
                 )
 
-                val expectedReturnTypeRef = expectedReturnType?.let { newLambdaExpression.returnTypeRef.resolvedTypeFromPrototype(it) }
                 replacements[lambdaArgument] =
                     newLambdaExpression.transformSingle(this@FirBodyResolveTransformer, LambdaResolution(expectedReturnTypeRef))
 
@@ -656,7 +673,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
         }, { it.resultType }, inferenceComponents)
 
-        completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(functionCall), initialType) {
+        completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(qualifiedAccess), initialType) {
             analyzer.analyze(
                 candidate.system.asPostponedArgumentsAnalyzerContext(),
                 it
@@ -664,18 +681,18 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             )
         }
 
-        functionCall.transformChildren(ReplaceInArguments, replacements.toMap())
+        qualifiedAccess.transformChildren(ReplaceInArguments, replacements.toMap())
 
 
         if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
             val finalSubstitutor =
                 candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
-            return functionCall.transformSingle(
+            return qualifiedAccess.transformSingle(
                 FirCallCompleterTransformer(session, finalSubstitutor, jump),
                 null
             )
         }
-        return functionCall
+        return qualifiedAccess
     }
 
     override fun transformTryExpression(tryExpression: FirTryExpression, data: Any?): CompositeTransformResult<FirStatement> {

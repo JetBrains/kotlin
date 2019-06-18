@@ -1,45 +1,45 @@
 FILE fqName:<root> fileName:/nonLocalReturn.kt
   FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
-        block: BLOCK type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
+        block: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test0'
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test0'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Nothing declared in <root>.test0' type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test0' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
-        block: BLOCK type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
+        block: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test1'
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Nothing declared in <root>.test1' type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
-        block: BLOCK type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
+        block: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test2'
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Nothing declared in <root>.test2' type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
-        block: BLOCK type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing 
+      CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
+        block: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
-              CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
-                block: BLOCK type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
+              CALL 'public final fun run (block: kotlin.Function0<R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
+                block: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                     BLOCK_BODY
-                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test3.<anonymous>'
+                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3.<anonymous>'
                         GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-                  FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Nothing declared in <root>.test3.<anonymous>' type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Nothing declared in <root>.test3' type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+                  FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3.<anonymous>' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
   FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> 
     BLOCK_BODY

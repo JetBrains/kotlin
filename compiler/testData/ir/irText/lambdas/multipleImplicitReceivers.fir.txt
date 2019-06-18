@@ -83,25 +83,25 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
     VALUE_PARAMETER name:fooImpl index:0 type:<root>.IFoo 
     VALUE_PARAMETER name:invokeImpl index:1 type:<root>.IInvoke 
     BLOCK_BODY
-      CALL 'public final fun with (receiver: T of <uninitialized parent>, block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+      CALL 'public final fun with (receiver: T of <uninitialized parent>, block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
         receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
-        block: BLOCK type=kotlin.Function2<<root>.A, <root>.A, kotlin.Nothing> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.A) returnType:kotlin.Nothing 
+        block: BLOCK type=kotlin.Function2<<root>.A, <root>.A, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.A) returnType:kotlin.Unit
             VALUE_PARAMETER name:it index:0 type:<root>.A 
             BLOCK_BODY
-              CALL 'public final fun with (receiver: T of <uninitialized parent>, block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+              CALL 'public final fun with (receiver: T of <uninitialized parent>, block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
                 receiver: GET_VAR 'fooImpl: <root>.IFoo declared in <root>.test' type=<root>.IFoo origin=null
-                block: BLOCK type=kotlin.Function2<<root>.IFoo, <root>.IFoo, kotlin.Nothing> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.IFoo) returnType:kotlin.Nothing 
+                block: BLOCK type=kotlin.Function2<<root>.IFoo, <root>.IFoo, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.IFoo) returnType:kotlin.Unit
                     VALUE_PARAMETER name:it index:0 type:<root>.IFoo 
                     BLOCK_BODY
-                      CALL 'public final fun with (receiver: T of <uninitialized parent>, block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Nothing origin=null
+                      CALL 'public final fun with (receiver: T of <uninitialized parent>, block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Unit origin=null
                         receiver: GET_VAR 'invokeImpl: <root>.IInvoke declared in <root>.test' type=<root>.IInvoke origin=null
-                        block: BLOCK type=kotlin.Function2<<root>.IInvoke, <root>.IInvoke, kotlin.Nothing> origin=LAMBDA
-                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.IInvoke) returnType:kotlin.Nothing
+                        block: BLOCK type=kotlin.Function2<<root>.IInvoke, <root>.IInvoke, kotlin.Unit> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.IInvoke) returnType:kotlin.Unit
                             VALUE_PARAMETER name:it index:0 type:<root>.IInvoke 
                             BLOCK_BODY
                               ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
-                          FUNCTION_REFERENCE 'local final fun <anonymous> (it: <root>.IInvoke): kotlin.Nothing declared in <root>.test.<anonymous>.<anonymous>' type=kotlin.Function2<<root>.IInvoke, <root>.IInvoke, kotlin.Nothing> origin=LAMBDA
-                  FUNCTION_REFERENCE 'local final fun <anonymous> (it: <root>.IFoo): kotlin.Nothing declared in <root>.test.<anonymous>' type=kotlin.Function2<<root>.IFoo, <root>.IFoo, kotlin.Nothing> origin=LAMBDA
-          FUNCTION_REFERENCE 'local final fun <anonymous> (it: <root>.A): kotlin.Nothing declared in <root>.test' type=kotlin.Function2<<root>.A, <root>.A, kotlin.Nothing> origin=LAMBDA
+                          FUNCTION_REFERENCE 'local final fun <anonymous> (it: <root>.IInvoke): kotlin.Unit declared in <root>.test.<anonymous>.<anonymous>' type=kotlin.Function2<<root>.IInvoke, <root>.IInvoke, kotlin.Unit> origin=LAMBDA
+                  FUNCTION_REFERENCE 'local final fun <anonymous> (it: <root>.IFoo): kotlin.Unit declared in <root>.test.<anonymous>' type=kotlin.Function2<<root>.IFoo, <root>.IFoo, kotlin.Unit> origin=LAMBDA
+          FUNCTION_REFERENCE 'local final fun <anonymous> (it: <root>.A): kotlin.Unit declared in <root>.test' type=kotlin.Function2<<root>.A, <root>.A, kotlin.Unit> origin=LAMBDA

@@ -7,7 +7,14 @@ var b: MutableSet<String>? = null
         field = HashSet()
     }
 
+var <T> MutableSet<T>.d: T? get() = null
+    set(_) {}
+
+fun <T> produce(): T = TODO()
+
 fun foo() {
     var c: MutableSet<String>? = null
     c = HashSet()
+
+    c!!.d = produce()
 }

@@ -42,5 +42,4 @@ FILE fqName:<root> fileName:/safeAssignment.kt
     VALUE_PARAMETER name:nc index:0 type:<root>.C? 
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
-        value: CONST Int type=kotlin.Int value=42
-
+        value: CONST Int type=kotlin.Int? value=42

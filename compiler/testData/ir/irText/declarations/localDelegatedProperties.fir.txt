@@ -8,11 +8,11 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
     BLOCK_BODY
       VAR name:x type:IrErrorType [var] 
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
-        CONST Int type=kotlin.Int value=0
+        CONST Int type=IrErrorType value=0
       VAR name:<unary> type:IrErrorType [val] 
         GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
         ERROR_CALL 'Unresolved reference: <Ambiguity: inc, [kotlin/inc, kotlin/inc]>#' type=IrErrorType
       GET_VAR 'val <unary>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
-        CONST Int type=kotlin.Int value=1
+        CONST Int type=IrErrorType value=1

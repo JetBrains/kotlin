@@ -47,25 +47,24 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
       VAR name:a type:<root>.A [val] 
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
       SET_VAR 'val a: <root>.A [val] declared in <root>.testVariable' type=<root>.A origin=null
-        CONST String type=kotlin.String value="+="
+        CONST String type=<root>.A value="+="
       SET_VAR 'val a: <root>.A [val] declared in <root>.testVariable' type=<root>.A origin=null
-        CONST String type=kotlin.String value="-="
+        CONST String type=<root>.A value="-="
       SET_VAR 'val a: <root>.A [val] declared in <root>.testVariable' type=<root>.A origin=null
-        CONST String type=kotlin.String value="*="
+        CONST String type=<root>.A value="*="
       SET_VAR 'val a: <root>.A [val] declared in <root>.testVariable' type=<root>.A origin=null
-        CONST String type=kotlin.String value="/="
+        CONST String type=<root>.A value="/="
       SET_VAR 'val a: <root>.A [val] declared in <root>.testVariable' type=<root>.A origin=null
-        CONST String type=kotlin.String value="*="
+        CONST String type=<root>.A value="*="
   FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
-        value: CONST String type=kotlin.String value="+="
+        value: CONST String type=<root>.A value="+="
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
-        value: CONST String type=kotlin.String value="-="
+        value: CONST String type=<root>.A value="-="
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
-        value: CONST String type=kotlin.String value="*="
+        value: CONST String type=<root>.A value="*="
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
-        value: CONST String type=kotlin.String value="/="
+        value: CONST String type=<root>.A value="/="
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static] ' type=<root>.A origin=null
-        value: CONST String type=kotlin.String value="%="
-
+        value: CONST String type=<root>.A value="%="

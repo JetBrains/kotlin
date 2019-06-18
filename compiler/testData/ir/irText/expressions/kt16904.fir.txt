@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/kt16904.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.B visibility:public [final] ' type=<root>.B origin=null
-          value: CONST Int type=kotlin.Int value=42
+          value: CONST Int type=<root>.B value=42
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
           value: CONST Int type=kotlin.Int value=42
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
