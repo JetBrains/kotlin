@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build
 
+import com.intellij.build.events.MessageEvent
 import com.intellij.build.events.impl.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Disposer
@@ -93,6 +94,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
       StartBuildEventImpl(buildDescriptor, "build started"),
       StartEventImpl("event_id", buildDescriptor.id, 1000, "build event"),
       StartEventImpl("sub_event_id", "event_id", 1100, "build nested event"),
+      MessageEventImpl("event_id", MessageEvent.Kind.ERROR, "Error", "error message", "error message"),
       FinishEventImpl("sub_event_id", "event_id", 1200, "build nested event", FailureResultImpl()),
       FinishEventImpl("event_id", buildDescriptor.id, 1500, "build event", DerivedResultImpl()),
       FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build finished", DerivedResultImpl())
@@ -108,13 +110,14 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
     PlatformTestUtil.assertTreeEqual(tree, "-\n" +
                                            " -build finished\n" +
                                            "  -build event\n" +
-                                           "   build nested event")
+                                           "   build nested event\n" +
+                                           "   error message")
     val visitor = CollectingTreeVisitor()
     TreeUtil.visitVisibleRows(tree, visitor)
 
 
     assertThat(visitor.userObjects.map { it -> (it as ExecutionNode).name + "--" + it.result!!.javaClass.simpleName })
-      .containsExactly("build finished--FailureResultImpl", "build event--FailureResultImpl", "build nested event--FailureResultImpl")
+      .containsExactly("build finished--FailureResultImpl", "build event--FailureResultImpl", "build nested event--FailureResultImpl", "error message--")
   }
 
   @Test
