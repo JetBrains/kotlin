@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.ide.util.DirectoryUtil
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
@@ -49,6 +51,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
+import org.jetbrains.kotlin.idea.core.findOrCreateDirectoryForPackage
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
@@ -330,36 +333,41 @@ class MoveKotlinDeclarationsProcessor(
         when (moveTarget) {
             is KotlinMoveTargetForDeferredFile -> {
                 val expectedElement = element.expectedDeclarationIfAny() ?: return moveTarget
-                when {
-                    moveTarget.directory != null -> {
-                        val currentDirForExpected = moveTarget.directory.virtualFile
-                        val expectedSourceRootPath = currentDirForExpected.getSourceRoot(project)?.path ?: return moveTarget
-                        val allActualSourceRoots = actualElement.module?.sourceRoots ?: return moveTarget
-                        val actualSourceRoot = findSuitableSourceRoot(
-                            allActualSourceRoots,
-                            expectedSourceRootPath,
-                            currentDirForExpected,
-                            expectedSourceRootPath
-                        ) ?: return moveTarget
-                        val actualTargetDir = actualSourceRoot.findFileByRelativePath(
-                            getRelativePath(
-                                expectedSourceRootPath,
-                                currentDirForExpected
-                            )
-                        )
-                        val actualTargetFile = actualTargetDir?.findChild("${actualElement.name}.kt")
-                        return KotlinMoveTargetForDeferredFile(
-                            moveTarget.targetContainerFqName,
-                            actualTargetDir?.toPsiDirectory(project),
-                            actualTargetFile,
-                            moveTarget.module,
-                        ) { originalFile ->
-                            getOrCreateKotlinFile(
-                                if (targetFileName != null) targetFileName else originalFile.name,
-                                moveDestination.getTargetDirectory(originalFile)
-                            )
-                        }
-                    }
+                val expectedModule = expectedElement.module ?: return moveTarget
+                val currentDirForExpected = moveTarget.directory?.virtualFile
+                        ?: moveTarget.targetFile
+                        ?: findOrCreateDirectoryForPackage(
+                            expectedModule,
+                            moveTarget.targetContainerFqName.asString()
+                        )?.virtualFile
+                        ?: return moveTarget
+                val expectedSourceRootPath = currentDirForExpected.getSourceRoot(project)?.path ?: return moveTarget
+                val allActualSourceRoots = actualElement.module?.sourceRoots ?: return moveTarget
+                val actualSourceRoot = findSuitableSourceRoot(
+                    allActualSourceRoots,
+                    expectedSourceRootPath,
+                    currentDirForExpected,
+                    expectedSourceRootPath
+                ) ?: return moveTarget
+                val relativePath = getRelativePath(expectedSourceRootPath, currentDirForExpected)
+                val actualTargetDir = actualSourceRoot.findFileByRelativePath(relativePath)
+                    ?: DirectoryUtil.mkdirs(
+                        PsiManager.getInstance(project),
+                        actualSourceRoot.path + "/" + relativePath
+                    ).virtualFile
+                val actualTargetDirPsi = actualTargetDir.toPsiDirectory(project) ?: return moveTarget
+                val actualTargetFile = moveTarget.targetFileName?.let { actualTargetDir.findChild(it) }
+                return KotlinMoveTargetForDeferredFile(
+                    moveTarget.targetContainerFqName,
+                    moveTarget.targetFileName,
+                    actualTargetDir.toPsiDirectory(project),
+                    actualTargetFile,
+                    moveTarget.module
+                ) {
+                    getOrCreateKotlinFile(
+                        moveTarget.targetFileName ?: "${actualElement.name}.kt",
+                        actualTargetDirPsi
+                    )
                 }
             }
             is KotlinMoveTargetForExistingElement -> {

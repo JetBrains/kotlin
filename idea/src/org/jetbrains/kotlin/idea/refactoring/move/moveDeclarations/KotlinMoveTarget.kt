@@ -92,6 +92,7 @@ class KotlinMoveTargetForCompanion(val targetClass: KtClass): KotlinMoveTarget {
 
 class KotlinMoveTargetForDeferredFile(
         override val targetContainerFqName: FqName,
+        val targetFileName: String?,
         override val directory: PsiDirectory?,
         override val targetFile: VirtualFile? = directory?.virtualFile,
         val module: Module? = directory?.module,

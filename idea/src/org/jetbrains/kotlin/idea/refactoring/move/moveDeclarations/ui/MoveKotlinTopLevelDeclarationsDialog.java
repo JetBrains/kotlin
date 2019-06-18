@@ -574,6 +574,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         final String finalTargetPackageFqName = targetPackageFqName.asString();
         return new KotlinMoveTargetForDeferredFile(
                 targetPackageFqName,
+                targetFile.getName(),
                 psiDirectory,
                 null,
                 null,

@@ -110,7 +110,7 @@ class ExtractDeclarationFromCurrentFileIntention :
             }
             return
         }
-        val moveTarget = KotlinMoveTargetForDeferredFile(packageName, directory, null) {
+        val moveTarget = KotlinMoveTargetForDeferredFile(packageName, targetFileName, directory, null) {
             createKotlinFile(targetFileName, directory, packageName.asString())
         }
 
