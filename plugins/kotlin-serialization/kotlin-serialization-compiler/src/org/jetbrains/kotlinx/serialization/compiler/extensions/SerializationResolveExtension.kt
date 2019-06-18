@@ -18,7 +18,6 @@ package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -38,7 +37,7 @@ import java.util.*
 open class SerializationResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
         thisDescriptor.annotations.hasAnnotation(serialInfoFqName) && thisDescriptor.platform?.isJvm() == true -> listOf(SerialEntityNames.IMPL_NAME)
-        thisDescriptor.isInternalSerializable && !thisDescriptor.hasCompanionObjectAsSerializer ->
+        (thisDescriptor.shouldHaveGeneratedSerializer) && !thisDescriptor.hasCompanionObjectAsSerializer ->
             listOf(SerialEntityNames.SERIALIZER_CLASS_NAME)
         else -> listOf()
     }
@@ -58,7 +57,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     ) {
         if (thisDescriptor.annotations.hasAnnotation(serialInfoFqName) && name == SerialEntityNames.IMPL_NAME)
             result.add(KSerializerDescriptorResolver.addSerialInfoImplClass(thisDescriptor, declarationProvider, ctx))
-        else if (thisDescriptor.isInternalSerializable && name == SerialEntityNames.SERIALIZER_CLASS_NAME &&
+        else if (thisDescriptor.shouldHaveGeneratedSerializer && name == SerialEntityNames.SERIALIZER_CLASS_NAME &&
             result.none { it.name == SerialEntityNames.SERIALIZER_CLASS_NAME }
         )
             result.add(KSerializerDescriptorResolver.addSerializerImplClass(thisDescriptor, declarationProvider, ctx))
@@ -66,7 +65,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     }
 
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? =
-        if (thisDescriptor.kind == ClassKind.CLASS && thisDescriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName))
+        if (thisDescriptor.shouldHaveGeneratedMethodsInCompanion && !thisDescriptor.isSerializableObject)
             SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
         else null
 

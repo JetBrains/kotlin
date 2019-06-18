@@ -58,16 +58,18 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
         if (!descriptor.hasSerializableAnnotationWithoutArgs) return false
 
-        if (!descriptor.isInternalSerializable && !descriptor.hasCompanionObjectAsSerializer) {
+        if (descriptor.serializableAnnotationIsUseless) {
             trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
             return false
         }
 
         // check that we can instantiate supertype
-        val superClass = descriptor.getSuperClassOrAny()
-        if (!superClass.isInternalSerializable && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
-            return false
+        if (!descriptor.isSerializableEnum()) { // enums are inherited from java.lang.Enum and can't be inherited from other classes
+            val superClass = descriptor.getSuperClassOrAny()
+            if (!superClass.isInternalSerializable && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
+                trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
+                return false
+            }
         }
         return true
     }
@@ -232,3 +234,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 }
+
+internal val ClassDescriptor.serializableAnnotationIsUseless: Boolean
+    get() = hasSerializableAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && !isSerializableEnum()
