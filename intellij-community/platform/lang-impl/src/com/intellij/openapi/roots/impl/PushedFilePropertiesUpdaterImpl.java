@@ -28,6 +28,7 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexProjectHandler;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,8 +62,9 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
     });
   }
 
+  @ApiStatus.Internal
   public void processAfterVfsChanges(@NotNull List<? extends VFileEvent> events) {
-    boolean pushedSomething = false;
+    List<Runnable> syncTasks = new ArrayList<>();
     List<Runnable> delayedTasks = new ArrayList<>();
     for (VFileEvent event : events) {
       VirtualFile file = event.getFile();
@@ -77,11 +79,8 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
       }
 
       if (event instanceof VFileCreateEvent) {
-        if (!event.isFromRefresh() || !file.isDirectory()) {
-          // push synchronously to avoid entering dumb mode in the middle of a meaningful write action
-          // avoid dumb mode for just one file
-          doPushRecursively(file, pushers, ProjectRootManager.getInstance(myProject).getFileIndex());
-          pushedSomething = true;
+        if (!event.isFromRefresh()) {
+          ContainerUtil.addIfNotNull(syncTasks, createRecursivePushTask(file, pushers));
         }
         else if (!ProjectUtil.isProjectOrWorkspaceFile(file)) {
           ContainerUtil.addIfNotNull(delayedTasks, createRecursivePushTask(file, pushers));
@@ -90,15 +89,21 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
         for (FilePropertyPusher<?> pusher : pushers) {
           file.putUserData(pusher.getFileDataKey(), null);
         }
-        // push synchronously to avoid entering dumb mode in the middle of a meaningful write action
-        doPushRecursively(file, pushers, ProjectRootManager.getInstance(myProject).getFileIndex());
-        pushedSomething = true;
+        ContainerUtil.addIfNotNull(syncTasks, createRecursivePushTask(file, pushers));
       }
+    }
+    boolean pushingSomethingSynchronously = !syncTasks.isEmpty() && syncTasks.size() < FileBasedIndexProjectHandler.ourMinFilesToStartDumMode;
+    if (pushingSomethingSynchronously) {
+      // push synchronously to avoid entering dumb mode in the middle of a meaningful write action
+      // when only a few files are created/moved
+      syncTasks.forEach(Runnable::run);
+    } else {
+      delayedTasks.addAll(syncTasks);
     }
     if (!delayedTasks.isEmpty()) {
       queueTasks(delayedTasks);
     }
-    if (pushedSomething) {
+    if (pushingSomethingSynchronously) {
       GuiUtils.invokeLaterIfNeeded(() -> scheduleDumbModeReindexingIfNeeded(), ModalityState.defaultModalityState());
     }
   }
