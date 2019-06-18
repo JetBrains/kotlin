@@ -338,13 +338,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
-        return this is ConeClassLikeSymbol && classId.asString() == "kotlin/Any"
+        return this is ConeClassLikeSymbol && classId == StandardClassIds.Any
     }
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
-        return this is ConeClassLikeSymbol && classId.asString() == "kotlin/Nothing"
+        return this is ConeClassLikeSymbol && classId == StandardClassIds.Nothing
     }
-
 
     override fun KotlinTypeMarker.isNotNullNothing(): Boolean {
         require(this is ConeKotlinType)
