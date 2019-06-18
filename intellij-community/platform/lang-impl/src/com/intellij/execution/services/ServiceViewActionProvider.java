@@ -44,9 +44,7 @@ class ServiceViewActionProvider {
     PopupHandler.installPopupHandler(component, actions, ActionPlaces.SERVICES_POPUP, ActionManager.getInstance());
   }
 
-  JComponent createMasterComponentToolbar(@NotNull JComponent component) {
-    JPanel toolBarPanel = new JPanel(new BorderLayout());
-
+  ActionToolbar createMasterComponentToolbar(@NotNull JComponent component) {
     DefaultActionGroup group = new DefaultActionGroup();
 
     if (component instanceof JTree) {
@@ -63,11 +61,10 @@ class ServiceViewActionProvider {
     treeActions.registerCustomShortcutSet(component, null);
     group.add(treeActions);
 
-    ActionToolbar treeActionsToolBar = ActionManager.getInstance().createActionToolbar(ActionPlaces.SERVICES_TOOLBAR, group, true);
-    toolBarPanel.add(treeActionsToolBar.getComponent(), BorderLayout.CENTER);
+    ActionToolbar treeActionsToolBar = ActionManager.getInstance().createActionToolbar(ActionPlaces.SERVICES_TOOLBAR, group, false);
     treeActionsToolBar.setTargetComponent(component);
 
-    return toolBarPanel;
+    return treeActionsToolBar;
   }
 
   @Nullable

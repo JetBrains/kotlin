@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.OnePixelSplitter;
@@ -9,6 +10,7 @@ import com.intellij.ui.SideBorder;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,9 +66,11 @@ class ServiceViewTreeUi implements ServiceViewUi {
   public void setMasterPanel(@NotNull JComponent component, @NotNull ServiceViewActionProvider actionManager) {
     myMasterPanel.add(ScrollPaneFactory.createScrollPane(component, SideBorder.LEFT), BorderLayout.CENTER);
 
-    JComponent masterComponentToolbar = actionManager.createMasterComponentToolbar(component);
-    masterComponentToolbar.setBorder(IdeBorderFactory.createBorder(SideBorder.LEFT | SideBorder.BOTTOM));
-    myMasterPanel.add(masterComponentToolbar, BorderLayout.NORTH);
+    ActionToolbar toolbar = actionManager.createMasterComponentToolbar(component);
+    toolbar.setOrientation(SwingConstants.VERTICAL);
+    JComponent toolbarComponent = toolbar.getComponent();
+    toolbarComponent.setBorder(IdeBorderFactory.createBorder(JBUI.CurrentTheme.DefaultTabs.borderColor(), SideBorder.LEFT));
+    myMasterPanel.add(toolbarComponent, BorderLayout.WEST);
 
     actionManager.installPopupHandler(component);
   }
