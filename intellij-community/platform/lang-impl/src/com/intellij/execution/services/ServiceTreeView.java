@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.AutoScrollToSourceHandler;
+import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -37,6 +38,7 @@ class ServiceTreeView extends ServiceView {
     myTreeModel = new ServiceViewTreeModel(model);
     myTree = new ServiceViewTree(myTreeModel, this);
     myTree.setShowsRootHandles(!model.isFlat());
+    myTree.addTreeSelectionListener(new RestoreSelectionListener());
 
     myListener = new MyViewModelListener();
     model.addModelListener(myListener);
