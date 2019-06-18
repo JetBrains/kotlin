@@ -2,8 +2,10 @@
 package com.intellij.codeInsight.hints
 
 import com.intellij.codeInsight.hints.filtering.MatcherConstructor
+import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.text.StringUtil
 import java.util.*
@@ -47,4 +49,17 @@ fun getBaseLanguagesWithProviders(): List<Language> {
     .map { (first) -> first }
     .sorted(Comparator.comparing<Language, String> { l -> l.displayName })
     .collect(Collectors.toList())
+}
+
+fun isHintsEnabledForLanguage(language: Language): Boolean {
+  if (!EditorSettingsExternalizable.getInstance().isShowParameterNameHints) return false
+  return ParameterNameHintsSettings.getInstance().isEnabledForLanguage(language)
+}
+
+fun setShowAllParameterHints(value: Boolean) {
+  EditorSettingsExternalizable.getInstance().isShowParameterNameHints = value
+}
+
+fun setShowParameterHintsForLanguage(value: Boolean, language: Language) {
+  ParameterNameHintsSettings.getInstance().setIsEnabledForLanguage(value, language)
 }

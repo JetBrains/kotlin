@@ -21,7 +21,6 @@ import com.intellij.diff.util.DiffUtil;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.Inlay;
-import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
@@ -78,13 +77,13 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
 
     Language language = myFile.getLanguage();
     InlayParameterHintsProvider provider = InlayParameterHintsExtension.INSTANCE.forLanguage(language);
-    if (provider == null || !provider.canShowHintsWhenDisabled() && !isEnabled() || DiffUtil.isDiffEditor(myEditor)) return;
+    if (provider == null || !provider.canShowHintsWhenDisabled() && !isEnabled(language) || DiffUtil.isDiffEditor(myEditor)) return;
 
     myTraverser.forEach(element -> process(element, provider));
   }
 
-  private static boolean isEnabled() {
-    return EditorSettingsExternalizable.getInstance().isShowParameterNameHints();
+  private static boolean isEnabled(Language language) {
+    return HintUtilsKt.isHintsEnabledForLanguage(language);
   }
 
   private void process(PsiElement element, InlayParameterHintsProvider provider) {

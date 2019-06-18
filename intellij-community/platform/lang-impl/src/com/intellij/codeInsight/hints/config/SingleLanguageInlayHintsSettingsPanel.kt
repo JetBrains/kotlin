@@ -28,6 +28,8 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
+// Note: old parameter hints panel is special cased as it rely on global settings, so it doesn't fit to this model,
+// but logically belongs to this settings
 internal class SingleLanguageInlayHintsSettingsPanel(
   val project: Project,
   val language: Language,
@@ -188,7 +190,11 @@ internal class SingleLanguageInlayHintsSettingsPanel(
       settingsWrapper.apply()
     }
     for (providerType in providerTypes) {
-      settings.changeHintTypeStatus(providerType.key, language, providerType.isEnabled())
+      if (providerType.isOldParameterHints) {
+        setShowParameterHintsForLanguage(providerType.isEnabled(), language)
+      } else {
+        settings.changeHintTypeStatus(providerType.key, language, providerType.isEnabled())
+      }
     }
     parameterHintsPanel?.saveOptions()
   }
