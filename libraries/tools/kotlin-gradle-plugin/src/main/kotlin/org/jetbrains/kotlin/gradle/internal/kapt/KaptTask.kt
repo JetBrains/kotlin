@@ -6,8 +6,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
-import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.UnknownSnapshot
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
@@ -171,21 +171,21 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
             clearLocalState()
             return KaptIncrementalChanges.Unknown
         }
+        val allDataFiles = classpathStructure!!.files
         if (!inputs.isIncremental) {
             clearLocalState()
-            findClasspathChanges(classpath.files)
+            findClasspathChanges(allDataFiles, allDataFiles)
             return KaptIncrementalChanges.Unknown
         }
 
         val changedFiles = with(mutableSetOf<File>()) {
             inputs.outOfDate { this.add(it.file) }
             inputs.removed { this.add(it.file) }
-            return@with this.toList()
+            return@with this
         }
 
-        val classpathChanges = classpath.files.let { cp -> changedFiles.filter { cp.contains(it) } }
-
-        val classpathStatus = findClasspathChanges(classpathChanges)
+        val changedDataFiles = allDataFiles.filterTo(HashSet<File>()) { it in changedFiles }
+        val classpathStatus = findClasspathChanges(allDataFiles, changedDataFiles)
         return when (classpathStatus) {
             is KaptClasspathChanges.Unknown -> KaptIncrementalChanges.Unknown
             is KaptClasspathChanges.Known -> KaptIncrementalChanges.Known(
@@ -194,18 +194,17 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         }
     }
 
-    private fun findClasspathChanges(changedClasspath: Iterable<File>): KaptClasspathChanges {
+    private fun findClasspathChanges(allDataFile: Set<File>, changedDataFiles: Set<File>): KaptClasspathChanges {
         val incAptCacheDir = incAptCache!!
         incAptCacheDir.mkdirs()
 
         val startTime = System.currentTimeMillis()
 
         val previousSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCacheDir)
-        val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
-            incAptCacheDir, classpath.files.toList(), classpathStructure!!.files
-        )
+        val currentSnapshot =
+            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(incAptCacheDir, classpath.files.toList(), allDataFile)
 
-        val classpathChanges = currentSnapshot.diff(previousSnapshot, changedClasspath.toSet())
+        val classpathChanges = currentSnapshot.diff(previousSnapshot, changedDataFiles)
         currentSnapshot.writeToCache()
 
         if (logger.isInfoEnabled) {

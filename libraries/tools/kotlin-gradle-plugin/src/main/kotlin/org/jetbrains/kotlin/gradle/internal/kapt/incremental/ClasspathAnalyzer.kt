@@ -26,10 +26,7 @@ class StructureArtifactTransform : ArtifactTransform() {
             val dataFile = outputDirectory.resolve("output.bin")
             data.saveTo(dataFile)
 
-            val lazyStructureFile = outputDirectory.resolve("lazy-output.bin")
-            LazyClasspathEntryData(input, dataFile).saveToFile(lazyStructureFile)
-
-            return mutableListOf(lazyStructureFile)
+            return mutableListOf(dataFile)
         } catch (e: Throwable) {
             throw e
         }
@@ -84,25 +81,6 @@ private fun analyzeInputStream(input: InputStream, internalName: String, entryDa
     entryData.classAbiHash[internalName] = digest
     entryData.classDependencies[internalName] =
         ClassDependencies(typeDependenciesExtractor.getAbiTypes(), typeDependenciesExtractor.getPrivateTypes())
-}
-
-class LazyClasspathEntryData(val classpathEntry: File, private val dataFile: File) : Serializable {
-
-    object LazyClasspathEntrySerializer {
-        fun loadFromFile(file: File): LazyClasspathEntryData {
-            ObjectInputStream(BufferedInputStream(file.inputStream())).use {
-                return it.readObject() as LazyClasspathEntryData
-            }
-        }
-    }
-
-    fun saveToFile(file: File) {
-        ObjectOutputStream(BufferedOutputStream(file.outputStream())).use {
-            it.writeObject(this)
-        }
-    }
-
-    fun getClasspathEntryData(): ClasspathEntryData = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(dataFile)
 }
 
 class ClasspathEntryData : Serializable {

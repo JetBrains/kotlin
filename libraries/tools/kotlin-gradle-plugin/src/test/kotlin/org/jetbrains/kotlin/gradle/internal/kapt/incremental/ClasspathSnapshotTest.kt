@@ -18,93 +18,80 @@ class ClasspathSnapshotTest {
 
     @Test
     fun testSerialization() {
-        val (firstJar, lazyData) = generateLazyData(
+        val data = generateStructureData(
             ClassData("first/A"), ClassData("first/B")
         )
 
         val snapshotDir = tmp.newFolder()
-        val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(snapshotDir, listOf(firstJar), setOf(lazyData))
-        assertEquals(KaptClasspathChanges.Unknown, currentSnapshot.diff(UnknownSnapshot, setOf(firstJar)))
+        val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(snapshotDir, listOf(), setOf(data))
+        assertEquals(KaptClasspathChanges.Unknown, currentSnapshot.diff(UnknownSnapshot, setOf(data)))
         currentSnapshot.writeToCache()
 
         val loadedSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(snapshotDir)
 
-        val diff = loadedSnapshot.diff(currentSnapshot, setOf(firstJar)) as KaptClasspathChanges.Known
+        val diff = loadedSnapshot.diff(currentSnapshot, setOf(data)) as KaptClasspathChanges.Known
         assertEquals(emptySet<String>(), diff.names)
     }
 
     @Test
     fun testIncompatibleClasspaths() {
-        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(File(""), listOf(File("1.jar")), emptySet())
+        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(File(""), listOf(File("a.jar")), emptySet())
         val secondSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(File(""), listOf(File("1.jar"), File("added.jar")), emptySet())
-        assertEquals(KaptClasspathChanges.Unknown, firstSnapshot.diff(secondSnapshot, setOf(File("added.jar"))))
+            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(File(""), listOf(File("b.jar")), setOf(File("")))
+        assertEquals(KaptClasspathChanges.Unknown, firstSnapshot.diff(secondSnapshot, emptySet()))
     }
 
     @Test
     fun testChangedClassesFound() {
-        val (firstJar, firstLazyData) = generateLazyData(
+        val dataFile = generateStructureData(
             ClassData("first/A"),
             ClassData("first/B").also { it.withAbiDependencies("first/A") }
         )
-        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(File(""), listOf(firstJar), setOf(firstLazyData))
-        firstSnapshot.diff(UnknownSnapshot, setOf(firstJar))
+        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), setOf(dataFile))
+        firstSnapshot.writeToCache()
 
-        val (_, changedLazyData) = generateLazyData(
+        generateStructureData(
             ClassData("first/A", ByteArray(1)),
             ClassData("first/B").also { it.withAbiDependencies("first/A") },
-            jarInput = firstJar
+            outputFile = dataFile
         )
-        val changedSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(File(""), listOf(firstJar), setOf(changedLazyData))
+        val changedSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), setOf(dataFile))
 
-        val diff = changedSnapshot.diff(firstSnapshot, setOf(firstJar)) as KaptClasspathChanges.Known
+        val diff = changedSnapshot.diff(firstSnapshot, setOf(dataFile)) as KaptClasspathChanges.Known
         assertEquals(setOf("first/A", "first/B"), diff.names)
     }
 
     @Test
     fun testChangedClassesAcrossEntries() {
-        val (firstJar, firstLazyData) = generateLazyData(
+        val dataFile = generateStructureData(
             ClassData("first/A").also { it.withAbiDependencies("library/C") },
             ClassData("first/B").also { it.withAbiDependencies("first/A") }
         )
 
-        val (libraryJar, libraryLazyData) = generateLazyData(ClassData("library/C"))
+        val libraryDataFile = generateStructureData(ClassData("library/C"))
 
         val cacheDir = tmp.newFolder()
         val firstSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
-                cacheDir,
-                listOf(firstJar, libraryJar),
-                setOf(firstLazyData, libraryLazyData)
-            )
-        firstSnapshot.diff(UnknownSnapshot, setOf(firstJar, libraryJar))
+            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(cacheDir, listOf(), setOf(dataFile, libraryDataFile))
         firstSnapshot.writeToCache()
 
-        val (_, changedLazyData) = generateLazyData(ClassData("library/C", ByteArray(1)), jarInput = libraryJar)
+        generateStructureData(ClassData("library/C", ByteArray(1)), outputFile = libraryDataFile)
         val changedSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
-                cacheDir,
-                listOf(firstJar, libraryJar),
-                setOf(firstLazyData, changedLazyData)
-            )
+            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(cacheDir, listOf(), setOf(dataFile, libraryDataFile))
 
-        val diff = changedSnapshot.diff(firstSnapshot, setOf(libraryJar)) as KaptClasspathChanges.Known
+        val diff = changedSnapshot.diff(firstSnapshot, setOf(libraryDataFile)) as KaptClasspathChanges.Known
         assertEquals(setOf("library/C", "first/A", "first/B"), diff.names)
     }
 
-    private fun generateLazyData(
-        vararg classData: ClassData,
-        jarInput: File = tmp.newFile()
-    ): Pair<File, File> {
+    private fun generateStructureData(vararg classData: ClassData, outputFile: File = tmp.newFile()): File {
         val data = ClasspathEntryData()
         classData.forEach {
             data.classAbiHash[it.internalName] = it.hash
             data.classDependencies[it.internalName] = ClassDependencies(it.abiDeps, it.privateDeps)
         }
-        val serialized = tmp.newFile().also { data.saveTo(it) }
-        val lazyData = tmp.newFile().also { LazyClasspathEntryData(jarInput, serialized).saveToFile(it) }
+        data.saveTo(outputFile)
 
-        return Pair(jarInput, lazyData)
+        return outputFile
     }
 
     private class ClassData(
