@@ -145,6 +145,7 @@ fun getPackageMoveTarget(
 
     return KotlinMoveTargetForDeferredFile(
         FqName(packageName),
+        targetFileName,
         moveDestination.getTargetIfExists(sourceFiles[0]),
         targetDir,
         module = sourceFiles.first().module

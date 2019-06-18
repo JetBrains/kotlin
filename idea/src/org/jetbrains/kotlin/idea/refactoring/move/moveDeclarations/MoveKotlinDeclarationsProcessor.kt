@@ -363,9 +363,9 @@ class MoveKotlinDeclarationsProcessor(
                     actualTargetDir.toPsiDirectory(project),
                     actualTargetFile,
                     moveTarget.module
-                ) {
+                ) {originalFile ->
                     getOrCreateKotlinFile(
-                        moveTarget.targetFileName ?: "${actualElement.name}.kt",
+                        moveTarget.targetFileName ?: originalFile.name,
                         actualTargetDirPsi
                     )
                 }
