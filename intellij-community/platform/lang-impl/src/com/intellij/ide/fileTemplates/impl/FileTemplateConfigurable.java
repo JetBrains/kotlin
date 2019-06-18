@@ -39,7 +39,6 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.SeparatorFactory;
 import com.intellij.ui.components.panels.HorizontalLayout;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBInsets;
@@ -155,8 +154,8 @@ public class FileTemplateConfigurable implements Configurable, Configurable.NoSc
     myTopPanel = new JPanel(new GridBagLayout());
 
     JPanel descriptionPanel = new JPanel(new GridBagLayout());
-    descriptionPanel.add(SeparatorFactory.createSeparator(IdeBundle.message("label.description"), null),
-                         new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+    descriptionPanel.add(new JLabel(IdeBundle.message("label.description")),
+                         new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                 JBUI.insetsBottom(2), 0, 0));
     descriptionPanel.add(ScrollPaneFactory.createScrollPane(myDescriptionComponent),
                          new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
