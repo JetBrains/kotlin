@@ -11,7 +11,6 @@ import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 
@@ -41,8 +40,7 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
         override fun valueOf(item: KotlinScriptDefinitionsModelDescriptor): String {
             val definition = item.definition
             return definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern
-                ?: definition.asLegacyOrNull<StandardIdeScriptDefinition>()?.let { KotlinParserDefinition.STD_SCRIPT_EXT }
-                ?: definition.fileExtension
+                ?: "." + definition.fileExtension
         }
     }
 
