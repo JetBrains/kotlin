@@ -60,6 +60,8 @@ import org.jetbrains.kotlin.idea.refactoring.ui.KotlinDestinationFolderComboBox;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinFileChooserDialog;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtModifierListOwner;
+import org.jetbrains.kotlin.psi.KtNamed;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
@@ -71,12 +73,16 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
 import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveToPackageUtilsKt.doMoveToPackage;
 import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveToPackageUtilsKt.getPackageMoveTarget;
 import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getSuitableDestinationSourceRoots;
+import static org.jetbrains.kotlin.idea.util.ExpectActualUtilKt.actualsForExpected;
+import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.hasActualModifier;
+import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.hasExpectModifier;
 
 public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = "MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY";
@@ -485,7 +491,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         setErrorText(null);
 
         List<KtFile> sourceFiles = getSourceFiles(getSelectedElementsToMove());
-        PsiDirectory sourceDirectory = getSourceDirectory(sourceFiles);
 
         if (isMoveToPackage()) {
             final String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
@@ -571,6 +576,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 targetPackageFqName,
                 psiDirectory,
                 null,
+                null,
                 new Function1<KtFile, KtFile>() {
                     @Override
                     public KtFile invoke(@NotNull KtFile originalFile) {
@@ -605,7 +611,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private List<KtNamedDeclaration> getSelectedElementsToMove() {
-        return CollectionsKt.map(
+        List<KtNamedDeclaration> selectedElements = CollectionsKt.map(
                 memberTable.getSelectedMemberInfos(),
                 new Function1<KotlinMemberInfo, KtNamedDeclaration>() {
                     @Override
@@ -614,6 +620,17 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     }
                 }
         );
+        List<KtNamedDeclaration> additionalElements = new ArrayList<>();
+        //for (KtNamedDeclaration elem : selectedElements) {
+        //    if (hasExpectModifier(elem)) {
+        //        actualsForExpected(elem, null).forEach(it -> additionalElements.add((KtNamedDeclaration) it));
+        //    }
+        //    if (hasActualModifier(elem)) {
+        //        //expectedForActual(elem, null).forEach(it -> additionalElements.add((KtNamedDeclaration) it));
+        //    }
+        //}
+        //selectedElements.addAll(additionalElements);
+        return selectedElements;
     }
 
     @Override
@@ -651,7 +668,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         List<KtNamedDeclaration> elementsToMove = getSelectedElementsToMove();
         List<KtFile> sourceFiles = getSourceFiles(elementsToMove);
-        final PsiDirectory sourceDirectory = getSourceDirectory(sourceFiles);
 
         for (PsiElement element : elementsToMove) {
             String message = target.verify(element.getContainingFile());

@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import java.util.*
+import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 
 interface KotlinMoveTarget {
     val targetContainerFqName: FqName?
@@ -92,7 +94,8 @@ class KotlinMoveTargetForDeferredFile(
         override val targetContainerFqName: FqName,
         override val directory: PsiDirectory?,
         override val targetFile: VirtualFile? = directory?.virtualFile,
-        private val createFile: (KtFile) -> KtFile?
+        val module: Module? = directory?.module,
+        val createFile: (KtFile) -> KtFile?
 ): KotlinDirectoryBasedMoveTarget {
     private val createdFiles = HashMap<KtFile, KtFile?>()
 

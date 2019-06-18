@@ -21,6 +21,7 @@ import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
@@ -49,19 +50,23 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.search.restrictByFileType
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
@@ -153,7 +158,20 @@ class MoveKotlinDeclarationsProcessor(
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
     private val moveEntireFile = descriptor.moveSource is MoveSource.File
-    private val elementsToMove = descriptor.moveSource.elementsToMove.filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
+    private val elementsToMove = descriptor.moveSource.elementsToMove
+        .filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
+        .let { selectedElements ->
+            val additionalElements = ArrayList<KtNamedDeclaration>()
+            selectedElements.forEach { elem ->
+                if (elem.hasExpectModifier()) {
+                    elem.actualsForExpected(null).forEach { additionalElements.addIfNotNull(it.safeAs()) }
+                }
+                if (elem.hasActualModifier()) {
+                    // TODO: error
+                }
+            }
+            selectedElements + additionalElements
+        }
     private val kotlinToLightElementsBySourceFile = elementsToMove
         .groupBy { it.containingKtFile }
         .mapValues { it.value.keysToMap { it.toLightElements().ifEmpty { listOf(it) } } }
@@ -209,10 +227,9 @@ class MoveKotlinDeclarationsProcessor(
                 val results = ReferencesSearch
                     .search(lightElement, searchScope)
                     .mapNotNullTo(ArrayList()) { ref ->
-                        if (foundReferences.add(ref) && elementsToMove.none { it.isAncestor(ref.element)}) {
+                        if (foundReferences.add(ref) && elementsToMove.none { it.isAncestor(ref.element) }) {
                             createMoveUsageInfoIfPossible(ref, lightElement, addImportToOriginalFile = true, isInternal = false)
-                        }
-                        else null
+                        } else null
                     }
 
                 val name = lightElement.getKotlinFqName()?.quoteIfNeeded()?.asString()
@@ -236,14 +253,18 @@ class MoveKotlinDeclarationsProcessor(
         }
 
         val usages = ArrayList<UsageInfo>()
-        val conflictChecker = MoveConflictChecker(
-            project,
-            elementsToMove,
-            descriptor.moveTarget,
-            elementsToMove.first(),
-            allElementsToMove = descriptor.allElementsToMove
-        )
-        for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
+
+        fun updateUsages(sourceFile: KtFile, elements: Map<KtNamedDeclaration, List<PsiNamedElement>>) {
+            if (elements.isEmpty()) return
+
+            val conflictChecker = MoveConflictChecker(
+                project,
+                elements.keys,
+                transformMoveTarget(elements.keys.first(), descriptor.moveTarget),
+                elements.keys.first(),
+                allElementsToMove = descriptor.allElementsToMove // TODO: ?
+            )
+
             val internalUsages = LinkedHashSet<UsageInfo>()
             val externalUsages = LinkedHashSet<UsageInfo>()
 
@@ -254,14 +275,14 @@ class MoveKotlinDeclarationsProcessor(
                 )
                 internalUsages += sourceFile.getInternalReferencesToUpdateOnPackageNameChange(changeInfo)
             } else {
-                kotlinToLightElements.keys.forEach {
+                elements.keys.forEach {
                     val packageNameInfo = descriptor.delegate.getContainerChangeInfo(it, descriptor.moveTarget)
                     internalUsages += it.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
                 }
             }
 
             internalUsages += descriptor.delegate.findInternalUsages(descriptor)
-            collectUsages(kotlinToLightElements, externalUsages)
+            collectUsages(elements, externalUsages)
             if (descriptor.analyzeConflicts) {
                 conflictChecker.checkAllConflicts(externalUsages, internalUsages, conflicts)
                 descriptor.delegate.collectConflicts(descriptor, internalUsages, conflicts)
@@ -271,7 +292,88 @@ class MoveKotlinDeclarationsProcessor(
             usages += externalUsages
         }
 
+        for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
+            updateUsages(sourceFile, kotlinToLightElements.filterKeys { !it.hasActualModifier() })
+            kotlinToLightElements.forEach {
+                if (it.key.hasActualModifier()) {
+                    updateUsages(sourceFile, mapOf(it.toPair()))
+                }
+            }
+        }
+
         return UsageViewUtil.removeDuplicatedUsages(usages.toTypedArray())
+    }
+
+    private fun getRelativePath(sourceRootPath: String, file: VirtualFile): String = file.path
+        .removePrefix(sourceRootPath)
+        .removePrefix("/")
+
+    private fun findSuitableSourceRoot(
+        allActualSourceRoots: Array<VirtualFile>,
+        expectedSourceRootPath: String,
+        currentDir: VirtualFile,
+        sourceRootPath: String
+    ): VirtualFile? {
+        val relativePath = getRelativePath(sourceRootPath, currentDir)
+        if (relativePath.isEmpty()) return allActualSourceRoots.maxBy { it.path.commonSuffixWith(expectedSourceRootPath).length }
+        return allActualSourceRoots.find { it.findFileByRelativePath(relativePath) != null }
+            ?: findSuitableSourceRoot(allActualSourceRoots, expectedSourceRootPath, currentDir.parent, sourceRootPath)
+    }
+
+    // TODO : add caching
+    private fun transformMoveTarget(
+        element: KtDeclaration,
+        moveTarget: KotlinMoveTarget
+    ): KotlinMoveTarget {
+        if (!element.hasActualModifier()) return moveTarget
+        val actualElement = element
+        when (moveTarget) {
+            is KotlinMoveTargetForDeferredFile -> {
+                val expectedElement = element.expectedDeclarationIfAny() ?: return moveTarget
+                when {
+                    moveTarget.directory != null -> {
+                        val currentDirForExpected = moveTarget.directory.virtualFile
+                        val expectedSourceRootPath = currentDirForExpected.getSourceRoot(project)?.path ?: return moveTarget
+                        val allActualSourceRoots = actualElement.module?.sourceRoots ?: return moveTarget
+                        val actualSourceRoot = findSuitableSourceRoot(
+                            allActualSourceRoots,
+                            expectedSourceRootPath,
+                            currentDirForExpected,
+                            expectedSourceRootPath
+                        ) ?: return moveTarget
+                        val actualTargetDir = actualSourceRoot.findFileByRelativePath(
+                            getRelativePath(
+                                expectedSourceRootPath,
+                                currentDirForExpected
+                            )
+                        )
+                        val actualTargetFile = actualTargetDir?.findChild("${actualElement.name}.kt")
+                        return KotlinMoveTargetForDeferredFile(
+                            moveTarget.targetContainerFqName,
+                            actualTargetDir?.toPsiDirectory(project),
+                            actualTargetFile,
+                            moveTarget.module,
+                        ) { originalFile ->
+                            getOrCreateKotlinFile(
+                                if (targetFileName != null) targetFileName else originalFile.name,
+                                moveDestination.getTargetDirectory(originalFile)
+                            )
+                        }
+                    }
+                }
+            }
+            is KotlinMoveTargetForExistingElement -> {
+                val targetFqName = moveTarget.targetElement.getKotlinFqName()?.asString() ?: return moveTarget
+                val moduleScope = element.module?.moduleScope ?: return moveTarget
+                val actualTarget = KotlinFullClassNameIndex.getInstance().get(
+                    targetFqName,
+                    project,
+                    moduleScope
+                ).firstOrNull() ?: return moveTarget
+                return KotlinMoveTargetForExistingElement(actualTarget)
+            }
+            else -> return moveTarget
+        }
     }
 
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
@@ -309,7 +411,10 @@ class MoveKotlinDeclarationsProcessor(
                 for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
                     val elementListener = transaction?.getElementListener(oldDeclaration)
 
-                    val newDeclaration = moveDeclaration(oldDeclaration, descriptor.moveTarget)
+                    val newDeclaration = moveDeclaration(
+                        oldDeclaration, transformMoveTarget(oldDeclaration, descriptor.moveTarget)
+                    )
+
                     newDeclarations += newDeclaration
 
                     oldToNewElementsMapping[oldDeclaration] = newDeclaration

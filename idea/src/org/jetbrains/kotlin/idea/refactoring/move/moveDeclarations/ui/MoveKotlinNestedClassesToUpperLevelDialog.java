@@ -400,6 +400,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
                     targetPackageFqName,
                     targetDir,
                     null,
+                    null,
                     new Function1<KtFile, KtFile>() {
                         @Override
                         public KtFile invoke(@NotNull KtFile originalFile) {

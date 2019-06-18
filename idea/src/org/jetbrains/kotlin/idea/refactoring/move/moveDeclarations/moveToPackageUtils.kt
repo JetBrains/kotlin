@@ -27,6 +27,7 @@ import com.intellij.ui.RecentsManager
 import com.intellij.util.Function
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -145,7 +146,8 @@ fun getPackageMoveTarget(
     return KotlinMoveTargetForDeferredFile(
         FqName(packageName),
         moveDestination.getTargetIfExists(sourceFiles[0]),
-        targetDir
+        targetDir,
+        module = sourceFiles.first().module
     ) { originalFile ->
         getOrCreateKotlinFile(
             if (targetFileName != null) targetFileName else originalFile.name,
