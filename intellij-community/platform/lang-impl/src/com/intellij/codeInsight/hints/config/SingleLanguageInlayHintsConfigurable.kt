@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.hints.config
 
 import com.intellij.codeInsight.hints.*
+import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings
 import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.options.Configurable
@@ -21,7 +22,8 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     }
     val parameterHintsProvider = InlayParameterHintsExtension.forLanguage(language)
     if (parameterHintsProvider != null) {
-      options.add(HintProviderOption(oldParameterHintsKey, "Parameter hints", true, true))
+      val enabledForLanguage = ParameterNameHintsSettings.getInstance().isEnabledForLanguage(language)
+      options.add(HintProviderOption(oldParameterHintsKey, "Parameter hints", true, enabledForLanguage))
     }
     val keyToProvider = providers.associateBy { it.provider.key }
     val settingsWrappers = providers.map { it.toSettingsWrapper(settings, language) }
