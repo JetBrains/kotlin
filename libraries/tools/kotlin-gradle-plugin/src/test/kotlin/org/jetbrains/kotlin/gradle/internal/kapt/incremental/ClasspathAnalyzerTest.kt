@@ -35,10 +35,7 @@ class ClasspathAnalyzerTest {
         val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
         val outputs = transform.transform(classesDir)
 
-        val lazyData = LazyClasspathEntryData.LazyClasspathEntrySerializer.loadFromFile(outputs.single())
-        assertEquals(classesDir, lazyData.classpathEntry)
-
-        val data = lazyData.getClasspathEntryData()
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
         assertEquals(setOf("test/A", "test/B"), data.classDependencies.keys)
         assertEquals(emptySet<String>(), data.classDependencies["test/A"]!!.abiTypes)
@@ -71,10 +68,7 @@ class ClasspathAnalyzerTest {
         val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
         val outputs = transform.transform(inputJar)
 
-        val lazyData = LazyClasspathEntryData.LazyClasspathEntrySerializer.loadFromFile(outputs.single())
-        assertEquals(inputJar, lazyData.classpathEntry)
-
-        val data = lazyData.getClasspathEntryData()
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
         assertEquals(setOf("test/A", "test/B"), data.classDependencies.keys)
         assertEquals(emptySet<String>(), data.classDependencies["test/A"]!!.abiTypes)
@@ -90,10 +84,7 @@ class ClasspathAnalyzerTest {
         val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
         val outputs = transform.transform(inputDir)
 
-        val lazyData = LazyClasspathEntryData.LazyClasspathEntrySerializer.loadFromFile(outputs.single())
-        assertEquals(inputDir, lazyData.classpathEntry)
-
-        val data = lazyData.getClasspathEntryData()
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
         assertTrue(data.classAbiHash.isEmpty())
         assertTrue(data.classDependencies.isEmpty())
     }
