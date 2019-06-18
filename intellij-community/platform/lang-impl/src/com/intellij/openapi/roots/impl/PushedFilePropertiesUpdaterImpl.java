@@ -97,7 +97,8 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
       // push synchronously to avoid entering dumb mode in the middle of a meaningful write action
       // when only a few files are created/moved
       syncTasks.forEach(Runnable::run);
-    } else {
+    }
+    else {
       delayedTasks.addAll(syncTasks);
     }
     if (!delayedTasks.isEmpty()) {
