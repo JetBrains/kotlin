@@ -2,6 +2,7 @@
 package com.intellij.openapi.fileTypes.impl;
 
 import com.intellij.CommonBundle;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.highlighter.custom.SyntaxTable;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
@@ -23,6 +24,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBDimension;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +40,8 @@ import static com.intellij.openapi.util.Pair.pair;
  * @author Eugene Belyaev
  */
 public class FileTypeConfigurable implements SearchableConfigurable, Configurable.NoScroll {
+  private static final Insets TITLE_INSETS = JBUI.insetsTop(8);
+
   private RecognizedFileTypes myRecognizedFileType;
   private PatternsPanel myPatterns;
   private FileTypePanel myFileTypePanel;
@@ -58,7 +62,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
 
   @Override
   public JComponent createComponent() {
-    myFileTypePanel = new FileTypePanel();
+    myFileTypePanel = new FileTypePanel().init();
     myRecognizedFileType = myFileTypePanel.myRecognizedFileType;
     myPatterns = myFileTypePanel.myPatterns;
     myRecognizedFileType.attachActions(this);
@@ -347,7 +351,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
         .disableUpDownActions();
 
       add(toolbarDecorator.createPanel(), BorderLayout.CENTER);
-      setBorder(IdeBorderFactory.createTitledBorder(FileTypesBundle.message("filetype.recognized.group"), false));
+      setBorder(IdeBorderFactory.createTitledBorder(FileTypesBundle.message("filetype.recognized.group"), false, TITLE_INSETS).setShowLine(false));
 
       mySpeedSearch = new MySpeedSearch(myFileTypesList);
     }
@@ -473,7 +477,8 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
             .setAddAction(button -> myController.addPattern()).setEditAction(button -> myController.editPattern()).setRemoveAction(
           button -> myController.removePattern()).disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
-      setBorder(IdeBorderFactory.createTitledBorder(FileTypesBundle.message("filetype.registered.patterns.group"), false));
+      setBorder(IdeBorderFactory.createTitledBorder(FileTypesBundle.message("filetype.registered.patterns.group"), false, TITLE_INSETS)
+                  .setShowLine(false));
     }
 
     public void attachActions(final FileTypeConfigurable controller) {
@@ -533,6 +538,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     private RecognizedFileTypes myRecognizedFileType;
     private PatternsPanel myPatterns;
     private JTextField myIgnoreFilesField;
+    private JPanel myIgnorePanel;
 
     public JComponent getComponent() {
       return myWholePanel;
@@ -541,6 +547,12 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     public void dispose() {
       myRecognizedFileType.setFileTypes(FileType.EMPTY_ARRAY);
       myPatterns.clearList();
+    }
+
+    private FileTypePanel init() {
+      myIgnorePanel.setBorder(
+        IdeBorderFactory.createTitledBorder(IdeBundle.message("editbox.ignore.files.and.folders"), false, TITLE_INSETS).setShowLine(false));
+      return this;
     }
   }
 
