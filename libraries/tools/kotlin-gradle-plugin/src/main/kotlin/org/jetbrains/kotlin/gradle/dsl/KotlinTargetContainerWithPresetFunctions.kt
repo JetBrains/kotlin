@@ -166,6 +166,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun linuxArm32Hfp(name: String, configure: Closure<*>) = linuxArm32Hfp(name) { ConfigureUtil.configure(configure, this) }
     fun linuxArm32Hfp(configure: Closure<*>) = linuxArm32Hfp { ConfigureUtil.configure(configure, this) }
 
+    fun linuxArm64(
+        name: String = "linuxArm64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("linuxArm64") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun linuxArm64() = linuxArm64("linuxArm64") { }
+    fun linuxArm64(name: String) = linuxArm64(name) { }
+    fun linuxArm64(name: String, configure: Closure<*>) = linuxArm64(name) { ConfigureUtil.configure(configure, this) }
+    fun linuxArm64(configure: Closure<*>) = linuxArm64 { ConfigureUtil.configure(configure, this) }
+
     fun linuxMips32(
         name: String = "linuxMips32",
         configure: KotlinNativeTarget.() -> Unit = { }
