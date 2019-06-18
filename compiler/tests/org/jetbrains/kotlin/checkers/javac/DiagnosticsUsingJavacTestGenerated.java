@@ -9910,6 +9910,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionToUnitForIfAsLastExpressionInLambda.kt");
                 }
 
+                @TestMetadata("coercionToUnitForLastLambdaInLambda.kt")
+                public void testCoercionToUnitForLastLambdaInLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionToUnitForLastLambdaInLambda.kt");
+                }
+
                 @TestMetadata("coercionWithExpectedType.kt")
                 public void testCoercionWithExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithExpectedType.kt");
