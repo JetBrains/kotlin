@@ -53,13 +53,13 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
     if (myMainComponent == null) {
       myMainComponent = new JPanel(new BorderLayout());
       myCbUseSoftWrapsAtConsole = new JCheckBox(ApplicationBundle.message("checkbox.use.soft.wraps.at.console"), false);
-      myCommandsHistoryLimitField = new JTextField(3);
+      myCommandsHistoryLimitField = new JTextField(4);
       myCbOverrideConsoleCycleBufferSize = new JCheckBox(ApplicationBundle.message("checkbox.override.console.cycle.buffer.size", String.valueOf(ConsoleBuffer.getLegacyCycleBufferSize() / 1024)), false);
       myCbOverrideConsoleCycleBufferSize.addChangeListener(e -> {
         myConsoleCycleBufferSizeField.setEnabled(myCbOverrideConsoleCycleBufferSize.isSelected());
         myConsoleBufferSizeWarningLabel.setVisible(myCbOverrideConsoleCycleBufferSize.isSelected());
       });
-      myConsoleCycleBufferSizeField = new JTextField(3);
+      myConsoleCycleBufferSizeField = new JTextField(4);
       myConsoleBufferSizeWarningLabel = new JLabel();
       myConsoleBufferSizeWarningLabel.setForeground(JBColor.red);
       myConsoleCycleBufferSizeField.getDocument().addDocumentListener(new DocumentAdapter() {
