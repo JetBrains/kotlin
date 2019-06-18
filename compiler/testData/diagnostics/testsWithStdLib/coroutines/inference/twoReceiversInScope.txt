@@ -1,0 +1,25 @@
+package
+
+public fun </*0*/ F> flow(/*0*/ @kotlin.BuilderInference block: MyFlowCollector<F>.() -> kotlin.Unit): MyFlow<F>
+public fun </*0*/ P> produce(/*0*/ @kotlin.BuilderInference block: SendChannel<P>.() -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ C> MyFlow<C>.collect(/*0*/ action: (C) -> kotlin.Unit): kotlin.Unit
+private fun </*0*/ T> MyFlow<T>.idScoped(): MyFlow<T>
+
+public interface MyFlow</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MyFlowCollector</*0*/ in T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SendChannel</*0*/ in E> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun send(/*0*/ element: E): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

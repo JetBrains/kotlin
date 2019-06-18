@@ -217,6 +217,8 @@ class CoroutineInferenceSession(
 
 class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubstitutor) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
-        return left.safeSubstitute(right.substituteNotNullTypeWithConstructor(constructor) ?: return null)
+        return left.substituteNotNullTypeWithConstructor(
+            right.substituteNotNullTypeWithConstructor(constructor)?.constructor ?: constructor
+        )
     }
 }
