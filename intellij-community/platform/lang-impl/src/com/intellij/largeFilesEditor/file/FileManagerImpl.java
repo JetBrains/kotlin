@@ -6,7 +6,7 @@ import com.intellij.largeFilesEditor.editor.Page;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.concurrency.SequentialTaskExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
@@ -23,7 +23,7 @@ public class FileManagerImpl implements FileManager {
   private FileAdapter fileAdapter;
   private final Queue<Page> notUpdatedPagesCash;
   private final ExecutorService readingPageExecutor =
-    ConcurrencyUtil.newSingleThreadExecutor("Large File Editor Reading File Executor");
+    SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Large File Editor Reading File Executor");
 
   public FileManagerImpl(VirtualFile vFile, int pageSize, int maxPageBorderShift) throws FileNotFoundException {
     this.fileAdapter = new FileAdapter(pageSize, maxPageBorderShift, vFile);
