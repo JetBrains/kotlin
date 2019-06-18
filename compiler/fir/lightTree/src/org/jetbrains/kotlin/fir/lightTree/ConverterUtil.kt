@@ -6,25 +6,23 @@
 package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
-import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirDelegatedConstructorCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirReturnExpressionImpl
-import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.MemberModifier
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.PlatformModifier
+import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -50,12 +48,9 @@ object ConverterUtil {
             )
         }
 
-    fun LighterASTNode?.hasSecondaryConstructor(tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
+    fun LighterASTNode?.hasSecondaryConstructor(kidsArray: Array<LighterASTNode?>): Boolean {
         if (this == null) return false
         //TODO check if node isn't CLASS_BODY
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(this, kidsRef)
-        val kidsArray = kidsRef.get()
 
         for (kid in kidsArray) {
             if (kid == null) continue
@@ -64,33 +59,6 @@ object ConverterUtil {
             }
         }
         return false
-    }
-
-    fun ValueParameter.toFirProperty(): FirProperty {
-        val modifier = this.modifier
-        val name = this.firValueParameter.name
-        val type = this.firValueParameter.returnTypeRef
-
-        return FirMemberPropertyImpl(
-            this.firValueParameter.session,
-            null,
-            FirPropertySymbol(ClassNameUtil.callableIdForName(name)),
-            name,
-            modifier.visibilityModifier.toVisibility(),
-            modifier.inheritanceModifier?.toModality(),
-            modifier.platformModifier == PlatformModifier.EXPECT,
-            modifier.platformModifier == PlatformModifier.ACTUAL,
-            isOverride = modifier.memberModifier == MemberModifier.OVERRIDE,
-            isConst = false,
-            isLateInit = false,
-            receiverTypeRef = null,
-            returnTypeRef = type,
-            isVar = this.isVar,
-            initializer = null,
-            getter = FirDefaultPropertyGetter(this.firValueParameter.session, null, type, modifier.visibilityModifier.toVisibility()),
-            setter = FirDefaultPropertySetter(this.firValueParameter.session, null, type, modifier.visibilityModifier.toVisibility()),
-            delegate = null
-        ).apply { annotations += this@toFirProperty.firValueParameter.annotations }
     }
 
     fun FirExpression.toReturn(labelName: String? = null): FirReturnExpression {
@@ -129,8 +97,83 @@ object ConverterUtil {
         }
     }
 
-    fun FirValueParameter.toFirExpression(session: FirSession, stubMode: Boolean): FirExpression {
-        return if (stubMode) FirExpressionStub(session, null)
+    fun FirTypeParameterContainer.joinTypeParameters(typeConstraints: List<TypeConstraint>) {
+        typeConstraints.forEach { (identifier, type) ->
+            this.typeParameters.forEach { typeParameter ->
+                if (identifier == typeParameter.name.identifier) {
+                    (typeParameter as FirTypeParameterImpl).bounds += type
+                    typeParameter.annotations += type.annotations
+                }
+            }
+        }
+    }
+
+    fun <T : FirAbstractCall> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
+        if (!stubMode) {
+            //TODO("not implemented")
+            this.arguments += container
+        }
+        return this
+    }
+
+    fun List<FirEnumEntryImpl>.fillEnumEntryConstructor(
+        firPrimaryConstructor: FirConstructor,
+        stubMode: Boolean
+    ) {
+        this.forEach { firEnumEntry ->
+            val enumDelegatedSelfTypeRef = firPrimaryConstructor.returnTypeRef
+            var enumDelegatedSuperTypeRef: FirTypeRef = FirImplicitAnyTypeRef(firEnumEntry.session, null)
+            val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
+
+            if (firPrimaryConstructor.valueParameters.isNotEmpty()) {
+                enumDelegatedSuperTypeRef = enumDelegatedSelfTypeRef
+                firEnumEntry.superTypeRefs += enumDelegatedSuperTypeRef
+                enumSuperTypeCallEntry += firPrimaryConstructor.valueParameters.map { firValueParameter ->
+                    firValueParameter.toFirExpression(stubMode)
+                }
+            }
+
+            val firDelegatedConstructorCall = FirDelegatedConstructorCallImpl(
+                firEnumEntry.session,
+                null,
+                enumDelegatedSuperTypeRef,
+                false
+            ).extractArgumentsFrom(enumSuperTypeCallEntry, stubMode)
+
+            val firEnumPrimaryConstructor = FirPrimaryConstructorImpl(
+                firEnumEntry.session,
+                null,
+                FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
+                Visibilities.UNKNOWN,
+                false,
+                false,
+                enumDelegatedSelfTypeRef,
+                firDelegatedConstructorCall
+            )
+            firEnumEntry.declarations.add(0, firEnumPrimaryConstructor)
+        }
+    }
+
+    fun List<FirDeclaration>.fillConstructors(
+        hasPrimaryConstructor: Boolean,
+        delegatedSelfTypeRef: FirTypeRef,
+        delegatedSuperTypeRef: FirTypeRef
+    ) {
+        this.forEach { constructor ->
+            (constructor as FirConstructorImpl).returnTypeRef = delegatedSelfTypeRef
+            val constructorDelegationCall = constructor.delegatedConstructor as? FirDelegatedConstructorCallImpl
+            val isThis =
+                (constructorDelegationCall == null && hasPrimaryConstructor) || constructorDelegationCall?.isThis == true
+            val delegatedType = when {
+                isThis -> delegatedSelfTypeRef
+                else -> delegatedSuperTypeRef
+            }
+            constructorDelegationCall?.constructedTypeRef = delegatedType
+        }
+    }
+
+    fun FirValueParameter.toFirExpression(stubMode: Boolean): FirExpression {
+        return if (stubMode) FirExpressionStub(this.session, null)
         else TODO("not implemeted")
     }
 }
