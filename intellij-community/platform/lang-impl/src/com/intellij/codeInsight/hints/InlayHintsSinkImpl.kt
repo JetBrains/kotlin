@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.InlayModel
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.util.DocumentUtil
@@ -88,9 +89,11 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
                     isEnabled: Boolean) {
     val inlayModel = editor.inlayModel
     val isBulkChange = existingHorizontalInlays.size + hints.size() > BulkChangeThreshold
-    DocumentUtil.executeInBulk(editor.document, isBulkChange) {
-      updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays, isEnabled)
-      createNewHints(inlayModel)
+    EditorScrollingPositionKeeper.perform(editor, true) {
+      DocumentUtil.executeInBulk(editor.document, isBulkChange) {
+        updateOrDeleteExistingHints(existingHorizontalInlays, existingVerticalInlays, isEnabled)
+        createNewHints(inlayModel)
+      }
     }
     hints.clear()
   }
