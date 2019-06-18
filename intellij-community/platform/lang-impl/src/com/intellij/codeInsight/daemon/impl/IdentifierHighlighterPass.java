@@ -215,7 +215,7 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
 
   @Override
   public void doApplyInformationToEditor() {
-    final boolean virtSpace = EditorUtil.inVirtualSpace(myEditor);
+    final boolean virtSpace = EditorUtil.isCaretInVirtualSpace(myEditor);
     final List<HighlightInfo> infos = virtSpace || isCaretOverCollapsedFoldRegion() ? Collections.emptyList() : getHighlights();
     UpdateHighlightersUtil.setHighlightersToEditor(myProject, myDocument, 0, myFile.getTextLength(), infos, getColorsScheme(), getId());
     doAdditionalCodeBlockHighlighting();
