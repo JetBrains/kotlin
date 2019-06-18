@@ -48,8 +48,8 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     }
   }
 
-  private val parameterHintsPanel by lazy {
-    val options = InlayParameterHintsExtension.forLanguage(language)?.supportedOptions ?: emptyList()
+  private val parameterHintsPanel = run {
+    val options = InlayParameterHintsExtension.forLanguage(language)?.supportedOptions ?: return@run null
     ParameterHintsSettingsPanel(language, options, true)
   }
 
@@ -179,6 +179,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
 
   fun isModified(): Boolean {
     if (providerTypes.any { it.isEnabled() != settings.hintsEnabled(it.key, language) }) return true
+    if (parameterHintsPanel?.isModified() == true) return true
     return settingsWrappers.any { it.isModified() }
   }
 
@@ -189,6 +190,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     for (providerType in providerTypes) {
       settings.changeHintTypeStatus(providerType.key, language, providerType.isEnabled())
     }
+    parameterHintsPanel?.saveOptions()
   }
 
   private fun initProviderList(typeSettingsPane: JBScrollPane) {
