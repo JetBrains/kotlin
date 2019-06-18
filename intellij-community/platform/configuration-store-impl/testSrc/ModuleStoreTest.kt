@@ -183,7 +183,7 @@ fun ProjectRule.loadModule(file: VirtualFile): Module {
 val Module.contentRootUrls: Array<String>
   get() = ModuleRootManager.getInstance(this).contentRootUrls
 
-fun ProjectRule.createModule(path: Path): Module {
+internal fun ProjectRule.createModule(path: Path): Module {
   val project = project
   return runWriteAction { ModuleManager.getInstance(project).newModule(path.systemIndependentPath, ModuleTypeId.JAVA_MODULE) }
 }
