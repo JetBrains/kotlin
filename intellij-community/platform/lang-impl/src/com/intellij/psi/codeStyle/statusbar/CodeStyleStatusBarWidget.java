@@ -111,7 +111,8 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
     Editor editor = getEditor();
     PsiFile psiFile = getPsiFile();
     if (state instanceof MyWidgetState && editor != null && psiFile != null) {
-      AnAction[] actions = getActions(((MyWidgetState)state).getContributor(), psiFile);
+      final CodeStyleStatusBarUIContributor uiContributor = ((MyWidgetState)state).getContributor();
+      AnAction[] actions = getActions(uiContributor, psiFile);
       ActionGroup actionGroup = new ActionGroup() {
         @NotNull
         @Override
@@ -120,7 +121,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
         }
       };
       return JBPopupFactory.getInstance().createActionGroupPopup(
-        "Code Style", actionGroup, context,
+        uiContributor != null ? uiContributor.getActionGroupTitle() : null, actionGroup, context,
         JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false);
     }
     return null;
