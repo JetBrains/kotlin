@@ -87,15 +87,17 @@ public class IgnoreExternalProjectAction extends ExternalSystemToggleAction {
   public boolean isSelected(@NotNull AnActionEvent e) {
     boolean selected = super.isSelected(e);
     ProjectSystemId systemId = getSystemId(e);
-    final String systemIdName = systemId != null ? systemId.getReadableName() : "external";
+    final String systemIdNameText = systemId != null ? systemId.getReadableName() : "External";
+    final String systemIdNameDescription = systemId != null ? systemId.getReadableName() : "external";
+
     int size = getProjectNodes(e).size();
     if (selected) {
-      setText(e, ExternalSystemBundle.message("action.unignore.external.projects.text", systemIdName, size));
-      setDescription(e, ExternalSystemBundle.message("action.unignore.external.projects.description", systemIdName, size));
+      setText(e, ExternalSystemBundle.message("action.unignore.external.projects.text", systemIdNameText, size));
+      setDescription(e, ExternalSystemBundle.message("action.unignore.external.projects.description", systemIdNameDescription, size));
     }
     else {
-      setText(e, ExternalSystemBundle.message("action.ignore.external.projects.text", systemIdName, size));
-      setDescription(e, ExternalSystemBundle.message("action.ignore.external.projects.description", systemIdName, size));
+      setText(e, ExternalSystemBundle.message("action.ignore.external.projects.text", systemIdNameText, size));
+      setDescription(e, ExternalSystemBundle.message("action.ignore.external.projects.description", systemIdNameDescription, size));
     }
     return selected;
   }

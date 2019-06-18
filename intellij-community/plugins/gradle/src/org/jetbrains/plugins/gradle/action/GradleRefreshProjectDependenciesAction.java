@@ -17,6 +17,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.util.List;
@@ -25,6 +26,11 @@ import java.util.List;
  * @author Vladislav.Soroka
  */
 public class GradleRefreshProjectDependenciesAction extends RefreshExternalProjectAction {
+  public GradleRefreshProjectDependenciesAction() {
+    getTemplatePresentation().setText(GradleBundle.message("gradle.action.refresh.dependencies.text"));
+    getTemplatePresentation().setDescription(GradleBundle.message("gradle.action.refresh.dependencies.description"));
+  }
+
   @Override
   protected boolean isEnabled(@NotNull AnActionEvent e) {
     if (!GradleConstants.SYSTEM_ID.equals(getSystemId(e))) return false;

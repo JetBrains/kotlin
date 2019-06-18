@@ -19,7 +19,7 @@ public class OpenExternalConfigAction extends ExternalSystemNodeAction<ExternalC
 
   public OpenExternalConfigAction() {
     super(ExternalConfigPathAware.class);
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.open.config.text", "external"));
+    getTemplatePresentation().setText(ExternalSystemBundle.message("action.open.config.text", "External"));
     getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.open.config.description", "external"));
   }
 

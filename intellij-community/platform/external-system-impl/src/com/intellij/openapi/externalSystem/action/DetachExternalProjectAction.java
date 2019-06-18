@@ -29,7 +29,7 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
 
   public DetachExternalProjectAction() {
     super(ProjectData.class);
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.detach.external.project.text", "external"));
+    getTemplatePresentation().setText(ExternalSystemBundle.message("action.detach.external.project.text", "External"));
     getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.detach.external.project.description"));
     getTemplatePresentation().setIcon(AllIcons.General.Remove);
   }
@@ -40,7 +40,7 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
     if(this.getClass() != DetachExternalProjectAction.class) return;
 
     ProjectSystemId systemId = getSystemId(e);
-    final String systemIdName = systemId != null ? systemId.getReadableName() : "external";
+    final String systemIdName = systemId != null ? systemId.getReadableName() : "External";
     Presentation presentation = e.getPresentation();
     presentation.setText(ExternalSystemBundle.message("action.detach.external.project.text", systemIdName));
   }

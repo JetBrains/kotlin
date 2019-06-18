@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class AttachExternalProjectAction extends AnAction {
 
   public AttachExternalProjectAction() {
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.attach.external.project.text", "external"));
+    getTemplatePresentation().setText(ExternalSystemBundle.message("action.attach.external.project.text", "External"));
     getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.attach.external.project.description", "external"));
   }
 
