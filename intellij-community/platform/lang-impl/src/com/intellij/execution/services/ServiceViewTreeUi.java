@@ -90,6 +90,8 @@ class ServiceViewTreeUi implements ServiceViewUi {
     myDetailsPanel.add(component, BorderLayout.CENTER);
     myDetailsPanel.revalidate();
     myDetailsPanel.repaint();
+    ActionToolbar serviceToolbar = (ActionToolbar)((BorderLayout)myMasterPanel.getLayout()).getLayoutComponent(BorderLayout.WEST);
+    serviceToolbar.updateActionsImmediately();
   }
 
   @Nullable
