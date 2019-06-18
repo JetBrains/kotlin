@@ -4530,6 +4530,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/leakingThis/enumEntryHasOverriddenMember2.kt");
         }
 
+        @TestMetadata("enumEntryHasOverriddenMember3.kt")
+        public void testEnumEntryHasOverriddenMember3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/leakingThis/enumEntryHasOverriddenMember3.kt");
+        }
+
+        @TestMetadata("enumEntryHasOverriddenMember4.kt")
+        public void testEnumEntryHasOverriddenMember4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/leakingThis/enumEntryHasOverriddenMember4.kt");
+        }
+
+        @TestMetadata("enumEntryHasOverriddenMember5.kt")
+        public void testEnumEntryHasOverriddenMember5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/leakingThis/enumEntryHasOverriddenMember5.kt");
+        }
+
+        @TestMetadata("enumEntryHasOverriddenMember6.kt")
+        public void testEnumEntryHasOverriddenMember6() throws Exception {
+            runTest("idea/testData/inspectionsLocal/leakingThis/enumEntryHasOverriddenMember6.kt");
+        }
+
+        @TestMetadata("enumEntryHasOverriddenMember7.kt")
+        public void testEnumEntryHasOverriddenMember7() throws Exception {
+            runTest("idea/testData/inspectionsLocal/leakingThis/enumEntryHasOverriddenMember7.kt");
+        }
+
         @TestMetadata("inClassLiteral.kt")
         public void testInClassLiteral() throws Exception {
             runTest("idea/testData/inspectionsLocal/leakingThis/inClassLiteral.kt");
