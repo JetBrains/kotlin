@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 import static androidx.build.dependencies.DependenciesKt.*
 import androidx.build.CompilationTarget
 import androidx.build.LibraryGroups
@@ -28,45 +31,30 @@ buildscript {
 
 plugins {
     id("AndroidXPlugin")
-}
-
-apply plugin: 'org.anarres.jarjar'
-
-configurations {
-    jarFiles
+    id("kotlin")
 }
 
 dependencies {
-    jarFiles(project(":compose-plugin-cli")) {
-        transitive = false
-    }
+    api(KOTLIN_STDLIB)
+    api("org.jetbrains.kotlin:kotlin-compiler")
+    api("org.jetbrains.kotlin:kotlin-plugin")
+    api("org.jetbrains.kotlin:kotlin-intellij-core")
+    api("org.jetbrains.kotlin:kotlin-platform-api")
 }
 
-jarjar.repackage('gradlePlugin') {
-    destinationName "compose-cli-plugin-embedded.jar"
-    from configurations.jarFiles
-    classRename 'com.intellij.**', 'org.jetbrains.kotlin.com.intellij.@1'
-}
-
-configurations {
-    pluginForGradle
-}
-
-artifacts {
-    pluginForGradle(gradlePlugin.destinationPath) {
-        name "compose-cli-plugin-embedded"
-        type "jar"
-        builtBy gradlePlugin
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
 androidx {
-    name = "AndroidX Compose Embedded Compiler Plugin"
+    name = "AndroidX Compose Hosted Compiler Plugin"
     publish = Publish.SNAPSHOT_AND_RELEASE
     toolingProject = true
     mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.COMPOSE
     inceptionYear = "2019"
-    description = "Contains the Kotlin compiler plugin for Compose"
+    description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
     compilationTarget = CompilationTarget.HOST
 }
