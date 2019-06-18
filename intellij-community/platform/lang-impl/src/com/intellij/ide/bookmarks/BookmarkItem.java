@@ -18,6 +18,7 @@ package com.intellij.ide.bookmarks;
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.FileStatusManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -63,16 +64,16 @@ public class BookmarkItem extends ItemWrapper implements Comparable<BookmarkItem
     }
 
     String description = bookmark.getDescription();
-    if (description != null) {
-      renderer.append(description + " ", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+    if (!StringUtilRt.isEmptyOrSpaces(description)) {
+      renderer.append(description + " ", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES, true);
     }
 
     FileStatus fileStatus = FileStatusManager.getInstance(project).getStatus(file);
     TextAttributes attributes = new TextAttributes(fileStatus.getColor(), null, null, EffectType.LINE_UNDERSCORE, Font.PLAIN);
-    renderer.append(file.getName(), SimpleTextAttributes.fromTextAttributes(attributes));
+    renderer.append(file.getName(), SimpleTextAttributes.fromTextAttributes(attributes), true);
     if (bookmark.getLine() >= 0) {
-      renderer.append(":", SimpleTextAttributes.GRAYED_ATTRIBUTES);
-      renderer.append(String.valueOf(bookmark.getLine() + 1), SimpleTextAttributes.GRAYED_ATTRIBUTES);
+      renderer.append(":", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+      renderer.append(String.valueOf(bookmark.getLine() + 1), SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
     }
     renderer.append(" (" + VfsUtilCore.getRelativeLocation(file, project.getBaseDir()) + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
 
