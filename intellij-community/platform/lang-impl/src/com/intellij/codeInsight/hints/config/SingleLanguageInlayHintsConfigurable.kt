@@ -14,9 +14,14 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     val settings = ServiceManager.getService(InlayHintsSettings::class.java)
     // All configurables operate with copy of settings, that is why we can do live preview
     val providers = HintUtils.getHintProvidersForLanguage(language, project).map { it.withSettingsCopy() }
-    val options = providers.map {
+    val options = mutableListOf<HintProviderOption<out Any>>()
+    providers.mapTo(options) {
       val provider = it.provider
       HintProviderOption(provider.key, provider.name, settings.hintsEnabled(provider.key, language), provider.previewText)
+    }
+    val parameterHintsProvider = InlayParameterHintsExtension.forLanguage(language)
+    if (parameterHintsProvider != null) {
+      options.add(HintProviderOption(oldParameterHintsKey, "Parameter hints", true, null, true))
     }
     val keyToProvider = providers.associateBy { it.provider.key }
     val settingsWrappers = providers.map { it.toSettingsWrapper(settings, language) }
@@ -48,5 +53,9 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
 
   fun loadFromSettings() {
     panel.loadFromSettings()
+  }
+
+  companion object {
+    private val oldParameterHintsKey = SettingsKey<NoSettings>("parameter.hints.old")
   }
 }

@@ -38,7 +38,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
 ) : JPanel() {
   private val editorField = createEditor()
   private val hintTypeConfigurableToComponent: MutableMap<ImmediateConfigurable, JComponent> = hashMapOf()
-  private var selectedProvider = defaultProvider
+  private var selectedProvider: ProviderWithSettings<out Any>? = defaultProvider
   private val providerTypesList = CheckBoxList<HintProviderOption<out Any>>()
   private val bottomPanel = JPanel()
   private val settings = ServiceManager.getService(InlayHintsSettings::class.java)
@@ -46,6 +46,11 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     override fun settingsChanged() {
       updateEditor(editorField.text)
     }
+  }
+
+  private val parameterHintsPanel by lazy {
+    val options = InlayParameterHintsExtension.forLanguage(language)?.supportedOptions ?: emptyList()
+    ParameterHintsSettingsPanel(language, options, true)
   }
 
 
@@ -119,7 +124,10 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   }
 
   private fun collectAndDrawHints(editor: Editor, file: PsiFile) {
-    val settingsWrapper = settingsWrappers.find { it.providerWithSettings.provider === selectedProvider.provider }!!
+    val provider = selectedProvider
+    // if provider == null, old parameter hints panel is current, no preview
+    if (provider == null) return
+    val settingsWrapper = settingsWrappers.find { it.providerWithSettings.provider === provider.provider }!!
     val collector = settingsWrapper.providerWithSettings.getCollectorWrapperFor(file, editor, settingsWrapper.language)
                     ?: return
     traverse(file) {
@@ -186,15 +194,20 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private fun initProviderList(typeSettingsPane: JBScrollPane) {
     providerTypesList.setCheckBoxListListener { index, value ->
       providerTypesList.getItemAt(index)?.setEnabled(value)
-      updateEditor(editorField.text)
     }
     providerTypesList.addListSelectionListener {
       val index = providerTypesList.selectedIndex
       val newOption = providerTypesList.getItemAt(index) ?: return@addListSelectionListener
-      val providerWithSettings = keyToProvider.getValue(newOption.key)
-      typeSettingsPane.setViewportView(getComponentFor(providerWithSettings.configurable))
-      selectedProvider = providerWithSettings
-      updateEditor(newOption.previewText)
+      if (newOption.isOldParameterHints) {
+        typeSettingsPane.setViewportView(parameterHintsPanel)
+        selectedProvider = null
+        updateEditor(null)
+      } else {
+        val providerWithSettings = keyToProvider.getValue(newOption.key)
+        typeSettingsPane.setViewportView(getComponentFor(providerWithSettings.configurable))
+        selectedProvider = providerWithSettings
+        updateEditor(newOption.previewText)
+      }
     }
     for (option in providerTypes) {
       providerTypesList.addItem(option, option.name, option.isEnabled())
