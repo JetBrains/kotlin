@@ -61,7 +61,12 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
             }
 
             override fun visitField(declaration: IrField) {
-                (declaration.descriptor as? WrappedFieldDescriptor)?.bind(declaration)
+                (declaration.descriptor as WrappedFieldDescriptor).bind(declaration)
+                declaration.acceptChildrenVoid(this)
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                (declaration.descriptor as WrappedPropertyDescriptor).bind(declaration)
                 declaration.acceptChildrenVoid(this)
             }
 
@@ -121,6 +126,9 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
         override fun remapDeclaredField(descriptor: PropertyDescriptor) =
             WrappedFieldDescriptor(descriptor.annotations, descriptor.source)
+
+        override fun remapDeclaredProperty(descriptor: PropertyDescriptor) =
+            WrappedPropertyDescriptor(descriptor.annotations, descriptor.source)
 
         override fun remapDeclaredSimpleFunction(descriptor: FunctionDescriptor) =
             WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
