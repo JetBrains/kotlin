@@ -26,6 +26,7 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.MetaLanguage
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
@@ -158,6 +159,7 @@ class KotlinCoreEnvironment private constructor(
 
                 registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
                 registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+                registerService(InjectedLanguageManager::class.java, MockInjectedLanguageManager())
             }
 
             super.registerJavaPsiFacade()
