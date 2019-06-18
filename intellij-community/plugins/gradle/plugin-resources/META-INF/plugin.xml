@@ -139,8 +139,7 @@
     <action id="Gradle.OpenProjectCompositeConfiguration" class="org.jetbrains.plugins.gradle.action.GradleOpenProjectCompositeConfigurationAction"
             text="Composite Build Configuration"/>
 
-    <action id="Gradle.RefreshDependencies" class="org.jetbrains.plugins.gradle.action.GradleRefreshProjectDependenciesAction"
-            text="Refresh Gradle Dependencies" description="Refresh dependencies in the Gradle cache using --refresh-dependencies argument"/>
+    <action id="Gradle.RefreshDependencies" class="org.jetbrains.plugins.gradle.action.GradleRefreshProjectDependenciesAction"/>
 
     <group>
       <separator/>

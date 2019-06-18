@@ -31,9 +31,8 @@ import java.util.List;
  * @author Denis Zhdanov
  */
 public class RefreshAllExternalProjectsAction extends AnAction implements AnAction.TransparentUpdate, DumbAware {
-
   public RefreshAllExternalProjectsAction() {
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.refresh.all.projects.text", "external"));
+    getTemplatePresentation().setText(ExternalSystemBundle.message("action.refresh.all.projects.text", "External"));
     getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.refresh.all.projects.description", "external"));
   }
 
