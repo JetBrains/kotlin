@@ -18,6 +18,8 @@ import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
 import com.intellij.stats.personalization.UserFactorsManager
+import com.intellij.stats.personalization.session.SessionFactorsUtils
+import com.intellij.stats.personalization.session.SessionPrefixTracker
 import java.beans.PropertyChangeListener
 import kotlin.random.Random
 
@@ -41,12 +43,11 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     }
     else if (lookup is LookupImpl) {
       if (isUnitTestMode() && !isEnabledInTests) return@PropertyChangeListener
-      lookup.putUserData(CompletionUtil.COMPLETION_STARTING_TIME_KEY, System.currentTimeMillis())
+      val startedTimestamp = System.currentTimeMillis()
+      lookup.putUserData(CompletionUtil.COMPLETION_STARTING_TIME_KEY, startedTimestamp)
 
       processUserFactors(lookup)
-
-      val shownTimesTracker = PositionTrackingListener(lookup)
-      lookup.setPrefixChangeListener(shownTimesTracker)
+      processSessionFactors(lookup, startedTimestamp)
 
       if (sessionShouldBeLogged(experimentHelper, lookup.language())) {
         val tracker = actionsTracker(lookup, experimentHelper)
@@ -71,6 +72,8 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
   private fun shouldTrackSession() = CompletionStatsCollectorSettings.getInstance().isCompletionLogsSendAllowed || isUnitTestMode()
 
   private fun shouldUseUserFactors() = UserFactorsManager.ENABLE_USER_FACTORS
+
+  private fun shouldUseSessionFactors(): Boolean = SessionFactorsUtils.shouldUseSessionFactors()
 
   private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus, language: Language?): Boolean {
     val application = ApplicationManager.getApplication()
@@ -106,6 +109,17 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     lookup.setPrefixChangeListener(TimeBetweenTypingTracker(lookup.project))
     lookup.addLookupListener(LookupCompletedTracker())
     lookup.addLookupListener(LookupStartedTracker())
+  }
+
+  private fun processSessionFactors(lookup: LookupImpl, completionStartedTimestamp: Long) {
+    if (!shouldUseSessionFactors()) return
+
+    val storage = SessionFactorsUtils.initLookupSessionFactors(lookup, completionStartedTimestamp)
+    lookup.setPrefixChangeListener(SessionPrefixTracker(storage))
+    lookup.addLookupListener(LookupSelectionTracker(storage))
+
+    val shownTimesTracker = PositionTrackingListener(lookup)
+    lookup.setPrefixChangeListener(shownTimesTracker)
   }
 
   private fun initComponent() {

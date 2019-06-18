@@ -60,6 +60,9 @@
 
     <registryKey key="completion.stats.send.logs" defaultValue="true"
                  description="Send anonymous logs about completion usage"/>
+
+    <registryKey key="completion.stats.enable.session.factors" defaultValue="true"
+                 description="Use inside single session factors"/>
   </extensions>
 
   <application-components>

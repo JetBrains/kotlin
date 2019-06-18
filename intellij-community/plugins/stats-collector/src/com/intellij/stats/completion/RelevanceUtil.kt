@@ -1,11 +1,17 @@
 package com.intellij.stats.completion
 
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.stats.personalization.session.SessionFactorsUtils
 
 object RelevanceUtil {
   private val IGNORED_FACTORS = setOf("kotlin.byNameAlphabetical", "scalaMethodCompletionWeigher", "unresolvedOnTop")
 
-  fun asRelevanceMap(relevanceObjects: List<com.intellij.openapi.util.Pair<String, Any?>>): MutableMap<String, Any> {
+  fun asRelevanceMap(lookup: LookupImpl,
+                     lookupElement: LookupElement,
+                     relevanceObjects: List<com.intellij.openapi.util.Pair<String, Any?>>,
+                     includeSessionFactors: Boolean): MutableMap<String, Any> {
     val relevanceMap = mutableMapOf<String, Any>()
     for (pair in relevanceObjects) {
       val name = pair.first.normalized()
@@ -17,6 +23,10 @@ object RelevanceUtil {
         "kotlin.callableWeight" -> relevanceMap.addDataClassValues("kotlin.callableWeight", value.toString())
         else -> relevanceMap[name] = value
       }
+    }
+
+    if (includeSessionFactors) {
+      SessionFactorsUtils.saveSessionFactorsTo(relevanceMap, lookup, lookupElement)
     }
 
     return relevanceMap

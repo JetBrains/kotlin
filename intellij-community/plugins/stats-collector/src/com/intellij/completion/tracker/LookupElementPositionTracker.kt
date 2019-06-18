@@ -36,9 +36,8 @@ interface LookupElementPositionTracker {
 class UserDataLookupElementPositionTracker : LookupElementPositionTracker {
 
     override fun positionsHistory(lookup: LookupImpl, element: LookupElement): List<StagePosition> {
-        val id = element.idString()
         val userData = lookup.getUserData(KEY)
-        return userData?.get(id)?.history() ?: emptyList()
+        return userData?.get(element.idString())?.history() ?: emptyList()
     }
 
     companion object {

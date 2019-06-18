@@ -74,7 +74,7 @@ class LookupStateManager {
         val relevanceObjects = lookup.getRelevanceObjects(this, false)
         return this.map { lookupElement ->
             val relevanceMap = relevanceObjects[lookupElement]?.let { objects ->
-                RelevanceUtil.asRelevanceMap(objects).mapValues { entry -> entry.value.toString() }
+                RelevanceUtil.asRelevanceMap(lookup, lookupElement, objects, true).mapValues { entry -> entry.value.toString() }
             }
 
             val elementId = elementToId.getValue(lookupElement)
