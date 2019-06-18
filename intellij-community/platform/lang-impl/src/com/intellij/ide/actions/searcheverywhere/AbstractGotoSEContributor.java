@@ -450,6 +450,10 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
         TOGGLE, MnemonicHelper.getFocusAcceleratorKeyMask(), true));
       e.getPresentation().setDescription("Choose scope (" + shortcutText + ")\n" +
                                          "Toggle scope (" + shortcutText2 + ")");
+      JComponent button = e.getPresentation().getClientProperty(CustomComponentAction.COMPONENT_KEY);
+      if (button != null) {
+        button.setBackground(selection.getColor());
+      }
     }
 
     @Override
