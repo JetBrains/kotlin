@@ -84,6 +84,10 @@ dependencies {
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":idea:jvm-debugger:jvm-debugger-util")) { isTransitive = false }
+    testRuntime(project(":idea:jvm-debugger:jvm-debugger-core")) { isTransitive = false }
+    testRuntime(project(":idea:jvm-debugger:jvm-debugger-evaluation")) { isTransitive = false }
+    testRuntime(project(":idea:jvm-debugger:jvm-debugger-sequence")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":idea:idea-maven")) { isTransitive = false }
     testRuntime(project(":idea:idea-jps-common")) { isTransitive = false }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.tests
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
 val ULTIMATE_TEST_ROOT: String
-    get() = "${KotlinTestUtils.getHomeDirectory()}/ultimate"
+    get() = "${KotlinTestUtils.getHomeDirectory()}/kotlin-ultimate/ultimate"
 
 val ULTIMATE_TEST_DATA_DIR: String
     get() = "$ULTIMATE_TEST_ROOT/testData"
