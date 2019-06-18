@@ -1520,6 +1520,10 @@ task kclassEnumArgument(type: KonanLocalTest) {
     source = "codegen/kclass/kClassEnumArgument.kt"
 }
 
+task ktype1(type: KonanLocalTest) {
+    source = "codegen/ktype/ktype1.kt"
+}
+
 task associatedObjects1(type: KonanLocalTest) {
     source = "codegen/associatedObjects/associatedObjects1.kt"
 }
