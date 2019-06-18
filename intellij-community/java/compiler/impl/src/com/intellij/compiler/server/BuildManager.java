@@ -1155,6 +1155,10 @@ public final class BuildManager implements Disposable {
       }
     }
 
+    if (Registry.is("compiler.process.use.hashes")) {
+      cmdLine.addParameter("-Dorg.jetbrains.jps.use.hashes=true");
+    }
+
     // javac's VM should use the same default locale that IDEA uses in order for javac to print messages in 'correct' language
     cmdLine.setCharset(mySystemCharset);
     cmdLine.addParameter("-D" + CharsetToolkit.FILE_ENCODING_PROPERTY + "=" + mySystemCharset.name());
