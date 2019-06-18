@@ -15,15 +15,16 @@
  */
 package com.intellij.application.options.codeStyle.arrangement.util;
 
+import com.intellij.application.options.codeStyle.arrangement.ArrangementConstants;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.GridBag;
+import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 /**
@@ -43,35 +44,14 @@ public class TitleWithToolbar extends JPanel {
     actionToolbar.setTargetComponent(targetComponent);
     actionToolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
 
-    add(new MyTitleComponent(title), new GridBag().weightx(1).anchor(GridBagConstraints.WEST).fillCellHorizontally());
-    add(actionToolbar.getComponent(), new GridBag().anchor(GridBagConstraints.CENTER));
-  }
+    JLabel label = new JLabel(title.startsWith("<html>") ? title : UIUtil.replaceMnemonicAmpersand(title));
+    label.setLabelFor(targetComponent);
 
-  private class MyTitleComponent extends JComponent {
+    GridBag gb = new GridBag().nextLine();
+    add(label, gb.anchor(GridBagConstraints.WEST));
+    add(new JPanel(), gb.next().weightx(1).fillCellHorizontally());
+    add(actionToolbar.getComponent(), gb.next().anchor(GridBagConstraints.CENTER));
 
-    private final Dimension myMinimumSize;
-    @NotNull private final Border myBorder;
-
-    MyTitleComponent(@NotNull String title) {
-      myBorder = IdeBorderFactory.createTitledBorder(title);
-      Insets insets = myBorder.getBorderInsets(TitleWithToolbar.this);
-      myMinimumSize = new Dimension(1, insets.top);
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-      return myMinimumSize;
-    }
-
-    @Override
-    public Dimension getMinimumSize() {
-      return myMinimumSize;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-      Rectangle bounds = getBounds();
-      myBorder.paintBorder(this, g, bounds.x, bounds.y, bounds.width, bounds.height);
-    }
+    setBorder(JBUI.Borders.empty(12, ArrangementConstants.HORIZONTAL_PADDING, 0, 0));
   }
 }
