@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empt
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -242,13 +243,15 @@ class KotlinCallCompleter(
         val constructor = typeVariable.constructor
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
         val constraints = variableWithConstraints.constraints
-        return constraints.isNotEmpty() && constraints.any {
+        return constraints.isNotEmpty() && constraints.anyOrAll(requireAll = typeVariable.hasExactAnnotation()) {
             !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
                     (it.kind.isLower() || it.kind.isEqual()) &&
                     csBuilder.isProperType(it.type)
         }
-
     }
+
+    private inline fun <T> Iterable<T>.anyOrAll(requireAll: Boolean, p: (T) -> Boolean): Boolean =
+        if (requireAll) all(p) else any(p)
 
     private fun KotlinResolutionCandidate.computeReturnTypeWithSmartCastInfo(
         returnType: UnwrappedType,

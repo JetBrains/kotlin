@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !LANGUAGE: -NewInference
 
 interface ISample
 

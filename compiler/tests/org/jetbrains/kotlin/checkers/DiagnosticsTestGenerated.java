@@ -10018,6 +10018,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/kt3372toCollection.kt");
                 }
 
+                @TestMetadata("lessSpecificTypeForArgumentCallWithExactAnnotation.kt")
+                public void testLessSpecificTypeForArgumentCallWithExactAnnotation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/lessSpecificTypeForArgumentCallWithExactAnnotation.kt");
+                }
+
+                @TestMetadata("lessSpecificTypeForArgumentCallWithExactAnnotation_ni.kt")
+                public void testLessSpecificTypeForArgumentCallWithExactAnnotation_ni() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/lessSpecificTypeForArgumentCallWithExactAnnotation_ni.kt");
+                }
+
                 @TestMetadata("nestedLambdas.kt")
                 public void testNestedLambdas() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/nestedLambdas.kt");
