@@ -15,7 +15,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
-  private val configurables: List<SingleLanguageInlayHintsConfigurable> = HintUtils.getLanguagesWithHintsSupport(project)
+  private val configurables: List<SingleLanguageInlayHintsConfigurable> = HintUtils.getLanguagesWithParamAndInlayHintsSupport(project)
     .map { SingleLanguageInlayHintsConfigurable(project, it) }
     .sortedBy { it.displayName }
 

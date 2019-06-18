@@ -11,9 +11,11 @@ object HintUtils {
     return InlayHintsProviderFactory.EP.extensionList
   }
 
-  fun getLanguagesWithHintsSupport(project: Project): Set<Language> {
+  fun getLanguagesWithParamAndInlayHintsSupport(project: Project) : Set<Language> {
     val languages = HashSet<Language>()
     getAllMetaProviders().flatMapTo(languages) { it.getProvidersInfo(project).map { info -> info.language } }
+    val parameterHintsSupportingLanguages = getBaseLanguagesWithProviders()
+    languages.addAll(parameterHintsSupportingLanguages)
     return languages
   }
 

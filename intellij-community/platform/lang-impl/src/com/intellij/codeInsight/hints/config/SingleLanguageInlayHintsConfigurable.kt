@@ -17,15 +17,15 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     val options = mutableListOf<HintProviderOption<out Any>>()
     providers.mapTo(options) {
       val provider = it.provider
-      HintProviderOption(provider.key, provider.name, settings.hintsEnabled(provider.key, language), provider.previewText)
+      HintProviderOption(provider.key, provider.name, settings.hintsEnabled(provider.key, language))
     }
     val parameterHintsProvider = InlayParameterHintsExtension.forLanguage(language)
     if (parameterHintsProvider != null) {
-      options.add(HintProviderOption(oldParameterHintsKey, "Parameter hints", true, null, true))
+      options.add(HintProviderOption(oldParameterHintsKey, "Parameter hints", true, true))
     }
     val keyToProvider = providers.associateBy { it.provider.key }
     val settingsWrappers = providers.map { it.toSettingsWrapper(settings, language) }
-    SingleLanguageInlayHintsSettingsPanel(project, language, keyToProvider, settingsWrappers, providers.first(), options)
+    SingleLanguageInlayHintsSettingsPanel(project, language, keyToProvider, settingsWrappers, options)
   }
 
   override fun getId(): String {

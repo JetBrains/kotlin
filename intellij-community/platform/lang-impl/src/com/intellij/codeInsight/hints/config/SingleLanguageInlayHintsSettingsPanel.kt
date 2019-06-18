@@ -35,12 +35,11 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   val language: Language,
   private val keyToProvider: Map<SettingsKey<out Any>, ProviderWithSettings<out Any>>,
   private val settingsWrappers: List<SettingsWrapper<out Any>>,
-  defaultProvider: ProviderWithSettings<out Any>,
   private val providerTypes: List<HintProviderOption<out Any>>
 ) : JPanel() {
   private val editorField = createEditor()
   private val hintTypeConfigurableToComponent: MutableMap<ImmediateConfigurable, JComponent> = hashMapOf()
-  private var selectedProvider: ProviderWithSettings<out Any>? = defaultProvider
+  private var selectedProvider: ProviderWithSettings<out Any>? = keyToProvider.entries.firstOrNull()?.value
   private val providerTypesList = CheckBoxList<HintProviderOption<out Any>>()
   private val bottomPanel = JPanel()
   private val settings = ServiceManager.getService(InlayHintsSettings::class.java)
@@ -70,14 +69,16 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     horizontalSplitter.firstComponent = withMargin(typesListPane)
     val providerSettingsPane = JBScrollPane()
     horizontalSplitter.secondComponent = withMargin(providerSettingsPane)
-    providerSettingsPane.setViewportView(getComponentFor(defaultProvider.configurable))
-    updateEditor(defaultProvider.provider.previewText ?: "")
+
     initProviderList(providerSettingsPane)
 
     bottomPanel.layout = BorderLayout()
     bottomPanel.add(withMargin(editorField), BorderLayout.CENTER)
-    if (defaultProvider.provider.previewText == null) {
-      bottomPanel.isVisible = false
+    val selected = selectedProvider
+    if (selected != null) {
+      updateWithInlayPanel(providerSettingsPane, selected)
+    } else {
+      updateWithParameterHintsPanel(providerSettingsPane)
     }
 
     val splitter = JBSplitter(true)
@@ -207,19 +208,27 @@ internal class SingleLanguageInlayHintsSettingsPanel(
       val index = providerTypesList.selectedIndex
       val newOption = providerTypesList.getItemAt(index) ?: return@addListSelectionListener
       if (newOption.isOldParameterHints) {
-        typeSettingsPane.setViewportView(parameterHintsPanel)
-        selectedProvider = null
-        updateEditor(null)
+        updateWithParameterHintsPanel(typeSettingsPane)
       } else {
-        val providerWithSettings = keyToProvider.getValue(newOption.key)
-        typeSettingsPane.setViewportView(getComponentFor(providerWithSettings.configurable))
-        selectedProvider = providerWithSettings
-        updateEditor(newOption.previewText)
+        updateWithInlayPanel(typeSettingsPane, keyToProvider.getValue(newOption.key))
       }
     }
     for (option in providerTypes) {
       providerTypesList.addItem(option, option.name, option.isEnabled())
     }
+  }
+
+  private fun updateWithInlayPanel(typeSettingsPane: JBScrollPane,
+                                   providerWithSettings: ProviderWithSettings<out Any>) {
+    typeSettingsPane.setViewportView(getComponentFor(providerWithSettings.configurable))
+    selectedProvider = providerWithSettings
+    updateEditor(providerWithSettings.provider.previewText)
+  }
+
+  private fun updateWithParameterHintsPanel(typeSettingsPane: JBScrollPane) {
+    typeSettingsPane.setViewportView(parameterHintsPanel)
+    selectedProvider = null
+    updateEditor(null)
   }
 
   /**

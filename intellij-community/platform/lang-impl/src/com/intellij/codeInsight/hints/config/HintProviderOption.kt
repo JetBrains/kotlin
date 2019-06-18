@@ -8,7 +8,6 @@ internal data class HintProviderOption<T>(
   val key: SettingsKey<T>,
   val name: String,
   private var isEnabled: Boolean,
-  val previewText: String?,
   val isOldParameterHints: Boolean = false
 ) {
 
