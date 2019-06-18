@@ -60,6 +60,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddConstructorParameterFromSuperTypeCall extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddConstructorParameterFromSuperTypeCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addCrossinline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -360,6 +360,59 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddConstructorParameterFromSuperTypeCall extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddConstructorParameterFromSuperTypeCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("backticks.kt")
+        public void testBackticks() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/backticks.kt");
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/basic.kt");
+        }
+
+        @TestMetadata("basic2.kt")
+        public void testBasic2() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/basic2.kt");
+        }
+
+        @TestMetadata("basic3.kt")
+        public void testBasic3() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/basic3.kt");
+        }
+
+        @TestMetadata("basic4.kt")
+        public void testBasic4() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/basic4.kt");
+        }
+
+        @TestMetadata("fewerArguments.kt")
+        public void testFewerArguments() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/fewerArguments.kt");
+        }
+
+        @TestMetadata("hasDifferentNameParameter.kt")
+        public void testHasDifferentNameParameter() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/hasDifferentNameParameter.kt");
+        }
+
+        @TestMetadata("hasSameNameParameter.kt")
+        public void testHasSameNameParameter() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/hasSameNameParameter.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addCrossinline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
