@@ -20,7 +20,7 @@ class ProviderWithSettings<T: Any>(
 ) {
   val configurable by lazy { provider.createConfigurable(settings) }
 
-  val provider: InlayHintProvider<T>
+  val provider: InlayHintsProvider<T>
   get() = info.provider
   val language: Language
   get() = info.language
@@ -42,16 +42,16 @@ fun <T : Any> ProviderWithSettings<T>.getCollectorWrapperFor(file: PsiFile, edit
   return CollectorWithSettings(collector, key, language, sink)
 }
 
-internal fun <T : Any> InlayHintProvider<T>.withSettings(language: Language, config: InlayHintsSettings): ProviderWithSettings<T> {
+internal fun <T : Any> InlayHintsProvider<T>.withSettings(language: Language, config: InlayHintsSettings): ProviderWithSettings<T> {
   val settings = getActualSettings(config, language)
   return ProviderWithSettings(ProviderInfo(language, this), settings)
 }
 
-internal fun <T : Any> InlayHintProvider<T>.getActualSettings(config: InlayHintsSettings, language: Language): T {
+internal fun <T : Any> InlayHintsProvider<T>.getActualSettings(config: InlayHintsSettings, language: Language): T {
   return config.findSettings(key, language, createSettings())
 }
 
-internal fun <T: Any> copySettings(from: T, provider: InlayHintProvider<T>): T {
+internal fun <T: Any> copySettings(from: T, provider: InlayHintsProvider<T>): T {
   val settings = provider.createSettings()
   // Workaround to make a deep copy of settings. The other way is to parametrize T with something like
   // interface DeepCopyable<T> { fun deepCopy(from: T): T }, but there will be a lot of problems with recursive type bounds

@@ -3,10 +3,11 @@ package com.intellij.codeInsight.hints
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 
-private val inlayProviderName = ExtensionPointName<LanguageExtensionPoint<InlayHintProvider<*>>>("com.intellij.codeInsight.inlayProvider")
+private val inlayProviderName = ExtensionPointName<LanguageExtensionPoint<InlayHintsProvider<*>>>("com.intellij.codeInsight.inlayProvider")
 
 class SingleLanguageInlayProviderFactory : InlayHintsProviderFactory {
   override fun getProvidersInfo(project: Project): List<ProviderInfo<out Any>> {
