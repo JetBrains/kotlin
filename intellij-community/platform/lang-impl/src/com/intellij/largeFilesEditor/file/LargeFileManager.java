@@ -7,7 +7,7 @@ import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public interface FileManager {
+public interface LargeFileManager {
 
   void reset(Charset charset);
 

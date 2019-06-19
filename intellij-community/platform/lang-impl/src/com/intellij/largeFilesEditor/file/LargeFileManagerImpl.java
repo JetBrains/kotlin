@@ -15,8 +15,8 @@ import java.nio.charset.Charset;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
-public class FileManagerImpl implements FileManager {
-  private static final Logger logger = Logger.getInstance(FileManagerImpl.class);
+public class LargeFileManagerImpl implements LargeFileManager {
+  private static final Logger logger = Logger.getInstance(LargeFileManagerImpl.class);
   private static final int MAX_SIZE_OF_PAGE_CASH = 3;
 
   // TODO: 2019-05-13 add checks for fileAdapter is null or not in all places, where it is used.
@@ -25,7 +25,7 @@ public class FileManagerImpl implements FileManager {
   private final ExecutorService readingPageExecutor =
     SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Large File Editor Reading File Executor");
 
-  public FileManagerImpl(VirtualFile vFile, int pageSize, int maxPageBorderShift) throws FileNotFoundException {
+  public LargeFileManagerImpl(VirtualFile vFile, int pageSize, int maxPageBorderShift) throws FileNotFoundException {
     this.fileAdapter = new FileAdapter(pageSize, maxPageBorderShift, vFile);
     notUpdatedPagesCash = EvictingQueue.create(MAX_SIZE_OF_PAGE_CASH);
   }
@@ -119,17 +119,17 @@ public class FileManagerImpl implements FileManager {
     return new FileDataProviderForSearch() {
       @Override
       public long getPagesAmount() throws IOException {
-        return FileManagerImpl.this.getPagesAmount();
+        return LargeFileManagerImpl.this.getPagesAmount();
       }
 
       @Override
       public Page getPage_wait(long pageNumber) throws IOException {
-        return FileManagerImpl.this.getPage_wait(pageNumber);
+        return LargeFileManagerImpl.this.getPage_wait(pageNumber);
       }
 
       @Override
       public String getName() {
-        return FileManagerImpl.this.getFileName();
+        return LargeFileManagerImpl.this.getFileName();
       }
     };
   }

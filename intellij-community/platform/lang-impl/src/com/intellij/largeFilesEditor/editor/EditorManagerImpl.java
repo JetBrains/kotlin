@@ -6,8 +6,8 @@ import com.intellij.largeFilesEditor.PlatformActionsReplacer;
 import com.intellij.largeFilesEditor.encoding.EditorManagerAccess;
 import com.intellij.largeFilesEditor.encoding.EditorManagerAccessorImpl;
 import com.intellij.largeFilesEditor.encoding.EncodingWidget;
-import com.intellij.largeFilesEditor.file.FileManager;
-import com.intellij.largeFilesEditor.file.FileManagerImpl;
+import com.intellij.largeFilesEditor.file.LargeFileManager;
+import com.intellij.largeFilesEditor.file.LargeFileManagerImpl;
 import com.intellij.largeFilesEditor.file.ReadingPageResultHandler;
 import com.intellij.largeFilesEditor.search.SearchManager;
 import com.intellij.largeFilesEditor.search.SearchManagerImpl;
@@ -47,7 +47,7 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
 
   private static final Logger logger = Logger.getInstance(EditorManagerImpl.class);
   private final Project project;
-  private FileManager fileManager;
+  private LargeFileManager fileManager;
   private final EditorModel editorModel;
   private final DocumentEx document;
   private final VirtualFile vFile;
@@ -65,7 +65,7 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
     editorModel = new EditorModel(document, project, implementDataProviderForEditorModel());
 
     try {
-      fileManager = new FileManagerImpl(vFile, customPageSize, customBorderShift);
+      fileManager = new LargeFileManagerImpl(vFile, customPageSize, customBorderShift);
     }
     catch (FileNotFoundException e) {
       logger.warn(e);

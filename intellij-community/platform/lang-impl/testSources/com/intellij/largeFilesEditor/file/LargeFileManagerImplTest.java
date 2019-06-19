@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 
 import static org.junit.Assert.*;
 
-public class FileManagerImplTest {
+public class LargeFileManagerImplTest {
 
   @Test
   public void getPage_wait_separators() throws IOException {
@@ -31,7 +31,7 @@ public class FileManagerImplTest {
       VirtualFile virtualFile = new MockVirtualFile(tempFile);
       assertNotNull(virtualFile);
 
-      FileManager fileManager = new FileManagerImpl(virtualFile, pageSize, maxPageBorderShift);
+      LargeFileManager fileManager = new LargeFileManagerImpl(virtualFile, pageSize, maxPageBorderShift);
       fileManager.reset(charset);
 
       StringBuilder readedContent = new StringBuilder();
