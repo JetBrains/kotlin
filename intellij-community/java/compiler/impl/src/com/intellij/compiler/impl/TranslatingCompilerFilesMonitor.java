@@ -110,30 +110,30 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
 
   @Override
   public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    Set<File> filesChanged = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     Set<File> filesDeleted = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     for (VFileEvent event : events) {
-      if (event instanceof VFileDeleteEvent || event instanceof VFileMoveEvent) {
+      if (event instanceof VFileDeleteEvent || event instanceof VFileMoveEvent || event instanceof VFileContentChangeEvent) {
         final VirtualFile file = event.getFile();
         if (file != null) {
-          collectPaths(file, filesDeleted);
+          collectPaths(file, event instanceof VFileContentChangeEvent ? filesChanged : filesDeleted);
         }
       }
     }
     return new ChangeApplier() {
       @Override
       public void afterVfsChange() {
-        after(events, filesDeleted);
+        after(events, filesDeleted, filesChanged);
       }
     };
   }
 
-  private static void after(@NotNull List<? extends VFileEvent> events, Set<File> filesDeleted) {
-    final Set<File> filesChanged = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
+  private static void after(@NotNull List<? extends VFileEvent> events, Set<File> filesDeleted, Set<File> filesChanged) {
     for (VFileEvent event : events) {
       if (event instanceof VFilePropertyChangeEvent) {
         handlePropChange((VFilePropertyChangeEvent)event, filesDeleted, filesChanged);
       }
-      else if (event instanceof VFileMoveEvent || event instanceof VFileCreateEvent || event instanceof VFileContentChangeEvent || event instanceof VFileCopyEvent) {
+      else if (event instanceof VFileMoveEvent || event instanceof VFileCreateEvent || event instanceof VFileCopyEvent) {
         VirtualFile file = event.getFile();
         if (file != null) {
           collectPaths(file, filesChanged);
