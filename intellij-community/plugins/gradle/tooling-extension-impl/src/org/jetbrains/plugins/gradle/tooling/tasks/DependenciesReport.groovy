@@ -26,12 +26,12 @@ class DependenciesReport extends DefaultTask {
     Gson gson = new GsonBuilder().create()
     Collection<Configuration> configurations = "*" == configurationName ? project.configurations.asList() :
                                                Collections.singleton(project.configurations.getByName(configurationName))
-    for (it in configurations) {
-      if (!it.isCanBeResolved()) continue
-      ResolutionResult resolutionResult = it.getIncoming().getResolutionResult()
+    for (configuration in configurations) {
+      if (!configuration.isCanBeResolved()) continue
+      ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult()
       Map<Object, DependencyNode> added = [:]
       RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
-      graph.add(toNode(gson, root, it.name, true, added))
+      graph.add(toNode(gson, root, configuration.name, true, added))
     }
     outputFile.parentFile.mkdirs()
     outputFile.text = gson.toJson(graph)
