@@ -45,7 +45,7 @@ abstract class UserFactorStorageBase : UserFactorStorage, PersistentStateCompone
             aggregateFactors.clear()
             for (child in element.children) {
                 val factorId = child.getAttributeValue("id")
-                if (child.name == "factor" && factorId != null) {
+                if (child.name == "factor" && factorId != null && UserFactorDescriptions.isKnownFactor(factorId)) {
                     val factor = DailyAggregateFactor.restore(child)
                     if (factor != null) aggregateFactors[factorId] = factor
                 }
