@@ -64,20 +64,14 @@ object Mapping : TemplateGroupBase() {
         body(Iterables) {
             """
             val collectionSize = collectionSizeOrDefault(10)
-            return when (collectionSize) {
-                0 -> emptyList()
-                1 -> listOf(transform(0, iterator().next()))
-                else -> mapIndexedTo(ArrayList<R>(collectionSize), transform)
-            }
+            if (collectionSize == 0) return emptyList()
+            return mapIndexedTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
-            return when (size) {
-                0 -> emptyList()
-                1 -> listOf(transform(0, get(0)))
-                else -> mapIndexedTo(ArrayList<R>(size), transform)
-            }
+            if (size == 0) return emptyList()
+            return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
             """
         }
         body(CharSequences) {
@@ -123,29 +117,20 @@ object Mapping : TemplateGroupBase() {
         body(Iterables) {
             """
             val collectionSize = collectionSizeOrDefault(10)
-            return when (collectionSize) {
-                0 -> emptyList()
-                1 -> listOf(transform(iterator().next()))
-                else -> mapTo(ArrayList<R>(collectionSize), transform)
-            }
+            if (collectionSize == 0) return emptyList()
+            return mapTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
-            return when (size) {
-                0 -> emptyList()
-                1 -> listOf(transform(get(0)))
-                else -> mapTo(ArrayList<R>(size), transform)
-            }
+            if (size == 0) return emptyList()
+            return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
             """
         }
         body(Maps) {
             """
-            return when (size) {
-                0 -> emptyList()
-                1 -> listOf(transform(iterator().next()))
-                else -> mapTo(ArrayList<R>(size), transform)
-            }
+            if (size == 0) return emptyList()
+            return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
             """
         }
         body(CharSequences) {

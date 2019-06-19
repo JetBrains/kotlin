@@ -1311,11 +1311,8 @@ public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> 
  */
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     val collectionSize = collectionSizeOrDefault(10)
-    return when (collectionSize) {
-        0 -> emptyList()
-        1 -> listOf(transform(iterator().next()))
-        else -> mapTo(ArrayList<R>(collectionSize), transform)
-    }
+    if (collectionSize == 0) return emptyList()
+    return mapTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
 }
 
 /**
@@ -1326,11 +1323,8 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
  */
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
     val collectionSize = collectionSizeOrDefault(10)
-    return when (collectionSize) {
-        0 -> emptyList()
-        1 -> listOf(transform(0, iterator().next()))
-        else -> mapIndexedTo(ArrayList<R>(collectionSize), transform)
-    }
+    if (collectionSize == 0) return emptyList()
+    return mapIndexedTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
 }
 
 /**

@@ -62,11 +62,8 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo
  * @sample samples.collections.Maps.Transformations.mapToList
  */
 public inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
-    return when (size) {
-        0 -> emptyList()
-        1 -> listOf(transform(iterator().next()))
-        else -> mapTo(ArrayList<R>(size), transform)
-    }
+    if (size == 0) return emptyList()
+    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
 }
 
 /**
