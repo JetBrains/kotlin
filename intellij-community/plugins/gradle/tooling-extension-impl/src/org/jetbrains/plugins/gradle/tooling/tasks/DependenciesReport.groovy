@@ -29,13 +29,11 @@ class DependenciesReport extends DefaultTask {
     for (configuration in configurations) {
       if (!configuration.isCanBeResolved()) continue
       ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult()
-      Map<Object, DependencyNode> added = [:]
       RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
-      graph.add(toNode(gson, root, configuration.name, true, added))
+      graph.add(toNode(gson, root, configuration.name, true, [:]))
     }
     outputFile.parentFile.mkdirs()
     outputFile.text = gson.toJson(graph)
-    println outputFile.text
   }
 
   static DependencyNode toNode(Gson gson,
