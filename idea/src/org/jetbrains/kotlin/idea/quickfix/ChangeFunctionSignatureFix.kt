@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -71,7 +71,7 @@ abstract class ChangeFunctionSignatureFix(
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, CallableDescriptor>() {
-        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? = diagnostic.psiElement.getNonStrictParentOfType()
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? = diagnostic.psiElement.getStrictParentOfType()
 
         override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): CallableDescriptor? {
             return DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).a
