@@ -48,7 +48,10 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         }
 
         if (oldResult != result) {
-            if (shouldShowNotification() && !ApplicationManager.getApplication().isUnitTestMode) {
+            if (shouldShowNotification()
+                && oldResult.valueOrNull() != result.valueOrNull() // Only compilation configuration changed
+                && !ApplicationManager.getApplication().isUnitTestMode
+            ) {
                 debug(file) {
                     "dependencies changed, notification is shown: old = $oldResult, new = $result"
                 }
