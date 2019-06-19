@@ -42,7 +42,17 @@ dependencies {
 
     if (intellijUltimateEnabled) {
         compileOnly(nodeJSPlugin())
-        compileOnly(intellijUltimateDep()) { includeJars("trove4j", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "util", "jdom") }
+        compileOnly(intellijUltimateDep()) { includeJars("trove4j", "openapi", "platform-api", "platform-impl", "idea", "util", "jdom") }
+
+        Platform[191].orLower {
+            compileOnly(intellijUltimateDep()) { includeJars("java-api", "java-impl") }
+        }
+
+        Platform[192].orHigher {
+            compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui", "platform-core-ui") }
+            compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
+        }
+
         compileOnly(intellijUltimatePluginDep("CSS"))
         compileOnly(intellijUltimatePluginDep("DatabaseTools"))
         compileOnly(intellijUltimatePluginDep("JavaEE"))
@@ -108,6 +118,9 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
 
     if (intellijUltimateEnabled) {
+        Platform[192].orHigher {
+            testRuntime(intellijUltimatePluginDep("java"))
+        }
         testCompile(nodeJSPlugin())
         testCompile(intellijUltimatePluginDep("CSS"))
         testCompile(intellijUltimatePluginDep("DatabaseTools"))
