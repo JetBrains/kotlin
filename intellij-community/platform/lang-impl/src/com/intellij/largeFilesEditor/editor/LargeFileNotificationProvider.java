@@ -4,10 +4,8 @@ package com.intellij.largeFilesEditor.editor;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
@@ -47,7 +45,7 @@ public final class LargeFileNotificationProvider extends EditorNotifications.Pro
       update(file, project);
     });
     return panel.text(String.format(
-      "The file is too large: %s. It is showing by a special read-only viewer for large files.",
+      "The file is too large (%s). Showing in read-only mode.",
       StringUtil.formatFileSize(file.getLength())));
   }
 
