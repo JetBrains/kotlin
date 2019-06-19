@@ -66,7 +66,11 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSystemContext
+import org.jetbrains.kotlin.types.model.TypeVariance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -1444,19 +1448,21 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 ?: SpecialNames.safeIdentifier(klass.name).identifier
         }
 
-        private fun hasNothingInNonContravariantPosition(kotlinType: KotlinType): Boolean {
-            val parameters = kotlinType.constructor.parameters
-            val arguments = kotlinType.arguments
+        private fun hasNothingInNonContravariantPosition(kotlinType: KotlinType): Boolean =
+            SimpleClassicTypeSystemContext.hasNothingInNonContravariantPosition(kotlinType)
 
-            for (i in arguments.indices) {
-                val projection = arguments[i]
+        private fun TypeSystemContext.hasNothingInNonContravariantPosition(type: KotlinTypeMarker): Boolean {
+            val typeConstructor = type.typeConstructor()
 
-                if (projection.isStarProjection) continue
+            for (i in 0 until type.argumentsCount()) {
+                val projection = type.getArgument(i)
+                if (projection.isStarProjection()) continue
 
-                val type = projection.type
+                val argument = projection.getType()
 
-                if (KotlinBuiltIns.isNullableNothing(type) || KotlinBuiltIns.isNothing(type) && parameters[i].variance !== Variance.IN_VARIANCE)
-                    return true
+                if (argument.isNullableNothing() ||
+                    argument.isNothing() && typeConstructor.getParameter(i).getVariance() != TypeVariance.IN
+                ) return true
             }
 
             return false
