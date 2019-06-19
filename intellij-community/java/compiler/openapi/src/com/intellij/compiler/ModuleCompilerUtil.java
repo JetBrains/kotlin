@@ -14,6 +14,7 @@ import com.intellij.util.Chunk;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.graph.*;
 import com.intellij.util.modules.CircularModuleDependenciesDetector;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
@@ -90,6 +91,7 @@ public final class ModuleCompilerUtil {
    * @deprecated Use {@link CircularModuleDependenciesDetector#addingDependencyFormsCircularity(Module, Module)} instead.
    *             To be removed in IDEA 2018.2.
    */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2018.2")
   @Deprecated
   public static Couple<Module> addingDependencyFormsCircularity(@NotNull Module currentModule, @NotNull Module toDependOn) {
     return CircularModuleDependenciesDetector.addingDependencyFormsCircularity(currentModule, toDependOn);

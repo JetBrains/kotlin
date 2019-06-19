@@ -41,6 +41,7 @@ import com.intellij.util.SingleAlarm;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,9 +66,11 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   public static final String HELP_ID = "reference.toolWindows.hierarchy";
 
   /** @deprecated (to be removed in IDEA 2018) */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2018")
   @Deprecated protected final Hashtable<String, HierarchyTreeBuilder> myBuilders = new Hashtable<>();
 
   /** @deprecated use {@link #getCurrentViewType()} (to be removed in IDEA 2018) */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2018")
   @Deprecated
   protected String myCurrentViewType;
 

@@ -56,6 +56,7 @@ import com.intellij.util.Function;
 import com.intellij.util.PatternUtil;
 import com.intellij.util.Processor;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -131,6 +132,7 @@ public class FindInProjectUtil {
   }
 
   /** @deprecated to remove in IDEA 2018 */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2018")
   @Deprecated
   @Nullable
   public static PsiDirectory getPsiDirectory(@NotNull FindModel findModel, @NotNull Project project) {
@@ -207,6 +209,7 @@ public class FindInProjectUtil {
    * @deprecated Use {@link #findUsages(FindModel, Project, Processor, FindUsagesProcessPresentation)} instead. To remove in IDEA 16
    */
   @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2016")
   public static void findUsages(@NotNull FindModel findModel,
                                 @Nullable final PsiDirectory psiDirectory,
                                 @NotNull final Project project,
