@@ -1,5 +1,9 @@
 ext.configureJvmProject = { Project project ->
     project.configure(project) {
+        configurations {
+            sources
+        }
+
         task sourcesJar(type: Jar, dependsOn: classes) {
             classifier = 'sources'
             from sourceSets.main.kotlin
@@ -31,6 +35,10 @@ ext.configureJavaOnlyJvm6Project = { Project project ->
 
 ext.configureJvm6Project = { Project project ->
     project.configure(project) {
+        configurations {
+            sources
+        }
+
         project.ext.jvmTarget = "1.6"
         project.ext.javaHome = JDK_16
 
@@ -132,24 +140,6 @@ ext.signPom = { Project project, MavenDeployer deployer ->
     }
 }
 
-ext.configureDist = { Project project ->
-    project.configure(project) {
-        configurations {
-            distJar
-        }
-
-        task dist(type: Copy, dependsOn: assemble) {
-            rename "-${java.util.regex.Pattern.quote(version)}", ''
-            into distLibDir
-            afterEvaluate {
-                project.artifacts {
-                    distJar file: file("$distLibDir${File.separator}${archivesBaseName}.jar"), builtBy: "dist"
-                }
-            }
-        }
-    }
-}
-
 ext.configurePublishing = { Project project ->
     project.configure(project) {
         apply plugin: 'maven'
@@ -219,8 +209,8 @@ allprojects { project ->
     project.ext.javadocJar = { lambda = {} ->
         ArtifactsKt.javadocJar(project, lambda)
     }
-    
+
     dependencies.ext.kotlinStdlib = { suffix ->
-        DependenciesKt.kotlinStdlib(project, suffix)
+        DependenciesKt.kotlinStdlib(project, suffix, null)
     }
 }

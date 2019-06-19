@@ -4,7 +4,6 @@ apply plugin: 'kotlin'
 apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_17
 
@@ -67,15 +66,12 @@ task modularJar(type: Jar) {
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
+
     archives modularJar
 }
 
 javadocJar()
-
-dist {
-    from (jar, sourcesJar)
-}
-
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_17

@@ -6,8 +6,11 @@ apply plugin: 'pill-configurable'
 archivesBaseName = 'kotlin-stdlib'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
+
+configurations {
+    distSources
+}
 
 pill {
     importAsLibrary = true
@@ -105,10 +108,10 @@ sourcesJar {
 
 task distSourcesJar(type: Jar) {
     dependsOn(sourcesJar, configurations.commonSources)
-    baseName = 'dist-kotlin-stdlib'
-    version = null
+    destinationDirectory = file("$buildDir/lib/dist")
     classifier = 'sources'
     duplicatesStrategy = DuplicatesStrategy.FAIL
+
     from zipTree(sourcesJar.outputs.files.singleFile)
 
     from(zipTree(configurations.commonSources.singleFile)) {
@@ -116,12 +119,6 @@ task distSourcesJar(type: Jar) {
         exclude 'META-INF/*'
         into 'common'
     }
-}
-
-task distMavenSources(type: Copy) {
-    from(sourcesJar)
-    into "$distDir/maven"
-    rename "-${java.util.regex.Pattern.quote(version)}", ''
 }
 
 task modularJar(type: Jar) {
@@ -138,24 +135,12 @@ task modularJar(type: Jar) {
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
+    distSources distSourcesJar
     archives modularJar
 }
 
 javadocJar()
-
-dist {
-    dependsOn distMavenSources
-
-    [jar, distSourcesJar].forEach {
-        from(it) {
-            rename('dist-', '')
-        }
-    }
-
-    from (configurations.compile) {
-        include 'annotations*.jar'
-    }
-}
 
 task dexMethodCount(type: DexMethodCount) {
     from jar

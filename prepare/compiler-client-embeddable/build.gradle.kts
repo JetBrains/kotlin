@@ -36,9 +36,7 @@ sourceSets {
 }
 
 projectTest {
-    dependsOn(":kotlin-compiler:dist",
-              ":kotlin-stdlib:dist",
-              ":kotlin-script-runtime:dist")
+    dependsOn(":dist")
     workingDir = File(rootDir, "libraries/tools/kotlin-compiler-client-embeddable-test/src")
     doFirst {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

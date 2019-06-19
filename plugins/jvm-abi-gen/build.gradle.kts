@@ -39,6 +39,5 @@ publish()
 
 sourcesJar()
 javadocJar()
-dist()
 
 testsJar()

@@ -161,13 +161,6 @@ if (project.findProperty("kotlin.stdlib.js.ir.publish")?.toBoolean() == true) {
     configurePublishing(project)
 }
 
-if (project.findProperty("kotlin.stdlib.js.ir.dist")?.toBoolean() == true) {
-    configureDist(project)
-    dist {
-        from (jar, sourcesJar)
-    }
-}
-
 node {
     download = true
     version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation

@@ -34,13 +34,9 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar {}
-
-dist {
-    rename("kotlin-", "")
-}
+testsJar()
 
 projectTest(parallel = true) {
-    dependsOn(":kotlin-stdlib:jvm-minimal-for-test:dist")
+    dependsOn(":dist")
     workingDir = rootDir
 }

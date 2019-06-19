@@ -34,8 +34,6 @@ runtimeJar()
 
 testsJar()
 
-dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kotlin-") + ".jar")
-
 projectTest(parallel = true) {
     workingDir = rootDir
 }

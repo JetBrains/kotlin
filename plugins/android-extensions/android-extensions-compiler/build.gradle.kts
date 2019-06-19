@@ -47,8 +47,6 @@ sourceSets {
 
 runtimeJar()
 
-dist()
-
 testsJar()
 
 projectTest {

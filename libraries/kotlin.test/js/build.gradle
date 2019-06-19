@@ -2,8 +2,12 @@ description = 'Kotlin Test for JS'
 
 apply plugin: 'kotlin-platform-js'
 
-configureDist(project)
 configurePublishing(project)
+
+configurations {
+    sources
+    distJs
+}
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
@@ -44,17 +48,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
+    distJs(file(compileKotlin2Js.kotlinOptions.outputFile)) {
+        builtBy(compileKotlin2Js)
+    }
 }
 
 javadocJar()
-
-task distJs(type: Copy) {
-    dependsOn(compileKotlin2Js)
-    from(compileKotlin2Js.kotlinOptions.outputFile)
-    into "$distDir/js"
-}
-
-dist {
-    dependsOn distJs
-    from (jar, sourcesJar)
-}

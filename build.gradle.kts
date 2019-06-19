@@ -437,13 +437,8 @@ gradle.taskGraph.whenReady {
     }
 }
 
-val dist by task<Copy> {
-    val childDistTasks = getTasksByName("dist", true) - this@task
-    dependsOn(childDistTasks)
-
-    into(distDir)
-    from(files("compiler/cli/bin")) { into("kotlinc/bin") }
-    from(files("license")) { into("kotlinc/license") }
+val dist = tasks.register("dist") {
+    dependsOn(":kotlin-compiler:dist")
 }
 
 val copyCompilerToIdeaPlugin by task<Copy> {

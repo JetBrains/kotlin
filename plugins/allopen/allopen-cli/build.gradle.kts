@@ -30,11 +30,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val jar = runtimeJar {}
+runtimeJar()
 
-testsJar {}
-
-dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kotlin-") + ".jar")
+testsJar()
 
 projectTest(parallel = true) {
     workingDir = rootDir

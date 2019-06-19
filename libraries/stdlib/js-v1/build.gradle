@@ -7,9 +7,14 @@ description = 'Kotlin Standard Library for JS'
 apply plugin: 'kotlin-platform-js'
 apply plugin: 'idea'
 
-configureDist(project)
 configurePublishing(project)
 
+configurations {
+    sources
+    commonSources
+    distSources
+    distJs
+}
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
@@ -77,9 +82,6 @@ sourceSets {
     }
 }
 
-configurations {
-    commonSources
-}
 dependencies {
     expectedBy project(":kotlin-stdlib-common")
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
@@ -331,9 +333,8 @@ task sourcesJar(type: Jar, dependsOn: compileJs) {
 
 task distSourcesJar(type: Jar) {
     dependsOn(sourcesJar, configurations.commonSources)
-    baseName = 'dist-kotlin-stdlib-js'
-    version = null
-    classifier = 'sources'
+    destinationDirectory = file("$buildDir/lib/dist")
+    archiveClassifier = 'sources'
     duplicatesStrategy = DuplicatesStrategy.FAIL
     from zipTree(sourcesJar.outputs.files.singleFile)
 
@@ -354,22 +355,15 @@ artifacts {
     runtime mergedJar
     archives mergedJar
     archives sourcesJar
+    sources sourcesJar
+    distSources distSourcesJar
+
+    compileJs.outputs.files.forEach { artifact ->
+        distJs(artifact) { builtBy(compileJs) }
+    }
 }
 
 javadocJar()
-
-task distJs(type: Copy) {
-    from(compileJs)
-    into "$distDir/js"
-}
-
-dist {
-    dependsOn distJs
-    [mergedJar, distSourcesJar].forEach {
-        rename("dist-", "")
-        from(it)
-    }
-}
 
 node {
     download = true

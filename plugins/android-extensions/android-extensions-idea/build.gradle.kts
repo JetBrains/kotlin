@@ -75,7 +75,7 @@ sourceSets {
 testsJar {}
 
 projectTest(parallel = true) {
-    dependsOn(":kotlin-android-extensions-runtime:dist")
+    dependsOn(":dist")
     workingDir = rootDir
     useAndroidSdk()
     useAndroidJar()

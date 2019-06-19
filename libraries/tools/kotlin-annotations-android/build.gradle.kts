@@ -37,5 +37,3 @@ publish()
 sourcesJar()
 javadocJar()
 runtimeJar()
-dist()
-

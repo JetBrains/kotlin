@@ -71,5 +71,3 @@ runtimeJar(task<ShadowJar>("shadowJar")) {
 sourcesJar()
 
 javadocJar()
-
-dist()

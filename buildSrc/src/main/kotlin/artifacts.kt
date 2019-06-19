@@ -151,31 +151,6 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     }
 }
 
-fun Project.dist(
-    targetDir: File? = null,
-    targetName: String? = null,
-    fromTask: Task? = null,
-    body: AbstractCopyTask.() -> Unit = {}
-): AbstractCopyTask {
-    val distJarCfg = configurations.getOrCreate("distJar")
-    val distLibDir: File by rootProject.extra
-    val distJarName = targetName ?: (the<BasePluginConvention>().archivesBaseName + ".jar")
-    val thisProject = this
-
-    return task<Copy>("dist") {
-        body()
-        (fromTask ?: runtimeJarTaskIfExists())?.let {
-            from(it)
-            if (targetName != null) {
-                rename(it.outputs.files.singleFile.name, targetName)
-            }
-        }
-        rename("-${java.util.regex.Pattern.quote(thisProject.version.toString())}", "")
-        into(targetDir ?: distLibDir)
-        project.addArtifact(distJarCfg, this, File(targetDir ?: distLibDir, distJarName))
-    }
-}
-
 private fun Project.runtimeJarTaskIfExists(): Task? =
     if (extra.has("runtimeJarTask")) extra["runtimeJarTask"] as Task
     else tasks.findByName("jar")

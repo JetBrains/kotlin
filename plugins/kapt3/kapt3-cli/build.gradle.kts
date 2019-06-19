@@ -18,9 +18,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-testsJar {}
-
-dist()
+testsJar()
 
 projectTest {
     workingDir = rootDir

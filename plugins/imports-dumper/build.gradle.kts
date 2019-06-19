@@ -35,5 +35,3 @@ projectTest {
 }
 
 runtimeJar()
-
-dist()

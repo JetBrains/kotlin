@@ -3,7 +3,6 @@ description = 'Kotlin Common Standard Library'
 apply plugin: 'kotlin-platform-common'
 apply plugin: 'pill-configurable'
 
-configureDist(project)
 configurePublishing(project)
 
 def commonSrcDir = "../src"
@@ -108,16 +107,5 @@ artifacts {
 }
 
 javadocJar()
-
-// TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
-task distCommon(type: Copy) {
-    from(jar)
-    from(sourcesJar)
-    into "$distDir/common"
-    rename "-${java.util.regex.Pattern.quote(version)}", ''
-}
-
-dist.dependsOn distCommon
-
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

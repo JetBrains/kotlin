@@ -73,13 +73,14 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
     else files()
 }
 
-fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
+fun Project.kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
+    listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
 
-fun Project.kotlinStdlib(suffix: String? = null): Any {
+fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): Any {
     return if (kotlinBuildProperties.useBootstrapStdlib)
-        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion)
+        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
     else
-        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"))
+        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
 }
 
 fun Project.kotlinBuiltins(): Any =

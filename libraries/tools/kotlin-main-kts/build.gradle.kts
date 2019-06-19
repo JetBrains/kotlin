@@ -17,18 +17,12 @@ val jarBaseName = property("archivesBaseName") as String
 
 val proguardLibraryJars by configurations.creating
 
-val default by configurations
-val runtimeJar by configurations.creating
-
-default.apply {
-    extendsFrom(runtimeJar)
-}
-
 val projectsDependencies = listOf(
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",
     ":kotlin-script-util",
-    ":kotlin-script-runtime")
+    ":kotlin-script-runtime"
+)
 
 dependencies {
     projectsDependencies.forEach {
@@ -95,17 +89,18 @@ val proguard by task<ProGuardTask> {
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
 }
 
-val pack = if (shrink) proguard else packJar
-
-runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
-    name = jarBaseName
-    classifier = ""
+val resultJar = tasks.register<Jar>("resultJar") {
+    val pack = if (shrink) proguard else packJar
+    dependsOn(pack)
+    setupPublicJar(jarBaseName)
+    from {
+        zipTree(pack.outputs.files.singleFile)
+    }
 }
 
-dist(
-    targetName = "$name.jar",
-    fromTask = pack
-)
+addArtifact("runtime", resultJar)
+addArtifact("archives", resultJar)
 
 sourcesJar()
+
 javadocJar()
