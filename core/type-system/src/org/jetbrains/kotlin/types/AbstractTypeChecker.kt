@@ -376,28 +376,28 @@ object AbstractTypeChecker {
 
 
     private fun AbstractTypeCheckerContext.collectAllSupertypesWithGivenTypeConstructor(
-        baseType: SimpleTypeMarker,
-        constructor: TypeConstructorMarker
+        subType: SimpleTypeMarker,
+        superConstructor: TypeConstructorMarker
     ): List<SimpleTypeMarker> {
-        baseType.fastCorrespondingSupertypes(constructor)?.let {
+        subType.fastCorrespondingSupertypes(superConstructor)?.let {
             return it
         }
 
-        if (constructor.isCommonFinalClassConstructor()) {
-            return if (areEqualTypeConstructors(baseType.typeConstructor(), constructor))
-                listOf(captureFromArguments(baseType, CaptureStatus.FOR_SUBTYPING) ?: baseType)
+        if (superConstructor.isCommonFinalClassConstructor()) {
+            return if (areEqualTypeConstructors(subType.typeConstructor(), superConstructor))
+                listOf(captureFromArguments(subType, CaptureStatus.FOR_SUBTYPING) ?: subType)
             else
                 emptyList()
         }
 
         val result: MutableList<SimpleTypeMarker> = SmartList()
 
-        anySupertype(baseType, { false }) {
+        anySupertype(subType, { false }) {
 
             val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING) ?: it
 
             when {
-                areEqualTypeConstructors(current.typeConstructor(), constructor) -> {
+                areEqualTypeConstructors(current.typeConstructor(), superConstructor) -> {
                     result.add(current)
                     SupertypesPolicy.None
                 }
@@ -440,21 +440,21 @@ object AbstractTypeChecker {
     // nullability was checked earlier via nullabilityChecker
     // should be used only if you really sure that it is correct
     fun AbstractTypeCheckerContext.findCorrespondingSupertypes(
-        baseType: SimpleTypeMarker,
-        constructor: TypeConstructorMarker
+        subType: SimpleTypeMarker,
+        superConstructor: TypeConstructorMarker
     ): List<SimpleTypeMarker> {
-        if (baseType.isClassType()) {
-            return collectAndFilter(baseType, constructor)
+        if (subType.isClassType()) {
+            return collectAndFilter(subType, superConstructor)
         }
 
         // i.e. superType is not a classType
-        if (!constructor.isClassTypeConstructor() && !constructor.isIntegerLiteralTypeConstructor()) {
-            return collectAllSupertypesWithGivenTypeConstructor(baseType, constructor)
+        if (!superConstructor.isClassTypeConstructor() && !superConstructor.isIntegerLiteralTypeConstructor()) {
+            return collectAllSupertypesWithGivenTypeConstructor(subType, superConstructor)
         }
 
         // todo add tests
         val classTypeSupertypes = SmartList<SimpleTypeMarker>()
-        anySupertype(baseType, { false }) {
+        anySupertype(subType, { false }) {
             if (it.isClassType()) {
                 classTypeSupertypes.add(it)
                 SupertypesPolicy.None
@@ -463,7 +463,7 @@ object AbstractTypeChecker {
             }
         }
 
-        return classTypeSupertypes.flatMap { collectAndFilter(it, constructor) }
+        return classTypeSupertypes.flatMap { collectAndFilter(it, superConstructor) }
     }
 }
 
