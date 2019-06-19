@@ -91,7 +91,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     val globalStorage = UserFactorStorage.getInstance()
     val projectStorage = UserFactorStorage.getInstance(lookup.project)
 
-    val userFactors = UserFactorsManager.getInstance(lookup.project).getAllFactors()
+    val userFactors = UserFactorsManager.getInstance().getAllFactors()
     val userFactorValues = mutableMapOf<String, String?>()
     userFactors.asSequence().map { "${it.id}:App" to it.compute(globalStorage) }.toMap(userFactorValues)
     userFactors.asSequence().map { "${it.id}:Project" to it.compute(projectStorage) }.toMap(userFactorValues)

@@ -49,6 +49,13 @@
     <applicationService serviceInterface="com.intellij.completion.tracker.LookupElementPositionTracker"
                         serviceImplementation="com.intellij.completion.tracker.UserDataLookupElementPositionTracker"/>
 
+    <applicationService serviceImplementation="com.intellij.stats.personalization.impl.ApplicationUserFactorStorage"/>
+
+    <applicationService serviceInterface="com.intellij.stats.personalization.UserFactorsManager"
+                        serviceImplementation="com.intellij.stats.personalization.impl.UserFactorsManagerImpl"/>
+
+    <projectService serviceImplementation="com.intellij.stats.personalization.impl.ProjectUserFactorStorage"/>
+
     <registryKey key="completion.stats.exit.experiment" defaultValue="false"
                  description="Do not perform A/B experiment for code completion on this installation"/>
 
@@ -70,23 +77,6 @@
     <component>
       <implementation-class>com.intellij.stats.completion.CompletionTrackerInitializer</implementation-class>
     </component>
-
-    <component>
-      <implementation-class>
-        com.intellij.stats.personalization.impl.ApplicationUserFactorStorage
-      </implementation-class>
-    </component>
   </application-components>
-
-  <project-components>
-    <component>
-      <implementation-class>com.intellij.stats.personalization.impl.ProjectUserFactorStorage</implementation-class>
-    </component>
-
-    <component>
-      <interface-class>com.intellij.stats.personalization.UserFactorsManager</interface-class>
-      <implementation-class>com.intellij.stats.personalization.impl.UserFactorsManagerImpl</implementation-class>
-    </component>
-  </project-components>
 
 </idea-plugin>
