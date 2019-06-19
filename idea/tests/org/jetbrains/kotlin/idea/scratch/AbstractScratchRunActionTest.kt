@@ -42,8 +42,6 @@ import org.junit.Assert
 import java.io.File
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
-    val module: Module get() = myModule
-
     fun doReplTest(fileName: String) {
         doTest(fileName, true)
     }
@@ -75,7 +73,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         MockLibraryUtil.compileKotlin(baseDir.path, outputDir)
 
-        PsiTestUtil.setCompilerOutputPath(module, outputDir.path, false)
+        PsiTestUtil.setCompilerOutputPath(myFixture.module, outputDir.path, false)
 
         val mainFileName = "$dirName/${getTestName(true)}.kts"
         doCompilingTest(mainFileName)
@@ -84,7 +82,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         doReplTest(mainFileName)
 
-        ModuleRootModificationUtil.updateModel(module) { model ->
+        ModuleRootModificationUtil.updateModel(myFixture.module) { model ->
             model.getModuleExtension(CompilerModuleExtension::class.java).inheritCompilerOutputPath(true)
         }
     }
