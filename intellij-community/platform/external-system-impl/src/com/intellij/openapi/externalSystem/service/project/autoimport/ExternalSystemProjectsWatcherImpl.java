@@ -781,7 +781,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     }
 
     @Override
-    protected void prepareFileDeletion(VirtualFile file) {
+    protected void prepareFileDeletion(@NotNull VirtualFile file) {
       for (String externalProjectPath : myKnownFiles.get(file.getPath())) {
         updateProjectStatus(externalProjectPath, it -> it.markModified(file.getModificationStamp()));
       }
