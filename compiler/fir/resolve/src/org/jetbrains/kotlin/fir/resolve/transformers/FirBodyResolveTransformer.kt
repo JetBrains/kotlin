@@ -898,10 +898,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
         val returnTypeRef = namedFunction.returnTypeRef
-        if ((returnTypeRef !is FirImplicitTypeRef || returnTypeRef is FirResolvedTypeRef) && implicitTypeOnly) {
+        if ((returnTypeRef !is FirImplicitTypeRef) && implicitTypeOnly) {
             return namedFunction.compose()
         }
-        if (returnTypeRef is FirImplicitTypeRef && returnTypeRef !is FirResolvedTypeRef) {
+        if (returnTypeRef is FirImplicitTypeRef) {
             namedFunction.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
         }
 
@@ -920,10 +920,10 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             return super.transformPropertyAccessor(propertyAccessor, data)
         }
         val returnTypeRef = propertyAccessor.returnTypeRef
-        if ((returnTypeRef !is FirImplicitTypeRef || returnTypeRef is FirResolvedTypeRef) && implicitTypeOnly) {
+        if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) {
             return propertyAccessor.compose()
         }
-        if (returnTypeRef is FirImplicitTypeRef && returnTypeRef !is FirResolvedTypeRef && data !is FirResolvedTypeRef) {
+        if (returnTypeRef is FirImplicitTypeRef && data !is FirResolvedTypeRef) {
             propertyAccessor.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
         }
         return if (data is FirResolvedTypeRef && returnTypeRef !is FirResolvedTypeRef) {

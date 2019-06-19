@@ -710,7 +710,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
-        print(if (implicitTypeRef is FirImplicitBuiltinTypeRef) "${implicitTypeRef.id}" else "<implicit>")
+        print("<implicit>")
     }
 
     override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
@@ -740,10 +740,14 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         resolvedTypeRef.annotations.renderAnnotations()
-        print("R|")
+        if (resolvedTypeRef !is FirImplicitBuiltinTypeRef) {
+            print("R|")
+        }
         val coneType = resolvedTypeRef.type
         print(coneType.render())
-        print("|")
+        if (resolvedTypeRef !is FirImplicitBuiltinTypeRef) {
+            print("|")
+        }
         if (coneType !is ConeKotlinErrorType && coneType !is ConeClassErrorType) {
             print(coneType.nullability.suffix)
         }
