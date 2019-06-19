@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasNotNullSupertype
-import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.model.CaptureStatus
-import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 object SimpleClassicTypeSystemContext : ClassicTypeSystemContext
 
@@ -130,29 +128,6 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
                 }
             }
         }.inheritEnhancement(type)
-
-
-    fun ClassicTypeCheckerContext.findCorrespondingSupertypes(
-        baseType: SimpleType,
-        constructor: TypeConstructor
-    ): List<SimpleType> {
-        return AbstractTypeChecker.run {
-            @Suppress("UNCHECKED_CAST")
-            findCorrespondingSupertypes(baseType, constructor) as List<SimpleType>
-        }
-    }
-
-    fun effectiveVariance(declared: Variance, useSite: Variance): Variance? {
-        if (declared == Variance.INVARIANT) return useSite
-        if (useSite == Variance.INVARIANT) return declared
-
-        // both not INVARIANT
-        if (declared == useSite) return declared
-
-        // composite In with Out
-        return null
-    }
-
 }
 
 object NullabilityChecker {
