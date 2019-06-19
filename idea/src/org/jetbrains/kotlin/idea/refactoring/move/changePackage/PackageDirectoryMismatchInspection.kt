@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSourceRootMoveDestination
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.packageDirectiveVisitor
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = packageDirectiveVisitor(fun(directive: KtPackageDirective) {
@@ -51,9 +53,12 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
             fixes += ChangePackageFix("'${fqNameWithImplicitPrefix.asString()}'", fqNameWithImplicitPrefix)
         }
 
+        val textRange = if (directive.textLength != 0) directive.textRange else file.declarations.firstOrNull()?.let {
+            TextRange.from(it.startOffset, 1)
+        }
         holder.registerProblem(
             file,
-            directive.textRange,
+            textRange,
             "Package directive doesn't match file location",
             *fixes.toTypedArray()
         )
