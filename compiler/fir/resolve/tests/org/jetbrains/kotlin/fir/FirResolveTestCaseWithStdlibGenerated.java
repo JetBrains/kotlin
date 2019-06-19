@@ -99,6 +99,11 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/typeAliasDeserialization.kt");
     }
 
+    @TestMetadata("typeFromDelegate.kt")
+    public void testTypeFromDelegate() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/typeFromDelegate.kt");
+    }
+
     @TestMetadata("unaryOperators.kt")
     public void testUnaryOperators() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/unaryOperators.kt");
