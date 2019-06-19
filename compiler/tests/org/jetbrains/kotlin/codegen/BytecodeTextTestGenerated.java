@@ -159,6 +159,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/intConstantSafeCall.kt");
     }
 
+    @TestMetadata("intProgressionNoBoxing.kt")
+    public void testIntProgressionNoBoxing() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/intProgressionNoBoxing.kt");
+    }
+
     @TestMetadata("intRangeNoBoxing.kt")
     public void testIntRangeNoBoxing() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/intRangeNoBoxing.kt");
