@@ -30,6 +30,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiFile;
@@ -186,6 +187,12 @@ public class LanguageConsoleImpl extends ConsoleViewImpl implements LanguageCons
     return myConsoleExecutionEditor.getPromptAttributes();
   }
 
+
+  @NotNull
+  public ConsolePromptDecorator getConsolePromptDecorator() {
+    return myConsoleExecutionEditor.getConsolePromptDecorator();
+  }
+
   @Override
   public void setPromptAttributes(@NotNull ConsoleViewContentType textAttributes) {
     myConsoleExecutionEditor.setPromptAttributes(textAttributes);
@@ -301,9 +308,15 @@ public class LanguageConsoleImpl extends ConsoleViewImpl implements LanguageCons
     }
     SyntaxHighlighter syntax =
       highlighter instanceof LexerEditorHighlighter ? ((LexerEditorHighlighter)highlighter).getSyntaxHighlighter() : null;
-    ((LanguageConsoleImpl)console).doAddPromptToHistory();
+    LanguageConsoleImpl consoleImpl = (LanguageConsoleImpl)console;
+    consoleImpl.doAddPromptToHistory();
     if (syntax != null) {
-      ConsoleViewUtil.printWithHighlighting(console, text, syntax);
+      String identPrompt = consoleImpl.myConsoleExecutionEditor.getConsolePromptDecorator().getIndentPrompt();
+      ConsoleViewUtil.printWithHighlighting(console, text, syntax, () -> {
+        if (StringUtil.isNotEmpty(identPrompt)) {
+          consoleImpl.print(identPrompt, consoleImpl.myConsoleExecutionEditor.getPromptAttributes());
+        }
+      });
     }
     else {
       console.print(text, ConsoleViewContentType.USER_INPUT);

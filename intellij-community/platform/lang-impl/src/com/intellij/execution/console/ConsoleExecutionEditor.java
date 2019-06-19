@@ -38,11 +38,7 @@ public class ConsoleExecutionEditor implements Disposable {
   private final Document myEditorDocument;
   private final LanguageConsoleImpl.Helper myHelper;
   private final MessageBusConnection myBusConnection;
-
-  @Nullable
-  private String myPrompt = "> ";
-  @NotNull
-  private ConsoleViewContentType myPromptAttributes = ConsoleViewContentType.USER_INPUT;
+  private final ConsolePromptDecorator myConsolePromptDecorator;
 
   public ConsoleExecutionEditor(@NotNull LanguageConsoleImpl.Helper helper)  {
     myHelper = helper;
@@ -54,6 +50,9 @@ public class ConsoleExecutionEditor implements Disposable {
     myConsoleEditor.getSettings().setVirtualSpace(false);
     myCurrentEditor = myConsoleEditor;
     myConsoleEditor.putUserData(SEARCH_DISABLED, true);
+
+    myConsolePromptDecorator = new ConsolePromptDecorator(myConsoleEditor);
+    myConsoleEditor.getGutter().registerTextAnnotation(myConsolePromptDecorator);
 
     myBusConnection = getProject().getMessageBus().connect();
     // action shortcuts are not yet registered
@@ -78,7 +77,7 @@ public class ConsoleExecutionEditor implements Disposable {
     myConsoleEditor.setContextMenuGroupId(IdeActions.GROUP_CONSOLE_EDITOR_POPUP);
     myConsoleEditor.setHighlighter(
       EditorHighlighterFactory.getInstance().createEditorHighlighter(getVirtualFile(), myConsoleEditor.getColorsScheme(), getProject()));
-    setPromptInner(myPrompt);
+    setPrompt("> ");
   }
 
   @NotNull
@@ -103,6 +102,11 @@ public class ConsoleExecutionEditor implements Disposable {
     return myConsoleEditor.getComponent();
   }
 
+  @NotNull
+  public ConsolePromptDecorator getConsolePromptDecorator() {
+    return myConsolePromptDecorator;
+  }
+
   public void setConsoleEditorEnabled(boolean consoleEditorEnabled) {
     if (isConsoleEditorEnabled() == consoleEditorEnabled) {
       return;
@@ -124,28 +128,27 @@ public class ConsoleExecutionEditor implements Disposable {
 
   @Nullable
   public String getPrompt() {
-    return myPrompt;
+    return myConsolePromptDecorator.getMainPrompt();
   }
 
   @NotNull
   public ConsoleViewContentType getPromptAttributes() {
-    return myPromptAttributes;
+    return myConsolePromptDecorator.getPromptAttributes();
   }
 
   public void setPromptAttributes(@NotNull ConsoleViewContentType textAttributes) {
-    myPromptAttributes = textAttributes;
+    myConsolePromptDecorator.setPromptAttributes(textAttributes);
   }
 
   public void setPrompt(@Nullable String prompt) {
     // always add space to the prompt otherwise it may look ugly
-    myPrompt = prompt != null && !prompt.endsWith(" ") ? prompt + " " : prompt;
-    setPromptInner(myPrompt);
+    setPromptInner(prompt != null && !prompt.endsWith(" ") ? prompt + " " : prompt);
   }
 
 
   public void setEditable(boolean editable) {
     myConsoleEditor.setRendererMode(!editable);
-    setPromptInner(editable ? myPrompt : "");
+    setPromptInner(editable ? getPrompt() : "");
   }
 
   public boolean isEditable() {
@@ -154,11 +157,9 @@ public class ConsoleExecutionEditor implements Disposable {
 
 
   private void setPromptInner(@Nullable final String prompt) {
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
-      if (!myConsoleEditor.isDisposed()) {
-        myConsoleEditor.setPrefixTextAndAttributes(prompt, myPromptAttributes.getAttributes());
-      }
-    });
+    if (!myConsoleEditor.isDisposed()) {
+      myConsolePromptDecorator.setMainPrompt(prompt != null ? prompt : "");
+    }
   }
 
   private void installEditorFactoryListener() {
