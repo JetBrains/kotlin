@@ -115,18 +115,10 @@ open class LazyImportResolver<I : KtImportInfo>(
     }
 
     val allNames: Set<Name>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        indexedImports.imports.flatMapToNullable(THashSet()) {
-            if (it.isAllUnder) getImportScope(it).computeImportedNames()
-            else listOf(it.importedName)
-        }
+        indexedImports.imports.flatMapToNullable(THashSet()) { getImportScope(it).computeImportedNames() }
     }
 
-    fun definitelyDoesNotContainName(name: Name): Boolean {
-        return indexedImports.imports.find {
-            if (it.isAllUnder) getImportScope(it).definitelyDoesNotContainName(name) //todo: optimize...
-            else it.importedName == name
-        } != null
-    }
+    fun definitelyDoesNotContainName(name: Name) = allNames?.let { name !in it } == true
 
     fun recordLookup(name: Name, location: LookupLocation) {
         if (allNames == null) return
