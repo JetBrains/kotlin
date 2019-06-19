@@ -36,7 +36,7 @@ fun defaultResolver(
         repositories: List<String>,
         target: KonanTarget,
         distribution: Distribution = Distribution(),
-        compatibleCompilerVersions: List<KonanVersion>
+        compatibleCompilerVersions: List<KonanVersion> = emptyList()
 ): SearchPathResolverWithTarget = defaultResolver(repositories, emptyList(), target, distribution, compatibleCompilerVersions)
 
 fun defaultResolver(
@@ -44,7 +44,7 @@ fun defaultResolver(
         directLibs: List<String>,
         target: KonanTarget,
         distribution: Distribution,
-        compatibleCompilerVersions: List<KonanVersion>,
+        compatibleCompilerVersions: List<KonanVersion> = emptyList(),
         logger: Logger = DummyLogger,
         skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget = KonanLibraryProperResolver(

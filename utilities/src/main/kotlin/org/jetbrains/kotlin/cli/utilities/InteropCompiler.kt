@@ -50,8 +50,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
                 repos,
                 libraries.filter { it.contains(File.separator) },
                 target,
-                Distribution(),
-                listOf(KonanVersion.CURRENT)
+                Distribution()
         ).libraryResolver()
         val allLibraries = resolver.resolveWithDependencies(
                 libraries.toUnresolvedLibraries, noStdLib = true, noDefaultLibs = noDefaultLibs

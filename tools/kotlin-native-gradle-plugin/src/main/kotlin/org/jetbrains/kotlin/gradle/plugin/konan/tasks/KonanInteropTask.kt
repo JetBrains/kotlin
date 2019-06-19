@@ -171,10 +171,9 @@ open class KonanInteropTask @Inject constructor(val workerExecutor: WorkerExecut
     override fun toModelArtifact(): KonanModelArtifact {
         val repos = libraries.repos
         val resolver = defaultResolver(
-                repos.map { it.absolutePath },
-                konanTarget,
-                Distribution(konanHomeOverride = project.konanHome),
-                listOf(KonanVersion.CURRENT)
+            repos.map { it.absolutePath },
+            konanTarget,
+            Distribution(konanHomeOverride = project.konanHome)
         )
 
         return KonanModelArtifactImpl(

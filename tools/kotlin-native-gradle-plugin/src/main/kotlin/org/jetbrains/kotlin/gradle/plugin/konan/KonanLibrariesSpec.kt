@@ -145,12 +145,11 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
     }
 
     fun asFiles(): List<File> = asFiles(
-            defaultResolver(
-                    repos.map { it.absolutePath },
-                    task.konanTarget,
-                    Distribution(konanHomeOverride = project.konanHome),
-                    listOf(KonanVersion.CURRENT)
-            )
+        defaultResolver(
+            repos.map { it.absolutePath },
+            task.konanTarget,
+            Distribution(konanHomeOverride = project.konanHome)
+        )
     )
 
     fun asFiles(resolver: SearchPathResolver): List<File> = mutableListOf<File>().apply {

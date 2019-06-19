@@ -104,7 +104,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         libraryNames.filter { it.contains(File.separator) },
         target,
         distribution,
-        compatibleCompilerVersions + KonanVersion.CURRENT,
+        compatibleCompilerVersions,
         resolverLogger
     ).libraryResolver()
 
