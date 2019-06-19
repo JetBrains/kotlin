@@ -230,6 +230,8 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       return;
     }
 
+    addAdvertisement("Press Enter to insert, Tab to replace", null);
+
     advertiseTabReplacement(parameters);
     if (isAutopopupCompletion()) {
       if (shouldPreselectFirstSuggestion(parameters) && !CodeInsightSettings.getInstance().isSelectAutopopupSuggestionsByChars()) {
