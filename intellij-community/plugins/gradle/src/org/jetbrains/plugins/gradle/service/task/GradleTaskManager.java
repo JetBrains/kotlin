@@ -1,20 +1,31 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.task;
 
+import com.google.gson.GsonBuilder;
+import com.intellij.build.SyncViewManager;
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
+import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerConfiguration;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration;
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.task.BaseExternalSystemTaskManager;
+import com.intellij.openapi.externalSystem.task.TaskCallback;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
+import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.SystemProperties;
+import org.gradle.api.Task;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.CancellationTokenSource;
 import org.gradle.tooling.GradleConnector;
@@ -29,6 +40,7 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtensi
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleBuildParticipant;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
+import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
@@ -204,5 +216,44 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
         throw externalSystemException;
       }
     }
+  }
+
+  public static void runTask(@NotNull Project project,
+                             @NotNull String executionName,
+                             @NotNull Class<? extends Task> taskClass,
+                             @NotNull String projectPath,
+                             @NotNull String gradlePath,
+                             @Nullable String taskConfiguration,
+                             @Nullable final TaskCallback callback) {
+    final String taskName = taskClass.getSimpleName();
+    String paths = GradleExecutionHelper.getToolingExtensionsJarPaths(set(taskClass, GsonBuilder.class));
+    String initScript = "initscript {\n" +
+                        "  dependencies {\n" +
+                        "    classpath files(" + paths + ")\n" +
+                        "  }\n" +
+                        "}\n" +
+                        "allprojects {\n" +
+                        "  afterEvaluate { project ->\n" +
+                        "    if(project.path == '" + gradlePath + "') {\n" +
+                        "        project.tasks.create(name: '" + taskName + "', overwrite: true, type: " + taskClass.getName() + ") {\n" +
+                        StringUtil.notNullize(taskConfiguration) + "\n" +
+                        "        }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}\n";
+    UserDataHolderBase userData = new UserDataHolderBase();
+    userData.putUserData(INIT_SCRIPT_KEY, initScript);
+    userData.putUserData(ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY, SyncViewManager.class);
+
+    String gradleVmOptions = GradleSettings.getInstance(project).getGradleVmOptions();
+    ExternalSystemTaskExecutionSettings settings = new ExternalSystemTaskExecutionSettings();
+    settings.setExecutionName(executionName);
+    settings.setExternalProjectPath(projectPath);
+    String taskPrefix = gradlePath.endsWith(":") ? gradlePath : gradlePath + ':';
+    settings.setTaskNames(Collections.singletonList(taskPrefix + taskName));
+    settings.setVmOptions(gradleVmOptions);
+    settings.setExternalSystemIdString(GradleConstants.SYSTEM_ID.getId());
+    ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, project, GradleConstants.SYSTEM_ID, callback,
+                               ProgressExecutionMode.IN_BACKGROUND_ASYNC, false, userData);
   }
 }
