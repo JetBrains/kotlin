@@ -50,7 +50,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         )
     }
 
-    private val tooComplex: Boolean by lazyPub { support.isTooComplexForUltraLightGeneration(classOrObject) }
+    protected val tooComplex: Boolean by lazyPub { support.isTooComplexForUltraLightGeneration(classOrObject) }
 
     private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
 

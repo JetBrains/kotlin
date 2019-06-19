@@ -21,9 +21,6 @@ class KtUltraLightInlineClass(
     support: KtUltraLightSupport
 ) : KtUltraLightClass(classOrObject, support) {
 
-    override fun getDelegate(): PsiClass =
-        throw IllegalStateException("Cls delegate shouldn't be loaded for not too complex ultra-light classes! Qualified name: $qualifiedName")
-
     override fun getScope(): PsiElement? = parent
 
     private val membersBuilder: UltraLightMembersCreator by lazyPub {
@@ -74,7 +71,7 @@ class KtUltraLightInlineClass(
 
     override fun getOwnFields(): List<KtLightField> = emptyList()
 
-    override fun getOwnMethods() = _ownMethods
+    override fun getOwnMethods() = if (tooComplex) super.getOwnMethods() else _ownMethods
 
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 
