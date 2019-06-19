@@ -18,7 +18,7 @@ package org.jetbrains.plugins.gradle.util
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.fileEditor.UniqueVFilePathBuilder
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider
-import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.io.FileUtil
@@ -27,8 +27,10 @@ import com.intellij.openapi.vfs.VirtualFile
 /**
  * @author Vladislav.Soroka
  */
-class GradleEditorTabTitleProvider : EditorTabTitleProvider, DumbAware {
+class GradleEditorTabTitleProvider : EditorTabTitleProvider {
   override fun getEditorTabTitle(project: Project, file: VirtualFile): String? {
+    if (DumbService.isDumb(project)) return null
+
     if (!GradleConstants.KNOWN_GRADLE_FILES.contains(file.name)) return null
 
     val fileParent = file.parent ?: return null
