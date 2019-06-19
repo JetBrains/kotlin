@@ -383,6 +383,8 @@ object AbstractTypeChecker {
             return it
         }
 
+        if (!superConstructor.isClassTypeConstructor() && subType.isClassType()) return emptyList()
+
         if (superConstructor.isCommonFinalClassConstructor()) {
             return if (areEqualTypeConstructors(subType.typeConstructor(), superConstructor))
                 listOf(captureFromArguments(subType, CaptureStatus.FOR_SUBTYPING) ?: subType)
