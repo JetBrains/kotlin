@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,9 +30,25 @@ class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDepend
                 debug(file) { "dependencies from fileAttributes = $it" }
             }
         }?.let {
-            saveToCache(file, it.asSuccess(), skipSaveToAttributes = true)
+            if (areDependenciesValid(file, it)) {
+                saveToCache(file, it.asSuccess(), skipSaveToAttributes = true)
+            }
         }
     }
 
     override fun shouldShowNotification(): Boolean = false
+
+    private fun areDependenciesValid(file: VirtualFile, configuration: ScriptCompilationConfigurationWrapper.FromLegacy): Boolean {
+        return configuration.dependenciesClassPath.all {
+            if (it.exists()) {
+                true
+            } else {
+                debug(file) {
+                    "classpath root saved to file attribute doesn't exist: ${it.path}"
+                }
+                false
+            }
+
+        }
+    }
 }
