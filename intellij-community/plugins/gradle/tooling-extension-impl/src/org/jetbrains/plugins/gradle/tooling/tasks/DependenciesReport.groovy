@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.ResolutionResult
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
@@ -23,8 +24,10 @@ class DependenciesReport extends DefaultTask {
   void generate() {
     List<DependencyNode> graph = []
     Gson gson = new GsonBuilder().create()
-    project.configurations.each {
-      if (!it.isCanBeResolved()) return
+    Collection<Configuration> configurations = "*" == configurationName ? project.configurations.asList() :
+                                               Collections.singleton(project.configurations.getByName(configurationName))
+    for (it in configurations) {
+      if (!it.isCanBeResolved()) continue
       ResolutionResult resolutionResult = it.getIncoming().getResolutionResult()
       Map<Object, DependencyNode> added = [:]
       RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
