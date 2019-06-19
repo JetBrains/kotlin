@@ -21,11 +21,11 @@ import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass
 import com.intellij.codeInsight.daemon.impl.actions.AddImportAction
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.hint.QuestionAction
+import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiDocumentManager
@@ -33,6 +33,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.statistics.StatisticsManager
 import com.intellij.psi.util.ProximityLocation
 import com.intellij.psi.util.proximity.PsiProximityComparator
+import com.intellij.ui.popup.list.ListPopupImpl
+import com.intellij.ui.popup.list.PopupListElementRenderer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -53,6 +55,9 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import java.awt.BorderLayout
+import javax.swing.JPanel
+import javax.swing.ListCellRenderer
 
 internal fun createSingleImportAction(
     project: Project,
@@ -155,7 +160,28 @@ class KotlinAddImportAction internal constructor(
             return true
         }
 
-        JBPopupFactory.getInstance().createListPopup(getVariantSelectionPopup()).showInBestPositionFor(editor)
+        object : ListPopupImpl(getVariantSelectionPopup()) {
+            override fun getListElementRenderer(): ListCellRenderer<AutoImportVariant> {
+                val baseRenderer = super.getListElementRenderer() as PopupListElementRenderer
+                val psiRenderer = DefaultPsiElementCellRenderer()
+                return ListCellRenderer { list, value, index, isSelected, cellHasFocus ->
+                    JPanel(BorderLayout()).apply {
+                        baseRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+                        add(baseRenderer.nextStepLabel, BorderLayout.EAST)
+                        add(
+                            psiRenderer.getListCellRendererComponent(
+                                list,
+                                value.declarationToImport(project),
+                                index,
+                                isSelected,
+                                cellHasFocus
+                            )
+                        )
+                    }
+                }
+            }
+        }.showInBestPositionFor(editor)
+
         return true
     }
 
