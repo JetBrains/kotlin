@@ -63,13 +63,14 @@ object Ordering : TemplateGroupBase() {
             if (this is Collection && size <= 1) return toList()
             val list = toMutableList()
             list.reverse()
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (isEmpty()) return emptyList()
+            if (size == 1) return listOf(get(0))
             val list = toMutableList()
             list.reverse()
             return list
@@ -153,21 +154,24 @@ object Ordering : TemplateGroupBase() {
                     @Suppress("UNCHECKED_CAST")
                     return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
                 }
-                return toMutableList().apply { sort() }
+                return toMutableList().apply { sort() }.optimizeReadOnlyList()
             """
         }
         body(ArraysOfPrimitives) {
             """
+            if (size <= 1) return toList()
             return toTypedArray().apply { sort() }.asList()
             """
         }
         body(ArraysOfUnsigned) {
             """
+            if (size <= 1) return toList()
             return copyOf().apply { sort() }.asList()
             """
         }
         body(ArraysOfObjects) {
             """
+            if (size <= 1) return toList()
             return sortedArray().asList()
             """
         }
@@ -320,17 +324,17 @@ object Ordering : TemplateGroupBase() {
                 @Suppress("UNCHECKED_CAST")
                 return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
             }
-            return toMutableList().apply { sortWith(comparator) }
+            return toMutableList().apply { sortWith(comparator) }.optimizeReadOnlyList()
             """
         }
         body(ArraysOfPrimitives) {
             """
-            return toTypedArray().apply { sortWith(comparator) }.asList()
+            return toTypedArray().apply { sortWith(comparator) }.asList().optimizeReadOnlyList()
             """
         }
         body(ArraysOfObjects) {
             """
-            return sortedArrayWith(comparator).asList()
+            return sortedArrayWith(comparator).asList().optimizeReadOnlyList()
             """
         }
 

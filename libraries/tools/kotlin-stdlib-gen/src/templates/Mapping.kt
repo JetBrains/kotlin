@@ -62,10 +62,23 @@ object Mapping : TemplateGroupBase() {
         typeParam("R")
         returns("List<R>")
         body(Iterables) {
-            "return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
+            """
+            val collectionSize = collectionSizeOrDefault(10)
+            return when (collectionSize) {
+                0 -> emptyList()
+                1 -> listOf(transform(0, iterator().next()))
+                else -> mapIndexedTo(ArrayList<R>(collectionSize), transform)
+            }
+            """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            "return mapIndexedTo(ArrayList<R>(size), transform)"
+            """
+            return when (size) {
+                0 -> emptyList()
+                1 -> listOf(transform(0, get(0)))
+                else -> mapIndexedTo(ArrayList<R>(size), transform)
+            }
+            """
         }
         body(CharSequences) {
             "return mapIndexedTo(ArrayList<R>(length), transform)"
@@ -108,10 +121,32 @@ object Mapping : TemplateGroupBase() {
         typeParam("R")
         returns("List<R>")
         body(Iterables) {
-            "return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
+            """
+            val collectionSize = collectionSizeOrDefault(10)
+            return when (collectionSize) {
+                0 -> emptyList()
+                1 -> listOf(transform(iterator().next()))
+                else -> mapTo(ArrayList<R>(collectionSize), transform)
+            }
+            """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Maps) {
-            "return mapTo(ArrayList<R>(size), transform)"
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            return when (size) {
+                0 -> emptyList()
+                1 -> listOf(transform(get(0)))
+                else -> mapTo(ArrayList<R>(size), transform)
+            }
+            """
+        }
+        body(Maps) {
+            """
+            return when (size) {
+                0 -> emptyList()
+                1 -> listOf(transform(iterator().next()))
+                else -> mapTo(ArrayList<R>(size), transform)
+            }
+            """
         }
         body(CharSequences) {
             "return mapTo(ArrayList<R>(length), transform)"
@@ -139,7 +174,7 @@ object Mapping : TemplateGroupBase() {
             """
         }
         body {
-            "return mapNotNullTo(ArrayList<R>(), transform)"
+            "return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()"
         }
 
         specialFor(Sequences) {
@@ -167,7 +202,7 @@ object Mapping : TemplateGroupBase() {
             """
         }
         body {
-            "return mapIndexedNotNullTo(ArrayList<R>(), transform)"
+            "return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()"
         }
 
         specialFor(Sequences) {
@@ -290,7 +325,7 @@ object Mapping : TemplateGroupBase() {
         typeParam("R")
         returns("List<R>")
         body {
-            "return flatMapTo(ArrayList<R>(), transform)"
+            "return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()"
         }
         specialFor(Sequences) {
             inline(Inline.No)

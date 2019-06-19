@@ -47,7 +47,7 @@ object Filtering : TemplateGroupBase() {
         include(CharSequences, Strings, ArraysOfUnsigned)
     } builder {
         val n = "\$n"
-        doc { 
+        doc {
             """
             Returns a list containing all elements except first [n] elements.
             """
@@ -215,7 +215,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         val n = "\$n"
 
-        doc { 
+        doc {
             """
             Returns a list containing all elements except last [n] elements.
             """
@@ -245,7 +245,7 @@ object Filtering : TemplateGroupBase() {
         include(Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, Strings)
     } builder {
         val n = "\$n"
-        doc { 
+        doc {
             """
             Returns a list containing last [n] elements.
             """
@@ -312,7 +312,7 @@ object Filtering : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { 
+        doc {
             """
             Returns a list containing all elements except first elements that satisfy the given [predicate].
             """
@@ -330,7 +330,7 @@ object Filtering : TemplateGroupBase() {
                     list.add(item)
                     yielding = true
                 }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
@@ -369,7 +369,7 @@ object Filtering : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { 
+        doc {
             """
             Returns a list containing first elements satisfying the given [predicate].
             """
@@ -384,7 +384,7 @@ object Filtering : TemplateGroupBase() {
                     break
                 list.add(item)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
@@ -421,7 +421,7 @@ object Filtering : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { 
+        doc {
             """
             Returns a list containing all elements except last elements that satisfy the given [predicate].
             """
@@ -479,7 +479,7 @@ object Filtering : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { 
+        doc {
             """
             Returns a list containing last elements satisfying the given [predicate].
             """
@@ -551,7 +551,7 @@ object Filtering : TemplateGroupBase() {
         returns("List<T>")
         body {
             """
-            return filterTo(ArrayList<T>(), predicate)
+            return filterTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
             """
         }
 
@@ -614,7 +614,7 @@ object Filtering : TemplateGroupBase() {
         returns("List<T>")
         body {
             """
-            return filterIndexedTo(ArrayList<T>(), predicate)
+            return filterIndexedTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
             """
         }
 
@@ -679,7 +679,7 @@ object Filtering : TemplateGroupBase() {
         returns("List<T>")
         body {
             """
-            return filterNotTo(ArrayList<T>(), predicate)
+            return filterNotTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
             """
         }
 
@@ -735,7 +735,7 @@ object Filtering : TemplateGroupBase() {
         toNullableT = true
         body {
             """
-            return filterNotNullTo(ArrayList<T>())
+            return filterNotNullTo(ArrayList<T>()).optimizeReadOnlyList()
             """
         }
 
@@ -794,7 +794,7 @@ object Filtering : TemplateGroupBase() {
         genericStarProjection = true
         body {
             """
-            return filterIsInstanceTo(ArrayList<R>())
+            return filterIsInstanceTo(ArrayList<R>()).optimizeReadOnlyList()
             """
         }
 

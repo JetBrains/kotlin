@@ -1572,7 +1572,7 @@ public inline fun UIntArray.dropWhile(predicate: (UInt) -> Boolean): List<UInt> 
             list.add(item)
             yielding = true
         }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -1593,7 +1593,7 @@ public inline fun ULongArray.dropWhile(predicate: (ULong) -> Boolean): List<ULon
             list.add(item)
             yielding = true
         }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -1614,7 +1614,7 @@ public inline fun UByteArray.dropWhile(predicate: (UByte) -> Boolean): List<UByt
             list.add(item)
             yielding = true
         }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -1635,7 +1635,7 @@ public inline fun UShortArray.dropWhile(predicate: (UShort) -> Boolean): List<US
             list.add(item)
             yielding = true
         }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -1645,7 +1645,7 @@ public inline fun UShortArray.dropWhile(predicate: (UShort) -> Boolean): List<US
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.filter(predicate: (UInt) -> Boolean): List<UInt> {
-    return filterTo(ArrayList<UInt>(), predicate)
+    return filterTo(ArrayList<UInt>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1655,7 +1655,7 @@ public inline fun UIntArray.filter(predicate: (UInt) -> Boolean): List<UInt> {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.filter(predicate: (ULong) -> Boolean): List<ULong> {
-    return filterTo(ArrayList<ULong>(), predicate)
+    return filterTo(ArrayList<ULong>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1665,7 +1665,7 @@ public inline fun ULongArray.filter(predicate: (ULong) -> Boolean): List<ULong> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.filter(predicate: (UByte) -> Boolean): List<UByte> {
-    return filterTo(ArrayList<UByte>(), predicate)
+    return filterTo(ArrayList<UByte>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1675,7 +1675,7 @@ public inline fun UByteArray.filter(predicate: (UByte) -> Boolean): List<UByte> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.filter(predicate: (UShort) -> Boolean): List<UShort> {
-    return filterTo(ArrayList<UShort>(), predicate)
+    return filterTo(ArrayList<UShort>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1687,7 +1687,7 @@ public inline fun UShortArray.filter(predicate: (UShort) -> Boolean): List<UShor
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.filterIndexed(predicate: (index: Int, UInt) -> Boolean): List<UInt> {
-    return filterIndexedTo(ArrayList<UInt>(), predicate)
+    return filterIndexedTo(ArrayList<UInt>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1699,7 +1699,7 @@ public inline fun UIntArray.filterIndexed(predicate: (index: Int, UInt) -> Boole
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.filterIndexed(predicate: (index: Int, ULong) -> Boolean): List<ULong> {
-    return filterIndexedTo(ArrayList<ULong>(), predicate)
+    return filterIndexedTo(ArrayList<ULong>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1711,7 +1711,7 @@ public inline fun ULongArray.filterIndexed(predicate: (index: Int, ULong) -> Boo
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.filterIndexed(predicate: (index: Int, UByte) -> Boolean): List<UByte> {
-    return filterIndexedTo(ArrayList<UByte>(), predicate)
+    return filterIndexedTo(ArrayList<UByte>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1723,7 +1723,7 @@ public inline fun UByteArray.filterIndexed(predicate: (index: Int, UByte) -> Boo
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.filterIndexed(predicate: (index: Int, UShort) -> Boolean): List<UShort> {
-    return filterIndexedTo(ArrayList<UShort>(), predicate)
+    return filterIndexedTo(ArrayList<UShort>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1793,7 +1793,7 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterIndexedTo
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.filterNot(predicate: (UInt) -> Boolean): List<UInt> {
-    return filterNotTo(ArrayList<UInt>(), predicate)
+    return filterNotTo(ArrayList<UInt>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1803,7 +1803,7 @@ public inline fun UIntArray.filterNot(predicate: (UInt) -> Boolean): List<UInt> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.filterNot(predicate: (ULong) -> Boolean): List<ULong> {
-    return filterNotTo(ArrayList<ULong>(), predicate)
+    return filterNotTo(ArrayList<ULong>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1813,7 +1813,7 @@ public inline fun ULongArray.filterNot(predicate: (ULong) -> Boolean): List<ULon
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.filterNot(predicate: (UByte) -> Boolean): List<UByte> {
-    return filterNotTo(ArrayList<UByte>(), predicate)
+    return filterNotTo(ArrayList<UByte>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -1823,7 +1823,7 @@ public inline fun UByteArray.filterNot(predicate: (UByte) -> Boolean): List<UByt
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.filterNot(predicate: (UShort) -> Boolean): List<UShort> {
-    return filterNotTo(ArrayList<UShort>(), predicate)
+    return filterNotTo(ArrayList<UShort>(), predicate).optimizeReadOnlyList()
 }
 
 /**
@@ -2349,7 +2349,7 @@ public inline fun UIntArray.takeWhile(predicate: (UInt) -> Boolean): List<UInt> 
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2367,7 +2367,7 @@ public inline fun ULongArray.takeWhile(predicate: (ULong) -> Boolean): List<ULon
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2385,7 +2385,7 @@ public inline fun UByteArray.takeWhile(predicate: (UByte) -> Boolean): List<UByt
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2403,7 +2403,7 @@ public inline fun UShortArray.takeWhile(predicate: (UShort) -> Boolean): List<US
             break
         list.add(item)
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -2453,6 +2453,7 @@ public inline fun UShortArray.reverse(): Unit {
 @ExperimentalUnsignedTypes
 public fun UIntArray.reversed(): List<UInt> {
     if (isEmpty()) return emptyList()
+    if (size == 1) return listOf(get(0))
     val list = toMutableList()
     list.reverse()
     return list
@@ -2465,6 +2466,7 @@ public fun UIntArray.reversed(): List<UInt> {
 @ExperimentalUnsignedTypes
 public fun ULongArray.reversed(): List<ULong> {
     if (isEmpty()) return emptyList()
+    if (size == 1) return listOf(get(0))
     val list = toMutableList()
     list.reverse()
     return list
@@ -2477,6 +2479,7 @@ public fun ULongArray.reversed(): List<ULong> {
 @ExperimentalUnsignedTypes
 public fun UByteArray.reversed(): List<UByte> {
     if (isEmpty()) return emptyList()
+    if (size == 1) return listOf(get(0))
     val list = toMutableList()
     list.reverse()
     return list
@@ -2489,6 +2492,7 @@ public fun UByteArray.reversed(): List<UByte> {
 @ExperimentalUnsignedTypes
 public fun UShortArray.reversed(): List<UShort> {
     if (isEmpty()) return emptyList()
+    if (size == 1) return listOf(get(0))
     val list = toMutableList()
     list.reverse()
     return list
@@ -2588,6 +2592,7 @@ public fun UShortArray.sortDescending(): Unit {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.sorted(): List<UInt> {
+    if (size <= 1) return toList()
     return copyOf().apply { sort() }.asList()
 }
 
@@ -2597,6 +2602,7 @@ public fun UIntArray.sorted(): List<UInt> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.sorted(): List<ULong> {
+    if (size <= 1) return toList()
     return copyOf().apply { sort() }.asList()
 }
 
@@ -2606,6 +2612,7 @@ public fun ULongArray.sorted(): List<ULong> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.sorted(): List<UByte> {
+    if (size <= 1) return toList()
     return copyOf().apply { sort() }.asList()
 }
 
@@ -2615,6 +2622,7 @@ public fun UByteArray.sorted(): List<UByte> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.sorted(): List<UShort> {
+    if (size <= 1) return toList()
     return copyOf().apply { sort() }.asList()
 }
 
@@ -3625,7 +3633,7 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.flatMap(transform: (UInt) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform)
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
 }
 
 /**
@@ -3635,7 +3643,7 @@ public inline fun <R> UIntArray.flatMap(transform: (UInt) -> Iterable<R>): List<
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.flatMap(transform: (ULong) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform)
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
 }
 
 /**
@@ -3645,7 +3653,7 @@ public inline fun <R> ULongArray.flatMap(transform: (ULong) -> Iterable<R>): Lis
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.flatMap(transform: (UByte) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform)
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
 }
 
 /**
@@ -3655,7 +3663,7 @@ public inline fun <R> UByteArray.flatMap(transform: (UByte) -> Iterable<R>): Lis
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.flatMap(transform: (UShort) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform)
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
 }
 
 /**
@@ -4012,7 +4020,11 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UShortArray.group
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.map(transform: (UInt) -> R): List<R> {
-    return mapTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(get(0)))
+        else -> mapTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -4025,7 +4037,11 @@ public inline fun <R> UIntArray.map(transform: (UInt) -> R): List<R> {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.map(transform: (ULong) -> R): List<R> {
-    return mapTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(get(0)))
+        else -> mapTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -4038,7 +4054,11 @@ public inline fun <R> ULongArray.map(transform: (ULong) -> R): List<R> {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.map(transform: (UByte) -> R): List<R> {
-    return mapTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(get(0)))
+        else -> mapTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -4051,7 +4071,11 @@ public inline fun <R> UByteArray.map(transform: (UByte) -> R): List<R> {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.map(transform: (UShort) -> R): List<R> {
-    return mapTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(get(0)))
+        else -> mapTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -4064,7 +4088,11 @@ public inline fun <R> UShortArray.map(transform: (UShort) -> R): List<R> {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.mapIndexed(transform: (index: Int, UInt) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(0, get(0)))
+        else -> mapIndexedTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -4077,7 +4105,11 @@ public inline fun <R> UIntArray.mapIndexed(transform: (index: Int, UInt) -> R): 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.mapIndexed(transform: (index: Int, ULong) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(0, get(0)))
+        else -> mapIndexedTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -4090,7 +4122,11 @@ public inline fun <R> ULongArray.mapIndexed(transform: (index: Int, ULong) -> R)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.mapIndexed(transform: (index: Int, UByte) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(0, get(0)))
+        else -> mapIndexedTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -4103,7 +4139,11 @@ public inline fun <R> UByteArray.mapIndexed(transform: (index: Int, UByte) -> R)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.mapIndexed(transform: (index: Int, UShort) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size), transform)
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(transform(0, get(0)))
+        else -> mapIndexedTo(ArrayList<R>(size), transform)
+    }
 }
 
 /**
@@ -5798,7 +5838,7 @@ public inline fun <R, V> UIntArray.zip(other: Array<out R>, transform: (a: UInt,
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -5817,7 +5857,7 @@ public inline fun <R, V> ULongArray.zip(other: Array<out R>, transform: (a: ULon
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -5836,7 +5876,7 @@ public inline fun <R, V> UByteArray.zip(other: Array<out R>, transform: (a: UByt
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -5855,7 +5895,7 @@ public inline fun <R, V> UShortArray.zip(other: Array<out R>, transform: (a: USh
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -5924,7 +5964,7 @@ public inline fun <R, V> UIntArray.zip(other: Iterable<R>, transform: (a: UInt, 
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -5945,7 +5985,7 @@ public inline fun <R, V> ULongArray.zip(other: Iterable<R>, transform: (a: ULong
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -5966,7 +6006,7 @@ public inline fun <R, V> UByteArray.zip(other: Iterable<R>, transform: (a: UByte
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -5987,7 +6027,7 @@ public inline fun <R, V> UShortArray.zip(other: Iterable<R>, transform: (a: USho
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -6054,7 +6094,7 @@ public inline fun <V> UIntArray.zip(other: UIntArray, transform: (a: UInt, b: UI
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -6073,7 +6113,7 @@ public inline fun <V> ULongArray.zip(other: ULongArray, transform: (a: ULong, b:
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -6092,7 +6132,7 @@ public inline fun <V> UByteArray.zip(other: UByteArray, transform: (a: UByte, b:
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**
@@ -6111,7 +6151,7 @@ public inline fun <V> UShortArray.zip(other: UShortArray, transform: (a: UShort,
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list
+    return list.optimizeReadOnlyList()
 }
 
 /**

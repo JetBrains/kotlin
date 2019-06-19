@@ -1541,7 +1541,7 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
             second.add(element)
         }
     }
-    return Pair(first, second)
+    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
 }
 
 /**

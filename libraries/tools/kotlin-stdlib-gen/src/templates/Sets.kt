@@ -90,7 +90,7 @@ object SetOps : TemplateGroupBase() {
                 if (set.add(key))
                     list.add(e)
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 

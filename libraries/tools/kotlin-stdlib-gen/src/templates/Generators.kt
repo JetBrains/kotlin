@@ -113,7 +113,7 @@ object Generators : TemplateGroupBase() {
             val result = ArrayList<T>()
             result.addAll(this)
             result.addAll(elements)
-            return result
+            return result.optimizeReadOnlyList()
             """
         }
         body(Collections) {
@@ -122,11 +122,11 @@ object Generators : TemplateGroupBase() {
                 val result = ArrayList<T>(this.size + elements.size)
                 result.addAll(this)
                 result.addAll(elements)
-                return result
+                return result.optimizeReadOnlyList()
             } else {
                 val result = ArrayList<T>(this)
                 result.addAll(elements)
-                return result
+                return result.optimizeReadOnlyList()
             }
             """
         }
@@ -181,7 +181,7 @@ object Generators : TemplateGroupBase() {
             val result = ArrayList<T>()
             result.addAll(this)
             result.addAll(elements)
-            return result
+            return result.optimizeReadOnlyList()
             """
         }
         body(Collections) {
@@ -189,7 +189,7 @@ object Generators : TemplateGroupBase() {
             val result = ArrayList<T>(this.size + elements.size)
             result.addAll(this)
             result.addAll(elements)
-            return result
+            return result.optimizeReadOnlyList()
             """
         }
         specialFor(Sets) {
@@ -242,7 +242,7 @@ object Generators : TemplateGroupBase() {
             val result = ArrayList<T>()
             result.addAll(this)
             result.addAll(elements)
-            return result
+            return result.optimizeReadOnlyList()
             """
         }
         body(Collections) {
@@ -250,7 +250,7 @@ object Generators : TemplateGroupBase() {
             val result = ArrayList<T>(this.size + 10)
             result.addAll(this)
             result.addAll(elements)
-            return result
+            return result.optimizeReadOnlyList()
             """
         }
 
@@ -593,7 +593,7 @@ object Generators : TemplateGroupBase() {
                     second.add(element)
                 }
             }
-            return Pair(first, second)
+            return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
             """
         }
 
@@ -664,13 +664,13 @@ object Generators : TemplateGroupBase() {
                     result.add(transform(window))
                     index += step
                 }
-                return result
+                return result.optimizeReadOnlyList()
             }
             val result = ArrayList<R>()
             windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = true).forEach {
                 result.add(transform(it))
             }
-            return result
+            return result.optimizeReadOnlyList()
             """
         }
 
@@ -739,13 +739,13 @@ object Generators : TemplateGroupBase() {
                     result.add(List(windowSize) { this[it + index] })
                     index += step
                 }
-                return result
+                return result.optimizeReadOnlyList()
             }
             val result = ArrayList<List<T>>()
             windowedIterator(iterator(), size, step, partialWindows, reuseBuffer = false).forEach {
                 result.add(it)
             }
-            return result
+            return result.optimizeReadOnlyList()
             """
         }
         body(CharSequences) { "return windowed(size, step, partialWindows) { it.toString() }" }
@@ -1026,7 +1026,7 @@ object Generators : TemplateGroupBase() {
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
@@ -1038,7 +1038,7 @@ object Generators : TemplateGroupBase() {
                 if (i >= arraySize) break
                 list.add(transform(this[i++], element))
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
     }
@@ -1069,7 +1069,7 @@ object Generators : TemplateGroupBase() {
                 if (i >= arraySize) break
                 list.add(transform(element, other[i++]))
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
@@ -1079,7 +1079,7 @@ object Generators : TemplateGroupBase() {
             for (i in 0 until size) {
                 list.add(transform(this[i], other[i]))
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
 
@@ -1108,7 +1108,7 @@ object Generators : TemplateGroupBase() {
             for (i in 0 until size) {
                 list.add(transform(this[i], other[i]))
             }
-            return list
+            return list.optimizeReadOnlyList()
             """
         }
     }

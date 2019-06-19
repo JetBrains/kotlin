@@ -737,7 +737,7 @@ public fun CharSequence.toSet(): Set<Char> {
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each character of original char sequence.
  */
 public inline fun <R> CharSequence.flatMap(transform: (Char) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform)
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
 }
 
 /**
@@ -852,7 +852,7 @@ public inline fun <R> CharSequence.mapIndexed(transform: (index: Int, Char) -> R
  * and returns the result of the transform applied to the character.
  */
 public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (index: Int, Char) -> R?): List<R> {
-    return mapIndexedNotNullTo(ArrayList<R>(), transform)
+    return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()
 }
 
 /**
@@ -884,7 +884,7 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(des
  * to each character in the original char sequence.
  */
 public inline fun <R : Any> CharSequence.mapNotNull(transform: (Char) -> R?): List<R> {
-    return mapNotNullTo(ArrayList<R>(), transform)
+    return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()
 }
 
 /**
