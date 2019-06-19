@@ -37,10 +37,24 @@ fun JUnit.configureForKotlin() {
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     allprojects {
         apply(mapOf("plugin" to "idea"))
+        // Make Idea import embedded configuration as transitive dependency for some configurations
         afterEvaluate {
-            // Make Idea import embedded configuration as transitive dependency
-            configurations.findByName("embedded")?.let { embedded ->
-                configurations.findByName("runtime")?.extendsFrom(embedded)
+            listOf(
+                "testCompile",
+                "testCompileOnly",
+                "testRuntime",
+                "testRuntimeOnly"
+            ).forEach { configurationName ->
+                val dependencyProjects = configurations
+                    .findByName(configurationName)
+                    ?.dependencies
+                    ?.mapNotNull { (it as? ProjectDependency)?.dependencyProject }
+
+                dependencies {
+                    dependencyProjects?.forEach {dependencyProject ->
+                        add(configurationName, project(dependencyProject.path, configuration = "embedded"))
+                    }
+                }
             }
         }
     }
