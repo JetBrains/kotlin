@@ -91,13 +91,10 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
   private fun processUserFactors(lookup: LookupImpl) {
     if (!shouldUseUserFactors()) return
 
-    val globalStorage = UserFactorStorage.getInstance()
-    val projectStorage = UserFactorStorage.getInstance(lookup.project)
-
     val userFactors = UserFactorsManager.getInstance().getAllFactors()
     val userFactorValues = mutableMapOf<String, String?>()
-    userFactors.asSequence().map { "${it.id}:App" to it.compute(globalStorage) }.toMap(userFactorValues)
-    userFactors.asSequence().map { "${it.id}:Project" to it.compute(projectStorage) }.toMap(userFactorValues)
+    userFactors.associateTo(userFactorValues) { "${it.id}:App" to it.compute(UserFactorStorage.getInstance()) }
+    userFactors.associateTo(userFactorValues) { "${it.id}:Project" to it.compute(UserFactorStorage.getInstance(lookup.project)) }
 
     lookup.putUserData(UserFactorsManager.USER_FACTORS_KEY, userFactorValues)
 
