@@ -1034,8 +1034,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     }
 
     String title = manager.getTitle(element);
-    if (title == null) return null;
-    title = StringUtil.escapeXmlEntities(title);
+    if (title != null) {
+      title = StringUtil.escapeXmlEntities(title);
+    }
     if (externalUrl == null) {
       List<String> urls = provider.getUrlFor(element, originalElement);
       if (urls != null) {
@@ -1062,7 +1063,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       if (link != null) return link;
     }
 
-    return "<a href='external_doc'>External documentation for `" + title + "`<icon src='AllIcons.Ide.External_link_arrow'></a></div>";
+    return "<a href='external_doc'>External documentation" +
+           (title == null ? "" : (" for `" + title + "`")) +
+           "<icon src='AllIcons.Ide.External_link_arrow'></a></div>";
   }
 
   private static String getLink(String title, String url) {
@@ -1072,11 +1075,14 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       return null;
     }
 
-    result.append("<a href='");
-    result.append(url);
-    result.append("'>`");
-    result.append(title).append("` on ").append(hostname);
-    result.append("</a>");
+    result.append("<a href='").append(url).append("'>");
+    if (title == null) {
+      result.append("Documentation");
+    }
+    else {
+      result.append("`").append(title).append("`");
+    }
+    result.append(" on ").append(hostname).append("</a>");
     return result.toString();
   }
 
