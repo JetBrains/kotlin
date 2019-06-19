@@ -105,6 +105,8 @@ import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
 import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
+import org.jetbrains.kotlin.idea.perf.AbstractPerformanceJavaToKotlinCopyPasteConversionTest
+import org.jetbrains.kotlin.idea.perf.AbstractPerformanceNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiModuleTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
@@ -1169,6 +1171,16 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSerializationIrBytecodeListingTest> {
             model("codegen")
+        }
+    }
+
+    testGroup("idea/performanceTests", "idea/testData") {
+        testClass<AbstractPerformanceJavaToKotlinCopyPasteConversionTest> {
+            model("copyPaste/conversion", testMethod = "doPerfTest", pattern = """^([^\.]+)\.java$""")
+        }
+
+        testClass<AbstractPerformanceNewJavaToKotlinCopyPasteConversionTest> {
+            model("copyPaste/conversion", testMethod = "doPerfTest", pattern = """^([^\.]+)\.java$""")
         }
     }
 /*

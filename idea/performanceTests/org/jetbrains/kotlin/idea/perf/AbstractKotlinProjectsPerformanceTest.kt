@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import java.io.File
 import java.nio.file.Paths
 
@@ -62,7 +64,25 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
     private lateinit var jdk18: Sdk
     private lateinit var myApplication: IdeaTestApplication
 
-    private val stats: Stats = Stats("-perf")
+    companion object {
+        @JvmStatic
+        var warmedUp: Boolean = false
+
+        @JvmStatic
+        val stats: Stats = Stats("-perf")
+
+        @BeforeClass
+        @JvmStatic
+        fun setup() {
+            // things to execute once and keep around for the class
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun teardown() {
+            stats.close()
+        }
+    }
 
     override fun setUp() {
         super.setUp()
@@ -88,17 +108,22 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
         InspectionProfileImpl.INIT_INSPECTIONS = true
 
         // warm up: open simple small project
-        val project = innerPerfOpenProject("helloKotlin", "warm-up ")
-        val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", "warm-up ")
-        assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
+        if (!warmedUp) {
+            val project = innerPerfOpenProject("helloKotlin", "warm-up ")
+            val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", "warm-up ")
+            assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+            ProjectManagerEx.getInstanceEx().forceCloseProject(project, true)
 
-        ProjectManagerEx.getInstanceEx().forceCloseProject(project, true)
+            warmedUp = true
+        }
     }
 
     override fun tearDown() {
         var runAll = RunAll()
 
         if (myProject != null) {
+            PsiDocumentManager.getInstance(myProject!!).commitAllDocuments()
             runAll = runAll
                 .append(ThrowableRunnable { LightPlatformTestCase.doTearDown(myProject!!, myApplication) })
         }
@@ -107,7 +132,7 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
             .run()
     }
 
-    protected fun getTempDirFixture(): TempDirTestFixture {
+    private fun getTempDirFixture(): TempDirTestFixture {
         val policy = IdeaTestExecutionPolicy.current()
         return if (policy != null)
             policy.createTempDirTestFixture()
@@ -136,6 +161,8 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
                 }
             }
         }, "change doc $fileName $nameOfChange", "")
+
+        manager.commitAllDocuments()
     }
 
     protected fun perfOpenProject(name: String, path: String = "idea/testData/perfTest") {
@@ -163,6 +190,8 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
 
         val changeListManagerImpl = ChangeListManager.getInstance(project) as ChangeListManagerImpl
         changeListManagerImpl.waitUntilRefreshed()
+
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
 
         return project
     }
@@ -207,16 +236,6 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
         return highlightFile
     }
 
-    inline fun attempts(block: (v: Int) -> Unit) {
-        attempts(3, block)
-    }
-
-    inline fun attempts(count: Int, block: (v: Int) -> Unit) {
-        for (attempt in 0..count) {
-            block(attempt)
-        }
-    }
-
     fun perfAutoCompletion(
         name: String,
         before: String,
@@ -244,10 +263,14 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
         val actualSuggestions = complete?.map { it.lookupString }?.toList() ?: emptyList()
         assertTrue(actualSuggestions.containsAll(suggestions.toList()))
 
-        with(fixture) {
-            type(type)
-            checkResult(after)
-            tearDown()
+        try {
+            with(fixture) {
+                type(type)
+                checkResult(after)
+            }
+        } finally {
+            PsiDocumentManager.getInstance(fixture.project).commitAllDocuments()
+            fixture.tearDown()
         }
     }
 

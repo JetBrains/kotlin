@@ -30,6 +30,7 @@ dependencies {
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(projectTests(":kotlinx-serialization-compiler-plugin"))
     compile(projectTests(":generators:test-generator"))
+    compile(projectTests(":idea"))
     builtinsCompile("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(builtinsSourceSet.output)

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.conversion.copy;
+package org.jetbrains.kotlin.idea.perf;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
@@ -20,9 +20,9 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/copyPaste/conversion")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaToKotlinCopyPasteConversionTest {
+public class PerformanceNewJavaToKotlinCopyPasteConversionTestGenerated extends AbstractPerformanceNewJavaToKotlinCopyPasteConversionTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
     }
 
     @TestMetadata("AddImports.java")
@@ -131,7 +131,8 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
 
     @TestMetadata("Imports2.java")
     public void testImports2() throws Exception {
-        runTest("idea/testData/copyPaste/conversion/Imports2.java");
+        // TODO: commented until rr/darthorimar/range-marker-fix is merged
+        // runTest("idea/testData/copyPaste/conversion/Imports2.java");
     }
 
     @TestMetadata("Imports3.java")
