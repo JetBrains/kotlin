@@ -6,6 +6,7 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ColoredItem;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Function;
@@ -18,7 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.CancellablePromise;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -425,7 +428,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     groupChildren.add(child);
   }
 
-  abstract static class ServiceViewItem {
+  abstract static class ServiceViewItem implements ColoredItem {
     private final Object myValue;
     private final ServiceViewItem myParent;
     private final ServiceViewContributor myContributor;
@@ -489,6 +492,13 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
     @NotNull
     protected abstract List<ServiceViewItem> doGetChildren();
+
+    @Nullable
+    @Override
+    public Color getColor() {
+      ServiceViewDescriptor descriptor = getViewDescriptor();
+      return descriptor instanceof ColoredItem ? ((ColoredItem)descriptor).getColor() : null;
+    }
 
     @Override
     public boolean equals(Object o) {
