@@ -250,13 +250,7 @@ internal class StepHandler(
             }
 
             // To reduce local variable usage, we create and use temporary variables only if necessary.
-            var stepArgVar: IrVariable? = null
-            val stepArgExpression = if (stepArg.canHaveSideEffects) {
-                stepArgVar = scope.createTemporaryVariable(stepArg, nameHint = "stepArg")
-                irGet(stepArgVar)
-            } else {
-                stepArg
-            }
+            val (stepArgVar, stepArgExpression) = createTemporaryVariableIfNecessary(stepArg, "stepArg")
 
             // The `step` standard library function only accepts positive values, and performs the following check:
             //
@@ -313,49 +307,24 @@ internal class StepHandler(
                     // Check value of nested step and negate step arg if needed: `if (nestedStep > 0) nestedStep else -nestedStep`
                     // A temporary variable is created only if necessary, so we can preserve the evaluation order.
                     val nestedStep = nestedInfo.step
-                    val nestedStepExpression = if (nestedStep.canHaveSideEffects) {
-                        nestedStepVar = scope.createTemporaryVariable(nestedStep, nameHint = "nestedStep")
-                        irGet(nestedStepVar)
-                    } else {
-                        nestedStep
-                    }
+                    val (tmpNestedStepVar, nestedStepExpression) = createTemporaryVariableIfNecessary(nestedStep, "nestedStep")
+                    nestedStepVar = tmpNestedStepVar
                     val nestedStepPositiveCheck = irCall(stepGreaterFun).apply {
                         putValueArgument(0, nestedStepExpression)
                         putValueArgument(1, zeroStep.deepCopyWithSymbols())
                     }
 
-                    checkedStepVar = scope.createTemporaryVariable(checkedStepExpression, nameHint = "checkedStep")
-                    irIfThenElse(stepType, nestedStepPositiveCheck, irGet(checkedStepVar), irGet(checkedStepVar).negate())
+                    val (tmpCheckedStepVar, checkedStepOrGet) = createTemporaryVariableIfNecessary(checkedStepExpression, "checkedStep")
+                    checkedStepVar = tmpCheckedStepVar
+                    irIfThenElse(stepType, nestedStepPositiveCheck, checkedStepOrGet, checkedStepOrGet.deepCopyWithSymbols().negate())
                 }
             }
 
-            // Store the final "step" a temporary variable only if necessary, so we can preserve the evaluation order.
-            var newStepVar: IrVariable? = null
-            val newStepExpression = if (checkedAndMaybeNegatedStep.canHaveSideEffects) {
-                newStepVar = scope.createTemporaryVariable(checkedAndMaybeNegatedStep, nameHint = "newStep")
-                irGet(newStepVar)
-            } else {
-                checkedAndMaybeNegatedStep
-            }
-
-            // Store the nested "first" and "last" in temporary variables only if necessary, so we can preserve the evaluation order.
-            var nestedFirstVar: IrVariable? = null
-            val nestedFirst = nestedInfo.first
-            val nestedFirstExpression = if (nestedFirst.canHaveSideEffects) {
-                nestedFirstVar = scope.createTemporaryVariable(nestedFirst, nameHint = "nestedFirst")
-                irGet(nestedFirstVar)
-            } else {
-                nestedFirst
-            }
-
-            var nestedLastVar: IrVariable? = null
-            val nestedLast = nestedInfo.last
-            val nestedLastExpression = if (nestedLast.canHaveSideEffects) {
-                nestedLastVar = scope.createTemporaryVariable(nestedLast, nameHint = "nestedLast")
-                irGet(nestedLastVar)
-            } else {
-                nestedLast
-            }
+            // Store the nested "first" and "last" and final "step" in temporary variables only if necessary, so we can preserve the
+            // evaluation order.
+            val (nestedFirstVar, nestedFirstExpression) = createTemporaryVariableIfNecessary(nestedInfo.first, "nestedFirst")
+            val (nestedLastVar, nestedLastExpression) = createTemporaryVariableIfNecessary(nestedInfo.last, "nestedLast")
+            val (newStepVar, newStepExpression) = createTemporaryVariableIfNecessary(checkedAndMaybeNegatedStep, "newStep")
 
             // Creating a progression with a step value != 1 may result in a "last" value that is smaller than the given "last". The new
             // "last" value is such that iterating over the progression (by incrementing by "step") does not go over the "last" value.
