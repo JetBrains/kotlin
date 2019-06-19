@@ -4,7 +4,7 @@
  */
 
 @file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("MathKt")
+@file:kotlin.jvm.JvmName("NumbersKt")
 
 package kotlin
 
