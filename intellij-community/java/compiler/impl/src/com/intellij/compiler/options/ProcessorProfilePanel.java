@@ -110,7 +110,7 @@ public class ProcessorProfilePanel extends JPanel {
 
     myProcessorTablePanel = new JPanel(new BorderLayout());
     myProcessorsModel = new ProcessorTableModel();
-    myProcessorTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Annotation Processors", false));
+    myProcessorTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Annotation processors:", false, JBUI.insetsTop(8)).setShowLine(false));
     myProcessorTable = new JBTable(myProcessorsModel);
     myProcessorTable.getEmptyText().setText("Compiler will run all automatically discovered processors");
     myProcessorPanel = createTablePanel(myProcessorTable);
@@ -118,7 +118,7 @@ public class ProcessorProfilePanel extends JPanel {
 
     myOptionsTablePanel = new JPanel(new BorderLayout());
     myOptionsModel = new OptionsTableModel();
-    myOptionsTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Annotation Processor options", false));
+    myOptionsTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Annotation processor options:", false, JBUI.insetsTop(13)).setShowLine(false));
     myOptionsTable = new JBTable(myOptionsModel);
     myOptionsTable.getEmptyText().setText("No processor-specific options configured");
     myOptionsPanel = createTablePanel(myOptionsTable);
@@ -157,9 +157,9 @@ public class ProcessorProfilePanel extends JPanel {
         new GridBagConstraints(1, GridBagConstraints.RELATIVE, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 5, 0, 0), 0, 0));
 
     add(myProcessorTablePanel,
-        new GridBagConstraints(0, GridBagConstraints.RELATIVE, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, JBUI.insetsTop(10), 0, 0));
+        new GridBagConstraints(0, GridBagConstraints.RELATIVE, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
     add(myOptionsTablePanel,
-        new GridBagConstraints(0, GridBagConstraints.RELATIVE, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, JBUI.insetsTop(10), 0, 0));
+        new GridBagConstraints(0, GridBagConstraints.RELATIVE, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, JBUI.emptyInsets(), 0, 0));
 
     myRbClasspath.addItemListener(e -> updateEnabledState());
 
