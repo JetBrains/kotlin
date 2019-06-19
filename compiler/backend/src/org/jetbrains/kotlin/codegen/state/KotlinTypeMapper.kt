@@ -67,10 +67,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeSystemContext
-import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -1468,9 +1467,14 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return false
         }
 
-        fun getVarianceForWildcard(parameter: TypeParameterDescriptor, projection: TypeProjection, mode: TypeMappingMode): Variance {
-            val projectionKind = projection.projectionKind
-            val parameterVariance = parameter.variance
+        fun getVarianceForWildcard(parameter: TypeParameterDescriptor, projection: TypeProjection, mode: TypeMappingMode): Variance =
+            SimpleClassicTypeSystemContext.getVarianceForWildcard(parameter, projection, mode)
+
+        private fun TypeSystemCommonBackendContext.getVarianceForWildcard(
+            parameter: TypeParameterMarker, projection: TypeArgumentMarker, mode: TypeMappingMode
+        ): Variance {
+            val projectionKind = projection.getVariance().convertVariance()
+            val parameterVariance = parameter.getVariance().convertVariance()
 
             if (parameterVariance == Variance.INVARIANT) {
                 return projectionKind
@@ -1481,12 +1485,12 @@ class KotlinTypeMapper @JvmOverloads constructor(
             }
 
             if (projectionKind == Variance.INVARIANT || projectionKind == parameterVariance) {
-                if (mode.skipDeclarationSiteWildcardsIfPossible && !projection.isStarProjection) {
-                    if (parameterVariance == Variance.OUT_VARIANCE && projection.type.isMostPreciseCovariantArgument()) {
+                if (mode.skipDeclarationSiteWildcardsIfPossible && !projection.isStarProjection()) {
+                    if (parameterVariance == Variance.OUT_VARIANCE && isMostPreciseCovariantArgument(projection.getType())) {
                         return Variance.INVARIANT
                     }
 
-                    if (parameterVariance == Variance.IN_VARIANCE && projection.type.isMostPreciseContravariantArgument(parameter)) {
+                    if (parameterVariance == Variance.IN_VARIANCE && isMostPreciseContravariantArgument(projection.getType(), parameter)) {
                         return Variance.INVARIANT
                     }
                 }

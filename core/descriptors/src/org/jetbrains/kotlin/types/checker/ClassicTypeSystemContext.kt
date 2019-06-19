@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
+interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return this.isDenotable
@@ -145,15 +145,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return this.projectionKind.convertVariance()
     }
 
-
-    private fun TypeVariance.convertVariance(): Variance {
-        return when (this) {
-            TypeVariance.INV -> Variance.INVARIANT
-            TypeVariance.IN -> Variance.IN_VARIANCE
-            TypeVariance.OUT -> Variance.OUT_VARIANCE
-        }
-    }
-
     override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
         require(this is TypeProjection, this::errorMessage)
         return this.type.unwrap()
@@ -212,6 +203,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return classDescriptor.isFinalClass &&
                 classDescriptor.kind != ClassKind.ENUM_ENTRY &&
                 classDescriptor.kind != ClassKind.ANNOTATION_CLASS
+    }
+
+    override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        val classDescriptor = declarationDescriptor
+        return classDescriptor is ClassDescriptor && classDescriptor.isFinalClass
     }
 
     override fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker {
@@ -488,6 +485,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return this is NewCapturedTypeConstructor
     }
 
+}
+
+fun TypeVariance.convertVariance(): Variance {
+    return when (this) {
+        TypeVariance.INV -> Variance.INVARIANT
+        TypeVariance.IN -> Variance.IN_VARIANCE
+        TypeVariance.OUT -> Variance.OUT_VARIANCE
+    }
 }
 
 private fun captureFromExpressionInternal(type: UnwrappedType) = captureFromExpression(type)
