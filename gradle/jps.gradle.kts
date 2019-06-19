@@ -73,6 +73,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                         kotlinJpsPluginJar()
 
+                        kotlinc()
+
                         ideaPlugin()
 
                         dist()
@@ -266,6 +268,32 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.dist() {
     }
 }
 
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinc() {
+    val kotlinCompilerProject = project(":kotlin-compiler")
+    val libraries by kotlinCompilerProject.configurations
+    val compilerPlugins by kotlinCompilerProject.configurations
+    val sources by kotlinCompilerProject.configurations
+
+    create("kotlinc") {
+        directory("bin") {
+            directoryContent("$rootDir/compiler/cli/bin")
+        }
+
+        directory("lib") {
+            artifact("kotlin-compiler.jar")
+            jarsFromConfiguration(libraries) { it.replace("-$bootstrapKotlinVersion", "") }
+            jarsFromConfiguration(compilerPlugins) { it.removePrefix("kotlin-") }
+            sourceJarsFromConfiguration(sources) { it.replace("-$bootstrapKotlinVersion", "") }
+        }
+
+        directory("license") {
+            directoryContent("$rootDir/license")
+        }
+        
+        file("$rootDir/bootstrap/build.txt")
+    }
+}
+
 fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
     val ideaPluginProject = project(":prepare:idea-plugin")
     (ideaPluginProject as ProjectInternal).evaluate()
@@ -335,26 +363,67 @@ fun RecursiveArtifact.jarContentsFromConfiguration(configuration: Configuration)
         }
 }
 
-fun RecursiveArtifact.jarsFromConfiguration(configuration: Configuration) {
+fun RecursiveArtifact.sourceJarsFromConfiguration(configuration: Configuration, renamer: (String) -> String = { it }) {
     val resolvedArtifacts = configuration
         .resolvedConfiguration
         .resolvedArtifacts
 
-    resolvedArtifacts.filter { it.id.componentIdentifier is ModuleComponentIdentifier }
-        .map { it.file }
-        .forEach(::file)
+    jarsFromExternalModules(resolvedArtifacts, renamer)
+    
+    resolvedArtifacts
+        .map { it.id.componentIdentifier }
+        .filterIsInstance<ProjectComponentIdentifier>()
+        .forEach {
+            val jarBaseName = project(it.projectPath).the<BasePluginConvention>().archivesBaseName
+            val renamed = renamer("$jarBaseName-sources") + ".jar"
+            archive(renamed) {
+                project(it.projectPath)
+                    .mainSourceSet
+                    .allSource
+                    .sourceDirectories
+                    .forEach {sourceDirectory ->
+                    directoryContent(sourceDirectory)
+                }
+            }
+        }
+}
+
+fun RecursiveArtifact.jarsFromConfiguration(configuration: Configuration, renamer: (String) -> String = { it }) {
+    val resolvedArtifacts = configuration
+        .resolvedConfiguration
+        .resolvedArtifacts
+
+    jarsFromExternalModules(resolvedArtifacts, renamer)
 
     resolvedArtifacts
         .map { it.id.componentIdentifier }
         .filterIsInstance<ProjectComponentIdentifier>()
         .forEach {
-            val artifactName = it.projectName + ".jar"
+            val jarBaseName = project(it.projectPath).the<BasePluginConvention>().archivesBaseName
+            val artifactName = renamer(jarBaseName) + ".jar"
             if (it.projectName in jarArtifactProjects) {
                 artifact(artifactName)
             } else {
                 archive(artifactName) {
                     moduleOutput(moduleName(it.projectPath))
+                    jarContentsFromEmbeddedConfiguration(project(it.projectPath))
                 }
+            }
+        }
+}
+
+fun RecursiveArtifact.jarsFromExternalModules(resolvedArtifacts: Iterable<ResolvedArtifact>, renamer: (String) -> String = { it }) {
+    // Use output-file-name property when fixed https://github.com/JetBrains/gradle-idea-ext-plugin/issues/63
+    resolvedArtifacts.filter { it.id.componentIdentifier is ModuleComponentIdentifier }
+        .forEach {
+            val baseName = it.file.nameWithoutExtension
+            val renamed = renamer(baseName)
+            if (it.file.extension == "jar" && renamed != baseName) {
+                archive("$renamed.jar") {
+                    extractedDirectory(it.file)
+                }
+            } else {
+                file(it.file)
             }
         }
 }

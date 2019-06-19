@@ -100,10 +100,7 @@ val distCompilerPluginProjects = listOf(
 
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
-    ":kotlin-reflect",
     ":kotlin-script-runtime",
-    ":kotlin-stdlib-jdk7".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-    ":kotlin-stdlib-jdk8".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-stdlib-js-ir".takeIf { jsIrDist },
     ":kotlin-test:kotlin-test-js",
     ":kotlin-test:kotlin-test-js-ir".takeIf { jsIrDist },
@@ -113,7 +110,7 @@ val distSourcesProjects = listOfNotNull(
     ":kotlin-test:kotlin-test-testng"
 )
 
-libraries.apply {
+configurations.all {
     resolutionStrategy {
         preferProjectModules()
     }
@@ -157,9 +154,16 @@ dependencies {
         sources(project(it, configuration = "sources"))
     }
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    sources(kotlinStdlib("jdk7", classifier = "sources"))
+    sources(kotlinStdlib("jdk8", classifier = "sources"))
+
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        sources(kotlinStdlib(classifier = "sources"))
+        sources("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion:sources")
+    } else {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
         sources(project(":kotlin-stdlib-js", configuration = "distSources"))
+        sources(project(":kotlin-reflect", configuration = "sources"))
 
         distStdlibMinimalForTests(project(":kotlin-stdlib:jvm-minimal-for-test"))
 
