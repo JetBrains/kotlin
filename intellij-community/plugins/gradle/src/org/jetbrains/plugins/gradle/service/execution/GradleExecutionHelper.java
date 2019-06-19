@@ -697,7 +697,7 @@ public class GradleExecutionHelper {
   }
 
   @NotNull
-  private static String getToolingExtensionsJarPaths(@NotNull Set<Class> toolingExtensionClasses) {
+  public static String getToolingExtensionsJarPaths(@NotNull Set<Class> toolingExtensionClasses) {
     final Set<String> jarPaths = ContainerUtil.map2SetNotNull(toolingExtensionClasses, aClass -> {
       String path = PathManager.getJarPathForClass(aClass);
       if (path != null) {
