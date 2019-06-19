@@ -740,14 +740,15 @@ public class EditorModel {
       LOG.info(e);
       return;
     }
-
-    targetCaretPosition.set(pagesAmount, 0);
-    isNeedToShowCaret = true;
-    requestUpdate();
+    setCaretAndShow(pagesAmount, 0);
   }
 
   public void setCaretToFileStartAndShow() {
-    targetCaretPosition.set(0, 0);
+    setCaretAndShow(0, 0);
+  }
+
+  public void setCaretAndShow(long pageNumber, int symbolOffsetInPage) {
+    targetCaretPosition.set(pageNumber, symbolOffsetInPage);
     isNeedToShowCaret = true;
     requestUpdate();
   }

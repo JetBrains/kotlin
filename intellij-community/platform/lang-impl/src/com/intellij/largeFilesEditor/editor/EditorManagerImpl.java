@@ -24,6 +24,8 @@ import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.TextRange;
@@ -60,7 +62,7 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
     int customPageSize = PropertiesGetter.getPageSize();
     int customBorderShift = PropertiesGetter.getMaxPageBorderShiftBytes();
 
-    document = createSpecialDocument();
+    document = createSpecialDocument(vFile);
 
     editorModel = new EditorModel(document, project, implementDataProviderForEditorModel());
 
@@ -129,6 +131,20 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
 
   @Override
   public void setState(@NotNull FileEditorState state) {
+    if (state instanceof LargeFileEditorState) {
+      LargeFileEditorState largeFileEditorState = (LargeFileEditorState)state;
+      editorModel.setCaretAndShow(largeFileEditorState.caretPageNumber,
+                                  largeFileEditorState.caretSymbolOffsetInPage);
+    }
+  }
+
+  @NotNull
+  @Override
+  public FileEditorState getState(@NotNull FileEditorStateLevel level) {
+    LargeFileEditorState state = new LargeFileEditorState();
+    state.caretPageNumber = editorModel.getCaretPageNumber();
+    state.caretSymbolOffsetInPage = editorModel.getCaretPageOffset();
+    return state;
   }
 
   @Override
@@ -269,9 +285,11 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
     return editorModel;
   }
 
-  private static DocumentEx createSpecialDocument() {
+  private static DocumentEx createSpecialDocument(VirtualFile vFile) {
     DocumentEx doc = new DocumentImpl("", false, false); // restrict "\r\n" line separators
     UndoUtil.disableUndoFor(doc); // disabling Undo-functionality, provided by IDEA
+    FileDocumentManagerImpl
+      .registerDocument(doc, vFile); // this is needed for caret listener in IdeDocumentHistoryImpl to make navigation history work
     return doc;
   }
 
