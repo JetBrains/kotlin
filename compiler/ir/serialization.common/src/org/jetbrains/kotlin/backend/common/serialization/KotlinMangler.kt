@@ -203,8 +203,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
 
             val parentDeclaration = (parent as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: parent
             val containingDeclarationPart = when (parentDeclaration) {
-                is IrDeclarationParent -> parentDeclaration.fqNameUnique.asString()
-                is IrProperty -> "${parentDeclaration.parent.fqNameUnique}.${parentDeclaration.name}"
+                is IrDeclaration -> parentDeclaration.uniqSymbolName()
                 else -> error("Unexpected type parameter parent")
             }
             return "ktypeparam:$containingDeclarationPart$name@$index"
