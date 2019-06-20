@@ -74,6 +74,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
                 constructor.valueParameters.forEach { this.storeDeclaration(it) }
             }
         }
+        if (implicitTypeOnly) return constructor.compose()
         return super.transformConstructor(constructor, data)
     }
 
@@ -81,6 +82,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         anonymousInitializer: FirAnonymousInitializer,
         data: Any?
     ): CompositeTransformResult<FirDeclaration> {
+        if (implicitTypeOnly) return anonymousInitializer.compose()
         return withScopeCleanup(localScopes) {
             localScopes.addIfNotNull(primaryConstructorParametersScope)
             super.transformAnonymousInitializer(anonymousInitializer, data)
