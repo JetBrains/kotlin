@@ -488,6 +488,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       cancelAllFlushRequests();
       mySpareTimeAlarm.cancelAllRequests();
       disposeEditor();
+      myEditor.putUserData(CONSOLE_VIEW_IN_EDITOR_VIEW, null);
       synchronized (LOCK) {
         myDeferredBuffer.clear();
       }
