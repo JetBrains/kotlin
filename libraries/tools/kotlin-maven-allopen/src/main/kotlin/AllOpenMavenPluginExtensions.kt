@@ -57,3 +57,22 @@ class KotlinSpringMavenPluginExtension : KotlinMavenPluginExtension {
         return listOf(PluginOption("spring", ALLOPEN_COMPILER_PLUGIN_ID, PRESET_ARG_NAME, "spring"))
     }
 }
+
+@Component(role = KotlinMavenPluginExtension::class, hint = "quarkus")
+class KotlinQuarkusMavenPluginExtension : KotlinMavenPluginExtension {
+    private companion object {
+        val PRESET_ARG_NAME = "preset"
+    }
+
+    override fun getCompilerPluginId() = ALLOPEN_COMPILER_PLUGIN_ID
+
+    @Requirement
+    lateinit var logger: Logger
+
+    override fun isApplicable(project: MavenProject, execution: MojoExecution) = true
+
+    override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
+        logger.debug("Loaded Maven plugin " + javaClass.name)
+        return listOf(PluginOption("quarkus", ALLOPEN_COMPILER_PLUGIN_ID, PRESET_ARG_NAME, "quarkus"))
+    }
+}
