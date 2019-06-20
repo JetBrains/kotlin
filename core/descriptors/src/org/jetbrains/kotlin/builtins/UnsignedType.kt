@@ -50,6 +50,15 @@ object UnsignedTypes {
         return isUnsignedClass(descriptor)
     }
 
+    fun toUnsignedType(type: KotlinType): UnsignedType? =
+        when {
+            KotlinBuiltIns.isUByte(type) -> UnsignedType.UBYTE
+            KotlinBuiltIns.isUShort(type) -> UnsignedType.USHORT
+            KotlinBuiltIns.isUInt(type) -> UnsignedType.UINT
+            KotlinBuiltIns.isULong(type) -> UnsignedType.ULONG
+            else -> null
+        }
+
     fun isUnsignedClass(descriptor: DeclarationDescriptor): Boolean {
         val container = descriptor.containingDeclaration
         return container is PackageFragmentDescriptor &&

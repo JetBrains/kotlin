@@ -32,10 +32,10 @@ class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescrip
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
         BoundedValue(
-            codegen.generateCallReceiver(rangeCall),
-            true,
-            codegen.generateCallSingleArgument(rangeCall),
-            false
+            lowBound = codegen.generateCallReceiver(rangeCall).coerceToRangeElementTypeIfRequired(),
+            isLowInclusive = true,
+            highBound = codegen.generateCallSingleArgument(rangeCall).coerceToRangeElementTypeIfRequired(),
+            isHighInclusive = false
         )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =

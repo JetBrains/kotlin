@@ -33,8 +33,8 @@ class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
         BoundedValue(
-            lowBound = codegen.generateCallSingleArgument(rangeCall),
-            highBound = codegen.generateCallReceiver(rangeCall)
+            lowBound = codegen.generateCallSingleArgument(rangeCall).coerceToRangeElementTypeIfRequired(),
+            highBound = codegen.generateCallReceiver(rangeCall).coerceToRangeElementTypeIfRequired()
         )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
