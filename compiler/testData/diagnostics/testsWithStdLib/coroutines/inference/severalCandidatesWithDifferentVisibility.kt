@@ -1,6 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.Experimental
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
 
 // FILE: a.kt
 
@@ -36,7 +35,7 @@ fun <T> invBuilder(@BuilderInference block: Inv<T>.() -> Unit) {}
 
 fun test() {
     invBuilder {
-        val q = <!NI;INVISIBLE_MEMBER!>Queue<!>.empty()
+        val q = Queue.empty()
         emit(42)
     }
 }
