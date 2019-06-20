@@ -41,8 +41,11 @@ class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<Diagno
             CommandProcessor.getInstance().runUndoTransparentAction {
                 val diagnostics = runWriteAction { analyzeFileRange(file, rangeMarker) }
                 for (diagnostic in diagnostics.all()) {
-                    diagnosticToFix[diagnostic.factory]?.forEach { fix ->
-                        runWriteAction { fix(diagnostic) }
+                    val range = rangeMarker?.range ?: file.textRange
+                    if (diagnostic.psiElement.isInRange(range)) {
+                        diagnosticToFix[diagnostic.factory]?.forEach { fix ->
+                            runWriteAction { fix(diagnostic) }
+                        }
                     }
                 }
             }
