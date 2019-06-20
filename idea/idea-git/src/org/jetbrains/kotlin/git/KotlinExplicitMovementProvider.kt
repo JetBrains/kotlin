@@ -34,14 +34,14 @@ class KotlinExplicitMovementProvider : GitCheckinExplicitMovementProvider() {
         project: Project,
         beforePaths: List<FilePath>,
         afterPaths: List<FilePath>
-    ): Collection<GitCheckinExplicitMovementProvider.Movement> {
-        val movedChanges = ArrayList<GitCheckinExplicitMovementProvider.Movement>()
+    ): Collection<Movement> {
+        val movedChanges = ArrayList<Movement>()
         for (after in afterPaths) {
             val pathBeforeJ2K = after.virtualFile?.pathBeforeJ2K
             if (pathBeforeJ2K != null) {
                 val before = beforePaths.firstOrNull { it.path == pathBeforeJ2K }
                 if (before != null) {
-                    movedChanges.add(GitCheckinExplicitMovementProvider.Movement(before, after))
+                    movedChanges.add(Movement(before, after))
                 }
             }
         }

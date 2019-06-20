@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.debugger.getContextElement
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.runner.RunWith
@@ -34,7 +34,7 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             super.configureModule(module, model)
 
-            val library = model.moduleLibraryTable.getLibraryByName(SdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
+            val library = model.moduleLibraryTable.getLibraryByName(LIBRARY_NAME)!!
             val modifiableModel = library.modifiableModel
 
             modifiableModel.addRoot(findLibrarySourceDir(), OrderRootType.SOURCES)

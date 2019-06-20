@@ -124,10 +124,10 @@ class ExpressionsOfTypeProcessor(
     private val scopesToUsePlainSearch = LinkedHashMap<KtFile, ArrayList<PsiElement>>()
 
     fun run() {
-        val usePlainSearch = when (ExpressionsOfTypeProcessor.mode) {
-            ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART -> false
-            ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN -> true
-            ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED -> searchScope is LocalSearchScope // for local scope it's faster to use plain search
+        val usePlainSearch = when (mode) {
+            Mode.ALWAYS_SMART -> false
+            Mode.ALWAYS_PLAIN -> true
+            Mode.PLAIN_WHEN_NEEDED -> searchScope is LocalSearchScope // for local scope it's faster to use plain search
         }
         if (usePlainSearch || classToSearch == null) {
             possibleMatchesInScopeHandler(searchScope)

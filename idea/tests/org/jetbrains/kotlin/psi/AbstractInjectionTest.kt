@@ -17,7 +17,6 @@ import org.intellij.plugins.intelliLang.inject.InjectLanguageAction
 import org.intellij.plugins.intelliLang.inject.UnInjectLanguageAction
 import org.intellij.plugins.intelliLang.references.FileReferenceInjector
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.utils.SmartList
@@ -28,7 +27,7 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         return when {
             testName.endsWith("WithAnnotation") -> KotlinLightProjectDescriptor.INSTANCE
             testName.endsWith("WithRuntime") -> KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-            else -> KotlinLightCodeInsightFixtureTestCaseBase.JAVA_LATEST
+            else -> JAVA_LATEST
         }
     }
 

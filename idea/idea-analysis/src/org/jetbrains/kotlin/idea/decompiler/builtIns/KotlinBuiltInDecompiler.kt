@@ -69,7 +69,7 @@ class BuiltInDefinitionFile(
 
             val version = BuiltInsBinaryVersion.readFrom(stream)
             if (!version.isCompatible()) {
-                return FileWithMetadata.Incompatible(version)
+                return Incompatible(version)
             }
 
             val proto = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)

@@ -49,7 +49,7 @@ object CommonIdePlatformKindTooling : IdePlatformKindTooling() {
     }
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
-        val icons = IdePlatformKindTooling.getInstances()
+        val icons = getInstances()
             .filter { it != this }
             .mapNotNull { it.getTestIcon(declaration, descriptor) }
             .distinct()

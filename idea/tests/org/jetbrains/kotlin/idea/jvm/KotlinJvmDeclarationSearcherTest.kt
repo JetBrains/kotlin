@@ -84,7 +84,7 @@ class KotlinJvmDeclarationSearcherTest : KotlinLightCodeInsightFixtureTestCase()
 
     fun testClassDeclaration() = assertElementsByIdentifier("""
             class Some<caret>Class(val field: String)
-        """, { it is JvmClass }, { it is com.intellij.lang.jvm.JvmMethod && it.isConstructor })
+        """, { it is JvmClass }, { it is JvmMethod && it.isConstructor })
 
 
     fun testLocalObjectDeclaration() = assertElementsByIdentifier("""

@@ -77,7 +77,7 @@ fun createLibraryWithLongPaths(project: Project): Library {
 
 
 private object MockExecutor : DefaultRunExecutor() {
-    override fun getId() = DefaultRunExecutor.EXECUTOR_ID
+    override fun getId() = EXECUTOR_ID
 }
 
 private object MockProfile : RunProfile {

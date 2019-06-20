@@ -205,7 +205,7 @@ protected constructor(
         forTests: Boolean
     ) {
         fun doUpdateMavenLanguageVersion(): PsiElement? {
-            val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
+            val psi = findModulePomFile(module) as? XmlFile ?: return null
             val pom = PomFile.forFileOrNull(psi) ?: return null
             return pom.changeLanguageVersion(
                 languageVersion,
@@ -307,7 +307,7 @@ protected constructor(
         messageTitle: String
     ): PsiElement? {
         fun doChangeMavenCoroutineConfiguration(): PsiElement? {
-            val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
+            val psi = findModulePomFile(module) as? XmlFile ?: return null
             val pom = PomFile.forFileOrNull(psi) ?: return null
             return pom.changeCoroutineConfiguration(value)
         }
@@ -329,7 +329,7 @@ protected constructor(
         state: LanguageFeature.State,
         messageTitle: String
     ): PsiElement? {
-        val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
+        val psi = findModulePomFile(module) as? XmlFile ?: return null
         val pom = PomFile.forFileOrNull(psi) ?: return null
         val element = pom.changeFeatureConfiguration(feature, state)
         if (element == null) {

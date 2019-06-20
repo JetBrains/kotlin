@@ -19,7 +19,10 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
@@ -31,7 +34,6 @@ import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.findAllUsedLibraries
 import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import java.io.File
-import java.util.*
 
 abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinProjectConfigurator {
     protected abstract val libraryName: String
@@ -176,12 +178,12 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             libraryJarDescriptor: LibraryJarDescriptor,
             collector: NotificationMessageCollector
     ) {
-        val jarFile = if (jarState == KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY)
+        val jarFile = if (jarState == FileState.DO_NOT_COPY)
             libraryJarDescriptor.getPathInPlugin()
         else
             File(dirToCopyJarTo, libraryJarDescriptor.jarName)
 
-        if (jarState == KotlinWithLibraryConfigurator.FileState.COPY) {
+        if (jarState == FileState.COPY) {
             copyFileToDir(libraryJarDescriptor.getPathInPlugin(), dirToCopyJarTo, collector)
         }
 

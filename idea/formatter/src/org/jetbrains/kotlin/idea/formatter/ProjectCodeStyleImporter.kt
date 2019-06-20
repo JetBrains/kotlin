@@ -13,11 +13,11 @@ object ProjectCodeStyleImporter {
     fun apply(project: Project, codeStyleStr: String?): Boolean {
         return when (codeStyleStr) {
             KotlinObsoleteCodeStyle.CODE_STYLE_SETTING -> {
-                ProjectCodeStyleImporter.apply(project, KotlinObsoleteCodeStyle.INSTANCE)
+                apply(project, KotlinObsoleteCodeStyle.INSTANCE)
                 true
             }
             KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING -> {
-                ProjectCodeStyleImporter.apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
+                apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
                 true
             }
             else -> false

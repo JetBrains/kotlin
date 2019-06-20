@@ -257,11 +257,11 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
         }
 
         if (isPluginExecutionMissing(plugin, "default-compile", "compile")) {
-            addExecution(javacPlugin, "compile", PomFile.DefaultPhases.Compile, listOf("compile"))
+            addExecution(javacPlugin, "compile", DefaultPhases.Compile, listOf("compile"))
         }
 
         if (isPluginExecutionMissing(plugin, "default-testCompile", "testCompile")) {
-            addExecution(javacPlugin, "testCompile", PomFile.DefaultPhases.TestCompile, listOf("testCompile"))
+            addExecution(javacPlugin, "testCompile", DefaultPhases.TestCompile, listOf("testCompile"))
         }
     }
 

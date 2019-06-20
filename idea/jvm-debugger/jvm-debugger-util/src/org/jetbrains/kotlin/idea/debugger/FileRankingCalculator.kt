@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.jvm.internal.FunctionBase
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 object FileRankingCalculatorForIde : FileRankingCalculator() {
     override fun analyze(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
@@ -106,7 +105,7 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
     }
 
     private fun rankingForClassName(fqName: String, descriptor: ClassDescriptor, bindingContext: BindingContext): Ranking {
-        if (DescriptorUtils.isLocal(descriptor)) return Ranking.ZERO
+        if (DescriptorUtils.isLocal(descriptor)) return ZERO
 
         val expectedFqName = makeTypeMapper(bindingContext).mapType(descriptor).className
         return when {

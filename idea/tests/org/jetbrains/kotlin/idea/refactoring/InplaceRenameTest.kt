@@ -231,14 +231,14 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     private fun doTestInplaceRename(newName: String?, handler: VariableInplaceRenameHandler = KotlinVariableInplaceRenameHandler()) {
         configureByFile(getTestName(false) + ".kt")
         val element = TargetElementUtil.findTargetElement(
-            LightPlatformCodeInsightTestCase.myEditor,
+            myEditor,
             TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
         )
 
         assertNotNull(element)
 
         val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element!!,
-                                                             LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
+                                                             getCurrentEditorDataContext())
 
         if (newName == null) {
             assertFalse(handler.isRenaming(dataContext), "In-place rename is allowed for " + element)
@@ -246,7 +246,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         else {
             try {
                 assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
-                CodeInsightTestUtil.doInlineRename(handler, newName, LightPlatformCodeInsightTestCase.getEditor(), element)
+                CodeInsightTestUtil.doInlineRename(handler, newName, getEditor(), element)
                 checkResultByFile(getTestName(false) + ".kt.after")
             } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
                 val expectedMessage = InTextDirectivesUtils.findStringWithPrefixes(myFile.text, "// SHOULD_FAIL_WITH: ")

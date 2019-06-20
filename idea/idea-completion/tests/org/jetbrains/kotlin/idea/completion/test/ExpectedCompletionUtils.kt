@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
@@ -316,7 +316,7 @@ object ExpectedCompletionUtils {
                 map.put(CompletionProposal.MODULE_NAME, it)
             }
 
-            result.add(ExpectedCompletionUtils.CompletionProposal(map))
+            result.add(CompletionProposal(map))
         }
         return result
     }

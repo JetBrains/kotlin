@@ -49,7 +49,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
             override fun configureModule(module: Module, model: ModifiableRootModel) {
                 super.configureModule(module, model)
 
-                val library = model.moduleLibraryTable.getLibraryByName(SdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
+                val library = model.moduleLibraryTable.getLibraryByName(LIBRARY_NAME)!!
                 val modifiableModel = library.modifiableModel
 
                 modifiableModel.addRoot(LocalFileSystem.getInstance().findFileByIoFile(libraryClean!!)!!, OrderRootType.SOURCES)

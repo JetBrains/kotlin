@@ -34,7 +34,7 @@ val Module.externalProjectId: String
     get() = facetSettings?.externalProjectId ?: ""
 
 val Module.sourceType: SourceType?
-    get() = facetSettings?.isTestModule?.let { isTest -> if (isTest) SourceType.TEST else PRODUCTION }
+    get() = facetSettings?.isTestModule?.let { isTest -> if (isTest) TEST else PRODUCTION }
 
 val Module.isMPPModule: Boolean
     get() = facetSettings?.isMPPModule ?: false

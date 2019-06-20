@@ -182,7 +182,7 @@ private object DebuggerMain {
         synchronized(lock) {
             // Wait until debugger is attached
             @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-            (lock as java.lang.Object).wait()
+            (lock as Object).wait()
         }
     }
 }

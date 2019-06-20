@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
-import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -59,7 +56,7 @@ sealed class ChangeCoroutineSupportFix(
     companion object : FeatureSupportIntentionActionsFactory() {
         private const val shortFeatureName = "coroutine"
 
-        fun getFixText(state: LanguageFeature.State) = AbstractChangeFeatureSupportLevelFix.getFixText(state, shortFeatureName)
+        fun getFixText(state: LanguageFeature.State) = getFixText(state, shortFeatureName)
 
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return emptyList()

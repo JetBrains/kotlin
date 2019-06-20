@@ -38,7 +38,7 @@ class KotlinCompletionCharFilter() : CharFilter() {
         val isAutopopup = CompletionService.getCompletionService().currentCompletion?.isAutopopupCompletion ?: return null
 
         if (Character.isJavaIdentifierPart(c) || c == '@') {
-            return CharFilter.Result.ADD_TO_PREFIX
+            return Result.ADD_TO_PREFIX
         }
 
         val currentItem = lookup.currentItem
@@ -51,7 +51,7 @@ class KotlinCompletionCharFilter() : CharFilter() {
         if (c == ':') {
             return when {
                 currentItem?.getUserData(HIDE_LOOKUP_ON_COLON) != null -> Result.HIDE_LOOKUP
-                else -> CharFilter.Result.ADD_TO_PREFIX /* used in '::xxx'*/
+                else -> Result.ADD_TO_PREFIX /* used in '::xxx'*/
             }
         }
 
@@ -79,7 +79,7 @@ class KotlinCompletionCharFilter() : CharFilter() {
 
             ',', ' ', '(', '=', '!' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
 
-            else -> CharFilter.Result.HIDE_LOOKUP
+            else -> Result.HIDE_LOOKUP
         }
     }
 }

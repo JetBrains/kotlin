@@ -43,7 +43,7 @@ import kotlin.reflect.KClass
 // thus making the original purpose useless.
 // The class still can be used, if you want to create a pair for existing intention with additional checker
 abstract class IntentionBasedInspection<TElement : PsiElement> private constructor(
-        private val intentionInfo: IntentionBasedInspection.IntentionData<TElement>,
+        private val intentionInfo: IntentionData<TElement>,
         protected open val problemText: String?
 ) : AbstractKotlinInspection() {
 

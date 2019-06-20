@@ -41,7 +41,7 @@ abstract class AbstractAnnotatedMembersSearchTest : AbstractSearcherTest() {
             PsiBasedClassResolver.trueHits.set(0)
             PsiBasedClassResolver.falseHits.set(0)
 
-            AbstractSearcherTest.checkResult(
+            checkResult(
                 path,
                 AnnotatedElementsSearch.searchElements(
                     psiClass,

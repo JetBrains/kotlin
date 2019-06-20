@@ -410,7 +410,7 @@ class KotlinLanguageInjector(
                                                }
                                            }
                                        }
-                                       for (injection in configuration.getInjections(org.jetbrains.kotlin.idea.injection.KOTLIN_SUPPORT_ID)) {
+                                       for (injection in configuration.getInjections(KOTLIN_SUPPORT_ID)) {
                                            for (injectionPlace in injection.injectionPlaces) {
                                                for (targetClassFQN in retrieveKotlinPlaceTargetClassesFQNs(injectionPlace)) {
                                                    add(StringUtilRt.getShortName(targetClassFQN))

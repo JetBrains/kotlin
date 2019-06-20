@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.gradle
 
-import com.intellij.openapi.roots.*
-import com.intellij.openapi.vfs.VirtualFile
-import junit.framework.TestCase
+import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase
+import org.jetbrains.kotlin.config.ResourceKotlinRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestRunConfigurationProducer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -29,14 +28,14 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     fun saveSdksBeforeTest() {
         val kotlinSdks = sdkCreationChecker?.getKotlinSdks() ?: emptyList()
         if (kotlinSdks.isNotEmpty()) {
-            ExternalSystemImportingTestCase.fail("Found Kotlin SDK before importing test. Sdk list: $kotlinSdks")
+            fail("Found Kotlin SDK before importing test. Sdk list: $kotlinSdks")
         }
     }
 
     @After
     fun checkSdkCreated() {
         if (sdkCreationChecker?.isKotlinSdkCreated() == false) {
-            ExternalSystemImportingTestCase.fail("Kotlin SDK was not created during import of MPP Project.")
+            fail("Kotlin SDK was not created during import of MPP Project.")
         }
     }
 

@@ -288,7 +288,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         libraryJarDescriptors: List<LibraryJarDescriptor>
     ) {
         val scope = OrderEntryFix.suggestScopeByLocation(module, element)
-        KotlinWithGradleConfigurator.addKotlinLibraryToModule(module, scope, library)
+        addKotlinLibraryToModule(module, scope, library)
     }
 
     companion object {

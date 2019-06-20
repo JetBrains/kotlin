@@ -48,7 +48,7 @@ interface IdePlatformKindResolution {
     ) {
         private val CACHED_RESOLUTION_SUPPORT by lazy {
             val allPlatformKinds = IdePlatformKind.ALL_KINDS
-            val groupedResolution = IdePlatformKindResolution.getInstances().groupBy { it.kind }.mapValues { it.value.single() }
+            val groupedResolution = getInstances().groupBy { it.kind }.mapValues { it.value.single() }
 
             for (kind in allPlatformKinds) {
                 if (kind !in groupedResolution) {

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
 
 class FilterIsInstanceHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl) : HandlerBase.Intermediate(dsl) {
     private companion object {
-        fun createHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl): HandlerBase.Intermediate =
+        fun createHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl): Intermediate =
             if (call.arguments.isEmpty()) MyWithGenericsHandler(num, call, dsl)
             else PeekTraceHandler(num, call.name, call.typeBefore, call.typeAfter, dsl)
     }
@@ -39,7 +39,7 @@ class FilterIsInstanceHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl) 
     /*
        * Transforms filterIsInstance<ClassName> -> filter { it is ClassName }.map { it as ClassName }
        */
-    private class MyWithGenericsHandler(num: Int, private val call: IntermediateStreamCall, dsl: Dsl) : HandlerBase.Intermediate(dsl) {
+    private class MyWithGenericsHandler(num: Int, private val call: IntermediateStreamCall, dsl: Dsl) : Intermediate(dsl) {
         private val peekHandler = PeekTraceHandler(num, "filterIsInstance", call.typeBefore, call.typeAfter, dsl)
         override fun additionalCallsAfter(): List<IntermediateStreamCall> {
             val mapperType = functionalType(call.typeBefore.genericTypeName, call.typeAfter.genericTypeName)

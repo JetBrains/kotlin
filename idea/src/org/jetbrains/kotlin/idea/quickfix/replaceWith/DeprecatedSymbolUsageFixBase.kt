@@ -90,7 +90,7 @@ abstract class DeprecatedSymbolUsageFixBase(
         ): ReplaceWith? {
             val annotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: return null
             val replaceWithValue =
-                annotation.argumentValue(kotlin.Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
+                annotation.argumentValue(Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
             val pattern = replaceWithValue.argumentValue(kotlin.ReplaceWith::expression.name)?.safeAs<StringValue>()?.value ?: return null
             if (pattern.isEmpty()) return null
             val importValues = replaceWithValue.argumentValue(kotlin.ReplaceWith::imports.name)?.safeAs<ArrayValue>()?.value ?: return null

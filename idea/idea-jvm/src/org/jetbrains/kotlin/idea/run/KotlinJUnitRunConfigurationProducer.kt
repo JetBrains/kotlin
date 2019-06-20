@@ -38,7 +38,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         configuration: JUnitConfiguration,
         context: ConfigurationContext
     ): Boolean {
-        if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
+        if (getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
         }
 

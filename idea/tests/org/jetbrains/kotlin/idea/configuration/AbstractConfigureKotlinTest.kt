@@ -165,9 +165,9 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         }
 
         private fun getPathToJar(runtimeState: FileState, jarFromDist: String, jarFromTemp: String) = when (runtimeState) {
-            KotlinWithLibraryConfigurator.FileState.EXISTS -> jarFromDist
-            KotlinWithLibraryConfigurator.FileState.COPY -> jarFromTemp
-            KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY -> jarFromDist
+            FileState.EXISTS -> jarFromDist
+            FileState.COPY -> jarFromTemp
+            FileState.DO_NOT_COPY -> jarFromDist
         }
 
 

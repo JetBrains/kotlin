@@ -31,7 +31,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.sun.jdi.AbsentInformationException
@@ -72,7 +71,7 @@ class KotlinFieldBreakpoint(
     private var breakpointType: BreakpointType = BreakpointType.FIELD
 
     override fun isValid(): Boolean {
-        if (!BreakpointWithHighlighter.isPositionValid(xBreakpoint.sourcePosition)) return false
+        if (!isPositionValid(xBreakpoint.sourcePosition)) return false
 
         return runReadAction {
             val field = getField()

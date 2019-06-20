@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
 import java.util.*
 
@@ -129,7 +128,7 @@ class ReferenceVariantsCollector(
         else
             ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression, callTypeAndReceiver)
 
-        return ReferenceVariantsCollector.FilterConfiguration(descriptorKindFilter, additionalPropertyNameFilter, shadowedDeclarationsFilter, completeExtensionsFromIndices)
+        return FilterConfiguration(descriptorKindFilter, additionalPropertyNameFilter, shadowedDeclarationsFilter, completeExtensionsFromIndices)
     }
 
     private fun doCollectBasicVariants(filterConfiguration: FilterConfiguration): ReferenceVariants {

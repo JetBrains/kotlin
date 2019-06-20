@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
-    KotlinJavaMavenConfigurator.TEST_LIB_ID,
+    TEST_LIB_ID,
     false,
-    KotlinJavaMavenConfigurator.NAME,
-    KotlinJavaMavenConfigurator.PRESENTABLE_TEXT
+    NAME,
+    PRESENTABLE_TEXT
 ) {
 
     override fun isKotlinModule(module: Module) =

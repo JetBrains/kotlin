@@ -28,8 +28,8 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.annotations.TestOnly
 import org.apache.log4j.Logger
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.Value
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -221,7 +221,7 @@ class KotlinDebuggerCaches(project: Project) {
     class ComputedClassNames(val classNames: List<String>, val shouldBeCached: Boolean) {
         @Suppress("FunctionName")
         companion object {
-            val EMPTY = ComputedClassNames.Cached(emptyList())
+            val EMPTY = Cached(emptyList())
 
             fun Cached(classNames: List<String>) = ComputedClassNames(classNames, true)
             fun Cached(className: String) = ComputedClassNames(Collections.singletonList(className), true)

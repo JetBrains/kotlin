@@ -25,7 +25,7 @@ class WholeProjectLightClassTest : WholeProjectPerformanceTest(), WholeProjectKo
         var totalNs = 0L
 
         val psiFile = file.toPsiFile(project) ?: run {
-            return WholeProjectPerformanceTest.PerFileTestResult(results, totalNs, listOf(AssertionError("PsiFile not found for $file")))
+            return PerFileTestResult(results, totalNs, listOf(AssertionError("PsiFile not found for $file")))
         }
 
         val errors = mutableListOf<Throwable>()

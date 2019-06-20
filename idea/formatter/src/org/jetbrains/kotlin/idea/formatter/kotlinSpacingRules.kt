@@ -21,7 +21,6 @@ import com.intellij.util.text.TextRangeUtil
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import org.jetbrains.kotlin.idea.util.requireNode
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
@@ -41,7 +40,7 @@ fun SpacingBuilder.afterInside(element: IElementType, tokenSet: TokenSet, spacin
     tokenSet.types.forEach { inType -> afterInside(element, inType).spacingFun() }
 }
 
-fun SpacingBuilder.RuleBuilder.spacesNoLineBreak(spaces: Int): SpacingBuilder? =
+fun RuleBuilder.spacesNoLineBreak(spaces: Int): SpacingBuilder? =
     spacing(spaces, spaces, 0, false, 0)
 
 fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacingBuilderUtil): KotlinSpacingBuilder {
@@ -143,7 +142,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             }
 
             val parameterWithDocCommentRule = { _: ASTBlock, _: ASTBlock, right: ASTBlock ->
-                if (right.requireNode().firstChildNode.elementType == KtTokens.DOC_COMMENT) {
+                if (right.requireNode().firstChildNode.elementType == DOC_COMMENT) {
                     createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 } else {
                     null
@@ -184,7 +183,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                             commonCodeStyleSettings.KEEP_LINE_BREAKS,
                             commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE
                         )
-                    left.requireNode().elementType == KtTokens.COMMA -> // incomplete call being edited
+                    left.requireNode().elementType == COMMA -> // incomplete call being edited
                         createSpacing(1)
                     else ->
                         createSpacing(0)

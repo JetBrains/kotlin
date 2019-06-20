@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 class KotlinJavascriptMavenConfigurator :
-    KotlinMavenConfigurator(null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
+    KotlinMavenConfigurator(null, false, NAME, PRESENTABLE_TEXT) {
 
     override fun getStdlibArtifactId(module: Module, version: String) = MAVEN_JS_STDLIB_ID
 

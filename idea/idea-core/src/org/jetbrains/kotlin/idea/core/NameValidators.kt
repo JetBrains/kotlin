@@ -63,12 +63,12 @@ class CollectingNameValidator @JvmOverloads constructor(
 class NewDeclarationNameValidator(
         private val visibleDeclarationsContext: KtElement?,
         private val checkDeclarationsIn: Sequence<PsiElement>,
-        private val target: NewDeclarationNameValidator.Target,
+        private val target: Target,
         private val excludedDeclarations: List<KtDeclaration> = emptyList()
 ) : (String) -> Boolean {
     constructor(container: PsiElement,
                 anchor: PsiElement?,
-                target: NewDeclarationNameValidator.Target,
+                target: Target,
                 excludedDeclarations: List<KtDeclaration> = emptyList())
         : this(
             (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<KtElement>(),

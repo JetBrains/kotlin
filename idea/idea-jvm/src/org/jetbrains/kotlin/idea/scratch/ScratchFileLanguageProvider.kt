@@ -62,7 +62,7 @@ abstract class ScratchFileLanguageProvider {
         private val EXTENSION = LanguageExtension<ScratchFileLanguageProvider>("org.jetbrains.kotlin.scratchFileLanguageProvider")
 
         fun get(language: Language): ScratchFileLanguageProvider? {
-            return ScratchFileLanguageProvider.EXTENSION.forLanguage(language)
+            return EXTENSION.forLanguage(language)
         }
 
         fun get(fileType: FileType): ScratchFileLanguageProvider? {

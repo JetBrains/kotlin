@@ -309,8 +309,8 @@ class ReflectionLookup(val classLoader: ClassLoader) {
             Type.BOOLEAN -> java.lang.Boolean.TYPE
             Type.BYTE -> java.lang.Byte.TYPE
             Type.SHORT -> java.lang.Short.TYPE
-            Type.CHAR -> java.lang.Character.TYPE
-            Type.INT -> java.lang.Integer.TYPE
+            Type.CHAR -> Character.TYPE
+            Type.INT -> Integer.TYPE
             Type.LONG -> java.lang.Long.TYPE
             Type.FLOAT -> java.lang.Float.TYPE
             Type.DOUBLE -> java.lang.Double.TYPE
