@@ -18,6 +18,7 @@ object KonanDescriptorUniqIdAware: DescriptorUniqIdAware {
         is DeserializedSimpleFunctionDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.functionUniqId)
         is DeserializedPropertyDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.propertyUniqId)
         is DeserializedClassConstructorDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.constructorUniqId)
+        is DeserializedTypeParameterDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.typeParamUniqId)
         else -> null
     }?.index
 }
