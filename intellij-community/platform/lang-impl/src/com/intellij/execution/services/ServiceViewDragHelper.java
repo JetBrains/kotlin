@@ -110,13 +110,13 @@ class ServiceViewDragHelper {
   }
 
   @Nullable
-  private static ServiceViewContributor getTheOnlyContributor(List<ServiceViewItem> nodes) {
+  static ServiceViewContributor getTheOnlyContributor(List<ServiceViewItem> nodes) {
     ServiceViewContributor result = null;
     for (ServiceViewItem node : nodes) {
       if (result == null) {
-        result = node.getContributor();
+        result = node.getRootContributor();
       }
-      else if (result != node.getContributor()) {
+      else if (result != node.getRootContributor()) {
         return null;
       }
     }
