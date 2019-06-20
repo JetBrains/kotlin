@@ -24,7 +24,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="f7bde" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="f7bde" binding="myValidatorsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -33,7 +33,7 @@
             <clientProperties>
               <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndentWithoutInsets"/>
             </clientProperties>
-            <border type="etched" title="Validators"/>
+            <border type="none"/>
             <children>
               <component id="3dfdb" class="com.intellij.ide.util.ElementsChooser" binding="myValidators" custom-create="true" default-binding="true">
                 <constraints>
@@ -41,9 +41,7 @@
                     <preferred-size width="150" height="50"/>
                   </grid>
                 </constraints>
-                <properties>
-                  <colorUnmarkedElements value="false"/>
-                </properties>
+                <properties/>
               </component>
             </children>
           </grid>
@@ -56,7 +54,7 @@
             <clientProperties>
               <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndentWithoutInsets"/>
             </clientProperties>
-            <border type="etched" title="Exclude From Validation"/>
+            <border type="none"/>
             <children/>
           </grid>
           <component id="33830" class="com.intellij.openapi.ui.Splitter">

@@ -33,10 +33,12 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.JBUI;
 import gnu.trove.THashSet;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +55,7 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
   private JCheckBox myValidateBox;
   private ElementsChooser<Compiler> myValidators;
   private JPanel myExcludedEntriesPanel;
+  private JPanel myValidatorsPanel;
   private final Project myProject;
   private final ValidationConfiguration myConfiguration;
   private final ExcludedEntriesConfigurable myExcludedConfigurable;
@@ -62,7 +65,10 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
     myConfiguration = ValidationConfiguration.getInstance(myProject);
     myExcludedConfigurable = createExcludedConfigurable(project);
 
+    myValidatorsPanel.setBorder(IdeBorderFactory.createTitledBorder("Validators:", false, JBUI.insetsTop(8)).setShowLine(false));
     myValidators.getEmptyText().setText(CompilerBundle.message("no.validators"));
+
+    myExcludedEntriesPanel.setBorder(IdeBorderFactory.createTitledBorder("Exclude From Validation:", false, JBUI.insetsTop(8)).setShowLine(false));
   }
 
   private static ExcludedEntriesConfigurable createExcludedConfigurable(final Project project) {
