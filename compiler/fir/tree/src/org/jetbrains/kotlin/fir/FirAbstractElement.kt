@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+
+abstract class FirPureAbstractElement : FirElement
 
 abstract class FirAbstractElement(
     final override val session: FirSession,
     final override val psi: PsiElement?
-) : FirElement
+) : FirPureAbstractElement()
