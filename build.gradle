@@ -404,6 +404,9 @@ task crossDist {
 }
 
 task bundle(type: (isWindows()) ? Zip : Tar) {
+    if (isMac()) {
+      dependsOn('bundleRestricted')
+    }
     def simpleOsName = HostManager.simpleOsName()
     baseName = "kotlin-native-$simpleOsName-$konanVersionFull"
     from("$project.rootDir/dist") {
