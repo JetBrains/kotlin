@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 
@@ -38,12 +39,12 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
 
                 val context = originalExpression.analyze()
 
-                val importableFqName = expressionForAnalyze.getQualifiedElementSelector()
-                    ?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
-                    ?.importableFqName ?: return
+                val originalDescriptor = expressionForAnalyze.getQualifiedElementSelector()
+                    ?.mainReference?.resolveToDescriptors(context)
+                    ?.firstOrNull() ?: return
 
                 val applicableExpression = expressionForAnalyze.firstApplicableExpression(validator = {
-                    applicableExpression(originalExpression, context, importableFqName)
+                    applicableExpression(originalExpression, context, originalDescriptor)
                 }) {
                     firstChild as? KtDotQualifiedExpression
                 } ?: return
@@ -74,7 +75,7 @@ private tailrec fun <T : KtElement> T.firstApplicableExpression(validator: T.() 
 private fun KtDotQualifiedExpression.applicableExpression(
     originalExpression: KtExpression,
     oldContext: BindingContext,
-    importableFqName: FqName
+    originalDescriptor: DeclarationDescriptor
 ): KtDotQualifiedExpression? {
     if (!receiverExpression.isApplicableReceiver(oldContext) || !ShortenReferences.canBePossibleToDropReceiver(
             this,
@@ -89,7 +90,10 @@ private fun KtDotQualifiedExpression.applicableExpression(
         ?.firstOrNull() ?: return null
 
     return takeIf {
-        importableFqName == newDescriptor.importableFqName
+        if (newDescriptor is ImportedFromObjectCallableDescriptor<*>)
+            originalDescriptor == newDescriptor.callableFromObject
+        else
+            originalDescriptor == newDescriptor
     }
 }
 
