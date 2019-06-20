@@ -89,6 +89,16 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
         runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test");
     }
 
+    @TestMetadata("redundantQualifierName/javaStatic2/fromKotlinTest.test")
+    public void testRedundantQualifierName_javaStatic2_FromKotlinTest() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/redundantQualifierName/javaStatic2/fromKotlinTest.test");
+    }
+
+    @TestMetadata("redundantQualifierName/javaStatic/fromKotlinTest.test")
+    public void testRedundantQualifierName_javaStatic_FromKotlinTest() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/redundantQualifierName/javaStatic/fromKotlinTest.test");
+    }
+
     @TestMetadata("unusedSymbol/fromKotlinTest/fromKotlinTest.test")
     public void testUnusedSymbol_fromKotlinTest_FromKotlinTest() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/unusedSymbol/fromKotlinTest/fromKotlinTest.test");
