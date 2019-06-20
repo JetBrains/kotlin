@@ -58,7 +58,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     internal var classpathStructure: FileCollection? = null
 
     /** Output directory that contains caches necessary to support incremental annotation processing. */
-    @get:OutputDirectory
+    @get:LocalState
     @get:Optional
     var incAptCache: File? = null
 
