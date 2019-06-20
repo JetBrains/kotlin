@@ -66,7 +66,9 @@ public abstract class AbstractModuleNode extends ProjectViewNode<Module> impleme
   @Override
   public Collection<VirtualFile> getRoots() {
     Module module = getValue();
-    return module != null ? Arrays.asList(ModuleRootManager.getInstance(module).getContentRoots()) : Collections.emptyList();
+    return module != null && !module.isDisposed()
+           ? Arrays.asList(ModuleRootManager.getInstance(module).getContentRoots())
+           : Collections.emptyList();
   }
 
   @Override
@@ -90,7 +92,7 @@ public abstract class AbstractModuleNode extends ProjectViewNode<Module> impleme
   @Override
   public void navigate(final boolean requestFocus) {
     Module module = getValue();
-    if (module != null) {
+    if (module != null && !module.isDisposed()) {
       ProjectSettingsService.getInstance(myProject).openModuleSettings(module);
     }
   }
@@ -102,7 +104,8 @@ public abstract class AbstractModuleNode extends ProjectViewNode<Module> impleme
 
   @Override
   public boolean canNavigate() {
-    return ProjectSettingsService.getInstance(myProject).canOpenModuleSettings() && getValue() != null;
+    Module module = getValue();
+    return module != null && !module.isDisposed() && ProjectSettingsService.getInstance(myProject).canOpenModuleSettings();
   }
 
   @SuppressWarnings("deprecation")

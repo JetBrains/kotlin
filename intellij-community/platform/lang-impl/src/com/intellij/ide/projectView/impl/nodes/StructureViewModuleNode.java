@@ -37,7 +37,7 @@ public class StructureViewModuleNode extends AbstractModuleNode {
   @NotNull
   public Collection<AbstractTreeNode> getChildren() {
     final Module module = getValue();
-    if (module == null) {
+    if (module == null || module.isDisposed()) {
       // just deleted a module from project view
       return Collections.emptyList();
     }

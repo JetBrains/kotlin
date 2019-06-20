@@ -601,7 +601,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   protected PsiDirectory[] getSelectedDirectoriesInAmbiguousCase(Object userObject) {
     if (userObject instanceof AbstractModuleNode) {
       final Module module = ((AbstractModuleNode)userObject).getValue();
-      if (module != null) {
+      if (module != null && !module.isDisposed()) {
         final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
         final VirtualFile[] sourceRoots = moduleRootManager.getSourceRoots();
         List<PsiDirectory> dirs = new ArrayList<>(sourceRoots.length);
