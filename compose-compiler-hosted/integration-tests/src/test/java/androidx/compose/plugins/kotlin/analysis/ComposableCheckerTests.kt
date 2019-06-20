@@ -7,6 +7,7 @@ import androidx.compose.plugins.kotlin.AbstractComposeDiagnosticsTest
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker.Mode
 import androidx.compose.plugins.kotlin.ComposeConfigurationKeys
 import androidx.compose.plugins.kotlin.newConfiguration
+import com.intellij.openapi.util.Disposer
 
 class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
@@ -17,7 +18,16 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         val MODE_FCS = 8
     }
 
+    override fun setUp() {
+        // intentionally don't call super.setUp() here since we are recreating an environment
+        // every test
+        System.setProperty("user.dir",
+            homeDir
+        )
+    }
+
     fun doTest(mode: Mode, text: String, expectPass: Boolean) {
+        val disposable = TestDisposable()
         val classPath = createClasspath()
         val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
@@ -25,7 +35,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
         val environment =
             KotlinCoreEnvironment.createForTests(
-                myTestRootDisposable,
+                disposable,
                 configuration,
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
@@ -33,12 +43,15 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
         try {
             doTest(text, environment)
-            if (!expectPass)
+            if (!expectPass) {
                 throw Exception(
                     "Test unexpectedly passed when running in $mode mode, but SHOULD FAIL"
                 )
+            }
         } catch (e: Exception) {
             if (expectPass) throw Exception("Unexpected failure while running in $mode mode", e)
+        } finally {
+            Disposer.dispose(disposable)
         }
     }
 
@@ -49,13 +62,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         doTest(Mode.FCS, expectedText, (modes and MODE_FCS) != 0)
     }
 
-    fun testAllDisabled() {
-        // All tests have been disabled in this class but this test prevents that being reported
-        // as an error.
-    }
-
-    // b/135294897
-    fun xtestComposableReporting001() {
+    fun testComposableReporting001() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*;
@@ -86,8 +93,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting002() {
+    fun testComposableReporting002() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*;
@@ -106,8 +112,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting003() {
+    fun testComposableReporting003() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -119,8 +124,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting004() {
+    fun testComposableReporting004() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -134,8 +138,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting005() {
+    fun testComposableReporting005() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -149,8 +152,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting006() {
+    fun testComposableReporting006() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*;
@@ -180,8 +182,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting007() {
+    fun testComposableReporting007() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
             import androidx.compose.*;
@@ -193,8 +194,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting008() {
+    fun testComposableReporting008() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
             import androidx.compose.*;
@@ -210,8 +210,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting009() {
+    fun testComposableReporting009() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*;
@@ -241,8 +240,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting010() {
+    fun testComposableReporting010() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -259,8 +257,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting011() {
+    fun testComposableReporting011() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
             import androidx.compose.*;
@@ -275,8 +272,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting012() {
+    fun testComposableReporting012() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC, """
             import androidx.compose.*;
@@ -291,8 +287,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting013() {
+    fun testComposableReporting013() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -307,8 +302,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting014() {
+    fun testComposableReporting014() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -325,8 +319,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting015() {
+    fun testComposableReporting015() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*;
@@ -371,8 +364,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting016() {
+    fun testComposableReporting016() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -404,8 +396,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting017() {
+    fun testComposableReporting017() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*;
@@ -440,8 +431,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting018() {
+    fun testComposableReporting018() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
             import androidx.compose.*;
@@ -464,8 +454,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting019() {
+    fun testComposableReporting019() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
            import androidx.compose.*;
@@ -492,8 +481,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting020() {
+    fun testComposableReporting020() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -508,8 +496,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting021() {
+    fun testComposableReporting021() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -523,8 +510,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting022() {
+    fun testComposableReporting022() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*;
@@ -547,8 +533,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting023() {
+    fun testComposableReporting023() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
                import androidx.compose.*;
@@ -563,8 +548,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
            """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting024() {
+    fun testComposableReporting024() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -577,8 +561,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting025() {
+    fun testComposableReporting025() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -591,8 +574,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting026() {
+    fun testComposableReporting026() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -608,8 +590,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting027() {
+    fun testComposableReporting027() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -627,8 +608,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting028() {
+    fun testComposableReporting028() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
             import androidx.compose.*;
@@ -651,8 +631,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting029() {
+    fun testComposableReporting029() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
             import androidx.compose.*;
@@ -677,8 +656,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting030() {
+    fun testComposableReporting030() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -692,8 +670,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting031() {
+    fun testComposableReporting031() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -706,8 +683,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting032() {
+    fun testComposableReporting032() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -724,8 +700,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting033() {
+    fun testComposableReporting033() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*;
@@ -742,8 +717,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting034() {
+    fun testComposableReporting034() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT, """
             import androidx.compose.*;
@@ -772,8 +746,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting035() {
+    fun testComposableReporting035() {
         doTest(
             MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*
@@ -786,8 +759,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting036() {
+    fun testComposableReporting036() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*
@@ -820,8 +792,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting037() {
+    fun testComposableReporting037() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*
@@ -839,8 +810,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting038() {
+    fun testComposableReporting038() {
         doTest(
             MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*
@@ -857,8 +827,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting039() {
+    fun testComposableReporting039() {
         doTest(
             MODE_KTX_CHECKED, """
             import androidx.compose.*
@@ -895,8 +864,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting040() {
+    fun testComposableReporting040() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*
@@ -915,8 +883,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting041() {
+    fun testComposableReporting041() {
         doTest(
             MODE_KTX_CHECKED or MODE_KTX_STRICT or MODE_KTX_PEDANTIC or MODE_FCS, """
             import androidx.compose.*
@@ -937,8 +904,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting042() {
+    fun testComposableReporting042() {
         doTest(
             MODE_FCS, """
             import androidx.compose.*
@@ -977,8 +943,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting043() {
+    fun testComposableReporting043() {
         doTest(
             MODE_FCS, """
             import androidx.compose.*
@@ -995,8 +960,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting044() {
+    fun testComposableReporting044() {
         doTest(
             MODE_FCS, """
             import androidx.compose.*
@@ -1014,8 +978,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting045() {
+    fun testComposableReporting045() {
         doTest(
             MODE_FCS, """
             import androidx.compose.*;
@@ -1029,8 +992,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    // b/135294897
-    fun xtestComposableReporting046() {
+    fun testComposableReporting046() {
         doTest(
             MODE_FCS, """
             import androidx.compose.*;
