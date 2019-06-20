@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
@@ -475,20 +476,18 @@ fun createFunctionConsumer(
             inferenceComponents,
             resultCollector
         ),
-        MultiplexerTowerDataConsumer(resultCollector).apply {
-            addConsumer(
-                createSimpleConsumer(
-                    session,
-                    name,
-                    TowerScopeLevel.Token.Properties,
-                    varCallInfo,
-                    inferenceComponents,
-                    InvokeCandidateCollector(
-                        callResolver,
-                        invokeCallInfo = callInfo,
-                        components = inferenceComponents,
-                        multiplexer = this
-                    )
+        AccumulatingTowerDataConsumer(resultCollector).apply {
+            initialConsumer = createSimpleConsumer(
+                session,
+                name,
+                TowerScopeLevel.Token.Properties,
+                varCallInfo,
+                inferenceComponents,
+                InvokeReceiverCandidateCollector(
+                    callResolver,
+                    invokeCallInfo = callInfo,
+                    components = inferenceComponents,
+                    invokeConsumer = this
                 )
             )
         }
@@ -552,16 +551,19 @@ class PrioritizedTowerDataConsumer(
     }
 }
 
-class MultiplexerTowerDataConsumer(
-    val resultCollector: CandidateCollector
+// Yet is used exclusively for invokes:
+// - initialConsumer consumes property which is invoke receiver
+// - additionalConsumers consume invoke calls themselves
+class AccumulatingTowerDataConsumer(
+    private val resultCollector: CandidateCollector
 ) : TowerDataConsumer() {
 
-    val consumers = mutableListOf<TowerDataConsumer>()
-    val newConsumers = mutableListOf<TowerDataConsumer>()
+    lateinit var initialConsumer: TowerDataConsumer
+    private val additionalConsumers = mutableListOf<TowerDataConsumer>()
 
-    data class TowerData(val kind: TowerDataKind, val level: TowerScopeLevel, val group: Int)
+    private data class TowerData(val kind: TowerDataKind, val level: TowerScopeLevel, val group: Int)
 
-    val datas = mutableListOf<TowerData>()
+    private val accumulatedTowerData = mutableListOf<TowerData>()
 
     override fun consume(
         kind: TowerDataKind,
@@ -569,11 +571,12 @@ class MultiplexerTowerDataConsumer(
         group: Int
     ): ProcessorAction {
         if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
-        consumers += newConsumers
-        newConsumers.clear()
-        datas += TowerData(kind, towerScopeLevel, group)
+        accumulatedTowerData += TowerData(kind, towerScopeLevel, group)
 
-        for (consumer in consumers) {
+        if (initialConsumer.consume(kind, towerScopeLevel, group).stop()) {
+            return ProcessorAction.STOP
+        }
+        for (consumer in additionalConsumers) {
             val action = consumer.consume(kind, towerScopeLevel, group)
             if (action.stop()) {
                 return ProcessorAction.STOP
@@ -582,19 +585,16 @@ class MultiplexerTowerDataConsumer(
         return ProcessorAction.NEXT
     }
 
-    fun addConsumer(consumer: TowerDataConsumer): ProcessorAction =
-        run {
-            for ((kind, level, group) in datas) {
-                if (consumer.consume(kind, level, group).stop()) {
-                    return@run ProcessorAction.STOP
-                }
+    fun addConsumer(consumer: TowerDataConsumer): ProcessorAction {
+        additionalConsumers += consumer
+        for ((kind, level, group) in accumulatedTowerData) {
+            if (consumer.consume(kind, level, group).stop()) {
+                return ProcessorAction.STOP
             }
-            return@run ProcessorAction.NEXT
-        }.also {
-            newConsumers += consumer
         }
+        return ProcessorAction.NEXT
+    }
 }
-
 
 class ExplicitReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
     val session: FirSession,
@@ -918,11 +918,13 @@ open class CandidateCollector(val components: InferenceComponents) {
     }
 }
 
-class InvokeCandidateCollector(
+// Collects properties that potentially could be invoke receivers, like 'propertyName()',
+// and initiates further invoke resolution by adding property-bound invoke consumers
+class InvokeReceiverCandidateCollector(
     val callResolver: CallResolver,
     val invokeCallInfo: CallInfo,
     components: InferenceComponents,
-    val multiplexer: MultiplexerTowerDataConsumer
+    val invokeConsumer: AccumulatingTowerDataConsumer
 ) : CandidateCollector(components) {
     override fun consumeCandidate(group: Int, candidate: Candidate): CandidateApplicability {
         val applicability = super.consumeCandidate(group, candidate)
@@ -949,10 +951,13 @@ class InvokeCandidateCollector(
                 invokeCallInfo.container,
                 invokeCallInfo.typeProvider
             )
-            val invokeConsumer =
-                createSimpleFunctionConsumer(session, Name.identifier("invoke"), boundInvokeCallInfo, components, callResolver.collector)
 
-            multiplexer.addConsumer(invokeConsumer)
+            invokeConsumer.addConsumer(
+                createSimpleFunctionConsumer(
+                    session, OperatorNameConventions.INVOKE,
+                    boundInvokeCallInfo, components, callResolver.collector
+                )
+            )
         }
 
         return applicability

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFin
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
@@ -199,7 +199,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                                 false
                             )
                         )
-                        val name = Name.identifier("invoke")
+                        val name = OperatorNameConventions.INVOKE
                         addDeclaration(
                             FirMemberFunctionImpl(
                                 session,
