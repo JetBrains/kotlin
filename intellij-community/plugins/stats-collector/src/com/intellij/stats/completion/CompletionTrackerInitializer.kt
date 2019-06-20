@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.stats.personalization.UserFactorDescriptions
@@ -78,6 +79,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
   private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus, language: Language?): Boolean {
     val application = ApplicationManager.getApplication()
     if (!application.isEAP) return false
+    if (Registry.`is`("completion.stats.show.ml.ranking.diff")) return false
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
 
     var logSessionChance = 0.0
