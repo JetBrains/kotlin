@@ -35,6 +35,7 @@ class TrivialConstraintTypeInferenceOracle(context: TypeSystemInferenceExtension
     // but can change result of the constraint system.
     // Therefore, here we avoid adding such trivial constraints to have stable constraint system
     fun isGeneratedConstraintTrivial(
+        baseConstraint: Constraint,
         otherConstraint: Constraint,
         generatedConstraintType: KotlinTypeMarker,
         isSubtype: Boolean
@@ -42,8 +43,9 @@ class TrivialConstraintTypeInferenceOracle(context: TypeSystemInferenceExtension
         if (isSubtype && generatedConstraintType.isNothing()) return true
         if (!isSubtype && generatedConstraintType.isNullableAny()) return true
 
-        // If type that will be used to generate new constraint already contains `Nothing(?)`,
+        // If types from constraints that will be used to generate new constraint already contains `Nothing(?)`,
         // then we can't decide that resulting constraint will be useless
+        if (baseConstraint.type.contains { it.isNothingOrNullableNothing() }) return false
         if (otherConstraint.type.contains { it.isNothingOrNullableNothing() }) return false
 
         // It's important to preserve constraints with nullable Nothing: `Nothing? <: T` (see implicitNothingConstraintFromReturn.kt test)

@@ -10272,6 +10272,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt24490.kt");
                 }
 
+                @TestMetadata("kt32051.kt")
+                public void testKt32051() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32051.kt");
+                }
+
+                @TestMetadata("kt32081.kt")
+                public void testKt32081() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32081.kt");
+                }
+
                 @TestMetadata("lambdaNothingAndExpectedType.kt")
                 public void testLambdaNothingAndExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/lambdaNothingAndExpectedType.kt");
