@@ -31,9 +31,7 @@ import java.io.File
 abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
 
     fun doTest(expectedText: String) {
-        val environment = createEnvironment()
-        setupEnvironment(environment)
-        doTest(expectedText, environment)
+        doTest(expectedText, myEnvironment!!)
     }
 
     fun doTest(expectedText: String, environment: KotlinCoreEnvironment) {
