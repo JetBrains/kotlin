@@ -118,6 +118,8 @@ public class GeneralColorsPage implements ColorSettingsPage, InspectionColorSett
 
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.selection.background"), EditorColors.SELECTION_BACKGROUND_COLOR, ColorDescriptor.Kind.BACKGROUND),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.selection.foreground"), EditorColors.SELECTION_FOREGROUND_COLOR, ColorDescriptor.Kind.FOREGROUND),
+    new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.scrollbar.thumb.while.scrolling"), EditorColors.SCROLLBAR_THUMB_WHILE_SCROLLING_COLOR, ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY),
+    new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.scrollbar.thumb"), EditorColors.SCROLLBAR_THUMB_COLOR, ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.caret"), EditorColors.CARET_COLOR, ColorDescriptor.Kind.FOREGROUND),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.caret.row"), EditorColors.CARET_ROW_COLOR, ColorDescriptor.Kind.BACKGROUND),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.right.margin"), EditorColors.RIGHT_MARGIN_COLOR, ColorDescriptor.Kind.FOREGROUND),
