@@ -1037,6 +1037,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/anonymousFunAsParamDefaultValue.kt");
         }
 
+        @TestMetadata("constantConditions.kt")
+        public void testConstantConditions() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/custom/constantConditions.kt");
+        }
+
         @TestMetadata("coroutine.kt")
         public void testCoroutine() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/coroutine.kt");

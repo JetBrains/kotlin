@@ -51,12 +51,14 @@ open class BranchedValue(
 
         val TRUE: BranchedValue = object : BranchedValue(StackValue.none()/*not used*/, null, Type.BOOLEAN_TYPE, IFEQ) {
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+                v.nop()
                 if (!jumpIfFalse) {
                     v.goTo(jumpLabel)
                 }
             }
 
             override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+                v.nop()
                 if (!jumpIfFalse) {
                     v.fakeAlwaysTrueIfeq(jumpLabel)
                 } else {
@@ -72,12 +74,14 @@ open class BranchedValue(
 
         val FALSE: BranchedValue = object : BranchedValue(StackValue.none()/*not used*/, null, Type.BOOLEAN_TYPE, IFEQ) {
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+                v.nop()
                 if (jumpIfFalse) {
                     v.goTo(jumpLabel)
                 }
             }
 
             override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+                v.nop()
                 if (jumpIfFalse) {
                     v.fakeAlwaysTrueIfeq(jumpLabel)
                 } else {
