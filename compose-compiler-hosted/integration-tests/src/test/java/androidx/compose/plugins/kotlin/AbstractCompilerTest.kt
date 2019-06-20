@@ -57,8 +57,8 @@ abstract class AbstractCompilerTest : TestCase() {
         System.setProperty("user.dir",
             homeDir
         )
-        val environment = createEnvironment()
-        setupEnvironment(environment)
+        myEnvironment = createEnvironment()
+        setupEnvironment(myEnvironment!!)
         super.setUp()
     }
 
