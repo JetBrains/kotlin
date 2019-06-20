@@ -23,7 +23,7 @@ kotlin {
         binaries {
             executable(listOf(DEBUG))
         }
-        binaries.getExecutable("test", DEBUG).apply {
+        binaries.getTest("DEBUG").apply {
             freeCompilerArgs.add("-Xlibrary-to-cover=${compilations["main"].output.classesDirs.singleFile.absolutePath}")
         }
     }
