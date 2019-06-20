@@ -32,7 +32,7 @@ public class FontOptions extends AbstractFontOptionsPanel {
   private @Nullable JCheckBox myOverwriteCheckBox;
   private @Nullable JLabel myBaseFontInfoLabel;
 
-  private final static int FONT_PANEL_LEFT_OFFSET = 15;
+  private static final int FONT_PANEL_LEFT_OFFSET = 15;
 
   public FontOptions(@NotNull ColorAndFontOptions options) {
     myOptions = options;
@@ -104,12 +104,8 @@ public class FontOptions extends AbstractFontOptionsPanel {
   }
 
   private String getBaseFontInfo() {
-    StringBuilder sb = new StringBuilder();
     FontPreferences basePrefs = getBaseFontPreferences();
-    sb.append(basePrefs.getFontFamily());
-    sb.append(',');
-    sb.append(basePrefs.getSize(basePrefs.getFontFamily()));
-    return sb.toString();
+    return basePrefs.getFontFamily() + ',' + basePrefs.getSize(basePrefs.getFontFamily());
   }
 
   protected FontPreferences getBaseFontPreferences() {
