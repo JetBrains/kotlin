@@ -7,13 +7,9 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -68,8 +64,12 @@ abstract class IrLazyDeclarationBase(
             ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
 
         return when (containingDeclaration) {
-            is PackageFragmentDescriptor -> stubGenerator.generateOrGetEmptyExternalPackageFragmentStub(containingDeclaration).also {
-                it.declarations.add(this)
+            is PackageFragmentDescriptor -> run {
+                val parent = this.takeUnless { it is IrClass }?.let {
+                    stubGenerator.generateOrGetFacadeClass(descriptor)
+                } ?: stubGenerator.generateOrGetEmptyExternalPackageFragmentStub(containingDeclaration)
+                parent.declarations.add(this)
+                parent
             }
             is ClassDescriptor -> stubGenerator.generateClassStub(containingDeclaration)
             is FunctionDescriptor -> stubGenerator.generateFunctionStub(containingDeclaration)

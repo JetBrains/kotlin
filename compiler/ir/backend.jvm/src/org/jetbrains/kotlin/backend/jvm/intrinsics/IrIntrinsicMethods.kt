@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -209,8 +206,16 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         private val EQUALS = Equals(KtTokens.EQEQ)
 
         private fun IrFunctionSymbol.toKey(): Key? {
+            val parent = owner.parent
+            val ownerFqName = when {
+                parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS ->
+                    (parent.parent as IrPackageFragment).fqName
+                parent is IrClass -> parent.fqNameWhenAvailable ?: return null
+                parent is IrPackageFragment -> parent.fqName
+                else -> return null
+            }
             return Key(
-                owner.parent.safeAs<IrClass>()?.fqNameWhenAvailable ?: owner.parent.safeAs<IrPackageFragment>()?.fqName ?: return null,
+                ownerFqName,
                 getParameterFqName(owner.extensionReceiverParameter),
                 owner.name.asString(),
                 owner.valueParameters.map(::getParameterFqName)

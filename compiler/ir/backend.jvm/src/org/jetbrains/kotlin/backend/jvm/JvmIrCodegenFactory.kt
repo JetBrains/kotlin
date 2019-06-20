@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
 
     override fun generateModule(state: GenerationState, files: Collection<KtFile>, errorHandler: CompilationErrorHandler) {
-        val psi2ir = Psi2IrTranslator(state.languageVersionSettings)
+        val psi2ir = Psi2IrTranslator(state.languageVersionSettings, facadeClassGenerator = JvmBackendFacade::facadeClassGenerator)
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
         JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext, phaseConfig)

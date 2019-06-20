@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import kotlin.math.min
 
 class ExternalDependenciesGenerator(
@@ -28,10 +30,11 @@ class ExternalDependenciesGenerator(
     val symbolTable: SymbolTable,
     val irBuiltIns: IrBuiltIns,
     externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = null,
-    private val deserializer: IrDeserializer? = null
+    private val deserializer: IrDeserializer? = null,
+    facadeClassGenerator: (DeserializedContainerSource) -> IrClass? = { null }
 ) {
     private val stubGenerator = DeclarationStubGenerator(
-        moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings, externalDeclarationOrigin, deserializer
+        moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings, externalDeclarationOrigin, deserializer, facadeClassGenerator
     )
 
     fun generateUnboundSymbolsAsDependencies() {
