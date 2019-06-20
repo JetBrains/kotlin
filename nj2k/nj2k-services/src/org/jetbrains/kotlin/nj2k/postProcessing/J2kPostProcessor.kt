@@ -124,6 +124,10 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
             MakeVisibleFactory,
             Errors.INVISIBLE_MEMBER
         ),
+        diagnosticBasedProcessing(
+            RemoveModifierFix.createRemoveModifierFactory(),
+            Errors.WRONG_MODIFIER_TARGET
+        ),
         fixValToVarDiagnosticBasedProcessing,
         fixTypeMismatchDiagnosticBasedProcessing
     )
