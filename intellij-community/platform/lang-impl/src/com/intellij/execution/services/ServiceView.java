@@ -3,6 +3,7 @@ package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.DeleteProvider;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
@@ -117,7 +118,11 @@ abstract class ServiceView extends JPanel implements Disposable {
         return navigatables.toArray(new Navigatable[0]);
       }
       if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
-        return new ServiceViewDeleteProvider(serviceView);
+        List<ServiceViewItem> selection = serviceView.getSelectedItems();
+        ServiceViewContributor contributor = ServiceViewDragHelper.getTheOnlyContributor(selection);
+        DataProvider delegate = contributor == null ? null : contributor.getViewDescriptor().getDataProvider();
+        DeleteProvider deleteProvider = delegate == null ? null : PlatformDataKeys.DELETE_ELEMENT_PROVIDER.getData(delegate);
+        return deleteProvider == null ? new ServiceViewDeleteProvider(serviceView) : deleteProvider;
       }
       if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
         return new ServiceViewCopyProvider(serviceView);
