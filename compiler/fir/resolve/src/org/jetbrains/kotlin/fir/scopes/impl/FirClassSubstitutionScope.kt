@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteScope: FirScope,
+    scopeSession: ScopeSession,
     substitution: Map<ConeTypeParameterSymbol, ConeKotlinType>
 ) : FirScope() {
 
@@ -49,7 +51,7 @@ class FirClassSubstitutionScope(
         return useSiteScope.processPropertiesByName(name, processor)
     }
 
-    private val typeCalculator by lazy { ReturnTypeCalculatorWithJump(session) }
+    private val typeCalculator by lazy { ReturnTypeCalculatorWithJump(session, scopeSession) }
 
     private fun ConeKotlinType.substitute(): ConeKotlinType? {
         return substitutor.substituteOrNull(this)

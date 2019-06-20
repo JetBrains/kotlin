@@ -46,7 +46,12 @@ open class ConeTypeVariable(name: String) : TypeVariableMarker {
     val defaultType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
 }
 
-class InferenceComponents(val ctx: TypeSystemInferenceExtensionContextDelegate, val session: FirSession, val returnTypeCalculator: ReturnTypeCalculator) {
+class InferenceComponents(
+    val ctx: TypeSystemInferenceExtensionContextDelegate,
+    val session: FirSession,
+    val returnTypeCalculator: ReturnTypeCalculator,
+    val scopeSession: ScopeSession
+) {
     private val approximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {
             return ConeClassErrorType(message)

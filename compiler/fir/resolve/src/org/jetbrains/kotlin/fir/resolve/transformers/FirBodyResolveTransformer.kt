@@ -44,7 +44,10 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOnly: Boolean) : FirTransformer<Any?>() {
+open class FirBodyResolveTransformer(
+    val session: FirSession, val implicitTypeOnly: Boolean,
+    val scopeSession: ScopeSession = ScopeSession()
+) : FirTransformer<Any?>() {
 
     val symbolProvider = session.service<FirSymbolProvider>()
 
@@ -183,8 +186,6 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
         return result
     }
 
-    val scopeSession = ScopeSession()
-
     val scopes = mutableListOf<FirScope>()
     private val localScopes = mutableListOf<FirLocalScope>()
 
@@ -192,7 +193,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
 
     private val implicitReceiverStack = mutableListOf<ImplicitReceiverValue>()
 
-    private val jump = ReturnTypeCalculatorWithJump(session)
+    private val jump = ReturnTypeCalculatorWithJump(session, scopeSession)
 
     private fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
         access.resultType = typeFromCallee(access)
@@ -241,7 +242,6 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
             else -> error("Failed to extract type from: $newCallee")
         }
     }
-
 
 
     private var qualifierStack = mutableListOf<Name>()
@@ -520,7 +520,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 
     private val noExpectedType = FirImplicitTypeRefImpl(session, null)
-    private val inferenceComponents = inferenceComponents(session, jump)
+    private val inferenceComponents = inferenceComponents(session, jump, scopeSession)
 
     private fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
 
@@ -1095,7 +1095,7 @@ open class FirBodyResolveTransformer(val session: FirSession, val implicitTypeOn
     }
 }
 
-private fun inferenceComponents(session: FirSession, jump: ReturnTypeCalculatorWithJump) =
+private fun inferenceComponents(session: FirSession, jump: ReturnTypeCalculatorWithJump, scopeSession: ScopeSession) =
     InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate {
         override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
             //TODO wtf
@@ -1112,10 +1112,10 @@ private fun inferenceComponents(session: FirSession, jump: ReturnTypeCalculatorW
         override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
             return this
         }
-    }, session, jump)
+    }, session, jump, scopeSession)
 
 
-class ReturnTypeCalculatorWithJump(val session: FirSession) : ReturnTypeCalculator {
+class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: ScopeSession) : ReturnTypeCalculator {
 
 
     val storeType = object : FirTransformer<FirTypeRef>() {
@@ -1172,7 +1172,8 @@ class ReturnTypeCalculatorWithJump(val session: FirSession) : ReturnTypeCalculat
 
         val transformer = FirDesignatedBodyResolveTransformer(
             (listOf(file) + outerClasses.filterNotNull().asReversed() + listOf(declaration)).iterator(),
-            file.session
+            file.session,
+            scopeSession
         )
 
         file.transform<FirElement, Any?>(transformer, null)
@@ -1186,8 +1187,8 @@ class ReturnTypeCalculatorWithJump(val session: FirSession) : ReturnTypeCalculat
 }
 
 
-class FirDesignatedBodyResolveTransformer(val designation: Iterator<FirElement>, session: FirSession) :
-    FirBodyResolveTransformer(session, implicitTypeOnly = true) {
+class FirDesignatedBodyResolveTransformer(val designation: Iterator<FirElement>, session: FirSession, scopeSession: ScopeSession) :
+    FirBodyResolveTransformer(session, implicitTypeOnly = true, scopeSession = scopeSession) {
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): CompositeTransformResult<E> {
         if (designation.hasNext()) {

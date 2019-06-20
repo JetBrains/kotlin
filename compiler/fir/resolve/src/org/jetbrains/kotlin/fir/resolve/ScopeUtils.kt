@@ -60,7 +60,7 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
             typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
         }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
 
-        FirClassSubstitutionScope(session, useSiteScope, substitution)
+        FirClassSubstitutionScope(session, useSiteScope, builder, substitution)
     }
 }
 

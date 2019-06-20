@@ -30,12 +30,10 @@ import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -191,7 +189,8 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
 class MemberScopeTowerLevel(
     session: FirSession,
     val dispatchReceiver: ReceiverValue,
-    val implicitExtensionReceiver: ImplicitReceiverValue? = null
+    val implicitExtensionReceiver: ImplicitReceiverValue? = null,
+    val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
 
     private fun <T : ConeSymbol> processMembers(
@@ -201,7 +200,7 @@ class MemberScopeTowerLevel(
     ): ProcessorAction {
         if (implicitExtensionReceiver != null && explicitExtensionReceiver != null) return ProcessorAction.NEXT
         val extensionReceiver = implicitExtensionReceiver ?: explicitExtensionReceiver
-        val scope = dispatchReceiver.type.scope(session, ScopeSession()) ?: return ProcessorAction.NEXT
+        val scope = dispatchReceiver.type.scope(session, scopeSession) ?: return ProcessorAction.NEXT
         if (scope.processScopeMembers { candidate ->
                 if (candidate is ConeCallableSymbol && candidate.hasConsistentExtensionReceiver(extensionReceiver)) {
                     // NB: we do not check dispatchReceiverValue != null here,
@@ -214,7 +213,7 @@ class MemberScopeTowerLevel(
                 }
             }.stop()
         ) return ProcessorAction.STOP
-        val withSynthetic = FirSyntheticPropertiesScope(session, scope, ReturnTypeCalculatorWithJump(session))
+        val withSynthetic = FirSyntheticPropertiesScope(session, scope, ReturnTypeCalculatorWithJump(session, scopeSession))
         return withSynthetic.processScopeMembers { symbol ->
             output.consumeCandidate(symbol, symbol.dispatchReceiverValue(), implicitExtensionReceiver)
         }
@@ -517,29 +516,30 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
         if (checkSkip(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
             TowerDataKind.EMPTY ->
-                MemberScopeTowerLevel(session, explicitReceiver).processElementsByName(
-                    token,
-                    name,
-                    explicitReceiver = null,
-                    processor = object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
-                        override fun consumeCandidate(
-                            symbol: T,
-                            dispatchReceiverValue: ClassDispatchReceiverValue?,
-                            implicitExtensionReceiverValue: ImplicitReceiverValue?
-                        ): ProcessorAction {
-                            resultCollector.consumeCandidate(
-                                group,
-                                candidateFactory.createCandidate(
-                                    symbol,
-                                    dispatchReceiverValue,
-                                    implicitExtensionReceiverValue,
-                                    ExplicitReceiverKind.DISPATCH_RECEIVER
+                MemberScopeTowerLevel(session, explicitReceiver, scopeSession = candidateFactory.inferenceComponents.scopeSession)
+                    .processElementsByName(
+                        token,
+                        name,
+                        explicitReceiver = null,
+                        processor = object : TowerScopeLevel.TowerScopeLevelProcessor<T> {
+                            override fun consumeCandidate(
+                                symbol: T,
+                                dispatchReceiverValue: ClassDispatchReceiverValue?,
+                                implicitExtensionReceiverValue: ImplicitReceiverValue?
+                            ): ProcessorAction {
+                                resultCollector.consumeCandidate(
+                                    group,
+                                    candidateFactory.createCandidate(
+                                        symbol,
+                                        dispatchReceiverValue,
+                                        implicitExtensionReceiverValue,
+                                        ExplicitReceiverKind.DISPATCH_RECEIVER
+                                    )
                                 )
-                            )
-                            return ProcessorAction.NEXT
+                                return ProcessorAction.NEXT
+                            }
                         }
-                    }
-                )
+                    )
             TowerDataKind.TOWER_LEVEL -> {
                 if (token == TowerScopeLevel.Token.Objects) return ProcessorAction.NEXT
                 towerScopeLevel.processElementsByName(
@@ -659,14 +659,14 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: Inf
         var group = oldGroup
         towerDataConsumer.consume(
             TowerDataKind.TOWER_LEVEL,
-            MemberScopeTowerLevel(session, implicitReceiverValue),
+            MemberScopeTowerLevel(session, implicitReceiverValue, scopeSession = components.scopeSession),
             collector, group++
         )
 
         // This is an equivalent to the old "BothTowerLevelAndImplicitReceiver"
         towerDataConsumer.consume(
             TowerDataKind.TOWER_LEVEL,
-            MemberScopeTowerLevel(session, implicitReceiverValue, implicitReceiverValue),
+            MemberScopeTowerLevel(session, implicitReceiverValue, implicitReceiverValue, components.scopeSession),
             collector, group++
         )
 
