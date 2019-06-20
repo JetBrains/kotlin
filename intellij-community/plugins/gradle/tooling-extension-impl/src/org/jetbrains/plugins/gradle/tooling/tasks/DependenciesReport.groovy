@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolutionResult
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
@@ -24,7 +26,7 @@ class DependenciesReport extends DefaultTask {
 
   @TaskAction
   void generate() {
-    List<DependencyNode> graph = []
+    List<ComponentNode> graph = []
     Gson gson = new GsonBuilder().create()
     Collection<Configuration> configurations = ANY_CONFIGURATION == configurationName ? project.configurations.asList() :
                                                Collections.singleton(project.configurations.getByName(configurationName))
@@ -32,33 +34,46 @@ class DependenciesReport extends DefaultTask {
       if (!configuration.isCanBeResolved()) continue
       ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult()
       RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
-      graph.add(toNode(gson, root, configuration.name, true, [:]))
+      graph.add(toNode(gson, root, configuration.name, project.path, true, [:]))
     }
     outputFile.parentFile.mkdirs()
     outputFile.text = gson.toJson(graph)
   }
 
-  static DependencyNode toNode(Gson gson,
-                               RenderableDependency dependency,
-                               String configurationName,
-                               boolean isConfigurationNode,
-                               Map<Object, DependencyNode> added) {
+  static ComponentNode toNode(Gson gson,
+                              RenderableDependency dependency,
+                              String configurationName,
+                              String projectPath,
+                              boolean isConfigurationNode,
+                              Map<Object, ComponentNode> added) {
     def id = "${gson.toJson(dependency.id)}_$configurationName".hashCode()
-    DependencyNode node = added.get(id)
-    if (node != null) {
-      def dependencyNode = new DependencyNode(id)
-      dependencyNode.setName(dependency.name + " (*)")
-      return dependencyNode
+    ComponentNode alreadySeenNode = added.get(id)
+    if (alreadySeenNode != null) {
+      return new ReferenceNode(id)
     }
 
-    def nodeName = isConfigurationNode ? dependency.name + " (" + configurationName + ")" : dependency.name
-    node = new DependencyNode(id)
-    node.setName(nodeName)
+    AbstractComponentNode node
+    if (isConfigurationNode) {
+      node = new ConfigurationNode(id, projectPath, configurationName)
+    }
+    else {
+      if (dependency.id instanceof ProjectComponentIdentifier) {
+        ProjectComponentIdentifier projectId = dependency.id as ProjectComponentIdentifier
+        node = new ProjectComponentNode(id, projectId.projectPath)
+      }
+      else if (dependency.id instanceof ModuleComponentIdentifier) {
+        ModuleComponentIdentifier moduleId = dependency.id as ModuleComponentIdentifier
+        node = new ArtifactComponentNode(id, moduleId.group, moduleId.module, moduleId.version)
+      }
+      else {
+        node = new BaseComponentNode(id, dependency.name)
+      }
+    }
     node.setState(dependency.resolutionState.name())
 
     added.put(id, node)
     dependency.getChildren().each { RenderableDependency child ->
-      node.children.add(toNode(gson, child, configurationName, false, added))
+      node.children.add(toNode(gson, child, configurationName, projectPath, false, added))
     }
     return node
   }
