@@ -218,13 +218,13 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
     }
   }
 
-  public static void runTask(@NotNull Project project,
-                             @NotNull String executionName,
-                             @NotNull Class<? extends Task> taskClass,
-                             @NotNull String projectPath,
-                             @NotNull String gradlePath,
-                             @Nullable String taskConfiguration,
-                             @Nullable final TaskCallback callback) {
+  public static void runCustomTask(@NotNull Project project,
+                                   @NotNull String executionName,
+                                   @NotNull Class<? extends Task> taskClass,
+                                   @NotNull String projectPath,
+                                   @NotNull String gradlePath,
+                                   @Nullable String taskConfiguration,
+                                   @Nullable final TaskCallback callback) {
     final String taskName = taskClass.getSimpleName();
     String paths = GradleExecutionHelper.getToolingExtensionsJarPaths(set(taskClass, GsonBuilder.class));
     String initScript = "initscript {\n" +
