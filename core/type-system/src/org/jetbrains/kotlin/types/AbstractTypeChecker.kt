@@ -17,7 +17,7 @@ import java.util.*
 abstract class AbstractTypeCheckerContext : TypeSystemContext {
 
 
-    abstract fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform
+    abstract fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy
 
     abstract fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean
 
@@ -379,6 +379,10 @@ object AbstractTypeChecker {
         baseType: SimpleTypeMarker,
         constructor: TypeConstructorMarker
     ): List<SimpleTypeMarker> {
+        baseType.fastCorrespondingSupertypes(constructor)?.let {
+            return it
+        }
+
         if (constructor.isCommonFinalClassConstructor()) {
             return if (areEqualTypeConstructors(baseType.typeConstructor(), constructor))
                 listOf(captureFromArguments(baseType, CaptureStatus.FOR_SUBTYPING) ?: baseType)

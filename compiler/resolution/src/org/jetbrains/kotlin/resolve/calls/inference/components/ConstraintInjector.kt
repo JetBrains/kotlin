@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.LOWER
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.UPPER
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import java.util.*
 import kotlin.math.max
@@ -123,7 +125,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         val baseContext: AbstractTypeCheckerContext = newBaseTypeCheckerContext(isErrorTypeEqualsToAnything)
 
-        override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
+        override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
             return baseContext.substitutionSupertypePolicy(type)
         }
 

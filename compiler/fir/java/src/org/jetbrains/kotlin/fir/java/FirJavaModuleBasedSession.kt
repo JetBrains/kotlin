@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScopeProvider
+import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
@@ -32,6 +33,7 @@ class FirJavaModuleBasedSession(
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
+
         _firSymbolProvider = FirCompositeSymbolProvider(
             listOf(
                 service<FirProvider>(),
@@ -43,6 +45,12 @@ class FirJavaModuleBasedSession(
         registerComponent(
             FirSymbolProvider::class,
             _firSymbolProvider as FirSymbolProvider
+        )
+
+        _correspondingSupertypesCache = FirCorrespondingSupertypesCache(this)
+        registerComponent(
+            FirCorrespondingSupertypesCache::class,
+            _correspondingSupertypesCache as FirCorrespondingSupertypesCache
         )
     }
 }
@@ -81,6 +89,12 @@ class FirLibrarySession private constructor(
             _firSymbolProvider as FirSymbolProvider
         )
         registerComponent(FirClassDeclaredMemberScopeProvider::class, FirClassDeclaredMemberScopeProvider())
+
+        _correspondingSupertypesCache = FirCorrespondingSupertypesCache(this)
+        registerComponent(
+            FirCorrespondingSupertypesCache::class,
+            _correspondingSupertypesCache as FirCorrespondingSupertypesCache
+        )
     }
 
     companion object {

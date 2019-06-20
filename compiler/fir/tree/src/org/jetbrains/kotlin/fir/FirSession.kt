@@ -19,6 +19,7 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) {
 
     var _firSymbolProvider: Any? = null
 
+    var _correspondingSupertypesCache: Any? = null
 
     fun <T : Any> getService(kclass: KClass<T>): T =
         components[kclass] as T

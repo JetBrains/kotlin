@@ -11,14 +11,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
-import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
-import org.jetbrains.kotlin.fir.resolve.withArguments
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -44,6 +41,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 
     override fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
         TODO("not implemented")
+    }
+
+    override fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? {
+        require(this is ConeKotlinType)
+        return session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor)
     }
 
     override fun SimpleTypeMarker.isIntegerLiteralType(): Boolean {
@@ -391,7 +393,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 
 class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :
     AbstractTypeCheckerContext(), ConeTypeContext {
-    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
+    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
+        if (type.argumentsCount() == 0) return SupertypesPolicy.LowerIfFlexible
         require(type is ConeKotlinType)
         val declaration = when (type) {
             is ConeClassType -> type.lookupTag.toSymbol(session)?.firUnsafe<FirRegularClass>()

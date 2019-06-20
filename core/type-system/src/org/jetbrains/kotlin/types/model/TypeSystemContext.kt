@@ -219,6 +219,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.isClassType(): Boolean = typeConstructor().isClassTypeConstructor()
 
+    fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? = null
+
     fun SimpleTypeMarker.isIntegerLiteralType(): Boolean = typeConstructor().isIntegerLiteralTypeConstructor()
 
     fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker>
