@@ -18,6 +18,10 @@ dependencies {
     testCompile(commonDep("junit:junit"))
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
+    }
 }
 
 sourceSets {

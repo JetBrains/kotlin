@@ -12,6 +12,12 @@ dependencies {
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
 
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) { 
+            includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl")
+        }
+    }
+
     compileOnly(intellijPluginDep("junit"))
     compileOnly(intellijPluginDep("testng"))
     compileOnly(intellijPluginDep("coverage"))

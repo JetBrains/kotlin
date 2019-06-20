@@ -99,6 +99,13 @@ dependencies {
     compileOnly(project(":kotlin-daemon-client"))
 
     compileOnly(intellijDep())
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl") }
+        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl") }
+        testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
+        testRuntime(intellijPluginDep("java"))
+    }
+
     compileOnly(commonDep("org.jetbrains", "markdown"))
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))

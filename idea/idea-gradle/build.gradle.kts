@@ -22,6 +22,18 @@ dependencies {
     compileOnly(intellijPluginDep("junit"))
     compileOnly(intellijPluginDep("testng"))
 
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) {
+            includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl")
+        }
+
+        testCompileOnly(intellijPluginDep("java")) {
+            includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl")
+        }
+
+        testRuntimeOnly(intellijPluginDep("java"))
+    }
+
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-test-framework"))
 

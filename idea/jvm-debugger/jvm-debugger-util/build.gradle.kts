@@ -12,6 +12,10 @@ dependencies {
     compile(project(":idea:jvm-debugger:eval4j"))
 
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+    }
 
     compileOnly(intellijDep())
 

@@ -32,6 +32,10 @@ dependencies {
     testCompileOnly(intellijPluginDep("Groovy"))
     testCompileOnly(intellijDep())
 
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) { includeJars("external-system-rt", "external-system-impl") }
+    }
+
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))

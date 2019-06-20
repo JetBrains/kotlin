@@ -12,6 +12,11 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-gradle"))
     compileOnly(intellijDep())
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) {
+            includeJars("external-system-rt", "external-system-impl")
+        }
+    }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("android"))
 }

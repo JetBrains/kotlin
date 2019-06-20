@@ -17,7 +17,17 @@ dependencies {
     compile(project(":compiler:util"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
-    compileOnly(intellijDep()) { includeJars("platform-api", "java-impl", "platform-impl", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("platform-api", "platform-impl", rootProject = rootProject) }
+
+    Platform[191].orLower {
+        compileOnly(intellijDep()) { includeJars("java-impl") }
+    }
+
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+        testRuntime(intellijPluginDep("java"))
+    }
 
     testCompile(project(":idea"))
     testCompile(projectTests(":j2k"))

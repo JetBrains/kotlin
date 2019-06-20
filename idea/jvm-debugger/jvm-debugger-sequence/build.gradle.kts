@@ -9,6 +9,10 @@ dependencies {
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
     compileOnly(intellijDep())
+    Platform[192].orHigher {
+        compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    }
+
     compileOnly(intellijPluginDep("stream-debugger"))
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))

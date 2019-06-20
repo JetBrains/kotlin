@@ -15,6 +15,10 @@ dependencies {
         testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
     }
 
+    Platform[192].orHigher {
+        testRuntime(intellijCoreDep()) { includeJars("intellij-core") }
+    }
+
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
     compile(project(":compiler:backend"))

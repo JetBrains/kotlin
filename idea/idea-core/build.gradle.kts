@@ -22,6 +22,16 @@ dependencies {
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
 
     compileOnly(intellijDep())
+
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java")) {
+            includeJars(
+                "java-api", "java-impl",
+                "external-system-rt", "external-system-impl"
+            )
+        }
+    }
+    
     compileOnly(intellijPluginDep("gradle"))
 }
 

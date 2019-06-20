@@ -19,7 +19,7 @@ dependencies {
     compile(project(":js:js.serializer"))
     compile(project(":js:js.dce"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))

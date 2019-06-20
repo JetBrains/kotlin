@@ -61,6 +61,10 @@ dependencies {
         )
         isTransitive = false
     }
+
+    Platform[192].orHigher {
+        testCompile(intellijDep()) { includeJars("platform-util-ui") }
+    }
 }
 
 sourceSets {

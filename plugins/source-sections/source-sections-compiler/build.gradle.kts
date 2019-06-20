@@ -27,6 +27,10 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
+    }
 }
 
 sourceSets {

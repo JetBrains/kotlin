@@ -12,7 +12,15 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testCompileOnly(intellijDep()) { includeJars("openapi", "java-api", "idea", "idea_rt", "util", "asm-all", "extensions", rootProject = rootProject) }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", "extensions", rootProject = rootProject) }
+
+    Platform[191].orLower {
+        testCompileOnly(intellijDep()) { includeJars("java-api") }
+    }
+
+    Platform[192].orHigher {
+        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
+    }
 
     testRuntime(intellijDep())
 
