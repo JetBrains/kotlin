@@ -65,7 +65,7 @@ class FirCallCompleterTransformer(
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): CompositeTransformResult<FirStatement> {
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate ?: return functionCall.compose()
-        val functionCall = functionCall.transformChildren(this, data) as FirFunctionCall
+        val functionCall = functionCall.transformArguments(this, data) as FirFunctionCall
 
         val subCandidate = calleeReference.candidate
         val declaration = subCandidate.symbol.firUnsafe<FirCallableMemberDeclaration>()
