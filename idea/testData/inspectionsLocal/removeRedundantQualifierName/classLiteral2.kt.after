@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+package foo
+
+class Foo
+
+fun bar() {
+    Foo::class.java
+}

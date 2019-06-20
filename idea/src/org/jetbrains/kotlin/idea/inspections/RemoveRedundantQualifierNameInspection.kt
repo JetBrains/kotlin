@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 
@@ -28,16 +27,23 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         object : KtVisitorVoid() {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                if (expression.parent is KtDotQualifiedExpression? || expression.isInImportDirective()) return
+                if (expression.parent is KtDotQualifiedExpression || expression.isInImportDirective()) return
                 val expressionForAnalyze = expression.firstExpressionWithoutReceiver() ?: return
 
-                val context = expressionForAnalyze.analyze()
+                val parent = expressionForAnalyze.parent
+                @Suppress("USELESS_CAST") val originalExpression = if (parent is KtClassLiteralExpression)
+                    parent as KtExpression
+                else
+                    expressionForAnalyze
+
+                val context = originalExpression.analyze()
+
                 val importableFqName = expressionForAnalyze.getQualifiedElementSelector()
                     ?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
                     ?.importableFqName ?: return
 
                 val applicableExpression = expressionForAnalyze.firstApplicableExpression(validator = {
-                    applicableExpression(expressionForAnalyze, context, importableFqName)
+                    applicableExpression(originalExpression, context, importableFqName)
                 }) {
                     firstChild as? KtDotQualifiedExpression
                 } ?: return
@@ -78,12 +84,17 @@ private fun KtDotQualifiedExpression.applicableExpression(
     val expressionText = originalExpression.text.substring(lastChild.startOffset - originalExpression.startOffset)
     val newExpression = KtPsiFactory(originalExpression).createExpressionIfPossible(expressionText) ?: return null
     val newContext = newExpression.analyzeAsReplacement(originalExpression, oldContext)
-    val newDescriptor = newExpression.getQualifiedElementSelector()?.getResolvedCall(newContext)?.resultingDescriptor ?: return null
+    val newDescriptor = newExpression.selector()
+        ?.mainReference?.resolveToDescriptors(newContext)
+        ?.firstOrNull() ?: return null
 
     return takeIf {
         importableFqName == newDescriptor.importableFqName
     }
 }
+
+private fun KtExpression.selector(): KtElement? = if (this is KtClassLiteralExpression) receiverExpression?.getQualifiedElementSelector()
+else getQualifiedElementSelector()
 
 private fun KtExpression.isApplicableReceiver(context: BindingContext): Boolean {
     if (this is KtInstanceExpressionWithLabel) return false
