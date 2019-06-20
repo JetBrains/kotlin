@@ -21,7 +21,9 @@ import com.intellij.stats.completion.prefixLength
 import com.intellij.stats.experiment.EmulatedExperiment
 import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.stats.personalization.UserFactorsManager
+import com.intellij.ui.JBColor
 import com.jetbrains.completion.feature.impl.FeatureUtils
+import java.awt.Color
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -142,7 +144,15 @@ class MLSorter : CompletionFinalSorter() {
 
   private fun Iterable<LookupElement>.addDiagnosticsIfNeeded(positionsBefore: Map<LookupElement, Int>): Iterable<LookupElement> {
     if (Registry.`is`("completion.stats.show.ml.ranking.diff")) {
-      return this.mapIndexed { position, element -> MyMovedLookupElement(element, positionsBefore.getValue(element), position) }
+      return this.mapIndexed { position, element ->
+        val diff = position - positionsBefore.getValue(element)
+        if (diff != 0) {
+          MyMovedLookupElement(element, diff)
+        }
+        else {
+          element
+        }
+      }
     }
 
     return this
@@ -177,14 +187,18 @@ class MLSorter : CompletionFinalSorter() {
 }
 
 private class MyMovedLookupElement(delegate: LookupElement,
-                                   private val before: Int,
-                                   private val after: Int) : LookupElementDecorator<LookupElement>(delegate) {
+                                   private val diff: Int) : LookupElementDecorator<LookupElement>(delegate) {
   override fun renderElement(presentation: LookupElementPresentation) {
     super.renderElement(presentation)
-    val diff = after - before
-    val diffText = if (diff < 0) diff.toString() else "+$diff"
-    val oldText = presentation.itemText
-    presentation.itemText = "$oldText (${diffText})"
+    if (!presentation.isReal) return
+    val text = if (diff < 0) " ↑${-diff} " else " ↓$diff "
+    val color: Color = if (diff < 0) JBColor.GREEN else JBColor.RED
+
+    val fragments = presentation.tailFragments
+    presentation.setTailText(text, color)
+    for (fragment in fragments) {
+      presentation.appendTailText(fragment.text, fragment.isGrayed)
+    }
   }
 }
 

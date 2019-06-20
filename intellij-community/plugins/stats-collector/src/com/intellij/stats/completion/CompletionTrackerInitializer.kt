@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.stats.personalization.UserFactorDescriptions
@@ -74,6 +75,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
 
   private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus, language: Language?): Boolean {
     val application = ApplicationManager.getApplication()
+    if (Registry.`is`("completion.stats.show.ml.ranking.diff")) return false
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
     if (!application.isEAP) return false // todo: care of released IDE versions
 
@@ -88,13 +90,10 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
   private fun processUserFactors(lookup: LookupImpl) {
     if (!shouldUseUserFactors()) return
 
-    val globalStorage = UserFactorStorage.getInstance()
-    val projectStorage = UserFactorStorage.getInstance(lookup.project)
-
     val userFactors = UserFactorsManager.getInstance().getAllFactors()
     val userFactorValues = mutableMapOf<String, String?>()
-    userFactors.asSequence().map { "${it.id}:App" to it.compute(globalStorage) }.toMap(userFactorValues)
-    userFactors.asSequence().map { "${it.id}:Project" to it.compute(projectStorage) }.toMap(userFactorValues)
+    userFactors.associateTo(userFactorValues) { "${it.id}:App" to it.compute(UserFactorStorage.getInstance()) }
+    userFactors.associateTo(userFactorValues) { "${it.id}:Project" to it.compute(UserFactorStorage.getInstance(lookup.project)) }
 
     lookup.putUserData(UserFactorsManager.USER_FACTORS_KEY, userFactorValues)
 
