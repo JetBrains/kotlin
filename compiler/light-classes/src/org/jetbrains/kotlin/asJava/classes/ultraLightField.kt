@@ -12,8 +12,10 @@ import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
+import org.jetbrains.kotlin.asJava.elements.KtUltraLightSimpleModifierList
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -28,6 +30,30 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 
+private class KtUltraLightSimpleModifierListField(
+    private val support: KtUltraLightSupport,
+    private val declaration: KtNamedDeclaration,
+    owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
+    private val modifiers: Set<String>
+) : KtUltraLightSimpleModifierList(owner, modifiers) {
+    override fun hasModifierProperty(name: String): Boolean = when (name) {
+        PsiModifier.VOLATILE -> hasFieldAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
+        PsiModifier.TRANSIENT -> hasFieldAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)
+        else -> super.hasModifierProperty(name)
+    }
+
+    private fun hasFieldAnnotation(fqName: FqName): Boolean {
+        val annotation = support.findAnnotation(declaration, fqName)?.first ?: return false
+        val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: return true
+        val expectedTarget =
+            if (declaration is KtProperty && declaration.hasDelegate()) AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+            else AnnotationUseSiteTarget.FIELD
+        return target == expectedTarget
+    }
+
+    override fun copy() = KtUltraLightSimpleModifierListField(support, declaration, owner, modifiers)
+}
+
 internal open class KtUltraLightField(
     protected val declaration: KtNamedDeclaration,
     name: String,
@@ -37,26 +63,13 @@ internal open class KtUltraLightField(
 ) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField,
     KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiField> {
 
-    private val modList = object : KtLightSimpleModifierList(this, modifiers) {
-        override fun hasModifierProperty(name: String): Boolean = when (name) {
-            PsiModifier.VOLATILE -> hasFieldAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-            PsiModifier.TRANSIENT -> hasFieldAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)
-            else -> super.hasModifierProperty(name)
-        }
-
-        private fun hasFieldAnnotation(fqName: FqName): Boolean {
-            val annotation = support.findAnnotation(declaration, fqName)?.first ?: return false
-            val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: return true
-            val expectedTarget =
-                if (declaration is KtProperty && declaration.hasDelegate()) AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-                else AnnotationUseSiteTarget.FIELD
-            return target == expectedTarget
-        }
+    private val modifierList by lazyPub {
+        KtUltraLightSimpleModifierListField(support, declaration, this, modifiers)
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
 
-    override fun getModifierList(): PsiModifierList = modList
+    override fun getModifierList(): PsiModifierList = modifierList
 
     override fun hasModifierProperty(name: String): Boolean =
         modifierList.hasModifierProperty(name) //can be removed after IDEA platform does the same

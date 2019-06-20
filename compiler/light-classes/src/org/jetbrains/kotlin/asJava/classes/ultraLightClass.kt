@@ -14,6 +14,8 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
+import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -39,6 +41,20 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
 open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: KtUltraLightSupport) :
     KtLightClassImpl(classOrObject) {
+
+    private class KtUltraLightClassModifierList(
+        private val containingClass: KtLightClassForSourceDeclaration,
+        private val computeModifiers: () -> Set<String>
+    ) :
+        KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
+        private val modifiers by lazyPub { computeModifiers() }
+
+        override fun hasModifierProperty(name: String): Boolean =
+            if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
+
+        override fun copy(): PsiElement = KtUltraLightClassModifierList(containingClass, computeModifiers)
+    }
+
 
     private val membersBuilder by lazyPub {
         UltraLightMembersCreator(
@@ -73,6 +89,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun findLightClassData(): LightClassData = forTooComplex { super.findLightClassData() }
 
     override fun getDelegate(): PsiClass = forTooComplex { super.getDelegate() }
+
+    private val _modifierList: PsiModifierList? by lazyPub {
+        if (tooComplex) super.getModifierList() else KtUltraLightClassModifierList(this) { computeModifiers() }
+    }
+
+    override fun getModifierList(): PsiModifierList? = _modifierList
 
     private fun allSuperTypes() =
         getDescriptor()?.typeConstructor?.supertypes.orEmpty().asSequence()
@@ -170,7 +192,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
                 if (isCompanion && (containingClass?.isInterface == false || property.isJvmField())) continue
 
-                membersBuilder.createPropertyField(property, usedNames, forceStatic = this.classOrObject is KtObjectDeclaration)?.let(result::add)
+                membersBuilder.createPropertyField(property, usedNames, forceStatic = this.classOrObject is KtObjectDeclaration)
+                    ?.let(result::add)
             }
         }
 

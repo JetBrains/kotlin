@@ -61,7 +61,7 @@ class KtUltraLightAnnotationForDescriptor(
     private val annotationDescriptor: AnnotationDescriptor,
     private val ultraLightSupport: KtUltraLightSupport,
     parent: PsiElement
-) : KtLightAbstractAnnotation(parent, { error("clsDelegate for annotation based on descriptor: $annotationDescriptor") }) {
+) : KtLightAbstractAnnotation(parent, computeDelegate = null) {
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = null
 
     override fun getMetaData(): PsiMetaData? = null
