@@ -130,12 +130,13 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       correspondingProperty: PROPERTY name:varWithBackingFieldAndAccessors visibility:public modality:FINAL [var] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-varWithBackingFieldAndAccessors> (): kotlin.Int declared in <root>'
-          ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
+          ERROR_CALL 'No getter found for F|/varWithBackingFieldAndAccessors|' type=kotlin.Int
     FUN name:<set-varWithBackingFieldAndAccessors> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:varWithBackingFieldAndAccessors visibility:public modality:FINAL [var] 
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:varWithBackingFieldAndAccessors type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.<set-varWithBackingFieldAndAccessors>' type=kotlin.Int origin=null
   PROPERTY name:test_varWithBackingFieldAndAccessors visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test_varWithBackingFieldAndAccessors type:kotlin.Int visibility:public [final,static] 
       EXPRESSION_BODY
@@ -146,39 +147,39 @@ FILE fqName:<root> fileName:/propertyReferences.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test_varWithBackingFieldAndAccessors> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_varWithBackingFieldAndAccessors type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:valWithAccessors visibility:public modality:FINAL [val] 
-    FUN name:<get-valWithAccessors> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FUN name:<get-valWithAccessors> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:valWithAccessors visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-valWithAccessors> (): IrErrorType declared in <root>'
-          CONST Int type=IrErrorType value=1
+        RETURN type=kotlin.Nothing from='public final fun <get-valWithAccessors> (): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=1
   PROPERTY name:test_valWithAccessors visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test_valWithAccessors type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test_valWithAccessors type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun <get-valWithAccessors> (): IrErrorType declared in <root>' type=IrErrorType origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_valWithAccessors> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun <get-valWithAccessors> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_valWithAccessors> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test_valWithAccessors visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_valWithAccessors> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_valWithAccessors type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_valWithAccessors> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_valWithAccessors type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:varWithAccessors visibility:public modality:FINAL [var] 
-    FUN name:<get-varWithAccessors> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FUN name:<get-varWithAccessors> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:varWithAccessors visibility:public modality:FINAL [var] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-varWithAccessors> (): IrErrorType declared in <root>'
-          CONST Int type=IrErrorType value=1
-    FUN name:<set-varWithAccessors> visibility:public modality:FINAL <> (value:IrErrorType) returnType:kotlin.Unit 
+        RETURN type=kotlin.Nothing from='public final fun <get-varWithAccessors> (): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=1
+    FUN name:<set-varWithAccessors> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:varWithAccessors visibility:public modality:FINAL [var] 
-      VALUE_PARAMETER name:value index:0 type:IrErrorType 
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
   PROPERTY name:test_varWithAccessors visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:test_varWithAccessors type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:test_varWithAccessors type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun <get-varWithAccessors> (): IrErrorType declared in <root>' type=IrErrorType origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithAccessors> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun <get-varWithAccessors> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithAccessors> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test_varWithAccessors visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test_varWithAccessors> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_varWithAccessors type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test_varWithAccessors> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test_varWithAccessors type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
   PROPERTY name:delegatedVal visibility:public modality:FINAL [delegated,val] 
     FIELD PROPERTY_BACKING_FIELD name:delegatedVal type:IrErrorType visibility:public [final,static] 
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-delegatedVal> visibility:public modality:FINAL <> () returnType:IrErrorType 

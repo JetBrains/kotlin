@@ -58,7 +58,8 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C 
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-test4>' type=kotlin.Int origin=null
     PROPERTY name:test5 visibility:public modality:FINAL [var] 
       FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public 
         EXPRESSION_BODY

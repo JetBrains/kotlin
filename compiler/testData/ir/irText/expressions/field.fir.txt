@@ -12,7 +12,8 @@ FILE fqName:<root> fileName:/field.kt
       correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL [var] 
       VALUE_PARAMETER name:value index:0 type:kotlin.Int 
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.<set-testSimple>' type=kotlin.Int origin=null
   PROPERTY name:testAugmented visibility:public modality:FINAL [var] 
     FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public [static] 
       EXPRESSION_BODY
@@ -26,5 +27,5 @@ FILE fqName:<root> fileName:/field.kt
       correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL [var] 
       VALUE_PARAMETER name:value index:0 type:kotlin.Int 
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
-
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.<set-testAugmented>' type=kotlin.Int origin=null

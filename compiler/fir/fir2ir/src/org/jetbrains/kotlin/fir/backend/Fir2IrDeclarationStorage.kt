@@ -499,8 +499,8 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getIrPropertyOrFieldSymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
-        return when (val fir = firPropertySymbol.fir) {
+    fun getIrPropertyOrFieldSymbol(firVariableSymbol: FirVariableSymbol): IrSymbol {
+        return when (val fir = firVariableSymbol.fir) {
             is FirProperty -> {
                 val irProperty = getIrProperty(fir).apply {
                     setAndModifyParent(findIrParent(fir))

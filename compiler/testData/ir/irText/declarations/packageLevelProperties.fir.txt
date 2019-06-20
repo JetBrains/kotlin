@@ -42,7 +42,8 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: field>#' type=IrErrorType
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public [static] ' type=kotlin.Int origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.<set-test4>' type=kotlin.Int origin=null
   PROPERTY name:test5 visibility:public modality:FINAL [var] 
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public [static] 
       EXPRESSION_BODY
