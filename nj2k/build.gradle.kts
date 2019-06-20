@@ -31,6 +31,7 @@ dependencies {
 
     testCompile(project(":idea"))
     testCompile(projectTests(":j2k"))
+    testCompile(projectTests(":idea"))
     testCompile(project(":nj2k:nj2k-services"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":compiler:light-classes"))
