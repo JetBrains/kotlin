@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.compat.toIdePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
@@ -107,9 +107,9 @@ sealed class VersionView : DescriptionAware {
         }
 
         fun deserialize(value: String?, isAutoAdvance: Boolean): VersionView {
-            if (isAutoAdvance) return VersionView.LatestStable
+            if (isAutoAdvance) return LatestStable
             val languageVersion = LanguageVersion.fromVersionString(value)
-            return if (languageVersion != null) VersionView.Specific(languageVersion) else VersionView.LatestStable
+            return if (languageVersion != null) Specific(languageVersion) else LatestStable
         }
     }
 }
