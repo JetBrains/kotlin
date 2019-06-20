@@ -158,7 +158,10 @@ class ConstraintIncorporator(
     ) {
         if (targetVariable in getNestedTypeVariables(newConstraint)) return
         if (!containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)) return
-        if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(otherConstraint, newConstraint, isSubtype)) return
+        if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
+                baseConstraint, otherConstraint, newConstraint, isSubtype
+            )
+        ) return
 
         val derivedFrom = (baseConstraint.derivedFrom + otherConstraint.derivedFrom).toMutableSet()
         if (otherVariable in derivedFrom) return
