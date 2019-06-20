@@ -48,7 +48,7 @@ public external object Math {
     public fun tan(value: Double): Double
     @Deprecated("Use kotlin.math.ln instead.", ReplaceWith("ln(value)", "kotlin.math.ln"), level = DeprecationLevel.ERROR)
     public fun log(value: Double): Double
-    @Deprecated("Use kotlin.math.pow instead.", ReplaceWith("pow(base, exp)", "kotlin.math.pow"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use kotlin.math.pow instead.", ReplaceWith("base.pow(exp)", "kotlin.math.pow"), level = DeprecationLevel.ERROR)
     public fun pow(base: Double, exp: Double): Double
     @Deprecated("Use kotlin.math.round instead.", ReplaceWith("round(value)", "kotlin.math.round"), level = DeprecationLevel.ERROR)
     public fun round(value: Number): Int
