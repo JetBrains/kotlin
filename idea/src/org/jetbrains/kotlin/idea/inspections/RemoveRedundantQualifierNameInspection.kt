@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -49,7 +48,8 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
             override fun visitUserType(type: KtUserType) {
                 if (type.parent is KtUserType) return
 
-                val applicableExpression = type.firstApplicableExpression(KtUserType::applicableExpression) {
+                val context = type.analyze()
+                val applicableExpression = type.firstApplicableExpression(validator = { applicableExpression(context) }) {
                     firstChild as? KtUserType
                 } ?: return
 
@@ -95,13 +95,13 @@ private fun KtExpression.isApplicableReceiver(context: BindingContext): Boolean 
     else descriptor.name.asString() != reference.text
 }
 
-private fun KtUserType.applicableExpression(): KtUserType? {
+private fun KtUserType.applicableExpression(context: BindingContext): KtUserType? {
     if (firstChild !is KtUserType) return null
     val referenceExpression = referenceExpression as? KtNameReferenceExpression ?: return null
-    val originalDescriptor = referenceExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return null
+    val originalDescriptor = referenceExpression.mainReference.resolveToDescriptors(context).firstOrNull() ?: return null
 
     val shortName = originalDescriptor.importableFqName?.shortName() ?: return null
-    val scope = referenceExpression.getResolutionScope()
+    val scope = referenceExpression.getResolutionScope(context) ?: return null
     val descriptor = scope.findFirstClassifierWithDeprecationStatus(shortName, NoLookupLocation.FROM_IDE)?.descriptor ?: return null
     return if (descriptor == originalDescriptor) this else null
 }
