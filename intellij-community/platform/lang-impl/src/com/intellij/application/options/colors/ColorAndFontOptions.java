@@ -871,7 +871,7 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
 
     @Override
     public Color getExternalForeground() {
-      return myKind.isForeground() ? myColor : null;
+      return isForegroundEnabled() ? myColor : null;
     }
 
     @Override
@@ -883,7 +883,7 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
 
     @Override
     public Color getExternalBackground() {
-      return myKind.isBackground() ? myColor : null;
+      return isBackgroundEnabled() ? myColor : null;
     }
 
     @Override
@@ -919,8 +919,7 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
 
     @Override
     public boolean isTransparencyEnabled() {
-      return myKind == ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY ||
-             myKind == ColorDescriptor.Kind.FOREGROUND_WITH_TRANSPARENCY;
+      return myKind.isWithTransparency();
     }
 
     @Override
