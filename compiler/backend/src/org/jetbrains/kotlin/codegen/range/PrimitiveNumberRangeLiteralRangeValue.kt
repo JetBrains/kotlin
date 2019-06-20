@@ -36,15 +36,14 @@ class PrimitiveNumberRangeLiteralRangeValue(
 ) : PrimitiveNumberRangeIntrinsicRangeValue(rangeCall),
     ReversableRangeValue {
 
-    override fun getBoundedValue(codegen: ExpressionCodegen): SimpleBoundedValue {
+    override fun getBoundedValue(codegen: ExpressionCodegen): BoundedValue {
         val instanceType = codegen.asmType(rangeCall.resultingDescriptor.returnType!!)
         val lowBound = codegen.generateCallReceiver(rangeCall)
         if (codegen.canBeSpecializedByExcludingHighBound(rangeCall)) {
             val highBound = (rangeCall.getFirstArgumentExpression() as KtBinaryExpression).left
-            return SimpleBoundedValue(instanceType, lowBound, true, codegen.gen(highBound), false)
+            return BoundedValue(lowBound, true, codegen.gen(highBound), false)
         }
-        return SimpleBoundedValue(
-            instanceType = instanceType,
+        return BoundedValue(
             lowBound = lowBound,
             highBound = codegen.generateCallSingleArgument(rangeCall)
         )

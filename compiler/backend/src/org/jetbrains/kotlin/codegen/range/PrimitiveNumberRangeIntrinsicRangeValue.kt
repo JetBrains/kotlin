@@ -63,7 +63,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             comparisonGenerator == null -> CallBasedInExpressionGenerator(codegen, operatorReference)
 
             comparedType == Type.DOUBLE_TYPE || comparedType == Type.FLOAT_TYPE -> {
-                val rangeLiteral = getBoundedValue(codegen) as? SimpleBoundedValue
+                val rangeLiteral = getBoundedValue(codegen) as? BoundedValue
                     ?: throw AssertionError("Floating point intrinsic range value should be a range literal")
                 InFloatingPointRangeLiteralExpressionGenerator(operatorReference, rangeLiteral, comparisonGenerator, codegen.frameMap)
             }

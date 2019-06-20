@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.range.inExpression
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.range.SimpleBoundedValue
+import org.jetbrains.kotlin.codegen.range.BoundedValue
 import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class InFloatingPointRangeLiteralExpressionGenerator(
     operatorReference: KtSimpleNameExpression,
-    private val rangeLiteral: SimpleBoundedValue,
+    private val rangeLiteral: BoundedValue,
     private val comparisonGenerator: ComparisonGenerator,
     private val frameMap: FrameMap
 ) : InExpressionGenerator {

@@ -31,8 +31,7 @@ class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescrip
     PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-        SimpleBoundedValue(
-            codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
+        BoundedValue(
             codegen.generateCallReceiver(rangeCall),
             true,
             codegen.generateCallSingleArgument(rangeCall),

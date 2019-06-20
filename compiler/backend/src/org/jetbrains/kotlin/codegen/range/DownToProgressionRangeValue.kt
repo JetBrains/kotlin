@@ -32,8 +32,7 @@ class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
     PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-        SimpleBoundedValue(
-            instanceType = codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
+        BoundedValue(
             lowBound = codegen.generateCallSingleArgument(rangeCall),
             highBound = codegen.generateCallReceiver(rangeCall)
         )
