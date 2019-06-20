@@ -15,6 +15,8 @@ import org.gradle.api.tasks.diagnostics.internal.graph.nodes.RenderableModuleRes
 
 @CompileStatic
 class DependenciesReport extends DefaultTask {
+  public static final String ANY_CONFIGURATION = "*"
+
   @Input
   String configurationName
   @OutputFile
@@ -24,7 +26,7 @@ class DependenciesReport extends DefaultTask {
   void generate() {
     List<DependencyNode> graph = []
     Gson gson = new GsonBuilder().create()
-    Collection<Configuration> configurations = "*" == configurationName ? project.configurations.asList() :
+    Collection<Configuration> configurations = ANY_CONFIGURATION == configurationName ? project.configurations.asList() :
                                                Collections.singleton(project.configurations.getByName(configurationName))
     for (configuration in configurations) {
       if (!configuration.isCanBeResolved()) continue
