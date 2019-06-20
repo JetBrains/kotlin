@@ -4,27 +4,21 @@ package org.jetbrains.plugins.gradle.tooling.tasks;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class DependencyNode {
+public abstract class AbstractComponentNode implements ComponentNode {
   private final long id;
-  private String name;
+  private final Set<ComponentNode> children = new LinkedHashSet<ComponentNode>();
   private String state;
-  private final Set<DependencyNode> children = new LinkedHashSet<DependencyNode>();
 
-  public DependencyNode(long id) {this.id = id;}
+  protected AbstractComponentNode(long id) {this.id = id;}
 
+  @Override
   public long getId() {
     return id;
   }
 
-  public String getName() {
-    return name;
-  }
+  abstract String getDisplayName();
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Set<DependencyNode> getChildren() {
+  public Set<ComponentNode> getChildren() {
     return children;
   }
 
