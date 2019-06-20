@@ -84,7 +84,7 @@ class DelegatedPropertyInferenceSession(
         initialStorage: ConstraintStorage
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
-    override fun writeOnlyStubs(): Boolean = false
+    override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
 }
 
 object InferenceSessionForExistingCandidates : InferenceSession {
@@ -102,6 +102,6 @@ object InferenceSessionForExistingCandidates : InferenceSession {
         initialStorage: ConstraintStorage
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
-    override fun writeOnlyStubs(): Boolean = false
+    override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
     override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
 }
