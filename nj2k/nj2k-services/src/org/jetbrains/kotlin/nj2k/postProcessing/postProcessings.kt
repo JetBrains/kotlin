@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.nj2k.postProcessing
 
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,7 +39,8 @@ abstract class ElementsBasedPostProcessing() : SimplePostProcessing() {
     final override fun applySimpleProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
         val elements =
             rangeMarker?.let { marker ->
-                file.elementsInRange(TextRange(marker.startOffset, marker.endOffset))
+                val range = marker.range ?: return@let emptyList()
+                file.elementsInRange(range)
             } ?: listOf(file)
         runProcessing(elements, converterContext)
     }
