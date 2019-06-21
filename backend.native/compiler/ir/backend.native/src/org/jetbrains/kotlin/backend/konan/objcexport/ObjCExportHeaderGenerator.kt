@@ -889,7 +889,7 @@ internal class ObjCExportTranslatorImpl(
                 ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType("uint64_t")
                 ObjCValueType.FLOAT -> ObjCPrimitiveType("float")
                 ObjCValueType.DOUBLE -> ObjCPrimitiveType("double")
-                ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType)
+                ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, kotlinType.binaryRepresentationIsNullable())
             }
             // TODO: consider other namings.
         }
