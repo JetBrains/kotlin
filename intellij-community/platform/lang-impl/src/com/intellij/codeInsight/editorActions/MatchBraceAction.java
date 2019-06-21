@@ -4,6 +4,7 @@ package com.intellij.codeInsight.editorActions;
 import com.intellij.codeInsight.highlighting.BraceHighlightingHandler;
 import com.intellij.codeInsight.highlighting.BraceMatcher;
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil;
+import com.intellij.codeInsight.highlighting.BraceMatchingUtil.BraceHighlightingAndNavigationContext;
 import com.intellij.codeInsight.highlighting.CodeBlockSupportHandler;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -20,7 +21,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Moves caret to the the matching brace:
@@ -81,70 +81,8 @@ public class MatchBraceAction extends EditorAction {
      * @implNote this code partially duplicates {@link BraceHighlightingHandler#updateBraces()} and probably can be extracted.
      */
     private static int getOffsetFromBraceMatcher(@NotNull Editor editor, @NotNull PsiFile file) {
-      int offset = editor.getCaretModel().getCurrentCaret().getOffset();
-      BraceMatchingContext matchingContext = computeBraceMatchingContext(editor, file, offset);
-      if (matchingContext != null) {
-        return matchingContext.navigationOffset;
-      }
-      return tryFindPreviousUnclosedOpeningBraceOffset(editor, file);
-    }
-
-    /**
-     * Computes context that should be used to highlight and navigate matching braces
-     *
-     * @param offset offset we are computing for. Some implementations may need to compute this not only for caret position, but for other offsets, e.g. skipping spaces behind or ahead.
-     * @return a context should be used or null if there is no matching braces at offset
-     * @apiNote this method contains a logic for selecting braces in different complicated situations, like {@code (<caret>(} and so on.
-     * It does not looks forward/behind skipping spaces, like highlighting does.
-     */
-    @Nullable
-    private static BraceMatchingContext computeBraceMatchingContext(@NotNull Editor editor,
-                                                                    @NotNull PsiFile file,
-                                                                    int offset) {
-      final EditorHighlighter highlighter = BraceHighlightingHandler.getLazyParsableHighlighterIfAny(file.getProject(), editor, file);
-      final CharSequence text = editor.getDocument().getCharsSequence();
-
-      final HighlighterIterator iterator = highlighter.createIterator(offset);
-      final FileType fileType = iterator.atEnd() ? null : getFileType(file, iterator.getStart());
-      final HighlighterIterator preOffsetIterator = offset > 0 ? highlighter.createIterator(offset - 1) : null;
-      final FileType preOffsetFileType = preOffsetIterator != null ? getFileType(file, preOffsetIterator.getStart()) : null;
-
-      boolean isAfterLeftBrace = preOffsetIterator != null &&
-                                 BraceMatchingUtil.isLBraceToken(preOffsetIterator, text, preOffsetFileType);
-      boolean isAfterRightBrace = !isAfterLeftBrace && preOffsetIterator != null &&
-                                  BraceMatchingUtil.isRBraceToken(preOffsetIterator, text, preOffsetFileType);
-      boolean isBeforeLeftBrace = fileType != null && BraceMatchingUtil.isLBraceToken(iterator, text, fileType);
-      boolean isBeforeRightBrace = !isBeforeLeftBrace && fileType != null && BraceMatchingUtil.isRBraceToken(iterator, text, fileType);
-
-      int offsetTokenStart = iterator.atEnd() ? -1 : iterator.getStart();
-      int preOffsetTokenStart = preOffsetIterator == null || preOffsetIterator.atEnd() ? -1 : preOffsetIterator.getStart();
-
-      if (isAfterRightBrace && BraceMatchingUtil.matchBrace(text, preOffsetFileType, preOffsetIterator, false)) {
-        return new BraceMatchingContext(preOffsetTokenStart, preOffsetIterator.getStart());
-      }
-      else if (isBeforeLeftBrace && BraceMatchingUtil.matchBrace(text, fileType, iterator, true)) {
-        return new BraceMatchingContext(offsetTokenStart, iterator.getEnd());
-      }
-      else if (isAfterLeftBrace && BraceMatchingUtil.matchBrace(text, preOffsetFileType, preOffsetIterator, true)) {
-        return new BraceMatchingContext(preOffsetTokenStart, preOffsetIterator.getEnd());
-      }
-      else if (isBeforeRightBrace && BraceMatchingUtil.matchBrace(text, fileType, iterator, false)) {
-        return new BraceMatchingContext(offsetTokenStart, iterator.getStart());
-      }
-      return null;
-    }
-
-    /**
-     * Describes a brace matching/navigation context computed by {@link #computeBraceMatchingContext
-     */
-    public static final class BraceMatchingContext {
-      public final int currentBraceStartOffset;
-      public final int navigationOffset;
-
-      public BraceMatchingContext(int currentBraceStartOffset, int navigationOffset) {
-        this.currentBraceStartOffset = currentBraceStartOffset;
-        this.navigationOffset = navigationOffset;
-      }
+      BraceHighlightingAndNavigationContext matchingContext = BraceMatchingUtil.computeHighlightingAndNavigationContext(editor, file);
+      return matchingContext != null ? matchingContext.navigationOffset : tryFindPreviousUnclosedOpeningBraceOffset(editor, file);
     }
 
     /**
@@ -157,7 +95,7 @@ public class MatchBraceAction extends EditorAction {
       final EditorHighlighter highlighter = BraceHighlightingHandler.getLazyParsableHighlighterIfAny(file.getProject(), editor, file);
       final CharSequence text = editor.getDocument().getCharsSequence();
       final HighlighterIterator iterator = highlighter.createIterator(editor.getCaretModel().getOffset());
-      final FileType fileType = iterator.atEnd() ? null : getFileType(file, iterator.getStart());
+      final FileType fileType = iterator.atEnd() ? null : PsiUtilBase.getPsiFileAtOffset(file, iterator.getStart()).getFileType();
 
       if (fileType == null) {
         return -1;
@@ -181,11 +119,6 @@ public class MatchBraceAction extends EditorAction {
         iterator.retreat();
       }
     }
-  }
-
-  @NotNull
-  private static FileType getFileType(PsiFile file, int offset) {
-    return PsiUtilBase.getPsiFileAtOffset(file, offset).getFileType();
   }
 
   private static void moveCaret(Editor editor, Caret caret, int offset) {
