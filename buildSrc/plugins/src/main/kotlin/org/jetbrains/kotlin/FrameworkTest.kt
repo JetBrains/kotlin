@@ -74,7 +74,12 @@ open class FrameworkTest : DefaultTask() {
         // Compile swift sources
         val sources = swiftSources.map { Paths.get(it).toString() } +
                 listOf(provider.toString(), swiftMain)
-        val options = listOf("-g", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
+        val options = listOf(
+                "-g",
+                "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath,
+                "-F", frameworkParentDirPath,
+                "-Xcc", "-Werror" // To fail compilation on warnings in framework header.
+        )
         val testExecutable = Paths.get(testOutput, frameworkName, "swiftTestExecutable")
         compileSwift(project, project.testTarget, sources, options, testExecutable, fullBitcode)
 
