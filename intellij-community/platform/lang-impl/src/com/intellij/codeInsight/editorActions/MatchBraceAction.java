@@ -20,6 +20,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Moves caret to the the matching brace:
@@ -80,10 +81,28 @@ public class MatchBraceAction extends EditorAction {
      * @implNote this code partially duplicates {@link BraceHighlightingHandler#updateBraces()} and probably can be extracted.
      */
     private static int getOffsetFromBraceMatcher(@NotNull Editor editor, @NotNull PsiFile file) {
-      final Caret caret = editor.getCaretModel().getCurrentCaret();
+      int offset = editor.getCaretModel().getCurrentCaret().getOffset();
+      BraceMatchingContext matchingContext = computeBraceMatchingContext(editor, file, offset);
+      if (matchingContext != null) {
+        return matchingContext.navigationOffset;
+      }
+      return tryFindPreviousUnclosedOpeningBraceOffset(editor, file);
+    }
+
+    /**
+     * Computes context that should be used to highlight and navigate matching braces
+     *
+     * @param offset offset we are computing for. Some implementations may need to compute this not only for caret position, but for other offsets, e.g. skipping spaces behind or ahead.
+     * @return a context should be used or null if there is no matching braces at offset
+     * @apiNote this method contains a logic for selecting braces in different complicated situations, like {@code (<caret>(} and so on.
+     * It does not looks forward/behind skipping spaces, like highlighting does.
+     */
+    @Nullable
+    private static BraceMatchingContext computeBraceMatchingContext(@NotNull Editor editor,
+                                                                    @NotNull PsiFile file,
+                                                                    int offset) {
       final EditorHighlighter highlighter = BraceHighlightingHandler.getLazyParsableHighlighterIfAny(file.getProject(), editor, file);
       final CharSequence text = editor.getDocument().getCharsSequence();
-      int offset = caret.getOffset();
 
       final HighlighterIterator iterator = highlighter.createIterator(offset);
       final FileType fileType = iterator.atEnd() ? null : getFileType(file, iterator.getStart());
@@ -97,33 +116,53 @@ public class MatchBraceAction extends EditorAction {
       boolean isBeforeLeftBrace = fileType != null && BraceMatchingUtil.isLBraceToken(iterator, text, fileType);
       boolean isBeforeRightBrace = !isBeforeLeftBrace && fileType != null && BraceMatchingUtil.isRBraceToken(iterator, text, fileType);
 
+      int offsetTokenStart = iterator.atEnd() ? -1 : iterator.getStart();
+      int preOffsetTokenStart = preOffsetIterator == null || preOffsetIterator.atEnd() ? -1 : preOffsetIterator.getStart();
+
       if (isAfterRightBrace && BraceMatchingUtil.matchBrace(text, preOffsetFileType, preOffsetIterator, false)) {
-        return preOffsetIterator.getStart();
+        return new BraceMatchingContext(preOffsetTokenStart, preOffsetIterator.getStart());
       }
       else if (isBeforeLeftBrace && BraceMatchingUtil.matchBrace(text, fileType, iterator, true)) {
-        return iterator.getEnd();
+        return new BraceMatchingContext(offsetTokenStart, iterator.getEnd());
       }
       else if (isAfterLeftBrace && BraceMatchingUtil.matchBrace(text, preOffsetFileType, preOffsetIterator, true)) {
-        return preOffsetIterator.getEnd();
+        return new BraceMatchingContext(preOffsetTokenStart, preOffsetIterator.getEnd());
       }
       else if (isBeforeRightBrace && BraceMatchingUtil.matchBrace(text, fileType, iterator, false)) {
-        return iterator.getStart();
+        return new BraceMatchingContext(offsetTokenStart, iterator.getStart());
       }
-      return fileType == null ? -1 : tryFindPreviousUnclosedOpeningBraceOffset(text, iterator, fileType);
+      return null;
     }
 
     /**
-     * Retries {@code iterator} and counting closing and opening braces (in dumb way, no need to be same type or whatever). Stops if
+     * Describes a brace matching/navigation context computed by {@link #computeBraceMatchingContext
+     */
+    public static final class BraceMatchingContext {
+      public final int currentBraceStartOffset;
+      public final int navigationOffset;
+
+      public BraceMatchingContext(int currentBraceStartOffset, int navigationOffset) {
+        this.currentBraceStartOffset = currentBraceStartOffset;
+        this.navigationOffset = navigationOffset;
+      }
+    }
+
+    /**
+     * Moving back from the caret position closing and opening braces (in dumb way, no need to be same type or whatever). Stops if
      * encounters first opening brace which was not closed before.
      *
-     * @param text     we are iterating through
-     * @param iterator in starting position
-     * @param fileType for detecting braces for
      * @return start offset of the opening brace or -1 if non were found.
      */
-    private static int tryFindPreviousUnclosedOpeningBraceOffset(@NotNull CharSequence text,
-                                                                 @NotNull HighlighterIterator iterator,
-                                                                 @NotNull FileType fileType) {
+    private static int tryFindPreviousUnclosedOpeningBraceOffset(@NotNull Editor editor, @NotNull PsiFile file) {
+      final EditorHighlighter highlighter = BraceHighlightingHandler.getLazyParsableHighlighterIfAny(file.getProject(), editor, file);
+      final CharSequence text = editor.getDocument().getCharsSequence();
+      final HighlighterIterator iterator = highlighter.createIterator(editor.getCaretModel().getOffset());
+      final FileType fileType = iterator.atEnd() ? null : getFileType(file, iterator.getStart());
+
+      if (fileType == null) {
+        return -1;
+      }
+
       int unopenedBraces = 0;
       while (true) {
         if (BraceMatchingUtil.isRBraceToken(iterator, text, fileType)) {
