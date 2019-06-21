@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 
 class DeepCopyTypeRemapper(
     private val symbolRemapper: SymbolRemapper
@@ -33,7 +34,7 @@ class DeepCopyTypeRemapper(
 
         val arguments = type.arguments.map {
             if (it is IrTypeProjection) {
-                IrTypeProjectionImpl(this.remapType(it.type), it.variance)
+                makeTypeProjection(this.remapType(it.type), it.variance)
             } else {
                 it
             }

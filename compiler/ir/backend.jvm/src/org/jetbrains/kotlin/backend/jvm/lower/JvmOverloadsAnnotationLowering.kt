@@ -60,7 +60,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         val wrapperIrFunction = generateWrapperHeader(target, numDefaultParametersToExpect)
 
         val call = if (target is IrConstructor)
-            IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol, target.descriptor)
+            IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol, target.descriptor)
         else
             IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
         call.dispatchReceiver = wrapperIrFunction.dispatchReceiverParameter?.let { dispatchReceiver ->

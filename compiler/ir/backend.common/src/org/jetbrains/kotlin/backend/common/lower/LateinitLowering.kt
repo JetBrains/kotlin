@@ -82,7 +82,7 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
                 ).also {
                     descriptor.bind(it)
                     it.parent = declaration.parent
-                    it.initializer = IrConstImpl.constNull(declaration.startOffset, declaration.endOffset, type)
+                    it.initializer = IrConstImpl.constNull(declaration.startOffset, declaration.endOffset, context.irBuiltIns.nothingNType)
                 }
 
                 nullableVariables[declaration] = newVar

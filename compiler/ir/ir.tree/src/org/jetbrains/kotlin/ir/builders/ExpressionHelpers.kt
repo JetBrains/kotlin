@@ -294,7 +294,7 @@ fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin): Ir
 
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
     IrDelegatingConstructorCallImpl(
-        startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptor,
+        startOffset, endOffset, context.irBuiltIns.unitType, callee.symbol, callee.descriptor,
         callee.parentAsClass.typeParameters.size, callee.valueParameters.size
     )
 
