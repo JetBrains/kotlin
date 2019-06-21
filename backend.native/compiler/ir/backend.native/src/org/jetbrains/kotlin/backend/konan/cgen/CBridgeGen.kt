@@ -223,7 +223,7 @@ private fun KotlinToCCallBuilder.unwrapVariadicArguments(
                 }
             } else {
                 stubs.reportError(it, "When calling variadic " +
-                        if (isObjCMethod) "Objective-C methods" else "C functions " +
+                        (if (isObjCMethod) "Objective-C methods " else "C functions ") +
                                 "spread operator is supported only for *arrayOf(...)")
             }
         }
