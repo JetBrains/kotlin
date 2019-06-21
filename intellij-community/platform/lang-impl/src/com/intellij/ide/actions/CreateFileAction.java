@@ -4,8 +4,8 @@ package com.intellij.ide.actions;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.actions.newclass.SimpleCreateFileDialogPanel;
 import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
+import com.intellij.ide.ui.newItemPopup.NewItemSimplePopupPanel;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
@@ -261,6 +261,13 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
       FileType fileType = FileTypeChooser.getKnownFileTypeOrAssociate(psiDirectory.getVirtualFile(), getFileName(inputString), project);
       if (fileType == null) return false;
       return super.canClose(getFileName(inputString));
+    }
+  }
+
+  private static class SimpleCreateFileDialogPanel extends NewItemSimplePopupPanel {
+
+    public JTextField getTextField() {
+      return myTextField;
     }
   }
 }

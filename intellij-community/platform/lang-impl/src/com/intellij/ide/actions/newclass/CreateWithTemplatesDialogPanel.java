@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.newclass;
 
-import com.intellij.ide.ui.newItemPopup.NewItemPopupPanel;
+import com.intellij.ide.ui.newItemPopup.NewItemWithTemplatesPopupPanel;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.fields.ExtendableTextComponent;
@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class CreateWithTemplatesDialogPanel extends NewItemPopupPanel<Trinity<String, Icon, String>> {
+public class CreateWithTemplatesDialogPanel extends NewItemWithTemplatesPopupPanel<Trinity<String, Icon, String>> {
 
   public CreateWithTemplatesDialogPanel(@NotNull List<Trinity<String, Icon, String>> templates, @Nullable String selectedItem) {
     super(templates, LIST_RENDERER);
