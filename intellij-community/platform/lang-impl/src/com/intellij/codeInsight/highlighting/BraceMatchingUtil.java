@@ -523,7 +523,7 @@ public class BraceMatchingUtil {
   }
 
   /**
-   * Describes a brace matching/navigation context computed by {@link #computeHighlightingAndNavigationContext
+   * Describes a brace matching/navigation context computed by {@link #computeHighlightingAndNavigationContext}
    */
   public static final class BraceHighlightingAndNavigationContext {
     public final int currentBraceOffset;
