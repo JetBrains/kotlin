@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -122,10 +121,10 @@ internal fun ClassDescriptor.isSerializableEnum(): Boolean {
     if (this.kind != ClassKind.ENUM_CLASS) return false
     if (hasSerializableAnnotationWithoutArgs) return true
     if (annotations.hasAnySerialAnnotation) return true
-//     check entries
-    for (enumEntry in enumEntries()) {
-        if (enumEntry.annotations.hasAnySerialAnnotation) return true
-    }
+//   todo:   check entries without 'recursive call in lazy class member scope'
+//   for (enumEntry in enumEntries()) {
+//        if (enumEntry.annotations.hasAnySerialAnnotation) return true
+//    }
     return false
 }
 
@@ -189,8 +188,6 @@ internal val ClassDescriptor?.classSerializer: ClassDescriptor?
 
 internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
     get() = isSerializableObject || companionObjectDescriptor?.serializerForClass == this.defaultType
-
-internal fun ClassDescriptor.isSerializerWhichRequiersKClass() = classId in setOf(enumSerializerId, contextSerializerId, polymorphicSerializerId)
 
 // returns only user-overriden Serializer
 internal val KotlinType.overridenSerializer: KotlinType?

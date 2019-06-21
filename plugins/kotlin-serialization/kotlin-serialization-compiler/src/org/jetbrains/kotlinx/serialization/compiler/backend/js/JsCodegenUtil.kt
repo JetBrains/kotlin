@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.objectSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 internal class JsBlockBuilder {
@@ -147,8 +146,12 @@ internal fun AbstractSerialGenerator.serializerInstance(
         return context.serializerObjectGetter(serializerClass)
     } else {
         var args = when {
-            serializerClass.isSerializerWhichRequiersKClass() -> listOf(
+            serializerClass.classId == contextSerializerId || serializerClass.classId == polymorphicSerializerId -> listOf(
                 ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!)
+            )
+            serializerClass.classId == enumSerializerId -> listOf(
+                ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!),
+                JsStringLiteral(kType.serialName())
             )
             serializerClass.classId == objectSerializerId -> listOf(
                 JsStringLiteral(kType.serialName()),
