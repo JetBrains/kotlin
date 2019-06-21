@@ -17,6 +17,7 @@ import java.util.Collection;
  * @deprecated Use {@link TargetElementUtil} instead. To be removed in IntelliJ IDEA 16.
  */
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2016")
 public abstract class TargetElementUtilBase {
   public static TargetElementUtilBase getInstance() {
     return TargetElementUtil.getInstance();

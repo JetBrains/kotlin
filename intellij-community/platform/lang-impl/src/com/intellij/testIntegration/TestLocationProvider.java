@@ -18,12 +18,14 @@ package com.intellij.testIntegration;
 import com.intellij.execution.Location;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /** @deprecated override SMTRunnerConsoleProperties.getTestLocator() instead (to be removed in IDEA 17) */
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2017")
 public interface TestLocationProvider {
   ExtensionPointName<TestLocationProvider> EP_NAME = ExtensionPointName.create("com.intellij.testSrcLocator");
 

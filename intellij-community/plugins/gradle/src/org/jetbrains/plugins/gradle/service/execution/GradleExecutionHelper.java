@@ -728,6 +728,7 @@ public class GradleExecutionHelper {
    * @deprecated {@link #getModelBuilder(Class, ExternalSystemTaskId, GradleExecutionSettings, ProjectConnection, ExternalSystemTaskNotificationListener)}
    */
   @Deprecated
+  @ApiStatus.ScheduledForRemoval
   @NotNull
   public <T> ModelBuilder<T> getModelBuilder(@NotNull Class<T> modelType,
                                              @NotNull final ExternalSystemTaskId id,
@@ -779,6 +780,7 @@ public class GradleExecutionHelper {
   /**
    * @deprecated to be removed in future version
    */
+  @ApiStatus.ScheduledForRemoval
   @Deprecated
   public static void prepare(@NotNull LongRunningOperation operation,
                              @NotNull final ExternalSystemTaskId id,
