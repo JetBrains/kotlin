@@ -8,6 +8,6 @@ fun foo(): String {
 }
 fun bar(): String {
     val x = fn() ?: return ""
-    <!OI;UNREACHABLE_CODE!>val <!OI;UNUSED_VARIABLE!>y<!> =<!> x<!UNNECESSARY_SAFE_CALL!>?.<!>let { throw Exception() } <!OI;UNREACHABLE_CODE, OI;USELESS_ELVIS!>?: "unreachable"<!>
-    <!OI;UNREACHABLE_CODE!>return y<!>
+    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>y<!> =<!> x<!UNNECESSARY_SAFE_CALL!>?.<!>let { throw Exception() } <!NI;UNREACHABLE_CODE, NI;USELESS_ELVIS, OI;UNREACHABLE_CODE, OI;USELESS_ELVIS!>?: "unreachable"<!>
+    <!UNREACHABLE_CODE!>return y<!>
 }

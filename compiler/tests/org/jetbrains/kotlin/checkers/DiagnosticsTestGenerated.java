@@ -10602,6 +10602,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/implicitNothingConstraintFromReturn.kt");
                 }
 
+                @TestMetadata("inferArgumentToNothingFromNullConstant.kt")
+                public void testInferArgumentToNothingFromNullConstant() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/inferArgumentToNothingFromNullConstant.kt");
+                }
+
                 @TestMetadata("kt24490.kt")
                 public void testKt24490() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt24490.kt");
