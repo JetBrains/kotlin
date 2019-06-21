@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExactAnnotation
+import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -494,6 +496,26 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? {
         require(this is KotlinType, this::errorMessage)
         return annotations.findAnnotation(fqName)?.allValueArguments?.values?.firstOrNull()?.value
+    }
+
+    override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {
+        require(this is TypeConstructor, this::errorMessage)
+        return declarationDescriptor as? TypeParameterDescriptor
+    }
+
+    override fun TypeConstructorMarker.isInlineClass(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return (declarationDescriptor as? ClassDescriptor)?.isInline == true
+    }
+
+    override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
+        require(this is TypeParameterDescriptor, this::errorMessage)
+        return representativeUpperBound
+    }
+
+    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
+        require(this is KotlinType, this::errorMessage)
+        return substitutedUnderlyingType()
     }
 }
 

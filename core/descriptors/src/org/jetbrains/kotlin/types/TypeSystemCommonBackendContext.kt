@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemContext
+import org.jetbrains.kotlin.types.model.*
 
 interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean
@@ -24,4 +22,15 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
      * TODO: provide a more granular & elaborate API here to reduce confusion
      */
     fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any?
+
+    fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?
+    fun TypeConstructorMarker.isInlineClass(): Boolean
+    fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker
+    fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker?
+
+    fun KotlinTypeMarker.isMarkedNullable(): Boolean =
+        this is SimpleTypeMarker && isMarkedNullable()
+
+    fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
+        asSimpleType()?.withNullability(true) ?: this
 }
