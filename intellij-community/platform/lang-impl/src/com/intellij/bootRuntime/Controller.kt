@@ -17,6 +17,7 @@ import com.intellij.ui.components.JBOptionButton
 import com.intellij.util.ui.UIUtil
 import java.awt.GridBagConstraints
 import java.awt.Insets
+import javax.swing.Action
 import javax.swing.JButton
 import javax.swing.SwingUtilities
 
@@ -36,7 +37,10 @@ class Controller(val project: Project, val actionPanel:ActionPanel, val model: M
     actionPanel.removeAll()
     val list = runtimeStateToActions(runtime, model.currentState()).toList()
 
-    val job = JBOptionButton(list.firstOrNull(), list.subList(1, list.size).toTypedArray())
+    val job = if (list.size > 1)
+      JBOptionButton(list.firstOrNull(), list.subList(1, list.size).toTypedArray())
+    else
+      JButton(list.firstOrNull())
 
     val constraint = GridBagConstraints()
     constraint.insets = Insets(0,0,0, 0)
@@ -69,6 +73,7 @@ class Controller(val project: Project, val actionPanel:ActionPanel, val model: M
       EXTRACTED -> listOf(produce(INSTALL, runtime), produce(DELETE, runtime))
       UNINSTALLED -> listOf(produce(INSTALL, runtime), produce(DELETE, runtime))
       INSTALLED -> listOf(produce(UNINSTALL, runtime))
+      LOCAL -> listOf(produce(INSTALL, runtime))
     }
   }
 

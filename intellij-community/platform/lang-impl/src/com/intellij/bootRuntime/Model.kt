@@ -1,12 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.bootRuntime
 
+import com.intellij.bootRuntime.bundles.Local
 import com.intellij.bootRuntime.bundles.Remote
 import com.intellij.bootRuntime.bundles.Runtime
 import com.intellij.openapi.util.io.FileUtil
 
 enum class BundleState {
   REMOTE,
+  LOCAL,
   DOWNLOADED,
   EXTRACTED,
   INSTALLED,
@@ -25,6 +27,7 @@ class Model(var selectedBundle: Runtime, val bundles:MutableList<Runtime>) {
        isExtracted(selectedBundle) -> BundleState.EXTRACTED
        isDownloaded(selectedBundle) -> BundleState.DOWNLOADED
        isRemote(selectedBundle) -> BundleState.REMOTE
+       isLocal(selectedBundle) -> BundleState.LOCAL
        else -> BundleState.UNINSTALLED
      }
   }
@@ -38,4 +41,6 @@ class Model(var selectedBundle: Runtime, val bundles:MutableList<Runtime>) {
   private fun isDownloaded(bundle:Runtime):Boolean = bundle.downloadPath.exists()
 
   fun isRemote(bundle:Runtime):Boolean = bundle is Remote
+
+  fun isLocal(bundle:Runtime):Boolean = bundle is Local
 }

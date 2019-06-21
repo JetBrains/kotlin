@@ -49,9 +49,7 @@ public class CommandFactory {
       case INSTALL:
         return new Install(getInstance().myProject, getInstance().myController, runtime);
       case UNINSTALL:
-        Install install = new Install(getInstance().myProject, getInstance().myController, runtime);
-        install.setEnabled(false);
-        return install;
+        return new Uninstall(getInstance().myProject, getInstance().myController, runtime);
       case DELETE:
         return new Delete(getInstance().myProject, getInstance().myController, runtime);
     }
