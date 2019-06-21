@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -326,6 +327,34 @@ public class Bookmark implements Navigatable, Comparable<Bookmark> {
     if (description != null) {
       result.append(": ").append(description);
     }
+
+    StringBuilder shortcutDescription = new StringBuilder();
+    if (myMnemonic != 0) {
+      String shortcutText = KeymapUtil.getFirstKeyboardShortcutText("ToggleBookmark" + myMnemonic);
+      if (shortcutText.length() > 0) {
+        shortcutDescription.append(shortcutText).append(" to toggle");
+      }
+
+      String navigateShortcutText = KeymapUtil.getFirstKeyboardShortcutText("GotoBookmark" + myMnemonic);
+      if (navigateShortcutText.length() > 0) {
+        if (shortcutDescription.length() > 0) {
+          shortcutDescription.append(", ");
+        }
+        shortcutDescription.append(navigateShortcutText).append(" to jump to");
+      }
+    }
+
+    if (shortcutDescription.length() == 0) {
+      String shortcutText = KeymapUtil.getFirstKeyboardShortcutText("ToggleBookmark");
+      if (shortcutText.length() > 0) {
+        shortcutDescription.append(shortcutText).append(" to toggle");
+      }
+    }
+
+    if (shortcutDescription.length() > 0) {
+      result.append(" (").append(shortcutDescription).append(")");
+    }
+
     return result.toString();
   }
 
