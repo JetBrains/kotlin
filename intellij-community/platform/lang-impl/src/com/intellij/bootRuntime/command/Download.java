@@ -27,14 +27,21 @@ public class Download extends RuntimeCommand {
       BinTrayUtil.downloadPath().mkdir();
     }
     if (!downloadDirectoryFile.exists()) {
-      String link = "https://bintray.com/jetbrains/intellij-jdk/download_file?file_path=" + getRuntime().getFileName();
+      String link = "https://bintray.com/jetbrains/intellij-jbr/download_file?file_path=" + getRuntime().getFileName();
+      String oldLink = "https://bintray.com/jetbrains/intellij-jdk/download_file?file_path=" + getRuntime().getFileName();
 
     runWithProgress("Downloading...", (progressIndicator) -> {
       progressIndicator.setIndeterminate(true);
+
       try {
-        HttpRequests.request(link).saveToFile(downloadDirectoryFile, progressIndicator);
-      } catch (IOException ioe) {
-        LOG.warn(ioe);
+        try {
+          HttpRequests.request(link).saveToFile(downloadDirectoryFile, progressIndicator);
+        }
+        catch (HttpRequests.HttpStatusException ioe) {
+          HttpRequests.request(oldLink).saveToFile(downloadDirectoryFile, progressIndicator);
+        }
+      } catch (IOException ex) {
+        LOG.warn(ex);
       }
     });
   }
