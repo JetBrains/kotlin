@@ -17,6 +17,7 @@
 package com.intellij.ide.actions;
 
 import com.intellij.ide.actions.newclass.CreateWithTemplatesDialogPanel;
+import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
 import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.project.Project;
@@ -25,7 +26,6 @@ import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
@@ -285,21 +285,7 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
         }
       };
 
-      JBPopup popup = JBPopupFactory.getInstance()
-        .createComponentPopupBuilder(contentPanel, contentPanel.getNameField())
-        .setTitle(myTitle)
-        .setResizable(false)
-        .setModalContext(true)
-        .setFocusable(true)
-        .setRequestFocus(true)
-        .setMovable(true)
-        .setBelongsToGlobalPopupStack(true)
-        .setCancelKeyEnabled(true)
-        .setCancelOnWindowDeactivation(false)
-        .setCancelOnClickOutside(true)
-        .addUserData("SIMPLE_WINDOW")
-        .createPopup();
-
+      JBPopup popup = NewItemPopupUtil.createNewItemPopup(myTitle, contentPanel, contentPanel.getNameField());
       contentPanel.setApplyAction(e -> {
         String newElementName = contentPanel.getEnteredName();
         if (StringUtil.isEmptyOrSpaces(newElementName)) return;
