@@ -45,7 +45,7 @@ public final class LargeFileNotificationProvider extends EditorNotifications.Pro
       update(file, project);
     });
     return panel.text(String.format(
-      "The file is too large (%s). Showing in read-only mode.",
+      "The file is too large: %s. Showing in read-only mode.",
       StringUtil.formatFileSize(file.getLength())));
   }
 
