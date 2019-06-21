@@ -87,8 +87,6 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
 
     protected abstract fun needProcessToStart(): Boolean
 
-    private var lastExecuted = 0
-
     fun start() {
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(listener, file.project.messageBus.connect())
 
@@ -102,18 +100,22 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
     }
 
     fun executeNew() {
+        val expressions = file.getExpressions()
+        if (wasExpressionExecuted(expressions.size)) return
+
         handler.onStart(file)
 
-        for ((index, expression) in file.getExpressions().withIndex()) {
-            if (index + 1 <= lastExecuted) continue
+        for ((index, expression) in expressions.withIndex()) {
+            if (wasExpressionExecuted(index)) continue
+
             executeStatement(expression)
-            lastExecuted = index + 1
+            lastExecuted = index
         }
     }
 
     override fun execute() {
         if (needToRestartProcess()) {
-            lastExecuted = 0
+            resetLastExecutedIndex()
             handler.clear(file)
 
             handler.onStart(file)
@@ -129,14 +131,11 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
 
     fun getFirstNewExpression(): ScratchExpression? {
         val expressions = runReadAction { file.getExpressions() }
-        if (lastExecuted in expressions.indices) {
-            return expressions[lastExecuted]
+        val firstNewExpressionIndex = lastExecuted + 1
+        if (firstNewExpressionIndex in expressions.indices) {
+            return expressions[firstNewExpressionIndex]
         }
         return null
-    }
-
-    private fun needToRestartProcess(): Boolean {
-        return lastExecuted > 0
     }
 
     private val listener = object : DocumentListener {
@@ -154,13 +153,27 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
 
             val changedLine = document.getLineNumber(event.offset)
             val changedExpression = file.getExpressionAtLine(changedLine) ?: return
-            val changedExpressionIndex = file.getExpressions().indexOf(changedExpression) + 1
-            if (changedExpressionIndex <= lastExecuted) {
-                lastExecuted = 0
+            val changedExpressionIndex = file.getExpressions().indexOf(changedExpression)
+            if (wasExpressionExecuted(changedExpressionIndex)) {
+                resetLastExecutedIndex()
                 handler.clear(file)
 
                 stopExecution()
             }
         }
+    }
+
+    private var lastExecuted = -1
+
+    private fun needToRestartProcess(): Boolean {
+        return lastExecuted > -1
+    }
+
+    private fun resetLastExecutedIndex() {
+        lastExecuted = -1
+    }
+
+    private fun wasExpressionExecuted(index: Int): Boolean {
+        return index <= lastExecuted
     }
 }
