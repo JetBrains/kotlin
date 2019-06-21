@@ -352,26 +352,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
         parameters: List<TypeParameterDescriptor>,
         mode: TypeMappingMode
     ) {
-        for ((parameter, argument) in parameters.zip(arguments)) {
-            if (argument.isStarProjection ||
-                // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
-                KotlinBuiltIns.isNothing(argument.type) && parameter.variance === Variance.IN_VARIANCE
-            ) {
-                signatureVisitor.writeUnboundedWildcard()
-            } else {
-                val argumentMode = mode.updateArgumentModeFromAnnotations(argument.type)
-                val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
-
-                signatureVisitor.writeTypeArgument(projectionKind)
-
-                mapType(
-                    argument.type, signatureVisitor,
-                    argumentMode.toGenericArgumentMode(
-                        getEffectiveVariance(parameter.variance, argument.projectionKind)
-                    )
-                )
-
-                signatureVisitor.writeTypeArgumentEnd()
+        with(SimpleClassicTypeSystemContext) {
+            writeGenericArguments(signatureVisitor, arguments, parameters, mode) { type, sw, mode ->
+                mapType(type as KotlinType, sw, mode)
             }
         }
     }
@@ -1500,6 +1483,37 @@ class KotlinTypeMapper @JvmOverloads constructor(
             // In<out X> = In<*>
             // Out<in X> = Out<*>
             return Variance.OUT_VARIANCE
+        }
+
+        fun TypeSystemCommonBackendContext.writeGenericArguments(
+            signatureVisitor: JvmSignatureWriter,
+            arguments: List<TypeArgumentMarker>,
+            parameters: List<TypeParameterMarker>,
+            mode: TypeMappingMode,
+            mapType: (KotlinTypeMarker, JvmSignatureWriter, TypeMappingMode) -> Type
+        ) {
+            for ((parameter, argument) in parameters.zip(arguments)) {
+                if (argument.isStarProjection() ||
+                    // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
+                    argument.getType().isNothing() && parameter.getVariance() == TypeVariance.IN
+                ) {
+                    signatureVisitor.writeUnboundedWildcard()
+                } else {
+                    val argumentMode = mode.updateArgumentModeFromAnnotations(argument.getType(), this)
+                    val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
+
+                    signatureVisitor.writeTypeArgument(projectionKind)
+
+                    mapType(
+                        argument.getType(), signatureVisitor,
+                        argumentMode.toGenericArgumentMode(
+                            getEffectiveVariance(parameter.getVariance().convertVariance(), argument.getVariance().convertVariance())
+                        )
+                    )
+
+                    signatureVisitor.writeTypeArgumentEnd()
+                }
+            }
         }
 
         //NB: similar platform agnostic code in DescriptorUtils.unwrapFakeOverride

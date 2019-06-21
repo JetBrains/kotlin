@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
@@ -485,6 +486,15 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is NewCapturedTypeConstructor
     }
 
+    override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return annotations.hasAnnotation(fqName)
+    }
+
+    override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? {
+        require(this is KotlinType, this::errorMessage)
+        return annotations.findAnnotation(fqName)?.allValueArguments?.values?.firstOrNull()?.value
+    }
 }
 
 fun TypeVariance.convertVariance(): Variance {
