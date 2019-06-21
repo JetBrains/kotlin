@@ -20,8 +20,8 @@ import org.gradle.language.java.artifact.JavadocArtifact;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.model.ExternalDependency;
+import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder;
 
 import java.io.File;
@@ -105,9 +105,9 @@ public class DependencyResultsTransformer {
       return Collections.emptySet();
     }
 
-    ComponentSelector componentSelector = dependencyResult.getRequested();
-    ModuleComponentIdentifier componentIdentifier = componentResult.getId() instanceof ModuleComponentIdentifier
-                                                    ? (ModuleComponentIdentifier)componentResult.getId()
+    final ComponentIdentifier resultId = componentResult.getId();
+    ModuleComponentIdentifier componentIdentifier = resultId instanceof ModuleComponentIdentifier
+                                                    ? (ModuleComponentIdentifier)resultId
                                                     : toComponentIdentifier(componentResult.getModuleVersion());
 
     String name = componentResult.getModuleVersion().getName();
@@ -115,13 +115,14 @@ public class DependencyResultsTransformer {
     String version = componentResult.getModuleVersion().getVersion();
     String selectionReason = componentResult.getSelectionReason().getDescription();
 
-    boolean resolveFromArtifacts = componentSelector instanceof ModuleComponentSelector;
+    boolean resolveFromArtifacts = resultId instanceof ModuleComponentIdentifier;
 
-    if (componentSelector instanceof ProjectComponentSelector) {
+    if (resultId instanceof ProjectComponentIdentifier) {
       Collection<ProjectDependency> projectDependencies = configurationProjectDependencies.get(componentIdentifier);
       Collection<Configuration> dependencyConfigurations;
+      String projectPath = ((ProjectComponentIdentifier)resultId).getProjectPath();
       if (projectDependencies.isEmpty()) {
-        Project dependencyProject = myProject.findProject(((ProjectComponentSelector)componentSelector).getProjectPath());
+        Project dependencyProject = myProject.findProject(projectPath);
         if (dependencyProject != null) {
           Configuration dependencyProjectConfiguration =
             dependencyProject.getConfigurations().getByName(Dependency.DEFAULT_CONFIGURATION);
@@ -145,7 +146,7 @@ public class DependencyResultsTransformer {
 
       for (Configuration it : dependencyConfigurations) {
         DefaultExternalProjectDependency dependency =
-          createProjectDependency(dependencyResult, componentResult, (ProjectComponentSelector)componentSelector, it);
+          createProjectDependency(dependencyResult, componentResult, projectPath, it);
 
         if (!componentResult.equals(dependencyResult.getFrom())) {
           dependency.getDependencies().addAll(
@@ -364,7 +365,7 @@ public class DependencyResultsTransformer {
   @NotNull
   private DefaultExternalProjectDependency createProjectDependency(DependencyResult dependencyResult,
                                                                    ResolvedComponentResult componentResult,
-                                                                   ProjectComponentSelector componentSelector,
+                                                                   String projectPath,
                                                                    Configuration it) {
     String name = componentResult.getModuleVersion().getName();
     String group = componentResult.getModuleVersion().getGroup();
@@ -377,7 +378,7 @@ public class DependencyResultsTransformer {
     dependency.setVersion(version);
     dependency.setScope(scope);
     dependency.setSelectionReason(selectionReason);
-    dependency.setProjectPath(componentSelector.getProjectPath());
+    dependency.setProjectPath(projectPath);
     dependency.setConfigurationName(it.getName());
     Set<File> artifactsFiles = new LinkedHashSet<File>(it.getAllArtifacts().getFiles().getFiles());
     dependency.setProjectDependencyArtifacts(artifactsFiles);
