@@ -17,9 +17,8 @@ package com.intellij.refactoring.introduce.inplace;
 
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -27,58 +26,45 @@ import java.awt.event.*;
 public class KeyboardComboSwitcher {
 
   public static void setupActions(final JComboBox comboBox, final Project project) {
-    final boolean toggleStrategy = !UIUtil.isUnderAquaLookAndFeel();
-    final boolean[] moveFocusBack = new boolean[] {true};
+    final Ref<Boolean> moveFocusBack = Ref.create(true);
     comboBox.addFocusListener(new FocusAdapter() {
       @Override
       public void focusGained(FocusEvent e) {
-        if (!moveFocusBack[0]) {
-          moveFocusBack[0] = true;
+        if (!moveFocusBack.get()) {
+          moveFocusBack.set(true);
           return;
         }
 
-        if (toggleStrategy) {
-          final int size = comboBox.getModel().getSize();
-          int next = comboBox.getSelectedIndex() + 1;
-          if (size > 0) {
-            if (next < 0 || next >= size) {
-              if (!UISettings.getInstance().getCycleScrolling()) {
-                return;
-              }
-              next = (next + size) % size;
+        final int size = comboBox.getModel().getSize();
+        int next = comboBox.getSelectedIndex() + 1;
+        if (size > 0) {
+          if (next < 0 || next >= size) {
+            if (!UISettings.getInstance().getCycleScrolling()) {
+              return;
             }
-            comboBox.setSelectedIndex(next);
+            next = (next + size) % size;
           }
-          ToolWindowManager.getInstance(project).activateEditorComponent();
+          comboBox.setSelectedIndex(next);
         }
-        else {
-          JBPopupFactory popupFactory = JBPopupFactory.getInstance();
-          boolean fromTheSameBalloon = popupFactory.getParentBalloonFor(e.getComponent()) == popupFactory.getParentBalloonFor(e.getOppositeComponent());
-          if (!fromTheSameBalloon) {
-            comboBox.showPopup();
-          }
-        }
+        ToolWindowManager.getInstance(project).activateEditorComponent();
       }
     });
     comboBox.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseEntered(MouseEvent e) {
-        moveFocusBack[0] = false;
+        moveFocusBack.set(false);
       }
     });
     comboBox.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-        moveFocusBack[0] = true;
-        if (!toggleStrategy && e.getKeyCode() == KeyEvent.VK_ESCAPE && e.getModifiers() == 0) {
-          ToolWindowManager.getInstance(project).activateEditorComponent();
-        }
+        moveFocusBack.set(true);
       }
     });
     comboBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        moveFocusBack[0] = true;
+        moveFocusBack.set(true);
         if (!project.isDisposed()) {
           ToolWindowManager.getInstance(project).activateEditorComponent();
         }
