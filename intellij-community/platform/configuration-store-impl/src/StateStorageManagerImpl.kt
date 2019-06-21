@@ -61,8 +61,8 @@ open class StateStorageManagerImpl(private val rootTagName: String,
 
   // access under storageLock
   @Suppress("LeakingThis")
-  private var isUseVfsListener = when {
-    componentManager == null || componentManager is Application -> ThreeState.NO
+  private var isUseVfsListener = when (componentManager) {
+    null, is Application -> ThreeState.NO
     else -> ThreeState.UNSURE // unsure because depends on stream provider state
   }
 
@@ -158,23 +158,26 @@ open class StateStorageManagerImpl(private val rootTagName: String,
                          storageCustomizer: (StateStorage.() -> Unit)? = null,
                          storageCreator: StorageCreator? = null): StateStorage {
     val normalizedCollapsedPath = normalizeFileSpec(collapsedPath)
-    val key: String
-    if (storageClass == StateStorage::class.java) {
+    val key = if (storageClass == StateStorage::class.java) {
       if (normalizedCollapsedPath.isEmpty()) {
         throw Exception("Normalized path is empty, raw path '$collapsedPath'")
       }
-      key = storageCreator?.key ?: normalizedCollapsedPath
+      val key = storageCreator?.key ?: normalizedCollapsedPath
+      if (key == StoragePathMacros.PRODUCT_WORKSPACE_FILE && ApplicationManager.getApplication().isUnitTestMode) {
+        StoragePathMacros.WORKSPACE_FILE
+      }
+      key
     }
     else {
-      key = storageClass.name!!
+      storageClass.name!!
     }
 
     val storage = storageLock.read { storages.get(key) } ?: return storageLock.write {
       storages.getOrPut(key) {
-        @Suppress("IfThenToElvis")
-        val storage = if (storageCreator == null) createStateStorage(storageClass, normalizedCollapsedPath, roamingType, stateSplitter,
-                                                                     exclusive)
-        else storageCreator.create(this)
+        val storage = when (storageCreator) {
+          null -> createStateStorage(storageClass, normalizedCollapsedPath, roamingType, stateSplitter, exclusive)
+          else -> storageCreator.create(this)
+        }
         storageCustomizer?.let { storage.it() }
         storage
       }
@@ -217,7 +220,7 @@ open class StateStorageManagerImpl(private val rootTagName: String,
         val storage = storages.get(path)
         if (storage is FileBasedStorage) {
           if (result == null) {
-            result = SmartList<FileBasedStorage>()
+            result = SmartList()
           }
           result.add(storage)
         }
