@@ -3758,6 +3758,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/explicitThis/differentReceiverInstanceExtension.kt");
         }
 
+        @TestMetadata("differentReceiverInstanceExtension2.kt")
+        public void testDifferentReceiverInstanceExtension2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/differentReceiverInstanceExtension2.kt");
+        }
+
+        @TestMetadata("differentReceiverInstanceExtension3.kt")
+        public void testDifferentReceiverInstanceExtension3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/differentReceiverInstanceExtension3.kt");
+        }
+
+        @TestMetadata("differentReceiverInstanceExtension4.kt")
+        public void testDifferentReceiverInstanceExtension4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/differentReceiverInstanceExtension4.kt");
+        }
+
         @TestMetadata("differentReceiverType.kt")
         public void testDifferentReceiverType() throws Exception {
             runTest("idea/testData/inspectionsLocal/explicitThis/differentReceiverType.kt");
