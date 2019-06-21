@@ -22,6 +22,7 @@ import com.intellij.util.ui.UIUtil;
 import java.awt.*;
 
 /**
+ * @deprecated will be removed 2020.1
  * @author Konstantin Bulenkov
  */
 public class AquaNavBarUI extends AbstractNavBarUI {

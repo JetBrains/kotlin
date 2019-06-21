@@ -16,7 +16,6 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.util.ui.JBSwingUtilities;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -199,10 +198,6 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
 
         Rectangle rectangle = new Rectangle(0, 0, r.width + insets.left + insets.right, r.height + insets.top + insets.bottom);
         NavBarUIManager.getUI().doPaintNavBarPanel(g2d, rectangle, isMainToolbarVisible(), isUndocked());
-        if (UIUtil.isUnderAquaLookAndFeel() && isUndocked()) {
-          Rectangle bounds = getParent().getBounds();
-          NavBarUIManager.getUI().doPaintWrapperPanel(g2d, bounds, false);
-        }
 
         g2d.dispose();
       }

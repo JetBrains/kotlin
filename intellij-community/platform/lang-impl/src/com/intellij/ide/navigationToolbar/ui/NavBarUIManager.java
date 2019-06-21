@@ -21,14 +21,16 @@ import com.intellij.util.ui.UIUtil;
  * @author Konstantin Bulenkov
  */
 public class NavBarUIManager {
-  public static final NavBarUI AQUA = new AquaNavBarUI();
   public static final NavBarUI COMMON = new CommonNavBarUI();
+  /**
+   * @deprecated will be removal in 2020.1
+   */
+  public static final NavBarUI AQUA = COMMON;
   public static final NavBarUI DARCULA = new DarculaNavBarUI();
 
 
   public static NavBarUI getUI() {
-    if (UIUtil.isUnderAquaLookAndFeel()) return AQUA;
-    if (UIUtil.isUnderDarcula())         return DARCULA;
+    if (UIUtil.isUnderDarcula()) return DARCULA;
     return COMMON;
   }
 }
