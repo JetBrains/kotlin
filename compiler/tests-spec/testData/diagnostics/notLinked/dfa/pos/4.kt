@@ -285,7 +285,7 @@ fun case_24(a: ((() -> Unit) -> Unit), b: (() -> Unit)) {
 }
 
 // TESTCASE NUMBER: 25
-fun case_25(a: (() -> Unit) -> Unit, b: (() -> Unit) -> Unit = if (<!SENSELESS_COMPARISON!>a == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.Unit) -> kotlin.Unit & kotlin.Nothing")!>a<!> else {{}}) {
+fun case_25(a: (() -> Unit) -> Unit, b: (() -> Unit) -> Unit = if (<!SENSELESS_COMPARISON!>a == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.Unit) -> kotlin.Unit & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>a<!> else <!TYPE_MISMATCH!>{{}}<!>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.Unit) -> kotlin.Unit")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.Unit) -> kotlin.Unit")!>b<!>
 }

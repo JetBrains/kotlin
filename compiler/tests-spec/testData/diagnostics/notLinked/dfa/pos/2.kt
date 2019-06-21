@@ -385,7 +385,7 @@ fun case_13(b: Boolean, c: Boolean, d: Boolean) {
  * ISSUES: KT-28329
  */
 fun case_14(z: Boolean?) {
-    if (true && true && true && true && EnumClassWithNullableProperty.B.prop_1 != null || z != null || <!ALWAYS_NULL!>z<!>!! && true && true) {
+    if (true && true && true && true && EnumClassWithNullableProperty.B.prop_1 != null || z != null || <!ALWAYS_NULL!>z<!>!! <!UNREACHABLE_CODE!>&& true && true<!>) {
 
     } else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>EnumClassWithNullableProperty.B.prop_1<!>

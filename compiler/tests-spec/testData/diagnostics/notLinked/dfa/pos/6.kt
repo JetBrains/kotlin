@@ -682,7 +682,7 @@ fun case_33(a: ((Float) -> Int?)?, b: Float?, c: Boolean?) {
 fun case_34(z1: Boolean?) {
     var z = null
 
-    if (true && true && true && true && EnumClassWithNullableProperty.A.prop_1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> && <!SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== null<!> && EnumClassWithNullableProperty.A.prop_1 !== <!DEBUG_INFO_CONSTANT!>z<!> || z1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> || <!ALWAYS_NULL!>z1<!>!! && true && true) {
+    if (true && true && true && true && EnumClassWithNullableProperty.A.prop_1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> && <!SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== null<!> && EnumClassWithNullableProperty.A.prop_1 !== <!DEBUG_INFO_CONSTANT!>z<!> || z1 != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> || <!ALWAYS_NULL!>z1<!>!! <!UNREACHABLE_CODE!>&& true && true<!>) {
 
     } else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>EnumClassWithNullableProperty.A.prop_1<!>
