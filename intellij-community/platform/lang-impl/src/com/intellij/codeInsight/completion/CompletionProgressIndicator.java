@@ -230,7 +230,9 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       return;
     }
 
-    addAdvertisement("Press Enter to insert, Tab to replace", null);
+    String enterShortcut = CompletionContributor.getActionShortcut(IdeActions.ACTION_EDITOR_ENTER);
+    String tabShortcut = CompletionContributor.getActionShortcut(IdeActions.ACTION_EDITOR_TAB);
+    addAdvertisement("Press " + enterShortcut + " to insert, " + tabShortcut + " to replace", null);
 
     advertiseTabReplacement(parameters);
     if (isAutopopupCompletion()) {
