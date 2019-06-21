@@ -984,9 +984,6 @@ open class FirBodyResolveTransformer(
                             else -> resultType
                         }
                     )
-                    if (variable is FirProperty) {
-                        variable.getter.transformReturnTypeRef(this, variable.returnTypeRef)
-                    }
                 }
                 variable.delegate != null -> {
                     // TODO: type from delegate
@@ -1017,6 +1014,9 @@ open class FirBodyResolveTransformer(
                         this, FirErrorTypeRefImpl(session, null, "Cannot infer variable type without initializer / getter / delegate")
                     )
                 }
+            }
+            if (variable is FirProperty && variable.getter.returnTypeRef is FirImplicitTypeRef) {
+                variable.getter.transformReturnTypeRef(this, variable.returnTypeRef)
             }
         }
     }
