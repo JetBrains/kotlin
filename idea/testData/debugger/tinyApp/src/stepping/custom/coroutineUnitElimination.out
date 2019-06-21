@@ -1,0 +1,11 @@
+LineBreakpoint created at coroutineUnitElimination.kt:5
+LineBreakpoint created at coroutineUnitElimination.kt:7
+LineBreakpoint created at coroutineUnitElimination.kt:9
+Run Java
+Connected to the target VM
+coroutineUnitElimination.kt:5
+coroutineUnitElimination.kt:7
+coroutineUnitElimination.kt:9
+Disconnected from the target VM
+
+Process finished with exit code 0

@@ -113,6 +113,7 @@ class RedundantLocalsEliminationMethodTransformer(private val languageVersionSet
         val insns =
             findPopPredecessors(methodNode) { it.isUnitInstance() || it.opcode == Opcodes.ACONST_NULL || it.opcode == Opcodes.ALOAD }
         for ((pred, pop) in insns) {
+            methodNode.instructions.insertBefore(pred, InsnNode(Opcodes.NOP))
             methodNode.instructions.removeAll(listOf(pred, pop))
         }
         return insns.isNotEmpty()

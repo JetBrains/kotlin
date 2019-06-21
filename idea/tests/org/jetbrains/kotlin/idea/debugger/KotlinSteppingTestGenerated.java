@@ -1047,6 +1047,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/coroutine.kt");
         }
 
+        @TestMetadata("coroutineUnitElimination.kt")
+        public void testCoroutineUnitElimination() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/custom/coroutineUnitElimination.kt");
+        }
+
         @TestMetadata("crossinlineLiteral.kt")
         public void testCrossinlineLiteral() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/crossinlineLiteral.kt");
