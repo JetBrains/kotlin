@@ -9,7 +9,19 @@ import org.jetbrains.org.objectweb.asm.*
 
 const val metadataDescriptor: String = "Lkotlin/Metadata;"
 
-class ClassAbiExtractor(private val writer: ClassWriter) : ClassVisitor(Opcodes.API_VERSION, writer) {
+/**
+ * Use this to get the ASM version, as otherwise value gets inlined which may cause runtime issues if
+ * another plugin adds ASM to the classpath. See https://youtrack.jetbrains.com/issue/KT-31291 for more details.
+ */
+internal val lazyAsmApiVersion = lazy {
+    try {
+        Opcodes::API_VERSION.get()
+    } catch(e: Throwable) {
+        Opcodes.API_VERSION
+    }
+}
+
+class ClassAbiExtractor(private val writer: ClassWriter) : ClassVisitor(lazyAsmApiVersion.value, writer) {
 
     override fun visitMethod(
         access: Int,
