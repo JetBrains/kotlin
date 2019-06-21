@@ -188,11 +188,15 @@ class MLSorter : CompletionFinalSorter() {
 
 private class MyMovedLookupElement(delegate: LookupElement,
                                    private val diff: Int) : LookupElementDecorator<LookupElement>(delegate) {
+  private companion object {
+    val ML_RANK_DIFF_GREEN_COLOR = JBColor(JBColor.GREEN.darker(), JBColor.GREEN.brighter())
+  }
+
   override fun renderElement(presentation: LookupElementPresentation) {
     super.renderElement(presentation)
     if (!presentation.isReal) return
     val text = if (diff < 0) " ↑${-diff} " else " ↓$diff "
-    val color: Color = if (diff < 0) JBColor.GREEN else JBColor.RED
+    val color: Color = if (diff < 0) ML_RANK_DIFF_GREEN_COLOR else JBColor.RED
 
     val fragments = presentation.tailFragments
     presentation.setTailText(text, color)
