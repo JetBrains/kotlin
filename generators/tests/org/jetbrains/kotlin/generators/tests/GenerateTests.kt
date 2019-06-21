@@ -105,8 +105,7 @@ import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
 import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
-import org.jetbrains.kotlin.idea.perf.AbstractPerformanceJavaToKotlinCopyPasteConversionTest
-import org.jetbrains.kotlin.idea.perf.AbstractPerformanceNewJavaToKotlinCopyPasteConversionTest
+import org.jetbrains.kotlin.idea.perf.*
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiModuleTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
@@ -1185,6 +1184,33 @@ fun main(args: Array<String>) {
 
         testClass<AbstractPerformanceNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPaste/conversion", testMethod = "doPerfTest", pattern = """^([^\.]+)\.java$""")
+        }
+
+        testClass<AbstractPerformanceHighlightingTest> {
+            model("highlighter", testMethod = "doPerfTest")
+        }
+
+    }
+
+    testGroup("idea/performanceTests", "idea/idea-completion/testData") {
+        testClass<AbstractPerformanceCompletionIncrementalResolveTest> {
+            model("incrementalResolve", testMethod = "doPerfTest")
+        }
+
+        testClass<AbstractPerformanceBasicCompletionHandlerTest> {
+            model("handlers/basic", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractPerformanceSmartCompletionHandlerTest> {
+            model("handlers/smart", testMethod = "doPerfTest")
+        }
+
+        testClass<AbstractPerformanceKeywordCompletionHandlerTest> {
+            model("handlers/keywords", testMethod = "doPerfTest")
+        }
+
+        testClass<AbstractPerformanceCompletionCharFilterTest> {
+            model("handlers/charFilter", testMethod = "doPerfTest")
         }
     }
 /*

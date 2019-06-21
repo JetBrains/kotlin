@@ -13,82 +13,104 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteCo
 import org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.AfterClass
 import java.io.File
 
 abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private val newJ2K: Boolean = false) :
     AbstractJavaToKotlinCopyPasteConversionTest() {
 
-    private val stats: Stats = Stats("-${j2kPrefix()}-j2k")
-
     companion object {
         @JvmStatic
-        var warmedUp: Array<Boolean> = arrayOf(false, false)
+        val warmedUp: Array<Boolean> = arrayOf(false, false)
 
+        val stats: Array<Stats> = arrayOf(Stats("old j2k"), Stats("new j2k"))
+
+        @AfterClass
+        @JvmStatic
+        fun teardown() {
+            stats.forEach { it.close() }
+        }
     }
 
     override fun setUp() {
         super.setUp()
 
         Registry.get("kotlin.use.new.j2k").setValue(newJ2K)
+        val index = j2kIndex()
 
-        val index = if (newJ2K) 1 else 0
         if (!warmedUp[index]) {
             doWarmUpPerfTest()
             warmedUp[index] = true
         }
     }
 
-    private fun doWarmUpPerfTest() {
-        val prefix = j2kPrefix()
-        with(myFixture) {
-            configureByText(JavaFileType.INSTANCE, "<selection>public class Foo {\nprivate String value;\n}</selection>")
-            performEditorAction(IdeActions.ACTION_CUT)
-            configureByText(KotlinFileType.INSTANCE, "<caret>")
-            ConvertJavaCopyPasteProcessor.conversionPerformed = false
-            tcSimplePerfTest("", "warm-up ${prefix} java2kotlin conversion", stats) {
-                performEditorAction(IdeActions.ACTION_PASTE)
-            }
-        }
-
-        kotlin.test.assertFalse(!ConvertJavaCopyPasteProcessor.conversionPerformed, "No conversion to Kotlin suggested")
-        assertEquals("class Foo {\n    private val value: String? = null\n}", myFixture.file.text)
+    override fun tearDown() {
+        commitAllDocuments()
+        super.tearDown()
     }
 
-    private fun j2kPrefix(): String {
-        return if (newJ2K) "new" else "old"
+    private fun doWarmUpPerfTest() {
+        stats().perfTest(
+            testName = "warm-up",
+            setUp = {
+                with(myFixture) {
+                    configureByText(JavaFileType.INSTANCE, "<selection>public class Foo {\nprivate String value;\n}</selection>")
+                    performEditorAction(IdeActions.ACTION_CUT)
+                    configureByText(KotlinFileType.INSTANCE, "<caret>")
+                }
+                ConvertJavaCopyPasteProcessor.conversionPerformed = false
+            },
+            test = {
+                myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+            },
+            tearDown = {
+                commitAllDocuments()
+                kotlin.test.assertFalse(!ConvertJavaCopyPasteProcessor.conversionPerformed, "No conversion to Kotlin suggested")
+                assertEquals("class Foo {\n    private val value: String? = null\n}", myFixture.file.text)
+            }
+        )
+    }
+
+    private fun j2kIndex(): Int {
+        return if (newJ2K) 1 else 0
     }
 
     fun doPerfTest(path: String) {
-        myFixture.testDataPath = testDataPath
         val testName = getTestName(false)
 
+        myFixture.testDataPath = testDataPath
         myFixture.configureByFiles("$testName.java")
+        configureByDependencyIfExists("$testName.dependency.java")
 
         val fileText = myFixture.editor.document.text
         val noConversionExpected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// NO_CONVERSION_EXPECTED").isNotEmpty()
 
-        myFixture.performEditorAction(IdeActions.ACTION_COPY)
+        stats().perfTest(
+            testName = testName,
+            setUp = {
+                myFixture.configureByFiles("$testName.java")
 
-        configureByDependencyIfExists("$testName.dependency.kt")
-        configureByDependencyIfExists("$testName.dependency.java")
+                myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
-        configureTargetFile("$testName.to.kt")
+                configureByDependencyIfExists("$testName.dependency.kt")
 
-        ConvertJavaCopyPasteProcessor.conversionPerformed = false
+                configureTargetFile("$testName.to.kt")
 
-        val prefix = j2kPrefix()
-
-        attempts {
-            tcSimplePerfTest(testName, "${prefix} java2kotlin conversion$it: $testName", stats) {
+                ConvertJavaCopyPasteProcessor.conversionPerformed = false
+            },
+            test = {
                 myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+            },
+            tearDown = {
+                commitAllDocuments()
+                validate(path, noConversionExpected)
+
+                myFixture.performEditorAction(IdeActions.ACTION_UNDO)
             }
-
-            validate(path, noConversionExpected)
-
-            myFixture.performEditorAction(IdeActions.ACTION_UNDO)
-        }
-
+        )
     }
+
+    private fun stats() = stats[j2kIndex()]
 
     open fun validate(path: String, noConversionExpected: Boolean) {
         kotlin.test.assertEquals(

@@ -131,8 +131,7 @@ public class PerformanceNewJavaToKotlinCopyPasteConversionTestGenerated extends 
 
     @TestMetadata("Imports2.java")
     public void testImports2() throws Exception {
-        // TODO: commented until rr/darthorimar/range-marker-fix is merged
-        // runTest("idea/testData/copyPaste/conversion/Imports2.java");
+        runTest("idea/testData/copyPaste/conversion/Imports2.java");
     }
 
     @TestMetadata("Imports3.java")

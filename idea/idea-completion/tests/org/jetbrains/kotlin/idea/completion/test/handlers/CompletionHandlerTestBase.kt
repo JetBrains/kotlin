@@ -40,7 +40,7 @@ abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCa
         fixture.checkResultByFile(afterFilePath)
     }
 
-    private fun getExistentLookupElement(lookupString: String?, itemText: String?, tailText: String?): LookupElement? {
+    protected fun getExistentLookupElement(lookupString: String?, itemText: String?, tailText: String?): LookupElement? {
         val lookup = LookupManager.getInstance(project)?.activeLookup as LookupImpl? ?: return null
         val items = lookup.items
 

@@ -34,7 +34,7 @@ import java.io.*
 abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProjectFileProvider {
 
     private val rootProjectFile: File = File("../perfTestProject").absoluteFile
-    private val perfStats: Stats = Stats()
+    private val perfStats: Stats = Stats(name = "whole", header = arrayOf("File", "ProcessID", "Time"))
     private val tmp = rootProjectFile
 
     override fun isStressTest(): Boolean = false
