@@ -58,7 +58,8 @@ public class BraceHighlightingHandlerTest extends LightPlatformCodeInsightTestCa
       for (RangeHighlighter highlighter : highlighters) {
         if (highlighter.getLayer() == BraceHighlightingHandler.LAYER) {
           braceHighlighters++;
-          assertTrue(first == highlighter.getStartOffset() || second == highlighter.getStartOffset());
+          assertTrue("Expected offsets: " + first + " or " + second + ", got: " + highlighter.getStartOffset(),
+                     first == highlighter.getStartOffset() || second == highlighter.getStartOffset());
         }
       }
       assertEquals(first >= 0 ? 2 : 0, braceHighlighters);

@@ -108,7 +108,7 @@ public class BraceMatchingUtil {
   }
 
   @NotNull
-  private static FileType getFileType(PsiFile file, int offset) {
+  public static FileType getFileType(PsiFile file, int offset) {
     return PsiUtilBase.getPsiFileAtOffset(file, offset).getFileType();
   }
 
