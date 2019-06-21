@@ -23,6 +23,7 @@ import org.gradle.plugins.ide.idea.IdeaPlugin;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.ExternalDependencyId;
 import org.jetbrains.plugins.gradle.model.ExternalDependency;
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency;
 import org.jetbrains.plugins.gradle.model.*;
@@ -65,6 +66,8 @@ public class DependencyResolverImpl implements DependencyResolver {
   protected final boolean myDownloadSources;
   protected final SourceSetCachedFinder mySourceSetFinder;
   public static final String PROVIDED_SCOPE = "PROVIDED";
+  public static final String COMPILE_SCOPE = CompileDependenciesProvider.SCOPE;
+  public static final String RUNTIME_SCOPE = RuntimeDependenciesProvider.SCOPE;
 
   @SuppressWarnings("GroovyUnusedDeclaration")
   public DependencyResolverImpl(@NotNull Project project, boolean isPreview) {
@@ -236,14 +239,13 @@ public class DependencyResolverImpl implements DependencyResolver {
 
     result.addAll(collectSourceSetOutputDirsAsSingleEntryLibraries(sourceSet, runtimeClasspathOrder, RuntimeDependenciesProvider.SCOPE));
 
-    filesToDependenciesMap = collectProvidedDependencies(sourceSet, result);
+    collectProvidedDependencies(sourceSet, result);
 
-    return removeDuplicates(filesToDependenciesMap, result);
+    return removeDuplicates(result);
   }
 
-  @NotNull
-  public Multimap<Object, ExternalDependency> collectProvidedDependencies(@NotNull SourceSet sourceSet,
-                                                                          @NotNull Collection<ExternalDependency> result) {
+  public void collectProvidedDependencies(@NotNull SourceSet sourceSet,
+                                          @NotNull Collection<ExternalDependency> result) {
     Multimap<Object, ExternalDependency> filesToDependenciesMap;// handle provided dependencies
     final Set<Configuration> providedConfigurations = new LinkedHashSet<Configuration>();
     filesToDependenciesMap = ArrayListMultimap.create();
@@ -302,7 +304,6 @@ public class DependencyResolverImpl implements DependencyResolver {
       }
       result.addAll(providedDependencies);
     }
-    return filesToDependenciesMap;
   }
 
   public void updateDependencyOrder(Map<File, Integer> compileClasspathOrder,
@@ -505,56 +506,53 @@ public class DependencyResolverImpl implements DependencyResolver {
     }
   }
 
-  private static List<ExternalDependency> removeDuplicates(Multimap<Object, ExternalDependency> resolvedMap, Collection<ExternalDependency> result) {
-
-    for (Collection<ExternalDependency> val : resolvedMap.asMap().values()) {
-      List<ExternalDependency> toRemove = new ArrayList<ExternalDependency>();
-      boolean isCompileScope = false;
-      boolean isProvidedScope = false;
-
-      for (ExternalDependency dep : val) {
-        if (dep.getDependencies().isEmpty()) {
-          toRemove.add(dep);
-          if (dep.getScope().equals("COMPILE")) {
-            isCompileScope = true;
-          } else if (dep.getScope().equals(PROVIDED_SCOPE)) {
-            isProvidedScope = true;
-          }
-        }
-      }
-
-      if (toRemove.size() != val.size()) {
-        removeOneByOne(result, toRemove);
-      } else if (toRemove.size() > 1) {
-        toRemove = toRemove.subList(1, toRemove.size());
-        removeOneByOne(result, toRemove);
-      }
-
-      if (!toRemove.isEmpty()) {
-        List<ExternalDependency> retained = new ArrayList<ExternalDependency>(val);
-        removeOneByOne(retained, toRemove);
-        if(!retained.isEmpty()) {
-          ExternalDependency retainedDependency = retained.iterator().next();
-          if(retainedDependency instanceof AbstractExternalDependency && !retainedDependency.getScope().equals("COMPILE")) {
-            if (isCompileScope) {
-              ((AbstractExternalDependency)retainedDependency).setScope("COMPILE");
-            } else if (isProvidedScope) {
-              ((AbstractExternalDependency)retainedDependency).setScope(PROVIDED_SCOPE);
-            }
-          }
-        }
-      }
-    }
-
-
+  // visible for tests
+  @NotNull
+  public static List<ExternalDependency> removeDuplicates(Collection<ExternalDependency> result) {
+    new DeduplicationVisitor().visit(result);
     return Lists.newArrayList(filter(result, not(isNull())));
   }
 
-  private static void removeOneByOne(Collection<ExternalDependency> collection, List<ExternalDependency> toRemove) {
-    for (ExternalDependency remove : toRemove) {
-      collection.remove(remove);
+  private static class DeduplicationVisitor {
+
+    private final Map<ExternalDependencyId, ExternalDependency> seenDependencies = new HashMap<ExternalDependencyId, ExternalDependency>();
+
+    public void visit(@NotNull Collection<ExternalDependency> dependencies) {
+      for (Iterator<ExternalDependency> iter = dependencies.iterator(); iter.hasNext(); ) {
+        ExternalDependency nextDependency = iter.next();
+        ExternalDependencyId nextId = nextDependency.getId();
+        ExternalDependency seenDependency = seenDependencies.get(nextId);
+        Collection<ExternalDependency> childDeps = nextDependency.getDependencies();
+        if (seenDependency == null) {
+          seenDependencies.put(nextId, nextDependency);
+          visit(childDeps);
+        } else {
+          upgradeScopeIfNeeded(seenDependency, nextDependency.getScope());
+          visit(childDeps);
+          seenDependency.getDependencies().addAll(childDeps);
+          iter.remove();
+        }
+      }
     }
   }
+
+  private static void upgradeScopeIfNeeded(@NotNull ExternalDependency targetDependency, @NotNull String newScope) {
+    if (targetDependency.getScope().equals(COMPILE_SCOPE) || !(targetDependency instanceof AbstractExternalDependency)) {
+      return;
+    }
+
+    final AbstractExternalDependency dep = ((AbstractExternalDependency)targetDependency);
+
+    if (newScope.equals(COMPILE_SCOPE)) {
+      dep.setScope(COMPILE_SCOPE);
+    }
+
+     if ((dep.getScope().equals(RUNTIME_SCOPE) && newScope.equals(PROVIDED_SCOPE))
+         || (dep.getScope().equals(PROVIDED_SCOPE) && newScope.equals(RUNTIME_SCOPE))) {
+       dep.setScope(COMPILE_SCOPE);
+    }
+  }
+
 
   @NotNull
   static Collection<File> getFiles(ExternalDependency dependency) {
