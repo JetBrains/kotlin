@@ -92,7 +92,7 @@ public class RegistryUi implements Disposable {
     final JScrollPane label = ScrollPaneFactory.createScrollPane(myDescriptionLabel);
     final JPanel descriptionPanel = new JPanel(new BorderLayout());
     descriptionPanel.add(label, BorderLayout.CENTER);
-    descriptionPanel.setBorder(IdeBorderFactory.createTitledBorder("Description", false));
+    descriptionPanel.setBorder(IdeBorderFactory.createTitledBorder("Description:", false, JBUI.insetsTop(8)).setShowLine(false));
 
     myContent.add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
     myContent.add(descriptionPanel, BorderLayout.SOUTH);
