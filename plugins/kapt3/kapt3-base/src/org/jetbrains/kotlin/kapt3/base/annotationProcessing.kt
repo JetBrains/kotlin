@@ -13,10 +13,7 @@ import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
-import org.jetbrains.kotlin.kapt3.base.incremental.GeneratedTypesTaskListener
-import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
-import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
+import org.jetbrains.kotlin.kapt3.base.incremental.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
@@ -87,6 +84,20 @@ fun KaptContext.doAnnotationProcessing(
 
         cacheManager?.updateCache(processors)
 
+        sourcesStructureListener?.let {
+            if (logger.isVerbose) {
+                logger.info("Analyzing sources structure took ${it.time}[ms].")
+            }
+        }
+        if (cacheManager != null && processors.any { it.getRuntimeType() == RuntimeProcType.NON_INCREMENTAL }) {
+            val nonIncremental =
+                processors.filter { it.getRuntimeType() == RuntimeProcType.NON_INCREMENTAL }.map { it.processorName }
+            logger.warn(
+                "Incremental annotation processing requested, but support is disabled because the following " +
+                        "processors are not incremental: ${nonIncremental.joinToString()}."
+            )
+        }
+
         val log = compilerAfterAP.log
 
         val filer = processingEnvironment.filer as JavacFiler
@@ -123,7 +134,7 @@ private fun showProcessorTimings(wrappedProcessors: List<ProcessorWrapper>, logg
     }
 }
 
-private class ProcessorWrapper(private val delegate: Processor) : Processor by delegate {
+private class ProcessorWrapper(private val delegate: IncrementalProcessor) : Processor by delegate {
     private var initTime: Long = 0
     private val roundTime = mutableListOf<Long>()
 
@@ -136,7 +147,7 @@ private class ProcessorWrapper(private val delegate: Processor) : Processor by d
         return result
     }
 
-    override fun init(processingEnv: ProcessingEnvironment?) {
+    override fun init(processingEnv: ProcessingEnvironment) {
         initTime += measureTimeMillis {
             delegate.init(processingEnv)
         }
@@ -161,7 +172,7 @@ private class ProcessorWrapper(private val delegate: Processor) : Processor by d
     }
 
     fun renderSpentTime(): String {
-        val processorName = delegate.javaClass.simpleName
+        val processorName = delegate.processorName
         val totalTime = initTime + roundTime.sum()
 
         return "$processorName: " +
