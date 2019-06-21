@@ -110,7 +110,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     moduleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     moduleList.setCellRenderer(new ModuleListCellRenderer() {
       @Override
-      public void customize(JList list, Module module, int index, boolean selected, boolean hasFocus) {
+      public void customize(@NotNull JList list, Module module, int index, boolean selected, boolean hasFocus) {
         if (module == null) {
           setText(getProjectConfigurableItemName());
           setIcon(getProjectConfigurableItemIcon());

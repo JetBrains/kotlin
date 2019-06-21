@@ -120,7 +120,7 @@ public final class ModuleDescriptionsComboBox extends ComboBox<ModuleDescription
     }
 
     @Override
-    public void customize(JList<? extends ModuleDescription> list, ModuleDescription value, int index, boolean selected, boolean hasFocus) {
+    public void customize(@NotNull JList<? extends ModuleDescription> list, ModuleDescription value, int index, boolean selected, boolean hasFocus) {
       setText(value == null ? myEmptySelectionText : value.getName());
       setIcon(value instanceof LoadedModuleDescription
               ? ModuleType.get(((LoadedModuleDescription)value).getModule()).getIcon()

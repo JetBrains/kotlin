@@ -255,7 +255,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     final TitledSeparator separator = new TitledSeparator();
 
     @Override
-    public void customize(JList<? extends ScopeDescriptor> list, ScopeDescriptor value, int index, boolean selected, boolean hasFocus) {
+    public void customize(@NotNull JList<? extends ScopeDescriptor> list, ScopeDescriptor value, int index, boolean selected, boolean hasFocus) {
       if (value == null) return;
       setIcon(value.getIcon());
       setText(value.getDisplayName());

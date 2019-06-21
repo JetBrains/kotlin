@@ -23,10 +23,11 @@ import com.intellij.lang.Commenter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.impl.AbstractFileType;
 import com.intellij.openapi.fileTypes.impl.CustomSyntaxTableFileType;
+import org.jetbrains.annotations.NotNull;
 
 public class StandardFileTypeRegistrator implements FileTypeRegistrator {
   @Override
-  public void initFileType(final FileType fileType) {
+  public void initFileType(@NotNull final FileType fileType) {
     if (fileType instanceof AbstractFileType) {
       init(((AbstractFileType)fileType));
     }
