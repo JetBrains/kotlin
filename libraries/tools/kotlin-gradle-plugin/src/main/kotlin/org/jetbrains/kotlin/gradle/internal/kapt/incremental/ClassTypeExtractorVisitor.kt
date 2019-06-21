@@ -9,7 +9,7 @@ import org.jetbrains.org.objectweb.asm.*
 
 private val toIgnore = setOf("java/lang/Object", "kotlin/Metadata", "org/jetbrains/annotations/NotNull")
 
-class ClassTypeExtractorVisitor(visitor: ClassVisitor) : ClassVisitor(Opcodes.API_VERSION, visitor) {
+class ClassTypeExtractorVisitor(visitor: ClassVisitor) : ClassVisitor(lazyAsmApiVersion.value, visitor) {
 
     private val abiTypes = mutableSetOf<String>()
     private val privateTypes = mutableSetOf<String>()
