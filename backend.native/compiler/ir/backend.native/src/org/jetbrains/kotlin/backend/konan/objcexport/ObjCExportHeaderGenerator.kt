@@ -977,6 +977,15 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         }
 
         add("NS_ASSUME_NONNULL_BEGIN")
+        add("#pragma clang diagnostic push")
+        listOf(
+                "-Wunknown-warning-option",
+                "-Wnullability",
+                "-Wnullability-completeness",
+                "-Wswift-name-attribute"
+        ).forEach {
+            add("#pragma clang diagnostic ignored \"$it\"")
+        }
         add("")
 
         stubs.forEach {
@@ -984,6 +993,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             add("")
         }
 
+        add("#pragma clang diagnostic pop")
         add("NS_ASSUME_NONNULL_END")
     }
 
