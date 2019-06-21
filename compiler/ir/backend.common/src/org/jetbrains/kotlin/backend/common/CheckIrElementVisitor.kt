@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isUnsigned
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
@@ -51,13 +50,17 @@ class CheckIrElementVisitor(
         // Nothing to do.
     }
 
-    private fun IrExpression.ensureTypeIs(expectedType: IrType) {
+    private fun IrExpression.ensureTypesEqual(actualType: IrType, expectedType: IrType) {
         if (!config.checkTypes)
             return
 
-        if (type != expectedType) {
-            reportError(this, "unexpected expression.type: expected ${expectedType.render()}, got ${type.render()}")
+        if (actualType != expectedType) {
+            reportError(this, "unexpected type: expected ${expectedType.render()}, got ${actualType.render()}")
         }
+    }
+
+    private fun IrExpression.ensureTypeIs(expectedType: IrType) {
+        ensureTypesEqual(type, expectedType)
     }
 
     private fun IrSymbol.ensureBound(expression: IrExpression) {
@@ -82,13 +85,12 @@ class CheckIrElementVisitor(
             IrConstKind.Double -> irBuiltIns.doubleType
         }
 
-        if (expression.type.isUnsigned()) {
-            // TODO: There are no unsigned builtins.
-            // And the CONST kind for an unsigned is signed.
-        } else {
-            expression.ensureTypeIs(naturalType)
+        var type = expression.type
+        while (true) {
+            val inlinedClass = type.getInlinedClass() ?: break
+            type = getInlineClassUnderlyingType(inlinedClass)
         }
-
+        expression.ensureTypesEqual(type, naturalType)
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
@@ -120,7 +122,14 @@ class CheckIrElementVisitor(
     override fun visitGetField(expression: IrGetField) {
         super.visitGetField(expression)
 
-        expression.ensureTypeIs(expression.symbol.owner.type)
+        val fieldType = expression.symbol.owner.type
+        // TODO: We don't have the proper type substitution yet, so skip generics for now.
+        if (fieldType is IrSimpleType &&
+                fieldType.classifier is IrClassSymbol &&
+                fieldType.arguments.isEmpty()
+        ) {
+            expression.ensureTypeIs(fieldType)
+        }
     }
 
     override fun visitSetField(expression: IrSetField) {
@@ -137,6 +146,7 @@ class CheckIrElementVisitor(
         if (function.dispatchReceiverParameter?.type is IrDynamicType) {
             reportError(expression, "Dispatch receivers with 'dynamic' type are not allowed")
         }
+        // TODO: Why don't we check parameters as well?
 
         val returnType = expression.symbol.owner.returnType
         // TODO: We don't have the proper type substitution yet, so skip generics for now.
