@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -205,25 +205,12 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
             && descriptor !is PropertyGetterDescriptor
 }
 
-private fun continuationInternalName(releaseCoroutines: Boolean): String {
-    val fqName =
-        if (releaseCoroutines) DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
-        else DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
-    return JvmClassName.byClassId(ClassId.topLevel(fqName)).internalName
-}
-
 private fun <T : Any> mapBuiltInType(
     type: KotlinType,
     typeFactory: JvmTypeFactory<T>,
     mode: TypeMappingMode
 ): T? {
     val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-
-    if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL) {
-        return typeFactory.createObjectType(continuationInternalName(false))
-    } else if (descriptor == FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE) {
-        return typeFactory.createObjectType(continuationInternalName(true))
-    }
 
     val primitiveType = KotlinBuiltIns.getPrimitiveType(descriptor)
     if (primitiveType != null) {

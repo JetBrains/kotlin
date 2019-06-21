@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-val FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL =
+private val FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL =
     MutableClassDescriptor(
         EmptyPackageFragmentDescriptor(ErrorUtils.getErrorModule(), DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL),
         ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
@@ -38,7 +37,7 @@ val FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL =
         createTypeConstructor()
     }
 
-val FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE =
+private val FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE =
     MutableClassDescriptor(
         EmptyPackageFragmentDescriptor(ErrorUtils.getErrorModule(), DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE),
         ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
