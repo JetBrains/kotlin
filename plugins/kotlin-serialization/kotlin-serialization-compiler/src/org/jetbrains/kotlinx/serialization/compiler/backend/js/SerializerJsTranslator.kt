@@ -41,11 +41,13 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 
-class SerializerJsTranslator(descriptor: ClassDescriptor,
-                             val translator: DeclarationBodyVisitor,
-                             val context: TranslationContext) : SerializerCodegen(descriptor, context.bindingContext()) {
+open class SerializerJsTranslator(
+    descriptor: ClassDescriptor,
+    val translator: DeclarationBodyVisitor,
+    val context: TranslationContext
+) : SerializerCodegen(descriptor, context.bindingContext()) {
 
-    private fun generateFunction(descriptor: FunctionDescriptor, bodyGen: JsBlockBuilder.(JsFunction, TranslationContext) -> Unit) {
+    internal fun generateFunction(descriptor: FunctionDescriptor, bodyGen: JsBlockBuilder.(JsFunction, TranslationContext) -> Unit) {
         val f = context.buildFunction(descriptor, bodyGen)
         translator.addFunction(descriptor, f, null)
     }
@@ -54,16 +56,10 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
     override fun generateSerialDesc() {
         val desc = generatedSerialDescPropertyDescriptor ?: return
         val serialDescImplClass = serializerDescriptor
-                .getClassFromInternalSerializationPackage(SERIAL_DESCRIPTOR_CLASS_IMPL)
-        val serialDescImplConstructor = serialDescImplClass
-                .unsubstitutedPrimaryConstructor!!
-
+            .getClassFromInternalSerializationPackage(SERIAL_DESCRIPTOR_CLASS_IMPL)
         // this.serialDesc = new SerialDescImpl(...)
         val correctThis = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(desc.containingDeclaration))
-        val value = JsNew(
-            context.getInnerReference(serialDescImplConstructor),
-            listOf(JsStringLiteral(serialName), if (isGeneratedSerializer) correctThis else JsNullLiteral())
-        )
+        val value = instantiateNewDescriptor(context, correctThis, serialDescImplClass)
         val assgmnt = TranslationUtils.assignmentToBackingField(context, desc, value)
         translator.addInitializerStatement(assgmnt.makeStmt())
 
@@ -73,23 +69,44 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         val pushClassFunc = serialDescImplClass.getFuncDesc(CallingConventions.addClassAnnotation).single()
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(generatedSerialDescPropertyDescriptor), JsThisRef())
 
-        for (prop in serializableProperties) {
-            if (prop.transient) continue
-            val call = JsInvocation(
-                JsNameRef(context.getNameForDescriptor(addFunc), serialClassDescRef),
-                JsStringLiteral(prop.name),
-                JsBooleanLiteral(prop.optional)
-            )
-            translator.addInitializerStatement(call.makeStmt())
-            // serialDesc.pushAnnotation(...)
-            pushAnnotationsInto(prop.descriptor, pushFunc, serialClassDescRef)
-        }
+        addElementsContentToDescriptor(context, serialClassDescRef, addFunc, pushFunc)
 
         // push class annotations
         pushAnnotationsInto(serializableDescriptor, pushClassFunc, serialClassDescRef)
     }
 
-    private fun pushAnnotationsInto(annotated: Annotated, pushFunction: DeclarationDescriptor, intoRef: JsNameRef) {
+    protected open fun instantiateNewDescriptor(
+        context: TranslationContext,
+        correctThis: JsExpression,
+        baseSerialDescImplClass: ClassDescriptor
+    ): JsExpression {
+        val serialDescImplConstructor = baseSerialDescImplClass.unsubstitutedPrimaryConstructor!!
+        return JsNew(
+            context.getInnerReference(serialDescImplConstructor),
+            listOf(JsStringLiteral(serialName), if (isGeneratedSerializer) correctThis else JsNullLiteral())
+        )
+    }
+
+    protected open fun addElementsContentToDescriptor(
+        context: TranslationContext,
+        serialDescriptorInThis: JsNameRef,
+        addElementFunction: FunctionDescriptor,
+        pushAnnotationFunction: FunctionDescriptor
+    ) {
+        for (prop in serializableProperties) {
+            if (prop.transient) continue
+            val call = JsInvocation(
+                JsNameRef(context.getNameForDescriptor(addElementFunction), serialDescriptorInThis),
+                JsStringLiteral(prop.name),
+                JsBooleanLiteral(prop.optional)
+            )
+            translator.addInitializerStatement(call.makeStmt())
+            // serialDesc.pushAnnotation(...)
+            pushAnnotationsInto(prop.descriptor, pushAnnotationFunction, serialDescriptorInThis)
+        }
+    }
+
+    protected fun pushAnnotationsInto(annotated: Annotated, pushFunction: DeclarationDescriptor, intoRef: JsNameRef) {
         for ((annotationClass , args, _) in annotated.annotationsWithArguments()) {
             val argExprs = args.map { arg ->
                 Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
@@ -107,11 +124,13 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
 
     override fun generateSerializableClassProperty(property: PropertyDescriptor) {
         val propDesc = generatedSerialDescPropertyDescriptor ?: return
-        val propTranslator = DefaultPropertyTranslator(propDesc, context,
-                                                       translator.getBackingFieldReference(propDesc))
+        val propTranslator = DefaultPropertyTranslator(
+            propDesc, context,
+            translator.getBackingFieldReference(propDesc)
+        )
         val getterDesc = propDesc.getter!!
         val getterExpr = context.getFunctionObject(getterDesc)
-                .apply { propTranslator.generateDefaultGetterFunction(getterDesc, this) }
+            .apply { propTranslator.generateDefaultGetterFunction(getterDesc, this) }
         translator.addProperty(propDesc, getterExpr, null)
     }
 
@@ -131,7 +150,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         context.addDeclarationStatement(f.makeStmt())
     }
 
-    private fun TranslationContext.referenceMethod(clazz: ClassDescriptor, name: String) =
+    protected fun TranslationContext.referenceMethod(clazz: ClassDescriptor, name: String) =
         getNameForDescriptor(clazz.getFuncDesc(name).single())
 
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
@@ -382,9 +401,18 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
     }
 
     companion object {
-        fun translate(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
-            if (getSerializableClassDescriptorBySerializer(descriptor) != null)
+        fun translate(
+            declaration: KtPureClassOrObject,
+            descriptor: ClassDescriptor,
+            translator: DeclarationBodyVisitor,
+            context: TranslationContext
+        ) {
+            val serializableDesc = getSerializableClassDescriptorBySerializer(descriptor) ?: return
+            if (serializableDesc.isSerializableEnum()) {
+                SerializerForEnumsTranslator(descriptor, translator, context).generate()
+            } else {
                 SerializerJsTranslator(descriptor, translator, context).generate()
+            }
         }
     }
 }
