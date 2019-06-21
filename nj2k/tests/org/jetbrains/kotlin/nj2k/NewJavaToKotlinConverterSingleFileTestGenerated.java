@@ -2666,6 +2666,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-1048.java");
         }
 
+        @TestMetadata("kt-10712.java")
+        public void testKt_10712() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-10712.java");
+        }
+
         @TestMetadata("kt-1074.java")
         public void testKt_1074() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-1074.java");
@@ -2691,9 +2696,19 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-17379.java");
         }
 
+        @TestMetadata("kt-19296.java")
+        public void testKt_19296() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19296.java");
+        }
+
         @TestMetadata("kt-19336.java")
         public void testKt_19336() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-19336.java");
+        }
+
+        @TestMetadata("kt-19340.java")
+        public void testKt_19340() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19340.java");
         }
 
         @TestMetadata("kt-19346.java")
@@ -2701,9 +2716,19 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-19346.java");
         }
 
+        @TestMetadata("kt-19347.java")
+        public void testKt_19347() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19347.java");
+        }
+
         @TestMetadata("kt-19348.java")
         public void testKt_19348() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-19348.java");
+        }
+
+        @TestMetadata("kt-19349.java")
+        public void testKt_19349() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19349.java");
         }
 
         @TestMetadata("kt-19352.java")
@@ -2736,6 +2761,51 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-19363.java");
         }
 
+        @TestMetadata("kt-19382.java")
+        public void testKt_19382() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19382.java");
+        }
+
+        @TestMetadata("kt-19383.java")
+        public void testKt_19383() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19383.java");
+        }
+
+        @TestMetadata("kt-19396.java")
+        public void testKt_19396() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19396.java");
+        }
+
+        @TestMetadata("kt-19549.java")
+        public void testKt_19549() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19549.java");
+        }
+
+        @TestMetadata("kt-19550.java")
+        public void testKt_19550() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19550.java");
+        }
+
+        @TestMetadata("kt-19569.java")
+        public void testKt_19569() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19569.java");
+        }
+
+        @TestMetadata("kt-19591.java")
+        public void testKt_19591() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19591.java");
+        }
+
+        @TestMetadata("kt-19600.java")
+        public void testKt_19600() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19600.java");
+        }
+
+        @TestMetadata("kt-19602.java")
+        public void testKt_19602() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19602.java");
+        }
+
         @TestMetadata("kt-19604.java")
         public void testKt_19604() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-19604.java");
@@ -2746,9 +2816,19 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-19606.java");
         }
 
+        @TestMetadata("kt-19632.java")
+        public void testKt_19632() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19632.java");
+        }
+
         @TestMetadata("kt-19634.java")
         public void testKt_19634() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-19634.java");
+        }
+
+        @TestMetadata("kt-19636.java")
+        public void testKt_19636() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19636.java");
         }
 
         @TestMetadata("kt-19639.java")
@@ -2769,6 +2849,21 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-21189.java")
         public void testKt_21189() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-21189.java");
+        }
+
+        @TestMetadata("kt-21315.java")
+        public void testKt_21315() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-21315.java");
+        }
+
+        @TestMetadata("kt-22848.java")
+        public void testKt_22848() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-22848.java");
+        }
+
+        @TestMetadata("kt-28899.java")
+        public void testKt_28899() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-28899.java");
         }
 
         @TestMetadata("kt-31818.java")
@@ -2849,6 +2944,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-809-string.java")
         public void testKt_809_string() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-809-string.java");
+        }
+
+        @TestMetadata("kt-8170.java")
+        public void testKt_8170() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-8170.java");
         }
 
         @TestMetadata("kt-820.java")
