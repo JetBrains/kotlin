@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrConst.ValueCase.*
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclarator.DeclaratorCase.*
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIr.IrType.KindCase.*
@@ -53,6 +56,8 @@ abstract class IrModuleDeserializer(
     abstract fun deserializeDescriptorReference(proto: KotlinIr.DescriptorReference): DeclarationDescriptor
     abstract fun deserializeString(proto: KotlinIr.String): String
     abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase): IrLoopBase
+
+    private val parentsStack = mutableListOf<IrDeclarationParent>()
 
     private fun deserializeName(proto: KotlinIr.String): Name {
         val name = deserializeString(proto)
@@ -159,12 +164,10 @@ abstract class IrModuleDeserializer(
     }
 
     private fun deserializeCatch(proto: KotlinIr.IrCatch, start: Int, end: Int): IrCatch {
-        val catchParameter =
-            deserializeDeclaration(proto.catchParameter, null) as IrVariable // TODO: we need a proper parent here
+        val catchParameter = deserializeIrVariable(proto.catchParameter)
         val result = deserializeExpression(proto.result)
 
-        val catch = IrCatchImpl(start, end, catchParameter, result)
-        return catch
+        return IrCatchImpl(start, end, catchParameter, result)
     }
 
     private fun deserializeSyntheticBody(proto: KotlinIr.IrSyntheticBody, start: Int, end: Int): IrSyntheticBody {
@@ -186,7 +189,7 @@ abstract class IrModuleDeserializer(
             StatementCase.CATCH //proto.hasCatch()
             -> deserializeCatch(proto.catch, start, end)
             StatementCase.DECLARATION // proto.hasDeclaration()
-            -> deserializeDeclaration(proto.declaration, null) // TODO: we need a proper parent here.
+            -> deserializeDeclaration(proto.declaration)
             StatementCase.EXPRESSION // proto.hasExpression()
             -> deserializeExpression(proto.expression)
             StatementCase.SYNTHETIC_BODY // proto.hasSyntheticBody()
@@ -817,43 +820,51 @@ abstract class IrModuleDeserializer(
         return expression
     }
 
-    private fun deserializeIrTypeParameter(
-        proto: KotlinIr.IrTypeParameter,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrTypeParameter {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrTypeParameterSymbol
-        val name = deserializeName(proto.name)
-        val variance = deserializeIrTypeVariance(proto.variance)
-        val descriptor = symbol.descriptor
+    private inline fun <T : IrDeclarationParent, R> usingParent(parent: T, block: (T) -> R): R {
+        parentsStack.push(parent)
+        try {
+            return block(parent)
+        } finally {
+            parentsStack.pop()
+        }
+    }
 
-        val parameter =  if (descriptor is DeserializedTypeParameterDescriptor && descriptor.containingDeclaration is PropertyDescriptor && symbol.isBound) {
-            // TODO: Get rid of once new properties are implemented
-            IrTypeParameterImpl(start, end, origin, IrTypeParameterSymbolImpl(descriptor), name, proto.index, proto.isReified, variance)
-        } else {
-            symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, descriptor) {
-                IrTypeParameterImpl(start, end, origin, it, name, proto.index, proto.isReified, variance)
+    private inline fun <T : IrDeclarationParent> T.usingParent(block: T.() -> Unit): T =
+        this.apply { usingParent(this) { block(it) } }
+
+    private inline fun <T> withDeserializedIrDeclarationBase(
+        proto: KotlinIr.IrDeclarationBase,
+        block: (IrSymbol, Int, Int, IrDeclarationOrigin) -> T
+    ): T where T : IrDeclaration, T : IrSymbolOwner {
+        val result = block(
+            deserializeIrSymbol(proto.symbol),
+            proto.coordinates.startOffset, proto.coordinates.endOffset,
+            deserializeIrDeclarationOrigin(proto.origin)
+        )
+        result.annotations.addAll(deserializeAnnotations(proto.annotations))
+        result.parent = parentsStack.peek()!!
+        return result
+    }
+
+    private fun deserializeIrTypeParameter(proto: KotlinIr.IrTypeParameter) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            val name = deserializeName(proto.name)
+            val variance = deserializeIrTypeVariance(proto.variance)
+
+            val descriptor = (symbol as IrTypeParameterSymbol).descriptor
+            if (descriptor is DeserializedTypeParameterDescriptor && descriptor.containingDeclaration is PropertyDescriptor && symbol.isBound) {
+                // TODO: Get rid of once new properties are implemented
+                IrTypeParameterImpl(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor), name, proto.index, proto.isReified, variance)
+            } else {
+                symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, descriptor) {
+                    IrTypeParameterImpl(startOffset, endOffset, origin, it, name, proto.index, proto.isReified, variance)
+                }
+            }.apply {
+                proto.superTypeList.mapTo(superTypes) { deserializeIrType(it) }
+
+                (descriptor as? WrappedTypeParameterDescriptor)?.bind(this)
             }
         }
-
-        val superTypes = proto.superTypeList.map { deserializeIrType(it) }
-        parameter.superTypes.addAll(superTypes)
-
-        return parameter
-    }
-
-    private fun deserializeIrTypeParameterContainer(
-        proto: KotlinIr.IrTypeParameterContainer,
-        parent: IrDeclarationParent
-    ): List<IrTypeParameter> {
-        return proto.typeParameterList.map {
-            deserializeDeclaration(
-                it,
-                parent
-            ) as IrTypeParameter
-        } // TODO: we need proper start, end and origin here?
-    }
 
     private fun deserializeClassKind(kind: KotlinIr.ClassKind) = when (kind) {
         KotlinIr.ClassKind.CLASS -> ClassKind.CLASS
@@ -864,201 +875,148 @@ abstract class IrModuleDeserializer(
         KotlinIr.ClassKind.OBJECT -> ClassKind.OBJECT
     }
 
-    private fun deserializeIrValueParameter(
-        proto: KotlinIr.IrValueParameter,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrValueParameter {
-
-        val varargElementType = if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null
-        val paramSymbol = deserializeIrSymbol(proto.symbol) as IrValueParameterSymbol
-        val parameter =
+    private fun deserializeIrValueParameter(proto: KotlinIr.IrValueParameter) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
             IrValueParameterImpl(
-                start, end, origin,
-                paramSymbol,
+                startOffset, endOffset, origin,
+                symbol as IrValueParameterSymbol,
                 deserializeName(proto.name),
                 proto.index,
                 deserializeIrType(proto.type),
-                varargElementType,
+                if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null,
                 proto.isCrossinline,
                 proto.isNoinline
             ).apply {
-                defaultValue = if (proto.hasDefaultValue()) {
-                    val expression = deserializeExpression(proto.defaultValue)
-                    IrExpressionBodyImpl(expression)
-                } else null
+                if (proto.hasDefaultValue())
+                    defaultValue = IrExpressionBodyImpl(deserializeExpression(proto.defaultValue))
+
+                (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
+                (descriptor as? WrappedReceiverParameterDescriptor)?.bind(this)
             }
+        }
 
-        return parameter
+    private fun deserializeIrClass(proto: KotlinIr.IrClass) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            val modality = deserializeModality(proto.modality)
+
+            symbolTable.declareClass(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
+                (symbol as IrClassSymbol).descriptor, modality
+            ) {
+                IrClassImpl(
+                    startOffset, endOffset, origin,
+                    it,
+                    deserializeName(proto.name),
+                    deserializeClassKind(proto.kind),
+                    deserializeVisibility(proto.visibility),
+                    modality,
+                    proto.isCompanion,
+                    proto.isInner,
+                    proto.isData,
+                    proto.isExternal,
+                    proto.isInline
+                )
+            }.usingParent {
+                proto.declarationContainer.declarationList.mapTo(declarations) { deserializeDeclaration(it) }
+
+                thisReceiver = deserializeIrValueParameter(proto.thisReceiver)
+
+                proto.typeParameters.typeParameterList.mapTo(typeParameters) { deserializeIrTypeParameter(it) }
+
+                proto.superTypeList.mapTo(superTypes) { deserializeIrType(it) }
+
+                (descriptor as? WrappedClassDescriptor)?.bind(this)
+            }
+        }
+
+    private inline fun <T : IrFunction> withDeserializedIrFunctionBase(
+        proto: KotlinIr.IrFunctionBase,
+        block: (IrFunctionSymbol, Int, Int, IrDeclarationOrigin) -> T
+    ) = withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+        block(symbol as IrFunctionSymbol, startOffset, endOffset, origin).usingParent {
+            proto.typeParameters.typeParameterList.mapTo(typeParameters) { deserializeIrTypeParameter(it) }
+            proto.valueParameterList.mapTo(valueParameters) { deserializeIrValueParameter(it) }
+            if (proto.hasDispatchReceiver())
+                dispatchReceiverParameter = deserializeIrValueParameter(proto.dispatchReceiver)
+            if (proto.hasExtensionReceiver())
+                extensionReceiverParameter = deserializeIrValueParameter(proto.extensionReceiver)
+            if (proto.hasBody())
+                body = deserializeStatement(proto.body) as IrBody
+        }
     }
 
-    private fun deserializeIrClass(
-        proto: KotlinIr.IrClass,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrClass {
+    private fun deserializeIrFunction(proto: KotlinIr.IrFunction) =
+        withDeserializedIrFunctionBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            logger.log { "### deserializing IrFunction ${proto.base.name}" }
 
-        val symbol = deserializeIrSymbol(proto.symbol) as IrClassSymbol
+            symbolTable.declareSimpleFunction(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
+                symbol.descriptor
+            ) {
+                IrFunctionImpl(
+                    startOffset, endOffset, origin,
+                    it,
+                    deserializeName(proto.base.name),
+                    deserializeVisibility(proto.base.visibility),
+                    deserializeModality(proto.modality),
+                    deserializeIrType(proto.base.returnType),
+                    proto.base.isInline,
+                    proto.base.isExternal,
+                    proto.isTailrec,
+                    proto.isSuspend
+                )
+            }.apply {
+                proto.overriddenList.mapTo(overriddenSymbols) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
 
-        val modality = deserializeModality(proto.modality)
-        val clazz = symbolTable.declareClass(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-            symbol.descriptor, modality
-        ) {
-            IrClassImpl(
-                start, end, origin,
-                it,
+                (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
+            }
+        }
+
+    private fun deserializeIrVariable(proto: KotlinIr.IrVariable) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            IrVariableImpl(
+                startOffset, endOffset, origin,
+                symbol as IrVariableSymbol,
                 deserializeName(proto.name),
-                deserializeClassKind(proto.kind),
-                deserializeVisibility(proto.visibility),
-                modality,
-                proto.isCompanion,
-                proto.isInner,
-                proto.isData,
-                proto.isExternal,
-                proto.isInline
-            )
+                deserializeIrType(proto.type),
+                proto.isVar,
+                proto.isConst,
+                proto.isLateinit
+            ).apply {
+                if (proto.hasInitializer())
+                    initializer = deserializeExpression(proto.initializer)
+
+                (descriptor as? WrappedVariableDescriptor)?.bind(this)
+            }
         }
 
-        proto.declarationContainer.declarationList.forEach {
-            val member = deserializeDeclaration(it, clazz)
-            clazz.addMember(member)
-            member.parent = clazz
+    private fun deserializeIrEnumEntry(proto: KotlinIr.IrEnumEntry): IrEnumEntry =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            symbolTable.declareEnumEntry(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                irrelevantOrigin,
+                (symbol as IrEnumEntrySymbol).descriptor
+            ) {
+                IrEnumEntryImpl(startOffset, endOffset, origin, it, deserializeName(proto.name))
+            }.apply {
+                if (proto.hasCorrespondingClass())
+                    correspondingClass = deserializeIrClass(proto.correspondingClass)
+                if (proto.hasInitializer())
+                    initializerExpression = deserializeExpression(proto.initializer)
+
+                (descriptor as? WrappedEnumEntryDescriptor)?.bind(this)
+            }
         }
 
-        clazz.thisReceiver = deserializeDeclaration(proto.thisReceiver, clazz) as IrValueParameter
+    private fun deserializeIrAnonymousInit(proto: KotlinIr.IrAnonymousInit) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            IrAnonymousInitializerImpl(startOffset, endOffset, origin, symbol as IrAnonymousInitializerSymbol).apply {
+                body = deserializeBlockBody(proto.body.blockBody, startOffset, endOffset)
 
-        val typeParameters = deserializeIrTypeParameterContainer(proto.typeParameters, clazz)
-        clazz.typeParameters.addAll(typeParameters)
-
-        val superTypes = proto.superTypeList.map { deserializeIrType(it) }
-        clazz.superTypes.addAll(superTypes)
-
-        return clazz
-    }
-
-    private fun deserializeIrFunctionBase(
-        base: KotlinIr.IrFunctionBase,
-        function: IrFunctionBase,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ) {
-
-        function.body = if (base.hasBody()) deserializeStatement(base.body) as IrBody else null
-
-        val valueParameters = base.valueParameterList.map { deserializeDeclaration(it, function) as IrValueParameter }
-        function.valueParameters.addAll(valueParameters)
-        function.dispatchReceiverParameter = if (base.hasDispatchReceiver()) deserializeDeclaration(
-            base.dispatchReceiver,
-            function
-        ) as IrValueParameter else null
-        function.extensionReceiverParameter = if (base.hasExtensionReceiver()) deserializeDeclaration(
-            base.extensionReceiver,
-            function
-        ) as IrValueParameter else null
-        val typeParameters = deserializeIrTypeParameterContainer(base.typeParameters, function) // TODO
-        function.typeParameters.addAll(typeParameters)
-    }
-
-    private fun deserializeIrFunction(
-        proto: KotlinIr.IrFunction,
-        start: Int, end: Int, origin: IrDeclarationOrigin
-    ): IrSimpleFunction {
-
-        logger.log { "### deserializing IrFunction ${proto.base.name}" }
-        val symbol = deserializeIrSymbol(proto.symbol) as IrSimpleFunctionSymbol
-
-        val function = symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                                                         symbol.descriptor
-        ) {
-            IrFunctionImpl(
-                start, end, origin, it,
-                deserializeName(proto.base.name),
-                deserializeVisibility(proto.base.visibility),
-                deserializeModality(proto.modality),
-                deserializeIrType(proto.base.returnType),
-                proto.base.isInline,
-                proto.base.isExternal,
-                proto.isTailrec,
-                proto.isSuspend
-            )
+                (descriptor as? WrappedClassDescriptor)?.bind(parentsStack.peek() as IrClass)
+            }
         }
-
-        deserializeIrFunctionBase(proto.base, function as IrFunctionBase, start, end, origin)
-        val overridden = proto.overriddenList.map { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
-        function.overriddenSymbols.addAll(overridden)
-
-//        function.correspondingProperty = correspondingProperty
-
-        return function
-    }
-
-    private fun deserializeIrVariable(
-        proto: KotlinIr.IrVariable,
-        start: Int, end: Int, origin: IrDeclarationOrigin
-    ): IrVariable {
-
-        val initializer = if (proto.hasInitializer()) {
-            deserializeExpression(proto.initializer)
-        } else null
-
-        val symbol = deserializeIrSymbol(proto.symbol) as IrVariableSymbol
-        val type = deserializeIrType(proto.type)
-
-        val variable = IrVariableImpl(
-            start,
-            end,
-            origin,
-            symbol,
-            deserializeName(proto.name),
-            type,
-            proto.isVar,
-            proto.isConst,
-            proto.isLateinit
-        )
-        variable.initializer = initializer
-        return variable
-    }
-
-    private fun deserializeIrEnumEntry(
-        proto: KotlinIr.IrEnumEntry,
-        start: Int, end: Int, origin: IrDeclarationOrigin
-    ): IrEnumEntry {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrEnumEntrySymbol
-
-        val enumEntry = symbolTable.declareEnumEntry(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            irrelevantOrigin,
-            symbol.descriptor
-        ) {
-            IrEnumEntryImpl(start, end, origin, it, deserializeName(proto.name))
-        }
-
-        if (proto.hasCorrespondingClass()) {
-            enumEntry.correspondingClass = deserializeDeclaration(proto.correspondingClass, null) as IrClass
-        }
-        if (proto.hasInitializer()) {
-            enumEntry.initializerExpression = deserializeExpression(proto.initializer)
-        }
-
-        return enumEntry
-    }
-
-    private fun deserializeIrAnonymousInit(
-        proto: KotlinIr.IrAnonymousInit,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrAnonymousInitializer {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrAnonymousInitializerSymbol
-        val initializer = IrAnonymousInitializerImpl(start, end, origin, symbol)
-        initializer.body = deserializeBlockBody(proto.body.blockBody, start, end)
-        return initializer
-    }
 
     private fun deserializeVisibility(value: KotlinIr.Visibility): Visibility { // TODO: switch to enum
         return when (deserializeString(value.name)) {
@@ -1073,50 +1031,38 @@ abstract class IrModuleDeserializer(
         }
     }
 
-    private fun deserializeIrConstructor(
-        proto: KotlinIr.IrConstructor,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrConstructor {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrConstructorSymbol
+    private fun deserializeIrConstructor(proto: KotlinIr.IrConstructor) =
+        withDeserializedIrFunctionBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            symbolTable.declareConstructor(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
+                (symbol as IrConstructorSymbol).descriptor
+            ) {
+                IrConstructorImpl(
+                    startOffset, endOffset, origin,
+                    it,
+                    deserializeName(proto.base.name),
+                    deserializeVisibility(proto.base.visibility),
+                    deserializeIrType(proto.base.returnType),
+                    proto.base.isInline,
+                    proto.base.isExternal,
+                    proto.isPrimary
+                )
+            }.apply {
+                (descriptor as? WrappedClassConstructorDescriptor)?.bind(this)
+            }
+        }
 
-        val constructor = symbolTable.declareConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                                                         symbol.descriptor, {
-                                                             IrConstructorImpl(
-                                                                 start, end, origin,
-                                                                 it,
-                                                                 deserializeName(proto.base.name),
-                                                                 deserializeVisibility(proto.base.visibility),
-                                                                 deserializeIrType(proto.base.returnType),
-                                                                 proto.base.isInline,
-                                                                 proto.base.isExternal,
-                                                                 proto.isPrimary
-                                                             )
+    private fun deserializeIrField(proto: KotlinIr.IrField) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            val type = deserializeIrType(proto.type)
 
-                                                         })
-
-        deserializeIrFunctionBase(proto.base, constructor as IrFunctionBase, start, end, origin)
-        return constructor
-    }
-
-    private fun deserializeIrField(
-        proto: KotlinIr.IrField,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrField {
-
-        val symbol = deserializeIrSymbol(proto.symbol) as IrFieldSymbol
-        val type = deserializeIrType(proto.type)
-        val field = symbolTable.declareField(UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            irrelevantOrigin,
-            symbol.descriptor,
-            type,
-            {
+            symbolTable.declareField(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
+                (symbol as IrFieldSymbol).descriptor,
+                type
+            ) {
                 IrFieldImpl(
-                    start, end, origin,
+                    startOffset, endOffset, origin,
                     it,
                     deserializeName(proto.name),
                     type,
@@ -1125,14 +1071,13 @@ abstract class IrModuleDeserializer(
                     proto.isExternal,
                     proto.isStatic
                 )
+            }.usingParent {
+                if (proto.hasInitializer())
+                    initializer = IrExpressionBodyImpl(deserializeExpression(proto.initializer))
+
+                (descriptor as? WrappedFieldDescriptor)?.bind(this)
             }
-        )
-
-        val initializer = if (proto.hasInitializer()) deserializeExpression(proto.initializer) else null
-        field.initializer = initializer?.let { IrExpressionBodyImpl(it) }
-
-        return field
-    }
+        }
 
     private fun deserializeModality(modality: KotlinIr.ModalityKind) = when (modality) {
         KotlinIr.ModalityKind.OPEN_MODALITY -> Modality.OPEN
@@ -1141,58 +1086,33 @@ abstract class IrModuleDeserializer(
         KotlinIr.ModalityKind.ABSTRACT_MODALITY -> Modality.ABSTRACT
     }
 
-    private fun deserializeIrLocalDelegatedProperty(
-        proto: KotlinIr.IrLocalDelegatedProperty,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrLocalDelegatedProperty {
+    private fun deserializeIrLocalDelegatedProperty(proto: KotlinIr.IrLocalDelegatedProperty) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            IrLocalDelegatedPropertyImpl(
+                startOffset, endOffset, origin,
+                symbol as IrLocalDelegatedPropertySymbol,
+                deserializeName(proto.name),
+                deserializeIrType(proto.type),
+                proto.isVar
+            ).apply {
+                delegate = deserializeIrVariable(proto.delegate)
+                getter = deserializeIrFunction(proto.getter)
+                if (proto.hasSetter())
+                    setter = deserializeIrFunction(proto.setter)
 
-        val delegate = deserializeIrVariable(proto.delegate, start, end, origin)
-        val getter = deserializeIrFunction(proto.getter, start, end, origin)
-        val setter = if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin) else null
-
-        delegate.let { (it.descriptor as? WrappedVariableDescriptor)?.bind(it) }
-        getter.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-        setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-
-        val symbol = deserializeIrSymbol(proto.symbol) as IrLocalDelegatedPropertySymbol
-
-        return IrLocalDelegatedPropertyImpl(
-            start, end, origin,
-            symbol,
-            deserializeName(proto.name),
-            deserializeIrType(proto.type),
-            proto.isVar
-        ).also {
-            it.delegate = delegate
-            it.getter = getter
-            it.setter = setter
+                (descriptor as? WrappedVariableDescriptorWithAccessor)?.bind(this)
+            }
         }
-    }
 
-    private fun deserializeIrProperty(
-        proto: KotlinIr.IrProperty,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrProperty {
-
-        val symbol = deserializeIrSymbol(proto.symbol) as IrPropertySymbol
-
-        val backingField =
-            if (proto.hasBackingField()) deserializeIrField(proto.backingField, start, end, origin) else null
-        val getter = if (proto.hasGetter()) deserializeIrFunction(proto.getter, start, end, origin) else null
-        val setter = if (proto.hasSetter()) deserializeIrFunction(proto.setter, start, end, origin) else null
-
-        val property =
+    private fun deserializeIrProperty(proto: KotlinIr.IrProperty) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
             symbolTable.declareProperty(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                symbol.descriptor, proto.isDelegated
+                (symbol as IrPropertySymbol).descriptor, proto.isDelegated
             ) {
                 IrPropertyImpl(
-                    start, end, origin,
-                    symbol,
+                    startOffset, endOffset, origin,
+                    it,
                     deserializeName(proto.name),
                     deserializeVisibility(proto.visibility),
                     deserializeModality(proto.modality),
@@ -1202,44 +1122,32 @@ abstract class IrModuleDeserializer(
                     proto.isDelegated,
                     proto.isExternal
                 )
-            }
+            }.apply {
+                if (proto.hasGetter()) {
+                    getter = deserializeIrFunction(proto.getter).also {
+                        it.correspondingPropertySymbol = symbol
+                    }
+                }
+                if (proto.hasSetter()) {
+                    setter = deserializeIrFunction(proto.setter).also {
+                        it.correspondingPropertySymbol = symbol
+                    }
+                }
+                if (proto.hasBackingField()) {
+                    backingField = deserializeIrField(proto.backingField).also {
+                        // A property symbol and its field symbol share the same descriptor.
+                        // Unfortunately symbol deserialization doesn't know anything about that.
+                        // So we can end up with two wrapped property descriptors for property and its field.
+                        // In that case we need to bind the field's one here.
+                        if (descriptor != it.descriptor)
+                            (it.descriptor as? WrappedPropertyDescriptor)?.bind(this)
+                        it.correspondingPropertySymbol = symbol
+                    }
+                }
 
-        backingField?.let {
-            val descriptor = it.descriptor
-            when (descriptor) {
-                is WrappedFieldDescriptor ->
-                    descriptor.bind(it)
-                is WrappedPropertyDescriptor ->
-                    // A property symbol and its field symbol share the same descriptor.
-                    // Unfortunately symbol deserialization doesn't know anything about that.
-                    // So we can end up with two wrapped property descriptors for property and its field.
-                    // In that case we need to bind the field's one here.
-                    if (symbol.descriptor != descriptor) descriptor.bind(property)
+                (descriptor as? WrappedPropertyDescriptor)?.bind(this)
             }
-
         }
-        getter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-        setter?.let { (it.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(it) }
-
-        property.backingField = backingField
-        property.getter = getter
-        property.setter = setter
-
-        backingField?.let { it.correspondingPropertySymbol = symbol }
-        getter?.let { it.correspondingPropertySymbol = symbol }
-        setter?.let { it.correspondingPropertySymbol = symbol }
-
-        return property
-    }
-
-    private fun deserializeIrTypeAlias(
-        proto: KotlinIr.IrTypeAlias,
-        start: Int,
-        end: Int,
-        origin: IrDeclarationOrigin
-    ): IrDeclaration {
-        return IrErrorDeclarationImpl(start, end, WrappedClassDescriptor())
-    }
 
     private val allKnownDeclarationOrigins =
         IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
@@ -1270,71 +1178,43 @@ abstract class IrModuleDeserializer(
         }
     }
 
-    open fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent?): IrDeclaration {
-
-        val start = proto.coordinates.startOffset
-        val end = proto.coordinates.endOffset
-        val origin = deserializeIrDeclarationOrigin(proto.origin)
-
-        val declarator = proto.declarator
-
-        val declaration: IrDeclaration = when (declarator.declaratorCase!!) {
+    private fun deserializeDeclaration(proto: KotlinIr.IrDeclaration): IrDeclaration {
+        val declaration: IrDeclaration = when (proto.declaratorCase!!) {
             IR_ANONYMOUS_INIT
-            -> deserializeIrAnonymousInit(declarator.irAnonymousInit, start, end, origin)
+            -> deserializeIrAnonymousInit(proto.irAnonymousInit)
             IR_CONSTRUCTOR
-            -> deserializeIrConstructor(declarator.irConstructor, start, end, origin)
+            -> deserializeIrConstructor(proto.irConstructor)
             IR_FIELD
-            -> deserializeIrField(declarator.irField, start, end, origin)
+            -> deserializeIrField(proto.irField)
             IR_CLASS
-            -> deserializeIrClass(declarator.irClass, start, end, origin)
+            -> deserializeIrClass(proto.irClass)
             IR_FUNCTION
-            -> deserializeIrFunction(declarator.irFunction, start, end, origin)
+            -> deserializeIrFunction(proto.irFunction)
             IR_PROPERTY
-            -> deserializeIrProperty(declarator.irProperty, start, end, origin)
-            IR_TYPE_ALIAS
-            -> deserializeIrTypeAlias(declarator.irTypeAlias, start, end, origin)
+            -> deserializeIrProperty(proto.irProperty)
             IR_TYPE_PARAMETER
-            -> deserializeIrTypeParameter(declarator.irTypeParameter, start, end, origin)
+            -> deserializeIrTypeParameter(proto.irTypeParameter)
             IR_VARIABLE
-            -> deserializeIrVariable(declarator.irVariable, start, end, origin)
+            -> deserializeIrVariable(proto.irVariable)
             IR_VALUE_PARAMETER
-            -> deserializeIrValueParameter(declarator.irValueParameter, start, end, origin)
+            -> deserializeIrValueParameter(proto.irValueParameter)
             IR_ENUM_ENTRY
-            -> deserializeIrEnumEntry(declarator.irEnumEntry, start, end, origin)
+            -> deserializeIrEnumEntry(proto.irEnumEntry)
             IR_LOCAL_DELEGATED_PROPERTY
-            -> deserializeIrLocalDelegatedProperty(declarator.irLocalDelegatedProperty, start, end, origin)
+            -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty)
             DECLARATOR_NOT_SET
-            -> error("Declaration deserialization not implemented: ${declarator.declaratorCase}")
+            -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
         }
 
-        val annotations = deserializeAnnotations(proto.annotations)
-        declaration.annotations.addAll(annotations)
-
-        parent?.let { declaration.parent = it }
-
-        val descriptor = declaration.descriptor
-
-        if (descriptor is WrappedDeclarationDescriptor<*>) {
-            when (declaration) {
-                is IrValueParameter ->
-                    if (descriptor is WrappedValueParameterDescriptor) descriptor.bind(declaration)
-                    else (descriptor as WrappedReceiverParameterDescriptor).bind(declaration)
-                is IrVariable -> (descriptor as WrappedVariableDescriptor).bind(declaration)
-                is IrTypeParameter -> (descriptor as WrappedTypeParameterDescriptor).bind(declaration)
-                is IrAnonymousInitializer -> (descriptor as WrappedClassDescriptor).bind(parent!! as IrClass)
-                is IrClass -> (descriptor as WrappedClassDescriptor).bind(declaration)
-                is IrConstructor -> (descriptor as WrappedClassConstructorDescriptor).bind(declaration)
-                is IrField -> (descriptor as WrappedFieldDescriptor).bind(declaration)
-                is IrProperty -> (descriptor as WrappedPropertyDescriptor).bind(declaration)
-                is IrEnumEntry -> (descriptor as WrappedEnumEntryDescriptor).bind(declaration)
-                is IrSimpleFunction -> (descriptor as WrappedSimpleFunctionDescriptor).bind(declaration)
-                is IrLocalDelegatedProperty -> (descriptor as WrappedVariableDescriptorWithAccessor).bind(declaration)
-            }
-        }
-        logger.log { "### Deserialized declaration: ${descriptor} -> ${ir2string(declaration)}" }
+        logger.log { "### Deserialized declaration: ${declaration.descriptor} -> ${ir2string(declaration)}" }
 
         return declaration
     }
+
+    fun deserializeDeclaration(proto: KotlinIr.IrDeclaration, parent: IrDeclarationParent) =
+        usingParent(parent) {
+            deserializeDeclaration(proto)
+        }
 }
 
 val irrelevantOrigin = object : IrDeclarationOriginImpl("irrelevant") {}

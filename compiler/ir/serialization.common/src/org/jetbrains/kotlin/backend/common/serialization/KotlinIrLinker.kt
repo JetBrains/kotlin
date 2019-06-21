@@ -271,9 +271,7 @@ abstract class KotlinIrLinker(
             val files = proto.fileList.map {
                 deserializeIrFile(it)
             }
-            val module = IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
-            module.patchDeclarationParents(null)
-            return module
+            return IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
         }
     }
 
@@ -362,7 +360,6 @@ abstract class KotlinIrLinker(
             val reachable = deserializeTopLevelDeclaration(key)
             val file = reversedFileIndex[key]!!
             file.declarations.add(reachable)
-            reachable.patchDeclarationParents(file)
             deserializeFileAnnotationsIfFirstUse(moduleOfOrigin, file)
 
             reachableTopLevels.remove(key)
