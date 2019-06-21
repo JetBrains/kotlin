@@ -639,8 +639,14 @@ internal class ObjCExportTranslatorImpl(
                     MethodBridgeValueParameter.ErrorOutParameter ->
                         ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
 
-                    is MethodBridgeValueParameter.KotlinResultOutParameter ->
-                        ObjCPointerType(mapType(method.returnType!!, bridge.bridge, objCExportScope), nullable = true)
+                    is MethodBridgeValueParameter.KotlinResultOutParameter -> {
+                        val resultType = mapType(method.returnType!!, bridge.bridge, objCExportScope)
+                        // Note: non-nullable reference or pointer type is unusable here
+                        // when passing reference to local variable from Swift because it
+                        // would require a non-null initializer then.
+                        val pointeeType = resultType.makeNullableIfReferenceOrPointer()
+                        ObjCPointerType(pointeeType, nullable = true)
+                    }
                 }
 
                 parameters += ObjCParameter(uniqueName, p, type)
@@ -981,7 +987,6 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         listOf(
                 "-Wunknown-warning-option",
                 "-Wnullability",
-                "-Wnullability-completeness",
                 "-Wswift-name-attribute"
         ).forEach {
             add("#pragma clang diagnostic ignored \"$it\"")

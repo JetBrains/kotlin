@@ -297,7 +297,7 @@ __attribute__((swift_name("Bridge")))
 - (ValuesKotlinNothing * _Nullable)foo1AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo1()")));
 - (BOOL)foo2AndReturnResult:(int32_t * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2(result:)")));
 - (BOOL)foo3AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo3()")));
-- (BOOL)foo4AndReturnResult:(ValuesKotlinNothing ** _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4(result:)")));
+- (BOOL)foo4AndReturnResult:(ValuesKotlinNothing * _Nullable * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4(result:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
