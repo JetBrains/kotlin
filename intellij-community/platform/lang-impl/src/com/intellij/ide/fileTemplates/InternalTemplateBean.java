@@ -16,13 +16,14 @@
 
 package com.intellij.ide.fileTemplates;
 
+import com.intellij.openapi.extensions.AbstractExtensionPointBean;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.xmlb.annotations.Attribute;
 
 /**
  * @author yole
  */
-public class InternalTemplateBean {
+public class InternalTemplateBean extends AbstractExtensionPointBean {
   public static final ExtensionPointName<InternalTemplateBean> EP_NAME = ExtensionPointName.create("com.intellij.internalFileTemplate");
   
   @Attribute("name")
