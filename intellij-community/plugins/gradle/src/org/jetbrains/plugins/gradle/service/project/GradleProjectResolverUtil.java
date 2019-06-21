@@ -448,7 +448,8 @@ public class GradleProjectResolverUtil {
     Queue<ExternalDependency> queue = new LinkedList<>(dependencies);
     while (!queue.isEmpty()) {
       final ExternalDependency dependency = queue.remove();
-      ExternalDependency seenDependency = dependencyMap.get(dependency.getId());
+      DefaultExternalDependencyId key = new DefaultExternalDependencyId(dependency.getId());
+      ExternalDependency seenDependency = dependencyMap.get(key);
       if (seenDependency != null) {
         if (dependency instanceof ExternalLibraryDependency) {
           if (seenDependency instanceof ExternalLibraryDependency &&
@@ -492,7 +493,7 @@ public class GradleProjectResolverUtil {
         if (prevScope.isForProductionRuntime() && currentScope.isForProductionRuntime()) continue;
       }
 
-      dependencyMap.put(new DefaultExternalDependencyId(dependency.getId()), dependency);
+      dependencyMap.put(key, dependency);
       queue.addAll(dependency.getDependencies());
     }
 
