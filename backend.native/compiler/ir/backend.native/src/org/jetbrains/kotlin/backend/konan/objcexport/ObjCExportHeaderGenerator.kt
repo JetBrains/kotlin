@@ -1096,11 +1096,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     internal fun referenceClass(objCName: String, descriptor: ClassDescriptor? = null) {
-        if (objcGenerics || descriptor !in generatedClasses) classForwardDeclarations += objCName
+        classForwardDeclarations += objCName
     }
 
     internal fun referenceProtocol(objCName: String, descriptor: ClassDescriptor? = null) {
-        if (descriptor !in generatedClasses) protocolForwardDeclarations += objCName
+        protocolForwardDeclarations += objCName
     }
 }
 

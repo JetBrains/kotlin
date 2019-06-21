@@ -542,6 +542,30 @@ __attribute__((swift_name("TestKClassI")))
 @required
 @end;
 
+__attribute__((swift_name("ForwardI2")))
+@protocol ValuesForwardI2 <ValuesForwardI1>
+@required
+@end;
+
+__attribute__((swift_name("ForwardI1")))
+@protocol ValuesForwardI1
+@required
+- (id<ValuesForwardI2>)getForwardI2 __attribute__((swift_name("getForwardI2()")));
+@end;
+
+__attribute__((swift_name("ForwardC2")))
+@interface ValuesForwardC2 : ValuesForwardC1
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((swift_name("ForwardC1")))
+@interface ValuesForwardC1 : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (ValuesForwardC2 *)getForwardC2 __attribute__((swift_name("getForwardC2()")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
