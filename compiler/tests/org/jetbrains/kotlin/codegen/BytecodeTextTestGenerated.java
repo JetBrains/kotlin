@@ -2157,6 +2157,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/forInUntil/forInUntilLongMinValue.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/stepped")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Stepped extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInStepped() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/stepped"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/hashCode")
