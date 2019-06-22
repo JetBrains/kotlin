@@ -262,6 +262,14 @@ class ServiceModel implements Disposable, InvokerSupplier {
     ServiceViewItem item = findItem(e.target, e.contributorClass);
     if (item == null) return;
 
+    if (item instanceof ServiceNode) {
+      ServiceViewContributor<?> providingContributor = ((ServiceNode)item).getProvidingContributor();
+      if (providingContributor != null && !providingContributor.equals(e.target)) {
+        item.setViewDescriptor(providingContributor.getViewDescriptor());
+        return;
+      }
+    }
+
     //noinspection unchecked
     ServiceViewDescriptor viewDescriptor = item.getContributor().getServiceDescriptor(e.target);
     item.setViewDescriptor(viewDescriptor);
@@ -300,7 +308,15 @@ class ServiceModel implements Disposable, InvokerSupplier {
       parent.getChildren().remove(item);
     }
 
-    addService(e.target, parent.getChildren(), myProject, parent, (ServiceViewContributor<?>)item.getContributor(), index);
+    Object value = e.target;
+    if (item instanceof ServiceNode) {
+      ServiceViewContributor<?> providingContributor = ((ServiceNode)item).getProvidingContributor();
+      if (providingContributor != null && !providingContributor.equals(e.target)) {
+        value = providingContributor;
+      }
+    }
+
+    addService(value, parent.getChildren(), myProject, parent, (ServiceViewContributor<?>)item.getContributor(), index);
     if (group != null && group.getChildren().isEmpty()) {
       parent.getChildren().remove(group);
     }
