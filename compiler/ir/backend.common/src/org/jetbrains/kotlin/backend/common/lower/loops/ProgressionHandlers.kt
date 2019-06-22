@@ -408,7 +408,7 @@ internal class StepHandler(
             //   // No nested step var because nested step `innerNewStep` is a local variable get (cannot have side-effects)
             //   val outerStepArg = D
             //   val outerNewStep = if (outerStepArg > 0) outerStepArg
-            //                      else throw IllegalArgumentException("Step must be positive, was: outerStepArg.")
+            //                      else throw IllegalArgumentException("Step must be positive, was: $outerStepArg.")
             //
             //   // Standard form of loop over progression
             //   var inductionVar = innerNestedFirst
@@ -438,7 +438,7 @@ internal class StepHandler(
             //   val nestedStep = progression.step
             //   val stepArg = C
             //   val checkedStep = if (stepArg > 0) stepArg
-            //                     else throw IllegalArgumentException("Step must be positive, was: stepArg.")
+            //                     else throw IllegalArgumentException("Step must be positive, was: $stepArg.")
             //   val newStep =   // Direction of P is unknown so we check its step to determine whether to negate
             //       if (nestedStep > 0) checkedStep else -checkedStep
             //
@@ -446,7 +446,7 @@ internal class StepHandler(
             //   var inductionVar = nestedFirst
             //   val last = getProgressionLastElement(nestedFirst, nestedLast, newStep)
             //   val step = newStep
-            //   if ((nestedStep > 0 && inductionVar <= last) || (nestedStep < 0 && last <= inductionVar)) {
+            //   if ((step > 0 && inductionVar <= last) || (step < 0 && last <= inductionVar)) {
             //     // Loop is not empty
             //     do {
             //       val i = inductionVar
