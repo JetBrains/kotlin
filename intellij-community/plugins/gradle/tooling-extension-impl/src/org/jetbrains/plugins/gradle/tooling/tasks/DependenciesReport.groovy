@@ -19,7 +19,7 @@ import org.gradle.api.tasks.diagnostics.internal.graph.nodes.RenderableModuleRes
 class DependenciesReport extends DefaultTask {
 
   @Input
-  String configurationName
+  List<String> configurations = []
   @OutputFile
   File outputFile
 
@@ -27,9 +27,18 @@ class DependenciesReport extends DefaultTask {
   void generate() {
     List<ComponentNode> graph = []
     Gson gson = new GsonBuilder().create()
-    Collection<Configuration> configurations = ConfigurationNode.ANY_CONFIGURATION == configurationName ? project.configurations.asList() :
-                                               Collections.singleton(project.configurations.getByName(configurationName))
-    for (configuration in configurations) {
+    Collection<Configuration> configurationList
+    if (configurations.isEmpty()) {
+      configurationList = project.configurations.asList()
+    }
+    else {
+      configurationList = new ArrayList<>()
+      for (c in configurations) {
+        configurationList.add(project.configurations.findByName(c))
+      }
+    }
+
+    for (configuration in configurationList) {
       if (!configuration.isCanBeResolved()) continue
       ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult()
       RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
