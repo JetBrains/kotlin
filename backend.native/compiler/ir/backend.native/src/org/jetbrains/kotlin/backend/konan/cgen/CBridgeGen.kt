@@ -297,19 +297,19 @@ internal fun KotlinStubs.generateObjCCall(
         superQualifier: IrClassSymbol?,
         receiver: IrExpression,
         arguments: List<IrExpression?>
-): IrExpression {
+) = builder.irBlock {
+    val callBuilder = KotlinToCCallBuilder(builder, this@generateObjCCall, isObjCMethod = true)
 
-    val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = true)
+    val superClass = irTemporaryVar(
+            superQualifier?.let { getObjCClass(symbols, it) } ?: irNullNativePtr(symbols)
+    )
 
-    val superClass = superQualifier?.let { builder.getObjCClass(symbols, it) }
-            ?: builder.irNullNativePtr(symbols)
-
-    val messenger = builder.irCall(if (isStret) {
+    val messenger = irCall(if (isStret) {
         symbols.interopGetMessengerStret
     } else {
         symbols.interopGetMessenger
     }.owner).apply {
-        putValueArgument(0, superClass) // TODO: check superClass statically.
+        putValueArgument(0, irGet(superClass)) // TODO: check superClass statically.
     }
 
     val targetPtrParameter = callBuilder.passThroughBridge(
@@ -320,7 +320,7 @@ internal fun KotlinStubs.generateObjCCall(
     val targetFunctionName = "targetPtr"
 
     val preparedReceiver = if (method.consumesReceiver()) {
-        builder.irCall(symbols.interopObjCRetain.owner).apply {
+        irCall(symbols.interopObjCRetain.owner).apply {
             putValueArgument(0, receiver)
         }
     } else {
@@ -328,9 +328,9 @@ internal fun KotlinStubs.generateObjCCall(
     }
 
     val receiverOrSuper = if (superQualifier != null) {
-        builder.irCall(symbols.interopCreateObjCSuperStruct.owner).apply {
+        irCall(symbols.interopCreateObjCSuperStruct.owner).apply {
             putValueArgument(0, preparedReceiver)
-            putValueArgument(1, superClass)
+            putValueArgument(1, irGet(superClass))
         }
     } else {
         preparedReceiver
@@ -355,7 +355,7 @@ internal fun KotlinStubs.generateObjCCall(
 
     callBuilder.emitCBridge()
 
-    return result
+    +result
 }
 
 private fun IrBuilderWithScope.getObjCClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrExpression {
@@ -1168,7 +1168,6 @@ private class ObjCBlockPointerValuePassing(
                 Name.identifier("blockHolder"),
                 isMutable = false, owner = irClass
         )
-        irClass.addChild(blockHolderField)
 
         val constructorDescriptor = WrappedClassConstructorDescriptor()
         val constructor = IrConstructorImpl(
