@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.ContinuationAdapter

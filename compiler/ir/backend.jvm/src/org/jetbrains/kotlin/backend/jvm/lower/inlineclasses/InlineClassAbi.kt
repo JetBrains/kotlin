@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 /**
  * Replace inline classes by their underlying types.
@@ -56,6 +58,13 @@ object InlineClassAbi {
      * to avoid clashes between overloaded methods.
      */
     fun mangledNameFor(irFunction: IrFunction): Name {
+        val suffix = when {
+            irFunction.fullValueParameterList.any { it.type.requiresMangling } ->
+                hashSuffix(irFunction)
+            (irFunction.parent as? IrClass)?.isInline == true -> "impl"
+            else -> return irFunction.name
+        }
+
         val base = when {
             irFunction is IrConstructor ->
                 "constructor"
@@ -67,13 +76,6 @@ object InlineClassAbi {
                 error("Unhandled special name in mangledNameFor: ${irFunction.name}")
             else ->
                 irFunction.name.asString()
-        }
-
-        val suffix = when {
-            irFunction.fullValueParameterList.any { it.type.erasedUpperBound.isInline } ->
-                hashSuffix(irFunction)
-            (irFunction.parent as? IrClass)?.isInline == true -> "impl"
-            else -> return irFunction.name
         }
 
         return Name.identifier("$base-$suffix")
@@ -92,6 +94,12 @@ object InlineClassAbi {
         append(';')
     }
 }
+
+internal val IrType.requiresMangling: Boolean
+    get() {
+        val irClass = erasedUpperBound
+        return irClass.isInline && irClass.fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME
+    }
 
 internal val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
