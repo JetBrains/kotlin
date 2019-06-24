@@ -253,3 +253,11 @@ messages/**)
 
 # used in LazyScriptDescriptor
 -keep class org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt { *; }
+
+# used in REPL
+# TODO: pack jline directly to scripting-compiler jars instead
+-keep class org.jline.reader.LineReaderBuilder { *; }
+-keep class org.jline.reader.LineReader { *; }
+-keep class org.jline.reader.History { *; }
+-keep class org.jline.reader.EndOfFileException { *; }
+-keep class org.jline.reader.UserInterruptException { *; }
