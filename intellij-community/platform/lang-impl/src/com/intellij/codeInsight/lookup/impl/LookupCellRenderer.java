@@ -71,6 +71,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   public static final Color SELECTED_FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionForeground", new JBColor(JBColor.WHITE, JBColor.foreground()));
 
   public static final Color BACKGROUND_COLOR = EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY);
+  private static final Color MATCHED_FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.matchForeground", JBUI.CurrentTheme.Link.linkColor());
   private static final Color SELECTED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionBackground", new JBColor(0xc5dffc, 0x113a5c));
   public static final Color SELECTED_NON_FOCUSED_BACKGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionInactiveBackground", new JBColor(0xE0E0E0, 0x515457));
   private static final Color NON_FOCUSED_MASK_COLOR = JBColor.namedColor("CompletionPopup.nonFocusedMask", Gray._0.withAlpha(0));
@@ -372,7 +373,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     if (prefix.length() > 0) {
       Iterable<TextRange> ranges = getMatchingFragments(prefix, name);
       if (ranges != null) {
-        SimpleTextAttributes highlighted = new SimpleTextAttributes(style, JBUI.CurrentTheme.Link.linkColor());
+        SimpleTextAttributes highlighted = new SimpleTextAttributes(style, MATCHED_FOREGROUND_COLOR);
         SpeedSearchUtil.appendColoredFragments(nameComponent, name, ranges, base, highlighted);
         return;
       }
