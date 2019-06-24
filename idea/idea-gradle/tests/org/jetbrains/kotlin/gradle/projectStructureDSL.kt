@@ -15,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -100,6 +101,13 @@ class ModuleInfo(
         val actualVersion = module.languageVersionSettings.languageVersion.versionString
         if (actualVersion != version) {
             projectInfo.messageCollector.report("Module '${module.name}': expected language version '$version' but found '$actualVersion'")
+        }
+    }
+
+    fun isHMPP(value: Boolean) {
+        val actualValue = module.isHMPPEnabled
+        if (actualValue != value) {
+            projectInfo.messageCollector.report("Module '${module.name}': expected isHMPP '$value' but found '$actualValue'")
         }
     }
 
