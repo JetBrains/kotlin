@@ -56,7 +56,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             val platform = kotlinSourceSet.actualPlatforms
             val rootModel = modelsProvider.getModifiableRootModel(ideModule)
 
-            if (!platform.supports(KotlinPlatform.JVM) && !platform.supports(KotlinPlatform.ANDROID)) {
+            if (platform.platforms.any { it != KotlinPlatform.JVM && it != KotlinPlatform.ANDROID }) {
                 migrateNonJvmSourceFolders(rootModel)
             }
 
