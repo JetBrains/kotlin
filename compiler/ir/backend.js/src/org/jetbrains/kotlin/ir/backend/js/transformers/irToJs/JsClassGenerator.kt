@@ -31,7 +31,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsGlobalBlock()
-    private val classModel = JsClassModel(className, baseClassName)
+    private val classModel = JsIrClassModel(irClass)
 
     fun generate(): JsStatement {
         assert(!irClass.descriptor.isExpect)
@@ -103,7 +103,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 }
             }
         }
-        context.staticContext.classModels[className] = classModel
+        context.staticContext.classModels[irClass.symbol] = classModel
         return classBlock
     }
 
@@ -278,3 +278,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
 private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
 private val IrClassifierSymbol.isEffectivelyExternal get() = (owner as? IrDeclaration)?.isEffectivelyExternal() == true
+
+class JsIrClassModel(val klass: IrClass) {
+    val superClasses = klass.superTypes.map { it.classifierOrFail as IrClassSymbol }
+
+    val preDeclarationBlock = JsGlobalBlock()
+    val postDeclarationBlock = JsGlobalBlock()
+}

@@ -21,5 +21,5 @@ interface IrNamer {
     fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName
     fun getNameForProperty(property: IrProperty): JsName
     fun getRefForExternalClass(klass: IrClass): JsNameRef
-    fun getNameForLoop(loop: IrLoop): String?
+    fun getNameForLoop(loop: IrLoop): JsName?
 }

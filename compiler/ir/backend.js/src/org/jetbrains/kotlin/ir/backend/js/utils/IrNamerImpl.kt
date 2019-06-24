@@ -12,18 +12,15 @@ import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 
-class IrNamerImpl(
-    private val newNameTables: NameTables,
-    private val rootScope: JsRootScope // TODO: Don't use scopes
-) : IrNamer {
+class IrNamerImpl(private val newNameTables: NameTables) : IrNamer {
 
-    override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
-        val name = newNameTables.getNameForStaticDeclaration(declaration)
-        return rootScope.declareName(name)
-    }
+    private fun String.toJsName() = JsName(this)
 
-    override fun getNameForLoop(loop: IrLoop): String? =
-        newNameTables.getNameForLoop(loop)
+    override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName =
+        newNameTables.getNameForStaticDeclaration(declaration).toJsName()
+
+    override fun getNameForLoop(loop: IrLoop): JsName? =
+        newNameTables.getNameForLoop(loop)?.toJsName()
 
     override fun getNameForConstructor(constructor: IrConstructor): JsName {
         return getNameForStaticDeclaration(constructor.parentAsClass)
@@ -31,12 +28,12 @@ class IrNamerImpl(
 
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
         require(function.dispatchReceiverParameter != null)
-        return rootScope.declareName(newNameTables.getNameForMemberFunction(function))
+        return newNameTables.getNameForMemberFunction(function).toJsName()
     }
 
     override fun getNameForMemberField(field: IrField): JsName {
         require(!field.isStatic)
-        return rootScope.declareName(newNameTables.getNameForMemberField(field))
+        return newNameTables.getNameForMemberField(field).toJsName()
     }
 
     override fun getNameForField(field: IrField): JsName {
@@ -56,9 +53,8 @@ class IrNamerImpl(
     override fun getNameForStaticFunction(function: IrSimpleFunction): JsName =
         getNameForStaticDeclaration(function)
 
-    override fun getNameForProperty(property: IrProperty): JsName {
-        return rootScope.declareName(property.getJsNameOrKotlinName().asString())
-    }
+    override fun getNameForProperty(property: IrProperty): JsName =
+        property.getJsNameOrKotlinName().asString().toJsName()
 
     override fun getRefForExternalClass(klass: IrClass): JsNameRef {
         val parent = klass.parent

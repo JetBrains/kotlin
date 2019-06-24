@@ -137,9 +137,7 @@ class ImportIntoFragmentInliningScope private constructor(
         get() = JsBlock(
             JsBlock(fragment.inlinedLocalDeclarations.values.toList()),
             fragment.declarationBlock,
-            JsBlock(fragment.classes.values.flatMap {
-                listOf(it.preDeclarationBlock, it.postDeclarationBlock)
-            }),
+            JsBlock(fragment.classes.values.map { it.postDeclarationBlock }),
             fragment.exportBlock,
             JsExpressionStatement(JsFunction(JsDynamicScope, fragment.initializerBlock, ""))
         ).also { block ->
