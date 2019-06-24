@@ -249,16 +249,16 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     )
                 }
 
-                val kFunctionRefConstructor =
-                    functionReferenceOrLambda.owner.constructors.single { it.valueParameters.size == if (isLambda) 1 else 2 }
                 // The syntax (object::method) only allows to bind one of them.
                 val hasReceiver = irFunctionReference.dispatchReceiver != null || irFunctionReference.extensionReceiver != null
+                val kFunctionRefConstructor =
+                    functionReferenceOrLambda.owner.constructors.single { it.valueParameters.size == if (hasReceiver) 2 else 1 }
 
                 body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                     +irDelegatingConstructorCall(kFunctionRefConstructor).apply {
                         putValueArgument(0, irInt(argumentTypes.size))
-                        if (!isLambda) {
-                            putValueArgument(1, if (hasReceiver) irGet(valueParameters[0]) else irNull())
+                        if (hasReceiver) {
+                            putValueArgument(1, irGet(valueParameters[0]))
                         }
                     }
 

@@ -1,5 +1,5 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
-// IGNORE_BACKEND: JS_IR, JS, JVM_IR, NATIVE
+// IGNORE_BACKEND: JS_IR, JS, NATIVE
 // WITH_REFLECT
 
 class A {
