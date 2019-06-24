@@ -17,6 +17,7 @@ package com.intellij.find.impl;
 
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.actions.ActionsCollector;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
@@ -349,6 +350,7 @@ public class RegExHelpPopup extends JPanel {
 
       @Override
       public void linkSelected(LinkLabel aSource, Object aLinkData) {
+        ActionsCollector.getInstance().record("regexp.help", RegExHelpPopup.class);
         action.run();
       }
     });
