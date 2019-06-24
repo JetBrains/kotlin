@@ -32,7 +32,7 @@ class ServiceViewSingleUi implements ServiceViewUi {
 
   @Override
   public void setServiceToolbar(@NotNull ServiceViewActionProvider actionManager) {
-    myMainPanel.setToolbar(actionManager.createServiceToolbar(myMainPanel));
+    myMainPanel.setToolbar(actionManager.createServiceToolbar(myMainPanel).getComponent());
   }
 
   @Override

@@ -10,13 +10,11 @@ import com.intellij.ui.SideBorder;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.util.Set;
 
@@ -27,6 +25,8 @@ class ServiceViewTreeUi implements ServiceViewUi {
   private final JPanel myDetailsPanel;
   private final JBPanelWithEmptyText myMessagePanel;
   private final Set<JComponent> myDetailsComponents = ContainerUtil.createWeakSet();
+  private ActionToolbar myServiceActionToolbar;
+  private ActionToolbar myMasterActionToolbar;
 
   ServiceViewTreeUi(@NotNull ServiceViewState state) {
     myMainPanel = new JPanel(new BorderLayout());
@@ -59,21 +59,18 @@ class ServiceViewTreeUi implements ServiceViewUi {
 
   @Override
   public void setServiceToolbar(@NotNull ServiceViewActionProvider actionProvider) {
-    JComponent serviceToolbar = actionProvider.createServiceToolbar(myMainPanel);
-    myMainPanel.add(serviceToolbar, BorderLayout.WEST);
+    myServiceActionToolbar = actionProvider.createServiceToolbar(myMainPanel);
+    myMainPanel.add(myServiceActionToolbar.getComponent(), BorderLayout.WEST);
   }
 
   @Override
   public void setMasterPanel(@NotNull JComponent component, @NotNull ServiceViewActionProvider actionProvider) {
     myMasterPanel.add(ScrollPaneFactory.createScrollPane(component, SideBorder.LEFT), BorderLayout.CENTER);
 
-    ActionToolbar toolbar = actionProvider.createMasterComponentToolbar(component);
-    toolbar.setOrientation(SwingConstants.VERTICAL);
-    JComponent toolbarComponent = toolbar.getComponent();
-    toolbarComponent.setBorder(new CompoundBorder(
-      IdeBorderFactory.createBorder(JBUI.CurrentTheme.DefaultTabs.borderColor(), SideBorder.LEFT),
-      toolbarComponent.getBorder()));
-    myMasterPanel.add(toolbarComponent, BorderLayout.WEST);
+    myMasterActionToolbar = actionProvider.createMasterComponentToolbar(component);
+    JComponent toolbarComponent = myMasterActionToolbar.getComponent();
+    toolbarComponent.setBorder(IdeBorderFactory.createBorder(SideBorder.LEFT | SideBorder.BOTTOM));
+    myMasterPanel.add(toolbarComponent, BorderLayout.NORTH);
 
     actionProvider.installPopupHandler(component);
   }
@@ -90,8 +87,15 @@ class ServiceViewTreeUi implements ServiceViewUi {
     myDetailsPanel.add(component, BorderLayout.CENTER);
     myDetailsPanel.revalidate();
     myDetailsPanel.repaint();
-    ActionToolbar serviceToolbar = (ActionToolbar)((BorderLayout)myMasterPanel.getLayout()).getLayoutComponent(BorderLayout.WEST);
-    serviceToolbar.updateActionsImmediately();
+
+    ActionToolbar serviceActionToolbar = myServiceActionToolbar;
+    if (serviceActionToolbar != null) {
+      serviceActionToolbar.updateActionsImmediately();
+    }
+    ActionToolbar masterActionToolbar = myMasterActionToolbar;
+    if (masterActionToolbar != null) {
+      masterActionToolbar.updateActionsImmediately();
+    }
   }
 
   @Nullable
