@@ -1,6 +1,7 @@
 //noinspection GrPackage
 
 apply plugin: 'war'
+apply plugin: 'idea'
 
 configurations {
   moreLibs
@@ -28,6 +29,7 @@ configurations {
 //  runtime files('extras')
 //}
 
+idea.module.excludeDirs += files('build/generated_content')
 
 war {
   from('src/rootContent') {
@@ -39,4 +41,6 @@ war {
   classpath configurations.moreLibs // adds a configuration to the WEB-INF/lib dir.
   webXml = file('src/someWeb.xml') // copies a file to WEB-INF/web.xml
   classpath file('src/bbb')
+
+  from ('build/generated_content') // to be excluded from idea project by idea.module.excludeDirs
 }
