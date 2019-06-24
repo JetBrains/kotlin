@@ -451,3 +451,20 @@ abstract class ForwardC1 {
 }
 
 interface TestSR10177Workaround
+
+interface TestClashes1 {
+    val clashingProperty: Int
+}
+
+interface TestClashes2 {
+    val clashingProperty: Any
+    val clashingProperty_: Any
+}
+
+class TestClashesImpl : TestClashes1, TestClashes2 {
+    override val clashingProperty: Int
+        get() = 1
+
+    override val clashingProperty_: Int
+        get() = 2
+}

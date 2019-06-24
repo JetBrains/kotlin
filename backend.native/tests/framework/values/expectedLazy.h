@@ -571,6 +571,28 @@ __attribute__((swift_name("TestSR10177Workaround")))
 @required
 @end;
 
+__attribute__((swift_name("TestClashes1")))
+@protocol ValuesTestClashes1
+@required
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@end;
+
+__attribute__((swift_name("TestClashes2")))
+@protocol ValuesTestClashes2
+@required
+@property (readonly) id clashingProperty __attribute__((swift_name("clashingProperty")));
+@property (readonly) id clashingProperty_ __attribute__((swift_name("clashingProperty_")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestClashesImpl")))
+@interface ValuesTestClashesImpl : KotlinBase <ValuesTestClashes1, ValuesTestClashes2>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@property (readonly) ValuesInt *clashingProperty_ __attribute__((swift_name("clashingProperty_")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;

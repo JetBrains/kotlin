@@ -613,6 +613,16 @@ func testSR10177Workaround() throws {
     try assertTrue(String(describing: test).contains("TestSR10177WorkaroundDerived"))
 }
 
+func testClashes() throws {
+    let test = TestClashesImpl()
+    let test1: TestClashes1 = test
+    let test2: TestClashes2 = test
+
+    try assertEquals(actual: 1, expected: test1.clashingProperty)
+    try assertEquals(actual: 1, expected: test2.clashingProperty_ as! Int32)
+    try assertEquals(actual: 2, expected: test2.clashingProperty__ as! Int32)
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -678,6 +688,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestGH2959", method: withAutorelease(testGH2959)),
             TestCase(name: "TestKClass", method: withAutorelease(testKClass)),
             TestCase(name: "TestSR10177Workaround", method: withAutorelease(testSR10177Workaround)),
+            TestCase(name: "TestClashes", method: withAutorelease(testClashes)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }

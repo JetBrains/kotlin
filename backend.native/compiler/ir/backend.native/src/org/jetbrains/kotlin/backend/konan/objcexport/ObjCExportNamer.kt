@@ -802,6 +802,10 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
         return false
     }
 
+    if (first.name != second.name) {
+        return false
+    }
+
     return bridgePropertyType(first) == bridgePropertyType(second)
 }
 
