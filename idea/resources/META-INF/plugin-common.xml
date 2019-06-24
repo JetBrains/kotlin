@@ -2233,12 +2233,21 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceSingleLineLetInspection"
-                     displayName="Replace single line .let"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimpleRedundantLetInspection"
+                     displayName="Redundant `let` call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
-                     level="INFORMATION"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ComplexRedundantLetInspection"
+                     displayName="Redundant `let` call could be removed"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="INFO"
                      language="kotlin"
     />
 
