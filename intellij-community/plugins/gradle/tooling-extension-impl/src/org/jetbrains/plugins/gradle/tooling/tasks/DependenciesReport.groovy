@@ -29,12 +29,15 @@ class DependenciesReport extends DefaultTask {
     Gson gson = new GsonBuilder().create()
     Collection<Configuration> configurationList
     if (configurations.isEmpty()) {
-      configurationList = project.configurations.asList()
+      configurationList = project.configurations
     }
     else {
       configurationList = new ArrayList<>()
-      for (c in configurations) {
-        configurationList.add(project.configurations.findByName(c))
+      for (configurationName in configurations) {
+        def configuration = project.configurations.findByName(configurationName)
+        if(configuration != null) {
+          configurationList.add(configuration)
+        }
       }
     }
 
