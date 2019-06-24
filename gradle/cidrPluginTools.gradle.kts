@@ -274,6 +274,7 @@ fun cidrUpdatePluginsXml(
                 version: String,
                 sinceBuild: String,
                 untilBuild: String,
+                name: String,
                 description: String,
                 dependency: String?
         ) = """
@@ -282,6 +283,7 @@ fun cidrUpdatePluginsXml(
                 |           url="$url"
                 |           version="$version">
                 |        <idea-version since-build="$sinceBuild" until-build="$untilBuild"/>
+                |        <name>$name</name>
                 |        <description>$description</description>
                 |        ${dependency?.let { "<depends>$it</depends>" } ?: ""}
                 |    </plugin>
@@ -292,10 +294,11 @@ fun cidrUpdatePluginsXml(
                     .files
                     .asFileTree
                     .singleFile
-                    .extractXmlElements(setOf("id", "version", "description", "idea-version"))
+                    .extractXmlElements(setOf("id", "version", "name", "description", "idea-version"))
 
             val id by extractedData
             val version by extractedData
+            val name by extractedData
             val description by extractedData
 
             val ideaVersion = extractedData.getValue("idea-version").second
@@ -303,24 +306,27 @@ fun cidrUpdatePluginsXml(
             val untilBuild = ideaVersion.getValue("until-build")
 
             val kotlinPluginDescription = generatePluginDescription(
-                    id.first,
-                    cidrPluginZipDeploymentUrl,
-                    version.first,
-                    sinceBuild,
-                    untilBuild,
-                    description.first,
-                    if (javaPluginRepoUrl != null) javaPluginId else null
+                    id = id.first,
+                    url = cidrPluginZipDeploymentUrl,
+                    version = version.first,
+                    sinceBuild = sinceBuild,
+                    untilBuild = untilBuild,
+                    name = name.first,
+                    description = description.first,
+                    dependency = if (javaPluginRepoUrl != null) javaPluginId else null
             )
 
             val javaPluginDescription = if (javaPluginRepoUrl != null) {
+                val nameAndDescription = "Kotlin/Native Platform Dependencies for " + guessCidrProductNameFromProject(false)
                 generatePluginDescription(
-                        javaPluginId,
-                        javaPluginRepoUrl,
-                        sinceBuild,
-                        sinceBuild,
-                        untilBuild,
-                        "Kotlin/Native Platform Deps for " + guessCidrProductNameFromProject(false),
-                        null
+                        id = javaPluginId,
+                        url = javaPluginRepoUrl,
+                        version = sinceBuild,
+                        sinceBuild = sinceBuild,
+                        untilBuild = untilBuild,
+                        name = nameAndDescription,
+                        description = nameAndDescription,
+                        dependency = null
                 )
             } else
                 ""
