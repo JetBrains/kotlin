@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorUniqIdAware
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.UniqId
+import org.jetbrains.kotlin.backend.common.serialization.UniqIdKey
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -52,6 +54,16 @@ class KonanIrLinker(
             moduleDescriptor.konanLibrary!!.string(stringIndex)
 
     override val ModuleDescriptor.irHeader get() = this.konanLibrary!!.irHeader
+
+    override fun List<IrFile>.handleClashes(uniqIdKey: UniqIdKey): IrFile {
+        if (size == 1)
+            return this[0]
+        assert(size != 0)
+        error("UniqId clash: ${uniqIdKey.uniqId.index}. Found in the " +
+                "[${this.joinToString { it.packageFragmentDescriptor.containingDeclaration.userName }}]")
+    }
+
+    private val ModuleDescriptor.userName get() = konanLibrary?.libraryFile?.absolutePath ?: name.asString()
 
     val modules: Map<String, IrModuleFragment> get() = mutableMapOf<String, IrModuleFragment>().apply {
         deserializersForModules.forEach {
