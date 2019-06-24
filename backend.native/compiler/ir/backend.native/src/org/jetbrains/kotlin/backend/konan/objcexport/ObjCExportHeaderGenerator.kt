@@ -604,7 +604,7 @@ internal class ObjCExportTranslatorImpl(
     private fun buildMethod(method: FunctionDescriptor, baseMethod: FunctionDescriptor, objCExportScope: ObjCExportScope): ObjCMethod {
         fun collectParameters(baseMethodBridge: MethodBridge, method: FunctionDescriptor): List<ObjCParameter> {
             fun unifyName(initialName: String, usedNames: Set<String>): String {
-                var unique = initialName
+                var unique = initialName.toValidObjCSwiftIdentifier()
                 while (unique in usedNames || unique in cKeywords) {
                     unique += "_"
                 }
@@ -986,8 +986,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         add("#pragma clang diagnostic push")
         listOf(
                 "-Wunknown-warning-option",
-                "-Wnullability",
-                "-Wswift-name-attribute"
+                "-Wnullability"
         ).forEach {
             add("#pragma clang diagnostic ignored \"$it\"")
         }

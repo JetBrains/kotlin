@@ -593,6 +593,54 @@ __attribute__((swift_name("TestClashesImpl")))
 @property (readonly) ValuesInt *clashingProperty_ __attribute__((swift_name("clashingProperty_")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers")))
+@interface ValuesTestInvalidIdentifiers : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)a_d_d_1:(int32_t)_1 _2:(int32_t)_2 _3:(int32_t)_3 __attribute__((swift_name("a_d_d(_1:_2:_3:)")));
+@property NSString *_status __attribute__((swift_name("_status")));
+@property (readonly) unichar __ __attribute__((swift_name("__")));
+@property (readonly) unichar __ __attribute__((swift_name("__")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers._Foo")))
+@interface ValuesTestInvalidIdentifiers_Foo : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers.Bar_")))
+@interface ValuesTestInvalidIdentifiersBar_ : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers.E")))
+@interface ValuesTestInvalidIdentifiersE : ValuesKotlinEnum
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *_4_ __attribute__((swift_name("_4_")));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *_5_ __attribute__((swift_name("_5_")));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (int32_t)compareToOther:(ValuesTestInvalidIdentifiersE *)other __attribute__((swift_name("compareTo(other:)")));
+@property (readonly) int32_t value __attribute__((swift_name("value")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers.Companion_")))
+@interface ValuesTestInvalidIdentifiersCompanion_ : KotlinBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion_ __attribute__((swift_name("init()")));
+@property (readonly) int32_t _42 __attribute__((swift_name("_42")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;

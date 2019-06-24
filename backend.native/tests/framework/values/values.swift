@@ -623,6 +623,27 @@ func testClashes() throws {
     try assertEquals(actual: 2, expected: test2.clashingProperty__ as! Int32)
 }
 
+func testInvalidIdentifiers() throws {
+    let test = TestInvalidIdentifiers()
+
+    try assertTrue(TestInvalidIdentifiers._Foo() is TestInvalidIdentifiers._Foo)
+    try assertFalse(TestInvalidIdentifiers.Bar_() is TestInvalidIdentifiers._Foo)
+
+    try assertEquals(actual: 42, expected: test.a_d_d(_1: 13, _2: 14, _3: 15))
+
+    test._status = "OK"
+    try assertEquals(actual: "OK", expected: test._status)
+
+    try assertEquals(actual: TestInvalidIdentifiers.E._4_.value, expected: 4)
+    try assertEquals(actual: TestInvalidIdentifiers.E._5_.value, expected: 5)
+    try assertEquals(actual: TestInvalidIdentifiers.E.__.value, expected: 6)
+    try assertEquals(actual: TestInvalidIdentifiers.E.___.value, expected: 7)
+
+    try assertEquals(actual: TestInvalidIdentifiers.Companion_()._42, expected: 42)
+
+    try assertEquals(actual: Set([test.__, test.___]), expected: Set(["$".utf16.first, "_".utf16.first]))
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -689,6 +710,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestKClass", method: withAutorelease(testKClass)),
             TestCase(name: "TestSR10177Workaround", method: withAutorelease(testSR10177Workaround)),
             TestCase(name: "TestClashes", method: withAutorelease(testClashes)),
+            TestCase(name: "TestInvalidIdentifiers", method: withAutorelease(testInvalidIdentifiers)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }
