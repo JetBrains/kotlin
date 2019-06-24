@@ -103,6 +103,18 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
         executeAfterInternal(id, operation, afterMicroseconds)
     }
 
+
+    /**
+     * Process pending job(s) on the queue of this worker, returns `true` if something was processed
+     * and `false` otherwise. Note that jobs scheduled with [executeAfter] using non-zero timeout are
+     * not processed this way. If termination request arrives while processing the queue via this API,
+     * worker is marked as terminated and will exit once the current request is done with.
+     */
+    public fun processQueue(): Boolean = processQueueInternal(id)
+
+    /**
+     * String representation of this worker.
+     */
     override public fun toString(): String = "worker $id"
 
     /**

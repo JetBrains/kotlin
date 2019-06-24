@@ -60,9 +60,10 @@ enum {
 };
 
 enum JobKind {
+  JOB_NONE = 0,
   JOB_REGULAR = 1,
-  JOB_TERMINATE,
-  JOB_EXECUTE_AFTER
+  JOB_TERMINATE = 2,
+  JOB_EXECUTE_AFTER = 3
 };
 
 THREAD_LOCAL_VARIABLE KInt g_currentWorkerId = 0;
@@ -178,7 +179,7 @@ typedef KStdOrderedSet<Job, JobCompare> DelayedJobSet;
 
 class Worker {
  public:
-  Worker(KInt id, bool errorReporting) : id_(id), errorReporting_(errorReporting) {
+  Worker(KInt id, bool errorReporting) : id_(id), errorReporting_(errorReporting), terminated_(false) {
     pthread_mutex_init(&lock_, nullptr);
     pthread_cond_init(&cond_, nullptr);
   }
@@ -199,6 +200,10 @@ class Worker {
         case JOB_TERMINATE: {
           // TODO: any more processing here?
           job.terminationRequest.future->cancelUnlocked();
+          break;
+        }
+        case JOB_NONE: {
+          RuntimeCheck(false, "Cannot be in queue");
           break;
         }
       }
@@ -228,15 +233,18 @@ class Worker {
     pthread_cond_signal(&cond_);
   }
 
-  bool waitDelayed() {
+  bool waitDelayed(bool blocking) {
     Locker locker(&lock_);
     if (delayed_.size() == 0) return false;
-    waitForQueueLocked();
+    if (blocking)
+        waitForQueueLocked();
     return true;
   }
 
-  Job getJob() {
+  Job getJob(bool blocking) {
     Locker locker(&lock_);
+    RuntimeAssert(!terminated_, "Must not be terminated");
+    if (queue_.size() == 0 && !blocking) return Job { .kind = JOB_NONE };
     waitForQueueLocked();
     auto result = queue_.front();
     queue_.pop_front();
@@ -278,6 +286,8 @@ class Worker {
     }
   }
 
+  JobKind processQueueElement(bool blocking);
+
   KInt id() const { return id_; }
 
   bool errorReporting() const { return errorReporting_; }
@@ -291,6 +301,7 @@ class Worker {
   pthread_cond_t cond_;
   // If errors to be reported on console.
   bool errorReporting_;
+  bool terminated_;
 };
 
 class State {
@@ -373,6 +384,21 @@ class State {
       worker->putDelayedJob(job);
     }
     return true;
+  }
+
+  // Returns `true` if something was indeed processed.
+  bool processQueueUnlocked(KInt id) {
+    // Can only process queue of the current worker.
+    if (id != g_currentWorkerId) ThrowWorkerInvalidState();
+    Worker* worker = nullptr;
+    {
+      Locker locker(&lock_);
+      auto it = workers_.find(id);
+      if (it == workers_.end()) return false;
+      worker = it->second;
+    }
+    JobKind kind = worker->processQueueElement(false);
+    return kind != JOB_NONE && kind != JOB_TERMINATE;
   }
 
   KInt stateOfFutureUnlocked(KInt id) {
@@ -494,42 +520,41 @@ void Future::cancelUnlocked() {
 // Defined in RuntimeUtils.kt.
 extern "C" void ReportUnhandledException(KRef e);
 
-void* workerRoutine(void* argument) {
-  Worker* worker = reinterpret_cast<Worker*>(argument);
-
-  g_currentWorkerId = worker->id();
-  Kotlin_initRuntimeIfNeeded();
-
-  {
-    ObjHolder argumentHolder;
-    ObjHolder resultHolder;
-    while (true) {
-      Job job = worker->getJob();
-      if (job.kind == JOB_TERMINATE) {
-        if (job.terminationRequest.waitDelayed) {
-          if (worker->waitDelayed()) {
-            worker->putJob(job, false);
-            continue;
-          }
+JobKind Worker::processQueueElement(bool blocking) {
+  ObjHolder argumentHolder;
+  ObjHolder resultHolder;
+  if (terminated_) return JOB_TERMINATE;
+  Job job = getJob(blocking);
+  switch (job.kind) {
+    case JOB_NONE: {
+      break;
+    }
+    case JOB_TERMINATE: {
+      if (job.terminationRequest.waitDelayed) {
+        if (waitDelayed(blocking)) {
+          putJob(job, false);
+          return JOB_NONE;
         }
-        // Termination request, notify the future.
-        job.terminationRequest.future->storeResultUnlocked(nullptr, true);
-        theState()->removeWorkerUnlocked(worker->id());
-        break;
       }
-      if (job.kind == JOB_EXECUTE_AFTER) {
-         ObjHolder operationHolder, dummyHolder;
-         KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
-         try {
-           WorkerLaunchpad(obj, dummyHolder.slot());
-         } catch (ExceptionObjHolder& e) {
-           if (worker->errorReporting())
-             ReportUnhandledException(e.obj());
-         }
-         DisposeStablePointer(job.executeAfter.operation);
-         continue;
+      terminated_ = true;
+      // Termination request, remove the worker and notify the future.
+      theState()->removeWorkerUnlocked(id());
+      job.terminationRequest.future->storeResultUnlocked(nullptr, true);
+      break;
+    }
+    case JOB_EXECUTE_AFTER: {
+      ObjHolder operationHolder, dummyHolder;
+      KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
+      try {
+        WorkerLaunchpad(obj, dummyHolder.slot());
+      } catch (ExceptionObjHolder& e) {
+        if (errorReporting())
+          ReportUnhandledException(e.obj());
       }
-      RuntimeAssert(job.kind == JOB_REGULAR, "Must be regular job");
+      DisposeStablePointer(job.executeAfter.operation);
+      break;
+    }
+    case JOB_REGULAR: {
       KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
       KNativePtr result = nullptr;
       bool ok = true;
@@ -538,19 +563,35 @@ void* workerRoutine(void* argument) {
         argumentHolder.clear();
         // Transfer the result.
         result = transfer(&resultHolder, job.regularJob.transferMode);
-      } catch (ExceptionObjHolder& e) {
-        ok = false;
-        if (worker->errorReporting())
-          ReportUnhandledException(e.obj());
-      }
-      // Notify the future.
-      job.regularJob.future->storeResultUnlocked(result, ok);
+       } catch (ExceptionObjHolder& e) {
+         ok = false;
+         if (errorReporting())
+           ReportUnhandledException(e.obj());
+       }
+       // Notify the future.
+       job.regularJob.future->storeResultUnlocked(result, ok);
+       break;
+    }
+    default: {
+      RuntimeCheck(false, "Must be exhaustive");
     }
   }
+  return job.kind;
+}
 
-  Kotlin_deinitRuntimeIfNeeded();
+void* workerRoutine(void* argument) {
+  Worker* worker = reinterpret_cast<Worker*>(argument);
+
+  g_currentWorkerId = worker->id();
+  Kotlin_initRuntimeIfNeeded();
+
+  do {
+    if (worker->processQueueElement(true) == JOB_TERMINATE) break;
+  } while (true);
 
   konanDestructInstance(worker);
+
+  Kotlin_deinitRuntimeIfNeeded();
 
   return nullptr;
 }
@@ -580,6 +621,10 @@ KInt execute(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) 
 void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
   if (!theState()->executeJobAfterInWorkerUnlocked(id, job, afterMicroseconds))
     ThrowWorkerInvalidState();
+}
+
+KBoolean processQueue(KInt id) {
+   return theState()->processQueueUnlocked(id);
 }
 
 KInt stateOfFuture(KInt id) {
@@ -637,6 +682,10 @@ KInt execute(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) 
 }
 
 void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
+  ThrowWorkerUnsupported();
+}
+
+KBoolean processQueue(KInt id) {
   ThrowWorkerUnsupported();
 }
 
@@ -699,6 +748,10 @@ KInt Kotlin_Worker_executeInternal(KInt id, KInt transferMode, KRef producer, KN
 
 void Kotlin_Worker_executeAfterInternal(KInt id, KRef job, KLong afterMicroseconds) {
   executeAfter(id, job, afterMicroseconds);
+}
+
+KBoolean Kotlin_Worker_processQueueInternal(KInt id) {
+  return processQueue(id);
 }
 
 KInt Kotlin_Worker_stateOfFuture(KInt id) {
