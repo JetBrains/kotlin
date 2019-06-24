@@ -39,10 +39,19 @@ val proguardLibraries by configurations.creating {
 }
 
 // Libraries to copy to the lib directory
-val libraries by configurations.creating
+val libraries by configurations.creating {
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+}
+
 // Compiler plugins should be copied without `kotlin-` prefix
-val compilerPlugins by configurations.creating
-val sources by configurations.creating
+val compilerPlugins by configurations.creating  {
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+}
+
+val sources by configurations.creating {
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+}
+
 // contents of dist/maven directory
 val distMavenContents by configurations.creating
 // contents of dist/common directory
@@ -114,8 +123,6 @@ configurations.all {
     resolutionStrategy {
         preferProjectModules()
     }
-
-    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 }
 
 dependencies {
