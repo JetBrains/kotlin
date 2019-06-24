@@ -404,7 +404,8 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
         val substitutor = if (declaration != null) {
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
-                    parameter.symbol as ConeTypeParameterSymbol to ((argument as? ConeTypedProjection)?.type ?: TODO("ANY?"))
+                    parameter.symbol as ConeTypeParameterSymbol to ((argument as? ConeTypedProjection)?.type
+                        ?: StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
             ConeSubstitutorByMap(substitution)
         } else {
