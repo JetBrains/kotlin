@@ -46,18 +46,17 @@ class MemoizedInlineClassReplacements {
     val getReplacementFunction: (IrFunction) -> IrReplacementFunction? =
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
-                !it.hasInlineClassParameters || it.isSyntheticInlineClassMember || it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> null
+                !it.hasMangledParameters || it.isSyntheticInlineClassMember || it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> null
                 it.hasMethodReplacement -> createMethodReplacement(it)
                 it.hasStaticReplacement -> createStaticReplacement(it)
                 else -> null
             }
         }
 
-    private val IrFunction.hasInlineClassParameters: Boolean
-        get() = explicitParameters.any { it.type.erasedUpperBound.isInline && !it.type.isDontMangleType() }
-                || (this is IrConstructor && constructedClass.isInline)
-
-    private fun IrType.isDontMangleType() = getClass()?.fqNameWhenAvailable == DescriptorUtils.RESULT_FQ_NAME
+    private val IrFunction.hasMangledParameters: Boolean
+        get() = dispatchReceiverParameter?.type?.getClass()?.isInline == true ||
+                fullValueParameterList.any { it.type.requiresMangling } ||
+                (this is IrConstructor && constructedClass.isInline)
 
     private val IrFunction.hasStaticReplacement: Boolean
         get() = origin != IrDeclarationOrigin.FAKE_OVERRIDE &&
