@@ -140,7 +140,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
 
   @NotNull
   private List<? extends ServiceViewItem> filterEmptyGroups(@NotNull List<? extends ServiceViewItem> items) {
-    return ContainerUtil.filter(items, item -> !(item instanceof ServiceGroupNode) || !getChildren(item).isEmpty());
+    return ContainerUtil.filter(items, item -> !(item instanceof ServiceGroupNode) || !filterEmptyGroups(getChildren(item)).isEmpty());
   }
 
   static ServiceViewModel createModel(@NotNull List<ServiceViewItem> items,
@@ -227,7 +227,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   }
 
   @Nullable
-  private static ServiceViewItem findItem(ServiceViewItem viewItem, List<? extends ServiceViewItem> modelItems) {
+  protected static ServiceViewItem findItem(ServiceViewItem viewItem, List<? extends ServiceViewItem> modelItems) {
     return findItem(getPath(viewItem), modelItems);
   }
 
@@ -247,7 +247,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     return null;
   }
 
-  private static Deque<ServiceViewItem> getPath(ServiceViewItem item) {
+  protected static Deque<ServiceViewItem> getPath(ServiceViewItem item) {
     Deque<ServiceViewItem> path = new LinkedList<>();
     do {
       path.addFirst(item);
@@ -359,8 +359,9 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
       super(model, modelFilter, new ServiceViewFilter(parentFilter) {
         @Override
         public boolean value(ServiceViewItem item) {
+          ServiceGroupNode group = groupRef.get();
           ServiceViewItem parent = item.getParent();
-          return parent != null && parent.equals(groupRef.get());
+          return parent != null && group != null && getPath(parent).equals(getPath(group));
         }
       });
       myGroupRef = groupRef;
@@ -378,7 +379,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
       ServiceGroupNode group = myGroupRef.get();
       if (group == null || !e.contributorClass.isInstance(group.getRootContributor())) return;
 
-      myGroupRef.set((ServiceGroupNode)findItem(group));
+      myGroupRef.set((ServiceGroupNode)findItem(group, myModel.getRoots()));
       notifyListeners();
     }
 
