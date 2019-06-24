@@ -604,6 +604,15 @@ func testKClass() throws {
   try assertTrue(test.getKotlinClass(protocol: NSObjectProtocol.self) == nil)
 }
 
+open class TestSR10177WorkaroundBase<T> {}
+class TestSR10177WorkaroundDerived : TestSR10177WorkaroundBase<TestSR10177Workaround> {}
+
+// See https://bugs.swift.org/browse/SR-10177 and https://bugs.swift.org/browse/SR-10217
+func testSR10177Workaround() throws {
+    let test = TestSR10177WorkaroundDerived()
+    try assertTrue(String(describing: test).contains("TestSR10177WorkaroundDerived"))
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -668,6 +677,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestGH2830", method: withAutorelease(testGH2830)),
             TestCase(name: "TestGH2959", method: withAutorelease(testGH2959)),
             TestCase(name: "TestKClass", method: withAutorelease(testKClass)),
+            TestCase(name: "TestSR10177Workaround", method: withAutorelease(testSR10177Workaround)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }

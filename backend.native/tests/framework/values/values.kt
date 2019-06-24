@@ -449,3 +449,5 @@ abstract class ForwardC2 : ForwardC1()
 abstract class ForwardC1 {
     abstract fun getForwardC2(): ForwardC2
 }
+
+interface TestSR10177Workaround

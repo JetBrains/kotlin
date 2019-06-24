@@ -566,6 +566,11 @@ __attribute__((swift_name("ForwardC1")))
 - (ValuesForwardC2 *)getForwardC2 __attribute__((swift_name("getForwardC2()")));
 @end;
 
+__attribute__((swift_name("TestSR10177Workaround")))
+@protocol ValuesTestSR10177Workaround
+@required
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
