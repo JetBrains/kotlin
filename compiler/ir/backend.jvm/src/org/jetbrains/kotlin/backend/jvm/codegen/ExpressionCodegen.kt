@@ -390,7 +390,7 @@ class ExpressionCodegen(
 
         expression.markLineNumber(true)
 
-        // Do not generate redundant markers in continuation, otherwise Roman will demand to remove them
+        // Do not generate redundant markers in continuation class.
         if (callee.isSuspend && !irFunction.isInvokeSuspendInContinuation()) {
             addSuspendMarker(mv, isStartNotEnd = true)
         }

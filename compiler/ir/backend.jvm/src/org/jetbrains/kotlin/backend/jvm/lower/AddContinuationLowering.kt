@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -169,6 +170,15 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
     }
 
+    private fun IrDeclarationContainer.addFunctionOverride(
+        function: IrSimpleFunction,
+        modality: Modality = Modality.FINAL
+    ): IrSimpleFunction =
+        addFunction(function.name.asString(), function.returnType, modality).apply {
+            overriddenSymbols.add(function.symbol)
+            function.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
+        }
+
     private fun IrClass.addInvoke(
         create: IrFunction,
         invokeSuspend: IrFunction,
@@ -198,7 +208,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         parametersFields: List<IrField>
     ): IrFunction {
         val create = superType.functions.single {
-            it.name == Name.identifier("create") && it.valueParameters.size == arity + 1 &&
+            it.name.asString() == "create" && it.valueParameters.size == arity + 1 &&
                     it.valueParameters.last().type.isContinuation() &&
                     if (arity == 1) it.valueParameters.first().type.isNullableAny() else true
         }
@@ -313,13 +323,22 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         addFunctionOverride(invokeSuspend).also { function ->
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
                 +irSetField(irGet(function.dispatchReceiverParameter!!), resultField, irGet(function.valueParameters[0]))
+                // There can be three kinds of suspend function call:
+                // 1) direct call from another suspend function/lambda
+                // 2) resume of coroutines via resumeWith call on continuation object
+                // 3) recursive call
+                // To distinguish case 1 from 2 and 3, we use simple INSTANCEOF check.
+                // However, this check shows the same in cases 2 and 3.
+                // Thus, we flip sign bit of label field in case 2 and leave it untouched in case 3.
+                // Since this is literally case 2 (resumeWith calls invokeSuspend), flip the bit.
+                val signBit = 1 shl 31
                 +irSetField(
                     irGet(function.dispatchReceiverParameter!!), labelField,
                     irCallOp(
                         context.irBuiltIns.intClass.functions.single { it.owner.name == OperatorNameConventions.OR },
                         context.irBuiltIns.intType,
                         irGetField(irGet(function.dispatchReceiverParameter!!), labelField),
-                        irInt(1 shl 31)
+                        irInt(signBit)
                     )
                 )
                 +irReturn(irCall(irFunction).also { it.putValueArgument(0, irGet(function.dispatchReceiverParameter!!)) })
@@ -329,11 +348,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
     private fun addContinuationParameter(irFile: IrFile, suspendLambdas: Set<IrFunction>): Set<IrFunction> {
         val views = hashSetOf<IrFunction>()
-        fun tryAddContinuationParameter(element: IrElement): List<IrDeclaration>? {
-            return if (element is IrSimpleFunction && element.isSuspend && element !in suspendLambdas) {
-                listOf(element.getOrCreateView().also { views.add(it) })
-            } else null
-        }
 
         irFile.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -342,7 +356,11 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
             override fun visitClass(declaration: IrClass) {
                 declaration.acceptChildrenVoid(this)
-                declaration.transformDeclarationsFlat(::tryAddContinuationParameter)
+                declaration.transformDeclarationsFlat { element ->
+                    if (element is IrSimpleFunction && element.isSuspend && element !in suspendLambdas) {
+                        listOf(element.getOrCreateView().also { views.add(it) })
+                    } else null
+                }
             }
         })
         return views

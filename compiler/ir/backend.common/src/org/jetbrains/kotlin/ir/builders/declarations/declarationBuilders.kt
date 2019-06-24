@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -162,12 +161,6 @@ fun IrDeclarationContainer.addFunction(
         if (!isStatic) {
             dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
         }
-    }
-
-fun IrDeclarationContainer.addFunctionOverride(function: IrSimpleFunction, modality: Modality = Modality.FINAL): IrSimpleFunction =
-    addFunction(function.name.asString(), function.returnType, modality).apply {
-        overriddenSymbols.add(function.symbol)
-        function.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
     }
 
 inline fun buildConstructor(b: IrFunctionBuilder.() -> Unit): IrConstructor =
