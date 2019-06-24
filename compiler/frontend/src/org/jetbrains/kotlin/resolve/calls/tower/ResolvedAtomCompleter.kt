@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
@@ -129,7 +130,7 @@ class ResolvedAtomCompleter(
             val substitutedTypes = returnTypes.filterNotNull()
             // we have some unsubstituted types
             if (substitutedTypes.isEmpty()) return false
-            val commonReturnType = CommonSupertypes.commonSupertype(substitutedTypes)
+            val commonReturnType = NewCommonSuperTypeCalculator.commonSuperType(substitutedTypes)
             return commonReturnType.isUnit()
         }
 
