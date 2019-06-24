@@ -19,7 +19,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndentWithoutInsets"/>
         </clientProperties>
-        <border type="none" title-resource-bundle="messages/CodeInsightBundle" title-key="dialog.intention.settings.description.panel.title"/>
+        <border type="none"/>
         <children>
           <scrollpane id="f9e30" class="com.intellij.ui.components.JBScrollPane">
             <constraints>
@@ -39,7 +39,7 @@
           </scrollpane>
         </children>
       </grid>
-      <grid id="3853d" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="3853d" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -53,7 +53,7 @@
           <xy id="a6fdd" binding="myAfterPanel" layout-manager="XYLayout" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -62,29 +62,12 @@
           <xy id="fa495" binding="myBeforePanel" layout-manager="XYLayout" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children/>
           </xy>
-          <component id="e4723" class="com.intellij.ui.TitledSeparator">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Before"/>
-            </properties>
-          </component>
-          <component id="967ce" class="com.intellij.ui.TitledSeparator">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <alignmentY value="0.2"/>
-              <text value="After"/>
-            </properties>
-          </component>
         </children>
       </grid>
       <grid id="ed462" binding="myPoweredByPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -95,7 +78,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
         </clientProperties>
-        <border type="none" title-resource-bundle="messages/CodeInsightBundle" title-key="powered.by"/>
+        <border type="none"/>
         <children/>
       </grid>
     </children>
