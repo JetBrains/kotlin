@@ -91,6 +91,8 @@ object CallingConventions {
     const val decode = "decode"
     const val update = "update"
     const val encode = "encode"
+    const val encodeEnum = "encodeEnum"
+    const val decodeEnum = "decodeEnum"
     const val decodeElementIndex = "decodeElementIndex"
     const val elementPostfix = "Element"
     const val shouldEncodeDefault = "shouldEncodeElementDefault"

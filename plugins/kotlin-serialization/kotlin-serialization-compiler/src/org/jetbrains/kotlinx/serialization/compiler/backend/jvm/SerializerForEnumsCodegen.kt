@@ -22,7 +22,7 @@ class SerializerForEnumsCodegen(
         stackSerialClassDesc(null)
         load(objVar, serializableAsmType)
         invokevirtual(serializableAsmType.internalName, "ordinal", "()I", false)
-        invokeinterface(encoderType.internalName, "encodeEnum", "(${descType.descriptor}I)V")
+        invokeinterface(encoderType.internalName, CallingConventions.encodeEnum, "(${descType.descriptor}I)V")
         // return
         areturn(Type.VOID_TYPE)
     }
@@ -36,7 +36,7 @@ class SerializerForEnumsCodegen(
         // input.decodeEnum(descriptor)
         load(inputVar, decoderType)
         stackSerialClassDesc(null)
-        invokeinterface(decoderType.internalName, "decodeEnum", "(${descType.descriptor})I")
+        invokeinterface(decoderType.internalName, CallingConventions.decodeEnum, "(${descType.descriptor})I")
         // return
         aload(serializableAsmType)
         areturn(serializableAsmType)
