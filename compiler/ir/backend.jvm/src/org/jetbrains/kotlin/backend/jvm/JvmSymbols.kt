@@ -114,6 +114,10 @@ class JvmSymbols(
     val functionReference: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionReference")) { klass ->
         klass.addConstructor().apply {
             addValueParameter("arity", irBuiltIns.intType)
+        }
+
+        klass.addConstructor().apply {
+            addValueParameter("arity", irBuiltIns.intType)
             addValueParameter("receiver", irBuiltIns.anyNType)
         }
 
