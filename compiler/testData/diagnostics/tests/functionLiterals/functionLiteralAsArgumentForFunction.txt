@@ -1,0 +1,42 @@
+package
+
+public final data class CalculatedVariable {
+    public constructor CalculatedVariable(/*0*/ idString: kotlin.String, /*1*/ presentableName: kotlin.String, /*2*/ units: kotlin.String, /*3*/ function: (Log) -> ((TimeIndex) -> kotlin.Any?)?, /*4*/ converter: (kotlin.Any) -> kotlin.Double)
+    public constructor CalculatedVariable(/*0*/ idString: kotlin.String, /*1*/ presentableName: kotlin.String, /*2*/ units: kotlin.String, /*3*/ function: (Log) -> ((TimeIndex) -> kotlin.Double?)?)
+    public final val converter: (kotlin.Any) -> kotlin.Double
+    public final val function: (Log) -> ((TimeIndex) -> kotlin.Any?)?
+    public final val idString: kotlin.String
+    public final val presentableName: kotlin.String
+    public final val units: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component2(): kotlin.String
+    public final operator /*synthesized*/ fun component3(): kotlin.String
+    public final operator /*synthesized*/ fun component4(): (Log) -> ((TimeIndex) -> kotlin.Any?)?
+    public final operator /*synthesized*/ fun component5(): (kotlin.Any) -> kotlin.Double
+    public final /*synthesized*/ fun copy(/*0*/ idString: kotlin.String = ..., /*1*/ presentableName: kotlin.String = ..., /*2*/ units: kotlin.String = ..., /*3*/ function: (Log) -> ((TimeIndex) -> kotlin.Any?)? = ..., /*4*/ converter: (kotlin.Any) -> kotlin.Double = ...): CalculatedVariable
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public object CalculatedVariables {
+    private constructor CalculatedVariables()
+    public final val x: CalculatedVariable
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Log {
+    public constructor Log()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TimeIndex {
+    public constructor TimeIndex()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

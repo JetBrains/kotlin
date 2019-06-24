@@ -129,7 +129,7 @@ class ResolvedAtomCompleter(
             val substitutedTypes = returnTypes.filterNotNull()
             // we have some unsubstituted types
             if (substitutedTypes.isEmpty()) return false
-            val commonReturnType = CommonSupertypes.commonSupertype(returnTypes)
+            val commonReturnType = CommonSupertypes.commonSupertype(substitutedTypes)
             return commonReturnType.isUnit()
         }
 
