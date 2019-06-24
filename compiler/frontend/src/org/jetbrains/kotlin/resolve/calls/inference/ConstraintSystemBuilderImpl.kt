@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.defaultProjections
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
+import org.jetbrains.kotlin.utils.SmartIdentityTable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
@@ -64,7 +65,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
         EQUAL(EXACT_BOUND)
     }
 
-    internal val allTypeParameterBounds = LinkedHashMap<TypeVariable, TypeBoundsImpl>()
+    internal val allTypeParameterBounds = SmartIdentityTable<TypeVariable, TypeBoundsImpl>()
     internal val usedInBounds = HashMap<TypeVariable, MutableList<TypeBounds.Bound>>()
     internal val errors = ArrayList<ConstraintError>()
     internal val initialConstraints = ArrayList<Constraint>()
@@ -99,11 +100,11 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
             }
         }
 
-        for ((_, typeVariable) in typeParameters.zip(typeVariables)) {
-            allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
+        for (typeVariable in typeVariables) {
+            allTypeParameterBounds[typeVariable] = TypeBoundsImpl(typeVariable)
         }
 
-        for ((typeVariable, _) in allTypeParameterBounds) {
+        for (typeVariable in allTypeParameterBounds.keys) {
             for (declaredUpperBound in typeVariable.freshTypeParameter.upperBounds) {
                 if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
                 val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.originalTypeParameter.index))
@@ -405,7 +406,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
                         "Calls of the first system: ${typeVariableSubstitutors.keys}, second: ${other.typeVariableSubstitutors.keys}"
             )
         }
-        if (!Collections.disjoint(other.allTypeParameterBounds.keys, allTypeParameterBounds.keys)) {
+        if (!Collections.disjoint(other.allTypeParameterBounds.keys.toList(), allTypeParameterBounds.keys.toList())) {
             throw IllegalArgumentException(
                 "Combining two constraint systems only makes sense when they have no common variables. " +
                         "First system variables: ${allTypeParameterBounds.keys}, second: ${other.allTypeParameterBounds.keys}"

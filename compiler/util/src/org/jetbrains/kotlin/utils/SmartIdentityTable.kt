@@ -27,6 +27,27 @@ class SmartIdentityTable<K, V> {
     val size: Int
         get() = keysArray?.size ?: largeMap!!.size
 
+
+    val keys: Sequence<K>
+        get() = keysArray?.asSequence() ?: largeMap!!.keys.asSequence()
+
+
+    val entries: Sequence<Entry<K, V>>
+        get() {
+            val ka = keysArray
+            return if (ka != null) {
+                val va = valuesArray!!
+                val currentSize = size
+                sequence {
+                    for (i in 0 until currentSize) {
+                        yield(Entry(ka[i], va[i]))
+                    }
+                }
+            } else {
+                largeMap!!.entries.asSequence().map { Entry(it.key, it.value) }
+            }
+        }
+
     operator fun get(key: K): V? {
         return keysArray?.let {
             for ((index, k) in it.withIndex()) {
@@ -80,7 +101,15 @@ class SmartIdentityTable<K, V> {
         }
     }
 
+    fun putAll(other: SmartIdentityTable<K, V>) {
+        for (key in other.keys) {
+            this[key] = other[key]!!
+        }
+    }
+
     companion object {
         private const val ARRAY_UNTIL_SIZE = 10
     }
+
+    data class Entry<K, V>(val key: K, val value: V)
 }

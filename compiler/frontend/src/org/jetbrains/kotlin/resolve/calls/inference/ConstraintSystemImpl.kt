@@ -30,17 +30,15 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import java.util.*
+import org.jetbrains.kotlin.utils.SmartIdentityTable
 
 internal class ConstraintSystemImpl(
-    private val allTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>,
+    private val allTypeParameterBounds: SmartIdentityTable<TypeVariable, TypeBoundsImpl>,
     private val usedInBounds: Map<TypeVariable, MutableList<TypeBounds.Bound>>,
     private val errors: List<ConstraintError>,
     private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
     private val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>
 ) : ConstraintSystem {
-    private val localTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>
-        get() = allTypeParameterBounds.filterNot { it.key.isExternal }
 
     override val status = object : ConstraintSystemStatus {
         // for debug ConstraintsUtil.getDebugMessageForStatus might be used
@@ -81,10 +79,12 @@ internal class ConstraintSystemImpl(
 
         override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).status.isSuccessful()
 
-        override fun hasConflictingConstraints() = localTypeParameterBounds.values.any { it.values.size > 1 }
+        override fun hasConflictingConstraints() =
+            allTypeParameterBounds.entries.any { !it.key.isExternal && it.value.values.size > 1 }
 
         override fun hasUnknownParameters() =
-            localTypeParameterBounds.values.any { it.values.isEmpty() } || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
+            allTypeParameterBounds.entries.any { !it.key.isExternal && it.value.values.isEmpty() } ||
+                    hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
 
         override fun hasParameterConstraintError() = errors.any { it is ParameterConstraintError }
 
@@ -101,19 +101,22 @@ internal class ConstraintSystemImpl(
         override fun hasTypeInferenceIncorporationError() = errors.any { it is TypeInferenceError } || !satisfyInitialConstraints()
 
         override fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError() =
-            localTypeParameterBounds.values.any { it.typeVariable.hasOnlyInputTypesAnnotation() && it.value == null }
+            allTypeParameterBounds.entries.any {
+                !it.key.isExternal && it.value.typeVariable.hasOnlyInputTypesAnnotation() && it.value.value == null
+            }
 
         override val constraintErrors: List<ConstraintError>
             get() = errors
     }
 
     private fun getParameterToInferredValueMap(
-        typeParameterBounds: Map<TypeVariable, TypeBoundsImpl>,
+        typeParameterBounds: SmartIdentityTable<TypeVariable, TypeBoundsImpl>,
         getDefaultType: (TypeVariable) -> KotlinType,
         substituteOriginal: Boolean
-    ): Map<TypeConstructor, TypeProjection> {
-        val substitutionContext = HashMap<TypeConstructor, TypeProjection>()
-        for ((variable, typeBounds) in typeParameterBounds) {
+    ): SmartIdentityTable<TypeConstructor, TypeProjection> {
+        val substitutionContext = SmartIdentityTable<TypeConstructor, TypeProjection>()
+        for (variable in typeParameterBounds.keys) {
+            val typeBounds = typeParameterBounds[variable]!!
             val value = typeBounds.value
             val typeConstructor =
                 if (substituteOriginal) variable.originalTypeParameter.typeConstructor
@@ -121,13 +124,13 @@ internal class ConstraintSystemImpl(
             val type =
                 if (value != null && !TypeUtils.contains(value, DONT_CARE)) value
                 else getDefaultType(variable)
-            substitutionContext.put(typeConstructor, TypeProjectionImpl(type))
+            substitutionContext[typeConstructor] = TypeProjectionImpl(type)
         }
         return substitutionContext
     }
 
     override val typeVariables: Set<TypeVariable>
-        get() = allTypeParameterBounds.keys
+        get() = allTypeParameterBounds.keys.toSet()
 
     override fun getTypeBounds(typeVariable: TypeVariable): TypeBoundsImpl {
         return allTypeParameterBounds[typeVariable]
@@ -145,11 +148,21 @@ internal class ConstraintSystemImpl(
         return TypeSubstitutor.create(
             SubstitutionWithCapturedTypeApproximation(
                 SubstitutionFilteringInternalResolveAnnotations(
-                    TypeConstructorSubstitution.createByConstructorsMap(parameterToInferredValueMap)
+                    createTypeConstructorSubstitutionFromTable(parameterToInferredValueMap)
                 )
             )
         )
     }
+
+    private fun createTypeConstructorSubstitutionFromTable(
+        table: SmartIdentityTable<TypeConstructor, TypeProjection>,
+        approximateCapturedTypes: Boolean = false
+    ): TypeConstructorSubstitution =
+        object : TypeConstructorSubstitution() {
+            override fun get(key: TypeConstructor) = table[key]
+            override fun isEmpty() = table.size == 0
+            override fun approximateCapturedTypes() = approximateCapturedTypes
+        }
 
     private class SubstitutionWithCapturedTypeApproximation(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
         override fun approximateCapturedTypes() = true
@@ -175,8 +188,8 @@ internal class ConstraintSystemImpl(
 
     override fun toBuilder(filterConstraintPosition: (ConstraintPosition) -> Boolean): ConstraintSystem.Builder {
         val result = ConstraintSystemBuilderImpl()
-        for ((typeParameter, typeBounds) in allTypeParameterBounds) {
-            result.allTypeParameterBounds.put(typeParameter, typeBounds.filter(filterConstraintPosition))
+        for (typeParameter in allTypeParameterBounds.entries) {
+            result.allTypeParameterBounds[typeParameter.key] = typeParameter.value.filter(filterConstraintPosition)
         }
         result.usedInBounds.putAll(usedInBounds.map {
             val (variable, bounds) = it
