@@ -19,7 +19,12 @@
 
 #include "Memory.h"
 
+extern "C" {
+
 void AddRefFromAssociatedObject(const ObjHeader* object) RUNTIME_NOTHROW;
 void ReleaseRefFromAssociatedObject(const ObjHeader* object) RUNTIME_NOTHROW;
+void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
+
+}  // extern "C"
 
 #endif // RUNTIME_MEMORYPRIVATE_HPP
