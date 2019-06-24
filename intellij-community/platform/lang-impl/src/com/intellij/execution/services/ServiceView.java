@@ -58,20 +58,20 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   abstract void onViewUnselected();
 
-  boolean isFlat() {
-    return myModel.isFlat();
+  boolean isGroupByServiceGroups() {
+    return myModel.isGroupByServiceGroups();
   }
 
-  void setFlat(boolean flat) {
-    myModel.setFlat(flat);
+  void setGroupByServiceGroups(boolean value) {
+    myModel.setGroupByServiceGroups(value);
   }
 
-  boolean isGroupByType() {
-    return myModel.isGroupByType();
+  boolean isGroupByContributor() {
+    return myModel.isGroupByContributor();
   }
 
-  void setGroupByType(boolean value) {
-    myModel.setGroupByType(value);
+  void setGroupByContributor(boolean value) {
+    myModel.setGroupByContributor(value);
   }
 
   abstract List<Object> getChildrenSafe(@NotNull Object value);
@@ -139,7 +139,7 @@ abstract class ServiceView extends JPanel implements Disposable {
   }
 
   private static void setViewModelState(@NotNull ServiceViewModel viewModel, @NotNull ServiceViewState viewState) {
-    viewModel.setFlat(viewState.flat);
-    viewModel.setGroupByType(viewState.groupByType);
+    viewModel.setGroupByServiceGroups(viewState.groupByServiceGroups);
+    viewModel.setGroupByContributor(viewState.groupByContributor);
   }
 }

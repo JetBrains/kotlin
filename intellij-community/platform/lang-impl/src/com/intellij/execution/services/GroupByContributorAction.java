@@ -8,25 +8,25 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.execution.services.ServiceViewActionProvider.getSelectedView;
 
-public class GroupByTypeAction extends ToggleAction implements DumbAware {
+public class GroupByContributorAction extends ToggleAction implements DumbAware {
   @Override
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
     ServiceView selectedView = getSelectedView(e);
-    e.getPresentation().setEnabled(selectedView != null && !selectedView.isFlat());
+    e.getPresentation().setEnabled(selectedView != null);
   }
 
   @Override
   public boolean isSelected(@NotNull AnActionEvent e) {
     ServiceView selectedView = getSelectedView(e);
-    return selectedView != null && selectedView.isGroupByType();
+    return selectedView != null && selectedView.isGroupByContributor();
   }
 
   @Override
   public void setSelected(@NotNull AnActionEvent e, boolean state) {
     ServiceView selectedView = getSelectedView(e);
     if (selectedView != null) {
-      selectedView.setGroupByType(state);
+      selectedView.setGroupByContributor(state);
     }
   }
 }

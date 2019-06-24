@@ -20,8 +20,8 @@ final class ServiceViewState {
   @Tag("treeState")
   public Element treeStateElement;
 
-  public boolean flat = false;
-  public boolean groupByType = false;
+  public boolean groupByServiceGroups = true;
+  public boolean groupByContributor;
 
   public String viewType = "";
   public List<ServiceState> roots = new ArrayList<>();
