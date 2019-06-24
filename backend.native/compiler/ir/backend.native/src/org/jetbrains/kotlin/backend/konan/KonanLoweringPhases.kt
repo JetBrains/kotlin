@@ -10,22 +10,24 @@ import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.checkDeclarationParents
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+
+private val validateAll = false
+private val filePhaseActions = if (validateAll) setOf(defaultDumper, ::fileValidationCallback) else setOf(defaultDumper)
+private val modulePhaseActions = if (validateAll) setOf(defaultDumper, ::moduleValidationCallback) else setOf(defaultDumper)
 
 private fun makeKonanFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
         prerequisite: Set<AnyNamedPhase> = emptySet()
-) = makeIrFilePhase(lowering, name, description, prerequisite)
+) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
 
 private fun makeKonanModuleLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
         prerequisite: Set<AnyNamedPhase> = emptySet()
-) = makeIrModulePhase(lowering, name, description, prerequisite)
+) = makeIrModulePhase(lowering, name, description, prerequisite, actions = modulePhaseActions)
 
 internal fun makeKonanFileOpPhase(
         op: (Context, IrFile) -> Unit,
@@ -39,7 +41,8 @@ internal fun makeKonanFileOpPhase(
                 op(context, input)
                 return input
             }
-        }
+        },
+        actions = filePhaseActions
 )
 
 internal fun makeKonanModuleOpPhase(
@@ -54,7 +57,8 @@ internal fun makeKonanModuleOpPhase(
                 op(context, input)
                 return input
             }
-        }
+        },
+        actions = modulePhaseActions
 )
 
 internal val removeExpectDeclarationsPhase = makeKonanModuleLoweringPhase(
@@ -79,7 +83,8 @@ internal val inlinePhase = namedIrModulePhase(
         name = "Inline",
         description = "Functions inlining",
         prerequisite = setOf(lowerBeforeInlinePhase),
-        nlevels = 0
+        nlevels = 0,
+        actions = modulePhaseActions
 )
 
 internal val lowerAfterInlinePhase = makeKonanModuleOpPhase(
@@ -97,24 +102,6 @@ internal val interopPart1Phase = makeKonanModuleLoweringPhase(
         name = "InteropPart1",
         description = "Interop lowering, part 1",
         prerequisite = setOf(inlinePhase)
-)
-
-internal val patchDeclarationParents1Phase = makeKonanModuleOpPhase(
-        { _, irModule -> irModule.patchDeclarationParents() },
-        name = "PatchDeclarationParents1",
-        description = "Patch declaration parents 1"
-)
-
-internal val checkDeclarationParentsPhase = makeKonanModuleOpPhase(
-        { _, irModule -> irModule.checkDeclarationParents() },
-        name = "CheckDeclarationParents",
-        description = "Check declaration parents"
-)
-
-internal val validateIrModulePhase = makeKonanModuleOpPhase(
-        { context, irModule -> validateIrModule(context, irModule) },
-        name = "ValidateIrModule",
-        description = "Validate generated module"
 )
 
 /* IrFile phases */
@@ -284,11 +271,8 @@ internal val bridgesPhase = makeKonanFileOpPhase(
         prerequisite = setOf(coroutinesPhase)
 )
 
-internal val autoboxPhase = makeKonanFileOpPhase(
-        { context, irFile ->
-            // validateIrFile(context, irFile) // Temporarily disabled until moving to new IR finished.
-            Autoboxing(context).lower(irFile)
-        },
+internal val autoboxPhase = makeKonanFileLoweringPhase(
+        ::Autoboxing,
         name = "Autobox",
         description = "Autoboxing of primitive types",
         prerequisite = setOf(bridgesPhase, coroutinesPhase)

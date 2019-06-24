@@ -123,39 +123,6 @@ object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent
     }
 }
 
-fun IrModuleFragment.checkDeclarationParents() {
-    this.accept(CheckDeclarationParentsVisitor, null)
-}
-
-object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
-
-    override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
-        element.acceptChildren(this, element as? IrDeclarationParent ?: data)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) {
-        if (declaration !is IrVariable && declaration !is IrValueParameter && declaration !is IrTypeParameter) {
-            checkParent(declaration, data)
-        } else {
-            // Don't check IrVariable parent.
-        }
-
-        super.visitDeclaration(declaration, data)
-    }
-
-    private fun checkParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?) {
-        val parent = try {
-            declaration.parent
-        } catch (e: Throwable) {
-            error("$declaration for ${declaration.descriptor} has no parent")
-        }
-
-        if (parent != expectedParent) {
-            error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
-        }
-    }
-}
-
 tailrec fun IrDeclaration.getContainingFile(): IrFile? {
     val parent = this.parent
 

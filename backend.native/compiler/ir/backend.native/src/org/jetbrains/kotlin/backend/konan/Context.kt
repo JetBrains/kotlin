@@ -10,10 +10,8 @@ import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
-import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
@@ -351,11 +349,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         moduleDescriptor.deepPrint()
     }
 
-    fun verifyIr() {
-        val module = irModule ?: return
-        validateIrModule(this, module)
-    }
-
     fun printIr() {
         if (irModule == null) return
         separator("IR:")
@@ -418,7 +411,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun verify() {
         verifyDescriptors()
-        verifyIr()
         verifyBitCode()
     }
 
