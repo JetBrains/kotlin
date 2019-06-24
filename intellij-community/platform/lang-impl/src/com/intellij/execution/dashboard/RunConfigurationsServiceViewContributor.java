@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -84,10 +85,11 @@ public class RunConfigurationsServiceViewContributor
     return contributor.getViewDescriptor();
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public RunDashboardGroup groupBy(@NotNull RunConfigurationContributor contributor) {
-    return TYPE_GROUPING_RULE.getGroup(contributor.asService());
+  public List<RunDashboardGroup> getGroups(@NotNull RunConfigurationContributor contributor) {
+    RunDashboardGroup group = TYPE_GROUPING_RULE.getGroup(contributor.asService());
+    return group != null ? Collections.singletonList(group) : Collections.emptyList();
   }
 
   @NotNull
