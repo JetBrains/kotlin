@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.idea.statistics
  *
  * Default value for [events] parameter is intended for collectors which don't have yet a set of allowed values for FUS Whitelist
  */
-enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = hashSetOf()) {
+enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf()) {
 
     GradleTarget("gradle.target", gradleTargetEvents),
     MavenTarget("maven.target", mavenTargetEvents),
@@ -23,7 +23,7 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = hashS
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
 }
 
-val gradleTargetEvents = hashSetOf(
+val gradleTargetEvents = setOf(
     "kotlin-android",
     "kotlin-platform-common",
     "kotlin-platform-js",
@@ -54,18 +54,18 @@ val gradleTargetEvents = hashSetOf(
     "MPP.native.wasm32",
     "MPP.native.zephyrStm32f4Disco"
 )
-val mavenTargetEvents = hashSetOf(
+val mavenTargetEvents = setOf(
     "common",
     "js",
     "jvm"
 )
-val JPSTargetEvents = hashSetOf(
+val JPSTargetEvents = setOf(
     "common",
     "js",
     "jvm",
     "native"
 )
-val refactoringEvents = hashSetOf(
+val refactoringEvents = setOf(
     "RenameKotlinFileProcessor",
     "RenameKotlinFunctionProcessor",
     "RenameKotlinPropertyProcessor",
@@ -78,7 +78,7 @@ val refactoringEvents = hashSetOf(
     "KotlinPushDownHandler",
     "KotlinPullUpHandler"
 )
-val newFileTemplateEvents = hashSetOf(
+val newFileTemplateEvents = setOf(
     "Kotlin File",
     "Kotlin Class",
     "Kotlin Interface",
@@ -87,7 +87,7 @@ val newFileTemplateEvents = hashSetOf(
     "Kotlin Scratch",
     "Kotlin Script"
 )
-val NPWizardsEvents = hashSetOf(
+val NPWizardsEvents = setOf(
     "KotlinModuleBuilder: JVM (JVM_1_6)",
     "KotlinModuleBuilder: JVM (JVM_1_8)",
     "KotlinModuleBuilder: JVM (JVM_9)",
@@ -111,7 +111,7 @@ val NPWizardsEvents = hashSetOf(
     "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
 )
-val debugEvalEvents = hashSetOf(
+val debugEvalEvents = setOf(
     "Success",
     "NoFrameProxy",
     "ThreadNotAvailable",
