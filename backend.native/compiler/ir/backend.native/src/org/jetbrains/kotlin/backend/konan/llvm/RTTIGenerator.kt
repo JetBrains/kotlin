@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.KonanAbiVersion
-import org.jetbrains.kotlin.ir.util.fqNameSafe
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -128,9 +126,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private val EXPORT_TYPE_INFO_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "ExportTypeInfo"))
 
     private fun exportTypeInfoIfRequired(irClass: IrClass, typeInfoGlobal: LLVMValueRef?) {
-        val annotation = irClass.descriptor.annotations.findAnnotation(EXPORT_TYPE_INFO_FQ_NAME)
+        val annotation = irClass.annotations.findAnnotation(EXPORT_TYPE_INFO_FQ_NAME)
         if (annotation != null) {
-            val name = getAnnotationValue(annotation)!!
+            val name = annotation.getAnnotationValue()!!
             // TODO: use LLVMAddAlias.
             val global = addGlobal(name, pointerType(runtime.typeInfoType), isExported = true)
             LLVMSetInitializer(global, typeInfoGlobal)

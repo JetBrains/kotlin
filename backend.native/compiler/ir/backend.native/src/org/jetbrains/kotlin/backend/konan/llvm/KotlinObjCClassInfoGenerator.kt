@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.LLVMStoreSizeOfType
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -118,7 +118,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
             .filterIsInstance<IrSimpleFunction>()
             .mapNotNull {
                 val annotation =
-                        it.descriptor.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
+                        it.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
                                 return@mapNotNull null
 
                 ObjCMethodDesc(

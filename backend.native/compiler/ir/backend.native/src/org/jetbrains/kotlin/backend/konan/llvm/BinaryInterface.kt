@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.isExported
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.backend.konan.isInlinedNative
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
@@ -45,20 +43,19 @@ object KonanMangler : KotlinManglerImpl() {
      */
     override fun IrDeclaration.isPlatformSpecificExported(): Boolean {
         // TODO: revise
-        val descriptorAnnotations = this.descriptor.annotations
-        if (descriptorAnnotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
+        if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
             // Treat any `@SymbolName` declaration as exported.
             return true
         }
-        if (descriptorAnnotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
+        if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
             // Treat any `@ExportForCppRuntime` declaration as exported.
             return true
         }
-        if (descriptorAnnotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
+        if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
             // Treat `@CName` declaration as exported.
             return true
         }
-        if (descriptorAnnotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
+        if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
             return true
         }
 
@@ -107,13 +104,13 @@ object KonanMangler : KotlinManglerImpl() {
             }
 
             if (isExternal) {
-                this.descriptor.externalSymbolOrThrow()?.let {
+                this.externalSymbolOrThrow()?.let {
                     return it
                 }
             }
 
-            this.descriptor.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)?.let {
-                val name = getAnnotationValue(it) ?: this.name.asString()
+            this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)?.let {
+                val name = it.getAnnotationValue() ?: this.name.asString()
                 return name // no wrapping currently required
             }
 

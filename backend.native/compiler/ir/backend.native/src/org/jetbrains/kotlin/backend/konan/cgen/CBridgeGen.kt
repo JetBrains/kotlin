@@ -581,11 +581,9 @@ private fun IrType.isCEnumType(): Boolean {
             .any { (it.classifierOrNull?.owner as? IrClass)?.fqNameForIrSerialization == FqName("kotlinx.cinterop.CEnum") }
 }
 
-// TODO: get rid of consulting descriptors for annotations.
 // Make sure external stubs always get proper annotaions.
 private fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
-        this.annotations.hasAnnotation(cCall.child(Name.identifier(name))) ||
-                this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
+        this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
 
 
 private fun IrValueParameter.isWCStringParameter() = hasCCallAnnotation("WCString")

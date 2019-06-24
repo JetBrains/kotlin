@@ -451,13 +451,13 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
     )
     val listOfInternal = internalFunction("listOfInternal")
 
-    val threadLocal =
+    val threadLocal = symbolTable.referenceClass(
             context.builtIns.builtInsModule.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(FqName("kotlin.native.concurrent.ThreadLocal")))!!
+                    ClassId.topLevel(KonanFqNames.threadLocal))!!)
 
-    val sharedImmutable =
+    val sharedImmutable = symbolTable.referenceClass(
             context.builtIns.builtInsModule.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(FqName("kotlin.native.concurrent.SharedImmutable")))!!
+                    ClassId.topLevel(KonanFqNames.sharedImmutable))!!)
 
     private fun topLevelClass(fqName: String): IrClassSymbol = topLevelClass(FqName(fqName))
     private fun topLevelClass(fqName: FqName): IrClassSymbol = classById(ClassId.topLevel(fqName))
