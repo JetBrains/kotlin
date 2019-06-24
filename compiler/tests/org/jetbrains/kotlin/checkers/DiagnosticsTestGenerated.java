@@ -7769,6 +7769,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/functionLIteralInBlockInIf.kt");
             }
 
+            @TestMetadata("functionLiteralAsArgumentForFunction.kt")
+            public void testFunctionLiteralAsArgumentForFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/functionLiterals/functionLiteralAsArgumentForFunction.kt");
+            }
+
             @TestMetadata("functionLiteralInIf.kt")
             public void testFunctionLiteralInIf() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/functionLiteralInIf.kt");
@@ -12398,11 +12403,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
 
                 public void testAllFilesPresentInSam() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/sam"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
-                }
-
-                @TestMetadata("contravariantSamConvertedFunctionFromAnotherModule.kt")
-                public void testContravariantSamConvertedFunctionFromAnotherModule() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/j+k/sam/contravariantSamConvertedFunctionFromAnotherModule.kt");
                 }
 
                 @TestMetadata("enhancedSamConstructor.kt")
