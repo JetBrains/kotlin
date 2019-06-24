@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.ir.util.hasDefaultValue
 internal val jvmDefaultConstructorPhase = makeIrFilePhase(
     ::JvmDefaultConstructorLowering,
     name = "JvmDefaultConstructor",
-    description = "Generate default constructors for Java"
+    description = "Generate default constructors for Java",
+    prerequisite = setOf(jvmOverloadsAnnotationPhase)
 )
 
 // Quoted from https://kotlinlang.org/docs/reference/classes.html
