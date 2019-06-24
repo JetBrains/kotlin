@@ -947,17 +947,22 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
 }
 
-fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): NativeIndex {
+fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
     val result = NativeIndexImpl(library, verbose)
-    indexDeclarations(result)
-    return result
+    val compilation = indexDeclarations(result)
+    return IndexerResult(result, compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl) {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
     withIndex { index ->
-        val translationUnit = nativeIndex.library.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord)
+        val translationUnit = nativeIndex.library.parse(
+                index,
+                options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization
+        )
         try {
             translationUnit.ensureNoCompileErrors()
+
+            val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
 
             val headers = getFilteredHeaders(nativeIndex, index, translationUnit)
 
@@ -991,7 +996,9 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl) {
                 CXChildVisitResult.CXChildVisit_Continue
             }
 
-            findMacros(nativeIndex, translationUnit, headers)
+            findMacros(nativeIndex, compilation, translationUnit, headers)
+
+            return compilation
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }

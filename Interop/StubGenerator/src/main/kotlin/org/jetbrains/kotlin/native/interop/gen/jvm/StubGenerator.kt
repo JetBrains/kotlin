@@ -965,7 +965,7 @@ class StubGenerator(
                         Language.C -> emptyList()
                         Language.OBJECTIVE_C -> listOf("void objc_terminate();")
                     }
-    )
+    ).precompileHeaders()
 
     /**
      * Produces to [out] the contents of C source file to be compiled into native lib used for Kotlin bindings impl.

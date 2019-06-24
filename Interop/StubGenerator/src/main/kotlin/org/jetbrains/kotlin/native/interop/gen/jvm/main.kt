@@ -220,8 +220,10 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
     val library = buildNativeLibrary(tool, def, argParser, imports)
 
+    val (nativeIndex, compilation) = buildNativeIndex(library, verbose)
+
     val configuration = InteropConfiguration(
-            library = library,
+            library = compilation,
             pkgName = outKtPkg,
             excludedFunctions = excludedFunctions,
             excludedMacros = excludedMacros,
@@ -232,8 +234,6 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks,
             target = tool.target
     )
-
-    val nativeIndex = buildNativeIndex(library, verbose)
 
     val gen = StubGenerator(nativeIndex, configuration, libName, verbose, flavor, imports)
 
@@ -330,12 +330,12 @@ internal fun buildNativeLibrary(
         })
     }
 
-    val compilation = object : Compilation {
-        override val includes = headerFiles
-        override val additionalPreambleLines = def.defHeaderLines
-        override val compilerArgs = compilerOpts + tool.platformCompilerOpts
-        override val language = language
-    }
+    val compilation = CompilationImpl(
+            includes = headerFiles,
+            additionalPreambleLines = def.defHeaderLines,
+            compilerArgs = compilerOpts + tool.platformCompilerOpts,
+            language = language
+    )
 
     val headerFilter: NativeLibraryHeaderFilter
     val includes: List<String>

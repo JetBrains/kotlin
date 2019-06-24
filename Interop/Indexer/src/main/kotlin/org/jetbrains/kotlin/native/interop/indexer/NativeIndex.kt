@@ -57,7 +57,22 @@ interface Compilation {
     val language: Language
 }
 
-// TODO: consider replacing inheritance by composition and turning Compilation into final class.
+data class CompilationWithPCH(
+        override val compilerArgs: List<String>,
+        override val language: Language
+) : Compilation {
+
+    constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language)
+            : this(compilerArgs + listOf("-include-pch", precompiledHeader), language)
+
+    override val includes: List<String>
+        get() = emptyList()
+
+    override val additionalPreambleLines: List<String>
+        get() = emptyList()
+}
+
+// TODO: Compilation hierarchy seems to require some refactoring.
 
 data class NativeLibrary(override val includes: List<String>,
                          override val additionalPreambleLines: List<String>,
@@ -68,10 +83,12 @@ data class NativeLibrary(override val includes: List<String>,
                          val headerExclusionPolicy: HeaderExclusionPolicy,
                          val headerFilter: NativeLibraryHeaderFilter) : Compilation
 
+data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)
+
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): NativeIndex = buildNativeIndexImpl(library, verbose)
+fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult = buildNativeIndexImpl(library, verbose)
 
 /**
  * This class describes the IR of definitions from C header file(s).

@@ -53,9 +53,9 @@ internal open class ModularCompilation(compilation: Compilation): Compilation by
 }
 
 private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
-    val compilationWithImports = object : Compilation by compilation {
-        override val additionalPreambleLines = modules.map { "@import $it;" } + compilation.additionalPreambleLines
-    }
+    val compilationWithImports = compilation.copy(
+            additionalPreambleLines = modules.map { "@import $it;" } + compilation.additionalPreambleLines
+    )
 
     val result = linkedSetOf<String>()
 

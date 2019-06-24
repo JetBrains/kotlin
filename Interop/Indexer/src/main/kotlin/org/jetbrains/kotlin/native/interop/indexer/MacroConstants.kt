@@ -23,10 +23,15 @@ import java.io.File
 /**
  * Finds all "macro constants" and registers them as [NativeIndex.constants] in given index.
  */
-internal fun findMacros(nativeIndex: NativeIndexImpl, translationUnit: CXTranslationUnit, headers: Set<CXFile?>) {
+internal fun findMacros(
+        nativeIndex: NativeIndexImpl,
+        compilation: CompilationWithPCH,
+        translationUnit: CXTranslationUnit,
+        headers: Set<CXFile?>
+) {
     val names = collectMacroNames(nativeIndex, translationUnit, headers)
     // TODO: apply user-defined filters.
-    val macros = expandMacros(nativeIndex.library, names, typeConverter = { nativeIndex.convertType(it) })
+    val macros = expandMacros(compilation, names, typeConverter = { nativeIndex.convertType(it) })
 
     macros.filterIsInstanceTo(nativeIndex.macroConstants)
     macros.filterIsInstanceTo(nativeIndex.wrappedMacros)
@@ -38,18 +43,16 @@ private typealias TypeConverter = (CValue<CXType>) -> Type
  * For each name expands the macro with this name declared in the library,
  * checking if it gets expanded to a constant expression.
  *
+ * Note: in the worst case this method parses the code against the library a lot of times,
+ * so it requires library headers precompiled to significantly speed up the parsing and avoid visiting headers' AST.
+ *
  * @return the list of constants.
  */
 private fun expandMacros(
-        originalLibrary: NativeLibrary,
+        library: CompilationWithPCH,
         names: List<String>,
         typeConverter: TypeConverter
 ): List<MacroDef> {
-
-    // In the worst case code is parsed against the library a lot of times;
-    // so precompile library headers to significantly speed up the parsing and avoid visiting headers' AST:
-    val library = originalLibrary.precompileHeaders()
-
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val sourceFile = library.createTempSource()
         val compilerArgs = library.compilerArgs.toMutableList()
@@ -94,7 +97,7 @@ private fun expandMacros(
  * As a side effect, modifies the [sourceFile] and reparses the [translationUnit].
  */
 private fun tryExpandMacros(
-        library: NativeLibrary,
+        library: CompilationWithPCH,
         translationUnit: CXTranslationUnit,
         sourceFile: File,
         names: List<String>,
@@ -158,7 +161,7 @@ private const val CODE_SNIPPET_FUNCTION_NAME_PREFIX = "kni_indexer_function_"
  * generate a bridge for this macro.
  *  - Otherwise the macro is skipped.
  */
-private fun reparseWithCodeSnippets(library: NativeLibrary,
+private fun reparseWithCodeSnippets(library: CompilationWithPCH,
                                     translationUnit: CXTranslationUnit, sourceFile: File,
                                     names: List<String>) {
 
