@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.presentableDescription
 
@@ -108,6 +109,25 @@ class ModuleInfo(
         val actualValue = module.isHMPPEnabled
         if (actualValue != value) {
             projectInfo.messageCollector.report("Module '${module.name}': expected isHMPP '$value' but found '$actualValue'")
+        }
+    }
+
+    fun targetPlatform(vararg platforms: TargetPlatform) {
+        val expected = platforms.flatMap { it.componentPlatforms }.toSet()
+        val actual = module.platform?.componentPlatforms
+
+        if (actual == null) {
+            projectInfo.messageCollector.report("Module '${module.name}': actual target platform is null")
+            return
+        }
+
+        val notFound = expected.subtract(actual)
+        if (notFound.isNotEmpty()) {
+            projectInfo.messageCollector.report("Module '${module.name}': not found target platforms: " + notFound.joinToString(","))
+        }
+        val notExpected = actual.subtract(expected)
+        if (notExpected.isNotEmpty()) {
+            projectInfo.messageCollector.report("Module '${module.name}': found unexpected target platforms: " + notExpected.joinToString(","))
         }
     }
 
