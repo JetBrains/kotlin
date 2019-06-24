@@ -11,10 +11,21 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.DFS
+
+private fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collection<IrModuleFragment> {
+    val mapping = dependencies.map { it.descriptor to it }.toMap()
+
+    return DFS.topologicalOrder(dependencies) { m ->
+        val descriptor = m.descriptor
+        descriptor.allDependencyModules.filter { it != descriptor }.map { mapping[it] }
+    }.reversed()
+}
 
 fun compile(
     project: Project,
@@ -44,8 +55,8 @@ fun compile(
         ).generateUnboundSymbolsAsDependencies()
     }
 
-    // TODO: check the order
-    val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
+    // Since modules should be initialized in the correct topological order we sort them
+    val irFiles = sortDependencies(dependencyModules).flatMap { it.files } + moduleFragment.files
 
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
