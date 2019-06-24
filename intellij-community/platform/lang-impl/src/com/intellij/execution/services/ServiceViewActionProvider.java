@@ -32,11 +32,11 @@ class ServiceViewActionProvider {
     return ourInstance;
   }
 
-  JComponent createServiceToolbar(@NotNull JComponent component) {
+  ActionToolbar createServiceToolbar(@NotNull JComponent component) {
     ActionGroup actions = (ActionGroup)ActionManager.getInstance().getAction(SERVICE_VIEW_NODE_TOOLBAR);
     ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.SERVICES_TOOLBAR, actions, false);
     toolbar.setTargetComponent(component);
-    return toolbar.getComponent();
+    return toolbar;
   }
 
   void installPopupHandler(@NotNull JComponent component) {
@@ -61,7 +61,7 @@ class ServiceViewActionProvider {
     treeActions.registerCustomShortcutSet(component, null);
     group.add(treeActions);
 
-    ActionToolbar treeActionsToolBar = ActionManager.getInstance().createActionToolbar(ActionPlaces.SERVICES_TOOLBAR, group, false);
+    ActionToolbar treeActionsToolBar = ActionManager.getInstance().createActionToolbar(ActionPlaces.SERVICES_TOOLBAR, group, true);
     treeActionsToolBar.setTargetComponent(component);
 
     return treeActionsToolBar;
