@@ -84,7 +84,7 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
   }
 
   private JBPopup createLightWeightPopup(MyInputValidator validator, Consumer<PsiElement[]> consumer) {
-    SimpleCreateFileDialogPanel contentPanel = new SimpleCreateFileDialogPanel();
+    NewItemSimplePopupPanel contentPanel = new NewItemSimplePopupPanel();
     JTextField nameField = contentPanel.getTextField();
     JBPopup popup = NewItemPopupUtil.createNewItemPopup(IdeBundle.message("title.new.file"), contentPanel, nameField);
     contentPanel.setApplyAction(event -> {
@@ -261,13 +261,6 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
       FileType fileType = FileTypeChooser.getKnownFileTypeOrAssociate(psiDirectory.getVirtualFile(), getFileName(inputString), project);
       if (fileType == null) return false;
       return super.canClose(getFileName(inputString));
-    }
-  }
-
-  private static class SimpleCreateFileDialogPanel extends NewItemSimplePopupPanel {
-
-    public JTextField getTextField() {
-      return myTextField;
     }
   }
 }

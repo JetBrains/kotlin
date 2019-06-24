@@ -4,17 +4,24 @@ package com.intellij.ide.actions;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeView;
+import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
+import com.intellij.ide.ui.newItemPopup.NewItemSimplePopupPanel;
 import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.util.function.Consumer;
 
 public class CreateDirectoryOrPackageAction extends AnAction implements DumbAware {
   public CreateDirectoryOrPackageAction() {
@@ -45,11 +52,18 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     }
 
     String initialText = validator.getInitialText();
-    Messages.showInputDialog(project, message, title, null, initialText, validator, TextRange.from(initialText.length(), 0));
+    Consumer<PsiElement> consumer = element -> {
+      if (element != null) {
+        view.selectElement(element);
+      }
+    };
 
-    final PsiElement result = validator.getCreatedElement();
-    if (result != null) {
-      view.selectElement(result);
+    if (Experiments.isFeatureEnabled("show.create.new.element.in.popup")) {
+      createLightWeightPopup(title, initialText, validator, consumer).showCenteredInCurrentWindow(project);
+    }
+    else {
+      Messages.showInputDialog(project, message, title, null, initialText, validator, TextRange.from(initialText.length(), 0));
+      consumer.accept(validator.getCreatedElement());
     }
   }
 
@@ -94,5 +108,25 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
       presentation.setText(IdeBundle.message("action.directory"));
       presentation.setIcon(PlatformIcons.FOLDER_ICON);
     }
+  }
+
+  private static JBPopup createLightWeightPopup(String title, String initialText, CreateGroupHandler validator, Consumer<PsiElement> consumer) {
+    NewItemSimplePopupPanel contentPanel = new NewItemSimplePopupPanel();
+    JTextField nameField = contentPanel.getTextField();
+    nameField.setText(initialText);
+    JBPopup popup = NewItemPopupUtil.createNewItemPopup(title, contentPanel, nameField);
+    contentPanel.setApplyAction(event -> {
+      String name = nameField.getText();
+      if (validator.checkInput(name) && validator.canClose(name)) {
+        popup.closeOk(event);
+        consumer.accept(validator.getCreatedElement());
+      }
+      else {
+        String errorMessage = validator.getErrorText(name);
+        contentPanel.setError(errorMessage);
+      }
+    });
+
+    return popup;
   }
 }
