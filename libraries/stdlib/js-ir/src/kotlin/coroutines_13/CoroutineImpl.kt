@@ -16,7 +16,9 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
     protected var exception: dynamic = null
     protected var finallyPath: Array<Int>? = null
 
-    public override val context: CoroutineContext get() = resultContinuation!!.context
+    private val _context: CoroutineContext? = resultContinuation?.context
+
+    public override val context: CoroutineContext get() = _context!!
 
     private var intercepted_: Continuation<Any?>? = null
 
