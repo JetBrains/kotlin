@@ -213,7 +213,9 @@ tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
     listOf(mainJar.name, "runtime", "archives").forEach { configurationName ->
-        add(configurationName, result)
+        add(configurationName, result.outputs.files.singleFile) {
+            builtBy(result)
+        }
     }
 
     add("archives", modularJar)
