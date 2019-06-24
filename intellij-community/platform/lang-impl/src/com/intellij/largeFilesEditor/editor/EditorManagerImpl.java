@@ -194,6 +194,8 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
       fileManager.dispose();
     }
     editorModel.dispose();
+
+    vFile.putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
   }
 
   @CalledInAwt

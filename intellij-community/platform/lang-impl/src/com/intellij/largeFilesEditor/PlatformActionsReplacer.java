@@ -2,8 +2,7 @@
 package com.intellij.largeFilesEditor;
 
 import com.intellij.largeFilesEditor.actions.*;
-import com.intellij.largeFilesEditor.editor.actions.LfeEditorActionTextEndHandler;
-import com.intellij.largeFilesEditor.editor.actions.LfeEditorActionTextStartHandler;
+import com.intellij.largeFilesEditor.editor.actions.LfeEditorActionTextStartEndHandler;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -31,8 +30,14 @@ public class PlatformActionsReplacer {
 
     addEditorActionHandler(IdeActions.ACTION_FIND_NEXT, LfeEditorActionSearchAgainHandler::new);
     addEditorActionHandler(IdeActions.ACTION_FIND_PREVIOUS, LfeEditorActionSearchBackHandler::new);
-    addEditorActionHandler(IdeActions.ACTION_EDITOR_TEXT_START, LfeEditorActionTextStartHandler::new);
-    addEditorActionHandler(IdeActions.ACTION_EDITOR_TEXT_END, LfeEditorActionTextEndHandler::new);
+    addEditorActionHandler(IdeActions.ACTION_EDITOR_TEXT_START,
+                           origHandler -> {
+                             return new LfeEditorActionTextStartEndHandler(origHandler, true);
+                           });
+    addEditorActionHandler(IdeActions.ACTION_EDITOR_TEXT_END,
+                           origHandler -> {
+                             return new LfeEditorActionTextStartEndHandler(origHandler, false);
+                           });
     addEditorActionHandler(IdeActions.ACTION_EDITOR_ESCAPE, LfeEditorActionHandlerEscape::new);
     addEditorActionHandler(IdeActions.ACTION_FIND, LfeEditorActionHandlerFind::new);
     addDisablingEditorActionHandler(IdeActions.ACTION_REPLACE);

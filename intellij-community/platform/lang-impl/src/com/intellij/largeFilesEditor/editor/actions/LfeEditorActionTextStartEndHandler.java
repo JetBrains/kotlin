@@ -11,10 +11,13 @@ import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class LfeEditorActionTextStartEndHandler extends LfeBaseEditorActionHandler {
+public class LfeEditorActionTextStartEndHandler extends LfeBaseEditorActionHandler {
 
-  public LfeEditorActionTextStartEndHandler(EditorActionHandler originalHandler) {
+  private final boolean isStart;
+
+  public LfeEditorActionTextStartEndHandler(EditorActionHandler originalHandler, boolean start) {
     super(originalHandler);
+    isStart = start;
   }
 
   @Override
@@ -22,7 +25,7 @@ public abstract class LfeEditorActionTextStartEndHandler extends LfeBaseEditorAc
                                 @NotNull Editor editor,
                                 @Nullable Caret caret,
                                 DataContext dataContext) {
-    if (isStart()) {
+    if (isStart) {
       editorManager.getEditorModel().setCaretToFileStartAndShow();
     }
     else {
@@ -32,7 +35,7 @@ public abstract class LfeEditorActionTextStartEndHandler extends LfeBaseEditorAc
     IdeDocumentHistory docHistory = IdeDocumentHistory.getInstance(editorManager.getProject());
     if (docHistory != null) {
       docHistory.includeCurrentCommandAsNavigation();
-      docHistory.includeCurrentCommandHasMoves();
+      docHistory.setCurrentCommandHasMoves();
     }
   }
 
@@ -43,6 +46,4 @@ public abstract class LfeEditorActionTextStartEndHandler extends LfeBaseEditorAc
                                    DataContext dataContext) {
     return true;
   }
-
-  abstract protected boolean isStart();
 }
