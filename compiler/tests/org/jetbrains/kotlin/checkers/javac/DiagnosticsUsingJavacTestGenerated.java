@@ -9837,6 +9837,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeMismatchWithInVariance.kt");
                 }
 
+                @TestMetadata("invokeCallWithCapturedReceiver.kt")
+                public void testInvokeCallWithCapturedReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/invokeCallWithCapturedReceiver.kt");
+                }
+
                 @TestMetadata("kt25302.kt")
                 public void testKt25302() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt25302.kt");
