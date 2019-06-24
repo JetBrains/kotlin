@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirTypeAlias : FirClassLikeDeclaration, FirSymbolOwner<FirTypeAlias> {
+interface FirTypeAlias : FirClassLikeDeclaration<FirTypeAlias> {
     fun replaceExpandTypeRef(typeRef: FirTypeRef): FirTypeAlias
 
     val expandedTypeRef: FirTypeRef

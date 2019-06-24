@@ -7,16 +7,16 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 abstract class AbstractFirSymbolProvider : FirSymbolProvider() {
-    protected val classCache = HashMap<ClassId, ConeClassLikeSymbol?>()
-    protected val topLevelCallableCache = HashMap<CallableId, List<ConeCallableSymbol>>()
+    protected val classCache = HashMap<ClassId, FirClassLikeSymbol<*>?>()
+    protected val topLevelCallableCache = HashMap<CallableId, List<FirCallableSymbol<*>>>()
     protected val packageCache = HashMap<FqName, FqName?>()
 
     protected inline fun <K, V : Any?> MutableMap<K, V>.lookupCacheOrCalculate(key: K, crossinline l: (K) -> V): V? {

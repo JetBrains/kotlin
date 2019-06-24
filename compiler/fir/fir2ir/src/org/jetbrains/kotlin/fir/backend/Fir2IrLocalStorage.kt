@@ -32,7 +32,7 @@ class Fir2IrLocalStorage {
         return null
     }
 
-    fun getVariable(variable: FirVariable): IrVariable? {
+    fun getVariable(variable: FirVariable<*>): IrVariable? {
         for (cache in cacheStack.asReversed()) {
             val local = cache.getVariable(variable)
             if (local != null) return local
@@ -60,7 +60,7 @@ class Fir2IrLocalStorage {
         cacheStack.last().putParameter(firParameter, irParameter)
     }
 
-    fun putVariable(firVariable: FirVariable, irVariable: IrVariable) {
+    fun putVariable(firVariable: FirVariable<*>, irVariable: IrVariable) {
         cacheStack.last().putVariable(firVariable, irVariable)
     }
 

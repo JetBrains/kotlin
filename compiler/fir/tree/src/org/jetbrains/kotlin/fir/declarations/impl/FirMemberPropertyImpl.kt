@@ -40,7 +40,7 @@ class FirMemberPropertyImpl(
     override var getter: FirPropertyAccessor,
     override var setter: FirPropertyAccessor?,
     override var delegate: FirExpression?
-) : FirAbstractCallableMember(
+) : FirAbstractCallableMember<FirProperty>(
     session, psi, name, visibility, modality, isExpect, isActual, isOverride, receiverTypeRef, returnTypeRef
 ), FirProperty {
     override val backingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)

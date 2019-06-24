@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // Good name needed (something with receiver, type parameters, return type, and name)
-interface FirCallableDeclaration :
+interface FirCallableDeclaration<F : FirCallableDeclaration<F>> :
     @VisitedSupertype FirDeclaration,
-    FirTypedDeclaration, FirSymbolOwner<FirCallableDeclaration> {
+    FirTypedDeclaration, FirSymbolOwner<F> {
 
-    override val symbol: FirCallableSymbol
+    override val symbol: FirCallableSymbol<F>
 
     val receiverTypeRef: FirTypeRef?
 

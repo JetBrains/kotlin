@@ -17,7 +17,7 @@ class FirWhenExpressionImpl(
     session: FirSession,
     psiElement: PsiElement?,
     override var subject: FirExpression? = null,
-    override var subjectVariable: FirVariable? = null
+    override var subjectVariable: FirVariable<*>? = null
 ) : FirWhenExpression(session, psiElement) {
     override val branches = mutableListOf<FirWhenBranch>()
 

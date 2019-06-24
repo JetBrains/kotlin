@@ -2,7 +2,8 @@ FILE fqName:<root> fileName:/javaSyntheticProperty.kt
   PROPERTY name:test visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String? visibility:public [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: R|/J.foo|' type=kotlin.String?
+        CALL 'public open fun getFoo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J' type=<root>.J origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.String?
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val] 
       BLOCK_BODY

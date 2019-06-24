@@ -9,7 +9,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -42,7 +41,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
 
         for (name in provider.getAllCallableNamesInPackage(packageFqName)) {
             for (symbol in provider.getTopLevelCallableSymbols(packageFqName, name)) {
-                (symbol as FirCallableSymbol).fir.accept(firRenderer)
+                symbol.fir.accept(firRenderer)
                 builder.appendln()
             }
         }

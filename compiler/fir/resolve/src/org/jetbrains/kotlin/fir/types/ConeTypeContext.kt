@@ -277,8 +277,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean {
-        val classSymbol = this as? ConeClassSymbol ?: return false
-        val fir = (classSymbol as FirClassSymbol).fir
+        val classSymbol = this as? FirClassSymbol ?: return false
+        val fir = classSymbol.fir
         return fir.modality == Modality.FINAL &&
                 fir.classKind != ClassKind.ENUM_ENTRY &&
                 fir.classKind != ClassKind.ANNOTATION_CLASS

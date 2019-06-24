@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructClassType
@@ -29,9 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -93,7 +90,7 @@ class CheckerSinkImpl(override val components: InferenceComponents, var continua
 
 
 class Candidate(
-    val symbol: ConeSymbol,
+    val symbol: FirBasedSymbol<*>,
     val dispatchReceiverValue: ClassDispatchReceiverValue?,
     val implicitExtensionReceiverValue: ImplicitReceiverValue?,
     val explicitReceiverKind: ExplicitReceiverKind,
@@ -136,14 +133,14 @@ enum class TowerDataKind {
 
 interface TowerScopeLevel {
 
-    sealed class Token<out T : ConeSymbol> {
-        object Properties : Token<ConePropertySymbol>()
+    sealed class Token<out T : FirBasedSymbol<*>> {
+        object Properties : Token<FirPropertySymbol>()
 
-        object Functions : Token<ConeFunctionSymbol>()
-        object Objects : Token<ConeClassifierSymbol>()
+        object Functions : Token<FirFunctionSymbol<*>>()
+        object Objects : Token<FirBasedSymbol<*>>()
     }
 
-    fun <T : ConeSymbol> processElementsByName(
+    fun <T : FirBasedSymbol<*>> processElementsByName(
         token: Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,
@@ -159,7 +156,7 @@ interface TowerScopeLevel {
     }
 
     object Empty : TowerScopeLevel {
-        override fun <T : ConeSymbol> processElementsByName(
+        override fun <T : FirBasedSymbol<*>> processElementsByName(
             token: Token<T>,
             name: Name,
             explicitReceiver: ExpressionReceiverValue?,
@@ -169,15 +166,15 @@ interface TowerScopeLevel {
 }
 
 abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel {
-    protected fun ConeSymbol.dispatchReceiverValue(): ClassDispatchReceiverValue? {
+    protected fun FirBasedSymbol<*>.dispatchReceiverValue(): ClassDispatchReceiverValue? {
         return when (this) {
-            is FirFunctionSymbol -> fir.dispatchReceiverValue(session)
+            is FirNamedFunctionSymbol -> fir.dispatchReceiverValue(session)
             is FirClassSymbol -> ClassDispatchReceiverValue(fir.symbol)
             else -> null
         }
     }
 
-    protected fun ConeCallableSymbol.hasConsistentExtensionReceiver(extensionReceiver: ReceiverValue?): Boolean {
+    protected fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(extensionReceiver: ReceiverValue?): Boolean {
         val hasExtensionReceiver = hasExtensionReceiver()
         return hasExtensionReceiver == (extensionReceiver != null)
     }
@@ -196,7 +193,7 @@ class MemberScopeTowerLevel(
     val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
 
-    private fun <T : ConeSymbol> processMembers(
+    private fun <T : FirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
         explicitExtensionReceiver: ExpressionReceiverValue?,
         processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
@@ -205,11 +202,11 @@ class MemberScopeTowerLevel(
         val extensionReceiver = implicitExtensionReceiver ?: explicitExtensionReceiver
         val scope = dispatchReceiver.type.scope(session, scopeSession) ?: return ProcessorAction.NEXT
         if (scope.processScopeMembers { candidate ->
-                if (candidate is ConeCallableSymbol && candidate.hasConsistentExtensionReceiver(extensionReceiver)) {
+                if (candidate is FirCallableSymbol<*> && candidate.hasConsistentExtensionReceiver(extensionReceiver)) {
                     // NB: we do not check dispatchReceiverValue != null here,
                     // because of objects & constructors (see comments in dispatchReceiverValue() implementation)
                     output.consumeCandidate(candidate, candidate.dispatchReceiverValue(), implicitExtensionReceiver)
-                } else if (candidate is ConeClassLikeSymbol) {
+                } else if (candidate is FirClassLikeSymbol<*>) {
                     output.consumeCandidate(candidate, null, implicitExtensionReceiver)
                 } else {
                     ProcessorAction.NEXT
@@ -222,7 +219,7 @@ class MemberScopeTowerLevel(
         }
     }
 
-    override fun <T : ConeSymbol> processElementsByName(
+    override fun <T : FirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,
@@ -244,7 +241,7 @@ class MemberScopeTowerLevel(
 
 }
 
-private fun ConeCallableSymbol.hasExtensionReceiver(): Boolean = (this as? FirCallableSymbol)?.fir?.receiverTypeRef != null
+private fun FirCallableSymbol<*>.hasExtensionReceiver(): Boolean = this.fir.receiverTypeRef != null
 
 // This is more like "scope-based tower level"
 // We can access here members of currently accessible scope which is not influenced by explicit receiver
@@ -258,7 +255,7 @@ class ScopeTowerLevel(
     val scope: FirScope,
     val implicitExtensionReceiver: ImplicitReceiverValue? = null
 ) : SessionBasedTowerLevel(session) {
-    override fun <T : ConeSymbol> processElementsByName(
+    override fun <T : FirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,
@@ -305,7 +302,7 @@ class ScopeTowerLevel(
  *  Handles only statics and top-levels, DOES NOT handle objects/companions members
  */
 class QualifiedReceiverTowerLevel(session: FirSession) : SessionBasedTowerLevel(session) {
-    override fun <T : ConeSymbol> processElementsByName(
+    override fun <T : FirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,
@@ -329,8 +326,8 @@ class QualifiedReceiverTowerLevel(session: FirSession) : SessionBasedTowerLevel(
             }
         } else {
             scope.processCallables(name, token.cast()) {
-                val fir = it.firUnsafe<FirCallableMemberDeclaration>()
-                if (fir.isStatic || it.callableId.classId == null) {
+                val fir = it.fir
+                if (fir is FirCallableMemberDeclaration<*> && fir.isStatic || it.callableId.classId == null) {
                     processor.consumeCandidate(it as T, null, null)
                 } else {
                     ProcessorAction.NEXT
@@ -341,7 +338,7 @@ class QualifiedReceiverTowerLevel(session: FirSession) : SessionBasedTowerLevel(
 
 }
 
-class QualifiedReceiverTowerDataConsumer<T : ConeSymbol>(
+class QualifiedReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
@@ -599,7 +596,7 @@ class MultiplexerTowerDataConsumer(
 }
 
 
-class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
+class ExplicitReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
@@ -657,11 +654,11 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
                             dispatchReceiverValue: ClassDispatchReceiverValue?,
                             implicitExtensionReceiverValue: ImplicitReceiverValue?
                         ): ProcessorAction {
-                            if (symbol is FirFunctionSymbol && symbol.callableId.packageName.startsWith(defaultPackage)) {
+                            if (symbol is FirNamedFunctionSymbol && symbol.callableId.packageName.startsWith(defaultPackage)) {
                                 val explicitReceiverType = explicitReceiver.type
                                 if (dispatchReceiverValue == null && explicitReceiverType is ConeClassType) {
                                     val declarationReceiverTypeRef =
-                                        (symbol as? FirCallableSymbol)?.fir?.receiverTypeRef as? FirResolvedTypeRef
+                                        (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef as? FirResolvedTypeRef
                                     val declarationReceiverType = declarationReceiverTypeRef?.type
                                     if (declarationReceiverType is ConeClassType) {
                                         if (!AbstractTypeChecker.isSubtypeOf(
@@ -699,7 +696,7 @@ class ExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
 
 }
 
-class NoExplicitReceiverTowerDataConsumer<T : ConeSymbol>(
+class NoExplicitReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
@@ -962,7 +959,7 @@ class InvokeCandidateCollector(
     }
 }
 
-fun FirCallableDeclaration.dispatchReceiverValue(session: FirSession): ClassDispatchReceiverValue? {
+fun FirCallableDeclaration<*>.dispatchReceiverValue(session: FirSession): ClassDispatchReceiverValue? {
     // TODO: this is not true at least for inner class constructors
     if (this is FirConstructor) return null
     val id = (this.symbol as ConeCallableSymbol).callableId.classId ?: return null

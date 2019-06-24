@@ -61,7 +61,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
     protected fun ConeCallableSymbol.isOverridden(seen: Set<ConeCallableSymbol>): ConeCallableSymbol? {
         if (overrides.containsKey(this)) return overrides[this]
 
-        fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration, self: FirCallableDeclaration): Boolean {
+        fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration<*>, self: FirCallableDeclaration<*>): Boolean {
             return when (declaration) {
                 is FirNamedFunction -> self is FirNamedFunction && isOverriddenFunCheck(declaration, self)
                 is FirConstructor -> false
@@ -75,9 +75,9 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
             }
         }
 
-        val self = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration
+        val self = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
         val overriding = seen.firstOrNull {
-            val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration
+            val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
             self.modality != Modality.FINAL
                     && similarFunctionsOrBothProperties(member, self)
         } // TODO: two or more overrides for one fun?

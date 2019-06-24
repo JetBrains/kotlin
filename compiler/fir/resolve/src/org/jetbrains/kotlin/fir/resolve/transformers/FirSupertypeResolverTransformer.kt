@@ -59,7 +59,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
         return property.compose()
     }
 
-    private fun resolveSupertypesOrExpansions(classLikeDeclaration: FirClassLikeDeclaration): FirDeclaration {
+    private fun resolveSupertypesOrExpansions(classLikeDeclaration: FirClassLikeDeclaration<*>): FirDeclaration {
         val classId = classLikeDeclaration.symbol.classId
 
         if (classId in fullyComputed) return classLikeDeclaration
@@ -76,7 +76,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
         file: FirFile,
         private val currentlyComputing: MutableSet<ClassId>,
         private val fullyComputed: MutableSet<ClassId>,
-        private val knownFirClassLikeDeclaration: FirClassLikeDeclaration? = null
+        private val knownFirClassLikeDeclaration: FirClassLikeDeclaration<*>? = null
     ) : FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority = true) {
 
         lateinit var resultingClass: FirDeclaration
@@ -108,7 +108,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
             return resolveNestedClassesSupertypes(transformedClass, data)
         }
 
-        private fun FirClassLikeDeclaration.matchesRequestedDeclaration(): Boolean {
+        private fun FirClassLikeDeclaration<*>.matchesRequestedDeclaration(): Boolean {
             if (knownFirClassLikeDeclaration != null) return knownFirClassLikeDeclaration == this
             return symbol.classId == requestedClassId
         }

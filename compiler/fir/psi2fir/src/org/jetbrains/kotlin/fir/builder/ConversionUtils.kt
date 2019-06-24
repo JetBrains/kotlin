@@ -431,7 +431,7 @@ internal fun generateAccessExpression(session: FirSession, psi: PsiElement?, nam
         calleeReference = FirSimpleNamedReference(session, psi, name)
     }
 
-internal fun generateResolvedAccessExpression(session: FirSession, psi: PsiElement?, variable: FirVariable): FirQualifiedAccessExpression =
+internal fun generateResolvedAccessExpression(session: FirSession, psi: PsiElement?, variable: FirVariable<*>): FirQualifiedAccessExpression =
     FirQualifiedAccessExpressionImpl(session, psi).apply {
         calleeReference = FirResolvedCallableReferenceImpl(session, psi, variable.name, variable.symbol)
     }
@@ -439,7 +439,7 @@ internal fun generateResolvedAccessExpression(session: FirSession, psi: PsiEleme
 internal fun generateDestructuringBlock(
     session: FirSession,
     multiDeclaration: KtDestructuringDeclaration,
-    container: FirVariable,
+    container: FirVariable<*>,
     tmpVariable: Boolean,
     extractAnnotationsTo: KtAnnotated.(FirAbstractAnnotatedElement) -> Unit,
     toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef
@@ -465,14 +465,14 @@ internal fun generateDestructuringBlock(
 
 internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, name: Name, initializer: FirExpression
-): FirVariable =
+): FirVariable<*> =
     FirVariableImpl(session, psi, name, FirImplicitTypeRefImpl(session, psi), false, initializer, FirVariableSymbol(name)).apply {
         symbol.bind(this)
     }
 
 internal fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression
-): FirVariable = generateTemporaryVariable(session, psi, Name.special("<$specialName>"), initializer)
+): FirVariable<*> = generateTemporaryVariable(session, psi, Name.special("<$specialName>"), initializer)
 
 private fun FirModifiableQualifiedAccess<*>.initializeLValue(
     session: FirSession,

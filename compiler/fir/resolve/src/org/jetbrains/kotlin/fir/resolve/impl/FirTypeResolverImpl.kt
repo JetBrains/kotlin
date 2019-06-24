@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
@@ -29,13 +30,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
     private data class ClassIdInSession(val session: FirSession, val id: ClassId)
 
-    private val implicitBuiltinTypeSymbols = mutableMapOf<ClassIdInSession, ConeClassLikeSymbol>()
+    private val implicitBuiltinTypeSymbols = mutableMapOf<ClassIdInSession, FirClassLikeSymbol<*>>()
 
     // TODO: get rid of session used here, and may be also of the cache above (see KT-30275)
-    private fun resolveBuiltInQualified(id: ClassId, session: FirSession): ConeClassLikeSymbol {
+    private fun resolveBuiltInQualified(id: ClassId, session: FirSession): FirClassLikeSymbol<*> {
         val nameInSession = ClassIdInSession(session, id)
         return implicitBuiltinTypeSymbols.getOrPut(nameInSession) {
-            symbolProvider.getClassLikeSymbolByFqName(id) as ConeClassLikeSymbol
+            symbolProvider.getClassLikeSymbolByFqName(id)!!
         }
     }
 

@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl.Companion.NAME
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class FirJavaConstructor(
     session: FirSession,
-    override val symbol: FirFunctionSymbol,
+    override val symbol: FirConstructorSymbol,
     visibility: Visibility,
     delegatedSelfTypeRef: FirTypeRef
-) : FirAbstractCallableMember(
+) : FirAbstractCallableMember<FirConstructor>(
     session,
     psi = null,
     name = NAME,

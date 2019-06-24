@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
@@ -159,7 +158,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
                                     renderedDeclarations += declaration
                                 } else {
                                     enhancementScope.processFunctionsByName(declaration.name) { symbol ->
-                                        val enhanced = (symbol as? FirFunctionSymbol)?.fir
+                                        val enhanced = symbol.fir
                                         if (enhanced != null && enhanced !in renderedDeclarations) {
                                             enhanced.accept(renderer, null)
                                             renderer.newLine()

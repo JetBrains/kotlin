@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -57,7 +56,7 @@ fun deserializeClassToSymbol(
                 classId, classProto, nameResolver, session,
                 defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
             )
-        typeParameters += context.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
+        typeParameters += context.typeDeserializer.ownTypeParameters.map { it.fir }
         annotations += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         val typeDeserializer = context.typeDeserializer

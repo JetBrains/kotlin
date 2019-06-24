@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -24,7 +21,6 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import java.lang.IllegalStateException
 
 
 abstract class ResolutionStage {
@@ -80,7 +76,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
         }
 
         override fun Candidate.getReceiverValue(): ReceiverValue? {
-            val callableSymbol = symbol as? FirCallableSymbol ?: return null
+            val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
             val type = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type ?: return null
             return object : ReceiverValue {
@@ -136,8 +132,8 @@ internal sealed class CheckReceivers : ResolutionStage() {
 
 internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val symbol = candidate.symbol as? FirFunctionSymbol ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
-        val function = symbol.firUnsafe<FirFunction>()
+        val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
+        val function = symbol.fir
         val processor = FirCallArgumentsProcessor(function, callInfo.arguments)
         val mappingResult = processor.process()
         candidate.argumentMapping = mappingResult.argumentMapping
@@ -190,8 +186,8 @@ internal object CheckVisibility : CheckerStage() {
 
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol
-        val declaration = symbol.firSafeNullable<FirMemberDeclaration>()
-        if (declaration != null && !declaration.visibility.isPublicAPI) {
+        val declaration = symbol.fir
+        if (declaration is FirMemberDeclaration && !declaration.visibility.isPublicAPI) {
             val visible = when (declaration.visibility) {
                 JavaVisibilities.PACKAGE_VISIBILITY ->
                     symbol.packageFqName() == callInfo.containingFile.packageFqName

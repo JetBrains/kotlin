@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-abstract class FirAbstractCallableMember : FirAbstractMemberDeclaration, FirCallableMemberDeclaration {
+abstract class FirAbstractCallableMember<F : FirCallableMemberDeclaration<F>> :
+    FirAbstractMemberDeclaration, FirCallableMemberDeclaration<F> {
 
-//    final override val symbol: FirBasedSymbol<FirCallableDeclaration>
     final override var receiverTypeRef: FirTypeRef?
     final override var returnTypeRef: FirTypeRef
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -28,7 +28,7 @@ class CandidateFactory(
     }
 
     fun createCandidate(
-        symbol: ConeSymbol,
+        symbol: FirBasedSymbol<*>,
         dispatchReceiverValue: ClassDispatchReceiverValue?,
         implicitExtensionReceiverValue: ImplicitReceiverValue?,
         explicitReceiverKind: ExplicitReceiverKind

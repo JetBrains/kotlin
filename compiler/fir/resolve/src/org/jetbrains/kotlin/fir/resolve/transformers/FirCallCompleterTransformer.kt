@@ -68,7 +68,7 @@ class FirCallCompleterTransformer(
         val functionCall = functionCall.transformArguments(this, data) as FirFunctionCall
 
         val subCandidate = calleeReference.candidate
-        val declaration = subCandidate.symbol.firUnsafe<FirCallableMemberDeclaration>()
+        val declaration = subCandidate.symbol.firUnsafe<FirCallableMemberDeclaration<*>>()
         val newTypeParameters = declaration.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }
             .map { subCandidate.substitutor.substituteOrSelf(it) }
             .map { finalSubstitutor.substituteOrSelf(it) }

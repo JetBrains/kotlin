@@ -20,7 +20,7 @@ class FirDefaultSetterValueParameter(
     session: FirSession,
     psi: PsiElement?,
     override var returnTypeRef: FirTypeRef,
-    override val symbol: FirVariableSymbol = FirVariableSymbol(name)
+    override val symbol: FirVariableSymbol<FirValueParameter> = FirVariableSymbol(name)
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirValueParameter {
 
     init {

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -41,10 +42,10 @@ abstract class FirAbstractStarImportingScope(
     }
 
 
-    override fun <T : ConeCallableSymbol> processCallables(
+    override fun <T : FirCallableSymbol<*>> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (ConeCallableSymbol) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
         for (import in starImports) {
             if (processCallables(import, name, token, processor).stop()) {

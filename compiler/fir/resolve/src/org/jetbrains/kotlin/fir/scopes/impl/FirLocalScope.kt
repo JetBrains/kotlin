@@ -12,20 +12,21 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirLocalScope : FirScope() {
 
-    val properties = mutableMapOf<Name, ConeVariableSymbol>()
-    val functions = mutableMapOf<Name, ConeFunctionSymbol>()
+    val properties = mutableMapOf<Name, FirVariableSymbol<*>>()
+    val functions = mutableMapOf<Name, FirFunctionSymbol<*>>()
 
     fun storeDeclaration(declaration: FirNamedDeclaration) {
         when (declaration) {
-            is FirVariable -> properties[declaration.name] = declaration.symbol
-            is FirNamedFunction -> functions[declaration.name] = declaration.symbol as FirFunctionSymbol
+            is FirVariable<*> -> properties[declaration.name] = declaration.symbol
+            is FirNamedFunction -> functions[declaration.name] = declaration.symbol as FirNamedFunctionSymbol
         }
     }
 
@@ -33,7 +34,7 @@ class FirLocalScope : FirScope() {
         properties[FirBackingFieldReference.NAME] = property.backingFieldSymbol
     }
 
-    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         val prop = functions[name]
         if (prop != null) {
             return processor(prop)
@@ -41,7 +42,7 @@ class FirLocalScope : FirScope() {
         return ProcessorAction.NEXT
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val prop = properties[name]
         if (prop != null) {
             return processor(prop)

@@ -328,7 +328,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     symbolIds[symbolOwner.symbol] = symbolCounter++
                 }
 
-                override fun visitVariable(variable: FirVariable) {
+                override fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>) {
                     indexDeclaration(variable)
                     super.visitVariable(variable)
                 }
@@ -696,7 +696,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 generate(type.directExpansionType(session) ?: ConeKotlinErrorType("No expansion for type-alias"))
             }
             is ConeTypeParameterType -> resolved {
-                symbolRef(type.lookupTag.toSymbol(session)) {
+                symbolRef(type.lookupTag.toSymbol()) {
                     simpleName(type.lookupTag.name)
                 }
             }
@@ -794,7 +794,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         +"> "
     }
 
-    private fun FlowContent.generateReceiver(declaration: FirCallableDeclaration) {
+    private fun FlowContent.generateReceiver(declaration: FirCallableDeclaration<*>) {
         generateReceiver(declaration.receiverTypeRef)
     }
 
@@ -873,13 +873,13 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is FirWhenExpression -> generate(statement, isStatement = true)
             is FirTryExpression -> generate(statement, isStatement = true)
             is FirExpression -> iline { generate(statement) }
-            is FirVariable -> iline { generate(statement) }
+            is FirVariable<*> -> iline { generate(statement) }
             is FirVariableAssignment -> iline { generate(statement) }
             else -> unsupported(statement)
         }
     }
 
-    private fun FlowContent.generate(variable: FirVariable) {
+    private fun FlowContent.generate(variable: FirVariable<*>) {
         if (variable.isVal) {
             keyword("val ")
         } else {

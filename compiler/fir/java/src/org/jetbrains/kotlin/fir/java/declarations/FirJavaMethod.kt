@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirJavaMethod(
     session: FirSession,
-    symbol: FirFunctionSymbol,
+    symbol: FirNamedFunctionSymbol,
     name: Name,
     visibility: Visibility,
     modality: Modality?,

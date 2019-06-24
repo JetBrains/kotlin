@@ -12,22 +12,23 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-open class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, FirModifiableFunction {
+open class FirMemberFunctionImpl : FirAbstractCallableMember<FirNamedFunction>, FirNamedFunction, FirModifiableFunction {
 
-    override val symbol: FirCallableSymbol
+    // NB: FirAccessorSymbol can be here
+    override val symbol: FirFunctionSymbol<FirNamedFunction>
 
     constructor(
         session: FirSession,
         psi: PsiElement?,
-        symbol: FirCallableSymbol,
+        symbol: FirFunctionSymbol<FirNamedFunction>,
         name: Name,
         receiverTypeRef: FirTypeRef?,
         returnTypeRef: FirTypeRef
@@ -39,7 +40,7 @@ open class FirMemberFunctionImpl : FirAbstractCallableMember, FirNamedFunction, 
     constructor(
         session: FirSession,
         psi: PsiElement?,
-        symbol: FirFunctionSymbol,
+        symbol: FirNamedFunctionSymbol,
         name: Name,
         visibility: Visibility,
         modality: Modality?,

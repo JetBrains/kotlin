@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -205,8 +206,8 @@ open class FirBodyResolveTransformer(
                 FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
             is FirResolvedCallableReference -> {
                 val symbol = newCallee.coneSymbol
-                if (symbol is ConeCallableSymbol) {
-                    val returnType = jump.tryCalculateReturnType(symbol.firUnsafe())
+                if (symbol is FirCallableSymbol<*>) {
+                    val returnType = jump.tryCalculateReturnType(symbol.fir)
                     if (access.safe && access.explicitReceiver!!.resultType.coneTypeUnsafe<ConeKotlinType>().isNullable) {
                         returnType.withReplacedConeType(
                             session,
@@ -215,11 +216,11 @@ open class FirBodyResolveTransformer(
                     } else {
                         returnType
                     }
-                } else if (symbol is ConeClassifierSymbol) {
-                    val firUnsafe = symbol.firUnsafe<FirElement>()
+                } else if (symbol is ConeClassifierSymbol && symbol is FirBasedSymbol<*>) {
+                    val fir = symbol.fir
                     // TODO: unhack
-                    if (firUnsafe is FirEnumEntry) {
-                        (firUnsafe.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(
+                    if (fir is FirEnumEntry) {
+                        (fir.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(
                             session,
                             null,
                             "no enum item supertype"
@@ -275,7 +276,7 @@ open class FirBodyResolveTransformer(
         val resultType = resolvedQualifier.resultType
         if (classId != null) {
             val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId)!!
-            val declaration = classSymbol.firUnsafe<FirClassLikeDeclaration>()
+            val declaration = classSymbol.fir
             if (declaration is FirClass) {
                 if (declaration.classKind == ClassKind.OBJECT) {
                     return resultType.resolvedTypeFromPrototype(
@@ -851,7 +852,7 @@ open class FirBodyResolveTransformer(
         val expectedType = data as FirTypeRef?
 
         val kind = constExpression.kind
-        if (expectedType == null || expectedType is FirImplicitTypeRef || expectedType == null ||
+        if (expectedType == null || expectedType is FirImplicitTypeRef ||
             kind == IrConstKind.Null || kind == IrConstKind.Boolean || kind == IrConstKind.Char
         ) {
             val symbol = when (kind) {
@@ -968,7 +969,7 @@ open class FirBodyResolveTransformer(
         }
     }
 
-    private fun storeVariableReturnType(variable: FirVariable) {
+    private fun storeVariableReturnType(variable: FirVariable<*>) {
         val initializer = variable.initializer
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             when {
@@ -1021,8 +1022,8 @@ open class FirBodyResolveTransformer(
         }
     }
 
-    override fun transformVariable(variable: FirVariable, data: Any?): CompositeTransformResult<FirDeclaration> {
-        val variable = super.transformVariable(variable, variable.returnTypeRef).single as FirVariable
+    override fun <F : FirVariable<F>> transformVariable(variable: FirVariable<F>, data: Any?): CompositeTransformResult<FirDeclaration> {
+        val variable = super.transformVariable(variable, variable.returnTypeRef).single as FirVariable<*>
         storeVariableReturnType(variable)
         if (variable !is FirProperty) {
             localScopes.lastOrNull()?.storeDeclaration(variable)
@@ -1085,7 +1086,7 @@ open class FirBodyResolveTransformer(
                     val symbol = symbolProvider.getClassLikeSymbolByFqName(classId)!!
                     // TODO: Unify logic?
                     symbol.constructType(
-                        Array(symbol.firUnsafe<FirClassLikeDeclaration>().typeParameters.size) {
+                        Array(symbol.fir.typeParameters.size) {
                             ConeStarProjection
                         },
                         isNullable = false
@@ -1161,7 +1162,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
         cycleErrorType(declaration)?.let { return it }
-        require(declaration is FirCallableMemberDeclaration) { "${declaration::class}: ${declaration.render()}" }
+        require(declaration is FirCallableMemberDeclaration<*>) { "${declaration::class}: ${declaration.render()}" }
 
 
         val symbol = declaration.symbol as ConeCallableSymbol

@@ -9,4 +9,4 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 
-abstract class FirCallableSymbol : ConeCallableSymbol, AbstractFirBasedSymbol<FirCallableDeclaration>()
+abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : ConeCallableSymbol, AbstractFirBasedSymbol<D>()

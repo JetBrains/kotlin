@@ -21,17 +21,11 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteScope
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -59,7 +53,7 @@ class JavaSymbolProvider(
         content: KotlinClassFinder.Result.ClassFileContent?
     ): JavaClass? = facade.findClass(JavaClassFinder.Request(classId, previouslyFoundClassFileContent = content?.content), searchScope)
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> =
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
         emptyList()
 
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
@@ -72,9 +66,8 @@ class JavaSymbolProvider(
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope? {
-        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        val javaClass = symbol.firUnsafe<FirJavaClass>()
-        return buildJavaEnhancementScope(useSiteSession, javaClass.symbol, scopeSession)
+        val symbol = this.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
+        return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
     }
 
     private fun buildJavaEnhancementScope(
@@ -140,9 +133,9 @@ class JavaSymbolProvider(
             }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? = getFirJavaClass(classId)
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? = getFirJavaClass(classId)
 
-    fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): ConeClassLikeSymbol? {
+    fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirClassLikeSymbol<*>? {
         if (!hasTopLevelClassOf(classId)) return null
         return classCache.lookupCacheOrCalculateWithPostCompute(classId, {
             val foundClass = findClass(classId, content)
@@ -197,7 +190,7 @@ class JavaSymbolProvider(
                     for (javaMethod in javaClass.methods) {
                         val methodName = javaMethod.name
                         val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
-                        val methodSymbol = FirFunctionSymbol(methodId)
+                        val methodSymbol = FirNamedFunctionSymbol(methodId)
                         val returnType = javaMethod.returnType
                         val firJavaMethod = FirJavaMethod(
                             this@JavaSymbolProvider.session, methodSymbol, methodName,
@@ -219,7 +212,7 @@ class JavaSymbolProvider(
                     val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
 
                     fun addJavaConstructor(visibility: Visibility = Visibilities.PUBLIC): FirJavaConstructor {
-                        val constructorSymbol = FirFunctionSymbol(constructorId)
+                        val constructorSymbol = FirConstructorSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                         val firJavaConstructor = FirJavaConstructor(
                             this@JavaSymbolProvider.session, constructorSymbol, visibility,
