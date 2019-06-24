@@ -383,9 +383,28 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         return types.first() // TODO: proper implementation
     }
 
+    private fun prepareClassLikeType(
+        type: ConeClassLikeType,
+        visited: MutableSet<ConeAbbreviatedType>
+    ): KotlinTypeMarker {
+        return when (type) {
+            is ConeAbbreviatedType -> prepareAbbreviatedType(type, visited)
+            else -> type
+        }
+    }
+
+    private fun prepareAbbreviatedType(
+        type: ConeAbbreviatedType,
+        visited: MutableSet<ConeAbbreviatedType> = mutableSetOf()
+    ): KotlinTypeMarker {
+        if (type in visited) return ConeClassErrorType("Recursive type alias")
+        visited += type
+        return prepareClassLikeType(type.directExpansionType(session) ?: ConeClassErrorType("unresolved"), visited)
+    }
+
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
         return when (type) {
-            is ConeAbbreviatedType -> prepareType(type.directExpansionType(session) ?: ConeClassErrorType("unresolved"))
+            is ConeAbbreviatedType -> prepareAbbreviatedType(type)
             else -> type
         }
     }
