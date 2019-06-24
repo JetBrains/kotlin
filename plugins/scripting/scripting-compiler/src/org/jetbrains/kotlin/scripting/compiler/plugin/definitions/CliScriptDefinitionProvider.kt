@@ -32,6 +32,7 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
             val (withoutStdDef, stdDef) = newDefinitions.partition { it != getDefaultScriptDefinition() }
             definitions.addAll(withoutStdDef)
             hasStandardDefinition = stdDef.isNotEmpty()
+            clearCache()
         }
     }
 
@@ -41,6 +42,7 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
             for (it in newSources) {
                 definitionsFromSources.add(it.definitions.constrainOnce())
             }
+            clearCache()
         }
     }
 }
