@@ -15,18 +15,17 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.AddEditDeleteListPanel;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.ListSpeedSearch;
+import com.intellij.ui.*;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.GridBag;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.ArrayList;
@@ -91,8 +90,8 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       Splitter splitter = new Splitter(true);
       myMainComponent.add(splitter, BorderLayout.CENTER);
       myPositivePanel =
-        new MyAddDeleteListPanel("Fold console lines that contain", "Enter a substring of a console line you'd like to see folded:");
-      myNegativePanel = new MyAddDeleteListPanel("Exceptions", "Enter a substring of a console line you don't want to fold:");
+        new MyAddDeleteListPanel("Fold console lines that contain:", "Enter a substring of a console line you'd like to see folded:");
+      myNegativePanel = new MyAddDeleteListPanel("Exceptions:", "Enter a substring of a console line you don't want to fold:");
       splitter.setFirstComponent(myPositivePanel);
       splitter.setSecondComponent(myNegativePanel);
 
@@ -231,6 +230,11 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       super(title, new ArrayList<>());
       myQuery = query;
       new ListSpeedSearch(myList);
+    }
+
+    @Override
+    protected Border createTitledBorder(String title) {
+      return IdeBorderFactory.createTitledBorder(title, false, JBUI.insetsTop(8)).setShowLine(false);
     }
 
     @Override
