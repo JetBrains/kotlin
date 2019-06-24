@@ -243,7 +243,7 @@ abstract class KotlinIrLinker(
 
             fileProto.declarationIdList.forEach {
                 val uniqIdKey = it.uniqIdKey(moduleDescriptor)
-                reversedFileIndex.put(uniqIdKey, file)
+                reversedFileIndex.getOrPut(uniqIdKey) { mutableListOf() }.add(file)
             }
 
             when (deserializationStrategy) {
@@ -299,22 +299,30 @@ abstract class KotlinIrLinker(
             return codedInputStream
         }
 
-    private val reversedFileIndex = mutableMapOf<UniqIdKey, IrFile>()
+    private val reversedFileIndex = mutableMapOf<UniqIdKey, MutableList<IrFile>>()
 
     private val UniqIdKey.moduleOfOrigin
         get() =
-            this.moduleDescriptor ?: reversedFileIndex[this]?.packageFragmentDescriptor?.containingDeclaration
+            this.moduleDescriptor ?: reversedFileIndex[this]?.handleClashes(this)?.packageFragmentDescriptor?.containingDeclaration
 
     private fun deserializeTopLevelDeclaration(uniqIdKey: UniqIdKey): IrDeclaration {
         val proto = loadTopLevelDeclarationProto(uniqIdKey)
         return deserializersForModules[uniqIdKey.moduleOfOrigin]!!
-            .deserializeDeclaration(proto, reversedFileIndex[uniqIdKey]!!)
+            .deserializeDeclaration(proto, reversedFileIndex[uniqIdKey]!!.handleClashes(uniqIdKey))
     }
 
     protected abstract fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId): ByteArray
     protected abstract fun readSymbol(moduleDescriptor: ModuleDescriptor, symbolIndex: Int): ByteArray
     protected abstract fun readType(moduleDescriptor: ModuleDescriptor, typeIndex: Int): ByteArray
     protected abstract fun readString(moduleDescriptor: ModuleDescriptor, stringIndex: Int): ByteArray
+
+    protected open fun List<IrFile>.handleClashes(uniqIdKey: UniqIdKey): IrFile {
+        if (size == 1)
+            return this[0]
+        assert(size != 0)
+        error("UniqId clash: ${uniqIdKey.uniqId.index}. Found in the " +
+                      "[${this.joinToString { it.packageFragmentDescriptor.containingDeclaration.name.asString() }}]")
+    }
 
     private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): KotlinIr.IrDeclaration {
         val stream = reader(uniqIdKey.moduleOfOrigin!!, uniqIdKey.uniqId).codedInputStream
@@ -358,7 +366,7 @@ abstract class KotlinIrLinker(
             }
 
             val reachable = deserializeTopLevelDeclaration(key)
-            val file = reversedFileIndex[key]!!
+            val file = reversedFileIndex[key]!!.handleClashes(key)
             file.declarations.add(reachable)
             deserializeFileAnnotationsIfFirstUse(moduleOfOrigin, file)
 

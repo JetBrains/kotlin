@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.kotlinLibrary
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -44,6 +45,16 @@ class JsIrLinker(
 
     override fun readString(moduleDescriptor: ModuleDescriptor, stringIndex: Int) =
         moduleDescriptor.kotlinLibrary.string(stringIndex)
+
+    override fun List<IrFile>.handleClashes(uniqIdKey: UniqIdKey): IrFile {
+        if (size == 1)
+            return this[0]
+        assert(size != 0)
+        error("UniqId clash: ${uniqIdKey.uniqId.index}. Found in the " +
+                      "[${this.joinToString { it.packageFragmentDescriptor.containingDeclaration.userName }}]")
+    }
+
+    private val ModuleDescriptor.userName get() = kotlinLibrary.libraryFile.absolutePath
 
     override fun declareForwardDeclarations() {
         // since for `knownBuiltIns` such as FunctionN it is possible to have unbound symbols after deserialization
