@@ -75,6 +75,8 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
     ).apply {
         descriptor.bind(this)
 
+        expression.setDeclarationsParent(this)
+
         if (threadLocal)
             annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
 
@@ -315,6 +317,7 @@ fun IrBuilderWithScope.irCatch(type: IrType) =
                             false
                     ).apply {
                         descriptor.bind(this)
+                        parent = this@irCatch.parent
                     }
                 }
         )

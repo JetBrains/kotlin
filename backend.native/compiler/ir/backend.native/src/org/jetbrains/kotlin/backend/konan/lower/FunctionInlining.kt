@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
-import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
@@ -56,9 +53,8 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
         val actualCallee = getFunctionDeclaration(callee.symbol)
 
-        actualCallee.transformChildrenVoid(this)                            // Process recursive inline.
-
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
+
         val inliner = Inliner(expression, actualCallee, currentScope!!, parent, context)
         return inliner.inline()
     }
@@ -107,7 +103,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
         val substituteMap = mutableMapOf<IrValueParameter, IrElement>()
 
-        fun inline() = inlineFunction(callSite, callee)
+        fun inline() = inlineFunction(callSite, callee, true)
 
         /**
          * TODO: JVM inliner crashed on attempt inline this function from transform.kt with:
@@ -120,8 +116,12 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             }
         }
 
-        private fun inlineFunction(callSite: IrFunctionAccessExpression, callee: IrFunction): IrReturnableBlock {
-            val copiedCallee = copyIrElement.copy(callee) as IrFunction
+        private fun inlineFunction(callSite: IrFunctionAccessExpression,
+                                   callee: IrFunction,
+                                   performRecursiveInline: Boolean): IrReturnableBlock {
+            val copiedCallee = if (performRecursiveInline)
+                visitElement(copyIrElement.copy(callee)) as IrFunction
+            else copyIrElement.copy(callee) as IrFunction
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
@@ -194,6 +194,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                         return expression
                     }
                 })
+                patchDeclarationParents(parent) // TODO: Why it is not enough to just run SetDeclarationsParentVisitor?
             }
         }
 
@@ -263,7 +264,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                     return super.visitCall(expression)
 
                 val functionDeclaration = functionArgument.statements[0] as IrFunction
-                val newExpression = inlineFunction(expression, functionDeclaration) // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
+                val newExpression = inlineFunction(expression, functionDeclaration, false) // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
                 return newExpression.transform(this, null)                          // Substitute lambda arguments with target function arguments.
             }
 

@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -77,9 +79,12 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                     return
                 }
 
-                function.findActualForExpected().valueParameters[index].defaultValue = defaultValue.also {
-                    it.expression = it.expression.remapExpectValueSymbols()
-                }
+                val actualForExpected = function.findActualForExpected()
+                actualForExpected.valueParameters[index].defaultValue =
+                        IrExpressionBodyImpl(
+                                defaultValue.startOffset, defaultValue.endOffset,
+                                defaultValue.expression.remapExpectValueSymbols().patchDeclarationParents(actualForExpected)
+                        )
             }
         })
     }

@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -103,7 +100,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                 val defaultValue = parameter.defaultValue ?: continue
                 defaultValue.transformChildrenVoid(ParameterMapper(enumConstructor, loweredEnumConstructor, true))
                 loweredEnumConstructor.valueParameters[parameter.loweredIndex].defaultValue = defaultValue
-                defaultValue.patchDeclarationParents(loweredEnumConstructor)
+                defaultValue.setDeclarationsParent(loweredEnumConstructor)
             }
 
             return loweredEnumConstructor
@@ -129,7 +126,9 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                 ).apply {
                     it.bind(this)
                     parent = constructor.parent
-                    body = constructor.body!! // Will be transformed later.
+                    val body = constructor.body!!
+                    this.body = body // Will be transformed later.
+                    body.setDeclarationsParent(this)
                 }
             }
 

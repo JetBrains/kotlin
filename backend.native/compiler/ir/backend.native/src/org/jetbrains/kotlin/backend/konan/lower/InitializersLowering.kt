@@ -132,7 +132,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                         return expression
                     }
                 })
-                initializer.patchDeclarationParents(initializeFun)
+                initializer.setDeclarationsParent(initializeFun)
             }
 
             return initializeFun.symbol
@@ -166,7 +166,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                 if (initializeMethodSymbol == null) {
                                     assert(declaration.isPrimary)
                                     for (initializer in initializers)
-                                        initializer.patchDeclarationParents(declaration)
+                                        initializer.setDeclarationsParent(declaration)
                                     initializers
                                 } else {
                                     val startOffset = it.startOffset

@@ -287,7 +287,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                                 putValueArgument(0, irInt(it.index))
                             }
                             val initializer = it.value.initializerExpression!!
-                            initializer.patchDeclarationParents(constructor)
+                            initializer.setDeclarationsParent(constructor)
                             when {
                                 initializer is IrConstructorCall -> +initInstanceCall(instance, initializer)
 
