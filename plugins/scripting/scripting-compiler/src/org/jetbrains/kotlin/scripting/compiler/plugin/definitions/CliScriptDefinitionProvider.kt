@@ -28,6 +28,7 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
             definitions.addAll(withoutStdDef)
             // TODO: consider reporting an error when several default definitions are supplied
             defaultDefinition = stdDef.firstOrNull()
+            clearCache()
         }
     }
 
@@ -37,6 +38,7 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
             for (it in newSources) {
                 definitionsFromSources.add(it.definitions.constrainOnce())
             }
+            clearCache()
         }
     }
 

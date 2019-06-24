@@ -40,6 +40,12 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
             return COMPILATION_ERROR
         }
         val sourcePath = arguments.freeArgs.first()
+
+        configuration.addKotlinSourceRoot(sourcePath)
+        configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+        val coreEnvironment =
+            KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
         val scriptFile = File(sourcePath)
         if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
             val extensionHint =
@@ -48,13 +54,8 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
             messageCollector.report(ERROR, "Specify path to the script file$extensionHint as the first argument")
             return COMPILATION_ERROR
         }
-        configuration.addKotlinSourceRoot(sourcePath)
-        configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
         val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
-
-        val coreEnvironment =
-            KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(coreEnvironment, scriptArgs)
     }
