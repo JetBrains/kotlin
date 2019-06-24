@@ -1181,7 +1181,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
           }
         }
         result.set(doc);
-      }, DOC_GENERATION_TIMEOUT_MILLISECONDS, DOC_GENERATION_PAUSE_MILLISECONDS, null);
+      }, DOC_GENERATION_TIMEOUT_MILLISECONDS, DOC_GENERATION_PAUSE_MILLISECONDS);
       return result.get();
     }
   }

@@ -274,7 +274,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       // Note: Making the caret visible is merely for convenience
       myEditorPane.getCaret().setVisible(true);
     }
-    myEditorPane.setBackground(EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY));
+    setBackground(EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY));
     HTMLEditorKit editorKit = new JBHtmlEditorKit(true) {
       @Override
       public ViewFactory getViewFactory() {
@@ -573,6 +573,15 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     updateControlState();
   }
 
+  @Override
+  public void setBackground(Color color) {
+    super.setBackground(color);
+    if (Registry.is("editor.new.mouse.hover.popups")) {
+      if (myEditorPane != null) myEditorPane.setBackground(color);
+      if (myControlPanel != null) myControlPanel.setBackground(color);
+    }
+  }
+
   public AnAction[] getActions() {
     return myToolBar.getActions().stream().filter((action -> !(action instanceof Separator))).toArray(AnAction[]::new);
   }
@@ -863,7 +872,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   }
 
   private void showHint() {
-    if (myHint == null) return;
+    if (myHint == null) {
+      if (Registry.is("editor.new.mouse.hover.popups")) setPreferredSize(getOptimalSize());
+      return;
+    }
 
     setHintSize();
 
@@ -895,26 +907,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private void setHintSize() {
     Dimension hintSize;
     if (!myManuallyResized && myHint.getDimensionServiceKey() == null) {
-      int minWidth = JBUIScale.scale(300);
-      int maxWidth = getPopupAnchor() != null ? JBUIScale.scale(435) : MAX_DEFAULT.width;
-
-      int width = definitionPreferredWidth();
-      if (width < 0) { // no definition found
-        width = myEditorPane.getPreferredSize().width;
-      }
-      else {
-        width = Math.max(width, myEditorPane.getMinimumSize().width);
-      }
-      width = Math.min(maxWidth, Math.max(minWidth, width));
-
-      myEditorPane.setBounds(0, 0, width, MAX_DEFAULT.height);
-      myEditorPane.setText(myDecoratedText);
-      Dimension preferredSize = myEditorPane.getPreferredSize();
-
-      int height = preferredSize.height + (needsToolbar() ? myControlPanel.getPreferredSize().height : 0);
-      height = Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height));
-
-      hintSize = new Dimension(width, height);
+      hintSize = getOptimalSize();
     }
     else {
       hintSize = myManuallyResized
@@ -931,8 +924,31 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     myHint.setSize(hintSize);
   }
 
+  public Dimension getOptimalSize() {
+    int minWidth = JBUIScale.scale(300);
+    int maxWidth = getPopupAnchor() != null ? JBUIScale.scale(435) : MAX_DEFAULT.width;
+
+    int width = definitionPreferredWidth();
+    if (width < 0) { // no definition found
+      width = myEditorPane.getPreferredSize().width;
+    }
+    else {
+      width = Math.max(width, myEditorPane.getMinimumSize().width);
+    }
+    width = Math.min(maxWidth, Math.max(minWidth, width));
+
+    myEditorPane.setBounds(0, 0, width, MAX_DEFAULT.height);
+    myEditorPane.setText(myDecoratedText);
+    Dimension preferredSize = myEditorPane.getPreferredSize();
+
+    int height = preferredSize.height + (needsToolbar() ? myControlPanel.getPreferredSize().height : 0);
+    height = Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height));
+
+    return new Dimension(width, height);
+  }
+
   private Component getPopupAnchor() {
-    LookupEx lookup = LookupManager.getActiveLookup(myManager.getEditor());
+    LookupEx lookup = myManager == null ? null : LookupManager.getActiveLookup(myManager.getEditor());
 
     if (lookup != null && lookup.getCurrentItem() != null && lookup.getComponent().isShowing()) {
       return lookup.getComponent();
@@ -1292,7 +1308,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     }
   }
 
-  private boolean needsToolbar() {
+  public boolean needsToolbar() {
     return myManager.myToolWindow == null && Registry.is("documentation.show.toolbar");
   }
 

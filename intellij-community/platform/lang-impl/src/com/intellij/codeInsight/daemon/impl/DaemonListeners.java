@@ -575,6 +575,7 @@ public class DaemonListeners implements Disposable {
 
     @Override
     public void mouseExited(@NotNull EditorMouseEvent e) {
+      if (Registry.is("editor.new.mouse.hover.popups")) return;
       if (!myTooltipController.shouldSurvive(e.getMouseEvent())) {
         DaemonTooltipUtil.cancelTooltips();
       }
@@ -584,7 +585,7 @@ public class DaemonListeners implements Disposable {
   private class MyEditorMouseMotionListener implements EditorMouseMotionListener {
     @Override
     public void mouseMoved(@NotNull EditorMouseEvent e) {
-      if (Registry.is("ide.disable.editor.tooltips")) {
+      if (Registry.is("ide.disable.editor.tooltips") || Registry.is("editor.new.mouse.hover.popups")) {
         return;
       }
       Editor editor = e.getEditor();
@@ -625,6 +626,7 @@ public class DaemonListeners implements Disposable {
 
     @Override
     public void mouseDragged(@NotNull EditorMouseEvent e) {
+      if (Registry.is("editor.new.mouse.hover.popups")) return;
       myTooltipController.cancelTooltips();
     }
   }

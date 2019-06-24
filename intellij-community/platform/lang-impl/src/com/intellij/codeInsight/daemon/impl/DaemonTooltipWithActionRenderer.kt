@@ -93,8 +93,9 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                          hint: LightweightHint,
                          hintHint: HintHint,
                          actions: ArrayList<AnAction>,
-                         tooltipReloader: TooltipReloader) {
-    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader)
+                         tooltipReloader: TooltipReloader,
+                         highlightActions: Boolean) {
+    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader, highlightActions)
     val hasMore = LineTooltipRenderer.isActiveHtml(myText!!)
     if (tooltipAction == null && !hasMore) return
 
@@ -105,7 +106,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     grid.add(settingsComponent, settingsConstraints)
 
     if (isShowActions()) {
-      addActionsRow(hintHint, hint, editor, actions, grid)
+      addActionsRow(hintHint, hint, editor, actions, grid, highlightActions)
     }
   }
 
@@ -113,12 +114,13 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                             hint: LightweightHint,
                             editor: Editor,
                             actions: ArrayList<AnAction>,
-                            grid: JComponent) {
+                            grid: JComponent,
+                            highlightActions: Boolean) {
     if (tooltipAction == null || !hintHint.isAwtTooltip) return
 
 
     val buttons = JPanel(GridBagLayout())
-    val wrapper = createActionPanelWithBackground(hint, grid)
+    val wrapper = createActionPanelWithBackground(highlightActions)
     wrapper.add(buttons, BorderLayout.WEST)
 
     buttons.border = JBUI.Borders.empty()
@@ -173,9 +175,8 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     grid.add(wrapper, buttonsConstraints)
   }
 
-  private fun createActionPanelWithBackground(hint: LightweightHint,
-                                              grid: JComponent): JPanel {
-    val wrapper: JPanel = object : JPanel(BorderLayout()) {
+  private fun createActionPanelWithBackground(highlight : Boolean): JPanel {
+    val wrapper: JPanel = if (highlight) object : JPanel(BorderLayout()) {
       override fun paint(g: Graphics?) {
         g!!.color = UIUtil.getToolTipActionBackground()
         val graphics2D = g as Graphics2D
@@ -192,7 +193,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
         cfg.restore()
         super.paint(g)
       }
-    }
+    } else JPanel(BorderLayout())
 
     wrapper.isOpaque = false
     wrapper.border = JBUI.Borders.empty()
