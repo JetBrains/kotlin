@@ -224,12 +224,12 @@ private fun KtFunctionLiteral.valueParameterReferences(callExpression: KtCallExp
 
 private fun isSingleLine(element: KtCallExpression): Boolean {
     val qualifiedExpression = element.getQualifiedExpressionForSelector() ?: return true
-    var receiver = qualifiedExpression.receiverExpression as? KtQualifiedExpression ?: return true
+    var receiver = qualifiedExpression.receiverExpression
     if (receiver.lineCount() > 1) return false
     var count = 1
     while (true) {
         if (count > 2) return false
-        receiver = receiver.receiverExpression as? KtQualifiedExpression ?: break
+        receiver = (receiver  as? KtQualifiedExpression)?.receiverExpression ?: break
         count++
     }
     return true

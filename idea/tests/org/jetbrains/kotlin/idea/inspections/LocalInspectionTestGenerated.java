@@ -2313,6 +2313,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/complexRedundantLet/longCallChain.kt");
         }
 
+        @TestMetadata("multipleLines.kt")
+        public void testMultipleLines() throws Exception {
+            runTest("idea/testData/inspectionsLocal/complexRedundantLet/multipleLines.kt");
+        }
+
         @TestMetadata("multipleReceiver.kt")
         public void testMultipleReceiver() throws Exception {
             runTest("idea/testData/inspectionsLocal/complexRedundantLet/multipleReceiver.kt");
