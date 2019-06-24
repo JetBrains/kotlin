@@ -14884,6 +14884,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/jvmOverloads/primaryConstructor.kt");
         }
 
+        @TestMetadata("primaryConstructorWithAllDefaults.kt")
+        public void testPrimaryConstructorWithAllDefaults() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmOverloads/primaryConstructorWithAllDefaults.kt");
+        }
+
         @TestMetadata("privateClass.kt")
         public void testPrivateClass() throws Exception {
             runTest("compiler/testData/codegen/box/jvmOverloads/privateClass.kt");
