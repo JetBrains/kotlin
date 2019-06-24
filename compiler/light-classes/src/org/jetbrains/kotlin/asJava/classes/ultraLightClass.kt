@@ -14,7 +14,6 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
@@ -246,7 +245,13 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         for (parameter in propertyParameters()) {
             result.addAll(
-                membersBuilder.propertyAccessors(parameter, parameter.isMutable, forceStatic = false, onlyJvmStatic = false)
+                membersBuilder.propertyAccessors(
+                    parameter,
+                    parameter.isMutable,
+                    forceStatic = false,
+                    onlyJvmStatic = false,
+                    createAsAnnotationMethod = isAnnotationType
+                )
             )
         }
 
@@ -257,8 +262,16 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             for (declaration in companion.declarations.filterNot { isHiddenByDeprecation(it) }) {
                 when (declaration) {
-                    is KtNamedFunction -> if (isJvmStatic(declaration)) result.addAll(membersBuilder.createMethods(declaration, true))
-                    is KtProperty -> result.addAll(membersBuilder.propertyAccessors(declaration, declaration.isVar, false, true))
+                    is KtNamedFunction ->
+                        if (isJvmStatic(declaration)) result.addAll(membersBuilder.createMethods(declaration,forceStatic = true))
+                    is KtProperty -> result.addAll(
+                        membersBuilder.propertyAccessors(
+                            declaration,
+                            declaration.isVar,
+                            forceStatic = false,
+                            onlyJvmStatic = true
+                        )
+                    )
                 }
             }
         }

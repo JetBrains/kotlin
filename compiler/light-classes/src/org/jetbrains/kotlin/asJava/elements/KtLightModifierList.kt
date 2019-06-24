@@ -67,16 +67,24 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
     override fun toString() = "Light modifier list of $owner"
 
+    protected open fun nonSourceAnnotations(sourceAnnotationNames: Set<String>): List<KtLightAbstractAnnotation> {
+
+        val annotations = parent.clsDelegate.modifierList?.annotations
+
+        if (annotations.isNullOrEmpty()) return emptyList()
+
+        return annotations
+            .filter { it.qualifiedName !in sourceAnnotationNames }
+            .map { KtLightNonSourceAnnotation(this, it) }
+    }
+
     private fun computeAnnotations(): List<KtLightAbstractAnnotation> {
         val annotationsForEntries =
             owner.givenAnnotations ?: lightAnnotationsForEntries(this)
         val modifierListOwner = parent
         if (modifierListOwner is KtLightClassForSourceDeclaration && modifierListOwner.isAnnotationType) {
-            val sourceAnnotationNames = annotationsForEntries.mapTo(mutableSetOf()) { it.qualifiedName }
-            val specialAnnotationsOnAnnotationClass = modifierListOwner.clsDelegate.modifierList?.annotations.orEmpty().filter {
-                it.qualifiedName !in sourceAnnotationNames
-            }.map { KtLightNonSourceAnnotation(this, it) }
-            return annotationsForEntries + specialAnnotationsOnAnnotationClass
+            val sourceAnnotationNames = annotationsForEntries.mapNotNullTo(mutableSetOf()) { it.qualifiedName }
+            return annotationsForEntries + nonSourceAnnotations(sourceAnnotationNames)
         }
         if ((modifierListOwner is KtLightMember<*> && modifierListOwner !is KtLightFieldImpl.KtLightEnumConstant)
             || modifierListOwner is LightParameter
@@ -114,6 +122,10 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
     override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
 
     override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
+
+    override fun nonSourceAnnotations(sourceAnnotationNames: Set<String>): List<KtLightAbstractAnnotation> {
+        return emptyList()
+    }
 }
 
 open class KtLightSimpleModifierList(
