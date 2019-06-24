@@ -477,7 +477,7 @@ class PSICallResolver(
                 variableReceiver,
                 context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings),
                 dataFlowValue.isStable
-            )
+            ).prepareReceiverRegardingCaptureTypes()
         }
     }
 
