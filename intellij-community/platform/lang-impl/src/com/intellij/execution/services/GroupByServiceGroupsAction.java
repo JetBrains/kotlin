@@ -8,18 +8,25 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.execution.services.ServiceViewActionProvider.getSelectedView;
 
-public class FlattenServicesAction extends ToggleAction implements DumbAware {
+public class GroupByServiceGroupsAction extends ToggleAction implements DumbAware {
+  @Override
+  public void update(@NotNull AnActionEvent e) {
+    super.update(e);
+    ServiceView selectedView = getSelectedView(e);
+    e.getPresentation().setEnabled(selectedView != null);
+  }
+
   @Override
   public boolean isSelected(@NotNull AnActionEvent e) {
     ServiceView selectedView = getSelectedView(e);
-    return selectedView != null && selectedView.isFlat();
+    return selectedView != null && selectedView.isGroupByServiceGroups();
   }
 
   @Override
   public void setSelected(@NotNull AnActionEvent e, boolean state) {
     ServiceView selectedView = getSelectedView(e);
     if (selectedView != null) {
-      selectedView.setFlat(state);
+      selectedView.setGroupByServiceGroups(state);
     }
   }
 }

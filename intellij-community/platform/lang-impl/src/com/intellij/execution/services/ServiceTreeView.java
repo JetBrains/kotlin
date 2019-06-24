@@ -37,7 +37,6 @@ class ServiceTreeView extends ServiceView {
 
     myTreeModel = new ServiceViewTreeModel(model);
     myTree = new ServiceViewTree(myTreeModel, this);
-    myTree.setShowsRootHandles(!model.isFlat());
     myTree.addTreeSelectionListener(new RestoreSelectionListener());
 
     myListener = new MyViewModelListener();
@@ -120,12 +119,6 @@ class ServiceTreeView extends ServiceView {
     if (myLastSelection != null) {
       myLastSelection.getViewDescriptor().onNodeUnselected();
     }
-  }
-
-  @Override
-  void setFlat(boolean flat) {
-    super.setFlat(flat);
-    myTree.setShowsRootHandles(!flat);
   }
 
   private void onSelectionChanged() {
