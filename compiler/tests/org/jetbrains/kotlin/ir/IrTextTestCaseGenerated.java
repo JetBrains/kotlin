@@ -1656,6 +1656,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/nullabilityAssertionOnExtensionReceiver.kt");
         }
 
+        @TestMetadata("platformTypeReceiver.kt")
+        public void testPlatformTypeReceiver() throws Exception {
+            runTest("compiler/testData/ir/irText/types/platformTypeReceiver.kt");
+        }
+
         @TestMetadata("smartCastOnFieldReceiverOfGenericType.kt")
         public void testSmartCastOnFieldReceiverOfGenericType() throws Exception {
             runTest("compiler/testData/ir/irText/types/smartCastOnFieldReceiverOfGenericType.kt");

@@ -1,0 +1,23 @@
+FILE fqName:<root> fileName:/asOnPlatformType.kt
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:nullStr type:kotlin.String? [val]
+        CALL 'public open fun nullString (): kotlin.String? declared in <root>.JavaClass' type=kotlin.String? origin=null
+      VAR name:nonnullStr type:kotlin.String? [val]
+        CALL 'public open fun nonnullString (): kotlin.String? declared in <root>.JavaClass' type=kotlin.String? origin=null
+      CALL 'public final fun foo <T> (): T of <root>.foo [inline] declared in <root>' type=kotlin.String? origin=null
+      CALL 'public final fun foo <T> (): T of <root>.foo [inline] declared in <root>' type=kotlin.String? origin=null
+      CALL 'public final fun fooN <T> (): T of <root>.fooN? [inline] declared in <root>' type=kotlin.String? origin=null
+      CALL 'public final fun fooN <T> (): T of <root>.fooN? [inline] declared in <root>' type=kotlin.String? origin=null
+  FUN name:foo visibility:public modality:FINAL <T> () returnType:T of <root>.foo [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo <T> (): T of <root>.foo [inline] declared in <root>'
+        TYPE_OP type=T of <root>.foo origin=CAST typeOperand=T of <root>.foo
+          ERROR_CALL 'Unresolved reference: this#' type=T of <root>.foo
+  FUN name:fooN visibility:public modality:FINAL <T> () returnType:T of <root>.fooN? [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun fooN <T> (): T of <root>.fooN? [inline] declared in <root>'
+        TYPE_OP type=T of <root>.fooN? origin=CAST typeOperand=T of <root>.fooN?
+          ERROR_CALL 'Unresolved reference: this#' type=T of <root>.fooN

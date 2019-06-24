@@ -124,6 +124,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
             }
 
             private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall) = expression.run {
+                // TODO check argument
                 assert(operator == IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
                 argument
             }

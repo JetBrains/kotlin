@@ -65,11 +65,18 @@ class Psi2IrTranslator(
     ): GeneratorContext =
         GeneratorContext(configuration, moduleDescriptor, bindingContext, languageVersionSettings, symbolTable, extensions)
 
-    fun generateModuleFragment(context: GeneratorContext, ktFiles: Collection<KtFile>, deserializer: IrDeserializer? = null): IrModuleFragment {
+    fun generateModuleFragment(
+        context: GeneratorContext,
+        ktFiles: Collection<KtFile>,
+        deserializer: IrDeserializer? = null
+    ): IrModuleFragment {
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
+
+        // This is required for implicit casts insertion on IrTypes (work-in-progress).
         moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer)
         irModule.patchDeclarationParents()
+
         postprocess(context, irModule)
         moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer)
         return irModule

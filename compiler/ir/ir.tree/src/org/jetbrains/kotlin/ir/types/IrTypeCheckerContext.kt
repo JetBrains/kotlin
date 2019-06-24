@@ -87,4 +87,9 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
             is IrSimpleType -> arguments[index]
             else -> error("Type $this has no arguments")
         }
+
+    override fun KotlinTypeMarker.mayBeTypeVariable(): Boolean {
+        require(this is IrType)
+        return false
+    }
 }

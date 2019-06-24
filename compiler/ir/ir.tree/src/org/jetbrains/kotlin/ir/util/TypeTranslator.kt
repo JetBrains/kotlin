@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -58,9 +57,9 @@ class TypeTranslator(
             ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
 
     fun translateType(kotlinType: KotlinType): IrType =
-        translateType(kotlinType, kotlinType, Variance.INVARIANT).type
+        translateType(kotlinType, Variance.INVARIANT).type
 
-    private fun translateType(originalKotlinType: KotlinType, kotlinType: KotlinType, variance: Variance): IrTypeProjection {
+    private fun translateType(kotlinType: KotlinType, variance: Variance): IrTypeProjection {
         val approximatedType = LegacyTypeApproximation().approximate(kotlinType)
 
         when {
@@ -69,7 +68,7 @@ class TypeTranslator(
             approximatedType.isDynamic() ->
                 return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType.annotations), variance)
             approximatedType.isFlexible() ->
-                return translateType(originalKotlinType, approximatedType.upperIfFlexible(), variance)
+                return translateType(approximatedType.upperIfFlexible(), variance)
         }
 
         val ktTypeConstructor = approximatedType.constructor
@@ -77,7 +76,7 @@ class TypeTranslator(
             ?: throw AssertionError("No descriptor for type $approximatedType")
 
         return IrSimpleTypeBuilder().apply {
-            this.kotlinType = originalKotlinType
+            this.kotlinType = kotlinType
             hasQuestionMark = approximatedType.isMarkedNullable
             this.variance = variance
             when (ktTypeDescriptor) {
@@ -140,6 +139,6 @@ class TypeTranslator(
             if (it.isStarProjection)
                 IrStarProjectionImpl
             else
-                translateType(it.type, it.type, it.projectionKind)
+                translateType(it.type, it.projectionKind)
         }
 }

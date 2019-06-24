@@ -34,7 +34,7 @@ abstract class IrDeclarationBase(
     private var _parent: IrDeclarationParent? = null
     override var parent: IrDeclarationParent
         get() = _parent
-            ?: throw IllegalStateException("Parent not initialized: $this")
+            ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
         set(v) {
             _parent = v
         }
