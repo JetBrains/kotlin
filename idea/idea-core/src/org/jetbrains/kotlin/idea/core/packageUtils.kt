@@ -67,7 +67,7 @@ private fun getWritableModuleDirectory(vFiles: Query<VirtualFile>, module: Modul
     return null
 }
 
-private fun findLongestExistingPackage(module: Module, packageName: String): PsiPackage? {
+fun findLongestExistingPackage(module: Module, packageName: String): PsiPackage? {
     val manager = PsiManager.getInstance(module.project)
 
     var nameToMatch = packageName

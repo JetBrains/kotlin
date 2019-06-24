@@ -332,43 +332,55 @@ class MoveKotlinDeclarationsProcessor(
         val actualElement = element
         when (moveTarget) {
             is KotlinMoveTargetForDeferredFile -> {
-                val expectedElement = element.expectedDeclarationIfAny() ?: return moveTarget
-                val expectedModule = expectedElement.module ?: return moveTarget
-                val currentDirForExpected = moveTarget.directory?.virtualFile
-                        ?: moveTarget.targetFile
-                        ?: findOrCreateDirectoryForPackage(
-                            expectedModule,
-                            moveTarget.targetContainerFqName.asString()
-                        )?.virtualFile
-                        ?: return moveTarget
-                val expectedSourceRootPath = currentDirForExpected.getSourceRoot(project)?.path ?: return moveTarget
-                val allActualSourceRoots = actualElement.module?.sourceRoots ?: return moveTarget
-                val actualSourceRoot = findSuitableSourceRoot(
-                    allActualSourceRoots,
-                    expectedSourceRootPath,
-                    currentDirForExpected,
-                    expectedSourceRootPath
-                ) ?: return moveTarget
-                val relativePath = getRelativePath(expectedSourceRootPath, currentDirForExpected)
-                val actualTargetDir = actualSourceRoot.findFileByRelativePath(relativePath)
-                    ?: DirectoryUtil.mkdirs(
-                        PsiManager.getInstance(project),
-                        actualSourceRoot.path + "/" + relativePath
-                    ).virtualFile
-                val actualTargetDirPsi = actualTargetDir.toPsiDirectory(project) ?: return moveTarget
-                val actualTargetFile = moveTarget.targetFileName?.let { actualTargetDir.findChild(it) }
-                return KotlinMoveTargetForDeferredFile(
-                    moveTarget.targetContainerFqName,
-                    moveTarget.targetFileName,
-                    actualTargetDir.toPsiDirectory(project),
-                    actualTargetFile,
-                    moveTarget.module
-                ) {originalFile ->
-                    getOrCreateKotlinFile(
-                        moveTarget.targetFileName ?: originalFile.name,
-                        actualTargetDirPsi
-                    )
+                fun transformDirMove(currentDirForExpected: VirtualFile): KotlinMoveTarget {
+                    val expectedSourceRootPath = currentDirForExpected.getSourceRoot(project)?.path ?: return moveTarget
+                    val allActualSourceRoots = actualElement.module?.sourceRoots ?: return moveTarget
+                    val actualSourceRoot = findSuitableSourceRoot(
+                        allActualSourceRoots,
+                        expectedSourceRootPath,
+                        currentDirForExpected,
+                        expectedSourceRootPath
+                    ) ?: return moveTarget
+                    val relativePath = getRelativePath(expectedSourceRootPath, currentDirForExpected)
+                    val actualTargetDir = actualSourceRoot.findFileByRelativePath(relativePath)
+                        ?: DirectoryUtil.mkdirs(
+                            PsiManager.getInstance(project),
+                            actualSourceRoot.path + "/" + relativePath
+                        ).virtualFile
+                    val actualTargetDirPsi = actualTargetDir.toPsiDirectory(project) ?: return moveTarget
+                    val actualTargetFile = moveTarget.targetFileName?.let { actualTargetDir.findChild(it) }
+                    return KotlinMoveTargetForDeferredFile(
+                        moveTarget.targetContainerFqName,
+                        moveTarget.targetFileName,
+                        actualTargetDir.toPsiDirectory(project),
+                        actualTargetFile,
+                        moveTarget.module
+                    ) { originalFile ->
+                        getOrCreateKotlinFile(
+                            moveTarget.targetFileName ?: originalFile.name,
+                            actualTargetDirPsi
+                        )
+                    }
                 }
+
+                fun transformPackageMove(packName: String): KotlinMoveTarget? {
+                    return KotlinMoveTargetForDeferredFile(
+                        moveTarget.targetContainerFqName,
+                        null,
+                        null,
+                        null,
+                        moveTarget.module
+                    ) { originalFile ->
+                        val dir = actualElement.module?.let {
+                            findOrCreateDirectoryForPackage(it, packName)
+                        } ?: throw AssertionError("Couldn't create directory for: ${actualElement::class.java}: ${actualElement.text}")
+                        getOrCreateKotlinFile(moveTarget.targetFileName ?: originalFile.name, dir)
+                    }
+                }
+
+                moveTarget.directory?.virtualFile?.let { return@transformMoveTarget transformDirMove(it) }
+                moveTarget.targetFile?.let { return@transformMoveTarget transformDirMove(it) }
+                return transformPackageMove(moveTarget.targetContainerFqName.asString()) ?: moveTarget
             }
             is KotlinMoveTargetForExistingElement -> {
                 val targetFqName = moveTarget.targetElement.getKotlinFqName()?.asString() ?: return moveTarget
