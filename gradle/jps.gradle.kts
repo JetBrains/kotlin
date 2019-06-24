@@ -327,7 +327,7 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
             directory("lib") {
                 artifact("kotlin-plugin.jar")
 
-                jarsFromConfiguration(libraries)
+                jarsFromConfiguration(libraries) { it.replace("-$bootstrapKotlinVersion", "") }
 
                 directory("jps") {
                     jarsFromConfiguration(jpsPlugin)
