@@ -9,7 +9,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compileOnly(intellijDep())
     Platform[192].orHigher {
-        compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+        compileOnly(intellijPluginDep("java"))
     }
 }
 

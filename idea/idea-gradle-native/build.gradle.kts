@@ -33,7 +33,7 @@ dependencies {
     testCompileOnly(intellijDep())
 
     Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("external-system-rt", "external-system-impl") }
+        compileOnly(intellijPluginDep("java"))
     }
 
     testRuntime(project(":kotlin-reflect"))

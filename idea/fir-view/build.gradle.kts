@@ -23,7 +23,7 @@ dependencies {
     compileOnly(intellijDep())
 
     Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+        compileOnly(intellijPluginDep("java"))
     }
 
     compileOnly(intellijPluginDep("gradle"))

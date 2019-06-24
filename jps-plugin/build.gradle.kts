@@ -25,17 +25,7 @@ dependencies {
             includeJars("jdom", "trove4j", "jps-model", "openapi", "util", "asm-all", rootProject = rootProject)
         }
     }
-
-    Platform[191].orLower {
-        testCompileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
-        compileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
-    }
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("jps-builders", "jps-builders-6") }
-        testCompileOnly(intellijPluginDep("java")) { includeJars("jps-builders", "jps-builders-6") }
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
-
+    compileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -43,7 +33,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
-
+    testCompileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
     Ide.IJ {
         testCompile(intellijDep("devkit"))
     }
@@ -53,6 +43,10 @@ dependencies {
     testCompile(jpsBuildTest())
     compilerModules.forEach {
         testRuntime(project(it))
+    }
+
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijPluginDep("java"))
     }
 
     testRuntime(project(":kotlin-reflect"))

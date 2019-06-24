@@ -10,7 +10,7 @@ dependencies {
 
     compileOnly(intellijDep())
     Platform[192].orHigher {
-        compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+        compileOnly(intellijPluginDep("java"))
     }
 
     compileOnly(intellijPluginDep("stream-debugger"))

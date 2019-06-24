@@ -20,8 +20,8 @@ dependencies {
 
     compileOnly(intellijDep())
     Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl") }
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl") }
+        compileOnly(intellijPluginDep("java"))
+        testCompileOnly(intellijPluginDep("java"))
         testRuntime(intellijPluginDep("java"))
     }
     

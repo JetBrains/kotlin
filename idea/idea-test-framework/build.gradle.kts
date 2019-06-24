@@ -16,7 +16,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompileOnly(intellijDep())
     Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "external-system-rt", "external-system-impl") }
+        testCompileOnly(intellijPluginDep("java"))
     }
 }
 
