@@ -307,12 +307,18 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        store(value, address)
+        if (context.memoryModel == MemoryModel.STRICT)
+            store(value, address)
+        else
+            call(context.llvm.updateReturnRefFunction, listOf(address, value))
     }
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean) {
         if (onStack) {
-            store(value, address)
+            if (context.memoryModel == MemoryModel.STRICT)
+                store(value, address)
+            else
+                call(context.llvm.updateStackRefFunction, listOf(address, value))
         } else {
             call(context.llvm.updateHeapRefFunction, listOf(address, value))
         }
@@ -339,24 +345,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 SlotType.RETURN -> returnSlot!!
 
                 SlotType.ANONYMOUS -> vars.createAnonymousSlot()
-
-                SlotType.RETURN_IF_ARENA -> returnSlot.let {
-                    if (it != null)
-                        call(context.llvm.getReturnSlotIfArenaFunction, listOf(it, vars.createAnonymousSlot()))
-                    else {
-                        // Return type is not an object type - can allocate locally.
-                        localAllocs++
-                        arenaSlot!!
-                    }
-                }
-
-                is SlotType.PARAM_IF_ARENA ->
-                    if (LLVMTypeOf(vars.load(resultLifetime.slotType.parameter)) != codegen.runtime.objHeaderPtrType)
-                        vars.createAnonymousSlot()
-                    else {
-                        call(context.llvm.getParamSlotIfArenaFunction,
-                                listOf(vars.load(resultLifetime.slotType.parameter), vars.createAnonymousSlot()))
-                    }
 
                 else -> throw Error("Incorrect slot type: ${resultLifetime.slotType}")
             }
@@ -958,7 +946,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                     releaseVars()
                     LLVMBuildRet(builder, returnPhi)
                 }
-            // Do nothing, all paths throw.
+                // Do nothing, all paths throw.
                 else -> LLVMBuildUnreachable(builder)
             }
         }

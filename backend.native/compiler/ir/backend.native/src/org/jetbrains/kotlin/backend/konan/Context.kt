@@ -450,6 +450,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
 
+    val memoryModel = config.memoryModel
+
     override var inVerbosePhase = false
     override fun log(message: () -> String) {
         if (inVerbosePhase) {

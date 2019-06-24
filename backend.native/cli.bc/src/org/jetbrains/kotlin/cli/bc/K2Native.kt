@@ -177,6 +177,18 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
+                put(MEMORY_MODEL, when (arguments.memoryModel) {
+                    "relaxed" -> {
+                        configuration.report(STRONG_WARNING, "Relaxed memory model is not yet functional")
+                        MemoryModel.RELAXED
+                    }
+                    "strict" -> MemoryModel.STRICT
+                    else -> {
+                        configuration.report(ERROR, "Unsupported memory model ${arguments.memoryModel}")
+                        return
+                    }
+                })
+
                 when {
                     arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
                     arguments.generateTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.MAIN_THREAD)

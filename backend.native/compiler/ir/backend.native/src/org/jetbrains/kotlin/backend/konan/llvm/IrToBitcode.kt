@@ -1484,39 +1484,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-
-    /*
-       in C:
-       struct ObjHeader *header = (struct ObjHeader *)ptr;
-       struct T* obj = (T*)&header[1];
-       return &obj->fieldX;
-
-       in llvm ir:
-       %struct.ObjHeader = type { i32, i32 }
-       %struct.Object = type { i32, i32 }
-
-       ; Function Attrs: nounwind ssp uwtable
-       define i32 @fooField2(i8*) #0 {
-         %2 = alloca i8*, align 8
-         %3 = alloca %struct.ObjHeader*, align 8
-         %4 = alloca %struct.Object*, align 8
-         store i8* %0, i8** %2, align 8
-         %5 = load i8*, i8** %2, align 8
-         %6 = bitcast i8* %5 to %struct.ObjHeader*
-         store %struct.ObjHeader* %6, %struct.ObjHeader** %3, align 8
-         %7 = load %struct.ObjHeader*, %struct.ObjHeader** %3, align 8
-
-         %8 = getelementptr inbounds %struct.ObjHeader, %struct.ObjHeader* %7, i64 1; <- (T*)&header[1];
-
-         %9 = bitcast %struct.ObjHeader* %8 to %struct.Object*
-         store %struct.Object* %9, %struct.Object** %4, align 8
-         %10 = load %struct.Object*, %struct.Object** %4, align 8
-         %11 = getelementptr inbounds %struct.Object, %struct.Object* %10, i32 0, i32 0 <-  &obj->fieldX
-         %12 = load i32, i32* %11, align 4
-         ret i32 %12
-       }
-
-    */
     private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
         val fieldInfo = context.llvmDeclarations.forField(value)
 

@@ -2365,8 +2365,6 @@ KBoolean Konan_ensureAcyclicAndSet(ObjHeader* where, KInt index, ObjHeader* what
     return true;
 }
 
-
-
 void Kotlin_Any_share(ObjHeader* obj) {
     auto* container = obj->container();
     if (Shareable(container)) return;

@@ -46,6 +46,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
 
+    val memoryModel: MemoryModel get() = configuration.get(KonanConfigKeys.MEMORY_MODEL)!!
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
