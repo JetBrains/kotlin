@@ -2,8 +2,6 @@
 package org.jetbrains.plugins.gradle.tooling.tasks;
 
 public class ConfigurationNode extends AbstractComponentNode {
-  public static final String ANY_CONFIGURATION = "*";
-
   private final String projectPath;
   private final String configurationName;
 
