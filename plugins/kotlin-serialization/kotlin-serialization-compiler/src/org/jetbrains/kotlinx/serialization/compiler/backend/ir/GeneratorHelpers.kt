@@ -558,7 +558,7 @@ interface IrBuilderExtension {
                     serializerClass = serializableDescriptor.getClassFromInternalSerializationPackage("CommonEnumSerializer")
                     args = kType.toClassDescriptor!!.let { enumDesc ->
                         listOf(
-                            irString(enumDesc.name.toString()),
+                            irString(enumDesc.serialName()),
                             irCall(findEnumValuesMethod(enumDesc)),
                             createArrayOfExpression(
                                 compilerContext.irBuiltIns.stringType,

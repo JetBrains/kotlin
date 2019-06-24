@@ -28,7 +28,7 @@ class SerializerForEnumsTranslator(
             NoLookupLocation.FROM_BACKEND
         ).single()
         val ordinalRef = JsNameRef(context.getNameForDescriptor(ordinalProp), JsNameRef(jsFun.parameters[1].name))
-        val encodeEnumF = ctx.getNameForDescriptor(encoderClass.getFuncDesc("encodeEnum").single())
+        val encodeEnumF = ctx.getNameForDescriptor(encoderClass.getFuncDesc(CallingConventions.encodeEnum).single())
         val call = JsInvocation(JsNameRef(encodeEnumF, JsNameRef(jsFun.parameters[0].name)), serialClassDescRef, ordinalRef)
         +call.makeStmt()
     }
@@ -36,7 +36,7 @@ class SerializerForEnumsTranslator(
     override fun generateLoad(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
         val decoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.DECODER_CLASS)
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
-        val decodeEnumF = ctx.getNameForDescriptor(decoderClass.getFuncDesc("decodeEnum").single())
+        val decodeEnumF = ctx.getNameForDescriptor(decoderClass.getFuncDesc(CallingConventions.decodeEnum).single())
         val valuesFunc = DescriptorUtils.getFunctionByName(serializableDescriptor.staticScope, DescriptorUtils.ENUM_VALUES)
         val decodeEnumCall = JsInvocation(JsNameRef(decodeEnumF, JsNameRef(jsFun.parameters[0].name)), serialClassDescRef)
         val resultCall = JsArrayAccess(JsInvocation(ctx.getInnerNameForDescriptor(valuesFunc).makeRef()), decodeEnumCall)
