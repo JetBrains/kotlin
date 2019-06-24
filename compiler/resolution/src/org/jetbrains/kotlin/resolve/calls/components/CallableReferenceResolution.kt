@@ -119,8 +119,10 @@ fun ConstraintSystemOperation.checkCallableReference(
         addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
     }
 
-    addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
-    addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
+    if (!ErrorUtils.isError(candidateDescriptor)) {
+        addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
+        addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
+    }
 
     val invisibleMember = Visibilities.findInvisibleMember(
         dispatchReceiver?.asReceiverValueForVisibilityChecks,

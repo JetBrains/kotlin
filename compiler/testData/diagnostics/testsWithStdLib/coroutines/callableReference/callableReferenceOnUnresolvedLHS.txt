@@ -1,0 +1,23 @@
+package
+
+public final class Impl : Inv {
+    public constructor Impl()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Inv {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Scope</*0*/ InterfaceT, /*1*/ ImplementationT : InterfaceT> {
+    public constructor Scope</*0*/ InterfaceT, /*1*/ ImplementationT : InterfaceT>(/*0*/ implClass: [ERROR : j.Class<ImplementationT>]<ImplementationT>)
+    private final val implClass: [ERROR : j.Class<ImplementationT>]<ImplementationT>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ c: kotlin.collections.Collection<InterfaceT>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
