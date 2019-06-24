@@ -1321,6 +1321,7 @@ abstract class IrModuleDeserializer(
                 is IrProperty -> (descriptor as WrappedPropertyDescriptor).bind(declaration)
                 is IrEnumEntry -> (descriptor as WrappedEnumEntryDescriptor).bind(declaration)
                 is IrSimpleFunction -> (descriptor as WrappedSimpleFunctionDescriptor).bind(declaration)
+                is IrLocalDelegatedProperty -> (descriptor as WrappedVariableDescriptorWithAccessor).bind(declaration)
             }
         }
         logger.log { "### Deserialized declaration: ${descriptor} -> ${ir2string(declaration)}" }
