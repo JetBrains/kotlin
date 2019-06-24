@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -156,7 +157,7 @@ class MemoizedInlineClassReplacements {
     }
 
     private fun buildReplacement(function: IrFunction, body: IrFunctionImpl.() -> Unit) =
-        buildFun {
+        buildFunWithDescriptorForInlining(function.descriptor) {
             updateFrom(function)
             name = mangledNameFor(function)
             returnType = function.returnType

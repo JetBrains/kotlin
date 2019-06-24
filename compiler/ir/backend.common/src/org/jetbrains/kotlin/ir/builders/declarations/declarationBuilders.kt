@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 fun IrClassBuilder.buildClass(): IrClass {
@@ -110,8 +112,11 @@ inline fun IrProperty.addSetter(b: IrFunctionBuilder.() -> Unit = {}): IrSimpleF
         }
     }
 
-fun IrFunctionBuilder.buildFun(): IrFunctionImpl {
-    val wrappedDescriptor = WrappedSimpleFunctionDescriptor()
+fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrFunctionImpl {
+    val wrappedDescriptor = if (originalDescriptor is DescriptorWithContainerSource)
+        WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
+    else
+        WrappedSimpleFunctionDescriptor()
     return IrFunctionImpl(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
@@ -134,6 +139,17 @@ fun IrFunctionBuilder.buildConstructor(): IrConstructor {
         wrappedDescriptor.bind(it)
     }
 }
+
+/**
+ * Inlining relies on descriptors for external declarations. When replacing a
+ * potentially external function (e.g. in an IrCall) we have to ensure that we keep
+ * information from the original descriptor so as not to break inlining.
+ */
+inline fun buildFunWithDescriptorForInlining(originalDescriptor: FunctionDescriptor, b: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+    IrFunctionBuilder().run {
+        b()
+        buildFun(originalDescriptor)
+    }
 
 inline fun buildFun(b: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
     IrFunctionBuilder().run {

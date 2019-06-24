@@ -463,7 +463,7 @@ open class WrappedSimpleFunctionDescriptor(
 }
 
 class WrappedFunctionDescriptorWithContainerSource(
-    override val containerSource: DeserializedContainerSource
+    override val containerSource: DeserializedContainerSource?
 ) : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource
 
 open class WrappedClassConstructorDescriptor(

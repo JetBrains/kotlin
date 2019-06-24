@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val u1: UByte = 255u

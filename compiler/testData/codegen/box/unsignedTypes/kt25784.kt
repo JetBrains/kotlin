@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
