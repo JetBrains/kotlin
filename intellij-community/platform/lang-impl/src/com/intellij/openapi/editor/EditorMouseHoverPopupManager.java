@@ -34,6 +34,7 @@ import com.intellij.ui.HintHint;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.SideBorder;
+import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.PopupPositionManager;
 import com.intellij.util.Alarm;
@@ -106,7 +107,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
               updateHint(component);
             }
             else {
-              JBPopup hint = createHint(component);
+              AbstractPopup hint = createHint(component);
               showHintInEditor(hint, editor, context);
               myPopupReference = new WeakReference<>(hint);
             }
@@ -117,7 +118,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     }, progress), Registry.intValue("editor.new.mouse.hover.popups.delay"));
   }
 
-  private void showHintInEditor(JBPopup hint, Editor editor, Context context) {
+  private void showHintInEditor(AbstractPopup hint, Editor editor, Context context) {
     closeHint();
     editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, context.getPopupPosition(editor));
     try {
@@ -126,13 +127,15 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     finally {
       editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, null);
     }
+    Window window = hint.getPopupWindow();
+    if (window != null) window.setFocusableWindowState(true);
   }
 
-  private static JBPopup createHint(JComponent component) {
+  private static AbstractPopup createHint(JComponent component) {
     JPanel wrapper = new JPanel(new BorderLayout());
     wrapper.setBorder(null);
     wrapper.add(component, BorderLayout.CENTER);
-    return JBPopupFactory.getInstance()
+    return (AbstractPopup)JBPopupFactory.getInstance()
       .createComponentPopupBuilder(wrapper, component)
       .setResizable(true)
       .createPopup();
