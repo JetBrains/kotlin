@@ -1,6 +1,6 @@
 // REPL_MODE: false
 
-foo.forEach {           // ERROR: Unresolved reference: foo; Cannot choose among the following candidates without completing ty...
+foo.forEach {           // ERROR: Unresolved reference: foo; Overload resolution ambiguity: ...
     1 + 1
 }
 
@@ -8,7 +8,7 @@ fun goo(a: String) {    // ERROR: Unresolved reference: goo
     super.goo(a)
 }
 /** unresolvedMultiline.kts:3 Unresolved reference: foo */
-/** unresolvedMultiline.kts:3 Cannot choose among the following candidates without completing type inference:
-@HidesMembers public inline fun <T> Iterable<???>.forEach(action: (???) -> Unit): Unit defined in kotlin.collections
-@HidesMembers public inline fun <K, V> Map<out ???, ???>.forEach(action: (Map.Entry<???, ???>) -> Unit): Unit defined in kotlin.collections */
+/** unresolvedMultiline.kts:3 Overload resolution ambiguity:
+@HidesMembers public inline fun <T> Iterable<TypeVariable(T)>.forEach(action: (TypeVariable(T)) -> Unit): Unit defined in kotlin.collections
+@HidesMembers public inline fun <K, V> Map<out TypeVariable(K), TypeVariable(V)>.forEach(action: (Map.Entry<TypeVariable(K), TypeVariable(V)>) -> Unit): Unit defined in kotlin.collections */
 /** unresolvedMultiline.kts:7 Unresolved reference: goo */
