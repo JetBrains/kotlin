@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -386,6 +389,7 @@ open class FirBodyResolveTransformer(
                 val types = if (labelName == null) labels.values() else labels[Name.identifier(labelName)]
                 val type = types.lastOrNull() ?: ConeKotlinErrorType("Unresolved this@$labelName")
                 qualifiedAccessExpression.resultType = FirResolvedTypeRefImpl(session, null, type, emptyList())
+                return qualifiedAccessExpression.compose()
             }
             is FirSuperReference -> {
                 if (callee.superTypeRef is FirResolvedTypeRef) {
@@ -397,14 +401,23 @@ open class FirBodyResolveTransformer(
                     qualifiedAccessExpression.resultType = superTypeRef
                     callee.replaceSuperTypeRef(superTypeRef)
                 }
+                return qualifiedAccessExpression.compose()
             }
             is FirResolvedCallableReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
                     storeTypeFromCallee(qualifiedAccessExpression)
                 }
+                return qualifiedAccessExpression.compose()
             }
         }
-        return transformCallee(qualifiedAccessExpression).compose()
+        val transformedCallee = transformCallee(qualifiedAccessExpression)
+        // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
+        // so candidate existence must be checked before calling completion
+        return if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
+            completeTypeInference(transformedCallee, data as? FirTypeRef).compose()
+        } else {
+            transformedCallee.compose()
+        }
     }
 
     override fun transformVariableAssignment(
@@ -774,10 +787,13 @@ open class FirBodyResolveTransformer(
             }
             candidates.size == 1 -> {
                 val candidate = candidates.single()
-                if (candidate.symbol is FirBackingFieldSymbol) {
-                    FirBackingFieldReferenceImpl(firSession, psi, candidate.symbol)
-                } else {
-                    FirNamedReferenceWithCandidate(firSession, psi, name, candidate)
+                val coneSymbol = candidate.symbol
+                when {
+                    coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(firSession, psi, coneSymbol)
+                    coneSymbol is FirVariableSymbol &&
+                            (coneSymbol !is FirPropertySymbol || coneSymbol.firUnsafe<FirMemberDeclaration>().typeParameters.isEmpty()) ->
+                        FirResolvedCallableReferenceImpl(firSession, psi, name, coneSymbol)
+                    else -> FirNamedReferenceWithCandidate(firSession, psi, name, candidate)
                 }
             }
             else -> FirErrorNamedReference(
