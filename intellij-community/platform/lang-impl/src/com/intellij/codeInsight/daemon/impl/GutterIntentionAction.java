@@ -39,7 +39,7 @@ class GutterIntentionAction extends AbstractIntentionAction implements Comparabl
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     final RelativePoint relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(editor);
     myAction.actionPerformed(
-      new AnActionEvent(relativePoint.toMouseEvent(), ((EditorEx)editor).getDataContext(), myText, new Presentation(),
+      new AnActionEvent(relativePoint.toMouseEvent(), ((EditorEx)editor).getDataContext(), ActionPlaces.INTENTION_MENU, new Presentation(),
                         ActionManager.getInstance(), 0));
   }
 
@@ -56,7 +56,7 @@ class GutterIntentionAction extends AbstractIntentionAction implements Comparabl
 
   @NotNull
   static AnActionEvent createActionEvent(@NotNull DataContext dataContext) {
-    return AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
+    return AnActionEvent.createFromDataContext(ActionPlaces.INTENTION_MENU, null, dataContext);
   }
 
   boolean isAvailable(@NotNull DataContext dataContext) {
