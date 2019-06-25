@@ -26,8 +26,7 @@ class DataNodeTest {
   @Test
   fun `instance of class from a classloader can be deserialized`() {
     val barObject = classLoader.loadClass("foo.Bar").newInstance()
-
-    val deserialized = wrapAndDeserialize(barObject, listOf(URLClassLoader(arrayOf(libUrl), javaClass.classLoader)))
+    val deserialized = wrapAndDeserialize(barObject, URLClassLoader(arrayOf(libUrl)))
     assertThat(deserialized.data.javaClass.name).isEqualTo("foo.Bar")
   }
 
@@ -59,7 +58,7 @@ class DataNodeTest {
 
     val proxyInstance = Proxy.newProxyInstance(classLoader, arrayOf(interfaceClass), invocationHandler)
     @Suppress("UNCHECKED_CAST")
-    val deserialized = wrapAndDeserialize(proxyInstance, listOf(URLClassLoader(arrayOf(libUrl), javaClass.classLoader)))
+    val deserialized = wrapAndDeserialize(proxyInstance, URLClassLoader(arrayOf(libUrl)))
     assertThat(deserialized.data.javaClass.interfaces)
       .extracting("name")
       .contains("foo.Baz")
@@ -100,27 +99,15 @@ class DataNodeTest {
     handler.ref = proxy
     assertThat(proxy.incrementAndGet()).isEqualTo(1)
 
-    val dataNode = wrapAndDeserialize(proxy, listOf(javaClass.classLoader))
+    val dataNode = wrapAndDeserialize(proxy, javaClass.classLoader)
     val counter = dataNode.data as Counter
     assertThat(counter.incrementAndGet()).isEqualTo(2)
   }
 
-  private fun wrapAndDeserialize(barObject: Any, classLoaders: List<ClassLoader>): DataNode<*> {
+  private fun wrapAndDeserialize(barObject: Any, classLoader: ClassLoader): DataNode<*> {
     val original = DataNode(Key.create(barObject.javaClass, 0), barObject, null)
     val bytes = ObjectSerializer.instance.writeAsBytes(original, createCacheWriteConfiguration())
-    return ObjectSerializer.instance.read(DataNode::class.java, bytes, createDataNodeReadConfiguration { name, _ ->
-      var lastException: ClassNotFoundException? = null
-      for (classLoader in classLoaders) {
-        try {
-          return@createDataNodeReadConfiguration classLoader.loadClass(name)
-        }
-        catch (e: ClassNotFoundException) {
-          lastException = e
-        }
-      }
-
-      throw lastException!!
-    })
+    return ObjectSerializer.instance.read(DataNode::class.java, bytes, createCacheReadConfiguration(logger<DataNodeTest>(), testOnlyClassLoader = classLoader))
   }
 }
 
