@@ -23,10 +23,11 @@ public class QuickChangeCodeStyleSchemeAction extends QuickSwitchSchemeAction {
     final CodeStyleSettingsManager manager = CodeStyleSettingsManager.getInstance(project);
     if (manager.getMainProjectCodeStyle() != null) {
       //noinspection HardCodedStringLiteral
-      group.add(new AnAction("<project>", "",
+      group.add(new AnAction("<Project>", "",
                              manager.USE_PER_PROJECT_SETTINGS ? AllIcons.Actions.Forward : ourNotCurrentAction) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
+          manager.updateSettingsTracker();
           manager.USE_PER_PROJECT_SETTINGS = true;
           CodeStyleSettingsManager.getInstance(project).fireCodeStyleSettingsChanged(null);
         }
@@ -35,28 +36,24 @@ public class QuickChangeCodeStyleSchemeAction extends QuickSwitchSchemeAction {
 
     CodeStyleScheme currentScheme = CodeStyleSchemes.getInstance().getCurrentScheme();
     for (CodeStyleScheme scheme : CodeStyleSchemesImpl.getSchemeManager().getAllSchemes()) {
-      addScheme(group, manager, currentScheme, scheme, false, project);
+      addScheme(group, manager, currentScheme, scheme);
     }
   }
 
   private static void addScheme(final DefaultActionGroup group,
                                 final CodeStyleSettingsManager manager,
                                 final CodeStyleScheme currentScheme,
-                                final CodeStyleScheme scheme,
-                                final boolean addScheme,
-                                Project project) {
+                                final CodeStyleScheme scheme) {
     group.add(new DumbAwareAction(scheme.getName(), "",
                                   scheme == currentScheme && !manager.USE_PER_PROJECT_SETTINGS ? AllIcons.Actions.Forward
                                                                                                : ourNotCurrentAction) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        if (addScheme) {
-          CodeStyleSchemes.getInstance().addScheme(scheme);
-        }
         CodeStyleSchemes.getInstance().setCurrentScheme(scheme);
+        manager.updateSettingsTracker(); //TODO<rv> Consider a better way to fix via proper caching
         manager.USE_PER_PROJECT_SETTINGS = false;
         manager.PREFERRED_PROJECT_CODE_STYLE = scheme.getName();
-        CodeStyleSettingsManager.getInstance(project).fireCodeStyleSettingsChanged(null);
+        manager.fireCodeStyleSettingsChanged(null);
       }
     });
   }
