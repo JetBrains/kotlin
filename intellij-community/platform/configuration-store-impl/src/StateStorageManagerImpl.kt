@@ -158,20 +158,7 @@ open class StateStorageManagerImpl(private val rootTagName: String,
                          storageCustomizer: (StateStorage.() -> Unit)? = null,
                          storageCreator: StorageCreator? = null): StateStorage {
     val normalizedCollapsedPath = normalizeFileSpec(collapsedPath)
-    val key = if (storageClass == StateStorage::class.java) {
-      if (normalizedCollapsedPath.isEmpty()) {
-        throw Exception("Normalized path is empty, raw path '$collapsedPath'")
-      }
-      val key = storageCreator?.key ?: normalizedCollapsedPath
-      if (key == StoragePathMacros.PRODUCT_WORKSPACE_FILE && ApplicationManager.getApplication().isUnitTestMode) {
-        StoragePathMacros.WORKSPACE_FILE
-      }
-      key
-    }
-    else {
-      storageClass.name!!
-    }
-
+    val key = computeStorageKey(storageClass, normalizedCollapsedPath, collapsedPath, storageCreator)
     val storage = storageLock.read { storages.get(key) } ?: return storageLock.write {
       storages.getOrPut(key) {
         val storage = when (storageCreator) {
@@ -185,6 +172,22 @@ open class StateStorageManagerImpl(private val rootTagName: String,
 
     storageCustomizer?.let { storage.it() }
     return storage
+  }
+
+  private fun computeStorageKey(storageClass: Class<out StateStorage>, normalizedCollapsedPath: String, collapsedPath: String, storageCreator: StorageCreator?): String {
+    if (storageClass != StateStorage::class.java) {
+      return storageClass.name!!
+    }
+
+    if (normalizedCollapsedPath.isEmpty()) {
+      throw Exception("Normalized path is empty, raw path '$collapsedPath'")
+    }
+
+    val key = storageCreator?.key ?: normalizedCollapsedPath
+    if (key == StoragePathMacros.PRODUCT_WORKSPACE_FILE && ApplicationManager.getApplication().isUnitTestMode) {
+      return StoragePathMacros.WORKSPACE_FILE
+    }
+    return key
   }
 
   fun getCachedFileStorages(): Set<StateStorage> = storageLock.read { storages.values.toSet() }
