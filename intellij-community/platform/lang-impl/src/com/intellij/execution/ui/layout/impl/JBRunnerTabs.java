@@ -112,12 +112,6 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   protected TabLabel createTabLabel(TabInfo info) {
     return new SingleHeightLabel(this, info) {
       @Override
-      public void setTabActionsAutoHide(boolean autoHide) {
-        super.setTabActionsAutoHide(autoHide);
-        apply(new UiDecorator.UiDecoration(null, JBUI.insets(0, 8, 0, 8)));
-      }
-
-      @Override
       public void setTabActions(ActionGroup group) {
         super.setTabActions(group);
         if (myActionPanel != null) {
