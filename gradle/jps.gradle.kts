@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.gradle.ext.*
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.ideaExt.*
 
 
@@ -341,8 +342,12 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project
     val jarName = name ?: project.name + ".jar"
     create(jarName) {
         archive(jarName) {
-            directory("META-INF") {
-                file("${project.buildDir}/tmp/jar/MANIFEST.MF")
+            (project.tasks["jar"] as? Jar)?.let { jar ->
+                val manifestPath = jar.temporaryDir.resolve("MANIFEST.MF")
+                jar.manifest.writeTo(manifestPath)
+                directory("META-INF") {
+                    file(manifestPath)
+                }
             }
             
             if (project.sourceSets.names.contains("main")) { 

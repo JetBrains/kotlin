@@ -32,7 +32,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-val runtimeJar by configurations.creating
 val compile by configurations  // maven plugin writes pom compile scope from compile configuration by default
 val proguardLibraries by configurations.creating {
     extendsFrom(compile)
@@ -220,15 +219,12 @@ dependencies {
 
 publish()
 
-noDefaultJar()
-
 val packCompiler by task<ShadowJar> {
     configurations = emptyList()
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(File(buildDir, "libs"))
+    archiveClassifier.set("before-proguard")
 
-    setupPublicJar(compilerBaseName, "before-proguard")
-    
     from(fatJarContents)
 
     dependsOn(fatJarContentsStripServices)
@@ -244,9 +240,6 @@ val packCompiler by task<ShadowJar> {
             zipTree(it).matching { exclude("META-INF/jb/**", "META-INF/LICENSE") }
         }
     }
-
-    manifest.attributes["Class-Path"] = compilerManifestClassPath
-    manifest.attributes["Main-Class"] = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 }
 
 val proguard by task<ProGuardTask> {
@@ -270,8 +263,28 @@ val proguard by task<ProGuardTask> {
 }
 
 val pack = if (shrink) proguard else packCompiler
-
 val distDir: String by rootProject.extra
+
+val jar = runtimeJar {
+    dependsOn(pack)
+
+    from {
+        zipTree(pack.outputs.files.singleFile)
+    }
+
+    manifest.attributes["Class-Path"] = compilerManifestClassPath
+    manifest.attributes["Main-Class"] = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
+}
+
+sourcesJar {
+    from {
+        compilerModules.map {
+            project(it).mainSourceSet.allSource
+        }
+    }
+}
+
+javadocJar()
 
 val distKotlinc = distTask<Sync>("distKotlinc") {
     destinationDir = File("$distDir/kotlinc")
@@ -287,7 +300,7 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
     }
 
     into("lib") {
-        from(pack) { rename { "$compilerBaseName.jar" } }
+        from(jar) { rename { "$compilerBaseName.jar" } }
         from(libraries)
         from(sources)
         from(compilerPlugins) {
@@ -322,21 +335,6 @@ distTask<Copy>("dist") {
     from(buildNumber)
     from(distStdlibMinimalForTests)
 }
-
-runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
-    name = compilerBaseName
-    classifier = ""
-}
-
-sourcesJar {
-    from {
-        compilerModules.map {
-            project(it).mainSourceSet.allSource
-        }
-    }
-}
-
-javadocJar()
 
 inline fun <reified T : AbstractCopyTask> Project.distTask(
     name: String,
