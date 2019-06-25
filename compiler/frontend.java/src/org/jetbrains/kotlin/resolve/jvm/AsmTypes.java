@@ -19,6 +19,7 @@ public class AsmTypes {
     public static final Type JAVA_STRING_TYPE = getType(String.class);
     public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
     public static final Type JAVA_CLASS_TYPE = getType(Class.class);
+    public static final Type JAVA_CLASS_ARRAY_TYPE = Type.getObjectType("[" + JAVA_CLASS_TYPE.getDescriptor());
     public static final Type ENUM_TYPE = getType(Enum.class);
     public static final Type NUMBER_TYPE = getType(Number.class);
     public static final Type BOOLEAN_WRAPPER_TYPE = getType(Boolean.class);

@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.isKClass
+import org.jetbrains.kotlin.ir.util.isKClassArray
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -110,9 +113,23 @@ fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
         }
     }
 
-    return when (type) {
+    return when {
         // All unsafe coercions between irTypes should use the UnsafeCoerce intrinsic
-        target -> this
+        type == target -> this
+        type == AsmTypes.JAVA_CLASS_TYPE && target == AsmTypes.K_CLASS_TYPE && irType.isKClass() ->
+            object : PromisedValue(codegen, target, irTarget) {
+                override fun materialize() {
+                    this@coerce.materialize()
+                    AsmUtil.wrapJavaClassIntoKClass(mv)
+                }
+            }
+        type == AsmTypes.JAVA_CLASS_ARRAY_TYPE && target == AsmTypes.K_CLASS_ARRAY_TYPE && irType.isKClassArray() ->
+            object : PromisedValue(codegen, target, irTarget) {
+                override fun materialize() {
+                    this@coerce.materialize()
+                    AsmUtil.wrapJavaClassesIntoKClasses(mv)
+                }
+            }
         else -> object : PromisedValue(codegen, target, irTarget) {
             override fun materialize() {
                 val value = this@coerce.materialized
