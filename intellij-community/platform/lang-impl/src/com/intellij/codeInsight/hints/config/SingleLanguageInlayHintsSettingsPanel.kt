@@ -8,6 +8,8 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileTypes.FileType
@@ -100,6 +102,8 @@ internal class SingleLanguageInlayHintsSettingsPanel(
         updateHints()
       }
     }
+    val scheme = EditorColorsManager.getInstance().globalScheme
+    editorField.font = scheme.getFont(EditorFontType.PLAIN)
     editorField.addSettingsProvider { editor ->
       editor.setVerticalScrollbarVisible(true)
       editor.setHorizontalScrollbarVisible(true)
