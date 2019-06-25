@@ -900,6 +900,7 @@ open class CandidateCollector(val components: InferenceComponents) {
 
     fun bestCandidates(): List<Candidate> {
         if (groupNumbers.isEmpty()) return emptyList()
+        if (groupNumbers.size == 1) return candidates
         val result = mutableListOf<Candidate>()
         var bestGroup = groupNumbers.first()
         for ((index, candidate) in candidates.withIndex()) {
