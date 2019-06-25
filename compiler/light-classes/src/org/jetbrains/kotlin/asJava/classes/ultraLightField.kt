@@ -35,7 +35,7 @@ private class KtUltraLightSimpleModifierListField(
     private val declaration: KtNamedDeclaration,
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
     private val modifiers: Set<String>
-) : KtUltraLightSimpleModifierList(owner, modifiers) {
+) : KtUltraLightSimpleModifierList(owner, modifiers, support) {
     override fun hasModifierProperty(name: String): Boolean = when (name) {
         PsiModifier.VOLATILE -> hasFieldAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
         PsiModifier.TRANSIENT -> hasFieldAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)

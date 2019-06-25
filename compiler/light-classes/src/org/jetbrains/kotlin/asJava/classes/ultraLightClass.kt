@@ -43,15 +43,16 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private class KtUltraLightClassModifierList(
         private val containingClass: KtLightClassForSourceDeclaration,
+        private val support: KtUltraLightSupport,
         private val computeModifiers: () -> Set<String>
     ) :
-        KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
+        KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
         private val modifiers by lazyPub { computeModifiers() }
 
         override fun hasModifierProperty(name: String): Boolean =
             if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
 
-        override fun copy(): PsiElement = KtUltraLightClassModifierList(containingClass, computeModifiers)
+        override fun copy(): PsiElement = KtUltraLightClassModifierList(containingClass, support, computeModifiers)
     }
 
 
@@ -90,7 +91,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun getDelegate(): PsiClass = forTooComplex { super.getDelegate() }
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        if (tooComplex) super.getModifierList() else KtUltraLightClassModifierList(this) { computeModifiers() }
+        if (tooComplex) super.getModifierList() else KtUltraLightClassModifierList(this, support) { computeModifiers() }
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
@@ -101,9 +102,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun mapSupertype(supertype: KotlinType) =
         supertype.asPsiType(support, TypeMappingMode.SUPER_TYPE, this) as? PsiClassType
 
-    override fun createExtendsList(): PsiReferenceList? =
-        if (tooComplex) super.createExtendsList()
-        else KotlinSuperTypeListBuilder(
+    override fun createExtendsList(): PsiReferenceList? {
+        if (isAnnotationType) return KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.EXTENDS_LIST)
+
+        if (tooComplex) return super.createExtendsList()
+
+        return KotlinSuperTypeListBuilder(
             kotlinOrigin.getSuperTypeList(),
             manager,
             language,
@@ -114,6 +118,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 .map(this::mapSupertype)
                 .forEach(list::addReference)
         }
+    }
 
     private fun isTypeForExtendsList(supertype: KotlinType): Boolean {
         // Do not add redundant "extends java.lang.Object" anywhere
@@ -128,9 +133,13 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         return !JvmCodegenUtil.isJvmInterface(supertype)
     }
 
-    override fun createImplementsList(): PsiReferenceList? =
-        if (tooComplex) super.createImplementsList()
-        else KotlinSuperTypeListBuilder(
+    override fun createImplementsList(): PsiReferenceList? {
+
+        if (isAnnotationType) return KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.IMPLEMENTS_LIST)
+
+        if (tooComplex) return super.createImplementsList()
+
+        return KotlinSuperTypeListBuilder(
             kotlinOrigin.getSuperTypeList(),
             manager,
             language,
@@ -143,6 +152,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                     .forEach(list::addReference)
             }
         }
+    }
 
     override fun buildTypeParameterList(): PsiTypeParameterList =
         if (tooComplex) super.buildTypeParameterList() else buildTypeParameterList(classOrObject, this, support)

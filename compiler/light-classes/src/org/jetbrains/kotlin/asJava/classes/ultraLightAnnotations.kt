@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.constants.*
@@ -52,13 +53,22 @@ class KtUltraLightNullabilityAnnotation(
     }
 }
 
+fun AnnotationDescriptor.toLightAnnotation(ultraLightSupport: KtUltraLightSupport, parent: PsiElement) =
+    KtUltraLightSimpleAnnotation(
+        fqName?.asString(),
+        allValueArguments.map { it.key.asString() to it.value },
+        ultraLightSupport,
+        parent
+    )
+
 fun DeclarationDescriptor.obtainLightAnnotations(
     ultraLightSupport: KtUltraLightSupport,
     parent: PsiElement
-): List<KtLightAbstractAnnotation> = annotations.map { KtUltraLightAnnotationForDescriptor(it, ultraLightSupport, parent) }
+): List<KtLightAbstractAnnotation> = annotations.map { it.toLightAnnotation(ultraLightSupport, parent) }
 
-class KtUltraLightAnnotationForDescriptor(
-    private val annotationDescriptor: AnnotationDescriptor,
+class KtUltraLightSimpleAnnotation(
+    private val annotationFqName: String?,
+    private val argumentsList: List<Pair<String, ConstantValue<*>>>,
     private val ultraLightSupport: KtUltraLightSupport,
     parent: PsiElement
 ) : KtLightAbstractAnnotation(parent, computeDelegate = null) {
@@ -80,12 +90,12 @@ class KtUltraLightAnnotationForDescriptor(
     override fun findDeclaredAttributeValue(attributeName: String?) =
         PsiImplUtil.findDeclaredAttributeValue(this, attributeName)
 
-    override fun getQualifiedName() = annotationDescriptor.fqName?.asString()
+    override fun getQualifiedName() = annotationFqName
 
-    private inner class ParameterListImpl : KtLightElementBase(this@KtUltraLightAnnotationForDescriptor), PsiAnnotationParameterList {
+    private inner class ParameterListImpl : KtLightElementBase(this@KtUltraLightSimpleAnnotation), PsiAnnotationParameterList {
         private val _attributes: Array<PsiNameValuePair> by lazyPub {
-            annotationDescriptor.allValueArguments.map {
-                PsiNameValuePairForAnnotationArgument(it.key.asString(), it.value, ultraLightSupport, this)
+            argumentsList.map {
+                PsiNameValuePairForAnnotationArgument(it.first, it.second, ultraLightSupport, this)
             }.toTypedArray()
         }
 
@@ -124,7 +134,7 @@ private fun ConstantValue<*>.toAnnotationMemberValue(
     parent: PsiElement, ultraLightSupport: KtUltraLightSupport
 ): PsiAnnotationMemberValue? = when (this) {
 
-    is AnnotationValue -> KtUltraLightAnnotationForDescriptor(value, ultraLightSupport, parent)
+    is AnnotationValue -> value.toLightAnnotation(ultraLightSupport, parent)
 
     is ArrayValue ->
         KtUltraLightPsiArrayInitializerMemberValue(lightParent = parent) { arrayLiteralParent ->
