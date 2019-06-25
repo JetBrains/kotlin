@@ -18,10 +18,10 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
@@ -242,11 +242,18 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private data class VariantComponentNames(val variantName: String, val flavorName: String, val buildTypeName: String)
 
-    private fun getCommonResDirectories(project: Project, resDirectories: List<FileCollection>): FileCollection =
-        if (resDirectories.isEmpty())
-            project.files()
-        else
-            resDirectories.reduce { acc, other -> acc.filter { other.contains(it) } }
+    private fun getCommonResDirectories(project: Project, resDirectories: List<FileCollection>): FileCollection {
+        val lazyFiles = lazy {
+            if (resDirectories.isEmpty()) {
+                emptySet<File>()
+            } else {
+                resDirectories.first().toMutableSet().apply {
+                    resDirectories.drop(1).forEach { retainAll(it) }
+                }
+            }
+        }
+        return project.files(Callable { lazyFiles.value })
+    }
 
     private fun getApplicationPackage(project: Project, mainSourceSet: AndroidSourceSet): String {
         val manifestFile = mainSourceSet.manifest.srcFile
