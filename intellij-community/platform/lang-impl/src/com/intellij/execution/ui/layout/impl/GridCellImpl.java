@@ -74,13 +74,18 @@ public class GridCellImpl implements GridCell {
         return null;
       }
     });
-    myTabs.getPresentation().setUiDecorator(new UiDecorator() {
-      @Override
-      @NotNull
-      public UiDecoration getDecoration() {
-        return new UiDecoration(null, JBTabsFactory.getUseNewTabs()? JBUI.insets(6, 8, 6, 9) : new Insets(1, -1, 1, -1));
-      }
-    }).setSideComponentVertical(!context.getLayoutSettings().isToolbarHorizontal())
+
+    if(!JBTabsFactory.getUseNewTabs()) {
+      myTabs.getPresentation().setUiDecorator(new UiDecorator() {
+        @Override
+        @NotNull
+        public UiDecoration getDecoration() {
+          return new UiDecoration(null, new Insets(1, -1, 1, -1));
+        }
+      });
+    }
+
+    myTabs.getPresentation().setSideComponentVertical(!context.getLayoutSettings().isToolbarHorizontal())
       .setStealthTabMode(!JBTabsFactory.getUseNewTabs()).setFocusCycle(false).setPaintFocus(true)
       .setTabDraggingEnabled(context.isMoveToGridActionEnabled()).setSideComponentOnTabs(false);
 
