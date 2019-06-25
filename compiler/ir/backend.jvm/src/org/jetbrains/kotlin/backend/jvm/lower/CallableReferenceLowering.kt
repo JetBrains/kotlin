@@ -164,9 +164,11 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
         val irFunctionReference: IrFunctionReference
     ) {
 
-        private val isLambda = irFunctionReference.origin == IrStatementOrigin.LAMBDA
+        private val isLambdaOrAnonymousFunction = irFunctionReference.origin == IrStatementOrigin.LAMBDA ||
+                irFunctionReference.origin == IrStatementOrigin.ANONYMOUS_FUNCTION
 
-        private val functionReferenceOrLambda = if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference
+        private val functionReferenceOrLambda =
+            if (isLambdaOrAnonymousFunction) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference
 
         private val callee = irFunctionReference.symbol.owner
         private val calleeParameters = callee.explicitParameters
@@ -221,7 +223,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             val constructor = createConstructor()
             createInvokeMethod(actualFunctionClass.owner.functions.find { it.name.asString() == "invoke" }!!)
 
-            if (!isLambda) {
+            if (!isLambdaOrAnonymousFunction) {
                 createGetSignatureMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getSignature" }!!)
                 createGetNameMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getName" }!!)
                 createGetOwnerMethod(functionReferenceOrLambda.owner.functions.find { it.name.asString() == "getOwner" }!!)
