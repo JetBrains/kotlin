@@ -7,7 +7,6 @@ import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask;
 import com.intellij.find.FindUtil;
 import com.intellij.ide.PsiCopyPasteManager;
 import com.intellij.ide.util.PsiElementListCellRenderer;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.progress.ProgressManager;
@@ -22,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
 import com.intellij.usages.UsageView;
-import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +51,7 @@ public class PsiElementListNavigator {
     if (popup != null) {
       RelativePoint point = new RelativePoint(e);
       if (listUpdaterTask != null) {
-        runActionAndListUpdaterTask(popup, () -> popup.show(point), listUpdaterTask);
+        runActionAndListUpdaterTask(() -> popup.show(point), listUpdaterTask);
       }
       else {
         popup.show(point);
@@ -70,7 +68,7 @@ public class PsiElementListNavigator {
     final JBPopup popup = navigateOrCreatePopup(targets, title, findUsagesTitle, listRenderer, listUpdaterTask);
     if (popup != null) {
       if (listUpdaterTask != null) {
-        runActionAndListUpdaterTask(popup, () -> popup.showInBestPositionFor(e), listUpdaterTask);
+        runActionAndListUpdaterTask(() -> popup.showInBestPositionFor(e), listUpdaterTask);
       }
       else {
         popup.showInBestPositionFor(e);
@@ -81,10 +79,8 @@ public class PsiElementListNavigator {
   /**
    * @see #navigateOrCreatePopup(NavigatablePsiElement[], String, String, ListCellRenderer, BackgroundUpdaterTask, Consumer)
    */
-  private static void runActionAndListUpdaterTask(@NotNull Disposable popup, @NotNull Runnable action,
-                                                  @NotNull BackgroundUpdaterTask listUpdaterTask) {
-    Alarm alarm = new Alarm(popup);
-    alarm.addRequest(action, 300);
+  private static void runActionAndListUpdaterTask(@NotNull Runnable action, @NotNull BackgroundUpdaterTask listUpdaterTask) {
+    action.run();
     ProgressManager.getInstance().run(listUpdaterTask);
   }
 
