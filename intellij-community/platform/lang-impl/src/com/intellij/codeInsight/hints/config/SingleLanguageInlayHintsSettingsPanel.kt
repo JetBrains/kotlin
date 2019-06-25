@@ -82,6 +82,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     } else {
       updateWithParameterHintsPanel(providerSettingsPane)
     }
+    providerTypesList.selectedIndex = 0
 
     val splitter = JBSplitter(true)
     splitter.firstComponent = top
