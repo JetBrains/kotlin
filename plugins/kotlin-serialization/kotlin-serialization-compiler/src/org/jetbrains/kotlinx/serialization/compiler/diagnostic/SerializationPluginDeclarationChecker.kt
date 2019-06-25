@@ -33,8 +33,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 internal val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
-class SerializationPluginDeclarationChecker : DeclarationChecker {
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+open class SerializationPluginDeclarationChecker : DeclarationChecker {
+    final override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
         if (!canBeSerializedInternally(descriptor, context.trace)) return
@@ -46,6 +46,11 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun canBeSerializedInternally(descriptor: ClassDescriptor, trace: BindingTrace): Boolean {
         if (!descriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return false
+
+        if (!serializationPluginEnabledOn(descriptor)) {
+            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.PLUGIN_IS_NOT_ENABLED)
+            return false
+        }
 
         if (descriptor.isInline) {
             trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED)
@@ -64,6 +69,13 @@ class SerializationPluginDeclarationChecker : DeclarationChecker {
             trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
             return false
         }
+        return true
+    }
+
+    open fun serializationPluginEnabledOn(descriptor: ClassDescriptor): Boolean {
+        // In the CLI/Gradle compiler, this diagnostic is located in the plugin itself.
+        // Therefore, if we are here, plugin is in the compile classpath and enabled.
+        // For the IDE case, see SerializationPluginIDEDeclarationChecker
         return true
     }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginDeclarationChecker
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginIDEDeclarationChecker
 
 class SerializationIDEContainerContributor : StorageComponentContainerContributor {
     override fun registerModuleComponents(
@@ -18,6 +18,6 @@ class SerializationIDEContainerContributor : StorageComponentContainerContributo
         platform: TargetPlatform,
         moduleDescriptor: ModuleDescriptor
     ) {
-        container.useInstance(SerializationPluginDeclarationChecker())
+        container.useInstance(SerializationPluginIDEDeclarationChecker())
     }
 }

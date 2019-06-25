@@ -19,6 +19,11 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Inline classes are not supported by kotlinx.serialization yet"
         )
         MAP.put(
+            SerializationErrors.PLUGIN_IS_NOT_ENABLED,
+            "kotlinx.serialization compiler plugin is not applied to the module, so this annotation would not be processed. " +
+                    "Make sure that you've setup your buildscript correctly and re-import project."
+        )
+        MAP.put(
             SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED,
             "@Serializable annotation is ignored because it is impossible to serialize automatically interfaces or enums. " +
                     "Provide serializer manually via e.g. companion object"
