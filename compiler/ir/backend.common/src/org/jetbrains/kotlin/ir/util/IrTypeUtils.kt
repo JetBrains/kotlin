@@ -36,6 +36,13 @@ fun IrType.isKotlinResult(): Boolean = isNameInPackage("Result", kotlinPackageFq
 fun IrType.isContinuation(): Boolean = isNameInPackage("Continuation", kotlinCoroutinesPackageFqn)
 fun IrType.isNullableContinuation(): Boolean = isContinuation() && this is IrSimpleType && hasQuestionMark
 
+fun IrType.isKClassArray(): Boolean {
+    if (!isNonPrimitiveArray()) return false
+    val argument = (this as? IrSimpleType)?.arguments?.singleOrNull() ?: return false
+    val argumentType = (argument as? IrTypeProjection)?.type ?: return false
+    return argumentType.isKClass()
+}
+
 fun IrType.isNameInPackage(prefix: String, packageFqName: FqName): Boolean {
     val classifier = classifierOrNull ?: return false
     val name = classifier.descriptor.name.asString()
