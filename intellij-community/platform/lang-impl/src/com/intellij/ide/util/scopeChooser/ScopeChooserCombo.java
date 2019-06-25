@@ -28,6 +28,7 @@ import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
 import javax.swing.*;
 import java.awt.*;
@@ -193,12 +194,14 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
   @NotNull
   private DefaultComboBoxModel<ScopeDescriptor> createModel() {
     DefaultComboBoxModel<ScopeDescriptor> model = new DefaultComboBoxModel<>();
-    DataContext dataContext = DataManager.getInstance().getDataContext(this);
-    processScopes(myProject, dataContext, myOptions, descriptor -> {
-      if (myScopeFilter == null || myScopeFilter.value(descriptor)) {
-        model.addElement(descriptor);
-      }
-      return true;
+    Promise<DataContext> promise = DataManager.getInstance().getDataContextFromFocusAsync();
+    promise.onSuccess(c -> {
+      processScopes(myProject, c, myOptions, descriptor -> {
+        if (myScopeFilter == null || myScopeFilter.value(descriptor)) {
+          model.addElement(descriptor);
+        }
+        return true;
+      });
     });
     return model;
   }
