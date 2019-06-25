@@ -156,6 +156,7 @@ class IrExpressionLambdaImpl(
                 add(
                     when (ir) {
                         is IrGetValue -> capturedParamDesc(ir.descriptor.name.asString(), typeMapper.mapType(ir.type))
+                        is IrGetField -> capturedParamDesc(ir.descriptor.name.asString(), typeMapper.mapType(ir.type))
                         is IrConst<*> -> capturedParamDesc(BOUND_REFERENCE_RECEIVER, typeMapper.mapType(ir.type))
                         else -> error("Unrecognized expression: ${ir.dump()}")
                     }
