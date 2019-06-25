@@ -36,7 +36,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
-        assertTrue("Launcher script not found, run 'ant dist': ${launcherFile.absolutePath}", launcherFile.exists())
+        assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
 
         val cmd = GeneralCommandLine(launcherFile.absolutePath, *args)
         workDirectory?.let(cmd::withWorkDirectory)
