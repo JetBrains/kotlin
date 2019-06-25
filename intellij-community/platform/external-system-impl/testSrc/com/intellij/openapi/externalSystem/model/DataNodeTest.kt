@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.model
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.serialization.ObjectSerializer
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
 import org.junit.Test
 import java.io.Serializable
@@ -27,6 +29,26 @@ class DataNodeTest {
 
     val deserialized = wrapAndDeserialize(barObject, listOf(URLClassLoader(arrayOf(libUrl), javaClass.classLoader)))
     assertThat(deserialized.data.javaClass.name).isEqualTo("foo.Bar")
+  }
+
+  @Test
+  fun `instance of class from a our own classloader can be deserialized`() {
+    class Container {
+      @JvmField
+      var bar: Any? = null
+    }
+
+    val barClass = classLoader.loadClass("foo.Bar")
+    val out = BufferExposingByteArrayOutputStream()
+    val container = Container()
+    container.bar = barClass.newInstance()
+    ObjectSerializer.instance.writeList(listOf(container), Any::class.java, out, createCacheWriteConfiguration())
+    // ClassNotFoundException because custom logic must be applied only to DataNode classes, but foo.Bar it is part of our test Container class
+    assertThatThrownBy {
+      ObjectSerializer.instance.readList(Any::class.java, out.toByteArray(),
+                                         createCacheReadConfiguration(logger<DataNodeTest>(), testOnlyClassLoader = classLoader))
+    }
+      .hasCause(ClassNotFoundException("foo.Bar"))
   }
 
   // well, proxy cannot be serialized because on deserialize we need class
