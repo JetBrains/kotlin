@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
 import com.intellij.build.events.*;
@@ -359,7 +359,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       currentNode.setHint(aHint);
       myDeferredEvents.forEach(buildEvent -> onEventInternal(buildId, buildEvent));
       if (myConsoleViewHandler.myExecutionNode == null) {
-        ApplicationManager.getApplication().invokeLater(() -> myConsoleViewHandler.setNode(buildProgressRootNode));
+        invokeLater(() -> myConsoleViewHandler.setNode(buildProgressRootNode));
       }
     }
     scheduleUpdate(currentNode);
@@ -492,22 +492,24 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     showErrorIfFirst(failureNode, failure.getNavigatable());
   }
 
-  private static void finishChildren(@NotNull ExecutionNode node, @NotNull EventResult result) {
-    for (SimpleNode child : node.getChildren()) {
-      if (child instanceof ExecutionNode) {
-        ExecutionNode executionChild = (ExecutionNode)child;
-        if (!executionChild.isRunning()) {
-          continue;
-        }
-        ApplicationManager.getApplication().invokeLater(() -> {
-          // Need to check again since node could have finished on a later event.
-          if (executionChild.isRunning()) {
-            finishChildren(executionChild, result);
-            executionChild.setResult(result);
+  private void finishChildren(@NotNull ExecutionNode node, @NotNull EventResult result) {
+    invokeLater(() -> {
+      for (SimpleNode child : node.getChildren()) {
+        if (child instanceof ExecutionNode) {
+          ExecutionNode executionChild = (ExecutionNode)child;
+          if (!executionChild.isRunning()) {
+            continue;
           }
-        });
+          invokeLater(() -> {
+            // Need to check again since node could have finished on a later event.
+            if (executionChild.isRunning()) {
+              finishChildren(executionChild, result);
+              executionChild.setResult(result);
+            }
+          });
+        }
       }
-    }
+    });
   }
 
   protected void expand(Tree tree) {
@@ -719,6 +721,10 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       nodesMap.put(nodeId, node);
     }
     return node;
+  }
+
+  private void invokeLater(@NotNull Runnable task) {
+    myTreeModel.getInvoker().invokeLater(task);
   }
 
   private static class ConsoleViewHandler {
