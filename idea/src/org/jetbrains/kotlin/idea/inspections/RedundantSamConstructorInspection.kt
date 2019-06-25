@@ -10,11 +10,13 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.codegen.SamCodegenUtil
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.forceEnableSamAdapters
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -131,10 +133,13 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             if (!resolutionResults.isSuccess) return false
 
             val samAdapterOriginalDescriptor =
-                if (resolutionResults.resultingCall is NewResolvedCallImpl<*>)
+                if (parentCall.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
+                    resolutionResults.resultingCall is NewResolvedCallImpl<*>
+                ) {
                     resolutionResults.resultingDescriptor
-                else
+                } else {
                     SamCodegenUtil.getOriginalIfSamAdapter(resolutionResults.resultingDescriptor) ?: return false
+                }
 
             return samAdapterOriginalDescriptor.original == originalCall.resultingDescriptor.original
         }

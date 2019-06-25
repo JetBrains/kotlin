@@ -125,6 +125,8 @@ enum class LanguageFeature(
 
     SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
+    SamConversionPerArgument(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
+
     // can be used only with NewInference feature
     NewDataFlowForTryExpressions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
