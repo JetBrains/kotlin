@@ -32,11 +32,13 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
 }
 
+const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
+
 class MainKtsTest {
 
     @Test
     fun testResolveJunit() {
-        val res = evalFile(File("testData/hello-resolve-junit.main.kts"))
+        val res = evalFile(File("$TEST_DATA_ROOT/hello-resolve-junit.main.kts"))
         assertSucceeded(res)
     }
 
@@ -46,34 +48,34 @@ class MainKtsTest {
     // TODO: 1. find non-default but non-pom dependency suitable for an example to test resolving
     // TODO: 2. implement proper handling of pom-typed dependencies (e.g. consider to reimplement it on aether as in JarRepositoryManager (from IDEA))
     fun testResolveWithArtifactType() {
-        val res = evalFile(File("testData/resolve-moneta.main.kts"))
+        val res = evalFile(File("$TEST_DATA_ROOT/resolve-moneta.main.kts"))
         assertSucceeded(res)
     }
 
     @Test
     fun testResolveJunitDynamicVer() {
-        val errRes = evalFile(File("testData/hello-resolve-junit-dynver-error.main.kts"))
+        val errRes = evalFile(File("$TEST_DATA_ROOT/hello-resolve-junit-dynver-error.main.kts"))
         assertFailed("Unresolved reference: assertThrows", errRes)
 
-        val res = evalFile(File("testData/hello-resolve-junit-dynver.main.kts"))
+        val res = evalFile(File("$TEST_DATA_ROOT/hello-resolve-junit-dynver.main.kts"))
         assertSucceeded(res)
     }
 
     @Test
     fun testUnresolvedJunit() {
-        val res = evalFile(File("testData/hello-unresolved-junit.main.kts"))
+        val res = evalFile(File("$TEST_DATA_ROOT/hello-unresolved-junit.main.kts"))
         assertFailed("Unresolved reference: junit", res)
     }
 
     @Test
     fun testResolveError() {
-        val res = evalFile(File("testData/hello-resolve-error.main.kts"))
+        val res = evalFile(File("$TEST_DATA_ROOT/hello-resolve-error.main.kts"))
         assertFailed("Unrecognized set of arguments to ivy resolver: abracadabra", res)
     }
 
     @Test
     fun testResolveLog4jAndDocopt() {
-        val res = evalFile(File("testData/resolve-log4j-and-docopt.main.kts"))
+        val res = evalFile(File("$TEST_DATA_ROOT/resolve-log4j-and-docopt.main.kts"))
         assertSucceeded(res)
     }
 
@@ -81,7 +83,7 @@ class MainKtsTest {
     fun testImport() {
 
         val out = captureOut {
-            val res = evalFile(File("testData/import-test.main.kts"))
+            val res = evalFile(File("$TEST_DATA_ROOT/import-test.main.kts"))
             assertSucceeded(res)
         }.lines()
 
