@@ -11,6 +11,8 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -71,6 +73,9 @@ private typealias ModuleId = Pair<String?, String> // group ID, artifact ID
 private val ResolvedDependency.moduleId: ModuleId
     get() = moduleGroup to moduleName
 
+private val Dependency.moduleId: ModuleId
+    get() = group to name
+
 internal class GranularMetadataTransformation(
     val project: Project,
     val kotlinSourceSet: KotlinSourceSet,
@@ -78,6 +83,7 @@ internal class GranularMetadataTransformation(
     val sourceSetRequestedScopes: List<KotlinDependencyScope>,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
     val allSourceSetsConfigurations: Iterable<Configuration>
+    val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
 ) {
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
@@ -115,47 +121,49 @@ internal class GranularMetadataTransformation(
         return result
     }
 
-    private fun getRequestedDependencies(kotlinSourceSet: KotlinSourceSet): Set<Dependency> {
-        val hierarchy = kotlinSourceSet.getSourceSetHierarchy().toMutableSet()
 
-        // This is an ad-hoc mechanism for exposing the commonMain dependencies to test source sets as well:
-        // TODO once a general production-test visibility mechanism is implemented, replace this workaround with the general solution
-        if (hierarchy.any { it.name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME }) {
-            hierarchy += project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME).getSourceSetHierarchy()
-        }
-
-        return hierarchy.flatMapTo(mutableSetOf()) { sourceSet ->
-            sourceSetRequestedScopes.flatMap { scope ->
+    private val requestedDependencies: Iterable<Dependency> by lazy {
+        fun collectScopedDependenciesFromSourceSet(sourceSet: KotlinSourceSet): Set<Dependency> =
+            sourceSetRequestedScopes.flatMapTo(mutableSetOf()) { scope ->
                 project.sourceSetDependencyConfigurationByScope(sourceSet, scope).allDependencies
             }
-        }
+
+        val ownDependencies = collectScopedDependenciesFromSourceSet(kotlinSourceSet)
+        val parentDependencies = parentTransformations.value.flatMapTo(mutableSetOf<Dependency>()) { it.requestedDependencies }
+
+        ownDependencies + parentDependencies
+    }
+
+    private val resolvedConfigurations: Iterable<LenientConfiguration> by lazy {
+        allSourceSetsConfigurations.map { it.resolvedConfiguration.lenientConfiguration }
     }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
 
-        val resolvedDependenciesFromAllSourceSets = allSourceSetsConfigurations.map { it.resolvedConfiguration.lenientConfiguration }
+        val parentResolutions =
+            parentTransformations.value.flatMap { it.metadataDependencyResolutions }.groupBy { it.dependency.moduleId }
 
-        val visitedDependencies = mutableSetOf<ResolvedDependency>()
+        val allRequestedDependencies = requestedDependencies
 
-        val directRequestedDependencies = getRequestedDependencies(kotlinSourceSet)
-
-        val directRequestedModules: Set<ModuleId> = directRequestedDependencies.mapTo(mutableSetOf()) { it.group to it.name }
-
-        val allModuleDependencies = resolvedDependenciesFromAllSourceSets.flatMapTo(mutableSetOf()) { it.allModuleDependencies }
+        val allModuleDependencies = resolvedConfigurations.flatMap { it.allModuleDependencies }
 
         val knownProjectDependencies = collectProjectDependencies(
-            directRequestedDependencies.filterIsInstance<ProjectDependency>(),
+            allRequestedDependencies.filterIsInstance<ProjectDependency>(),
             allModuleDependencies
         )
 
         val resolvedDependencyQueue: Queue<ResolvedDependencyWithParent> = ArrayDeque<ResolvedDependencyWithParent>().apply {
+            val requestedModules: Set<ModuleId> = allRequestedDependencies.mapTo(mutableSetOf()) { it.moduleId }
+
             addAll(
-                resolvedDependenciesFromAllSourceSets.flatMap { it.firstLevelModuleDependencies }
-                    .filter { it.moduleId in directRequestedModules }
+                resolvedConfigurations.flatMap { it.firstLevelModuleDependencies }
+                    .filter { it.moduleId in requestedModules }
                     .map { ResolvedDependencyWithParent(it, null) }
             )
         }
+
+        val visitedDependencies = mutableSetOf<ResolvedDependency>()
 
         while (resolvedDependencyQueue.isNotEmpty()) {
             val (resolvedDependency, parent: ResolvedDependency?) = resolvedDependencyQueue.poll()
@@ -164,7 +172,13 @@ internal class GranularMetadataTransformation(
 
             visitedDependencies.add(resolvedDependency)
 
-            val dependencyResult = processDependency(resolvedDependency, parent, projectDependency)
+            val dependencyResult = processDependency(
+                resolvedDependency,
+                parentResolutions[resolvedDependency.moduleId].orEmpty(),
+                parent,
+                projectDependency
+            )
+
             result.add(dependencyResult)
 
             val transitiveDependenciesToVisit = when (dependencyResult) {
@@ -209,6 +223,7 @@ internal class GranularMetadataTransformation(
      */
     private fun processDependency(
         module: ResolvedDependency,
+        parentResolutionsForModule: Iterable<MetadataDependencyResolution>,
         parent: ResolvedDependency?,
         projectDependency: ProjectDependency?
     ): MetadataDependencyResolution {
@@ -220,19 +235,20 @@ internal class GranularMetadataTransformation(
         }
 
         val projectStructureMetadata = mppDependencyMetadataExtractor?.getProjectStructureMetadata()
+            ?: return MetadataDependencyResolution.KeepOriginalDependency(module, projectDependency)
 
-        if (projectStructureMetadata == null) {
-            return MetadataDependencyResolution.KeepOriginalDependency(module, projectDependency)
-        }
-
-        val (allVisibleSourceSets, visibleByParents) =
-            SourceSetVisibilityProvider(project).getVisibleSourceSets(
+        val allVisibleSourceSets =
+            SourceSetVisibilityProvider(project).getVisibleSourceSetNames(
                 kotlinSourceSet,
                 sourceSetRequestedScopes,
                 parent ?: module,
                 projectStructureMetadata,
                 projectDependency?.dependencyProject
             )
+
+        val sourceSetsVisibleInParents = parentResolutionsForModule
+            .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+            .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
 
         // Keep only the transitive dependencies requested by the visible source sets:
         // Visit the transitive dependencies visible by parents, too (i.e. allVisibleSourceSets), as this source set might get a more
@@ -250,7 +266,7 @@ internal class GranularMetadataTransformation(
             (it.moduleId) in requestedTransitiveDependencies
         }
 
-        val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in visibleByParents }
+        val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
 
         return object : MetadataDependencyResolution.ChooseVisibleSourceSets(
             module,
