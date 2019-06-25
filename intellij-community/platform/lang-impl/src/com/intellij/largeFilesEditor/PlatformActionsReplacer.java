@@ -31,13 +31,9 @@ public class PlatformActionsReplacer {
     addEditorActionHandler(IdeActions.ACTION_FIND_NEXT, LfeEditorActionSearchAgainHandler::new);
     addEditorActionHandler(IdeActions.ACTION_FIND_PREVIOUS, LfeEditorActionSearchBackHandler::new);
     addEditorActionHandler(IdeActions.ACTION_EDITOR_TEXT_START,
-                           origHandler -> {
-                             return new LfeEditorActionTextStartEndHandler(origHandler, true);
-                           });
+                           origHandler -> new LfeEditorActionTextStartEndHandler(origHandler, true));
     addEditorActionHandler(IdeActions.ACTION_EDITOR_TEXT_END,
-                           origHandler -> {
-                             return new LfeEditorActionTextStartEndHandler(origHandler, false);
-                           });
+                           origHandler -> new LfeEditorActionTextStartEndHandler(origHandler, false));
     addEditorActionHandler(IdeActions.ACTION_EDITOR_ESCAPE, LfeEditorActionHandlerEscape::new);
     addEditorActionHandler(IdeActions.ACTION_FIND, LfeEditorActionHandlerFind::new);
     addDisablingEditorActionHandler(IdeActions.ACTION_REPLACE);
