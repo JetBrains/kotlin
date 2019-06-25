@@ -94,11 +94,6 @@ sourceSets {
     }
 }
 
-val jar: Jar by tasks
-jar.from("../idea/resources") {
-    include("META-INF/extensions/compiler.xml")
-}
-
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
