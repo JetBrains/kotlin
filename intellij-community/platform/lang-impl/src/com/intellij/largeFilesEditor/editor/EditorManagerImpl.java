@@ -120,7 +120,7 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
   @Nullable
   @Override
   public JComponent getPreferredFocusedComponent() {
-    return editorModel.getComponent();
+    return editorModel.getEditor().getContentComponent();
   }
 
   @NotNull
