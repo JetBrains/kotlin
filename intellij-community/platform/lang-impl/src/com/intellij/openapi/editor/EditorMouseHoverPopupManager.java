@@ -81,10 +81,13 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       closeHint();
       return;
     }
-    if (context.equals(myContext) && isHintShown()) {
+    Context.Relation relation = isHintShown() ? context.compareTo(myContext) : Context.Relation.DIFFERENT;
+    if (relation == Context.Relation.SAME) {
       return;
     }
-    closeHint();
+    else if (relation == Context.Relation.DIFFERENT) {
+      closeHint();
+    }
 
     ProgressIndicatorBase progress = new ProgressIndicatorBase();
     myCurrentProgress = progress;
@@ -94,24 +97,55 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         if (progress != myCurrentProgress) return;
         myCurrentProgress = null;
         if (info != null && editor.getContentComponent().isShowing()) {
-          closeHint();
           JComponent component = info.createComponent(editor);
-          if (component == null) return;
-          JBPopup hint = createHint(component);
-          editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, editor.offsetToVisualPosition(context.offset));
-          PopupPositionManager.positionPopupInBestPosition(hint, editor, null);
-          myPopupReference = new WeakReference<>(hint);
-          myContext = context;
+          if (component == null) {
+            closeHint();
+          }
+          else {
+            if (relation == Context.Relation.SIMILAR && isHintShown()) {
+              updateHint(component);
+            }
+            else {
+              JBPopup hint = createHint(component);
+              showHintInEditor(hint, editor, context);
+              myPopupReference = new WeakReference<>(hint);
+            }
+            myContext = context;
+          }
         }
       });
     }, progress), Registry.intValue("editor.new.mouse.hover.popups.delay"));
   }
 
+  private void showHintInEditor(JBPopup hint, Editor editor, Context context) {
+    closeHint();
+    editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, context.getPopupPosition(editor));
+    try {
+      PopupPositionManager.positionPopupInBestPosition(hint, editor, null);
+    }
+    finally {
+      editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, null);
+    }
+  }
+
   private static JBPopup createHint(JComponent component) {
+    JPanel wrapper = new JPanel(new BorderLayout());
+    wrapper.setBorder(null);
+    wrapper.add(component, BorderLayout.CENTER);
     return JBPopupFactory.getInstance()
-      .createComponentPopupBuilder(component, component)
+      .createComponentPopupBuilder(wrapper, component)
       .setResizable(true)
       .createPopup();
+  }
+
+  private void updateHint(JComponent component) {
+    JBPopup popup = SoftReference.dereference(myPopupReference);
+    if (popup != null) {
+      JPanel wrapper = (JPanel)popup.getContent();
+      wrapper.removeAll();
+      wrapper.add(component, BorderLayout.CENTER);
+      popup.pack(true, true);
+    }
   }
 
   private static int getTargetOffset(EditorMouseEvent event) {
@@ -155,8 +189,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       }
     }
 
-    if (info == null && elementForQuickDoc == null) return null;
-    return new Context(elementForQuickDoc == null ? offset : elementForQuickDoc.getTextRange().getStartOffset(), info, elementForQuickDoc);
+    return info == null && elementForQuickDoc == null ? null : new Context(offset, info, elementForQuickDoc);
   }
 
   private void closeHint() {
@@ -174,12 +207,12 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   }
 
   private static class Context {
-    private final int offset;
+    private final int targetOffset;
     private final WeakReference<HighlightInfo> highlightInfo;
     private final WeakReference<PsiElement> elementForQuickDoc;
 
-    private Context(int offset, HighlightInfo highlightInfo, PsiElement elementForQuickDoc) {
-      this.offset = offset;
+    private Context(int targetOffset, HighlightInfo highlightInfo, PsiElement elementForQuickDoc) {
+      this.targetOffset = targetOffset;
       this.highlightInfo = highlightInfo == null ? null : new WeakReference<>(highlightInfo);
       this.elementForQuickDoc = elementForQuickDoc == null ? null : new WeakReference<>(elementForQuickDoc);
     }
@@ -192,14 +225,35 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       return SoftReference.dereference(highlightInfo);
     }
 
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Context context = (Context)o;
-      return offset == context.offset &&
-             Objects.equals(getHighlightInfo(), context.getHighlightInfo()) &&
-             Objects.equals(getElementForQuickDoc(), context.getElementForQuickDoc());
+    private Relation compareTo(Context other) {
+      if (other == null) return Relation.DIFFERENT;
+      HighlightInfo highlightInfo = getHighlightInfo();
+      if (!Objects.equals(highlightInfo, other.getHighlightInfo())) return Relation.DIFFERENT;
+      return Objects.equals(getElementForQuickDoc(), other.getElementForQuickDoc())
+             ? Relation.SAME
+             : highlightInfo == null ? Relation.DIFFERENT : Relation.SIMILAR;
+    }
+
+    @NotNull
+    private VisualPosition getPopupPosition(Editor editor) {
+      HighlightInfo highlightInfo = getHighlightInfo();
+      if (highlightInfo == null) {
+        int offset = targetOffset;
+        PsiElement elementForQuickDoc = getElementForQuickDoc();
+        if (elementForQuickDoc != null) {
+          offset = elementForQuickDoc.getTextRange().getStartOffset();
+        }
+        return editor.offsetToVisualPosition(offset);
+      }
+      else {
+        VisualPosition targetPosition = editor.offsetToVisualPosition(targetOffset);
+        VisualPosition endPosition = editor.offsetToVisualPosition(highlightInfo.getEndOffset());
+        if (endPosition.line <= targetPosition.line) return targetPosition;
+        Point targetPoint = editor.visualPositionToXY(targetPosition);
+        Point endPoint = editor.visualPositionToXY(endPosition);
+        Point resultPoint = new Point(targetPoint.x, endPoint.x > targetPoint.x ? endPoint.y : editor.visualLineToY(endPosition.line - 1));
+        return editor.xyToVisualPosition(resultPoint);
+      }
     }
 
     @Nullable
@@ -215,9 +269,9 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         Ref<PsiElement> targetElementRef = new Ref<>();
         QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
           if (element.isValid()) {
-            targetElementRef.set(DocumentationManager.getInstance(editor.getProject()).findTargetElement(editor, offset,
-                                                                                                          element.getContainingFile(),
-                                                                                                          element));
+            targetElementRef.set(DocumentationManager.getInstance(editor.getProject()).findTargetElement(editor, targetOffset,
+                                                                                                         element.getContainingFile(),
+                                                                                                         element));
           }
         }, 5000, 100);
 
@@ -226,6 +280,12 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         }
       }
       return info == null && quickDocMessage == null ? null : new Info(info, quickDocMessage);
+    }
+
+    private enum Relation {
+      SAME, // no need to update popup
+      SIMILAR, // popup needs to be updated
+      DIFFERENT // popup needs to be closed, and new one shown
     }
   }
 
