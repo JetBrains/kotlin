@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +SamConversionPerArgument
 // IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME

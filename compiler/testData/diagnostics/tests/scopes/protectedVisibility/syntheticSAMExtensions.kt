@@ -21,7 +21,7 @@ class B : A() {
         }
 
         if (d.x is B) {
-            <!OI;SMARTCAST_IMPOSSIBLE!>d.x<!>.<!NI;INVISIBLE_MEMBER!>foo<!> {}
+            <!SMARTCAST_IMPOSSIBLE!>d.x<!>.<!NI;INVISIBLE_MEMBER!>foo<!> {}
         }
     }
 }

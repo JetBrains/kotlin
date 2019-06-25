@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions
+// !LANGUAGE: +NewInference +SamConversionPerArgument
 // FILE: J.java
 public interface J {
     public void foo1(Runnable r);

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
@@ -295,6 +296,7 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor
 ): UnwrappedType? {
+    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
     if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
 
     val argumentIsFunctional = when (argument) {
