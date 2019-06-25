@@ -683,10 +683,7 @@ class PSICallResolver(
                 is DoubleColonLHS.Type -> {
                     val qualifiedExpression = ktExpression.receiverExpression!!.let { it.referenceExpression() ?: it }
                     val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, qualifiedExpression)
-                    when (qualifier) {
-                        is ClassQualifier, is TypeAliasQualifier -> LHSResult.Type(qualifier, lhsResult.type.unwrap())
-                        else -> LHSResult.Error
-                    }
+                    LHSResult.Type(qualifier, lhsResult.type.unwrap())
                 }
             }
 

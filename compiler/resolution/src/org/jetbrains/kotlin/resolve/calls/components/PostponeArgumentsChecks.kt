@@ -167,7 +167,11 @@ private fun preprocessCallableReference(
         val lhsType = it.unboundDetailedReceiver.stableType
         if (ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) {
             val lhsTypeVariable = expectedType.arguments.first().type.unwrap()
-            csBuilder.addSubtypeConstraint(lhsType, lhsTypeVariable, LHSArgumentConstraintPosition(it.qualifier))
+            csBuilder.addSubtypeConstraint(
+                lhsType,
+                lhsTypeVariable,
+                LHSArgumentConstraintPosition(it.qualifier ?: it.unboundDetailedReceiver)
+            )
         }
     }
     if (notCallableTypeConstructor != null) {
