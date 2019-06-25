@@ -91,7 +91,7 @@ class WarModelBuilderImpl implements ModelBuilderService {
             void visitFile(String relativePath, FileVisitDetails fileDetails) {
               if (warTask.webXml == null ||
                   !fileDetails.file.canonicalPath.equals(warTask.webXml.canonicalPath)) {
-                addPath(excludeDirs, webResources, relativePath, fileDetails.path, fileDetails.file)
+                addPath(Collections.emptySet(), webResources, relativePath, fileDetails.path, fileDetails.file)
               }
             }
           })
