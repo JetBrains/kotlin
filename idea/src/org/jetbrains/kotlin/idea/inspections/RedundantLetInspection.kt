@@ -41,7 +41,7 @@ abstract class RedundantLetInspection : AbstractApplicabilityBasedInspection<KtC
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return false
         val parameterName = lambdaExpression.getParameterName() ?: return false
 
-        return myIsApplicable(
+        return isApplicable(
             element,
             lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false,
             lambdaExpression,
@@ -49,7 +49,7 @@ abstract class RedundantLetInspection : AbstractApplicabilityBasedInspection<KtC
         )
     }
 
-    protected abstract fun myIsApplicable(
+    protected abstract fun isApplicable(
         element: KtCallExpression,
         bodyExpression: PsiElement,
         lambdaExpression: KtLambdaExpression,
@@ -67,7 +67,7 @@ abstract class RedundantLetInspection : AbstractApplicabilityBasedInspection<KtC
 }
 
 class SimpleRedundantLetInspection : RedundantLetInspection() {
-    override fun myIsApplicable(
+    override fun isApplicable(
         element: KtCallExpression,
         bodyExpression: PsiElement,
         lambdaExpression: KtLambdaExpression,
@@ -76,7 +76,7 @@ class SimpleRedundantLetInspection : RedundantLetInspection() {
 }
 
 class ComplexRedundantLetInspection : RedundantLetInspection() {
-    override fun myIsApplicable(
+    override fun isApplicable(
         element: KtCallExpression,
         bodyExpression: PsiElement,
         lambdaExpression: KtLambdaExpression,

@@ -2234,7 +2234,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimpleRedundantLetInspection"
-                     displayName="Redundant `let` call"
+                     displayName="Redundant receiver-based `let` call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
@@ -2243,7 +2243,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ComplexRedundantLetInspection"
-                     displayName="Redundant `let` call could be removed"
+                     displayName="Redundant argument-based `let` call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
