@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
@@ -45,6 +46,33 @@ class FirCallCompleterTransformer(
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator
 ) : FirAbstractTreeTransformer() {
+
+    override fun transformQualifiedAccessExpression(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        data: Nothing?
+    ): CompositeTransformResult<FirStatement> {
+        val calleeReference =
+            qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate ?: return qualifiedAccessExpression.compose()
+        calleeReference.candidate.substitutor
+
+        val typeRef = typeCalculator.tryCalculateReturnType(calleeReference.coneSymbol.firUnsafe())
+
+        val initialType = calleeReference.candidate.substitutor.substituteOrNull(typeRef.type)
+        val finalType = finalSubstitutor.substituteOrNull(initialType)
+
+        val resultType = typeRef.withReplacedConeType(session, finalType)
+        qualifiedAccessExpression.replaceTypeRef(resultType)
+
+        return qualifiedAccessExpression.transformCalleeReference(
+            StoreCalleeReference,
+            FirResolvedCallableReferenceImpl(
+                calleeReference.session,
+                calleeReference.psi,
+                calleeReference.name,
+                calleeReference.coneSymbol
+            )
+        ).compose()
+    }
 
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
