@@ -121,6 +121,13 @@ private val innerClassesPhase = makeIrFilePhase(
     prerequisite = setOf(localDeclarationsPhase)
 )
 
+private val returnableBlocksPhase = makeIrFilePhase(
+    ::ReturnableBlockLowering,
+    name = "ReturnableBlock",
+    description = "Replace returnable blocks with do-while(false) loops",
+    prerequisite = setOf(arrayConstructorPhase, assertionPhase)
+)
+
 private val jvmFilePhases =
         stripTypeAliasDeclarationsPhase then
         provisionalFunctionExpressionPhase then
@@ -141,6 +148,7 @@ private val jvmFilePhases =
         renameFieldsPhase then
         assertionPhase then
         tailrecPhase then
+        returnableBlocksPhase then
 
         jvmInlineClassPhase then
 

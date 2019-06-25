@@ -62,20 +62,11 @@ class TryInfo(val onExit: IrExpression) : ExpressionInfo() {
     val gaps = mutableListOf<Pair<Label, Label>>()
 }
 
-class ReturnableBlockInfo(
-    val returnLabel: Label,
-    val returnSymbol: IrSymbol,
-    val returnTemporary: Int? = null
-) : ExpressionInfo()
-
 class BlockInfo(val parent: BlockInfo? = null) {
     val variables = mutableListOf<VariableInfo>()
     private val infos: Stack<ExpressionInfo> = parent?.infos ?: Stack()
 
     fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryInfo>() != null
-
-    internal inline fun <reified T : ExpressionInfo> findBlock(predicate: (T) -> Boolean): T? =
-        infos.find { it is T && predicate(it) } as? T
 
     internal inline fun <T : ExpressionInfo, R> withBlock(info: T, f: (T) -> R): R {
         infos.add(info)
@@ -257,34 +248,13 @@ class ExpressionCodegen(
     }
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): PromisedValue {
+        assert(expression !is IrReturnableBlock) { "unlowered returnable block: ${expression.dump()}" }
         if (expression.isTransparentScope)
             return super.visitBlock(expression, data)
         val info = BlockInfo(data)
-        return if (expression is IrReturnableBlock) {
-            val returnType = expression.asmType
-            val returnLabel = Label()
-            // Because the return might be inside an expression, it will need to pop excess items
-            // before jumping and store the result in a temporary variable.
-            val returnTemporary = if (returnType != Type.VOID_TYPE) frameMap.enterTemp(returnType) else null
-            info.withBlock(ReturnableBlockInfo(returnLabel, expression.symbol, returnTemporary)) {
-                // Remember current stack depth.
-                mv.fakeAlwaysFalseIfeq(returnLabel)
-                super.visitBlock(expression, info).materialized.also {
-                    returnTemporary?.let { mv.store(it, returnType) }
-                    // Variables leave the scope in reverse order, so must write locals first.
-                    mv.mark(returnLabel)
-                    writeLocalVariablesInTable(info, returnLabel)
-                    returnTemporary?.let {
-                        mv.load(it, returnType)
-                        frameMap.leaveTemp(returnType)
-                    }
-                }
-            }
-        } else {
-            // Force materialization to avoid reading from out-of-scope variables.
-            super.visitBlock(expression, info).materialized.also {
-                writeLocalVariablesInTable(info, markNewLabel())
-            }
+        // Force materialization to avoid reading from out-of-scope variables.
+        return super.visitBlock(expression, info).materialized.also {
+            writeLocalVariablesInTable(info, markNewLabel())
         }
     }
 
@@ -571,21 +541,15 @@ class ExpressionCodegen(
             return immaterialUnitValue
         }
 
-        val target = data.findBlock<ReturnableBlockInfo> { it.returnSymbol == expression.returnTargetSymbol }
         val returnType = methodSignatureMapper.mapReturnType(owner)
         val afterReturnLabel = Label()
         expression.value.accept(this, data).coerce(returnType, owner.returnType).materialize()
-        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
+        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
         expression.markLineNumber(startOffset = true)
-        if (target != null) {
-            target.returnTemporary?.let { mv.store(it, returnType) }
-            mv.fixStackAndJump(target.returnLabel)
-        } else {
-            if (isNonLocalReturn) {
-                generateGlobalReturnFlag(mv, owner.name.asString())
-            }
-            mv.areturn(returnType)
+        if (isNonLocalReturn) {
+            generateGlobalReturnFlag(mv, owner.name.asString())
         }
+        mv.areturn(returnType)
         mv.mark(afterReturnLabel)
         mv.nop()/*TODO check RESTORE_STACK_IN_TRY_CATCH processor*/
         return immaterialUnitValue
@@ -757,7 +721,7 @@ class ExpressionCodegen(
         return immaterialUnitValue
     }
 
-    private fun unwindBlockStack(endLabel: Label, data: BlockInfo, stop: (ExpressionInfo) -> Boolean): ExpressionInfo? {
+    private fun unwindBlockStack(endLabel: Label, data: BlockInfo, stop: (ExpressionInfo) -> Boolean = { false }): ExpressionInfo? {
         return data.handleBlock {
             if (it is TryInfo)
                 genFinallyBlock(it, null, endLabel, data)
@@ -900,16 +864,16 @@ class ExpressionCodegen(
         tryInfo.gaps.add(gapStart to (afterJumpLabel ?: markNewLabel()))
     }
 
-    fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo, target: ReturnableBlockInfo? = null) {
+    fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
         if (data.hasFinallyBlocks()) {
             if (Type.VOID_TYPE != returnType) {
                 val returnValIndex = frameMap.enterTemp(returnType)
                 mv.store(returnValIndex, returnType)
-                unwindBlockStack(afterReturnLabel, data) { it == target }
+                unwindBlockStack(afterReturnLabel, data)
                 mv.load(returnValIndex, returnType)
                 frameMap.leaveTemp(returnType)
             } else {
-                unwindBlockStack(afterReturnLabel, data) { it == target }
+                unwindBlockStack(afterReturnLabel, data)
             }
         }
     }
