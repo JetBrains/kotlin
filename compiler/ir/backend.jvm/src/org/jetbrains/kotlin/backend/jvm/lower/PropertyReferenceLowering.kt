@@ -270,7 +270,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 val superClass = propertyReferenceKindFor(expression).interfaceSymbol.owner
                 val referenceClass = buildClass {
                     setSourceRange(expression)
-                    name = Name.identifier("${expression.descriptor.name}\$${kPropertyClasses.size}")
+                    name = Name.special("<property reference to ${(expression.symbol.owner as IrDeclarationWithName).fqNameWhenAvailable}>")
                     origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
                 }.apply {
                     parent = irClass

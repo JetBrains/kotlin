@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
-import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -73,9 +72,6 @@ internal val callableReferencePhase = makeIrFilePhase(
 
 //Originally was copied from K/Native
 internal class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPass {
-
-    private var functionReferenceCount = 0
-
     private val inlineLambdaReferences = mutableSetOf<IrFunctionReference>()
 
     override fun lower(irFile: IrFile) {
@@ -194,7 +190,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)
             origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-            name = "${callee.name.safeName()}\$${functionReferenceCount++}".synthesizedName
+            name = Name.special("<function reference to ${callee.fqNameWhenAvailable}>")
         }.apply {
             parent = referenceParent
             superTypes += functionReferenceOrLambda.owner.defaultType
@@ -202,8 +198,12 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
             copyAttributes(irFunctionReference)
         }
 
-        private val argumentToFieldMap = boundCalleeParameters.associate {
-            it to buildField(it.name.safeName(), it.type)
+        private val argumentToFieldMap = boundCalleeParameters.associateWith { parameter ->
+            // TODO: do not store receivers to fields and get rid of this
+            val safeName = parameter.name.takeUnless(Name::isSpecial) ?: parameter.name.asString().let { name ->
+                Name.identifier("$${name.substring(1, name.length - 1)}")
+            }
+            buildField(safeName, parameter.type)
         }
 
         fun build(): BuiltFunctionReference {
@@ -448,13 +448,5 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 })
             }
         }
-    }
-
-    //TODO rewrite
-    private fun Name.safeName(): Name {
-        return if (isSpecial) {
-            val name = asString()
-            Name.identifier("$${name.substring(1, name.length - 1)}")
-        } else this
     }
 }
