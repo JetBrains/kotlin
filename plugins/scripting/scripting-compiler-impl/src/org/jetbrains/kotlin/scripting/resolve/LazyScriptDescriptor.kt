@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassMemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
@@ -144,14 +145,19 @@ class LazyScriptDescriptor(
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
         visitor.visitScriptDescriptor(this, data)
 
-    override fun createMemberScope(c: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider): LazyScriptClassMemberScope =
-        LazyScriptClassMemberScope(
-            // Must be a ResolveSession for scripts
-            c as ResolveSession,
-            declarationProvider,
-            this,
-            c.trace
-        )
+    override fun createMemberScope(
+        c: LazyClassContext,
+        declarationProvider: ClassMemberDeclarationProvider
+    ): ScopesHolderForClass<LazyClassMemberScope> =
+        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeChecker.kotlinTypeRefiner) {
+            LazyScriptClassMemberScope(
+                // Must be a ResolveSession for scripts
+                c as ResolveSession,
+                declarationProvider,
+                this,
+                c.trace
+            )
+        }
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 

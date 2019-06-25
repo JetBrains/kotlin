@@ -40,14 +40,18 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import java.util.*
 
 open class LazyClassMemberScope(
     c: LazyClassContext,
     declarationProvider: ClassMemberDeclarationProvider,
     thisClass: ClassDescriptorWithResolutionScopes,
-    trace: BindingTrace
+    trace: BindingTrace,
+    private val kotlinTypeRefiner: KotlinTypeRefiner = c.kotlinTypeChecker.kotlinTypeRefiner
 ) : AbstractLazyMemberScope<ClassDescriptorWithResolutionScopes, ClassMemberDeclarationProvider>(c, declarationProvider, thisClass, trace) {
 
     private val descriptorsFromDeclaredElements = storageManager.createLazyValue {

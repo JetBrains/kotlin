@@ -35,7 +35,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
+import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;
@@ -372,13 +374,13 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments, @NotNull KotlinTypeRefiner kotlinTypeRefiner) {
             return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeArguments);
         }
 
         @NotNull
         @Override
-        public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+        public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution, @NotNull KotlinTypeRefiner kotlinTypeRefiner) {
             return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeSubstitution);
         }
     }

@@ -12,24 +12,27 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class LazySubstitutingClassDescriptor implements ClassDescriptor {
-    private final ClassDescriptor original;
+public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor {
+    private final ModuleAwareClassDescriptor original;
     private final TypeSubstitutor originalSubstitutor;
     private TypeSubstitutor newSubstitutor;
     private List<TypeParameterDescriptor> typeConstructorParameters;
     private List<TypeParameterDescriptor> declaredTypeParameters;
     private TypeConstructor typeConstructor;
 
-    public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
+    public LazySubstitutingClassDescriptor(ModuleAwareClassDescriptor descriptor, TypeSubstitutor substitutor) {
         this.original = descriptor;
         this.originalSubstitutor = substitutor;
     }
@@ -82,28 +85,46 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
-        MemberScope memberScope = original.getMemberScope(typeArguments);
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments, @NotNull KotlinTypeRefiner kotlinTypeRefiner) {
+        MemberScope memberScope = original.getMemberScope(typeArguments, kotlinTypeRefiner);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
         return new SubstitutingScope(memberScope, getSubstitutor());
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution, @NotNull KotlinTypeRefiner kotlinTypeRefiner) {
+        MemberScope memberScope = original.getMemberScope(typeSubstitution, kotlinTypeRefiner);
+        if (originalSubstitutor.isEmpty()) {
+            return memberScope;
+        }
+        return new SubstitutingScope(memberScope, getSubstitutor());
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        return getMemberScope(typeArguments, DescriptorUtilsKt.getKotlinTypeRefiner(DescriptorUtils.getContainingModule(this)));
     }
 
     @NotNull
     @Override
     public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
-        MemberScope memberScope = original.getMemberScope(typeSubstitution);
-        if (originalSubstitutor.isEmpty()) {
-            return memberScope;
-        }
-        return new SubstitutingScope(memberScope, getSubstitutor());
+        return getMemberScope(typeSubstitution, DescriptorUtilsKt.getKotlinTypeRefiner(DescriptorUtils.getContainingModule(this)));
     }
 
     @NotNull
     @Override
     public MemberScope getUnsubstitutedMemberScope() {
-        MemberScope memberScope = original.getUnsubstitutedMemberScope();
+        return getUnsubstitutedMemberScope(DescriptorUtilsKt.getKotlinTypeRefiner(DescriptorUtils.getContainingModule(original)));
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getUnsubstitutedMemberScope(@NotNull KotlinTypeRefiner kotlinTypeRefiner) {
+        MemberScope memberScope = original.getUnsubstitutedMemberScope(kotlinTypeRefiner);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }

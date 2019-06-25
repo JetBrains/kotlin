@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
 import java.util.*;
 
@@ -162,7 +163,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
 
     @Override
     @NotNull
-    public MemberScope getUnsubstitutedMemberScope() {
+    public MemberScope getUnsubstitutedMemberScope(@NotNull KotlinTypeRefiner kotlinTypeRefiner) {
         return MemberScope.Empty.INSTANCE; // used for getDefaultType
     }
 
