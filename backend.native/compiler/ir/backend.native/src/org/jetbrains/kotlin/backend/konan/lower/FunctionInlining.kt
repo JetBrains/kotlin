@@ -70,7 +70,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
                 context.ir.symbols.konanSuspendCoroutineUninterceptedOrReturn.owner
 
-            descriptor == context.ir.symbols.coroutineContextGetter ->
+            descriptor == context.ir.symbols.coroutineContextGetter.owner.descriptor ->
                 context.ir.symbols.konanCoroutineContextGetter.owner
 
             else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner

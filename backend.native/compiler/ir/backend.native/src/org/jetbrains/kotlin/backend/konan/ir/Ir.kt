@@ -328,13 +328,17 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
 
     override val getContinuation = internalFunction("getContinuation")
 
-    val returnIfSuspended = internalFunction("returnIfSuspended")
+    override val returnIfSuspended = internalFunction("returnIfSuspended")
 
     val coroutineLaunchpad = internalFunction("coroutineLaunchpad")
 
     val konanSuspendCoroutineUninterceptedOrReturn = internalFunction("suspendCoroutineUninterceptedOrReturn")
 
     val konanCoroutineContextGetter = internalFunction("getCoroutineContext")
+
+    override val suspendCoroutineUninterceptedOrReturn = konanSuspendCoroutineUninterceptedOrReturn
+
+    override val coroutineGetContext = konanCoroutineContextGetter
 
     private val coroutinesIntrinsicsPackage = context.builtIns.builtInsModule.getPackage(
         context.config.configuration.languageVersionSettings.coroutinesIntrinsicsPackageFqName()).memberScope
@@ -345,10 +349,10 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
     val continuationClassDescriptor = coroutinesPackage
             .getContributedClassifier(Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
-    val coroutineContextGetter = coroutinesPackage
+    override val coroutineContextGetter = symbolTable.referenceSimpleFunction(coroutinesPackage
             .getContributedVariables(Name.identifier("coroutineContext"), NoLookupLocation.FROM_BACKEND)
             .single()
-            .getter!!
+            .getter!!)
 
     override val coroutineImpl get() = TODO()
 
