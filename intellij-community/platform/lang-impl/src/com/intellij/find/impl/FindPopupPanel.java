@@ -9,6 +9,7 @@ import com.intellij.find.replaceInProject.ReplaceInProjectManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.MnemonicHelper;
 import com.intellij.openapi.actionSystem.*;
@@ -907,7 +908,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
   @NotNull
   private static StateRestoringCheckBox createCheckBox(String message, String featureId) {
     StateRestoringCheckBox checkBox = new StateRestoringCheckBox(FindBundle.message(message));
-    checkBox.addActionListener(__ -> FeatureUsageTracker.getInstance().triggerFeatureUsed(featureId));
+    checkBox.addActionListener(__ -> FUCounterUsageLogger.getInstance().logEvent("find", featureId));
     checkBox.setFocusable(false);
     return checkBox;
   }
