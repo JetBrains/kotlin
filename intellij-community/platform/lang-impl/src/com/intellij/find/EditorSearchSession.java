@@ -198,6 +198,8 @@ public class EditorSearchSession implements SearchSession,
         }
       }
     }, myDisposable);
+
+    FindUtil.triggerUsedOptionsStats("FindInEditor", findModel);
   }
 
   public Editor getEditor() {
