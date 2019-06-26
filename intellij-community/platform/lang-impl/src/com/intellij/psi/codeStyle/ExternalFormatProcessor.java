@@ -121,14 +121,14 @@ public interface ExternalFormatProcessor {
       if (rangeAfterFormat != null) {
         PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
         if (!elementToFormat.isValid()) {
-          final PsiElement elementAtStart = file.findElementAt(rangeAfterFormat.getStartOffset());
-          final PsiElement elementAtEnd = file.findElementAt(rangeAfterFormat.getEndOffset() - 1);
+          PsiElement elementAtStart = file.findElementAt(rangeAfterFormat.getStartOffset());
+          if (elementAtStart instanceof PsiWhiteSpace) {
+              elementAtStart = PsiTreeUtil.nextLeaf(elementAtStart);
+          }
           if (elementAtStart != null) {
-            if (elementAtEnd != null) {
-              PsiElement parent = PsiTreeUtil.findCommonParent(elementAtStart, elementAtEnd);
-              if (parent != null) {
-                return parent;
-              }
+            PsiElement parent = PsiTreeUtil.getParentOfType(elementAtStart, elementToFormat.getClass());
+            if (parent != null) {
+              return parent;
             }
             return elementAtStart;
           }
