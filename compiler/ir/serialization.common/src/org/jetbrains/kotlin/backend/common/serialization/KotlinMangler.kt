@@ -25,6 +25,8 @@ interface KotlinMangler {
 }
 
 abstract class KotlinManglerImpl: KotlinMangler {
+    override val String.hashMangle get() = this.cityHash64()
+
     override val IrDeclaration.hashedMangle: Long
         get() = this.uniqSymbolName().hashMangle
 
