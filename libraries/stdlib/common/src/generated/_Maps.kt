@@ -41,7 +41,7 @@ public fun <K, V> Map<out K, V>.toList(): List<Pair<K, V>> {
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each entry of original map.
  */
 public inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -63,7 +63,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo
  */
 public inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -71,7 +71,7 @@ public inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R)
  * to each entry in the original map.
  */
 public inline fun <K, V, R : Any> Map<out K, V>.mapNotNull(transform: (Map.Entry<K, V>) -> R?): List<R> {
-    return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**

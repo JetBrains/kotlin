@@ -63,15 +63,15 @@ object Mapping : TemplateGroupBase() {
         returns("List<R>")
         body(Iterables) {
             """
-            val collectionSize = collectionSizeOrDefault(10)
-            if (collectionSize == 0) return emptyList()
-            return mapIndexedTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
+            val size = collectionSizeOrDefault(10)
+            if (size == 0) return emptyList()
+            return mapIndexedTo(ArrayList<R>(size), transform)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (size == 0) return emptyList()
-            return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+            return mapIndexedTo(ArrayList<R>(size), transform)
             """
         }
         body(CharSequences) {
@@ -116,21 +116,21 @@ object Mapping : TemplateGroupBase() {
         returns("List<R>")
         body(Iterables) {
             """
-            val collectionSize = collectionSizeOrDefault(10)
-            if (collectionSize == 0) return emptyList()
-            return mapTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
+            val size = collectionSizeOrDefault(10)
+            if (size == 0) return emptyList()
+            return mapTo(ArrayList<R>(size), transform)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (size == 0) return emptyList()
-            return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+            return mapTo(ArrayList<R>(size), transform)
             """
         }
         body(Maps) {
             """
             if (size == 0) return emptyList()
-            return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+            return mapTo(ArrayList<R>(size), transform)
             """
         }
         body(CharSequences) {
@@ -159,7 +159,7 @@ object Mapping : TemplateGroupBase() {
             """
         }
         body {
-            "return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()"
+            "return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()"
         }
 
         specialFor(Sequences) {
@@ -187,7 +187,7 @@ object Mapping : TemplateGroupBase() {
             """
         }
         body {
-            "return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()"
+            "return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()"
         }
 
         specialFor(Sequences) {
@@ -310,7 +310,7 @@ object Mapping : TemplateGroupBase() {
         typeParam("R")
         returns("List<R>")
         body {
-            "return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()"
+            "return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()"
         }
         specialFor(Sequences) {
             inline(Inline.No)

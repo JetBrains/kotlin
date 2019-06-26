@@ -3117,7 +3117,7 @@ public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T>
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3135,7 +3135,7 @@ public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte> 
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3153,7 +3153,7 @@ public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Shor
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3171,7 +3171,7 @@ public inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int> {
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3189,7 +3189,7 @@ public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long> 
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3207,7 +3207,7 @@ public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Floa
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3225,7 +3225,7 @@ public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Do
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3243,7 +3243,7 @@ public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3261,70 +3261,70 @@ public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> 
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T> {
-    return filterTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun ByteArray.filter(predicate: (Byte) -> Boolean): List<Byte> {
-    return filterTo(ArrayList<Byte>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Byte>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun ShortArray.filter(predicate: (Short) -> Boolean): List<Short> {
-    return filterTo(ArrayList<Short>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Short>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun IntArray.filter(predicate: (Int) -> Boolean): List<Int> {
-    return filterTo(ArrayList<Int>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Int>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun LongArray.filter(predicate: (Long) -> Boolean): List<Long> {
-    return filterTo(ArrayList<Long>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Long>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun FloatArray.filter(predicate: (Float) -> Boolean): List<Float> {
-    return filterTo(ArrayList<Float>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Float>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun DoubleArray.filter(predicate: (Double) -> Boolean): List<Double> {
-    return filterTo(ArrayList<Double>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Double>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean): List<Boolean> {
-    return filterTo(ArrayList<Boolean>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Boolean>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char> {
-    return filterTo(ArrayList<Char>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<Char>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3333,7 +3333,7 @@ public inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char> {
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun <T> Array<out T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T> {
-    return filterIndexedTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3342,7 +3342,7 @@ public inline fun <T> Array<out T>.filterIndexed(predicate: (index: Int, T) -> B
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun ByteArray.filterIndexed(predicate: (index: Int, Byte) -> Boolean): List<Byte> {
-    return filterIndexedTo(ArrayList<Byte>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Byte>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3351,7 +3351,7 @@ public inline fun ByteArray.filterIndexed(predicate: (index: Int, Byte) -> Boole
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun ShortArray.filterIndexed(predicate: (index: Int, Short) -> Boolean): List<Short> {
-    return filterIndexedTo(ArrayList<Short>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Short>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3360,7 +3360,7 @@ public inline fun ShortArray.filterIndexed(predicate: (index: Int, Short) -> Boo
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun IntArray.filterIndexed(predicate: (index: Int, Int) -> Boolean): List<Int> {
-    return filterIndexedTo(ArrayList<Int>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Int>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3369,7 +3369,7 @@ public inline fun IntArray.filterIndexed(predicate: (index: Int, Int) -> Boolean
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun LongArray.filterIndexed(predicate: (index: Int, Long) -> Boolean): List<Long> {
-    return filterIndexedTo(ArrayList<Long>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Long>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3378,7 +3378,7 @@ public inline fun LongArray.filterIndexed(predicate: (index: Int, Long) -> Boole
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun FloatArray.filterIndexed(predicate: (index: Int, Float) -> Boolean): List<Float> {
-    return filterIndexedTo(ArrayList<Float>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Float>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3387,7 +3387,7 @@ public inline fun FloatArray.filterIndexed(predicate: (index: Int, Float) -> Boo
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun DoubleArray.filterIndexed(predicate: (index: Int, Double) -> Boolean): List<Double> {
-    return filterIndexedTo(ArrayList<Double>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Double>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3396,7 +3396,7 @@ public inline fun DoubleArray.filterIndexed(predicate: (index: Int, Double) -> B
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun BooleanArray.filterIndexed(predicate: (index: Int, Boolean) -> Boolean): List<Boolean> {
-    return filterIndexedTo(ArrayList<Boolean>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Boolean>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3405,7 +3405,7 @@ public inline fun BooleanArray.filterIndexed(predicate: (index: Int, Boolean) ->
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boolean): List<Char> {
-    return filterIndexedTo(ArrayList<Char>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<Char>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3520,7 +3520,7 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(des
  * Returns a list containing all elements that are instances of specified type parameter R.
  */
 public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
-    return filterIsInstanceTo(ArrayList<R>()).optimizeReadOnlyList()
+    return filterIsInstanceTo(ArrayList<R>()).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -3535,63 +3535,63 @@ public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInst
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean): List<T> {
-    return filterNotTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun ByteArray.filterNot(predicate: (Byte) -> Boolean): List<Byte> {
-    return filterNotTo(ArrayList<Byte>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Byte>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun ShortArray.filterNot(predicate: (Short) -> Boolean): List<Short> {
-    return filterNotTo(ArrayList<Short>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Short>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun IntArray.filterNot(predicate: (Int) -> Boolean): List<Int> {
-    return filterNotTo(ArrayList<Int>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Int>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun LongArray.filterNot(predicate: (Long) -> Boolean): List<Long> {
-    return filterNotTo(ArrayList<Long>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Long>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun FloatArray.filterNot(predicate: (Float) -> Boolean): List<Float> {
-    return filterNotTo(ArrayList<Float>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Float>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun DoubleArray.filterNot(predicate: (Double) -> Boolean): List<Double> {
-    return filterNotTo(ArrayList<Double>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Double>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun BooleanArray.filterNot(predicate: (Boolean) -> Boolean): List<Boolean> {
-    return filterNotTo(ArrayList<Boolean>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Boolean>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun CharArray.filterNot(predicate: (Char) -> Boolean): List<Char> {
-    return filterNotTo(ArrayList<Char>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<Char>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4629,7 +4629,7 @@ public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T>
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4644,7 +4644,7 @@ public inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte> 
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4659,7 +4659,7 @@ public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Shor
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4674,7 +4674,7 @@ public inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int> {
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4689,7 +4689,7 @@ public inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long> 
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4704,7 +4704,7 @@ public inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Floa
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4719,7 +4719,7 @@ public inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Do
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4734,7 +4734,7 @@ public inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -4749,7 +4749,7 @@ public inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char> 
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -8059,63 +8059,63 @@ public fun CharArray.toSet(): Set<Char> {
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> ByteArray.flatMap(transform: (Byte) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> ShortArray.flatMap(transform: (Short) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> IntArray.flatMap(transform: (Int) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> LongArray.flatMap(transform: (Long) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> FloatArray.flatMap(transform: (Float) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> DoubleArray.flatMap(transform: (Double) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> BooleanArray.flatMap(transform: (Boolean) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
  */
 public inline fun <R> CharArray.flatMap(transform: (Char) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -8779,7 +8779,7 @@ public inline fun <T, K> Array<out T>.groupingBy(crossinline keySelector: (T) ->
  */
 public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8790,7 +8790,7 @@ public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
  */
 public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8801,7 +8801,7 @@ public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
  */
 public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8812,7 +8812,7 @@ public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
  */
 public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8823,7 +8823,7 @@ public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
  */
 public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8834,7 +8834,7 @@ public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
  */
 public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8845,7 +8845,7 @@ public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
  */
 public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8856,7 +8856,7 @@ public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
  */
 public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8867,7 +8867,7 @@ public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
  */
 public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8878,7 +8878,7 @@ public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
  */
 public inline fun <T, R> Array<out T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8889,7 +8889,7 @@ public inline fun <T, R> Array<out T>.mapIndexed(transform: (index: Int, T) -> R
  */
 public inline fun <R> ByteArray.mapIndexed(transform: (index: Int, Byte) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8900,7 +8900,7 @@ public inline fun <R> ByteArray.mapIndexed(transform: (index: Int, Byte) -> R): 
  */
 public inline fun <R> ShortArray.mapIndexed(transform: (index: Int, Short) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8911,7 +8911,7 @@ public inline fun <R> ShortArray.mapIndexed(transform: (index: Int, Short) -> R)
  */
 public inline fun <R> IntArray.mapIndexed(transform: (index: Int, Int) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8922,7 +8922,7 @@ public inline fun <R> IntArray.mapIndexed(transform: (index: Int, Int) -> R): Li
  */
 public inline fun <R> LongArray.mapIndexed(transform: (index: Int, Long) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8933,7 +8933,7 @@ public inline fun <R> LongArray.mapIndexed(transform: (index: Int, Long) -> R): 
  */
 public inline fun <R> FloatArray.mapIndexed(transform: (index: Int, Float) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8944,7 +8944,7 @@ public inline fun <R> FloatArray.mapIndexed(transform: (index: Int, Float) -> R)
  */
 public inline fun <R> DoubleArray.mapIndexed(transform: (index: Int, Double) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8955,7 +8955,7 @@ public inline fun <R> DoubleArray.mapIndexed(transform: (index: Int, Double) -> 
  */
 public inline fun <R> BooleanArray.mapIndexed(transform: (index: Int, Boolean) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8966,7 +8966,7 @@ public inline fun <R> BooleanArray.mapIndexed(transform: (index: Int, Boolean) -
  */
 public inline fun <R> CharArray.mapIndexed(transform: (index: Int, Char) -> R): List<R> {
     if (size == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(size), transform).optimizeReadOnlyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -8976,7 +8976,7 @@ public inline fun <R> CharArray.mapIndexed(transform: (index: Int, Char) -> R): 
  * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R> {
-    return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9112,7 +9112,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destin
  * to each element in the original array.
  */
 public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R> {
-    return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9372,7 +9372,7 @@ public inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T> {
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9389,7 +9389,7 @@ public inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte> {
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9406,7 +9406,7 @@ public inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short>
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9423,7 +9423,7 @@ public inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int> {
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9440,7 +9440,7 @@ public inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long> {
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9457,7 +9457,7 @@ public inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float>
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9474,7 +9474,7 @@ public inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Doub
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9491,7 +9491,7 @@ public inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Bo
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -9508,7 +9508,7 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -12796,7 +12796,7 @@ public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<Li
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12814,7 +12814,7 @@ public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<B
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12832,7 +12832,7 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12850,7 +12850,7 @@ public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12868,7 +12868,7 @@ public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<L
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12886,7 +12886,7 @@ public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12904,7 +12904,7 @@ public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<Li
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12922,7 +12922,7 @@ public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -12940,7 +12940,7 @@ public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<C
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -13046,7 +13046,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a:
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13062,7 +13062,7 @@ public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte,
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13078,7 +13078,7 @@ public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Shor
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13094,7 +13094,7 @@ public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13110,7 +13110,7 @@ public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long,
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13126,7 +13126,7 @@ public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Floa
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13142,7 +13142,7 @@ public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Dou
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13158,7 +13158,7 @@ public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Bo
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13174,7 +13174,7 @@ public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char,
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13282,7 +13282,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (a: 
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13300,7 +13300,7 @@ public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (a: Byte, 
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13318,7 +13318,7 @@ public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (a: Short
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13336,7 +13336,7 @@ public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (a: Int, b:
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13354,7 +13354,7 @@ public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (a: Long, 
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13372,7 +13372,7 @@ public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (a: Float
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13390,7 +13390,7 @@ public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (a: Doub
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13408,7 +13408,7 @@ public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (a: Boo
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13426,7 +13426,7 @@ public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (a: Char, 
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13522,7 +13522,7 @@ public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: By
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13538,7 +13538,7 @@ public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b:
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13554,7 +13554,7 @@ public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) 
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13570,7 +13570,7 @@ public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Lo
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13586,7 +13586,7 @@ public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b:
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13602,7 +13602,7 @@ public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double,
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13618,7 +13618,7 @@ public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boole
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -13634,7 +13634,7 @@ public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Ch
     for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**

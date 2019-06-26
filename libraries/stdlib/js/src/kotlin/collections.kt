@@ -6,6 +6,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
+import kotlin.internal.InlineOnly
 import kotlin.random.Random
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
@@ -164,7 +165,10 @@ internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean)
     else
         this.copyOf()
 
-
+@PublishedApi
+@SinceKotlin("1.3")
+@InlineOnly
+internal actual inline fun <T> List<T>.optimizeReadOnlyListCompat(): List<T> = optimizeReadOnlyList()
 
 @PublishedApi
 internal actual fun checkIndexOverflow(index: Int): Int {

@@ -45,6 +45,14 @@ internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
     else
         java.util.Arrays.copyOf(this, this.size, Array<Any?>::class.java)
 
+@PublishedApi
+@SinceKotlin("1.3")
+@InlineOnly
+internal actual inline fun <T> List<T>.optimizeReadOnlyListCompat(): List<T> =
+    if (apiVersionIsAtLeast(1, 1, 0))
+        optimizeReadOnlyList()
+    else
+        this
 
 @PublishedApi
 @SinceKotlin("1.3")

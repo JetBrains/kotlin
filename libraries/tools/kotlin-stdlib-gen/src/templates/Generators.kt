@@ -593,7 +593,7 @@ object Generators : TemplateGroupBase() {
                     second.add(element)
                 }
             }
-            return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+            return Pair(first, second)
             """
         }
 
@@ -1026,7 +1026,7 @@ object Generators : TemplateGroupBase() {
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
-            return list.optimizeReadOnlyList()
+            return list.optimizeReadOnlyListCompat()
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
@@ -1038,7 +1038,7 @@ object Generators : TemplateGroupBase() {
                 if (i >= arraySize) break
                 list.add(transform(this[i++], element))
             }
-            return list.optimizeReadOnlyList()
+            return list.optimizeReadOnlyListCompat()
             """
         }
     }
@@ -1069,7 +1069,7 @@ object Generators : TemplateGroupBase() {
                 if (i >= arraySize) break
                 list.add(transform(element, other[i++]))
             }
-            return list.optimizeReadOnlyList()
+            return list.optimizeReadOnlyListCompat()
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
@@ -1079,7 +1079,7 @@ object Generators : TemplateGroupBase() {
             for (i in 0 until size) {
                 list.add(transform(this[i], other[i]))
             }
-            return list.optimizeReadOnlyList()
+            return list.optimizeReadOnlyListCompat()
             """
         }
 
@@ -1108,7 +1108,7 @@ object Generators : TemplateGroupBase() {
             for (i in 0 until size) {
                 list.add(transform(this[i], other[i]))
             }
-            return list.optimizeReadOnlyList()
+            return list.optimizeReadOnlyListCompat()
             """
         }
     }

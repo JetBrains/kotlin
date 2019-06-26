@@ -224,6 +224,10 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     else -> this
 }
 
+@PublishedApi
+@SinceKotlin("1.3")
+internal expect fun <T> List<T>.optimizeReadOnlyListCompat(): List<T>
+
 /**
  * Searches this list or its range for the provided [element] using the binary search algorithm.
  * The list is expected to be sorted into ascending order according to the Comparable natural ordering of its elements,

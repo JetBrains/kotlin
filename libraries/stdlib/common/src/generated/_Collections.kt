@@ -663,14 +663,14 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
             list.add(item)
             yielding = true
         }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
-    return filterTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+    return filterTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -679,7 +679,7 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
  * and returns the result of predicate evaluation on the element.
  */
 public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T> {
-    return filterIndexedTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+    return filterIndexedTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -698,7 +698,7 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(d
  * Returns a list containing all elements that are instances of specified type parameter R.
  */
 public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
-    return filterIsInstanceTo(ArrayList<R>()).optimizeReadOnlyList()
+    return filterIsInstanceTo(ArrayList<R>()).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -713,7 +713,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
  * Returns a list containing all elements not matching the given [predicate].
  */
 public inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T> {
-    return filterNotTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+    return filterNotTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -851,7 +851,7 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
             break
         list.add(item)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -1215,7 +1215,7 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
  */
 public inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return flatMapTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -1310,9 +1310,9 @@ public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> 
  * @sample samples.collections.Collections.Transformations.map
  */
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
-    val collectionSize = collectionSizeOrDefault(10)
-    if (collectionSize == 0) return emptyList()
-    return mapTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
+    val size = collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -1322,9 +1322,9 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
  * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
-    val collectionSize = collectionSizeOrDefault(10)
-    if (collectionSize == 0) return emptyList()
-    return mapIndexedTo(ArrayList<R>(collectionSize), transform).optimizeReadOnlyList()
+    val size = collectionSizeOrDefault(10)
+    if (size == 0) return emptyList()
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -1334,7 +1334,7 @@ public inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R)
  * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R> {
-    return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return mapIndexedNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -1366,7 +1366,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(d
  * to each element in the original collection.
  */
 public inline fun <T, R : Any> Iterable<T>.mapNotNull(transform: (T) -> R?): List<R> {
-    return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyList()
+    return mapNotNullTo(ArrayList<R>(), transform).optimizeReadOnlyListCompat()
 }
 
 /**
@@ -1418,7 +1418,7 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
         if (set.add(key))
             list.add(e)
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -2018,7 +2018,7 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
             second.add(element)
         }
     }
-    return Pair(first.optimizeReadOnlyList(), second.optimizeReadOnlyList())
+    return Pair(first, second)
 }
 
 /**
@@ -2228,7 +2228,7 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: 
         if (i >= arraySize) break
         list.add(transform(element, other[i++]))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**
@@ -2255,7 +2255,7 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
-    return list.optimizeReadOnlyList()
+    return list.optimizeReadOnlyListCompat()
 }
 
 /**

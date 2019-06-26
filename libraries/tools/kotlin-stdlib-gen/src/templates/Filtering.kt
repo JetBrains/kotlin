@@ -330,7 +330,7 @@ object Filtering : TemplateGroupBase() {
                     list.add(item)
                     yielding = true
                 }
-            return list.optimizeReadOnlyList()
+            return list.optimizeReadOnlyListCompat()
             """
         }
 
@@ -384,7 +384,7 @@ object Filtering : TemplateGroupBase() {
                     break
                 list.add(item)
             }
-            return list.optimizeReadOnlyList()
+            return list.optimizeReadOnlyListCompat()
             """
         }
 
@@ -551,7 +551,7 @@ object Filtering : TemplateGroupBase() {
         returns("List<T>")
         body {
             """
-            return filterTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+            return filterTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
             """
         }
 
@@ -614,7 +614,7 @@ object Filtering : TemplateGroupBase() {
         returns("List<T>")
         body {
             """
-            return filterIndexedTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+            return filterIndexedTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
             """
         }
 
@@ -679,7 +679,7 @@ object Filtering : TemplateGroupBase() {
         returns("List<T>")
         body {
             """
-            return filterNotTo(ArrayList<T>(), predicate).optimizeReadOnlyList()
+            return filterNotTo(ArrayList<T>(), predicate).optimizeReadOnlyListCompat()
             """
         }
 
@@ -794,7 +794,7 @@ object Filtering : TemplateGroupBase() {
         genericStarProjection = true
         body {
             """
-            return filterIsInstanceTo(ArrayList<R>()).optimizeReadOnlyList()
+            return filterIsInstanceTo(ArrayList<R>()).optimizeReadOnlyListCompat()
             """
         }
 
