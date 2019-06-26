@@ -5,6 +5,7 @@ package com.intellij.find;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.find.replaceInProject.ReplaceInProjectManager;
@@ -1003,5 +1004,16 @@ public class FindUtil {
   private static int getCaretPosition(FindResult findResult, int caretShiftFromSelectionStart) {
     return caretShiftFromSelectionStart < 0
            ? findResult.getEndOffset() : Math.min(findResult.getStartOffset() + caretShiftFromSelectionStart, findResult.getEndOffset());
+  }
+
+  public static void triggerUsedOptionsStats(@NotNull String prefix, @NotNull FindModel model) {
+    FeatureUsageTracker tracker = FeatureUsageTracker.getInstance();
+    if (model.isCaseSensitive()) tracker.triggerFeatureUsed(prefix + ".MatchCaseOn");
+    if (model.isWholeWordsOnly()) tracker.triggerFeatureUsed(prefix + ".WholeWordsOn");
+    if (model.isRegularExpressions()) tracker.triggerFeatureUsed(prefix + ".RegexOn");
+    if (model.getFileFilter() != null) tracker.triggerFeatureUsed(prefix + ".FileFilterOn");
+    if (model.getSearchContext() != FindModel.SearchContext.ANY) {
+      tracker.triggerFeatureUsed(prefix + ".Context." + model.getSearchContext());
+    }
   }
 }
