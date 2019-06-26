@@ -411,7 +411,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     myCbCaseSensitive = createCheckBox("find.popup.case.sensitive", "FindPopupPanel$ToggleCaseSensitive");
     ItemListener liveResultsPreviewUpdateListener = __ -> scheduleResultsUpdate();
     myCbCaseSensitive.addItemListener(liveResultsPreviewUpdateListener);
-    myCbPreserveCase = createCheckBox("find.options.replace.preserve.case", "FindPopupPanel$TogglePreserveSensitive");
+    myCbPreserveCase = createCheckBox("find.options.replace.preserve.case", "FindPopupPanel$TogglePreserveCase");
     myCbPreserveCase.addItemListener(liveResultsPreviewUpdateListener);
     myCbPreserveCase.setVisible(myHelper.getModel().isReplaceState());
     myCbWholeWordsOnly = createCheckBox("find.popup.whole.words", "FindPopupPanel$ToggleWholeWords");
