@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -161,7 +162,7 @@ class InitializersLowering(
     companion object {
         val clinitName = Name.special("<clinit>")
 
-        fun IrStatement.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithWrappedDescriptors(containingDeclaration)
-        fun IrExpression.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithWrappedDescriptors(containingDeclaration)
+        fun IrStatement.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
+        fun IrExpression.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
     }
 }

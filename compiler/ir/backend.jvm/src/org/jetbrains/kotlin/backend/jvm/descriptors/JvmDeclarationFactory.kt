@@ -97,7 +97,7 @@ class JvmDeclarationFactory(
             oldConstructor.isInline, oldConstructor.isExternal, oldConstructor.isPrimary
         ).apply {
             newDescriptor.bind(this)
-            annotations.addAll(oldConstructor.annotations.map { it.deepCopyWithWrappedDescriptors(this) })
+            annotations.addAll(oldConstructor.annotations.map { it.deepCopyWithSymbols(this) })
             parent = oldConstructor.parent
             returnType = oldConstructor.returnType
             copyTypeParametersFrom(oldConstructor)

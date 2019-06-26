@@ -179,6 +179,13 @@ private val localDeclarationsLoweringPhase = makeJsModulePhase(
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
 )
 
+private val localClassExtractionPhase = makeJsModulePhase(
+    ::LocalClassPopupLowering,
+    name = "LocalClassExtractionPhase",
+    description = "Move local declarations into nearest declaration container",
+    prerequisite = setOf(localDeclarationsLoweringPhase)
+)
+
 private val innerClassesLoweringPhase = makeJsModulePhase(
     ::InnerClassesLowering,
     name = "InnerClassesLowering",
@@ -372,6 +379,7 @@ val jsPhases = namedIrModulePhase(
             sharedVariablesLoweringPhase then
             localDelegatedPropertiesLoweringPhase then
             localDeclarationsLoweringPhase then
+            localClassExtractionPhase then
             innerClassesLoweringPhase then
             innerClassConstructorCallsLoweringPhase then
             propertiesLoweringPhase then

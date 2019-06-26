@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-
+// IGNORE_BACKEND: JVM_IR
 // WITH_REFLECT
 
 interface C {
