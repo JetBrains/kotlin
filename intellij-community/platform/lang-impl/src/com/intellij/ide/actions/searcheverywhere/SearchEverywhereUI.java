@@ -164,6 +164,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   }
 
   public void toggleEverywhereFilter() {
+    myEverywhereAutoSet = false;
     if (mySelectedTab.everywhereAction == null) return;
     if (!mySelectedTab.everywhereAction.canToggleEverywhere()) return;
     mySelectedTab.everywhereAction.setEverywhere(
@@ -462,6 +463,9 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
           @Override
           public void setEverywhere(boolean state) {
             seManager.setEverywhere(state);
+            myTabs.stream()
+              .filter(tab -> tab != SETab.this)
+              .forEach(tab -> tab.everywhereAction.setEverywhere(state));
             onChanged.run();
           }
         }, new FiltersAction(myContributorsFilter, onChanged));
