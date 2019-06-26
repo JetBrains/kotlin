@@ -178,16 +178,10 @@ open class StateStorageManagerImpl(private val rootTagName: String,
     if (storageClass != StateStorage::class.java) {
       return storageClass.name!!
     }
-
     if (normalizedCollapsedPath.isEmpty()) {
       throw Exception("Normalized path is empty, raw path '$collapsedPath'")
     }
-
-    val key = storageCreator?.key ?: normalizedCollapsedPath
-    if (key == StoragePathMacros.PRODUCT_WORKSPACE_FILE && ApplicationManager.getApplication().isUnitTestMode) {
-      return StoragePathMacros.WORKSPACE_FILE
-    }
-    return key
+    return storageCreator?.key ?: normalizedCollapsedPath
   }
 
   fun getCachedFileStorages(): Set<StateStorage> = storageLock.read { storages.values.toSet() }

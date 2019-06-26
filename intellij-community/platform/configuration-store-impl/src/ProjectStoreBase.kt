@@ -122,6 +122,8 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       if (isUnitTestMode) {
         // load state only if there are existing files
         isOptimiseTestLoadSpeed = !Paths.get(filePath).toFile().exists()
+
+        storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, workspacePath)
       }
     }
     else {
@@ -135,6 +137,8 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
       if (isUnitTestMode) {
         // load state only if there are existing files
         isOptimiseTestLoadSpeed = !Paths.get(filePath).exists()
+
+        storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, "$configDir/product-workspace.xml")
       }
 
       if (isRefreshVfsNeeded) {
@@ -150,7 +154,6 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     storageManager.addMacro(StoragePathMacros.CACHE_FILE, appSystemDir.resolve("workspace").resolve(cacheFileName).systemIndependentPath)
 
     if (isUnitTestMode) {
-      storageManager.addMacro(StoragePathMacros.PRODUCT_WORKSPACE_FILE, storageManager.expandMacro(StoragePathMacros.WORKSPACE_FILE))
       return
     }
 

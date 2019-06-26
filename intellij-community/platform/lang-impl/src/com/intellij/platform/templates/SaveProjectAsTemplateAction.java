@@ -31,7 +31,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -145,10 +144,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     indicator.setText("Saving project...");
     StoreUtil.saveSettings(project, true);
     indicator.setText("Processing project files...");
-    ZipOutputStream stream = null;
-    try {
-      stream = new ZipOutputStream(PathKt.outputStream(zipFile));
-
+    try (ZipOutputStream stream = new ZipOutputStream(PathKt.outputStream(zipFile))) {
       final VirtualFile dir = getDirectoryToSave(project, moduleToSave);
 
       List<LocalArchivedTemplate.RootDescription> roots = collectStructure(project, moduleToSave);
@@ -166,9 +162,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
       FileIndex index = moduleToSave == null
                         ? ProjectRootManager.getInstance(project).getFileIndex()
                         : ModuleRootManager.getInstance(moduleToSave).getFileIndex();
-      final ZipOutputStream finalStream = stream;
-
-      MyContentIterator iterator = new MyContentIterator(indicator, finalStream, project, parameters, shouldEscape);
+      MyContentIterator iterator = new MyContentIterator(indicator, stream, project, parameters, shouldEscape);
       for (LocalArchivedTemplate.RootDescription root : roots) {
         String prefix = LocalArchivedTemplate.ROOT_FILE_NAME + root.myIndex;
         VirtualFile rootFile = root.myFile;
@@ -182,9 +176,6 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     catch (Exception ex) {
       LOG.error(ex);
       UIUtil.invokeLaterIfNeeded(() -> Messages.showErrorDialog(project, "Can't save project as template", "Internal Error"));
-    }
-    finally {
-      StreamUtil.closeStream(stream);
     }
   }
 
