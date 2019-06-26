@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
+import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -30,6 +33,11 @@ abstract class AbstractUltraLightFacadeClassTest : KotlinLightCodeInsightFixture
 
         val scope = GlobalSearchScope.allScope(project)
         val facades = KotlinAsJavaSupport.getInstance(project).getFacadeNames(FqName.ROOT, scope)
+
+        TestCase.assertTrue(
+            "Test should be runned under language version that supports released coroutines",
+            module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+        )
 
         for (facadeName in facades) {
             val ultraLightClass = UltraLightChecker.checkFacadeEquivalence(FqName(facadeName), scope, project)

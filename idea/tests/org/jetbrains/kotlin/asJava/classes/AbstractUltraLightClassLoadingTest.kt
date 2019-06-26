@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.testFramework.LightProjectDescriptor
+import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -37,6 +40,11 @@ abstract class AbstractUltraLightClassLoadingTest : KotlinLightCodeInsightFixtur
             KotlinTestUtils.assertEqualsToFile(expectedTextFile, renderedResult)
             return
         }
+
+        TestCase.assertTrue(
+            "Test should be runned under language version that supports released coroutines",
+            module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+        )
 
         for (ktClass in UltraLightChecker.allClasses(file)) {
             val ultraLightClass = UltraLightChecker.checkClassEquivalence(ktClass)

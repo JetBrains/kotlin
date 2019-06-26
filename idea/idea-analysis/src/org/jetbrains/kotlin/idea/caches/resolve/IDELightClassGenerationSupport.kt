@@ -39,12 +39,14 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -74,8 +76,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
 
         override val isReleasedCoroutine
-            get() = KotlinFacet.get(module)
-                ?.configuration?.settings?.languageLevel?.let { it.major >= 1 && it.minor >= 3 } ?: true
+            get() = module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
         override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
             val facet = KotlinFacet.get(module)
