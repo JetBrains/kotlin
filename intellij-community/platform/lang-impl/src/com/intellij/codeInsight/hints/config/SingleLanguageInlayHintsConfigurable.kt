@@ -23,7 +23,7 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
     val parameterHintsProvider = InlayParameterHintsExtension.forLanguage(language)
     if (parameterHintsProvider != null) {
       val enabledForLanguage = ParameterNameHintsSettings.getInstance().isEnabledForLanguage(language)
-      options.add(HintProviderOption(oldParameterHintsKey, "Parameter Hints", true, enabledForLanguage))
+      options.add(HintProviderOption(oldParameterHintsKey, "Parameter hints", true, enabledForLanguage))
     }
     val keyToProvider = providers.associateBy { it.provider.key }
     val settingsWrappers = providers.map { it.toSettingsWrapper(settings, language) }
