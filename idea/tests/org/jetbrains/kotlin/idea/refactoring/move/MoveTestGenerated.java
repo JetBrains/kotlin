@@ -739,6 +739,16 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePropertyToPackage/movePropertyToPackage.test");
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveSealedClassWithImplsToAnotherPackage/moveSealedClassWithNestedImplsToAnotherPackage.test")
+    public void testKotlin_moveTopLevelDeclarations_moveSealedClassWithImplsToAnotherPackage_MoveSealedClassWithNestedImplsToAnotherPackage() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveSealedClassWithImplsToAnotherPackage/moveSealedClassWithNestedImplsToAnotherPackage.test");
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveSealedClassWithNestedImplsToAnotherPackage/moveSealedClassWithNestedImplsToAnotherPackage.test")
+    public void testKotlin_moveTopLevelDeclarations_moveSealedClassWithNestedImplsToAnotherPackage_MoveSealedClassWithNestedImplsToAnotherPackage() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveSealedClassWithNestedImplsToAnotherPackage/moveSealedClassWithNestedImplsToAnotherPackage.test");
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/objectAlreadyInaccessible/objectAlreadyInaccessible.test")
     public void testKotlin_moveTopLevelDeclarations_objectAlreadyInaccessible_ObjectAlreadyInaccessible() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/objectAlreadyInaccessible/objectAlreadyInaccessible.test");

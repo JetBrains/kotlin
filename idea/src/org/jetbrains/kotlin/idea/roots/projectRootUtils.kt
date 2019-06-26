@@ -73,12 +73,10 @@ private fun Module.collectKotlinAwareDestinationSourceRoots(): List<VirtualFile>
 }
 
 fun isOutsideSourceRootSet(psiFile : PsiFile?, sourceRootTypes: Set<JpsModuleSourceRootType<*>>): Boolean {
-    if (psiFile == null) return false
-    if (psiFile is PsiCodeFragment) return false
-    val file = psiFile.getVirtualFile()
-    if (file == null) return false
-    if (file.getFileSystem() is NonPhysicalFileSystem) return false
-    val projectFileIndex = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex()
+    if (psiFile == null || psiFile is PsiCodeFragment) return false
+    val file = psiFile.virtualFile ?: return false
+    if (file.fileSystem is NonPhysicalFileSystem) return false
+    val projectFileIndex = ProjectRootManager.getInstance(psiFile.project).fileIndex
     return !projectFileIndex.isUnderSourceRootOfType(file, sourceRootTypes) && !projectFileIndex.isInLibrary(file)
 }
 
