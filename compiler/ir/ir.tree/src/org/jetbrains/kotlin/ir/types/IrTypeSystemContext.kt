@@ -217,8 +217,6 @@ interface IrTypeSystemContext : TypeSystemInferenceExtensionContext {
 
     override fun SimpleTypeMarker.typeDepth() = 2
 
-    override fun KotlinTypeMarker.typeDepth() = if (this is IrStarProjection) 1 else 0
-
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? =
         irBuiltIns.intType as IrSimpleType
 

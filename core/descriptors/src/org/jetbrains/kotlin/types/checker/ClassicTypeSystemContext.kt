@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import kotlin.math.max
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
@@ -268,12 +267,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
 
     override fun SimpleTypeMarker.typeDepth(): Int {
         require(this is SimpleType, this::errorMessage)
-        return this.typeDepthInternal()
-    }
+        if (this is TypeUtils.SpecialType) return 0
 
-    override fun KotlinTypeMarker.typeDepth(): Int {
-        require(this is UnwrappedType, this::errorMessage)
-        return this.typeDepthInternal()
+        val maxInArguments = arguments.asSequence().map {
+            if (it.isStarProjection) 1 else it.type.unwrap().typeDepth()
+        }.max() ?: 0
+
+        return maxInArguments + 1
     }
 
     override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
@@ -513,23 +513,6 @@ private fun makeSimpleTypeDefinitelyNotNullOrNotNullInternal(type: SimpleType): 
 private fun containsInternal(type: KotlinType, predicate: (KotlinTypeMarker) -> Boolean): Boolean = type.contains(predicate)
 
 private fun singleBestRepresentative(collection: Collection<KotlinType>) = collection.singleBestRepresentative()
-
-internal fun UnwrappedType.typeDepthInternal() =
-    when (this) {
-        is SimpleType -> typeDepthInternal()
-        is FlexibleType -> max(lowerBound.typeDepthInternal(), upperBound.typeDepthInternal())
-    }
-
-internal fun SimpleType.typeDepthInternal(): Int {
-    if (this is TypeUtils.SpecialType) return 0
-
-    val maxInArguments = arguments.asSequence().map {
-        if (it.isStarProjection) 1 else it.type.unwrap().typeDepthInternal()
-    }.max() ?: 0
-
-    return maxInArguments + 1
-}
-
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun Any.errorMessage(): String {

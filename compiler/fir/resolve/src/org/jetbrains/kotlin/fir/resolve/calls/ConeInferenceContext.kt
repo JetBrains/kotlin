@@ -91,7 +91,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
                 || this is ConeTypeParameterType
     }
 
-    fun ConeKotlinType.typeDepthSimple(): Int {
+    override fun SimpleTypeMarker.typeDepth(): Int {
+        require(this is ConeKotlinType)
         // if (this is TypeUtils.SpecialType) return 0 // TODO: WTF?
 
         val maxInArguments = this.typeArguments.asSequence().map {
@@ -99,21 +100,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         }.max() ?: 0
 
         return maxInArguments + 1
-    }
-
-    override fun SimpleTypeMarker.typeDepth(): Int {
-        require(this is ConeKotlinType)
-        return this.typeDepthSimple()
-    }
-
-    override fun KotlinTypeMarker.typeDepth(): Int {
-        require(this is ConeKotlinType) {
-            "Incorrect type of class ${this::class.java}: $this"
-        }
-        return when (this) {
-            is ConeFlexibleType -> Math.max(lowerBound.typeDepthSimple(), upperBound.typeDepthSimple())
-            else -> typeDepthSimple()
-        }
     }
 
     override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean {

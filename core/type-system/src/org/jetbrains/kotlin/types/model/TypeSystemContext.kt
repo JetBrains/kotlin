@@ -76,7 +76,12 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean
 
     fun SimpleTypeMarker.typeDepth(): Int
-    fun KotlinTypeMarker.typeDepth(): Int
+
+    fun KotlinTypeMarker.typeDepth(): Int = when (this) {
+        is SimpleTypeMarker -> typeDepth()
+        is FlexibleTypeMarker -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
+        else -> error("Type should be simple or flexible: $this")
+    }
 
     fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker?
 }
