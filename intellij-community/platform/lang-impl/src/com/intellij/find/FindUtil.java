@@ -9,6 +9,7 @@ import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.find.replaceInProject.ReplaceInProjectManager;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -1007,13 +1008,13 @@ public class FindUtil {
   }
 
   public static void triggerUsedOptionsStats(@NotNull String prefix, @NotNull FindModel model) {
-    FeatureUsageTracker tracker = FeatureUsageTracker.getInstance();
-    if (model.isCaseSensitive()) tracker.triggerFeatureUsed(prefix + ".MatchCaseOn");
-    if (model.isWholeWordsOnly()) tracker.triggerFeatureUsed(prefix + ".WholeWordsOn");
-    if (model.isRegularExpressions()) tracker.triggerFeatureUsed(prefix + ".RegexOn");
-    if (model.getFileFilter() != null) tracker.triggerFeatureUsed(prefix + ".FileFilterOn");
+    FUCounterUsageLogger logger = FUCounterUsageLogger.getInstance();
+    if (model.isCaseSensitive()) logger.logEvent("find", prefix + ".MatchCaseOn");
+    if (model.isWholeWordsOnly()) logger.logEvent("find", prefix + ".WholeWordsOn");
+    if (model.isRegularExpressions()) logger.logEvent("find", prefix + ".RegexOn");
+    if (model.getFileFilter() != null) logger.logEvent("find", prefix + ".FileFilterOn");
     if (model.getSearchContext() != FindModel.SearchContext.ANY) {
-      tracker.triggerFeatureUsed(prefix + ".Context." + model.getSearchContext());
+      logger.logEvent("find", prefix + ".Context." + model.getSearchContext());
     }
   }
 }
