@@ -133,10 +133,18 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
     )
 
 
+private val addOrRemoveModifiersInspectionProcessing =
+    InspectionLikeProcessingGroup(
+        runSingleTime = true,
+        processings = listOf(
+            RemoveRedundantVisibilityModifierProcessing(),
+            RemoveRedundantModalityModifierProcessing(),
+            inspectionBasedProcessing(AddOperatorModifierInspection())
+        )
+    )
+
 private val inspectionLikePostProcessingGroup =
     InspectionLikeProcessingGroup(
-        RemoveRedundantVisibilityModifierProcessing(),
-        RemoveRedundantModalityModifierProcessing(),
         RemoveRedundantConstructorKeywordProcessing(),
         RemoveExplicitOpenInInterfaceProcessing(),
         generalInspectionBasedProcessing(ExplicitThisInspection()),
@@ -174,7 +182,6 @@ private val inspectionLikePostProcessingGroup =
         inspectionBasedProcessing(IfThenToElvisInspection(highlightStatement = true)),
         inspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection()),
         inspectionBasedProcessing(ReplaceGetOrSetInspection()),
-        inspectionBasedProcessing(AddOperatorModifierInspection()),
         intentionBasedProcessing(ObjectLiteralToLambdaIntention()),
         intentionBasedProcessing(AnonymousFunctionToLambdaIntention()),
         intentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()),
@@ -226,6 +233,7 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         "Cleaning up Kotlin code",
         listOf(
             errorsFixingDiagnosticBasedPostProcessingGroup,
+            addOrRemoveModifiersInspectionProcessing,
             inspectionLikePostProcessingGroup,
             cleaningUpDiagnosticBasedPostProcessingGroup
         )

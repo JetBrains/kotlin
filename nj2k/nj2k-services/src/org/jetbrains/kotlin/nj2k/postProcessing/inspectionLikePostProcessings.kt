@@ -32,11 +32,14 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 
-class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<InspectionLikeProcessing>) : ProcessingGroup {
+class InspectionLikeProcessingGroup(
+    private val runSingleTime: Boolean = false,
+    private val processings: List<InspectionLikeProcessing>
+) : ProcessingGroup {
 
-    constructor(vararg inspectionLikeProcessings: InspectionLikeProcessing) : this(inspectionLikeProcessings.toList())
+    constructor(vararg processings: InspectionLikeProcessing) : this(false, processings.toList())
 
-    private val processingsToPriorityMap = inspectionLikeProcessings.mapToIndex()
+    private val processingsToPriorityMap = processings.mapToIndex()
     fun priority(processing: InspectionLikeProcessing): Int = processingsToPriorityMap.getValue(processing)
 
     override suspend fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
@@ -62,6 +65,7 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
                     }
                 }
             }
+            if (runSingleTime) break
         } while (modificationStamp != file.modificationStamp && elementToActions.isNotEmpty())
     }
 
@@ -90,7 +94,7 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
                 super.visitElement(element)
 
                 if (rangeResult == RangeFilterResult.PROCESS) {
-                    inspectionLikeProcessings.forEach { processing ->
+                    processings.forEach { processing ->
                         val action = processing.createAction(element, context.converter.settings)
                         if (action != null) {
                             availableActions.add(
