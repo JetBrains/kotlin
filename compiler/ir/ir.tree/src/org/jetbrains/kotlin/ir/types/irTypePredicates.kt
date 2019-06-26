@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
@@ -19,9 +20,11 @@ private fun IrType.isNullableClassType(fqName: FqNameUnsafe) = isClassType(fqNam
 private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
-    val classSymbol = this.classifier as? IrClassSymbol ?: return false
-    return classFqNameEquals(classSymbol, fqName)
+    return classifier.isClassWithFqName(fqName)
 }
+
+fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
+    this is IrClassSymbol && classFqNameEquals(this, fqName)
 
 private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Boolean =
     if (symbol.isBound) classFqNameEquals(symbol.owner, fqName) else classFqNameEquals(symbol.descriptor, fqName)
@@ -47,12 +50,6 @@ fun IrType.isPrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiv
 fun IrType.isNullablePrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNullableClassType(it) }
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
-fun IrType.containsNull(): Boolean = when {
-    this is IrDynamicType -> true
-    this is IrStarProjection -> true
-    this is IrSimpleType -> hasQuestionMark || classifier.superTypes().any { it.containsNull() }
-    else -> false
-}
 
 fun IrType.isUnit() = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.unit)
 fun IrType.isNullableUnit() = isNullableClassType(KotlinBuiltIns.FQ_NAMES.unit)

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext, AbstractTypeCheckerContext() {
@@ -60,21 +59,4 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? =
         error("Captured type is unsupported in IR")
-
-    override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
-        // TODO this is currently used in overload resolution only
-        return false
-    }
-
-    override fun KotlinTypeMarker.argumentsCount(): Int =
-        when (this) {
-            is IrSimpleType -> arguments.size
-            else -> 0
-        }
-
-    override fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker =
-        when (this) {
-            is IrSimpleType -> arguments[index]
-            else -> error("Type $this has no arguments")
-        }
 }

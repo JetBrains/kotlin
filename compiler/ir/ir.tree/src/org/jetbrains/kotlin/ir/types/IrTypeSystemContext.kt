@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.types
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimitiveType
 
 interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext {
 
@@ -49,7 +51,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? = null
 
-    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = (this as IrSimpleType).containsNull()
+    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = (this as IrSimpleType).isMarkedNullable()
 
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         val simpleType = this as IrSimpleType
@@ -59,13 +61,26 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.typeConstructor() = (this as IrSimpleType).classifier
 
+    override fun KotlinTypeMarker.argumentsCount(): Int =
+        when (this) {
+            is IrSimpleType -> arguments.size
+            else -> 0
+        }
+
+    override fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker =
+        when (this) {
+            is IrSimpleType -> arguments[index]
+            else -> error("Type $this has no arguments")
+        }
+
     override fun KotlinTypeMarker.asTypeArgument() = this as IrTypeArgument
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? = error("Captured Type is not valid for IrTypes")
 
     override fun TypeArgumentMarker.isStarProjection() = this is IrStarProjection
 
-    override fun TypeArgumentMarker.getVariance() = (this as IrTypeProjection).variance.convertVariance()
+    override fun TypeArgumentMarker.getVariance(): TypeVariance =
+        (this as? IrTypeProjection)?.variance?.convertVariance() ?: TypeVariance.OUT
 
     override fun TypeArgumentMarker.getType() = (this as IrTypeProjection).type
 
@@ -164,9 +179,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.asArgumentList() = this as IrSimpleType
 
-    override fun TypeConstructorMarker.isAnyConstructor() = this === irBuiltIns.anyClass
+    override fun TypeConstructorMarker.isAnyConstructor(): Boolean =
+        this is IrClassSymbol && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.any)
 
-    override fun TypeConstructorMarker.isNothingConstructor() = this === irBuiltIns.nothingClass
+    override fun TypeConstructorMarker.isNothingConstructor(): Boolean =
+        this is IrClassSymbol && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.nothing)
 
     override fun SimpleTypeMarker.isSingleClassifierType() = true
 
@@ -203,21 +220,30 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability() = this is IrSimpleType && classifier is IrTypeParameterSymbol
 
-    override fun SimpleTypeMarker.typeDepth() = 2
+    override fun SimpleTypeMarker.typeDepth(): Int {
+        val maxInArguments = (this as IrSimpleType).arguments.asSequence().map {
+            if (it is IrStarProjection) 1 else it.getType().typeDepth()
+        }.max() ?: 0
+
+        return maxInArguments + 1
+    }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? =
         irBuiltIns.intType as IrSimpleType
 
-    override fun KotlinTypeMarker.isNullableType() = this is IrDynamicType || this is IrSimpleType && hasQuestionMark
+    override fun KotlinTypeMarker.isNullableType(): Boolean =
+        this is IrType && isNullable()
 
     @Suppress("UNCHECKED_CAST")
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker =
         makeTypeIntersection(types as List<IrType>) as SimpleTypeMarker
 
-
     @Suppress("UNCHECKED_CAST")
     override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker =
         makeTypeIntersection(types as List<IrType>)
+
+    override fun SimpleTypeMarker.isPrimitiveType(): Boolean =
+        this is IrSimpleType && irTypePredicates_isPrimitiveType()
 
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker =
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
