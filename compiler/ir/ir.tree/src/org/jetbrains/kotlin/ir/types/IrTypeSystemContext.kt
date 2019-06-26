@@ -15,17 +15,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
-
-private val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.internal.NoInfer")
-private val EXACT_ANNOTATION_FQ_NAME = FqName("kotlin.internal.Exact")
-
-interface IrTypeSystemContext : TypeSystemInferenceExtensionContext {
+interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext {
 
     val irBuiltIns: IrBuiltIns
 
@@ -182,15 +176,9 @@ interface IrTypeSystemContext : TypeSystemInferenceExtensionContext {
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor() = false
 
-    override fun nullableNothingType() = irBuiltIns.nothingNType as IrSimpleType
-
-    override fun nullableAnyType() = irBuiltIns.anyNType as IrSimpleType
-
-    override fun nothingType() = irBuiltIns.nothingType as IrSimpleType
-
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
-        require(lowerBound == nothingType())
-        require(upperBound == nullableAnyType())
+        require(lowerBound.isNothing())
+        require(upperBound is IrType && upperBound.isNullableAny())
         return IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     }
 
@@ -220,91 +208,7 @@ interface IrTypeSystemContext : TypeSystemInferenceExtensionContext {
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? =
         irBuiltIns.intType as IrSimpleType
 
-    override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean) = predicate(this)
-
-    override fun TypeConstructorMarker.isUnitTypeConstructor() = isEqualTypeConstructors(this, irBuiltIns.unitClass)
-
-    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker = irBuiltIns.intType
-
-    override fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker? {
-        if (this.size == 1) return this.first()
-
-        return this.firstOrNull { candidate ->
-            this.all { other ->
-                // We consider error types equal to anything here, so that intersections like
-                // {Array<String>, Array<[ERROR]>} work correctly
-                candidate == other || other is IrErrorType
-            }
-        }
-    }
-
-    override fun KotlinTypeMarker.isUnit() = (this as IrType) == irBuiltIns.unitType
-
-    override fun KotlinTypeMarker.withNullability(nullable: Boolean) = if (this is IrSimpleType)
-        IrSimpleTypeImpl(classifier, true, arguments, annotations)
-    else this
-
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
-        error("Captured Type is not supported for IrType")
-    }
-
-    override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
-        error("Captured Type is not supported for IrType")
-    }
-
-    override fun createCapturedType(
-        constructorProjection: TypeArgumentMarker,
-        constructorSupertypes: List<KotlinTypeMarker>,
-        lowerType: KotlinTypeMarker?,
-        captureStatus: CaptureStatus
-    ): CapturedTypeMarker {
-        error("Captured Type is not supported for IrType")
-    }
-
-    override fun createStubType(typeVariable: TypeVariableMarker) = error("Stub type is not supported for IrTypes")
-
-    override fun KotlinTypeMarker.removeAnnotations() = with(this as IrType) {
-        if (annotations.isEmpty()) this
-        else {
-            when {
-                this is IrDynamicType -> IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
-                this is IrSimpleType -> IrSimpleTypeImpl(classifier, hasQuestionMark, arguments, emptyList())
-                else -> this
-            }
-        }
-    }
-
-    override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker = with(this as IrSimpleType) {
-        IrSimpleTypeImpl(classifier, hasQuestionMark, newArguments.map { it as IrTypeArgument }, annotations)
-    }
-
-    override fun KotlinTypeMarker.hasExactAnnotation(): Boolean = with(this as IrType) {
-        annotations.hasAnnotation(EXACT_ANNOTATION_FQ_NAME)
-    }
-
-    override fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean = with(this as IrType) {
-        annotations.hasAnnotation(NO_INFER_ANNOTATION_FQ_NAME)
-    }
-
-    override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker =
-        error("freshTypeConstructor is not supported for IrType")
-
-    override fun CapturedTypeMarker.typeConstructorProjection() =
-        error("typeConstructorProjection is not supported for IrType")
-
     override fun KotlinTypeMarker.isNullableType() = this is IrDynamicType || this is IrSimpleType && hasQuestionMark
-
-    override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker = error("DefinitelyNotNullTypeMarker is not supported for IrType")
-
-    override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
-        TODO("not implemented")
-    }
-
-    override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
-        TODO("not implemented")
-    }
-
-    override fun TypeVariableMarker.defaultType(): SimpleTypeMarker = error("defaultType is not supported for IrType")
 
     @Suppress("UNCHECKED_CAST")
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker =
@@ -315,13 +219,8 @@ interface IrTypeSystemContext : TypeSystemInferenceExtensionContext {
     override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker =
         makeTypeIntersection(types as List<IrType>)
 
-    override fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean = false
-
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker =
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
-
-    override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
-        error("Captured type is unsupported in IR")
 }
 
 fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {

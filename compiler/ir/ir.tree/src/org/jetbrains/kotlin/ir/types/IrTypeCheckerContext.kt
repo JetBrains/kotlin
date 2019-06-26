@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext, AbstractTypeCheckerContext() {
 
-    override fun anyType(): SimpleTypeMarker =
-        irBuiltIns.anyType as IrSimpleType
-
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
         require(type is IrSimpleType)
         val parameters = extractTypeParameters((type.classifier as IrClassSymbol).owner).map { it.symbol }
@@ -51,19 +48,12 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
 
     override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker) = super.isEqualTypeConstructors(a, b)
 
-
     override val isErrorTypeEqualsToAnything = false
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = false
 
-
     override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext {
         return IrTypeCheckerContext(irBuiltIns)
-    }
-
-    override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
-        // TODO remove 'Exact' annotation only
-        return removeAnnotations()
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
@@ -87,9 +77,4 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
             is IrSimpleType -> arguments[index]
             else -> error("Type $this has no arguments")
         }
-
-    override fun KotlinTypeMarker.mayBeTypeVariable(): Boolean {
-        require(this is IrType)
-        return false
-    }
 }
