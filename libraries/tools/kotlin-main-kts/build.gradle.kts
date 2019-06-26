@@ -8,11 +8,6 @@ plugins {
     id("jps-compatible")
 }
 
-// You can run Gradle with "-Pkotlin.build.proguard=true" to enable ProGuard run on the jar (on TeamCity, ProGuard always runs)
-val shrink =
-    findProperty("kotlin.build.proguard")?.toString()?.toBoolean()
-        ?: hasProperty("teamcity")
-
 val jarBaseName = property("archivesBaseName") as String
 
 val proguardLibraryJars by configurations.creating
@@ -58,9 +53,8 @@ val mainKtsRelocatedDepsRootPackage = "$mainKtsRootPackage.relocatedDeps"
 val packJar by task<ShadowJar> {
     configurations = emptyList()
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    destinationDir = File(buildDir, "libs")
-
-    setupPublicJar(project.the<BasePluginConvention>().archivesBaseName, "before-proguard")
+    destinationDirectory.set(File(buildDir, "libs"))
+    archiveClassifier.set("before-proguard")
 
     from(mainSourceSet.output)
     from(project.configurations.embedded)
@@ -68,8 +62,10 @@ val packJar by task<ShadowJar> {
     // don't add this files to resources classpath to avoid IDE exceptions on kotlin project
     from("jar-resources")
 
-    packagesToRelocate.forEach {
-        relocate(it, "$mainKtsRelocatedDepsRootPackage.$it")
+    if (kotlinBuildProperties.relocation) {
+        packagesToRelocate.forEach {
+            relocate(it, "$mainKtsRelocatedDepsRootPackage.$it")
+        }
     }
 }
 
@@ -90,7 +86,7 @@ val proguard by task<ProGuardTask> {
 }
 
 val resultJar = tasks.register<Jar>("resultJar") {
-    val pack = if (shrink) proguard else packJar
+    val pack = if (kotlinBuildProperties.proguard) proguard else packJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {

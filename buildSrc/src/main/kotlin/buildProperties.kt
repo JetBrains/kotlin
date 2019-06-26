@@ -28,7 +28,8 @@ class KotlinBuildProperties(
 
     private operator fun get(key: String): Any? = localProperties.getProperty(key) ?: propertiesProvider.getProperty(key)
 
-    private fun getBoolean(key: String): Boolean = this[key]?.toString()?.toBoolean() == true
+    private fun getBoolean(key: String, default: Boolean = false): Boolean =
+        (this[key]?.toString()?.toBoolean() ?: default) == true
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
@@ -70,9 +71,17 @@ class KotlinBuildProperties(
             }
             return kotlinUltimateExists && (explicitlyEnabled || isTeamcityBuild)
         }
+
+    val postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
+
+    val relocation: Boolean get() = postProcessing
+
+    val proguard: Boolean get() = postProcessing && getBoolean("kotlin.build.proguard")
+
+    val jsIrDist: Boolean get() = getBoolean("kotlin.stdlib.js.ir.dist")
 }
 
-private const val extensionName = "kotlinBuildFlags"
+private const val extensionName = "kotlinBuildProperties"
 
 class ProjectProperties(val project: Project) : PropertiesProvider {
     override val rootProjectDir: File

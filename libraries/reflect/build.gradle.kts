@@ -35,7 +35,6 @@ val core = "$rootDir/core"
 val relocatedCoreSrc = "$buildDir/core-relocated"
 val libsDir = property("libsDir")
 
-
 val proguardDeps by configurations.creating
 val proguardAdditionalInJars by configurations.creating
 
@@ -109,23 +108,25 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
 }
 
 val reflectShadowJar by task<ShadowJar> {
-    classifier = "shadow"
-    version = null
+    archiveClassifier.set("shadow")
+    configurations = listOf(embedded)
+
     callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
 
     exclude("**/*.proto")
 
-    transform(KotlinModuleShadowTransformer(logger))
-
-    configurations = listOf(embedded)
-    relocate("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
-    relocate("javax.inject", "kotlin.reflect.jvm.internal.impl.javax.inject")
     mergeServiceFiles()
+
+    if (kotlinBuildProperties.relocation) {
+        transform(KotlinModuleShadowTransformer(logger))
+        relocate("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
+        relocate("javax.inject", "kotlin.reflect.jvm.internal.impl.javax.inject")
+    }
 }
 
 val stripMetadata by tasks.creating {
-    dependsOn("reflectShadowJar")
-    val inputJar = reflectShadowJar.archivePath
+    dependsOn(reflectShadowJar)
+    val inputJar = reflectShadowJar.outputs.files.singleFile
     val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
     inputs.file(inputJar)
     outputs.file(outputJar)
@@ -189,14 +190,18 @@ addArtifact("archives", sourcesJar)
 addArtifact("sources", sourcesJar)
 
 val result by task<Jar> {
-    dependsOn(proguard)
-    from(zipTree(file(proguardOutput)))
+    val task = if (kotlinBuildProperties.proguard) proguard else reflectShadowJar
+    dependsOn(task)
+    from {
+        zipTree(task.outputs.files.singleFile)
+    }
+    
     callGroovy("manifestAttributes", manifest, project, "Main")
 }
 
 val modularJar by task<Jar> {
     dependsOn(proguard)
-    classifier = "modular"
+    archiveClassifier.set("modular")
     from(zipTree(file(proguardOutput)))
     from(zipTree(reflectShadowJar.archivePath)) {
         include("META-INF/versions/**")

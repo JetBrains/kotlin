@@ -12,11 +12,6 @@ plugins {
     java
 }
 
-// You can run Gradle with "-Pkotlin.build.proguard=true" to enable ProGuard run on kotlin-compiler.jar (on TeamCity, ProGuard always runs)
-val shrink = findProperty("kotlin.build.proguard")?.toString()?.toBoolean() ?: hasProperty("teamcity")
-
-val jsIrDist = findProperty("kotlin.stdlib.js.ir.dist")?.toString()?.toBoolean() == true
-
 val fatJarContents by configurations.creating
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
@@ -85,10 +80,10 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
-    ":kotlin-stdlib-js-ir".takeIf { jsIrDist },
+    ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-source-sections-compiler-plugin",
     ":kotlin-test:kotlin-test-js",
-    ":kotlin-test:kotlin-test-js-ir".takeIf { jsIrDist },
+    ":kotlin-test:kotlin-test-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-jvm",
@@ -109,9 +104,9 @@ val distCompilerPluginProjects = listOf(
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
     ":kotlin-script-runtime",
-    ":kotlin-stdlib-js-ir".takeIf { jsIrDist },
+    ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-test:kotlin-test-js",
-    ":kotlin-test:kotlin-test-js-ir".takeIf { jsIrDist },
+    ":kotlin-test:kotlin-test-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-jvm",
@@ -262,7 +257,7 @@ val proguard by task<ProGuardTask> {
     }
 }
 
-val pack = if (shrink) proguard else packCompiler
+val pack = if (kotlinBuildProperties.proguard) proguard else packCompiler
 val distDir: String by rootProject.extra
 
 val jar = runtimeJar {
