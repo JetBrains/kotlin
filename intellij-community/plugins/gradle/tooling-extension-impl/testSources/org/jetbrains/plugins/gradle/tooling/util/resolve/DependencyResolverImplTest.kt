@@ -2,11 +2,14 @@
 package org.jetbrains.plugins.gradle.tooling.util.resolve
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.plugins.gradle.model.AbstractExternalDependency
+import org.jetbrains.plugins.gradle.model.DefaultExternalLibraryDependency
 import org.jetbrains.plugins.gradle.model.DefaultExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalDependency
 import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl.removeDuplicates
 import org.jetbrains.plugins.gradle.tooling.util.resolve.Scope.*
 import org.junit.Test
+import java.io.File
 
 class DependencyResolverImplTest {
 
@@ -124,13 +127,106 @@ class DependencyResolverImplTest {
       )
     }
   }
+
+  @Test
+  fun testLibraryDepWithDifferentFilesAreKeptSeparate() {
+    mutableListOf<ExternalDependency>(
+      libraryDep("lib1", COMPILE, "f1.jar"),
+      libraryDep("lib1", COMPILE, "f2.jar")
+    ).let {
+      removeDuplicates(it)
+      assertThat(it).containsExactly(
+        libraryDep("lib1", COMPILE, "f1.jar"),
+        libraryDep("lib1", COMPILE, "f2.jar")
+      )
+    }
+  }
+
+  @Test
+  fun testIdenticalLibrariesMerged() {
+    mutableListOf<ExternalDependency>(
+      libraryDep("lib1", COMPILE, "f1.jar") {
+        libraryDep("lib2", RUNTIME, "f2.jar")
+      },
+      libraryDep("lib1", COMPILE, "f1.jar") {
+        libraryDep("lib3", RUNTIME, "f3.jar")
+      }
+    ).let {
+      removeDuplicates(it)
+      assertThat(it).containsExactly(
+        libraryDep("lib1", COMPILE, "f1.jar") {
+          libraryDep("lib2", RUNTIME, "f2.jar")
+          libraryDep("lib3", RUNTIME, "f3.jar")
+        }
+      )
+    }
+  }
+
+  @Test
+  fun testMergeLibraryDependenciesGraphs() {
+    mutableListOf<ExternalDependency>(
+      libraryDep("lib1", COMPILE, "f1.jar") {
+        libraryDep("lib2", COMPILE, "f2.jar")
+        libraryDep("lib3", RUNTIME, "f3.jar")
+      },
+      libraryDep("lib4", COMPILE, "f4.jar") {
+        libraryDep("lib2", COMPILE, "f5.jar")
+        libraryDep("lib3", COMPILE, "f3.jar")
+      }
+
+    ).let {
+      removeDuplicates(it)
+      assertThat(it).containsExactly(
+        libraryDep("lib1", COMPILE, "f1.jar") {
+          libraryDep("lib2", COMPILE, "f2.jar")
+          libraryDep("lib3", COMPILE, "f3.jar")
+        },
+        libraryDep("lib4", COMPILE, "f4.jar") {
+          libraryDep("lib2", COMPILE, "f5.jar")
+        }
+      )
+    }
+  }
+}
+
+fun libraryDep(libraryId: String,
+               depScope: Scope,
+               libraryFile: String,
+               builder: AbstractExternalDependency.() -> Unit = {})
+  : DefaultExternalLibraryDependency {
+  val newDependency = DefaultExternalLibraryDependency().apply {
+    name = libraryId
+    scope = depScope.toString()
+    group = "testGrp"
+    version = "1.0"
+    file = File(libraryFile)
+  }
+  newDependency.builder()
+  return newDependency
+}
+
+fun AbstractExternalDependency.libraryDep(libraryId: String,
+                                          depScope: Scope,
+                                          libraryFile: String,
+                                          builder: AbstractExternalDependency.() -> Unit = {})
+  : AbstractExternalDependency  {
+  val newDependency = DefaultExternalLibraryDependency().apply {
+    name = libraryId
+    scope = depScope.toString()
+    group = "testGrp"
+    version = "1.0"
+    file = File(libraryFile)
+  }
+  newDependency.builder()
+  this.dependencies.add(newDependency)
+  return this
 }
 
 
 
 fun projectDep(targetName: String,
                 depScope: Scope,
-                builder: DefaultExternalProjectDependency.() -> Unit = {})
+                builder: AbstractExternalDependency.() -> Unit = {})
   : DefaultExternalProjectDependency {
   val newDependency = DefaultExternalProjectDependency().apply {
     name = targetName
@@ -139,16 +235,17 @@ fun projectDep(targetName: String,
     version = "1.0"
     projectPath = "projects/${targetName}"
     classpathOrder = 0
+    projectDependencyArtifacts = listOf(File(targetName))
   }
   newDependency.builder()
   return newDependency
 }
 
 
-fun DefaultExternalProjectDependency.projectDep(targetName: String,
+fun AbstractExternalDependency.projectDep(targetName: String,
                                                 depScope: Scope,
-                                                builder: DefaultExternalProjectDependency.() -> Unit = {})
-: DefaultExternalProjectDependency
+                                                builder: AbstractExternalDependency.() -> Unit = {})
+: AbstractExternalDependency
 {
   val newDependency = DefaultExternalProjectDependency().apply {
     name = targetName
@@ -157,6 +254,7 @@ fun DefaultExternalProjectDependency.projectDep(targetName: String,
     version = "1.0"
     projectPath = "projects/${targetName}"
     classpathOrder = 0
+    projectDependencyArtifacts = listOf(File(targetName))
   }
   newDependency.builder()
   this.dependencies.add(newDependency)

@@ -530,11 +530,21 @@ public class DependencyResolverImpl implements DependencyResolver {
           upgradeScopeIfNeeded(seenDependency, nextDependency.getScope());
           visit(childDeps);
           seenDependency.getDependencies().addAll(childDeps);
-          iter.remove();
+          if (seenAllFiles(seenDependency, nextDependency)) {
+            iter.remove();
+          }
         }
       }
     }
   }
+
+  private static boolean seenAllFiles(@NotNull ExternalDependency seenDependency,
+                                      @NotNull ExternalDependency nextDependency) {
+    Collection<File> seenFiles = getFiles(seenDependency);
+    Collection<File> nextFiles = getFiles(nextDependency);
+    return seenFiles.containsAll(nextFiles);
+  }
+
 
   private static void upgradeScopeIfNeeded(@NotNull ExternalDependency targetDependency, @NotNull String newScope) {
     if (targetDependency.getScope().equals(COMPILE_SCOPE) || !(targetDependency instanceof AbstractExternalDependency)) {
