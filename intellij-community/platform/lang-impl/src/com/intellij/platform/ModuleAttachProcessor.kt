@@ -92,7 +92,7 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
     val dotIdeaDir = projectDir.resolve(Project.DIRECTORY_STORE_FOLDER)
     if (!dotIdeaDir.exists()) {
       val newProject = ProjectManagerEx.getInstanceEx().newProject(projectDir.fileName.toString(), projectDir.toString(), true, false) ?: return false
-      val baseDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectDir.systemIndependentPath)
+      val baseDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(projectDir.systemIndependentPath)!!
       PlatformProjectOpenProcessor.runDirectoryProjectConfigurators(baseDir, newProject)
       StoreUtil.saveSettings(newProject)
       runWriteAction { Disposer.dispose(newProject) }
