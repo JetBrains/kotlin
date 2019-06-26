@@ -395,9 +395,6 @@ fun IrClass.simpleFunctions() = declarations.flatMap {
     }
 }
 
-val IrClass.primaryConstructor: IrConstructor?
-    get() = constructors.singleOrNull(IrConstructor::isPrimary)
-
 fun IrClass.createParameterDeclarations() {
     assert (thisReceiver == null)
 

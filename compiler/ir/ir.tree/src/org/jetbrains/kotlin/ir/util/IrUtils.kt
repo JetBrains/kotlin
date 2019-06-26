@@ -189,6 +189,9 @@ val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
 val IrClass.constructors: Sequence<IrConstructor>
     get() = this.declarations.asSequence().filterIsInstance<IrConstructor>()
 
+val IrClass.primaryConstructor: IrConstructor?
+    get() = this.declarations.singleOrNull { it is IrConstructor && it.isPrimary } as IrConstructor?
+
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
