@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.offlineViewer;
 
@@ -31,6 +31,9 @@ public class OfflineViewParseUtil {
     return parse(new FileReader(problemFile));
   }
 
+  /**
+   * @deprecated use {@link #parse(File)} or {@link #parse(Reader)}
+   */
   @Deprecated
   public static Map<String, Set<OfflineProblemDescriptor>> parse(String problemText) {
     return parse(new StringReader(problemText));
@@ -111,6 +114,9 @@ public class OfflineViewParseUtil {
     return parseProfileName(new FileReader(descriptorFile));
   }
 
+  /**
+   * @deprecated use {@link #parseProfileName(File)} or {@link #parseProfileName(Reader)}
+   */
   @Deprecated
   @Nullable
   public static String parseProfileName(String descriptorText) {

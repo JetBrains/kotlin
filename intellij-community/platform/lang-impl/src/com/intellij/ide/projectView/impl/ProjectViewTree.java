@@ -102,7 +102,7 @@ public class ProjectViewTree extends DnDAwareTree {
   }
 
   /**
-   * Not every tree employs {@link DefaultMutableTreeNode} so
+   * @deprecated Not every tree employs {@link DefaultMutableTreeNode} so
    * use {@link #getSelectionPaths()} or {@link TreeUtil#getSelectedPathIfOne(JTree)} directly.
    */
   @Deprecated

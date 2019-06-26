@@ -47,6 +47,9 @@ public abstract class TargetElementUtilBase {
     return TargetElementUtil.adjustOffset(file, document, offset);
   }
 
+  /**
+   * @deprecated use {@link TargetElementUtil#inVirtualSpace(Editor, int)}
+   */
   @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Deprecated
   public static boolean inVirtualSpace(@NotNull Editor editor, int offset) {

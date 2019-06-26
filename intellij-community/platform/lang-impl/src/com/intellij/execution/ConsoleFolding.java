@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -16,7 +17,7 @@ public abstract class ConsoleFolding {
   /**
    * @param project current project
    * @param line    line to check whether it should be folded or not
-   * @return true if line should be folded, false if not
+   * @return {@code true} if line should be folded, {@code false} if not
    */
   public boolean shouldFoldLine(@NotNull Project project, @NotNull String line) {
     return shouldFoldLine(line);
@@ -33,21 +34,19 @@ public abstract class ConsoleFolding {
   }
 
   /**
-   * Deprecated since 2018.1. Use {@link #shouldFoldLine(Project, String)} instead.
-   *
    * @param line to check if should be folded
-   * @return true is line should be folded, false if not
+   * @return {@code true} if line should be folded, {@code false} if not
+   * @deprecated since 2018.1. Use {@link #shouldFoldLine(Project, String)} instead.
    */
   @Deprecated
-  public boolean shouldFoldLine(@NotNull String line) { return false; }
+  public boolean shouldFoldLine(@SuppressWarnings("unused") @NotNull String line) { return false; }
 
   /**
-   * Deprecated since 2018.1. Use {@link #getPlaceholderText(Project, List)} instead.
-   *
    * @param lines to fold
    * @return placeholder for lines
+   * @deprecated since 2018.1. Use {@link #getPlaceholderText(Project, List)} instead.
    */
   @Deprecated
   @Nullable
-  public String getPlaceholderText(@NotNull List<String> lines) { return null; }
+  public String getPlaceholderText(@SuppressWarnings("unused") @NotNull List<String> lines) { return null; }
 }

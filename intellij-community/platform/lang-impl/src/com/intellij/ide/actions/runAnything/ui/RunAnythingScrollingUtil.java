@@ -14,9 +14,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class RunAnythingScrollingUtil {
+
+  /**
+   * @deprecated unused
+   */
   @NonNls
   @Deprecated
   protected static final String SELECT_PREVIOUS_ROW_ACTION_ID = ListActions.Up.ID;
+
+  /**
+   * @deprecated unused
+   */
   @NonNls
   @Deprecated
   protected static final String SELECT_NEXT_ROW_ACTION_ID = ListActions.Down.ID;

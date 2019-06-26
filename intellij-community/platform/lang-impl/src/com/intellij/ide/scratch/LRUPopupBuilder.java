@@ -70,6 +70,9 @@ public abstract class LRUPopupBuilder<T> {
     });
   }
 
+  /**
+   * @deprecated use {@link #forFileLanguages(Project, String, Language, Consumer)}
+   */
   @Deprecated
   @NotNull
   public static ListPopup forFileLanguages(@NotNull Project project,

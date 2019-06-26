@@ -31,6 +31,9 @@ public class DocumentBasedFormattingModel implements FormattingModelEx {
   private final FileType                myFileType;
   private final PsiFile                 myFile;
 
+  /**
+   * @deprecated use other CTORs
+   */
   @Deprecated
   public DocumentBasedFormattingModel(final Block rootBlock,
                                       @NotNull final Document document,

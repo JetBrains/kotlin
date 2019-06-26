@@ -57,7 +57,9 @@ public abstract class FileTemplateManager{
   @NotNull
   protected FileTemplateManager checkInitialized() { return this; }
 
-  /** Use {@link #getInstance(Project)} instead */
+  /**
+   * @deprecated Use {@link #getInstance(Project)} instead
+   */
   @Deprecated
   public static FileTemplateManager getInstance(){
     return getDefaultInstance();
@@ -94,7 +96,9 @@ public abstract class FileTemplateManager{
   @NotNull 
   public abstract Properties getDefaultProperties();
 
-  /** Use {@link #getDefaultProperties()} instead */
+  /**
+   * @deprecated use {@link #getDefaultProperties()} instead
+   */
   @NotNull
   @Deprecated
   public Properties getDefaultProperties(@NotNull Project project) {

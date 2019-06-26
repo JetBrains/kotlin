@@ -67,6 +67,9 @@ public class ConflictsDialog extends DialogWrapper{
     init();
   }
 
+  /**
+   * @deprecated use other CTORs
+   */
   @Deprecated
   public ConflictsDialog(Project project, String... conflictDescriptions) {
     super(project, true);

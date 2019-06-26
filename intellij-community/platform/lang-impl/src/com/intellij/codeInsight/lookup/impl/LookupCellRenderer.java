@@ -58,9 +58,15 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private final FontMetrics myNormalMetrics;
   private final FontMetrics myBoldMetrics;
 
+  /**
+   * @deprecated unused
+   */
   @Deprecated
   public static final Color FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.foreground", JBColor.foreground());
 
+  /**
+   * @deprecated unused
+   */
   @Deprecated
   public static final Color SELECTED_FOREGROUND_COLOR = JBColor.namedColor("CompletionPopup.selectionForeground", new JBColor(JBColor.WHITE, JBColor.foreground()));
 

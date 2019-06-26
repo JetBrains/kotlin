@@ -123,6 +123,9 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     Disposer.register(project, this);
   }
 
+  /**
+   * @deprecated unused
+   */
   @Deprecated
   protected final void fireTreeChangeListener() {
   }
@@ -801,6 +804,9 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     return myTreeBuilder.getUi().getReady(requestor);
   }
 
+  /**
+   * @deprecated temporary API
+   */
   @TestOnly
   @Deprecated
   @NotNull

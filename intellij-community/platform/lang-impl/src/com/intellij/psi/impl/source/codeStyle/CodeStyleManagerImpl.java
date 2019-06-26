@@ -600,7 +600,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   }
 
   @Override
-  @Deprecated
   public Indent getIndent(String text, FileType fileType) {
     int indent = IndentHelperImpl.getIndent(CodeStyle.getSettings(myProject).getIndentOptions(fileType), text, true);
     int indentLevel = indent / IndentHelperImpl.INDENT_FACTOR;
@@ -609,7 +608,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   }
 
   @Override
-  @Deprecated
   public String fillIndent(Indent indent, FileType fileType) {
     IndentImpl indent1 = (IndentImpl)indent;
     int indentLevel = indent1.getIndentLevel();
@@ -636,7 +634,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   }
 
   @Override
-  @Deprecated
   public Indent zeroIndent() {
     return new IndentImpl(CodeStyle.getSettings(myProject), 0, 0, null);
   }

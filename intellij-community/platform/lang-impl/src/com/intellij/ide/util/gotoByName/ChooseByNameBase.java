@@ -1046,6 +1046,9 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
     }
   }
 
+  /**
+   * @deprecated unused
+   */
   @Deprecated
   public boolean hasPostponedAction() {
     return false;

@@ -90,6 +90,7 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
   /**
    * @deprecated use accessors instead
    */
+  @Deprecated
   public boolean SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS;
 
   public boolean isSelectAutopopupSuggestionsByChars() {
@@ -109,6 +110,9 @@ public class CodeInsightSettings implements PersistentStateComponent<Element>, C
   public boolean AUTOCOMPLETE_ON_CODE_COMPLETION = true;
   public boolean AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = true;
 
+  /**
+   * @deprecated unused
+   */
   @Deprecated
   public boolean AUTOCOMPLETE_COMMON_PREFIX = true;
 

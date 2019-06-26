@@ -190,6 +190,9 @@ public abstract class GotoActionBase extends AnAction {
                         ChooseByNameModelEx.getItemProvider(model, getPsiContext(e)));
   }
 
+  /**
+   * @deprecated use other overloaded methods
+   */
   @Deprecated
   protected <T> void showNavigationPopup(AnActionEvent e,
                                          ChooseByNameModel model,
