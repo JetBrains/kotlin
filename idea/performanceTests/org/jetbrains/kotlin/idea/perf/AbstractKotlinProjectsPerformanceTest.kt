@@ -40,7 +40,6 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.fixtures.TempDirTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
@@ -113,7 +112,7 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
             val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", "warm-up ")
             assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            ProjectManagerEx.getInstanceEx().forceCloseProject(project, true)
+            ProjectManagerEx.getInstanceEx().closeAndDispose(project)
 
             warmedUp = true
         }
@@ -132,13 +131,8 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
             .run()
     }
 
-    private fun getTempDirFixture(): TempDirTestFixture {
-        val policy = IdeaTestExecutionPolicy.current()
-        return if (policy != null)
-            policy.createTempDirTestFixture()
-        else
-            LightTempDirTestFixtureImpl(true)
-    }
+    private fun getTempDirFixture(): TempDirTestFixture =
+        LightTempDirTestFixtureImpl(true)
 
     protected fun perfChangeDocument(fileName: String, note: String = "", block: (document: Document) -> Unit) =
         perfChangeDocument(myProject!!, fileName, note, block)
@@ -185,7 +179,7 @@ abstract class AbstractKotlinProjectsPerformanceTest : UsefulTestCase() {
 
             ProjectManagerEx.getInstanceEx().openTestProject(project)
 
-            disposeOnTearDown(Disposable { ProjectManagerEx.getInstanceEx().forceCloseProject(project, true) })
+            disposeOnTearDown(Disposable { ProjectManagerEx.getInstanceEx().closeAndDispose(project) })
         }
 
         val changeListManagerImpl = ChangeListManager.getInstance(project) as ChangeListManagerImpl

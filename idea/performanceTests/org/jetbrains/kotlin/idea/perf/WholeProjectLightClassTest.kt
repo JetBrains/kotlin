@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
-import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import java.util.*
@@ -24,7 +24,7 @@ class WholeProjectLightClassTest : WholeProjectPerformanceTest(), WholeProjectKo
         val results = mutableMapOf<String, Long>()
         var totalNs = 0L
 
-        val psiFile = file.toPsiFile(project) ?: run {
+        val psiFile = PsiManager.getInstance(project).findFile(file) ?: run {
             return PerFileTestResult(results, totalNs, listOf(AssertionError("PsiFile not found for $file")))
         }
 

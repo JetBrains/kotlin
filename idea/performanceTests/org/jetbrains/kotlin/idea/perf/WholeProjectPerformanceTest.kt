@@ -69,18 +69,21 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
         InjectedLanguageManager.getInstance(project) // zillion of Dom Sem classes
         LanguageAnnotators.INSTANCE.allForLanguage(JavaLanguage.INSTANCE) // pile of annotator classes loads
         LanguageAnnotators.INSTANCE.allForLanguage(StdLanguages.XML)
-        ProblemHighlightFilter.EP_NAME.extensions
-        ImplicitUsageProvider.EP_NAME.extensionList
-        XmlSchemaProvider.EP_NAME.extensionList
-        XmlFileNSInfoProvider.EP_NAME.extensionList
-        ExternalAnnotatorsFilter.EXTENSION_POINT_NAME.extensionList
-        IndexPatternBuilder.EP_NAME.extensionList
+        assertTrue(
+            "side effect: to load extensions",
+            ProblemHighlightFilter.EP_NAME.extensions.toMutableList()
+                .plus(ImplicitUsageProvider.EP_NAME.extensions)
+                .plus(XmlSchemaProvider.EP_NAME.extensions)
+                .plus(XmlFileNSInfoProvider.EP_NAME.extensions)
+                .plus(ExternalAnnotatorsFilter.EXTENSION_POINT_NAME.extensions)
+                .plus(IndexPatternBuilder.EP_NAME.extensions).isNotEmpty()
+        )
     }
 
     override fun setUpProject() {
         println("Using project in $tmp")
 
-        (ApplicationManager.getApplication() as ApplicationEx).doNotSave()
+        (ApplicationManager.getApplication() as ApplicationEx).isSaveAllowed = false
         myProject = ProjectUtil.openOrImport(tmp.path, null, false)
     }
 
