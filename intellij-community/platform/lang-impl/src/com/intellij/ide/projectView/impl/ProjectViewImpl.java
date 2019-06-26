@@ -211,6 +211,16 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
         AbstractProjectViewPane pane = getCurrentProjectViewPane();
         return pane == null || pane.isAutoScrollEnabledFor(file);
       }
+
+      @Override
+      protected String getActionName() {
+        return "Open Files with Single Click";
+      }
+
+      @Override
+      protected String getActionDescription() {
+        return "When a file is selected, open it for editing";
+      }
     };
 
     myConnection.subscribe(ToolWindowManagerListener.TOPIC, new ToolWindowManagerListener() {
@@ -1955,6 +1965,16 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }
       createToolbarActions();
     }
+
+    @Override
+    protected String getActionName() {
+      return "Always Select Opened File";
+    }
+
+    @Override
+    protected String getActionDescription() {
+      return "When an editor tab is selected, select the corresponding file in Project view";
+    }
   }
 
   private class SimpleSelectInContext extends SmartSelectInContext {
@@ -2114,7 +2134,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   private class ScrollFromSourceAction extends AnAction implements DumbAware {
     private ScrollFromSourceAction() {
-      super("Scroll from Source", "Select the file open in the active editor", AllIcons.General.Locate);
+      super("Select Opened File", "Select the file open in the active editor", AllIcons.General.Locate);
     }
 
     @Override
