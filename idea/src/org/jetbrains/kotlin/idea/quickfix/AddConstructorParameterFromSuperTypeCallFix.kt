@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -32,7 +33,7 @@ class AddConstructorParameterFromSuperTypeCallFix(
         val superTypeCallArgList = element ?: return
         val constructorParamList = superTypeCallArgList.containingClass()?.createPrimaryConstructorIfAbsent()?.valueParameterList ?: return
         val psiFactory = KtPsiFactory(superTypeCallArgList)
-        val constructorParam = constructorParamList.addParameter(psiFactory.createParameter("$parameterName: ${parameterType.asString()}"))
+        val constructorParam = constructorParamList.addParameter(psiFactory.createParameter("$parameterName: ${parameterType.render()}"))
         val superTypeCallArg = superTypeCallArgList.addArgument(psiFactory.createArgument(parameterName))
         ShortenReferences.DEFAULT.process(constructorParam)
         editor?.caretModel?.moveToOffset(superTypeCallArg.endOffset)
@@ -46,7 +47,7 @@ class AddConstructorParameterFromSuperTypeCallFix(
 
             val parameter = DiagnosticFactory.cast(diagnostic, Errors.NO_VALUE_FOR_PARAMETER).a
             if (parameter.index != superTypeCallArgList.arguments.size) return null
-            val parameterName = parameter.name.asString()
+            val parameterName = parameter.name.render()
             val constructor = containingClass.resolveToDescriptorIfAny(BodyResolveMode.PARTIAL)?.constructors?.firstOrNull() ?: return null
             if (constructor.valueParameters.any { it.name.asString() == parameterName }) return null
             val parameterType = parameter.type.constructor.declarationDescriptor?.fqNameOrNull() ?: return null

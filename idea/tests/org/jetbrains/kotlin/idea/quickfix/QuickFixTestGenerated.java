@@ -372,6 +372,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("backticks.kt")
+        public void testBackticks() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/backticks.kt");
+        }
+
         @TestMetadata("basic.kt")
         public void testBasic() throws Exception {
             runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/basic.kt");
