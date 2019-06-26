@@ -68,6 +68,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "control alt N",            "Inline", "Console.TableResult.SetNull"},
     { "control alt M",            "ExtractMethod", "TodoViewGroupByShowModules", "ChangesView.GroupBy.Module"},
     { "control alt P",            "ChangesView.GroupBy.Directory", "IntroduceParameter", "TodoViewGroupByShowPackages", "ServiceView.GroupByServiceGroups"},
+    { "ctrl alt C",               "IntroduceConstant", "TodoViewGroupByFlattenPackage"},
     { "ctrl alt U",               "ShowUmlDiagramPopup", "ChangesView.UnshelveSilently"},
     { "ctrl alt F",               "IntroduceField", "ShowFilterPopup"},
     { "control MINUS",            "CollapseAll", "CollapseExpandableComponent", "CollapseRegion"},
