@@ -2,10 +2,12 @@
 package com.intellij.codeInsight.hints
 
 import com.intellij.codeHighlighting.EditorBoundHighlightingPass
+import com.intellij.concurrency.JobLauncher
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SyntaxTraverser
+import com.intellij.util.Processor
 
 class InlayHintsPass(
   val rootElement: PsiElement,
@@ -13,16 +15,22 @@ class InlayHintsPass(
   editor: Editor,
   val settings: InlayHintsSettings
 ) : EditorBoundHighlightingPass(editor, rootElement.containingFile, true) {
-  val traverser = SyntaxTraverser.psiTraverser(rootElement)
-
   override fun doCollectInformation(progress: ProgressIndicator) {
-    traverser.forEach { element ->
-      for (collector in collectors) {
-        if (settings.hintsEnabled(collector.key, collector.language)) {
-          collector.collectHints(element, myEditor)
+    JobLauncher.getInstance().invokeConcurrentlyUnderProgress(
+      collectors,
+      progress,
+      true,
+      false,
+      Processor { collector ->
+        val traverser = SyntaxTraverser.psiTraverser(rootElement)
+        for (element in traverser.preOrderDfsTraversal()) {
+          if (settings.hintsEnabled(collector.key, collector.language)) {
+            if (!collector.collectHints(element, myEditor)) break
+          }
         }
+        true
       }
-    }
+    )
   }
 
   override fun doApplyInformationToEditor() {

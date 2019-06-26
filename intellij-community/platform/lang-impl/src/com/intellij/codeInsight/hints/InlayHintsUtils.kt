@@ -66,8 +66,8 @@ class CollectorWithSettings<T : Any>(
   val language: Language,
   val sink: InlayHintsSinkImpl<T>
 ) {
-  fun collectHints(element: PsiElement, editor: Editor) {
-    collector.collect(element, editor, sink)
+  fun collectHints(element: PsiElement, editor: Editor): Boolean {
+    return collector.collect(element, editor, sink)
   }
 
   fun applyToEditor(
