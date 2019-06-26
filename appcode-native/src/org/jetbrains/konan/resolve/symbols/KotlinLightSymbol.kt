@@ -18,6 +18,8 @@ class KotlinLightSymbol(
     private val name: String,
     private val kind: OCSymbolKind
 ) : OCSymbol {
+    constructor(psi: PsiElement, symbol: OCSymbol) : this(psi, symbol.name, symbol.kind)
+
     override fun getKind(): OCSymbolKind = kind
 
     override fun locateDefinition(project: Project): PsiElement? = psi
