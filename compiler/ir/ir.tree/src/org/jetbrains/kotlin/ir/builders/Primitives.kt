@@ -44,7 +44,17 @@ fun primitiveOp2(
     origin: IrStatementOrigin,
     argument1: IrExpression, argument2: IrExpression
 ): IrExpression =
-    IrBinaryPrimitiveImpl(startOffset, endOffset, primitiveOpReturnType, origin, primitiveOpSymbol, argument1, argument2)
+    IrCallImpl(
+        startOffset, endOffset,
+        primitiveOpReturnType,
+        primitiveOpSymbol, primitiveOpSymbol.descriptor,
+        typeArgumentsCount = 0,
+        valueArgumentsCount = 2,
+        origin = origin
+    ).apply {
+        putValueArgument(0, argument1)
+        putValueArgument(1, argument2)
+    }
 
 fun IrGeneratorContext.constNull(startOffset: Int, endOffset: Int): IrExpression =
     IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
@@ -59,7 +69,15 @@ fun IrGeneratorContext.eqeqeq(startOffset: Int, endOffset: Int, argument1: IrExp
     primitiveOp2(startOffset, endOffset, irBuiltIns.eqeqeqSymbol, irBuiltIns.booleanType, IrStatementOrigin.EQEQEQ, argument1, argument2)
 
 fun IrGeneratorContext.throwNpe(startOffset: Int, endOffset: Int, origin: IrStatementOrigin): IrExpression =
-    IrNullaryPrimitiveImpl(startOffset, endOffset, irBuiltIns.nothingType, origin, irBuiltIns.throwNpeSymbol)
+    IrCallImpl(
+        startOffset, endOffset,
+        irBuiltIns.nothingType,
+        irBuiltIns.throwNpeSymbol,
+        irBuiltIns.throwNpeSymbol.descriptor,
+        typeArgumentsCount = 0,
+        valueArgumentsCount = 0,
+        origin = origin
+    )
 
 fun IrGeneratorContext.constTrue(startOffset: Int, endOffset: Int) =
     IrConstImpl.constTrue(startOffset, endOffset, irBuiltIns.booleanType)

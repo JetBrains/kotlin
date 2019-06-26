@@ -201,18 +201,19 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     )
                 } else {
                     val getterSymbol = context.symbolTable.referenceFunction(getMethodDescriptor.original)
-                    IrGetterCallImpl(
+                    IrCallImpl(
                         startOffset, endOffset,
                         irType,
                         getterSymbol,
                         getMethodDescriptor,
                         descriptor.typeParametersCount,
-                        dispatchReceiverValue?.load(),
-                        extensionReceiverValue?.load(),
+                        0,
                         IrStatementOrigin.GET_PROPERTY,
                         superQualifierSymbol
                     ).apply {
                         putTypeArguments(call.typeArguments) { it.toIrType() }
+                        dispatchReceiver = dispatchReceiverValue?.load()
+                        extensionReceiver = extensionReceiverValue?.load()
                     }
                 }
             }

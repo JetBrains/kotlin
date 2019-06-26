@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrNullaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findTopLevelDeclaration
@@ -355,15 +353,6 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun irCallToPrimitiveKind(call: IrCall): KotlinIr.IrCall.Primitive = when (call) {
-        is IrNullaryPrimitiveImpl
-        -> KotlinIr.IrCall.Primitive.NULLARY
-        is IrBinaryPrimitiveImpl
-        -> KotlinIr.IrCall.Primitive.BINARY
-        else
-        -> KotlinIr.IrCall.Primitive.NOT_PRIMITIVE
-    }
-
     private fun serializeMemberAccessCommon(call: IrMemberAccessExpression): KotlinIr.MemberAccessCommon {
         val proto = KotlinIr.MemberAccessCommon.newBuilder()
         if (call.extensionReceiver != null) {
@@ -395,7 +384,6 @@ open class IrModuleSerializer(
 
     private fun serializeCall(call: IrCall): KotlinIr.IrCall {
         val proto = KotlinIr.IrCall.newBuilder()
-        proto.kind = irCallToPrimitiveKind(call)
         proto.symbol = serializeIrSymbol(call.symbol)
         call.origin?.let { proto.origin = serializeIrStatementOrigin(it) }
 

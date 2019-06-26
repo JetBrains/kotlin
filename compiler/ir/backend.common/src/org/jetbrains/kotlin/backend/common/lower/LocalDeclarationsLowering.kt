@@ -417,19 +417,16 @@ class LocalDeclarationsLowering(
         }
 
         private fun createNewCall(oldCall: IrCall, newCallee: IrFunction) =
-            if (oldCall is IrCallWithShallowCopy)
-                oldCall.shallowCopy(oldCall.origin, newCallee.symbol, oldCall.superQualifierSymbol)
-            else
-                IrCallImpl(
-                    oldCall.startOffset, oldCall.endOffset,
-                    newCallee.returnType,
-                    newCallee.symbol,
-                    newCallee.descriptor,
-                    oldCall.typeArgumentsCount,
-                    oldCall.origin, oldCall.superQualifierSymbol
-                ).also {
-                    it.copyTypeArgumentsFrom(oldCall)
-                }
+            IrCallImpl(
+                oldCall.startOffset, oldCall.endOffset,
+                newCallee.returnType,
+                newCallee.symbol,
+                newCallee.descriptor,
+                oldCall.typeArgumentsCount,
+                oldCall.origin, oldCall.superQualifierSymbol
+            ).also {
+                it.copyTypeArgumentsFrom(oldCall)
+            }
 
         private fun createNewCall(oldCall: IrConstructorCall, newCallee: IrConstructor) =
             IrConstructorCallImpl.fromSymbolOwner(

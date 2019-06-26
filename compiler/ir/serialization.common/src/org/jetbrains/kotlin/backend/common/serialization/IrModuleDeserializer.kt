@@ -270,23 +270,16 @@ abstract class IrModuleDeserializer(
 
         val origin = if (proto.hasOrigin()) deserializeIrStatementOrigin(proto.origin) else null
 
-        val call: IrCall = when (proto.kind) {
-            KotlinIr.IrCall.Primitive.NOT_PRIMITIVE ->
-                // TODO: implement the last three args here.
-                IrCallImpl(
-                    start, end, type,
-                    symbol, symbol.descriptor,
-                    proto.memberAccess.typeArguments.typeArgumentCount,
-                    proto.memberAccess.valueArgumentList.size,
-                    origin,
-                    superSymbol
-                )
-            KotlinIr.IrCall.Primitive.NULLARY ->
-                IrNullaryPrimitiveImpl(start, end, type, origin, symbol)
-            KotlinIr.IrCall.Primitive.BINARY ->
-                IrBinaryPrimitiveImpl(start, end, type, origin, symbol)
-            else -> TODO("Unexpected primitive IrCall.")
-        }
+        val call: IrCall =
+            // TODO: implement the last three args here.
+            IrCallImpl(
+                start, end, type,
+                symbol, symbol.descriptor,
+                proto.memberAccess.typeArguments.typeArgumentCount,
+                proto.memberAccess.valueArgumentList.size,
+                origin,
+                superSymbol
+            )
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }

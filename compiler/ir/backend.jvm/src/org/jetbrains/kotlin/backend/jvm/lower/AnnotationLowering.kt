@@ -9,27 +9,19 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.KClassJavaProperty
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetterCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isKClass
-import org.jetbrains.kotlin.ir.util.isNonPrimitiveArray
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.Variance
@@ -118,7 +110,7 @@ private class AnnotationLowering(private val context: JvmBackendContext) : FileL
 
         // Check for a property access on a KClass or Array<KClass> field of an
         // annotation class instance.
-        val receiver = subject as? IrGetterCallImpl
+        val receiver = (subject as? IrCall)?.takeIf { it.symbol.owner.isGetter }
             ?: return super.visitCall(expression)
 
         val wrapIntoArray = receiver.type.isKClassArray()

@@ -98,17 +98,17 @@ val IrDeclaration.fileEntry: SourceManager.FileEntry
 
 fun IrClass.companionObject() = this.declarations.singleOrNull {it is IrClass && it.isCompanion }
 
-val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.getter
+val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.correspondingPropertySymbol?.owner?.getter
 
-val IrDeclaration.isSetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.setter
+val IrDeclaration.isSetter get() = this is IrSimpleFunction && this == this.correspondingPropertySymbol?.owner?.setter
 
 val IrDeclaration.isAccessor get() = this.isGetter || this.isSetter
 
 val IrDeclaration.isPropertyAccessor get() =
-    this is IrSimpleFunction && this.correspondingProperty != null
+    this is IrSimpleFunction && this.correspondingPropertySymbol != null
 
 val IrDeclaration.isPropertyField get() =
-    this is IrField && this.correspondingProperty != null
+    this is IrField && this.correspondingPropertySymbol != null
 
 val IrDeclaration.isTopLevelDeclaration get() =
     parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
@@ -117,9 +117,9 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
     this.isTopLevelDeclaration ->
         this
     this.isPropertyAccessor ->
-        (this as IrSimpleFunction).correspondingProperty!!.findTopLevelDeclaration()
+        (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.findTopLevelDeclaration()
     this.isPropertyField ->
-        (this as IrField).correspondingProperty!!.findTopLevelDeclaration()
+        (this as IrField).correspondingPropertySymbol!!.owner.findTopLevelDeclaration()
     else ->
         (this.parent as IrDeclaration).findTopLevelDeclaration()
 }

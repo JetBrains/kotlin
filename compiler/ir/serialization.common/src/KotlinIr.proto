@@ -227,16 +227,10 @@ message MemberAccessCommon {
 }
 
 message IrCall {
-  enum Primitive {
-    NOT_PRIMITIVE = 1;
-    NULLARY = 2;
-    BINARY = 4;
-  }
-  required Primitive kind = 1;
-  required IrSymbol symbol = 2;
-  required MemberAccessCommon member_access = 3;
-  optional IrSymbol super = 4;
-  optional IrStatementOrigin origin = 5;
+  required IrSymbol symbol = 1;
+  required MemberAccessCommon member_access = 2;
+  optional IrSymbol super = 3;
+  optional IrStatementOrigin origin = 4;
 }
 
 message IrConstructorCall {

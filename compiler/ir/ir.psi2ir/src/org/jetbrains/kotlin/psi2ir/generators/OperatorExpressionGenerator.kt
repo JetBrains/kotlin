@@ -257,11 +257,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument0 = expression.left!!.genExpr()
         val irArgument1 = expression.right!!.genExpr()
 
-        val irIdentityEquals = IrBinaryPrimitiveImpl(
+        val irIdentityEquals = primitiveOp2(
             expression.startOffsetSkippingComments, expression.endOffset,
+            context.irBuiltIns.eqeqeqSymbol,
             context.irBuiltIns.booleanType,
             irOperator,
-            context.irBuiltIns.eqeqeqSymbol,
             irArgument0, irArgument1
         )
 
@@ -297,11 +297,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         val eqeqSymbol = context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType] ?: context.irBuiltIns.eqeqSymbol
 
-        val irEquals = IrBinaryPrimitiveImpl(
+        val irEquals = primitiveOp2(
             expression.startOffsetSkippingComments, expression.endOffset,
+            eqeqSymbol,
             context.irBuiltIns.booleanType,
             irOperator,
-            eqeqSymbol,
             expression.left!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.leftType, comparisonType),
             expression.right!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.rightType, comparisonType)
         )
@@ -334,20 +334,20 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             val comparisonType = comparisonInfo.comparisonType
             val eqeqSymbol =
                 context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType] ?: context.irBuiltIns.eqeqSymbol
-            IrBinaryPrimitiveImpl(
+            primitiveOp2(
                 startOffset, endOffset,
+                eqeqSymbol,
                 context.irBuiltIns.booleanType,
                 irOperator,
-                eqeqSymbol,
                 arg1.promoteToPrimitiveNumericType(comparisonInfo.leftType, comparisonType),
                 arg2.promoteToPrimitiveNumericType(comparisonInfo.rightType, comparisonType)
             )
         } else {
-            IrBinaryPrimitiveImpl(
+            primitiveOp2(
                 startOffset, endOffset,
+                context.irBuiltIns.eqeqSymbol,
                 context.irBuiltIns.booleanType,
                 irOperator,
-                context.irBuiltIns.eqeqSymbol,
                 arg1, arg2
             )
         }
@@ -421,11 +421,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val ktRight = ktExpression.right ?: throw AssertionError("No RHS in ${ktExpression.text}")
 
         return if (comparisonInfo != null) {
-            IrBinaryPrimitiveImpl(
+            primitiveOp2(
                 startOffset, endOffset,
+                getComparisonOperatorSymbol(origin, comparisonInfo.comparisonType),
                 context.irBuiltIns.booleanType,
                 origin,
-                getComparisonOperatorSymbol(origin, comparisonInfo.comparisonType),
                 ktLeft.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.leftType, comparisonInfo.comparisonType),
                 ktRight.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.rightType, comparisonInfo.comparisonType)
             )
@@ -433,11 +433,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             val resolvedCall = getResolvedCall(ktExpression)
                 ?: throw AssertionError("No resolved call for comparison operator ${ktExpression.text}")
 
-            IrBinaryPrimitiveImpl(
+            primitiveOp2(
                 startOffset, endOffset,
+                getComparisonOperatorSymbol(origin, context.irBuiltIns.int),
                 context.irBuiltIns.booleanType,
                 origin,
-                getComparisonOperatorSymbol(origin, context.irBuiltIns.int),
                 generateCall(resolvedCall, ktExpression, origin),
                 IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, 0)
             )

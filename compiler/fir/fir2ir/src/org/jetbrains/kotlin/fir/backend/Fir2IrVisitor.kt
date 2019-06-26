@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
+import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -1073,10 +1074,7 @@ internal class Fir2IrVisitor(
             FirOperation.GT_EQ -> irBuiltIns.greaterOrEqualFunByOperandType[simpleType] to IrStatementOrigin.GTEQ
             else -> throw AssertionError("Unexpected comparison operation: $operation")
         }
-        return IrBinaryPrimitiveImpl(
-            startOffset, endOffset, booleanType, origin, symbol!!,
-            first.toIrExpression(), second.toIrExpression()
-        )
+        return primitiveOp2(startOffset, endOffset, symbol!!, booleanType, origin, first.toIrExpression(), second.toIrExpression())
     }
 
     private fun generateOperatorCall(
@@ -1104,10 +1102,7 @@ internal class Fir2IrVisitor(
         val result = if (operation in UNARY_OPERATIONS) {
             primitiveOp1(startOffset, endOffset, symbol, type, origin, arguments[0].toIrExpression())
         } else {
-            IrBinaryPrimitiveImpl(
-                startOffset, endOffset, type, origin, symbol,
-                arguments[0].toIrExpression(), arguments[1].toIrExpression()
-            )
+            primitiveOp2(startOffset, endOffset, symbol, type, origin, arguments[0].toIrExpression(), arguments[1].toIrExpression())
         }
         if (operation !in NEGATED_OPERATIONS) return result
         return primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, booleanType, origin, result)
