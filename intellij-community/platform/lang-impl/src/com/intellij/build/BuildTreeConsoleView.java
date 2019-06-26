@@ -287,11 +287,11 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
               showErrorIfFirst(currentNode, messageEventNavigatable);
             }
 
-            if (parentNode != buildProgressRootNode) {
-              myConsoleViewHandler.addOutput(parentNode, buildId, event);
-              myConsoleViewHandler.addOutput(parentNode, "\n", true);
-            }
             if (parentNode != null) {
+              if (parentNode != buildProgressRootNode) {
+                myConsoleViewHandler.addOutput(parentNode, buildId, event);
+                myConsoleViewHandler.addOutput(parentNode, "\n", true);
+              }
               reportMessageKind(messageEvent, parentNode);
             }
             myConsoleViewHandler.addOutput(currentNode, buildId, event);
@@ -850,19 +850,19 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       return true;
     }
 
-    private void addOutput(ExecutionNode node, @NotNull String text, boolean stdOut) {
+    private void addOutput(@NotNull ExecutionNode node, @NotNull String text, boolean stdOut) {
       addOutput(node, view -> view.append(text, stdOut));
     }
 
-    private void addOutput(ExecutionNode node, @NotNull Object buildId, BuildEvent event) {
+    private void addOutput(@NotNull ExecutionNode node, @NotNull Object buildId, BuildEvent event) {
       addOutput(node, view -> view.onEvent(buildId, event));
     }
 
-    private void addOutput(ExecutionNode node, Failure failure) {
+    private void addOutput(@NotNull ExecutionNode node, Failure failure) {
       addOutput(node, view -> view.append(failure));
     }
 
-    private void addOutput(ExecutionNode node, Consumer<BuildTextConsoleView> consumer) {
+    private void addOutput(@NotNull ExecutionNode node, Consumer<BuildTextConsoleView> consumer) {
       if (!myViewSettingsProvider.isSideBySideView()) return;
       String nodeConsoleViewName = getNodeConsoleViewName(node);
       ExecutionConsole viewView = myView.getView(nodeConsoleViewName);
