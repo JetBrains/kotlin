@@ -12,10 +12,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
-import javax.swing.BoxLayout
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
+import javax.swing.*
+import javax.swing.border.EmptyBorder
 
 class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
   private val configurables: List<SingleLanguageInlayHintsConfigurable> = HintUtils.getLanguagesWithParamAndInlayHintsSupport(project)
@@ -32,9 +30,8 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
     val outer = JPanel()
     outer.layout = BorderLayout()
     val label = JLabel(CodeInsightBundle.message("inlay.hints.language.list.description"))
-    label.alignmentX = 0.5f
     outer.add(label, BorderLayout.NORTH)
-    outer.add(createListPanel(), BorderLayout.CENTER)
+    outer.add(createListPanel(), BorderLayout.WEST)
     return outer
   }
 
@@ -42,11 +39,16 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
     val panel = JPanel()
     panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
     panel.border = JBUI.Borders.empty(0, 10, 0, 0)
+    panel.add(Box.Filler(JBUI.size(0, 10),
+                         JBUI.size(0, 10),
+                         JBUI.size(0, 10)))
     for (configurable in configurables) {
       val label = LinkLabel.create(configurable.language.displayName) {
         val settings = Settings.KEY.getData(DataManager.getInstance().getDataContext(panel))
         settings?.select(configurable)
       }
+      label.alignmentX = 0f
+      label.border = EmptyBorder(1, 17, 3, 1)
       panel.add(label)
     }
     return panel
