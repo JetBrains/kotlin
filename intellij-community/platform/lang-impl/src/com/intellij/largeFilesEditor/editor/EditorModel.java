@@ -269,6 +269,7 @@ public class EditorModel {
     }
 
     if (isNeedToShowCaret) {
+      ensureTargetCaretPositionIsInFileBounds(pagesAmountInFile);
       targetVisiblePosition.set(targetCaretPosition.pageNumber,
                                 targetVisiblePosition.verticalScrollOffset);  // we can't count the necessary offset at this stage
     }
@@ -683,6 +684,15 @@ public class EditorModel {
       return true;
     }
     return false;
+  }
+
+  private void ensureTargetCaretPositionIsInFileBounds(long pagesAmount) {
+    if (targetCaretPosition.pageNumber < 0) {
+      targetCaretPosition.set(0, 0);
+    }
+    else if (targetCaretPosition.pageNumber >= pagesAmount) {
+      targetCaretPosition.set(pagesAmount, 0);
+    }
   }
 
   private void normalizePagesInDocumentListEnding() {

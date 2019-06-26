@@ -121,16 +121,12 @@ class FileAdapter {
    */
   @NotNull
   String getPageText(long pageNumber) throws IOException {
-
     randomAccessFileLock.lock();
     try {
-
-      /*DEBUG BEGIN*/
-      //java.util.Random rand = new java.util.Random(System.currentTimeMillis());
-      //if (true) try { Thread.sleep(rand.nextInt(100));} catch (InterruptedException e) {}
-      //if (rand.nextInt(10) < 1) throw new FileNotFoundException();
-      //try { Thread.sleep(10);} catch (InterruptedException e) {}
-      /*DEBUG END*/
+      long pagesAmount = getPagesAmount();
+      if (pageNumber < 0 || pageNumber >= pagesAmount) {
+        throw new IllegalArgumentException("pageNumber=" + pageNumber + ", pagesAmount=" + pagesAmount);
+      }
 
       long minProbStartPos;
       long startByte;
