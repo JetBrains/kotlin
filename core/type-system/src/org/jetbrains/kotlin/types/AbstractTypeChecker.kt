@@ -538,7 +538,7 @@ object AbstractNullabilityChecker {
 
     fun AbstractTypeCheckerContext.hasPathByNotMarkedNullableNodes(start: SimpleTypeMarker, end: TypeConstructorMarker) =
         anySupertype(start, {
-            it.isNotNullNothing() || (!it.isMarkedNullable() && isEqualTypeConstructors(it.typeConstructor(), end))
+            it.isNothing() || (!it.isMarkedNullable() && isEqualTypeConstructors(it.typeConstructor(), end))
         }) {
             if (it.isMarkedNullable()) SupertypesPolicy.None else SupertypesPolicy.LowerIfFlexible
         }

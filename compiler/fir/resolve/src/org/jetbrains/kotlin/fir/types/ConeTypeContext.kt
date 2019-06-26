@@ -347,12 +347,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
         return this is ConeClassLikeSymbol && classId == StandardClassIds.Nothing
     }
 
-    override fun KotlinTypeMarker.isNotNullNothing(): Boolean {
-        require(this is ConeKotlinType)
-        return typeConstructor().isNothingConstructor() && !this.nullability.isNullable
-    }
-
-
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
         if (isError()) return false
         if (this is ConeCapturedType) return true

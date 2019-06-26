@@ -261,11 +261,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
                 (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor)
     }
 
-    override fun KotlinTypeMarker.isNotNullNothing(): Boolean {
-        require(this is KotlinType, this::errorMessage)
-        return typeConstructor().isNothingConstructor() && !TypeUtils.isNullableType(this)
-    }
-
     override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean {
         require(this is KotlinType, this::errorMessage)
         return containsInternal(this, predicate)

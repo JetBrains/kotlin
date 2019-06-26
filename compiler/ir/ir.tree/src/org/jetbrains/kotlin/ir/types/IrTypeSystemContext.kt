@@ -174,11 +174,6 @@ interface IrTypeSystemContext : TypeSystemInferenceExtensionContext {
 
     override fun TypeConstructorMarker.isNothingConstructor() = this === irBuiltIns.nothingClass
 
-    override fun KotlinTypeMarker.isNotNullNothing(): Boolean {
-        val simpleType = this as? IrSimpleType ?: return false
-        return simpleType == irBuiltIns.nothingType && !simpleType.hasQuestionMark
-    }
-
     override fun SimpleTypeMarker.isSingleClassifierType() = true
 
     override fun SimpleTypeMarker.possibleIntegerTypes() = irBuiltIns.run {

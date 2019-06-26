@@ -255,8 +255,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isAnyConstructor(): Boolean
     fun TypeConstructorMarker.isNothingConstructor(): Boolean
 
-    fun KotlinTypeMarker.isNotNullNothing(): Boolean
-
     /**
      *
      * SingleClassifierType is one of the following types:
