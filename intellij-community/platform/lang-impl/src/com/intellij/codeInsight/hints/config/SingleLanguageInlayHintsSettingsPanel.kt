@@ -47,7 +47,13 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private val settings = ServiceManager.getService(InlayHintsSettings::class.java)
   private val immediateConfigurableListener = object : ChangeListener {
     override fun settingsChanged() {
-      updateEditor(editorField.text)
+      val provider = selectedProvider
+      if (provider == null) {
+        updateEditor(null)
+      }
+      else {
+        updateEditor(provider.provider.previewText)
+      }
     }
   }
 
