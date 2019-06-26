@@ -218,8 +218,12 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinReflectJar() =
 fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinCompilerClientEmbeddableJar() =
     jarFromProject(project(":kotlin-compiler-client-embeddable"))
 
-fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinMainKtsJar() =
-    jarFromProject(project(":kotlin-main-kts"))
+fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinMainKtsJar() {
+    val mainKtsProject = project(":kotlin-main-kts")
+    jarFromProject(mainKtsProject) {
+        directoryContent("${mainKtsProject.rootDir}/jar-resources")
+    }
+}
 
 fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinPluginJar() =
     jarFromProject(project(":prepare:idea-plugin"), "kotlin-plugin.jar")
