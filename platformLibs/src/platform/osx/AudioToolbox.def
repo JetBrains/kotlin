@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork Cocoa CoreAudio CoreData CoreFoundation CoreGraphics CoreImage CoreMIDI CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.AudioToolbox
+modules = AudioToolbox
+
+compilerOpts = -framework AudioToolbox
+linkerOpts = -framework AudioToolbox

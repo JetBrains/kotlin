@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork Carbon Cocoa ColorSync CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.InputMethodKit
+modules = InputMethodKit
+
+compilerOpts = -framework InputMethodKit
+linkerOpts = -framework InputMethodKit

@@ -89,7 +89,7 @@ private class CompositeDependencyAssigner(val dependencyAssigners: List<Dependen
     override fun getReady(): Map<File, Set<String>> {
         return dependencyAssigners.map { it.getReady() }.reduce { left, right ->
             (left.keys intersect right.keys)
-                    .associateWith { left[it]!! union right[it]!! }
+                    .associateWith { left.getValue(it) union right.getValue(it) }
         }.also {
             require(it.isNotEmpty()) { "incompatible dependencies" } // TODO: add more info.
         }

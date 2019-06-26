@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal ModelIO OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.MetalKit
+modules = MetalKit
+
+compilerOpts = -framework MetalKit
+linkerOpts = -framework MetalKit

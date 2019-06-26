@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork Cocoa CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.PreferencePanes
+modules = PreferencePanes
+
+compilerOpts = -framework PreferencePanes
+linkerOpts = -framework PreferencePanes
