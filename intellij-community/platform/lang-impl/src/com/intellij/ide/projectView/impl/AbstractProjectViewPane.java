@@ -506,7 +506,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
       treeState.applyTo(myTree);
     }
     else if (myTree.isSelectionEmpty()) {
-      TreeUtil.promiseSelectFirst(myTree).onSuccess(myTree::expandPath);
+      TreeUtil.promiseSelectFirst(myTree);
     }
   }
 
