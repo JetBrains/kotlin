@@ -345,23 +345,28 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.ideaPlugin() {
 fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project, name: String? = null, configureAction: RecursiveArtifact.() -> Unit = {}) {
     val jarName = name ?: project.name + ".jar"
     create(jarName) {
-        archive(jarName) {
-            (project.tasks["jar"] as? Jar)?.let { jar ->
-                val manifestPath = jar.temporaryDir.resolve("MANIFEST.MF")
-                jar.manifest.writeTo(manifestPath)
-                directory("META-INF") {
-                    file(manifestPath)
-                }
-            }
-            
-            if (project.sourceSets.names.contains("main")) { 
-                moduleOutput(moduleName(project.path))
-            }
+        archiveFromProject(project, jarName, configureAction)
+    }
+}
 
-            jarContentsFromEmbeddedConfiguration(project)
-
-            configureAction()
+fun RecursiveArtifact.archiveFromProject(project: Project, name: String? = null, configureAction: RecursiveArtifact.() -> Unit = {}) {
+    val jarName = name ?: project.name + ".jar"
+    archive(jarName) {
+        (project.tasks["jar"] as? Jar)?.let { jar ->
+            val manifestPath = jar.temporaryDir.resolve("MANIFEST.MF")
+            jar.manifest.writeTo(manifestPath)
+            directory("META-INF") {
+                file(manifestPath)
+            }
         }
+
+        if (project.sourceSets.names.contains("main")) {
+            moduleOutput(moduleName(project.path))
+        }
+
+        jarContentsFromEmbeddedConfiguration(project)
+
+        configureAction()
     }
 }
 
@@ -431,10 +436,7 @@ fun RecursiveArtifact.jarsFromConfiguration(configuration: Configuration, rename
             if (it.projectName in jarArtifactProjects) {
                 artifact(artifactName)
             } else {
-                archive(artifactName) {
-                    moduleOutput(moduleName(it.projectPath))
-                    jarContentsFromEmbeddedConfiguration(project(it.projectPath))
-                }
+                archiveFromProject(project(it.projectPath), artifactName)
             }
         }
 }
