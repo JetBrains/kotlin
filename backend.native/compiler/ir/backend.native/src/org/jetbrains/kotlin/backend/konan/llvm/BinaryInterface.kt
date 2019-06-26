@@ -36,8 +36,6 @@ object KonanMangler : KotlinManglerImpl() {
     override val IrType.isInlined
         get() = this.isInlinedNative()
 
-    override val String.hashMangle get() = this.localHash.value
-
     /**
      * Defines whether the declaration is exported, i.e. visible from other modules.
      *
