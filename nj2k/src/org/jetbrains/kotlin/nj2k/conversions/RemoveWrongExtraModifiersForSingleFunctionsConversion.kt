@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.nj2k.tree.*
 
 class RemoveWrongExtraModifiersForSingleFunctionsConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKExtraModifiersOwner) return recurse(element)
+        if (element !is JKOtherModifiersOwner) return recurse(element)
         if (element.parentOfType<JKClass>() == null) {
-            element.elementByModifier(ExtraModifier.STATIC)?.also { modifierElement ->
-                element.extraModifierElements -= modifierElement
+            element.elementByModifier(OtherModifier.STATIC)?.also { modifierElement ->
+                element.otherModifierElements -= modifierElement
             }
         }
         return recurse(element)

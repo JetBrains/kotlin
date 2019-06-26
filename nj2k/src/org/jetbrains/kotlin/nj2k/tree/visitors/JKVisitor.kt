@@ -32,11 +32,11 @@ interface JKVisitor<out R, in D> {
     fun visitVisibilityModifierElement(visibilityModifierElement: JKVisibilityModifierElement, data: D): R =
         visitModifierElement(visibilityModifierElement, data)
 
-    fun visitExtraModifierElement(extraModifierElement: JKExtraModifierElement, data: D): R =
-        visitModifierElement(extraModifierElement, data)
+    fun visitExtraModifierElement(otherModifierElement: JKOtherModifierElement, data: D): R =
+        visitModifierElement(otherModifierElement, data)
 
-    fun visitExtraModifiersOwner(extraModifiersOwner: JKExtraModifiersOwner, data: D): R =
-        visitModifiersListOwner(extraModifiersOwner, data)
+    fun visitExtraModifiersOwner(otherModifiersOwner: JKOtherModifiersOwner, data: D): R =
+        visitModifiersListOwner(otherModifiersOwner, data)
 
     fun visitVisibilityOwner(visibilityOwner: JKVisibilityOwner, data: D): R = visitModifiersListOwner(visibilityOwner, data)
     fun visitModalityOwner(modalityOwner: JKModalityOwner, data: D): R = visitModifiersListOwner(modalityOwner, data)

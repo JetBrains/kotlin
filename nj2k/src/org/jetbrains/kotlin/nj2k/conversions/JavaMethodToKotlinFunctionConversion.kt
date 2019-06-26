@@ -43,7 +43,7 @@ class JavaMethodToKotlinFunctionConversion(private val context: NewJ2kConverterC
                         )
                 }
             },
-            element.extraModifierElements,
+            element.otherModifierElements,
             element.visibilityElement,
             element.modalityElement
         ).also {

@@ -65,10 +65,11 @@ class JavaStandardMethodsConversion(private val context: NewJ2kConverterContext)
         if (method.name.value != "finalize") return false
         if (method.parameters.isNotEmpty()) return false
         if (method.returnType.type != JKJavaVoidType) return false
-        if (method.modality == Modality.OVERRIDE) {
+        if (method.hasOtherModifier(OtherModifier.OVERRIDE)) {
             method.modality =
                 if (containingClass.modality == Modality.OPEN) Modality.OPEN
                 else Modality.FINAL
+            method.otherModifierElements -= method.otherModifierElements.first { it.otherModifier == OtherModifier.OVERRIDE }
         }
         return true
     }

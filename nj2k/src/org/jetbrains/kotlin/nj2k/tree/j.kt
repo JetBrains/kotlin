@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.nj2k.tree
 
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-abstract class JKField : JKVariable(), JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKAnnotationListOwner
+abstract class JKField : JKVariable(), JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKOtherModifiersOwner, JKAnnotationListOwner
 
 abstract class JKJavaField : JKField()
 
@@ -142,7 +142,7 @@ abstract class JKJavaSynchronizedStatement : JKStatement(), JKBranchElement {
 abstract class JKJavaAnnotationMethod : JKMethod(), JKBranchElement {
     abstract val defaultValue: JKAnnotationMemberValue
 
-    override var extraModifierElements by children<JKExtraModifierElement>()
+    override var otherModifierElements by children<JKOtherModifierElement>()
     override var visibilityElement by child(JKVisibilityModifierElementImpl(Visibility.PUBLIC))
     override var modalityElement by child(JKModalityModifierElementImpl(Modality.FINAL))
 }

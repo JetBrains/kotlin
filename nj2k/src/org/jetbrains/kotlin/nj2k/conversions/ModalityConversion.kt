@@ -9,6 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKOtherModifierElementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
 class ModalityConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
@@ -38,18 +39,27 @@ class ModalityConversion(private val context: NewJ2kConverterContext) : Recursiv
     private fun processMethod(method: JKJavaMethod) {
         val psi = method.psi<PsiMethod>() ?: return
         val containingClass = method.parentOfType<JKClass>() ?: return
-        method.modality = when {
+        when {
             method.modality != Modality.ABSTRACT
-                    && psi.findSuperMethods().isNotEmpty() -> Modality.OVERRIDE
+                    && psi.findSuperMethods().isNotEmpty() -> {
+                method.modality = Modality.FINAL
+                if (!method.hasOtherModifier(OtherModifier.OVERRIDE)) {
+                    method.otherModifierElements += JKOtherModifierElementImpl(OtherModifier.OVERRIDE)
+                }
+            }
             method.modality == Modality.OPEN
                     && context.converter.settings.openByDefault
                     && containingClass.modality == Modality.OPEN
-                    && method.visibility != Visibility.PRIVATE -> Modality.OPEN
+                    && method.visibility != Visibility.PRIVATE -> {
+                method.modality = Modality.OPEN
+            }
 
             method.modality == Modality.OPEN
                     && containingClass.classKind != JKClass.ClassKind.INTERFACE
-                    && !context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi) -> Modality.FINAL
-            else -> method.modality
+                    && !context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi) -> {
+                method.modality = Modality.FINAL
+            }
+            else -> method.modality = method.modality
         }
     }
 

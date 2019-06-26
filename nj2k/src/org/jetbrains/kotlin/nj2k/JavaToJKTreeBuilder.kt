@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.lang.jvm.JvmAnnotatedElement
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
@@ -532,7 +531,7 @@ class JavaToJKTreeBuilder constructor(
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 createClassBody(),
                 annotationList(this),
-                extraModifiers(),
+                otherModifiers(),
                 visibility(),
                 modality()
             ).also { jkClassImpl ->
@@ -600,20 +599,20 @@ class JavaToJKTreeBuilder constructor(
         fun PsiMember.modality() =
             modality({ ast, psi -> ast.assignNonCodeElements(psi) })
 
-        fun PsiMember.extraModifiers() =
+        fun PsiMember.otherModifiers() =
             modifierList?.children?.mapNotNull { child ->
                 if (child !is PsiKeyword) return@mapNotNull null
                 when (child.text) {
-                    PsiModifier.NATIVE -> ExtraModifier.NATIVE
-                    PsiModifier.STATIC -> ExtraModifier.STATIC
-                    PsiModifier.STRICTFP -> ExtraModifier.STRICTFP
-                    PsiModifier.SYNCHRONIZED -> ExtraModifier.SYNCHRONIZED
-                    PsiModifier.TRANSIENT -> ExtraModifier.TRANSIENT
-                    PsiModifier.VOLATILE -> ExtraModifier.VOLATILE
+                    PsiModifier.NATIVE -> OtherModifier.NATIVE
+                    PsiModifier.STATIC -> OtherModifier.STATIC
+                    PsiModifier.STRICTFP -> OtherModifier.STRICTFP
+                    PsiModifier.SYNCHRONIZED -> OtherModifier.SYNCHRONIZED
+                    PsiModifier.TRANSIENT -> OtherModifier.TRANSIENT
+                    PsiModifier.VOLATILE -> OtherModifier.VOLATILE
 
                     else -> null
                 }?.let {
-                    JKExtraModifierElementImpl(it).withAssignedNonCodeElements(child)
+                    JKOtherModifierElementImpl(it).withAssignedNonCodeElements(child)
                 }
             }.orEmpty()
 
@@ -627,7 +626,7 @@ class JavaToJKTreeBuilder constructor(
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 annotationList(this),
-                extraModifiers(),
+                otherModifiers(),
                 visibility(),
                 modality(),
                 JKMutabilityModifierElementImpl(Mutability.UNKNOWN)
@@ -718,7 +717,7 @@ class JavaToJKTreeBuilder constructor(
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 annotationList(this),
                 throwsList.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider)) },
-                extraModifiers(),
+                otherModifiers(),
                 visibility(),
                 modality()
             ).also { jkMethod ->

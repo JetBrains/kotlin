@@ -54,7 +54,7 @@ class JKClassImpl(
     typeParameterList: JKTypeParameterList,
     classBody: JKClassBody,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKClass(), PsiOwner by PsiOwnerImpl() {
@@ -66,7 +66,7 @@ class JKClassImpl(
     override var classBody: JKClassBody by child(classBody)
     override var annotationList: JKAnnotationList by child(annotationList)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 }
@@ -636,7 +636,7 @@ class JKVisibilityModifierElementImpl(override var visibility: Visibility) : JKV
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitVisibilityModifierElement(this, data)
 }
 
-class JKExtraModifierElementImpl(override var extraModifier: ExtraModifier) : JKExtraModifierElement() {
+class JKOtherModifierElementImpl(override var otherModifier: OtherModifier) : JKOtherModifierElement() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExtraModifierElement(this, data)
 }
 

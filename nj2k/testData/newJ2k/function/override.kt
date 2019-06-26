@@ -3,5 +3,5 @@ internal open class A {
 }
 
 internal class B : A() {
-    override fun a() {}
+    public override fun a() {}
 }

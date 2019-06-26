@@ -17,12 +17,11 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
         name.value.asGetterName() != null
                 || name.value.asSetterName() != null
 
-
     private fun JKMethod.canNotBeMerged(): Boolean =
         modality == Modality.ABSTRACT
-                || modality == Modality.OVERRIDE
-                || hasExtraModifier(ExtraModifier.NATIVE)
-                || hasExtraModifier(ExtraModifier.SYNCHRONIZED)
+                || hasOtherModifier(OtherModifier.OVERRIDE)
+                || hasOtherModifier(OtherModifier.NATIVE)
+                || hasOtherModifier(OtherModifier.SYNCHRONIZED)
                 || context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi()!!)
                 || annotationList.annotations.isNotEmpty()
                 || canBeGetterOrSetter()

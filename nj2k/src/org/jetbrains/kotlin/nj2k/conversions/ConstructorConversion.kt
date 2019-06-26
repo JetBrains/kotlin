@@ -25,7 +25,7 @@ class ConstructorConversion(private val context: NewJ2kConverterContext) : Recur
             element.block,
             delegationCall,
             element.annotationList,
-            element.extraModifierElements,
+            element.otherModifierElements,
             element.visibilityElement,
             element.modalityElement
         ).also {

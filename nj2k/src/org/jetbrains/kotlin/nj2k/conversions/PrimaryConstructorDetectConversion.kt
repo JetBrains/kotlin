@@ -49,7 +49,7 @@ class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterCon
                 primaryConstructorCandidate.parameters,
                 primaryConstructorCandidate.delegationCall,
                 primaryConstructorCandidate.annotationList,
-                primaryConstructorCandidate.extraModifierElements,
+                primaryConstructorCandidate.otherModifierElements,
                 primaryConstructorCandidate.visibilityElement,
                 primaryConstructorCandidate.modalityElement
             ).withNonCodeElementsFrom(primaryConstructorCandidate)

@@ -93,7 +93,9 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitModifierElementRaw(modifierElement: JKModifierElement) {
-            printer.printWithNoIndent(modifierElement.modifier.text)
+            if (modifierElement.modifier != Modality.FINAL) {
+                printer.printWithNoIndent(modifierElement.modifier.text)
+            }
         }
 
         private fun renderExtraTypeParametersUpperBounds(typeParameterList: JKTypeParameterList) {
@@ -212,8 +214,20 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         private fun renderModifiersList(modifiersList: JKModifiersListOwner) {
-            renderList(modifiersList.modifierElements(), " ") {
-                it.accept(this)
+            val hasOverrideModifier = modifiersList.safeAs<JKOtherModifiersOwner>()
+                ?.otherModifierElements
+                ?.any { it.otherModifier == OtherModifier.OVERRIDE } == true
+            renderList(modifiersList.modifierElements(), " ") { modifierElement ->
+                if (modifierElement.modifier == Modality.FINAL || modifierElement.modifier == Visibility.PUBLIC) {
+                    if (hasOverrideModifier) {
+                        modifierElement.accept(this)
+                    } else {
+                        printLeftNonCodeElements(modifierElement)
+                        printRightNonCodeElements(modifierElement)
+                    }
+                } else {
+                    modifierElement.accept(this)
+                }
             }
         }
 

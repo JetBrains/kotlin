@@ -56,7 +56,7 @@ abstract class JKUniverseSymbol<T : JKTreeElement> : JKNamedSymbol {
 fun JKSymbol.getDisplayName(): String {
     if (this !is JKUniverseSymbol<*>) return fqName
     return generateSequence(declaredIn as? JKUniverseClassSymbol) { symbol ->
-        symbol.declaredIn.safeAs<JKUniverseClassSymbol>()?.takeIf { !it.target.hasExtraModifier(ExtraModifier.INNER) }
+        symbol.declaredIn.safeAs<JKUniverseClassSymbol>()?.takeIf { !it.target.hasOtherModifier(OtherModifier.INNER) }
     }.fold(name) { acc, symbol -> "${symbol.name}.$acc" }
 }
 

@@ -31,7 +31,7 @@ class JKJavaFieldImpl(
     name: JKNameIdentifier,
     initializer: JKExpression,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement,
     mutabilityElement: JKMutabilityModifierElement
@@ -43,7 +43,7 @@ class JKJavaFieldImpl(
     override var type by child(type)
     override var name: JKNameIdentifier by child(name)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
     override var mutabilityElement by child(mutabilityElement)
@@ -57,7 +57,7 @@ class JKJavaMethodImpl(
     typeParameterList: JKTypeParameterList,
     annotationList: JKAnnotationList,
     throwsList: List<JKTypeElement>,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKJavaMethod(), PsiOwner by PsiOwnerImpl() {
@@ -71,7 +71,7 @@ class JKJavaMethodImpl(
     override var annotationList: JKAnnotationList by child(annotationList)
     override var throwsList: List<JKTypeElement> by children(throwsList)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 }

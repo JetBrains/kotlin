@@ -65,13 +65,13 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitVisibilityModifierElement(visibilityModifierElement: JKVisibilityModifierElement, data: Nothing?) =
         visitVisibilityModifierElement(visibilityModifierElement)
 
-    fun visitExtraModifierElement(extraModifierElement: JKExtraModifierElement) = visitModifierElement(extraModifierElement, null)
-    override fun visitExtraModifierElement(extraModifierElement: JKExtraModifierElement, data: Nothing?) =
-        visitExtraModifierElement(extraModifierElement)
+    fun visitExtraModifierElement(otherModifierElement: JKOtherModifierElement) = visitModifierElement(otherModifierElement, null)
+    override fun visitExtraModifierElement(otherModifierElement: JKOtherModifierElement, data: Nothing?) =
+        visitExtraModifierElement(otherModifierElement)
 
-    fun visitExtraModifiersOwner(extraModifiersOwner: JKExtraModifiersOwner) = visitModifiersListOwner(extraModifiersOwner, null)
-    override fun visitExtraModifiersOwner(extraModifiersOwner: JKExtraModifiersOwner, data: Nothing?) =
-        visitExtraModifiersOwner(extraModifiersOwner)
+    fun visitExtraModifiersOwner(otherModifiersOwner: JKOtherModifiersOwner) = visitModifiersListOwner(otherModifiersOwner, null)
+    override fun visitExtraModifiersOwner(otherModifiersOwner: JKOtherModifiersOwner, data: Nothing?) =
+        visitExtraModifiersOwner(otherModifiersOwner)
 
     fun visitVisibilityOwner(visibilityOwner: JKVisibilityOwner) = visitModifiersListOwner(visibilityOwner, null)
     override fun visitVisibilityOwner(visibilityOwner: JKVisibilityOwner, data: Nothing?) = visitVisibilityOwner(visibilityOwner)

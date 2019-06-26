@@ -178,21 +178,21 @@ interface JKVisitorWithCommentsPrinting : JKVisitorVoid {
     fun visitVisibilityModifierElementRaw(visibilityModifierElement: JKVisibilityModifierElement) =
         visitModifierElementRaw(visibilityModifierElement)
 
-    override fun visitExtraModifierElement(extraModifierElement: JKExtraModifierElement) {
-        printLeftNonCodeElements(extraModifierElement)
-        visitExtraModifierElementRaw(extraModifierElement)
-        printRightNonCodeElements(extraModifierElement)
+    override fun visitExtraModifierElement(otherModifierElement: JKOtherModifierElement) {
+        printLeftNonCodeElements(otherModifierElement)
+        visitExtraModifierElementRaw(otherModifierElement)
+        printRightNonCodeElements(otherModifierElement)
     }
 
-    fun visitExtraModifierElementRaw(extraModifierElement: JKExtraModifierElement) = visitModifierElementRaw(extraModifierElement)
+    fun visitExtraModifierElementRaw(otherModifierElement: JKOtherModifierElement) = visitModifierElementRaw(otherModifierElement)
 
-    override fun visitExtraModifiersOwner(extraModifiersOwner: JKExtraModifiersOwner) {
-        printLeftNonCodeElements(extraModifiersOwner)
-        visitExtraModifiersOwnerRaw(extraModifiersOwner)
-        printRightNonCodeElements(extraModifiersOwner)
+    override fun visitExtraModifiersOwner(otherModifiersOwner: JKOtherModifiersOwner) {
+        printLeftNonCodeElements(otherModifiersOwner)
+        visitExtraModifiersOwnerRaw(otherModifiersOwner)
+        printRightNonCodeElements(otherModifiersOwner)
     }
 
-    fun visitExtraModifiersOwnerRaw(extraModifiersOwner: JKExtraModifiersOwner) = visitModifiersListOwnerRaw(extraModifiersOwner)
+    fun visitExtraModifiersOwnerRaw(otherModifiersOwner: JKOtherModifiersOwner) = visitModifiersListOwnerRaw(otherModifiersOwner)
 
     override fun visitVisibilityOwner(visibilityOwner: JKVisibilityOwner) {
         printLeftNonCodeElements(visibilityOwner)

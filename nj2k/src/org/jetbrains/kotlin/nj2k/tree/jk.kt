@@ -58,7 +58,7 @@ interface JKFile : JKTreeElement, JKBranchElement {
     var declarationList: List<JKDeclaration>
 }
 
-abstract class JKClass : JKDeclaration(), JKVisibilityOwner, JKExtraModifiersOwner, JKModalityOwner, JKTypeParameterListOwner,
+abstract class JKClass : JKDeclaration(), JKVisibilityOwner, JKOtherModifiersOwner, JKModalityOwner, JKTypeParameterListOwner,
     JKAnnotationListOwner,
     JKBranchElement {
     abstract val name: JKNameIdentifier
@@ -109,7 +109,7 @@ interface JKAnnotationListOwner : JKTreeElement {
     var annotationList: JKAnnotationList
 }
 
-abstract class JKMethod : JKDeclaration(), JKVisibilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKTypeParameterListOwner,
+abstract class JKMethod : JKDeclaration(), JKVisibilityOwner, JKModalityOwner, JKOtherModifiersOwner, JKTypeParameterListOwner,
     JKAnnotationListOwner {
     abstract val name: JKNameIdentifier
     abstract var parameters: List<JKParameter>
@@ -138,7 +138,7 @@ val JKModifierElement.modifier: Modifier
         is JKMutabilityModifierElement -> mutability
         is JKModalityModifierElement -> modality
         is JKVisibilityModifierElement -> visibility
-        is JKExtraModifierElement -> extraModifier
+        is JKOtherModifierElement -> otherModifier
         else -> error("")
     }
 
@@ -154,25 +154,26 @@ abstract class JKVisibilityModifierElement : JKModifierElement() {
     abstract var visibility: Visibility
 }
 
-abstract class JKExtraModifierElement : JKModifierElement() {
-    abstract var extraModifier: ExtraModifier
+abstract class JKOtherModifierElement : JKModifierElement() {
+    abstract var otherModifier: OtherModifier
 }
 
 interface Modifier {
     val text: String
 }
 
-interface JKExtraModifiersOwner : JKModifiersListOwner {
-    var extraModifierElements: List<JKExtraModifierElement>
+interface JKOtherModifiersOwner : JKModifiersListOwner {
+    var otherModifierElements: List<JKOtherModifierElement>
 }
 
-fun JKExtraModifiersOwner.elementByModifier(modifier: ExtraModifier): JKExtraModifierElement? =
-    extraModifierElements.firstOrNull { it.extraModifier == modifier }
+fun JKOtherModifiersOwner.elementByModifier(modifier: OtherModifier): JKOtherModifierElement? =
+    otherModifierElements.firstOrNull { it.otherModifier == modifier }
 
-fun JKExtraModifiersOwner.hasExtraModifier(modifier: ExtraModifier): Boolean =
-    extraModifierElements.any { it.extraModifier == modifier }
+fun JKOtherModifiersOwner.hasOtherModifier(modifier: OtherModifier): Boolean =
+    otherModifierElements.any { it.otherModifier == modifier }
 
-enum class ExtraModifier(override val text: String) : Modifier {
+enum class OtherModifier(override val text: String) : Modifier {
+    OVERRIDE("override"),
     ACTUAL("actual"),
     ANNOTATION("annotation"),
     COMPANION("companion"),
@@ -228,7 +229,6 @@ enum class Modality(override val text: String) : Modifier {
     OPEN("open"),
     FINAL("final"),
     ABSTRACT("abstract"),
-    OVERRIDE("override")
 }
 
 var JKModalityOwner.modality: Modality
@@ -257,7 +257,7 @@ interface JKModifiersListOwner : JKTreeElement
 
 fun JKModifiersListOwner.modifierElements(): List<JKModifierElement> =
     listOfNotNull((this as? JKVisibilityOwner)?.visibilityElement) +
-            (this as? JKExtraModifiersOwner)?.extraModifierElements.orEmpty() +
+            (this as? JKOtherModifiersOwner)?.otherModifierElements.orEmpty() +
             listOfNotNull((this as? JKModalityOwner)?.modalityElement) +
             listOfNotNull((this as? JKMutabilityOwner)?.mutabilityElement)
 

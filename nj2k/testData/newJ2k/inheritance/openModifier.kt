@@ -31,9 +31,8 @@ internal abstract class E {
 }
 
 internal class F : E() {
-    override fun f1() {}
-
-    override fun f2() {
+    public override fun f1() {}
+    public override fun f2() {
         super.f2()
     }
 }

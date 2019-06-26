@@ -13,9 +13,9 @@ internal class A {
     fun /* we return int*/ foo(  /*int*/ p: Int/* parameter p */): Int { /* body is empty */
     }
 
-    private/*it's private*/ val field = 0
-    /*it's public*/ fun foo(s: String?): Char {}
-    protected/*it's protected*/ fun foo(c: Char) {}
+    private/*it's private*/  val field = 0
+    /*it's public*/  fun foo(s: String?): Char {}
+    protected/*it's protected*/  fun foo(c: Char) {}
     /**
      * Method description.
      * Multi-line method description.
@@ -29,6 +29,6 @@ internal class A {
     fun foo(param1: String?, param2: String?, param3: String?) {}
 
     companion object {
-        /*it's public*/const /*and static*/ val/*and final*/ C = 1
+        /*it's public*/  /*and static*/ const val/*and final*/ C = 1
     }
 }

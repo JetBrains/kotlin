@@ -19,33 +19,33 @@ class JavaModifiersConversion(private val context: NewJ2kConverterContext) : Rec
                 //TODO change modality to OVERRIDE???
             }
         }
-        if (element is JKExtraModifiersOwner && element is JKAnnotationListOwner) {
-            element.elementByModifier(ExtraModifier.VOLATILE)?.also { modifierElement ->
-                element.extraModifierElements -= modifierElement
+        if (element is JKOtherModifiersOwner && element is JKAnnotationListOwner) {
+            element.elementByModifier(OtherModifier.VOLATILE)?.also { modifierElement ->
+                element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
                     jvmAnnotation("Volatile", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
 
-            element.elementByModifier(ExtraModifier.TRANSIENT)?.also { modifierElement ->
-                element.extraModifierElements -= modifierElement
+            element.elementByModifier(OtherModifier.TRANSIENT)?.also { modifierElement ->
+                element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
                     jvmAnnotation("Transient", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
 
-            element.elementByModifier(ExtraModifier.STRICTFP)?.also { modifierElement ->
-                element.extraModifierElements -= modifierElement
+            element.elementByModifier(OtherModifier.STRICTFP)?.also { modifierElement ->
+                element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
                     jvmAnnotation("Strictfp", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
 
-            element.elementByModifier(ExtraModifier.SYNCHRONIZED)?.also { modifierElement ->
-                element.extraModifierElements -= modifierElement
+            element.elementByModifier(OtherModifier.SYNCHRONIZED)?.also { modifierElement ->
+                element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
                     jvmAnnotation("Synchronized", context.symbolProvider).withNonCodeElementsFrom(modifierElement)
             }
 
-            element.elementByModifier(ExtraModifier.NATIVE)?.also { modifierElement ->
-                modifierElement.extraModifier = ExtraModifier.EXTERNAL
+            element.elementByModifier(OtherModifier.NATIVE)?.also { modifierElement ->
+                modifierElement.otherModifier = OtherModifier.EXTERNAL
             }
         }
         return recurse(element)

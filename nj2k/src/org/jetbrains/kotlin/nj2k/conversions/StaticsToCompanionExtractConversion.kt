@@ -13,15 +13,16 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
         if (element !is JKClass) return recurse(element)
         if (element.classKind == JKClass.ClassKind.COMPANION || element.classKind == JKClass.ClassKind.OBJECT) return element
         val statics = element.declarationList.filter { declaration ->
-            declaration is JKExtraModifiersOwner && declaration.hasExtraModifier(ExtraModifier.STATIC)
+            declaration is JKOtherModifiersOwner && declaration.hasOtherModifier(OtherModifier.STATIC)
         }
         if (statics.isEmpty()) return recurse(element)
         val companion = element.getOrCreateCompanionObject()
 
         element.classBody.declarations -= statics
         companion.classBody.declarations += statics.onEach { declaration ->
-            (declaration as JKExtraModifiersOwner)
-            declaration.extraModifierElements -= declaration.elementByModifier(ExtraModifier.STATIC)!!
+            if (declaration is JKOtherModifiersOwner) {
+                declaration.otherModifierElements -= declaration.elementByModifier(OtherModifier.STATIC)!!
+            }
         }
         return recurse(element)
     }
