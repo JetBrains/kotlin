@@ -108,30 +108,38 @@ internal external fun fromBits(bits: Int): Float
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Int.countOneBits(): Int {
-    var v = this
-    v = (v and 0x55555555) + (v.ushr(1) and 0x55555555)
-    v = (v and 0x33333333) + (v.ushr(2) and 0x33333333)
-    v = (v and 0x0F0F0F0F) + (v.ushr(4) and 0x0F0F0F0F)
-    v = (v and 0x00FF00FF) + (v.ushr(8) and 0x00FF00FF)
-    v = (v and 0x0000FFFF) + (v.ushr(16))
-    return v
-}
+@SymbolName("Kotlin_Int_countOneBits")
+public actual external fun Int.countOneBits(): Int
+
+/**
+ * Counts the number of consecutive most significant bits that are zero in the binary representation of [Int] [value].
+ * Returns undefined result for zero [value].
+ */
+@SymbolName("Kotlin_Int_countLeadingZeroBits")
+private external fun countLeadingZeroBits(value: Int): Int
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Int.countLeadingZeroBits(): Int = TODO()
+public actual fun Int.countLeadingZeroBits(): Int =
+        if (this == 0) Int.SIZE_BITS else countLeadingZeroBits(this)
+
+/**
+ * Counts the number of consecutive least significant bits that are zero in the binary representation of [Int] [value].
+ * Returns undefined result for zero [value].
+ */
+@SymbolName("Kotlin_Int_countTrailingZeroBits")
+private external fun countTrailingZeroBits(value: Int): Int
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Int.countTrailingZeroBits(): Int = TODO()
-//        Int.SIZE_BITS - (this or -this).inv().countLeadingZeroBits()
+public actual fun Int.countTrailingZeroBits(): Int =
+        if (this == 0) Int.SIZE_BITS else countTrailingZeroBits(this)
 
 /**
  * Returns a number having a single bit set in the position of the most significant set bit of this [Int] number,
@@ -140,7 +148,7 @@ public actual fun Int.countTrailingZeroBits(): Int = TODO()
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Int.takeHighestOneBit(): Int =
-        if (this == 0) 0 else 1.shl(Int.SIZE_BITS - 1 - countLeadingZeroBits())
+        if (this == 0) 0 else 1.shl(Int.SIZE_BITS - 1 - countLeadingZeroBits(this))
 
 /**
  * Returns a number having a single bit set in the position of the least significant set bit of this [Int] number,
@@ -188,22 +196,38 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Long.countOneBits(): Int = TODO()
-//        high.countOneBits() + low.countOneBits()
+@SymbolName("Kotlin_Long_countOneBits")
+public actual external fun Long.countOneBits(): Int
+
+/**
+ * Counts the number of consecutive most significant bits that are zero in the binary representation of [Long] [value].
+ * Returns undefined result for zero [value].
+ */
+@SymbolName("Kotlin_Long_countLeadingZeroBits")
+private external fun countLeadingZeroBits(value: Long): Int
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Long.countLeadingZeroBits(): Int = TODO()
+public actual fun Long.countLeadingZeroBits(): Int =
+        if (this == 0L) Long.SIZE_BITS else countLeadingZeroBits(this)
+
+/**
+ * Counts the number of consecutive least significant bits that are zero in the binary representation of [Long] [value].
+ * Returns undefined result for zero [value].
+ */
+@SymbolName("Kotlin_Long_countTrailingZeroBits")
+private external fun countTrailingZeroBits(value: Long): Int
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Long.countTrailingZeroBits(): Int = TODO()
+public actual fun Long.countTrailingZeroBits(): Int =
+        if (this == 0L) Long.SIZE_BITS else countTrailingZeroBits(this)
 
 /**
  * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
@@ -211,7 +235,8 @@ public actual fun Long.countTrailingZeroBits(): Int = TODO()
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Long.takeHighestOneBit(): Long = TODO()
+public actual fun Long.takeHighestOneBit(): Long =
+        if (this == 0L) 0L else 1L.shl(Long.SIZE_BITS - 1 - countLeadingZeroBits(this))
 
 /**
  * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,

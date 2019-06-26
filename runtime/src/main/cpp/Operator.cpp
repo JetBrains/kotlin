@@ -67,4 +67,15 @@ ALWAYS_INLINE KBoolean Kotlin_Double_isNaN(KDouble a)          { return isnan(a)
 ALWAYS_INLINE KBoolean Kotlin_Double_isInfinite(KDouble a)          { return isinf(a); }
 ALWAYS_INLINE KBoolean Kotlin_Double_isFinite(KDouble a)          { return isfinite(a); }
 
+//--- Bit operations ---------------------------------------------------------//
+
+ALWAYS_INLINE KInt Kotlin_Int_countOneBits(KInt value) { return __builtin_popcount(value); }
+ALWAYS_INLINE KInt Kotlin_Long_countOneBits(KLong value) { return __builtin_popcountll(value); }
+
+ALWAYS_INLINE KInt Kotlin_Int_countTrailingZeroBits(KInt value) { return __builtin_ctz(value); }
+ALWAYS_INLINE KInt Kotlin_Long_countTrailingZeroBits(KLong value) { return __builtin_ctzll(value); }
+
+ALWAYS_INLINE KInt Kotlin_Int_countLeadingZeroBits(KInt value) { return __builtin_clz(value); }
+ALWAYS_INLINE KInt Kotlin_Long_countLeadingZeroBits(KLong value) { return __builtin_clzll(value); }
+
 }  // extern "C"
