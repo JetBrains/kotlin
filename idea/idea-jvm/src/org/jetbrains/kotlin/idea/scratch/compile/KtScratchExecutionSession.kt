@@ -173,13 +173,3 @@ class KtScratchExecutionSession(
         return javaParameters.toCommandLine()
     }
 }
-
-fun foo() {
-    listOf(1, 2, 3).joinToString {
-        if (true) {
-            "lsdkfjlsd"
-        } else {
-            "sdfsdf"
-        }
-    }
-}
