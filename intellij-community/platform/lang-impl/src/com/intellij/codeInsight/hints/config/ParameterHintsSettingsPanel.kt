@@ -5,11 +5,13 @@ import com.intellij.codeInsight.hints.BlackListDialog
 import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.Language
 import com.intellij.ui.components.labels.LinkLabel
+import com.intellij.util.ui.JBInsets
 import com.intellij.util.ui.JBUI
 import javax.swing.BoxLayout
 import javax.swing.JCheckBox
 import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.border.EmptyBorder
 
 class ParameterHintsSettingsPanel(val language: Language,
                                   options: List<Option>,
@@ -26,6 +28,7 @@ class ParameterHintsSettingsPanel(val language: Language,
       panel.border = JBUI.Borders.empty(10, 20, 0, 0)
       for (option in options) {
         val checkBox = JCheckBox(option.name, option.get())
+        checkBox.border = EmptyBorder(1, 1, 0, 0)
         panel.add(checkBox)
         this.options.add(OptionWithCheckBox(option, checkBox))
       }
