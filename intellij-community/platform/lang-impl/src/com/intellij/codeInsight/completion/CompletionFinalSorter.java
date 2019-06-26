@@ -44,7 +44,7 @@ public abstract class CompletionFinalSorter {
   public abstract Map<LookupElement, List<Pair<String, Object>>> getRelevanceObjects(@NotNull Iterable<LookupElement> elements);
   
   
-  @Deprecated
+  @ApiStatus.Internal
   public interface Factory {
     @NotNull
     CompletionFinalSorter newSorter();
