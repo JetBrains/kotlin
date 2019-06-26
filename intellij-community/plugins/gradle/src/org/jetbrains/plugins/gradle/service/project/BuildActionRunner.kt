@@ -1,11 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project
 
-import org.gradle.tooling.BuildActionExecuter
-import org.gradle.tooling.GradleConnectionException
-import org.gradle.tooling.IntermediateResultHandler
-import org.gradle.tooling.ResultHandler
-import org.gradle.tooling.UnsupportedVersionException
+import org.gradle.tooling.*
 import org.gradle.tooling.model.idea.BasicIdeaProject
 import org.gradle.tooling.model.idea.IdeaProject
 import org.jetbrains.plugins.gradle.model.ProjectImportAction
@@ -14,6 +10,7 @@ import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 
 /**
  * This class handles setting up and running the [BuildActionExecuter] it deals with calling the correct APIs based on the version of
@@ -63,7 +60,7 @@ class BuildActionRunner(
    * [settings].
    */
   fun fetchModels(
-    buildFinishedCallBack: Runnable
+    buildFinishedCallBack: Consumer<GradleConnectionException?>
   ): AllModels {
     // First try with the phased build executor
     createPhasedExecuter().run(BuildActionResultHandler(buildFinishedCallBack))
@@ -99,7 +96,7 @@ class BuildActionRunner(
       resolverCtx.connection,
       resolverCtx.listener)
 
-    buildFinishedCallBack.run()
+    buildFinishedCallBack.accept(null)
 
     return ProjectImportAction.AllModels(modelBuilder.get())
   }
@@ -138,10 +135,11 @@ class BuildActionRunner(
                                                                                resolverCtx.listener, resolverCtx.connection)
 
   private inner class BuildActionResultHandler(
-    val buildFinishedCallBack: Runnable
+    val buildFinishedCallBack: Consumer<GradleConnectionException?>
   ): ResultHandler<Any> {
     override fun onFailure(connectionException: GradleConnectionException?) {
       resultQueue.add(connectionException)
+      buildFinishedCallBack.accept(connectionException)
     }
 
     /**
@@ -153,7 +151,7 @@ class BuildActionRunner(
       if (allModels != null) {
         resultQueue.add(allModels)
       }
-      buildFinishedCallBack.run()
+      buildFinishedCallBack.accept(null)
     }
   }
 }

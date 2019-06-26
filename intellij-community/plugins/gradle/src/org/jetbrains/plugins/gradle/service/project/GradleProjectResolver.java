@@ -262,9 +262,9 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     final long startTime = System.currentTimeMillis();
     ProjectImportAction.AllModels allModels;
     try {
-      allModels = buildActionRunner.fetchModels(() -> {
+      allModels = buildActionRunner.fetchModels((exception) -> {
         for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
-          resolver.buildFinished();
+          resolver.buildFinished(exception);
         }
       });
       performanceTrace.addTrace(allModels.getPerformanceTrace());

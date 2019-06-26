@@ -25,6 +25,7 @@ import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.service.ParametersEnhancer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
+import org.gradle.tooling.GradleConnectionException;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
@@ -150,10 +151,12 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * Called once Gradle has finished executing everything, including any tasks that might need to be run. The models are obtained
    * separately and in some cases before this method is called.
    *
+   * @param exception the exception thrown by Gradle, if everything completes successfully then this will be null.
+   *
    * Note: This method is called from a Gradle connection thread, within the {@link org.gradle.tooling.ResultHandler} passed to the
    * tooling api.
    */
-  default void buildFinished() { }
+  default void buildFinished(@Nullable GradleConnectionException exception) { }
 
   /**
    * Allows extension to contribute to init script

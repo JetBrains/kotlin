@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.importing
 import com.intellij.openapi.extensions.Extensions
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.tooling.BuildController
+import org.gradle.tooling.GradleConnectionException
 import org.gradle.tooling.model.idea.IdeaModule
 import org.gradle.tooling.model.idea.IdeaProject
 import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
@@ -102,7 +103,7 @@ class TestProjectResolverExtension : AbstractProjectResolverExtension() {
   }
 
 
-  override fun buildFinished() {
+  override fun buildFinished(exception: GradleConnectionException?) {
     lastBuildFinished.complete(true)
   }
 
