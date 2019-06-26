@@ -27,14 +27,13 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.modifier.CodeStyleSettingsModifier;
 import com.intellij.psi.impl.source.codeStyle.CodeStyleSchemeImpl;
-import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.ui.components.labels.LinkListener;
 import com.intellij.util.ui.JBDimension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,10 +141,9 @@ public class CodeStyleSchemesPanel extends SimpleSchemesPanel<CodeStyleScheme> {
     myBottomPanel.add(Box.createRigidArea(new JBDimension(10,0)));
     myBottomLabel = new JLabel();
     myBottomPanel.add(myBottomLabel);
-    HyperlinkLabel disableHyperLink = new HyperlinkLabel("Disable");
-    disableHyperLink.addHyperlinkListener(new HyperlinkAdapter() {
+    LinkLabel<Object> disableHyperLink = new LinkLabel<>("Disable", null, new LinkListener<Object>() {
       @Override
-      protected void hyperlinkActivated(HyperlinkEvent e) {
+      public void linkSelected(LinkLabel aSource, Object aLinkData) {
         disableOverriding();
       }
     });
