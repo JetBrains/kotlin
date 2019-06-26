@@ -19,7 +19,9 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.util.List;
 
-import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.*;
+import static org.jetbrains.plugins.gradle.execution.GradleGroovyRunnerUtil.getTasksTarget;
+import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.isFromGroovyGradleScript;
+import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.resolveProjectPath;
 
 /**
  * @author Vladislav.Soroka

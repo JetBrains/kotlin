@@ -30,7 +30,7 @@ public class GradleGroovyRunLineMarkerProvider extends RunLineMarkerContributor 
     if (isFromGroovyGradleScript(element)) {
       if (element instanceof LeafElement && !(element instanceof PsiWhiteSpace) && !(element instanceof PsiComment)
           && element.getParent() instanceof GrReferenceExpression && element.getParent().getParent() instanceof GrMethodCallExpression) {
-        List<String> tasks = GradleRunnerUtil.getTasksTarget(element);
+        List<String> tasks = GradleGroovyRunnerUtil.getTasksTarget(element);
         if (!tasks.isEmpty() && tasks.contains(element.getText().trim())) {
           final AnAction[] actions = ExecutorAction.getActions();
           return new Info(AllIcons.RunConfigurations.TestState.Run, actions,
