@@ -73,3 +73,20 @@ fun Collection<IrType>.commonSupertype(irBuiltIns: IrBuiltIns): IrType {
         IrTypeCheckerContext(irBuiltIns).commonSuperType(map { it }) as IrType
     }
 }
+
+fun IrType.isNullable(): Boolean = DFS.ifAny(
+    listOf(this),
+    {
+        when (val classifier = it.classifierOrNull) {
+            is IrTypeParameterSymbol -> classifier.owner.superTypes
+            is IrClassSymbol -> emptyList()
+            null -> emptyList()
+            else -> error("Unsupported classifier: $classifier")
+        }
+    }, {
+        when (it) {
+            is IrSimpleType -> it.hasQuestionMark
+            else -> it is IrDynamicType
+        }
+    }
+)

@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.ir.types.isNullable as irTreeTypeUtils_isNullable
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
 val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
@@ -49,15 +49,6 @@ fun IrType.isNameInPackage(prefix: String, packageFqName: FqName): Boolean {
 
 fun IrType.superTypes() = classifierOrNull?.superTypes() ?: emptyList()
 
-fun IrType.typeParameterSuperTypes(): List<IrType> {
-    val classifier = classifierOrNull ?: return emptyList()
-    return when (classifier) {
-        is IrTypeParameterSymbol -> classifier.owner.superTypes
-        is IrClassSymbol -> emptyList()
-        else -> throw IllegalStateException()
-    }
-}
-
 fun IrType.isFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), { it.superTypes() }, { it.isFunction() })
 fun IrType.isSuspendFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), { it.superTypes() }, { it.isSuspendFunction() })
 
@@ -67,13 +58,13 @@ fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
 fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()
 
-fun IrType.isNullable(): Boolean = DFS.ifAny(listOf(this), { it.typeParameterSuperTypes() }, {
-    when (it) {
-        is IrSimpleType -> it.hasQuestionMark
-        else -> it is IrDynamicType
-    }
-})
-
+@Deprecated(
+    "Use org.jetbrains.kotlin.ir.types.isNullable instead.",
+    ReplaceWith("this.isNullable()", "org.jetbrains.kotlin.ir.types.isNullable")
+)
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@kotlin.internal.LowPriorityInOverloadResolution
+fun IrType.isNullable(): Boolean = this.irTreeTypeUtils_isNullable()
 
 fun IrType.isThrowable(): Boolean = isTypeFromKotlinPackage { name -> name.asString() == "Throwable" }
 

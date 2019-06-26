@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
