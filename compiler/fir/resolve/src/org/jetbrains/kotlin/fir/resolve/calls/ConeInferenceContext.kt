@@ -256,21 +256,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         return this.constructor.projection
     }
 
-    override fun KotlinTypeMarker.isNullableType(): Boolean {
-        require(this is ConeKotlinType)
-        if (this.isMarkedNullable)
-            return true
-
-        if (this is ConeFlexibleType && this.upperBound.isNullableType())
-            return true
-
-        if (this is ConeTypeParameterType /* || is TypeVariable */)
-            return hasNullableSuperType(type)
-
-        // TODO: Intersection types
-        return false
-    }
-
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
         require(this is ConeDefinitelyNotNullType)
         return this.original()

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
+import org.jetbrains.kotlin.fir.resolve.calls.hasNullableSuperType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
-
 
 class ErrorTypeConstructor(reason: String) : TypeConstructorMarker
 
@@ -407,6 +407,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
             is ConeAbbreviatedType -> prepareAbbreviatedType(type)
             else -> type
         }
+    }
+
+    override fun KotlinTypeMarker.isNullableType(): Boolean {
+        require(this is ConeKotlinType)
+        if (this.isMarkedNullable)
+            return true
+
+        if (this is ConeFlexibleType && this.upperBound.isNullableType())
+            return true
+
+        if (this is ConeTypeParameterType /* || is TypeVariable */)
+            return hasNullableSuperType(type)
+
+        // TODO: Intersection types
+        return false
     }
 }
 
