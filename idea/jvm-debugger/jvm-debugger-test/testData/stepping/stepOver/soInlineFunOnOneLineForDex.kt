@@ -1,3 +1,6 @@
+// FILE: soInlineFunOnOneLineForDex.kt
+// EMULATE_DEX: true
+
 package soInlineFunOnOneLineForDex
 
 fun main(args: Array<String>) {

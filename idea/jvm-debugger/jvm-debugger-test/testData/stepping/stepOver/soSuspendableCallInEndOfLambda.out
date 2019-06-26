@@ -1,9 +1,9 @@
-LineBreakpoint created at soSuspendableCallInEndOfLambda.kt:16
+LineBreakpoint created at soSuspendableCallInEndOfLambda.kt:18
 Run Java
 Connected to the target VM
-soSuspendableCallInEndOfLambda.kt:16
-soSuspendableCallInEndOfLambda.kt:13
-soSuspendableCallInEndOfLambda.kt:17
+soSuspendableCallInEndOfLambda.kt:18
+soSuspendableCallInEndOfLambda.kt:15
+soSuspendableCallInEndOfLambda.kt:19
 Disconnected from the target VM
 
 Process finished with exit code 0

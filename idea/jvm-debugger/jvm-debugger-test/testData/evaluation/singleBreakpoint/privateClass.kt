@@ -1,3 +1,4 @@
+// FILE: privateClass.kt
 package privateClass
 
 fun main(args: Array<String>) {
@@ -32,3 +33,15 @@ class A {
 
 // EXPRESSION: forTests.MyJavaClass.PrivateJavaClass().prop
 // RESULT: 1: I
+
+// FILE: forTests/MyJavaClass.java
+package forTests;
+
+import org.jetbrains.annotations.NotNull;
+import java.util.List;
+
+public class MyJavaClass {
+    private static class PrivateJavaClass {
+        public final int prop = 1;
+    }
+}

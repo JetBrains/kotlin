@@ -1,7 +1,7 @@
-LineBreakpoint created at classFromAnotherPackage.kt:7
+LineBreakpoint created at classFromAnotherPackage.kt:8
 Run Java
 Connected to the target VM
-classFromAnotherPackage.kt:7
+classFromAnotherPackage.kt:8
 Compile bytecode for MyJavaClass()
 Compile bytecode for forTests.MyJavaClass()
 Disconnected from the target VM

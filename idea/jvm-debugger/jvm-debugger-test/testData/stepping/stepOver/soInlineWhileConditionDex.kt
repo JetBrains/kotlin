@@ -1,3 +1,6 @@
+// FILE: soInlineWhileConditionDex.kt
+// EMULATE_DEX: true
+
 package soInlineWhileConditionDex
 
 fun main(args: Array<String>) {

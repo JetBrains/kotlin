@@ -1,3 +1,4 @@
+// FILE: inlineFunction.kt
 package inlineFunction
 
 import inlineFunctionOtherPackage.*
@@ -14,3 +15,13 @@ inline fun foo() = 1
 
 // EXPRESSION: foo()
 // RESULT: 1: I
+
+// FILE: lib.kt
+package inlineFunctionOtherPackage
+
+inline fun myFun(f: () -> Int): Int = f()
+
+val String.prop: String
+    get() {
+        return "a"
+    }

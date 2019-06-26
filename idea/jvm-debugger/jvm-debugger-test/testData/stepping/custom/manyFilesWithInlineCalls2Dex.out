@@ -1,7 +1,7 @@
-LineBreakpoint created at manyFilesWithInlineCalls2Dex.Second.kt:5
+LineBreakpoint created at manyFilesWithInlineCalls2Dex.Second.kt:6
 Run Java
 Connected to the target VM
-manyFilesWithInlineCalls2Dex.Second.kt:5
+manyFilesWithInlineCalls2Dex.Second.kt:6
 Disconnected from the target VM
 
 Process finished with exit code 0

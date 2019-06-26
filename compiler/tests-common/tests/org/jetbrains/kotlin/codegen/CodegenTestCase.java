@@ -641,10 +641,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     protected void compile(@NotNull List<TestFile> files) {
-        compile(files, true);
+        compile(files, true, false);
     }
 
-    protected void compile(@NotNull List<TestFile> files, boolean reportProblems) {
+    protected void compile(@NotNull List<TestFile> files, boolean reportProblems, boolean dumpKotlinFiles) {
         File javaSourceDir = writeJavaFiles(files);
 
         configurationKind = extractConfigurationKind(files);
@@ -676,18 +676,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         generateClassesInFile(reportProblems);
 
-        if (javaSourceDir != null && javaClassesOutputDirectory == null) {
-            // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
-            File kotlinOut;
-            try {
-                kotlinOut = KotlinTestUtils.tmpDir(toString());
-            }
-            catch (IOException e) {
-                throw ExceptionUtilsKt.rethrow(e);
-            }
+        boolean compileJavaFiles = javaSourceDir != null && javaClassesOutputDirectory == null;
+        File kotlinOut = null;
 
+        // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
+        if (dumpKotlinFiles || compileJavaFiles) {
+            kotlinOut = getKotlinClassesOutputDirectory();
             OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
+        }
 
+        if (compileJavaFiles) {
             List<String> javaClasspath = new ArrayList<>();
             javaClasspath.add(kotlinOut.getPath());
 
@@ -695,9 +693,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 javaClasspath.add(ForTestCompileRuntime.androidAnnotationsForTests().getPath());
             }
 
-            javaClassesOutputDirectory = CodegenTestUtil.compileJava(
-                    findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions
-            );
+            javaClassesOutputDirectory = getJavaClassesOutputDirectory();
+            compileJava(findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions, javaClassesOutputDirectory);
         }
     }
 
@@ -801,18 +798,35 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }, coroutinesPackage);
     }
 
+    @NotNull
+    protected File getJavaSourcesOutputDirectory() {
+        return createTempDirectory("java-files");
+    }
+
+    @NotNull
+    protected File getJavaClassesOutputDirectory() {
+        return createTempDirectory("java-classes");
+    }
+
+    protected File getKotlinClassesOutputDirectory() {
+        return createTempDirectory(toString());
+    }
+
+    @NotNull
+    private static File createTempDirectory(String prefix) {
+        try {
+            return KotlinTestUtils.tmpDir(prefix);
+        } catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
     @Nullable
-    protected static File writeJavaFiles(@NotNull List<TestFile> files) {
+    protected File writeJavaFiles(@NotNull List<TestFile> files) {
         List<TestFile> javaFiles = CollectionsKt.filter(files, file -> file.name.endsWith(".java"));
         if (javaFiles.isEmpty()) return null;
 
-        File dir;
-        try {
-            dir = KotlinTestUtils.tmpDir("java-files");
-        }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
+        File dir = getJavaSourcesOutputDirectory();
 
         for (TestFile testFile : javaFiles) {
             File file = new File(dir, testFile.name);

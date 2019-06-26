@@ -53,9 +53,10 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCo
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
-import org.jetbrains.kotlin.idea.debugger.sequence.exec.AbstractSequenceTraceTestCase
+import org.jetbrains.kotlin.idea.debugger.test.sequence.exec.AbstractSequenceTraceTestCase
+import org.jetbrains.kotlin.idea.debugger.test.*
+import org.jetbrains.kotlin.idea.debugger.test.AbstractFileRankingTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTestWithJS
@@ -160,6 +161,70 @@ import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnostic
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
+
+    testGroup("idea/jvm-debugger/jvm-debugger-test/test", "idea/jvm-debugger/jvm-debugger-test/testData") {
+        testClass<AbstractKotlinSteppingTest> {
+            model(
+                "stepping/stepIntoAndSmartStepInto",
+                pattern = KT_WITHOUT_DOTS_IN_NAME,
+                testMethod = "doStepIntoTest",
+                testClassName = "StepInto"
+            )
+            model(
+                "stepping/stepIntoAndSmartStepInto",
+                pattern = KT_WITHOUT_DOTS_IN_NAME,
+                testMethod = "doSmartStepIntoTest",
+                testClassName = "SmartStepInto"
+            )
+            model(
+                "stepping/stepInto",
+                pattern = KT_WITHOUT_DOTS_IN_NAME,
+                testMethod = "doStepIntoTest",
+                testClassName = "StepIntoOnly"
+            )
+            model("stepping/stepOut", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOutTest")
+            model("stepping/stepOver", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverTest")
+            model("stepping/stepOverForce", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverForceTest")
+            model("stepping/filters", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest")
+            model("stepping/custom", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doCustomTest")
+        }
+
+        testClass<AbstractKotlinEvaluateExpressionTest> {
+            model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest")
+            model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
+        }
+
+        testClass<AbstractSelectExpressionForDebuggerTest> {
+            model("selectExpression", recursive = false)
+            model("selectExpression/disallowMethodCalls", testMethod = "doTestWoMethodCalls")
+        }
+
+        testClass<AbstractPositionManagerTest> {
+            model("positionManager", recursive = false, extension = "kt", testClassName = "SingleFile")
+            model("positionManager", recursive = false, extension = null, testClassName = "MultiFile")
+        }
+
+        testClass<AbstractSmartStepIntoTest> {
+            model("smartStepInto")
+        }
+
+        testClass<AbstractBreakpointApplicabilityTest> {
+            model("breakpointApplicability")
+        }
+
+        testClass<AbstractFileRankingTest> {
+            model("fileRanking")
+        }
+
+        testClass<AbstractAsyncStackTraceTest> {
+            model("asyncStackTrace")
+        }
+
+        testClass<AbstractSequenceTraceTestCase> {
+            // TODO: implement mapping logic for terminal operations
+            model("sequence/streams/sequence", excludeDirs = listOf("terminal"))
+        }
+    }
 
     testGroup("idea/tests", "idea/testData") {
         testClass<AbstractAdditionalResolveDescriptorRendererTest> {
@@ -636,61 +701,8 @@ fun main(args: Array<String>) {
             model("editor/optimizeImports/common", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
-        testClass<AbstractPositionManagerTest> {
-            model("debugger/positionManager", recursive = false, extension = "kt", testClassName = "SingleFile")
-            model("debugger/positionManager", recursive = false, extension = null, testClassName = "MultiFile")
-        }
-
-        testClass<AbstractBreakpointApplicabilityTest> {
-            model("debugger/breakpointApplicability")
-        }
-
         testClass<AbstractKotlinExceptionFilterTest> {
             model("debugger/exceptionFilter", pattern = """^([^\.]+)$""", recursive = false)
-        }
-
-        testClass<AbstractSmartStepIntoTest> {
-            model("debugger/smartStepInto")
-        }
-
-        testClass<AbstractKotlinSteppingTest> {
-            model(
-                "debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto",
-                pattern = KT_WITHOUT_DOTS_IN_NAME,
-                testMethod = "doStepIntoTest",
-                testClassName = "StepInto"
-            )
-            model(
-                "debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto",
-                pattern = KT_WITHOUT_DOTS_IN_NAME,
-                testMethod = "doSmartStepIntoTest",
-                testClassName = "SmartStepInto"
-            )
-            model(
-                "debugger/tinyApp/src/stepping/stepInto",
-                pattern = KT_WITHOUT_DOTS_IN_NAME,
-                testMethod = "doStepIntoTest",
-                testClassName = "StepIntoOnly"
-            )
-            model("debugger/tinyApp/src/stepping/stepOut", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOutTest")
-            model("debugger/tinyApp/src/stepping/stepOver", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverTest")
-            model("debugger/tinyApp/src/stepping/stepOverForce", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverForceTest")
-            model("debugger/tinyApp/src/stepping/filters", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest")
-            model("debugger/tinyApp/src/stepping/custom", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doCustomTest")
-        }
-
-        testClass<AbstractKotlinEvaluateExpressionTest> {
-            model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest")
-            model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
-        }
-
-        testClass<AbstractFileRankingTest> {
-            model("debugger/fileRanking")
-        }
-
-        testClass<AbstractSequenceTraceTestCase> {
-            // We need to implement mapping logic for terminal operations
-            model("debugger/tinyApp/src/streams/sequence", excludeDirs = listOf("terminal"))
         }
 
         testClass<AbstractStubBuilderTest> {
@@ -752,11 +764,6 @@ fun main(args: Array<String>) {
             model("refactoring/pushDown/k2k", extension = "kt", singleClass = true, testClassName = "K2K", testMethod = "doKotlinTest")
             model("refactoring/pushDown/k2j", extension = "kt", singleClass = true, testClassName = "K2J", testMethod = "doKotlinTest")
             model("refactoring/pushDown/j2k", extension = "java", singleClass = true, testClassName = "J2K", testMethod = "doJavaTest")
-        }
-
-        testClass<AbstractSelectExpressionForDebuggerTest> {
-            model("debugger/selectExpression", recursive = false)
-            model("debugger/selectExpression/disallowMethodCalls", testMethod = "doTestWoMethodCalls")
         }
 
         testClass<AbstractKotlinCoverageOutputFilesTest> {

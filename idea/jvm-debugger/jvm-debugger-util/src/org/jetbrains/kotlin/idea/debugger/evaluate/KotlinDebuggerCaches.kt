@@ -91,6 +91,9 @@ class KotlinDebuggerCaches(project: Project) {
     companion object {
         private val LOG = Logger.getLogger(KotlinDebuggerCaches::class.java)!!
 
+        @get:TestOnly
+        var LOG_COMPILATIONS: Boolean = false
+
         fun getInstance(project: Project) = ServiceManager.getService(project, KotlinDebuggerCaches::class.java)!!
 
         fun compileCodeFragmentCacheAware(
@@ -123,7 +126,10 @@ class KotlinDebuggerCaches(project: Project) {
             }
 
             val newCompiledData = compileCode()
-            LOG.debug("Compile bytecode for ${codeFragment.text}")
+
+            if (LOG_COMPILATIONS) {
+                LOG.debug("Compile bytecode for ${codeFragment.text}")
+            }
 
             synchronized(evaluateExpressionCache.cachedCompiledData) {
                 evaluateExpressionCache.cachedCompiledData.value.putValue(text, newCompiledData)

@@ -1,9 +1,9 @@
-LineBreakpoint created at jcLocalVariable.kt:6
+LineBreakpoint created at jcLocalVariable.kt:7
 Run Java
 Connected to the target VM
-jcLocalVariable.kt:6
-JavaClass.java:11
-JavaClass.java:12
+jcLocalVariable.kt:7
+JavaClass.java:6
+JavaClass.java:7
 Compile bytecode for i
 Disconnected from the target VM
 

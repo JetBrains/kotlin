@@ -1,3 +1,5 @@
+// ATTACH_LIBRARY: coroutines
+
 package siSuspendFun
 
 import forTests.builder

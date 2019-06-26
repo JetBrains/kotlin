@@ -1,3 +1,6 @@
+// FILE: stopInAnonymousFunctionInInlinedCallWithCrossInlineDex.kt
+// EMULATE_DEX: true
+
 package stopInAnonymousFunctionInInlinedCallWithCrossInlineDex
 
 // KT-15282

@@ -1,8 +1,8 @@
-LineBreakpoint created at javaFun.kt:8
+LineBreakpoint created at javaFun.kt:9
 Run Java
 Connected to the target VM
-javaFun.kt:8
-MyJavaClass.java:8
+javaFun.kt:9
+MyJavaClass.java:9
 Disconnected from the target VM
 
 Process finished with exit code 0

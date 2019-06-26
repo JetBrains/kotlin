@@ -1,8 +1,8 @@
-LineBreakpoint created at stopInInlineFunDex.kt:10
+LineBreakpoint created at stopInInlineFunDex.kt:13
 Run Java
 Connected to the target VM
-stopInInlineFunDex.kt:10
-stopInInlineFunDex.kt:11
+stopInInlineFunDex.kt:13
+stopInInlineFunDex.kt:14
 Disconnected from the target VM
 
 Process finished with exit code 0

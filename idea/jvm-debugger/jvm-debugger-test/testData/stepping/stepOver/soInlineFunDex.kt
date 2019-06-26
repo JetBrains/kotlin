@@ -1,3 +1,6 @@
+// FILE: soInlineFunDex.kt
+// EMULATE_DEX: true
+
 package soInlineFunDex
 
 fun main(args: Array<String>) {

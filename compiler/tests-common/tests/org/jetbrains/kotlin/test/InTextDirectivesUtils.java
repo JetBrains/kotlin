@@ -100,11 +100,11 @@ public final class InTextDirectivesUtils {
 
     @NotNull
     public static List<String> findLinesWithPrefixesRemoved(String fileText, String... prefixes) {
-        return findLinesWithPrefixesRemoved(fileText, true, prefixes);
+        return findLinesWithPrefixesRemoved(fileText, true, true, prefixes);
     }
 
     @NotNull
-    public static List<String> findLinesWithPrefixesRemoved(String fileText, boolean trim, String... prefixes) {
+    public static List<String> findLinesWithPrefixesRemoved(String fileText, boolean trim, boolean strict, String... prefixes) {
         if (prefixes.length == 0) {
             throw new IllegalArgumentException("Please specify the prefixes to check");
         }
@@ -121,7 +121,7 @@ public final class InTextDirectivesUtils {
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
                         result.add(trim ? noPrefixLine.trim() : StringUtil.trimTrailing(StringsKt.drop(noPrefixLine, 1)));
                         break;
-                    } else {
+                    } else if (strict) {
                         throw new AssertionError(
                                 "Line starts with prefix \"" + prefix + "\", but doesn't have space symbol after it: " + line);
                     }

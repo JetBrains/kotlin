@@ -1,8 +1,8 @@
-LineBreakpoint created at stopInSuspendFunctionWithSuspendPoints.kt:16
+LineBreakpoint created at stopInSuspendFunctionWithSuspendPoints.kt:18
 Run Java
 Connected to the target VM
-stopInSuspendFunctionWithSuspendPoints.kt:16
-stopInSuspendFunctionWithSuspendPoints.kt:17
+stopInSuspendFunctionWithSuspendPoints.kt:18
+stopInSuspendFunctionWithSuspendPoints.kt:19
 Disconnected from the target VM
 
 Process finished with exit code 0

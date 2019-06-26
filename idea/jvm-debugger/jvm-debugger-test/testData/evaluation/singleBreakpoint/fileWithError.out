@@ -1,7 +1,7 @@
-LineBreakpoint created at fileWithInternal.kt:5
+LineBreakpoint created at fileWithInternal.kt:6
 Run Java
 Connected to the target VM
-fileWithInternal.kt:5
+fileWithInternal.kt:6
 Compile bytecode for 1
 Disconnected from the target VM
 

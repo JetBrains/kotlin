@@ -1,3 +1,5 @@
+// ATTACH_LIBRARY: coroutines
+
 package stopInSuspendFunctionWithSuspendPoints
 
 import forTests.builder

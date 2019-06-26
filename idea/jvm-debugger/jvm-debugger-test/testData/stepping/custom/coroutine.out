@@ -1,9 +1,9 @@
-LineBreakpoint created at coroutine.kt:15
+LineBreakpoint created at coroutine.kt:17
 Run Java
 Connected to the target VM
-coroutine.kt:15
-coroutine.kt:15
-coroutine.kt:16
+coroutine.kt:17
+coroutine.kt:17
+coroutine.kt:18
 Disconnected from the target VM
 
 Process finished with exit code 0

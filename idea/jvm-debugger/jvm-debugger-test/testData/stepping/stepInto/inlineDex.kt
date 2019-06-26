@@ -1,3 +1,6 @@
+// EMULATE_DEX: true
+// FILE: trueseveralInlineFunctionsInOneFileDex.kt
+
 package inlineDex
 
 fun main(args: Array<String>) {

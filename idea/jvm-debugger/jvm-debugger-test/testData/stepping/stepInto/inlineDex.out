@@ -1,8 +1,8 @@
-LineBreakpoint created at inlineDex.kt:5
+LineBreakpoint created at trueseveralInlineFunctionsInOneFileDex.kt:8
 Run Java
 Connected to the target VM
-inlineDex.kt:5
-inlineDex.kt:9
+trueseveralInlineFunctionsInOneFileDex.kt:8
+trueseveralInlineFunctionsInOneFileDex.kt:12
 Disconnected from the target VM
 
 Process finished with exit code 0

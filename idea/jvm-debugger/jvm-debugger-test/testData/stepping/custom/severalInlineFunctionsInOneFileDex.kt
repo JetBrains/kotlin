@@ -1,3 +1,6 @@
+// FILE: severalInlineCallsFromOtherFileDex.kt
+// EMULATE_DEX: true
+
 package severalInlineCallsFromOtherFileDex
 
 fun main(args: Array<String>) {

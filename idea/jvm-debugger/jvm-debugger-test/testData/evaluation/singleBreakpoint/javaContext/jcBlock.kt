@@ -1,3 +1,4 @@
+// FILE: jcBlock.kt
 package jcBlock
 
 fun main(args: Array<String>) {
@@ -17,3 +18,19 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: elseVal
 // RESULT: Unresolved reference: elseVal
+
+// FILE: forTests/javaContext/JavaClass.java
+package forTests.javaContext;
+
+public class JavaClass {
+    public void block() {
+        int bodyVal = 1;
+        if (true) {
+            int thenVal = 1;
+            int breakpoint = 1;
+        }
+        else {
+            int elseVal = 1;
+        }
+    }
+}

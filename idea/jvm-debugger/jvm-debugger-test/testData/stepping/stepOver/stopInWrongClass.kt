@@ -1,3 +1,4 @@
+// FILE: stopInWrongClass.kt
 package stopInWrongClass
 
 class AA {
@@ -19,3 +20,16 @@ fun main(args: Array<String>) {
 }
 
 // ADDITIONAL_BREAKPOINT: stopInWrongClass.Other.kt: Breakpoint 1
+
+// FILE: stopInWrongClass.Other.kt
+package stopInWrongClass
+
+class A {
+    fun test() {
+        // Breakpoint 1
+        foo()
+    }
+}
+
+fun foo() {
+}

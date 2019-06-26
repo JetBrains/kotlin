@@ -1,3 +1,4 @@
+// FILE: createExpressionWithArray.kt
 package createExpressionWithArray
 
 import forTests.MyJavaClass
@@ -13,3 +14,28 @@ fun main(args: Array<String>) {
 
 // PRINT_FRAME
 // DESCRIPTOR_VIEW_OPTIONS: NAME_EXPRESSION_RESULT
+
+// FILE: forTests/MyJavaClass.java
+package forTests;
+
+import org.jetbrains.annotations.NotNull;
+import java.util.List;
+
+public class MyJavaClass {
+    public static class BaseClass {
+        public final int i2 = 1;
+    }
+
+    public BaseClass getBaseClassValue() {
+        return new BaseClass();
+    }
+    public BaseClass getInnerClassValue() {
+        return new InnerClass();
+    }
+
+    public static class InnerClass extends BaseClass {
+        public final int i = 1;
+    }
+
+    public MyJavaClass() {}
+}

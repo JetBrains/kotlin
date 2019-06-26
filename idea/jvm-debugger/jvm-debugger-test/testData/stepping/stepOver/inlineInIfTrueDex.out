@@ -1,9 +1,9 @@
-LineBreakpoint created at inlineInIfTrueDex.kt:6
+LineBreakpoint created at inlineInIfTrueDex.kt:9
 Run Java
 Connected to the target VM
-inlineInIfTrueDex.kt:6
-inlineInIfTrueDex.kt:7
 inlineInIfTrueDex.kt:9
+inlineInIfTrueDex.kt:10
+inlineInIfTrueDex.kt:12
 Disconnected from the target VM
 
 Process finished with exit code 0

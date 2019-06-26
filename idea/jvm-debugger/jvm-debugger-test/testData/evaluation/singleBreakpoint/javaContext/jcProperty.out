@@ -1,8 +1,8 @@
-LineBreakpoint created at jcProperty.kt:6
+LineBreakpoint created at test.kt:7
 Run Java
 Connected to the target VM
-jcProperty.kt:6
-JavaClass.java:47
+test.kt:7
+JavaClass.java:9
 Compile bytecode for this.javaProperty
 Compile bytecode for javaProperty
 Compile bytecode for javaPrivateProperty

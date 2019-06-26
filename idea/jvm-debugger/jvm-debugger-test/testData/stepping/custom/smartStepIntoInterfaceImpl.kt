@@ -1,3 +1,4 @@
+// FILE: smartStepIntoInterfaceImpl.kt
 package smartStepIntoInterfaceImpl
 
 import forTests.MyJavaClass
@@ -152,4 +153,17 @@ fun testStepInto() {
     // RESUME: 1
     //Breakpoint!
     Obj2.staticCallInOverride("a")
+}
+
+// FILE: forTests/MyJavaClass.java
+package forTests;
+
+import org.jetbrains.annotations.NotNull;
+import java.util.List;
+
+public class MyJavaClass {
+    @NotNull
+    public static int staticFun(Object s) {
+        return 1;
+    }
 }

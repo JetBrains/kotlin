@@ -10,7 +10,7 @@ inlineOnly.kt:13
 inlineOnly.kt:14
 inlineOnly.kt:7
 inlineOnly.kt:9
-PrintStream.!EXT!
+inlineOnly.kt:10
 Disconnected from the target VM
 
 Process finished with exit code 0

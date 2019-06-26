@@ -1,3 +1,6 @@
+// FILE: soInlineAnonymousFunctionArgumentDex.kt
+// EMULATE_DEX: true
+
 package soInlineAnonymousFunctionArgumentDex
 
 fun main(args: Array<String>) {

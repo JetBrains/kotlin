@@ -1,7 +1,7 @@
-LineBreakpoint created at inlineFunInMultiFilePackage.kt:5
+LineBreakpoint created at inlineFunInMultiFilePackage.kt:6
 Run Java
 Connected to the target VM
-inlineFunInMultiFilePackage.kt:5
+inlineFunInMultiFilePackage.kt:6
 Compile bytecode for multiFilePackage.foo { 1 }
 Disconnected from the target VM
 

@@ -1,3 +1,6 @@
+// FILE: inlineInIfFalseDex.kt
+// EMULATE_DEX: true
+
 package inlineInIfFalseDex
 
 fun main(args: Array<String>) {

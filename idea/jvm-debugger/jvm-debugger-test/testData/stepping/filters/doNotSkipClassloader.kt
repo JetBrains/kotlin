@@ -4,7 +4,7 @@ fun main(args: Array<String>) {
     val loader = A::class.java.getClassLoader()!!
     try {
         //Breakpoint!
-        val aaa = loader.loadClass("skipClassloader.A")
+        val aaa = loader.loadClass("doNotSkipClassloader.A")
     }
     catch (e: ClassNotFoundException) {
         e.printStackTrace()

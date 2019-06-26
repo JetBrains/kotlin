@@ -27,5 +27,4 @@ inline fun forEach(s: () -> Unit) {
     }
 }
 
-// STEP_INTO: 9
-// TRACING_FILTERS_ENABLED: false
+// STEP_INTO: 10

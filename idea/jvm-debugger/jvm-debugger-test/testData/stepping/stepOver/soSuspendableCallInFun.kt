@@ -1,3 +1,5 @@
+// ATTACH_LIBRARY: coroutines
+
 package soSuspendableCallInFun
 
 import forTests.builder

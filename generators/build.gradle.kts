@@ -29,6 +29,7 @@ dependencies {
     compile(projectTests(":kotlin-noarg-compiler-plugin"))
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(projectTests(":kotlinx-serialization-compiler-plugin"))
+    compile(projectTests(":idea:jvm-debugger:jvm-debugger-test"))
     compile(projectTests(":generators:test-generator"))
     compile(projectTests(":idea"))
     builtinsCompile("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")

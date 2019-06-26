@@ -1,3 +1,4 @@
+// FILE: defaultAccessors.kt
 package defaultAccessors
 
 fun main(args: Array<String>) {
@@ -26,3 +27,14 @@ fun testPublicPropertyInLibrary() {
 // STEP_INTO: 21
 // SKIP_SYNTHETIC_METHODS: true
 // SKIP_CONSTRUCTORS: true
+
+// FILE: customLib/simpleLibFile.kt
+package customLib.simpleLibFile
+
+public fun foo() {
+    1 + 1
+}
+
+class B {
+    public var prop: Int = 1
+}

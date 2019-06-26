@@ -1,3 +1,4 @@
+// FILE: test.kt
 package inlineFunctionBreakpointAnotherFile
 
 fun main(args: Array<String>) {
@@ -11,3 +12,10 @@ fun main(args: Array<String>) {
 }
 
 // ADDITIONAL_BREAKPOINT: inlineFunctionWithBreakpoint.kt:inline fun myFun
+
+// FILE: inlineFunctionWithBreakpoint.kt
+package inlineFunctionWithBreakpoint
+
+inline fun myFun(f: (Int) -> Unit) {
+    f(1)
+}

@@ -1,3 +1,6 @@
+// FILE: soInlineCallInLastStatementInInlineFunctionArgumentDex.kt
+// EMULATE_DEX: true
+
 package soInlineCallInLastStatementInInlineFunctionArgumentDex
 
 fun main(args: Array<String>) {

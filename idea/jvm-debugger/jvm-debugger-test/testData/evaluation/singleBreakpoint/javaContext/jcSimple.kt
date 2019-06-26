@@ -1,3 +1,4 @@
+// FILE: jcSimple.kt
 package jcSimple
 
 fun main(args: Array<String>) {
@@ -10,3 +11,12 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: 1 + 1
 // RESULT: 2: I
+
+// FILE: forTests/javaContext/JavaClass.java
+package forTests.javaContext;
+
+public class JavaClass {
+    public void simple() {
+        int breakpoint = 1;
+    }
+}

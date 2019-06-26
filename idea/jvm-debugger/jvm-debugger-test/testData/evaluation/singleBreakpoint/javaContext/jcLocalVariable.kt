@@ -1,3 +1,4 @@
+// FILE: jcLocalVariable.kt
 package jcLocalVariable
 
 fun main(args: Array<String>) {
@@ -11,3 +12,13 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: i
 // RESULT: 1: I
+
+// FILE: forTests/javaContext/JavaClass.java
+package forTests.javaContext;
+
+public class JavaClass {
+    public void localVariable() {
+        int i = 1;
+        int breakpoint = 1;
+    }
+}

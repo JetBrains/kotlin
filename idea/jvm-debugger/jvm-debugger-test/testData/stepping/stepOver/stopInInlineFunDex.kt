@@ -1,3 +1,6 @@
+// FILE: stopInInlineFunDex.kt
+// EMULATE_DEX: true
+
 package stopInInlineFunDex
 
 fun main(args: Array<String>) {

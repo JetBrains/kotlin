@@ -34,7 +34,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     ) throws Exception {
         boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
 
-        compile(files, !isIgnored);
+        compile(files, !isIgnored, false);
 
         try {
             blackBox(!isIgnored, unexpectedBehaviour);

@@ -1,10 +1,10 @@
-LineBreakpoint created at jcBlock.kt:6
+LineBreakpoint created at jcBlock.kt:7
 Run Java
 Connected to the target VM
-jcBlock.kt:6
-JavaClass.java:16
-JavaClass.java:18
-JavaClass.java:19
+jcBlock.kt:7
+JavaClass.java:6
+JavaClass.java:8
+JavaClass.java:9
 Compile bytecode for bodyVal
 Compile bytecode for thenVal
 Disconnected from the target VM

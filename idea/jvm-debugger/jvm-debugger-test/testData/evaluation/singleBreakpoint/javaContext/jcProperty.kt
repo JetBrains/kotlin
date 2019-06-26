@@ -1,3 +1,4 @@
+// FILE: test.kt
 package jcProperty
 
 fun main(args: Array<String>) {
@@ -16,3 +17,15 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: javaPrivateProperty
 // RESULT: 1: I
+
+// FILE: forTests/javaContext/JavaClass.java
+package forTests.javaContext;
+
+public class JavaClass {
+    public int javaProperty = 1;
+    private int javaPrivateProperty = 1;
+
+    public void property() {
+        int breakpoint = 1;
+    }
+}

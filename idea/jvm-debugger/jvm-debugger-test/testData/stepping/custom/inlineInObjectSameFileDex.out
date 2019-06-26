@@ -1,9 +1,9 @@
-LineBreakpoint created at inlineInObjectSameFileDex.kt:5
-LineBreakpoint created at inlineInObjectSameFileDex.kt:11
+LineBreakpoint created at inlineInObjectSameFileDex.kt:8
+LineBreakpoint created at inlineInObjectSameFileDex.kt:14
 Run Java
 Connected to the target VM
-inlineInObjectSameFileDex.kt:5
-inlineInObjectSameFileDex.kt:11
+inlineInObjectSameFileDex.kt:8
+inlineInObjectSameFileDex.kt:14
 Disconnected from the target VM
 
 Process finished with exit code 0

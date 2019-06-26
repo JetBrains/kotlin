@@ -1,3 +1,6 @@
+// FILE: inlineInObjectSameFileDex.kt
+// EMULATE_DEX: true
+
 package inlineInObjectSameFileDex
 
 fun main(args: Array<String>) {

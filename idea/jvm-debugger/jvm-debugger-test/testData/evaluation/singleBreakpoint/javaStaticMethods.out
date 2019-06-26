@@ -1,7 +1,7 @@
-LineBreakpoint created at javaStaticMethods.kt:7
+LineBreakpoint created at javaStaticMethods.kt:8
 Run Java
 Connected to the target VM
-javaStaticMethods.kt:7
+javaStaticMethods.kt:8
 Compile bytecode for JavaStatic.state()
 Disconnected from the target VM
 

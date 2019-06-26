@@ -1,3 +1,4 @@
+// FILE: test.kt
 package jcMarkedObject
 
 fun main(args: Array<String>) {
@@ -16,3 +17,13 @@ fun main(args: Array<String>) {
 // RESULT: instance of java.lang.Integer(id=ID): Ljava/lang/Integer;
 
 // DEBUG_LABEL: i = i
+
+// FILE: forTests/javaContext/JavaClass.java
+package forTests.javaContext;
+
+public class JavaClass {
+    public void markObject() {
+        Integer i = 1;
+        int breakpoint = 1;
+    }
+}

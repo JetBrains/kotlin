@@ -1,7 +1,7 @@
-LineBreakpoint created at inlineFunctionWithBreakpoint.kt:4
+LineBreakpoint created at inlineFunctionWithBreakpoint.kt:5
 Run Java
 Connected to the target VM
-inlineFunctionWithBreakpoint.kt:4
+inlineFunctionWithBreakpoint.kt:5
 Disconnected from the target VM
 
 Process finished with exit code 0

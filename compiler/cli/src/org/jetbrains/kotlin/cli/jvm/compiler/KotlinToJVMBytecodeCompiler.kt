@@ -398,7 +398,7 @@ object KotlinToJVMBytecodeCompiler {
             (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
         }
 
-    private class MainClassProvider(generationState: GenerationState, environment: KotlinCoreEnvironment) {
+    class MainClassProvider(generationState: GenerationState, environment: KotlinCoreEnvironment) {
         val mainClassFqName: FqName? by lazy { findMainClass(generationState, environment.getSourceFiles()) }
 
         private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {

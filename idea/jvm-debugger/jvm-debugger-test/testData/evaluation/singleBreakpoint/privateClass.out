@@ -1,7 +1,7 @@
-LineBreakpoint created at privateClass.kt:5
+LineBreakpoint created at privateClass.kt:6
 Run Java
 Connected to the target VM
-privateClass.kt:5
+privateClass.kt:6
 Compile bytecode for A.PrivateClass()
 Compile bytecode for A.PrivateClass().prop
 Compile bytecode for A().PrivateInnerClass()

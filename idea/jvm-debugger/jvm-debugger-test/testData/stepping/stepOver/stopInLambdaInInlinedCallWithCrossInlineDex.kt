@@ -1,6 +1,8 @@
-package stopInLambdaInInlinedCallWithCrossInlineDex
-
+// FILE: stopInLambdaInInlinedCallWithCrossInlineDex.kt
+// EMULATE_DEX: true
 // KT-15282
+
+package stopInLambdaInInlinedCallWithCrossInlineDex
 
 fun main(args: Array<String>) {
     foo {
