@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints.config
 
+import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.hints.HintUtils
 import com.intellij.ide.DataManager
 import com.intellij.lang.Language
@@ -10,8 +11,10 @@ import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
+import java.awt.BorderLayout
 import javax.swing.BoxLayout
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JPanel
 
 class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
@@ -23,16 +26,30 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
     return configurables.toTypedArray()
   }
 
-  private val panel = JPanel().also {
-    it.layout = BoxLayout(it, BoxLayout.Y_AXIS)
-    it.border = JBUI.Borders.empty(0, 10, 0, 0)
+  private val listPanel = createPanel()
+
+  private fun createPanel() : JPanel {
+    val outer = JPanel()
+    outer.layout = BorderLayout()
+    val label = JLabel(CodeInsightBundle.message("inlay.hints.language.list.description"))
+    label.alignmentX = 0.5f
+    outer.add(label, BorderLayout.NORTH)
+    outer.add(createListPanel(), BorderLayout.CENTER)
+    return outer
+  }
+
+  private fun createListPanel(): JPanel {
+    val panel = JPanel()
+    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+    panel.border = JBUI.Borders.empty(0, 10, 0, 0)
     for (configurable in configurables) {
       val label = LinkLabel.create(configurable.language.displayName) {
-        val settings = Settings.KEY.getData(DataManager.getInstance().getDataContext(it))
+        val settings = Settings.KEY.getData(DataManager.getInstance().getDataContext(panel))
         settings?.select(configurable)
       }
-      it.add(label)
+      panel.add(label)
     }
+    return panel
   }
 
   override fun isModified(): Boolean {
@@ -44,7 +61,7 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
   }
 
   override fun createComponent(): JComponent {
-    return panel
+    return listPanel
   }
 
   override fun apply() {
