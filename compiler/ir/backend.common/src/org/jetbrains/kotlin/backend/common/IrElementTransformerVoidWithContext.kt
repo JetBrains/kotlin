@@ -20,55 +20,61 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.descriptors.*
 
-class ScopeWithIr(val scope: Scope, val irElement: IrElement)
+open class ScopeWithIr(val scope: Scope, val irElement: IrElement)
 
 abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
-    override final fun visitFile(declaration: IrFile): IrFile {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
+    protected open fun createScope(declaration: IrSymbolOwner): ScopeWithIr =
+        ScopeWithIr(Scope(declaration.symbol), declaration)
+
+    final override fun visitFile(declaration: IrFile): IrFile {
+        scopeStack.push(createScope(declaration))
         val result = visitFileNew(declaration)
         scopeStack.pop()
         return result
     }
 
-    override final fun visitClass(declaration: IrClass): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
+    final override fun visitClass(declaration: IrClass): IrStatement {
+        scopeStack.push(createScope(declaration))
         val result = visitClassNew(declaration)
         scopeStack.pop()
         return result
     }
 
-    override final fun visitProperty(declaration: IrProperty): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+    final override fun visitProperty(declaration: IrProperty): IrStatement {
+        scopeStack.push(createScope(declaration))
         val result = visitPropertyNew(declaration)
         scopeStack.pop()
         return result
     }
 
-    override final fun visitField(declaration: IrField): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
+    final override fun visitField(declaration: IrField): IrStatement {
+        scopeStack.push(createScope(declaration))
         val result = visitFieldNew(declaration)
         scopeStack.pop()
         return result
     }
 
-    override final fun visitFunction(declaration: IrFunction): IrStatement {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
+    final override fun visitFunction(declaration: IrFunction): IrStatement {
+        scopeStack.push(createScope(declaration))
         val result = visitFunctionNew(declaration)
         scopeStack.pop()
         return result
     }
 
     protected val currentFile get() = scopeStack.lastOrNull { it.irElement is IrFile }!!.irElement as IrFile
-    protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwner is ClassDescriptor }
-    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwner is FunctionDescriptor }
-    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwner is PropertyDescriptor }
+    protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
+    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFunctionSymbol }
+    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrPropertySymbol }
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
@@ -102,41 +108,44 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
-    override final fun visitFile(declaration: IrFile) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
+    protected open fun createScope(declaration: IrSymbolOwner): ScopeWithIr =
+        ScopeWithIr(Scope(declaration.symbol), declaration)
+
+    final override fun visitFile(declaration: IrFile) {
+        scopeStack.push(createScope(declaration))
         visitFileNew(declaration)
         scopeStack.pop()
     }
 
-    override final fun visitClass(declaration: IrClass) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
+    final override fun visitClass(declaration: IrClass) {
+        scopeStack.push(createScope(declaration))
         visitClassNew(declaration)
         scopeStack.pop()
     }
 
-    override final fun visitProperty(declaration: IrProperty) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+    final override fun visitProperty(declaration: IrProperty) {
+        scopeStack.push(createScope(declaration))
         visitPropertyNew(declaration)
         scopeStack.pop()
     }
 
-    override final fun visitField(declaration: IrField) {
+    final override fun visitField(declaration: IrField) {
         @Suppress("DEPRECATION") val isDelegated = declaration.descriptor.isDelegated
-        if (isDelegated) scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
+        if (isDelegated) scopeStack.push(createScope(declaration))
         visitFieldNew(declaration)
         if (isDelegated) scopeStack.pop()
     }
 
-    override final fun visitFunction(declaration: IrFunction) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
+    final override fun visitFunction(declaration: IrFunction) {
+        scopeStack.push(createScope(declaration))
         visitFunctionNew(declaration)
         scopeStack.pop()
     }
 
-    protected val currentFile get() = scopeStack.lastOrNull { it.scope.scopeOwner is PackageFragmentDescriptor }
-    protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwner is ClassDescriptor }
-    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwner is FunctionDescriptor }
-    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwner is PropertyDescriptor }
+    protected val currentFile get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFileSymbol }
+    protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
+    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFunctionSymbol }
+    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrPropertySymbol }
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
