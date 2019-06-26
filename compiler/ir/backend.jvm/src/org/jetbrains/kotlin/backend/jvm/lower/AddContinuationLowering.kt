@@ -349,6 +349,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun addContinuationParameter(irFile: IrFile, suspendLambdas: Set<IrFunction>): Set<IrFunction> {
         val views = hashSetOf<IrFunction>()
 
+        // Collect all suspend functions
         irFile.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -363,6 +364,20 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 }
             }
         })
+        // fix return targets
+        for (view in views) {
+            view.transformChildrenVoid(object : IrElementTransformerVoid() {
+                override fun visitReturn(expression: IrReturn): IrExpression {
+                    val owner = expression.returnTargetSymbol.owner as? IrSimpleFunction
+                        ?: return super.visitReturn(expression)
+                    val ownerView = owner.getOrCreateView()
+                    if (ownerView == owner) return super.visitReturn(expression)
+                    val result =
+                        IrReturnImpl(expression.startOffset, expression.endOffset, ownerView.returnType, ownerView.symbol, expression.value)
+                    return super.visitReturn(result)
+                }
+            })
+        }
         return views
     }
 
@@ -416,7 +431,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             override fun visitCall(expression: IrCall): IrExpression {
                 if (!expression.isSuspend) return super.visitCall(expression)
                 val view = (expression.symbol.owner as IrSimpleFunction).getOrCreateView()
-                val res = IrCallImpl(expression.startOffset, expression.endOffset, expression.type, view.symbol).apply {
+                val res = IrCallImpl(expression.startOffset, expression.endOffset, view.returnType, view.symbol).apply {
                     copyTypeArgumentsFrom(expression)
                     dispatchReceiver = expression.dispatchReceiver
                     for (i in 0 until expression.valueArgumentsCount) {

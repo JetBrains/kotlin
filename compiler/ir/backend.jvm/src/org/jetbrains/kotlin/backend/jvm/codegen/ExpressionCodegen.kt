@@ -402,7 +402,7 @@ class ExpressionCodegen(
             expression
         )
 
-        val returnType = callee.returnType.substitute(typeSubstitutionMap)
+        val returnType = callee.returnType
 
         if (callee.isSuspend && !irFunction.isInvokeSuspendInContinuation()) {
             addSuspendMarker(mv, isStartNotEnd = false)

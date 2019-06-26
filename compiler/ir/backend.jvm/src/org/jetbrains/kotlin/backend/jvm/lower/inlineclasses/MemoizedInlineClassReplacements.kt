@@ -18,10 +18,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class IrReplacementFunction(
@@ -49,7 +53,10 @@ class MemoizedInlineClassReplacements {
         }
 
     private val IrFunction.hasInlineClassParameters: Boolean
-        get() = explicitParameters.any { it.type.erasedUpperBound.isInline } || (this is IrConstructor && constructedClass.isInline)
+        get() = explicitParameters.any { it.type.erasedUpperBound.isInline && !it.type.isDontMangleType() }
+                || (this is IrConstructor && constructedClass.isInline)
+
+    private fun IrType.isDontMangleType() = getClass()?.fqNameWhenAvailable == DescriptorUtils.RESULT_FQ_NAME
 
     private val IrFunction.hasStaticReplacement: Boolean
         get() = origin != IrDeclarationOrigin.FAKE_OVERRIDE &&
