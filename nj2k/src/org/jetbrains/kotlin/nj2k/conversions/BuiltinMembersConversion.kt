@@ -202,7 +202,7 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
         copy(argumentsProvider = argumentsProvider)
 
     private infix fun Conversion.andAfter(actionAfter: (JKExpression) -> JKExpression) =
-        copy(actionAfter = actionAfter).also { println() }
+        copy(actionAfter = actionAfter)
 
     private val conversions: Map<String, List<Conversion>> =
         listOf(
