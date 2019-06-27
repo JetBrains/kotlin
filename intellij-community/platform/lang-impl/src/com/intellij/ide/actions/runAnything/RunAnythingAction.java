@@ -115,7 +115,7 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
             .setTitle(myPresentation.getText())
             .setShortcut(getShortcut())
             .setDescription(getShortcutText())
-            .setLocation(getTooltipLocation()).installOn(this);
+            .installOn(this);
         }
         else {
           setToolTipText(getShortcutText());

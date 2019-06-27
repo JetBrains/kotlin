@@ -215,7 +215,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
             .setTitle(myPresentation.getText())
             .setShortcut(shortcutText)
             .setDescription("Searches for:<br/> - Classes<br/> - Files<br/> - Tool Windows<br/> - Actions<br/> - Settings")
-            .setLocation(getTooltipLocation()).installOn(this);
+            .installOn(this);
         }
         else {
           setToolTipText("<html><body>Search Everywhere<br/>Press <b>" + shortcutText +
