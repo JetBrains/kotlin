@@ -599,6 +599,7 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
         SpecialFunction.COROUTINE_CONTROLLER -> JsAstProtoBuf.SpecialFunction.COROUTINE_CONTROLLER
         SpecialFunction.COROUTINE_RECEIVER -> JsAstProtoBuf.SpecialFunction.COROUTINE_RECEIVER
         SpecialFunction.SET_COROUTINE_RESULT -> JsAstProtoBuf.SpecialFunction.SET_COROUTINE_RESULT
+        SpecialFunction.GET_KCLASS -> JsAstProtoBuf.SpecialFunction.GET_KCLASS
     }
 
     private fun serialize(name: JsName): Int = nameMap.getOrPut(name) {
