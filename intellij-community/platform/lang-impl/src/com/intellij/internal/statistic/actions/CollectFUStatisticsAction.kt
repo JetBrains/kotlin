@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal.statistic.actions
 
+import com.google.common.collect.HashMultiset
 import com.google.gson.GsonBuilder
 import com.intellij.BundleBase
 import com.intellij.ide.actions.GotoActionBase
@@ -32,12 +33,14 @@ class CollectFUStatisticsAction : GotoActionBase() {
     val projectCollectors = ExtensionPointName.create<Any>("com.intellij.statistics.projectUsagesCollector").extensionList
     val applicationCollectors = ExtensionPointName.create<Any>("com.intellij.statistics.applicationUsagesCollector").extensionList
 
-    val items = (projectCollectors + applicationCollectors)
-      .filterIsInstance(FeatureUsagesCollector::class.java)
+    val collectors = (projectCollectors + applicationCollectors).filterIsInstance(FeatureUsagesCollector::class.java)
+
+    val ids = collectors.mapTo(HashMultiset.create()) { it.groupId }
+    val items = collectors
       .map { collector ->
         val groupId = collector.groupId
         val className = StringUtil.nullize(collector.javaClass.simpleName, true)
-        Item(collector, groupId, className)
+        Item(collector, groupId, className, ids.count(groupId) > 1)
       }
 
     ContainerUtil.sort(items, Comparator.comparing<Item, String> { it -> it.groupId })
@@ -108,8 +111,9 @@ class CollectFUStatisticsAction : GotoActionBase() {
 
   private class Item(val usagesCollector: FeatureUsagesCollector,
                      val groupId: String,
-                     val className: String?) : ChooseByNameItem {
-    override fun getName(): String = groupId
+                     val className: String?,
+                     val nonUniqueId: Boolean) : ChooseByNameItem {
+    override fun getName(): String = groupId + if (nonUniqueId) " ($className)" else ""
     override fun getDescription(): String? = className
   }
 
