@@ -25,10 +25,12 @@ fun <T> TargetPlatform?.has(klass: Class<T>): Boolean = this != null && subplatf
  * also provides better description for multiplatforms.
  */
 val TargetPlatform.oldFashionedDescription: String
-    get() = if (this.isCommon()) "Common (experimental) " else this.single().oldFashionedDescription
+    // the invocation if isCommon is not preferable as it could be governed by separate flag and may
+    // to appear independently on count of target platforms
+    get() = this.singleOrNull()?.oldFashionedDescription ?: "Common (experimental) "
 
 
-/**
+    /**
  * Renders multiplatform in form
  *      '$PLATFORM_1 / $PLATFORM_2 / ...'
  * e.g.

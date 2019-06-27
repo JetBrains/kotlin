@@ -103,7 +103,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         application.isSaveAllowed = true
         application.saveAll()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
-        Assert.assertEquals(moduleFileContentBefore.replace("platform=\"JVM 1.8\"", "allPlatforms=\"JVM [1.8]\""), moduleFileContentAfter)
+        Assert.assertEquals(moduleFileContentBefore.replace("platform=\"JVM 1.8\"", "platform=\"JVM 1.8\" allPlatforms=\"JVM [1.8]\""), moduleFileContentAfter)
     }
 
     fun testApiVersionWithoutLanguageVersion() {
