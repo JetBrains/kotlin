@@ -133,25 +133,44 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
     )
 
 
-private val addOrRemoveModifiersInspectionProcessing =
+private val addOrRemoveModifiersProcessingGroup =
     InspectionLikeProcessingGroup(
         runSingleTime = true,
         processings = listOf(
             RemoveRedundantVisibilityModifierProcessing(),
             RemoveRedundantModalityModifierProcessing(),
-            inspectionBasedProcessing(AddOperatorModifierInspection())
+            inspectionBasedProcessing(AddOperatorModifierInspection()),
+            generalInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
         )
     )
+
+private val removeRedundantElementsProcessingGroup =
+    InspectionLikeProcessingGroup(
+        runSingleTime = true,
+        processings = listOf(
+            RemoveExplicitTypeArgumentsProcessing(),
+            generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
+            generalInspectionBasedProcessing(ExplicitThisInspection()),
+            intentionBasedProcessing(RemoveEmptyClassBodyIntention())
+        )
+    )
+
+private val removeRedundantSemicolonProcessing =
+    InspectionLikeProcessingGroup(
+        runSingleTime = true,
+        acceptNonKtElements = true,
+        processings = listOf(
+            generalInspectionBasedProcessing(RedundantSemicolonInspection())
+        )
+    )
+
 
 private val inspectionLikePostProcessingGroup =
     InspectionLikeProcessingGroup(
         RemoveRedundantConstructorKeywordProcessing(),
         RemoveExplicitOpenInInterfaceProcessing(),
-        generalInspectionBasedProcessing(ExplicitThisInspection()),
-        RemoveExplicitTypeArgumentsProcessing(),
         RemoveRedundantOverrideVisibilityProcessing(),
         inspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
-        generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
         ConvertToStringTemplateProcessing(),
         UsePropertyAccessSyntaxProcessing(),
         UninitializedVariableReferenceFromInitializerToThisReferenceProcessing(),
@@ -162,14 +181,11 @@ private val inspectionLikePostProcessingGroup =
         UseExpressionBodyProcessing(),
         inspectionBasedProcessing(UnnecessaryVariableInspection()),
         RemoveExplicitPropertyTypeWithInspectionProcessing(),
-        generalInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
         JavaObjectEqualsToEqOperatorProcessing(),
         RemoveExplicitPropertyTypeProcessing(),
         RemoveRedundantNullabilityProcessing(),
         generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
         inspectionBasedProcessing(FoldInitializerAndIfToElvisInspection()),
-        generalInspectionBasedProcessing(RedundantSemicolonInspection()),
-        intentionBasedProcessing(RemoveEmptyClassBodyIntention()),
         intentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention()),
         inspectionBasedProcessing(JavaMapForEachInspection()),
         intentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() },
@@ -233,8 +249,10 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         "Cleaning up Kotlin code",
         listOf(
             errorsFixingDiagnosticBasedPostProcessingGroup,
-            addOrRemoveModifiersInspectionProcessing,
+            addOrRemoveModifiersProcessingGroup,
             inspectionLikePostProcessingGroup,
+            removeRedundantSemicolonProcessing,
+            removeRedundantElementsProcessingGroup,
             cleaningUpDiagnosticBasedPostProcessingGroup
         )
     ),

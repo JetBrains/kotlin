@@ -1,1 +1,1 @@
-val a: Array<Any?> = arrayOfNulls(10)
+val a = arrayOfNulls<Any>(10)

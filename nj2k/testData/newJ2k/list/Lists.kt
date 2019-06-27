@@ -5,7 +5,7 @@ class Lists {
     fun test() {
         val xs: MutableList<Any?> = ArrayList()
         val ys: MutableList<Any?> = LinkedList<Any>()
-        val zs: ArrayList<Any?> = ArrayList()
+        val zs = ArrayList<Any?>()
         xs.add(null)
         ys.add(null)
         xs.clear()

@@ -1,7 +1,7 @@
 import java.util.ArrayList
 
 internal class A {
-    private val list1: ArrayList<String> = ArrayList()
+    private val list1 = ArrayList<String>()
     private val list2: MutableList<String> = ArrayList()
     private val myList3: MutableList<String> = ArrayList()
     fun getList1(): List<String> {

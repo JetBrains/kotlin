@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.mapToIndex
@@ -34,10 +36,15 @@ import kotlin.reflect.full.isSubclassOf
 
 class InspectionLikeProcessingGroup(
     private val runSingleTime: Boolean = false,
+    private val acceptNonKtElements: Boolean = false,
     private val processings: List<InspectionLikeProcessing>
 ) : ProcessingGroup {
 
-    constructor(vararg processings: InspectionLikeProcessing) : this(false, processings.toList())
+    constructor(vararg processings: InspectionLikeProcessing) : this(
+        runSingleTime = false,
+        acceptNonKtElements = false,
+        processings = processings.toList()
+    )
 
     private val processingsToPriorityMap = processings.mapToIndex()
     fun priority(processing: InspectionLikeProcessing): Int = processingsToPriorityMap.getValue(processing)
@@ -88,22 +95,24 @@ class InspectionLikeProcessingGroup(
 
         file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
-                val rangeResult = rangeFilter(element, rangeMarker)
-                if (rangeResult == RangeFilterResult.SKIP) return
+                if (element is KtElement || acceptNonKtElements) {
+                    val rangeResult = rangeFilter(element, rangeMarker)
+                    if (rangeResult == RangeFilterResult.SKIP) return
 
-                super.visitElement(element)
+                    super.visitElement(element)
 
-                if (rangeResult == RangeFilterResult.PROCESS) {
-                    processings.forEach { processing ->
-                        val action = processing.createAction(element, context.converter.settings)
-                        if (action != null) {
-                            availableActions.add(
-                                ActionData(
-                                    element, action,
-                                    priority(processing),
-                                    processing.writeActionNeeded
+                    if (rangeResult == RangeFilterResult.PROCESS) {
+                        processings.forEach { processing ->
+                            val action = processing.createAction(element, context.converter.settings)
+                            if (action != null) {
+                                availableActions.add(
+                                    ActionData(
+                                        element, action,
+                                        priority(processing),
+                                        processing.writeActionNeeded
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }

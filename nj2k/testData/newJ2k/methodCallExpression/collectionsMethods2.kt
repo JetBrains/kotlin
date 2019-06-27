@@ -1,6 +1,6 @@
 internal class A {
     fun foo() {
-        val list: List<String?> = listOf(null)
-        val set: Set<String?> = setOf(null)
+        val list = listOf<String?>(null)
+        val set = setOf<String?>(null)
     }
 }

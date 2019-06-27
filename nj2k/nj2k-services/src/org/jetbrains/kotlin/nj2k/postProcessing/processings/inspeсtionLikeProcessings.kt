@@ -199,12 +199,12 @@ class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing :
     override val writeActionNeeded = true
 
     override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtSimpleNameExpression || element.mainReference.resolve() == null) return null
+        if (element !is KtSimpleNameExpression) return null
+        val anonymousObject = element.getParentOfType<KtClassOrObject>(true)?.takeIf { it.name == null } ?: return null
 
         val resolved = element.mainReference.resolve() ?: return null
         if (resolved.isAncestor(element, strict = true)) {
             if (resolved is KtVariableDeclaration && resolved.hasInitializer()) {
-                val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
                 if (resolved.initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
                     return { element.replaced(KtPsiFactory(element).createThisExpression()) }
                 }
