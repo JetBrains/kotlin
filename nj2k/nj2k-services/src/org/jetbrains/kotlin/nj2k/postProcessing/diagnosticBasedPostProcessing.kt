@@ -44,7 +44,9 @@ class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<Diagno
                     val range = rangeMarker?.range ?: file.textRange
                     if (diagnostic.psiElement.isInRange(range)) {
                         diagnosticToFix[diagnostic.factory]?.forEach { fix ->
-                            runWriteAction { fix(diagnostic) }
+                            if (diagnostic.psiElement.isValid) {
+                                runWriteAction { fix(diagnostic) }
+                            }
                         }
                     }
                 }
