@@ -152,6 +152,10 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             super.equals(other) && other is FromCompilationConfiguration && configuration == other.configuration
 
         override fun hashCode(): Int = super.hashCode() + 23 * (configuration?.hashCode() ?: 1)
+
+        override fun toString(): String {
+            return "FromCompilationConfiguration($configuration)"
+        }
     }
 
     @Suppress("OverridingDeprecatedMember", "DEPRECATION")
@@ -200,6 +204,10 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             super.equals(other) && other is FromLegacy && legacyDependencies == other.legacyDependencies
 
         override fun hashCode(): Int = super.hashCode() + 31 * (legacyDependencies?.hashCode() ?: 1)
+
+        override fun toString(): String {
+            return "FromLegacy($legacyDependencies)"
+        }
     }
 }
 

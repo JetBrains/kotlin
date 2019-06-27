@@ -48,6 +48,10 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     inline fun <reified T : KotlinScriptDefinition> asLegacyOrNull(): T? =
         if (this is FromLegacy) legacyDefinition as? T else null
 
+    override fun toString(): String {
+        return "ScriptDefinition($name)"
+    }
+
     @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     open class FromLegacy(
         override val hostConfiguration: ScriptingHostConfiguration,
