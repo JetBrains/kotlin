@@ -109,7 +109,6 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
 
 val reflectShadowJar by task<ShadowJar> {
     archiveClassifier.set("shadow")
-    duplicatesStrategy = DuplicatesStrategy.FAIL
     configurations = listOf(embedded)
 
     callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
@@ -117,6 +116,7 @@ val reflectShadowJar by task<ShadowJar> {
     exclude("**/*.proto")
 
     if (kotlinBuildProperties.relocation) {
+        mergeServiceFiles()
         transform(KotlinModuleShadowTransformer(logger))
         relocate("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
         relocate("javax.inject", "kotlin.reflect.jvm.internal.impl.javax.inject")
