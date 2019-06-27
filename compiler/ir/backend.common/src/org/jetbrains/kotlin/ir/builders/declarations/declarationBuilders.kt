@@ -32,9 +32,9 @@ fun IrClassBuilder.buildClass(): IrClass {
     }
 }
 
-inline fun buildClass(b: IrClassBuilder.() -> Unit) =
+inline fun buildClass(builder: IrClassBuilder.() -> Unit) =
     IrClassBuilder().run {
-        b()
+        builder()
         buildClass()
     }
 
@@ -50,14 +50,14 @@ fun IrFieldBuilder.buildField(): IrField {
     }
 }
 
-inline fun buildField(b: IrFieldBuilder.() -> Unit) =
+inline fun buildField(builder: IrFieldBuilder.() -> Unit) =
     IrFieldBuilder().run {
-        b()
+        builder()
         buildField()
     }
 
-inline fun IrDeclarationContainer.addField(b: IrFieldBuilder.() -> Unit) =
-    buildField(b).also { field ->
+inline fun IrDeclarationContainer.addField(builder: IrFieldBuilder.() -> Unit) =
+    buildField(builder).also { field ->
         field.parent = this
         declarations.add(field)
     }
@@ -80,32 +80,32 @@ fun IrPropertyBuilder.buildProperty(): IrProperty {
     }
 }
 
-inline fun buildProperty(b: IrPropertyBuilder.() -> Unit) =
+inline fun buildProperty(builder: IrPropertyBuilder.() -> Unit) =
     IrPropertyBuilder().run {
-        b()
+        builder()
         buildProperty()
     }
 
-inline fun IrDeclarationContainer.addProperty(b: IrPropertyBuilder.() -> Unit): IrProperty =
-    buildProperty(b).also { property ->
+inline fun IrDeclarationContainer.addProperty(builder: IrPropertyBuilder.() -> Unit): IrProperty =
+    buildProperty(builder).also { property ->
         declarations.add(property)
         property.parent = this@addProperty
     }
 
-inline fun IrProperty.addGetter(b: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
+inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
     IrFunctionBuilder().run {
         name = Name.special("<get-${this@addGetter.name}>")
-        b()
+        builder()
         buildFun().also { getter ->
             this@addGetter.getter = getter
             getter.parent = this@addGetter.parent
         }
     }
 
-inline fun IrProperty.addSetter(b: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
+inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
     IrFunctionBuilder().run {
         name = Name.special("<set-${this@addSetter.name}>")
-        b()
+        builder()
         buildFun().also { setter ->
             this@addSetter.setter = setter
             setter.parent = this@addSetter.parent
@@ -145,20 +145,20 @@ fun IrFunctionBuilder.buildConstructor(): IrConstructor {
  * potentially external function (e.g. in an IrCall) we have to ensure that we keep
  * information from the original descriptor so as not to break inlining.
  */
-inline fun buildFunWithDescriptorForInlining(originalDescriptor: FunctionDescriptor, b: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun buildFunWithDescriptorForInlining(originalDescriptor: FunctionDescriptor, builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
     IrFunctionBuilder().run {
-        b()
+        builder()
         buildFun(originalDescriptor)
     }
 
-inline fun buildFun(b: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun buildFun(builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
     IrFunctionBuilder().run {
-        b()
+        builder()
         buildFun()
     }
 
-inline fun IrDeclarationContainer.addFunction(b: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
-    buildFun(b).also { function ->
+inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
+    buildFun(builder).also { function ->
         declarations.add(function)
         function.parent = this@addFunction
     }
@@ -179,15 +179,15 @@ fun IrDeclarationContainer.addFunction(
         }
     }
 
-inline fun buildConstructor(b: IrFunctionBuilder.() -> Unit): IrConstructor =
+inline fun buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructor =
     IrFunctionBuilder().run {
-        b()
+        builder()
         buildConstructor()
     }
 
-inline fun IrClass.addConstructor(b: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
+inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
     buildConstructor {
-        b()
+        builder()
         returnType = defaultType
     }.also { constructor ->
         declarations.add(constructor)
@@ -205,15 +205,15 @@ fun IrValueParameterBuilder.build(): IrValueParameter {
     }
 }
 
-inline fun buildValueParameter(b: IrValueParameterBuilder.() -> Unit): IrValueParameter =
+inline fun buildValueParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
-        b()
+        builder()
         build()
     }
 
-inline fun IrFunction.addValueParameter(b: IrValueParameterBuilder.() -> Unit): IrValueParameter =
+inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
-        b()
+        builder()
         if (index == UNDEFINED_PARAMETER_INDEX) {
             index = valueParameters.size
         }
@@ -230,9 +230,9 @@ fun IrFunction.addValueParameter(name: String, type: IrType, origin: IrDeclarati
         this.origin = origin
     }
 
-inline fun IrSimpleFunction.addDispatchReceiver(b: IrValueParameterBuilder.() -> Unit): IrValueParameter =
+inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
-        b()
+        builder()
         index = -1
         name = "this".synthesizedName
         build().also { receiver ->
@@ -241,9 +241,9 @@ inline fun IrSimpleFunction.addDispatchReceiver(b: IrValueParameterBuilder.() ->
         }
     }
 
-inline fun IrSimpleFunction.addExtensionReceiver(b: IrValueParameterBuilder.() -> Unit): IrValueParameter =
+inline fun IrSimpleFunction.addExtensionReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
-        b()
+        builder()
         index = -1
         name = "receiver".synthesizedName
         build().also { receiver ->
@@ -270,9 +270,9 @@ fun IrTypeParameterBuilder.build(): IrTypeParameter {
     }
 }
 
-inline fun IrTypeParametersContainer.addTypeParameter(b: IrTypeParameterBuilder.() -> Unit): IrTypeParameter =
+inline fun IrTypeParametersContainer.addTypeParameter(builder: IrTypeParameterBuilder.() -> Unit): IrTypeParameter =
     IrTypeParameterBuilder().run {
-        b()
+        builder()
         if (index == UNDEFINED_PARAMETER_INDEX) {
             index = typeParameters.size
         }
