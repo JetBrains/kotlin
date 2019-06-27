@@ -150,7 +150,7 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
 
   @Override
   public void enhanceTaskProcessing(@NotNull List<String> taskNames,
-                                    @Nullable String jvmAgentSetup,
+                                    @Nullable String jvmParametersSetup,
                                     @NotNull Consumer<String> initScriptConsumer,
                                     boolean testExecutionExpected) {
 

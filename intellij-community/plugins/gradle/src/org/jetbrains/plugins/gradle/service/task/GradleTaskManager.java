@@ -70,11 +70,11 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
                            @NotNull final List<String> taskNames,
                            @NotNull String projectPath,
                            @Nullable GradleExecutionSettings settings,
-                           @Nullable final String jvmAgentSetup,
+                           @Nullable final String jvmParametersSetup,
                            @NotNull final ExternalSystemTaskNotificationListener listener) throws ExternalSystemException {
     if (ExternalSystemApiUtil.isInProcessMode(GradleConstants.SYSTEM_ID)) {
       for (GradleTaskManagerExtension gradleTaskManagerExtension : GradleTaskManagerExtension.EP_NAME.getExtensions()) {
-        if (gradleTaskManagerExtension.executeTasks(id, taskNames, projectPath, settings, jvmAgentSetup, listener)) {
+        if (gradleTaskManagerExtension.executeTasks(id, taskNames, projectPath, settings, jvmParametersSetup, listener)) {
           return;
         }
       }
@@ -83,7 +83,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
     GradleExecutionSettings effectiveSettings =
       settings == null ? new GradleExecutionSettings(null, null, DistributionType.BUNDLED, false) : settings;
 
-    ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmAgentSetup);
+    ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmParametersSetup);
     if (forkedDebuggerSetup != null && isGradleScriptDebug(settings)) {
       effectiveSettings.withVmOption(forkedDebuggerSetup.getJvmAgentSetup(isJdk9orLater(effectiveSettings.getJavaHome())));
     }
@@ -92,7 +92,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
     myCancellationMap.put(id, cancellationTokenSource);
     Function<ProjectConnection, Void> f = connection -> {
       try {
-        appendInitScriptArgument(taskNames, jvmAgentSetup, effectiveSettings);
+        appendInitScriptArgument(taskNames, jvmParametersSetup, effectiveSettings);
         try {
           for (GradleBuildParticipant buildParticipant : effectiveSettings.getExecutionWorkspace().getBuildParticipants()) {
             effectiveSettings.withArguments(GradleConstants.INCLUDE_BUILD_CMD_OPTION, buildParticipant.getProjectPath());
@@ -163,7 +163,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
   }
 
   public static void appendInitScriptArgument(@NotNull List<String> taskNames,
-                                              @Nullable String jvmAgentSetup,
+                                              @Nullable String jvmParametersSetup,
                                               @NotNull GradleExecutionSettings effectiveSettings) {
     final List<String> initScripts = new ArrayList<>();
     final GradleProjectResolverExtension projectResolverChain = GradleProjectResolver.createProjectResolverChain(effectiveSettings);
@@ -181,7 +181,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
         }
       };
       boolean isTestExecution = Boolean.TRUE == effectiveSettings.getUserData(GradleConstants.RUN_TASK_AS_TEST);
-      resolverExtension.enhanceTaskProcessing(taskNames, jvmAgentSetup, initScriptConsumer, isTestExecution);
+      resolverExtension.enhanceTaskProcessing(taskNames, jvmParametersSetup, initScriptConsumer, isTestExecution);
     }
 
     if (!initScripts.isEmpty()) {

@@ -44,7 +44,7 @@ public interface RemoteExternalSystemTaskManager<S extends ExternalSystemExecuti
                                @NotNull List<String> taskNames,
                                @NotNull String projectPath,
                                @Nullable ExternalSystemExecutionSettings settings,
-                               @Nullable String jvmAgentSetup) throws ExternalSystemException {
+                               @Nullable String jvmParametersSetup) throws ExternalSystemException {
       }
 
       @Override
@@ -83,15 +83,15 @@ public interface RemoteExternalSystemTaskManager<S extends ExternalSystemExecuti
                             @Nullable S settings,
                             @NotNull List<String> vmOptions,
                             @NotNull List<String> scriptParameters,
-                            @Nullable String jvmAgentSetup) throws RemoteException, ExternalSystemException {
+                            @Nullable String jvmParametersSetup) throws RemoteException, ExternalSystemException {
   }
 
   default void executeTasks(@NotNull ExternalSystemTaskId id,
                             @NotNull List<String> taskNames,
                             @NotNull String projectPath,
                             @Nullable S settings,
-                            @Nullable String jvmAgentSetup) throws RemoteException, ExternalSystemException {
-    executeTasks(id, taskNames, projectPath, settings, Collections.emptyList(), Collections.emptyList(), jvmAgentSetup);
+                            @Nullable String jvmParametersSetup) throws RemoteException, ExternalSystemException {
+    executeTasks(id, taskNames, projectPath, settings, Collections.emptyList(), Collections.emptyList(), jvmParametersSetup);
   }
 
   @Override

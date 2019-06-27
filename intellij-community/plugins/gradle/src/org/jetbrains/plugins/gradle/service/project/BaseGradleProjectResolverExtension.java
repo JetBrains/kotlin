@@ -34,6 +34,7 @@ import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.text.CharArrayUtil;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
@@ -820,20 +821,22 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
   @Override
   public void enhanceTaskProcessing(@NotNull List<String> taskNames,
-                                    @Nullable String jvmAgentSetup,
+                                    @Nullable String jvmParametersSetup,
                                     @NotNull Consumer<String> initScriptConsumer) {
-    if (!StringUtil.isEmpty(jvmAgentSetup)) {
-      ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmAgentSetup);
+    if (!StringUtil.isEmpty(jvmParametersSetup)) {
+      ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmParametersSetup);
       if (forkedDebuggerSetup != null) {
         setupDebugForAllJvmForkedTasks(initScriptConsumer, forkedDebuggerSetup.getForkSocketPort());
       }
       else {
         final String names = "[\"" + StringUtil.join(taskNames, "\", \"") + "\"]";
+        final String jvmArgs = Arrays.stream(ParametersListUtil.parseToArray(jvmParametersSetup))
+          .map(s -> '\'' + s.trim().replace("\\", "\\\\") + '\'').collect(Collectors.joining(" << "));
         final String[] lines = {
           "gradle.taskGraph.beforeTask { Task task ->",
           "    if (task instanceof JavaForkOptions && (" + names + ".contains(task.name) || " + names + ".contains(task.path))) {",
           "        def jvmArgs = task.jvmArgs.findAll{!it?.startsWith('-agentlib:jdwp') && !it?.startsWith('-Xrunjdwp')}",
-          "        jvmArgs << '" + jvmAgentSetup.trim().replace("\\", "\\\\") + '\'',
+          "        jvmArgs << " + jvmArgs,
           "        task.jvmArgs = jvmArgs",
           "    }" +
           "}",
