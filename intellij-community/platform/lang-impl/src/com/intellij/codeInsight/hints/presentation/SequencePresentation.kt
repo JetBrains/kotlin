@@ -9,16 +9,12 @@ import java.awt.Point
 import java.awt.Rectangle
 import java.awt.event.MouseEvent
 
-class SequencePresentation : BasePresentation {
-  val presentations: List<InlayPresentation>
-  constructor(vararg presentations: InlayPresentation): this(listOf(*presentations))
-  constructor(presentations: List<InlayPresentation>) : super() {
-    this.presentations = presentations
+class SequencePresentation(val presentations: List<InlayPresentation>) : BasePresentation() {
+  init {
     if (presentations.isEmpty()) throw IllegalArgumentException()
     for (presentation in presentations) {
       presentation.addListener(InternalListener(presentation))
     }
-    calcDimensions()
   }
 
   fun calcDimensions() {
@@ -28,6 +24,9 @@ class SequencePresentation : BasePresentation {
 
   override var width: Int = 0
   override var height: Int = 0
+  init {
+    calcDimensions()
+  }
 
   private var presentationUnderCursor: InlayPresentation? = null
 
