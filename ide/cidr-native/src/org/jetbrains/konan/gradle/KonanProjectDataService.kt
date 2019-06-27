@@ -69,22 +69,21 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
             // this is necessary to avoid polluting run configurations drop-down with too many choices
             it.baseBuildTarget ?: it
         }.forEach { buildTarget ->
-            var configuration =
+            val templateConfiguration =
                     gradleAppRunConfigurationType.factory.createTemplateConfiguration(project) as GradleKonanAppRunConfiguration
-            configurationProducer.setupTarget(configuration, listOf(buildTarget))
-            val suggestedName = configuration.suggestedName()
-            if (suggestedName == null || runManager.findConfigurationByTypeAndName(
-                            gradleAppRunConfigurationType,
-                            suggestedName
-                    ) != null
-            ) {
+            configurationProducer.setupTarget(templateConfiguration, listOf(buildTarget))
+
+            val suggestedName = templateConfiguration.suggestedName() ?: return@forEach
+
+            if (runManager.findConfigurationByTypeAndName(gradleAppRunConfigurationType, suggestedName) != null) {
                 return@forEach
             }
 
             val runConfiguration = runManager.createConfiguration(suggestedName, gradleAppRunConfigurationType.factory)
-            configuration = runConfiguration.configuration as GradleKonanAppRunConfiguration
+            val configuration = runConfiguration.configuration as GradleKonanAppRunConfiguration
             configuration.name = suggestedName
             configurationProducer.setupTarget(configuration, listOf(buildTarget))
+
             runManager.addConfiguration(runConfiguration)
             if (runConfigurationToSelect == null) {
                 runConfigurationToSelect = runConfiguration
