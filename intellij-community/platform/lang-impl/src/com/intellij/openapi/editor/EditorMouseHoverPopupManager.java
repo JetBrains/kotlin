@@ -27,6 +27,8 @@ import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.JBPopupListener;
+import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
@@ -50,6 +52,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
@@ -102,7 +105,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         myCurrentProgress = null;
         if (info != null && !EditorMouseHoverPopupControl.arePopupsDisabled(editor) && editor.getContentComponent().isShowing()) {
           ActionCallback hideCallback = new ActionCallback();
-          JComponent component = info.createComponent(editor, hideCallback::setDone);
+          JComponent component = info.createComponent(editor, hideCallback);
           if (component == null) {
             closeHint();
           }
@@ -143,7 +146,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       .createComponentPopupBuilder(wrapper, component)
       .setResizable(true)
       .createPopup();
-    cancelPopupWhenRequested(hideCallback, popup);
+    bindPopupHiding(popup, hideCallback);
     return popup;
   }
 
@@ -154,21 +157,46 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       wrapper.removeAll();
       wrapper.add(component, BorderLayout.CENTER);
       popup.pack(true, true);
-      cancelPopupWhenRequested(hideCallback, popup);
+      bindPopupHiding(popup, hideCallback);
     }
   }
 
-  private static void cancelPopupWhenRequested(ActionCallback hideCallback, JBPopup popup) {
+  private static void bindPopupHiding(JBPopup popup, ActionCallback hideCallback) {
+    AtomicBoolean inProcess = new AtomicBoolean();
     hideCallback.doWhenDone(() -> {
-      popup.cancel();
-      IdeEventQueue eventQueue = IdeEventQueue.getInstance();
-      AWTEvent currentEvent = eventQueue.getTrueCurrentEvent();
-      if (currentEvent instanceof MouseEvent && currentEvent.getID() == MouseEvent.MOUSE_PRESSED) { // e.g. on link activation
-        // this is to prevent mouse released (and dragged, dispatched due to some reason) event to be dispatched into editor
-        // alternative solution would be to activate links on mouse release, not on press
-        eventQueue.blockNextEvents((MouseEvent)currentEvent);
+      if (inProcess.compareAndSet(false, true)) {
+        try {
+          popup.cancel();
+          blockFurtherMouseEvents();
+        }
+        finally {
+          inProcess.set(true);
+        }
       }
     });
+    popup.addListener(new JBPopupListener() {
+      @Override
+      public void onClosed(@NotNull LightweightWindowEvent event) {
+        if (inProcess.compareAndSet(false, true)) {
+          try {
+            hideCallback.setDone();
+          }
+          finally {
+            inProcess.set(false);
+          }
+        }
+      }
+    });
+  }
+
+  private static void blockFurtherMouseEvents() {
+    IdeEventQueue eventQueue = IdeEventQueue.getInstance();
+    AWTEvent currentEvent = eventQueue.getTrueCurrentEvent();
+    if (currentEvent instanceof MouseEvent && currentEvent.getID() == MouseEvent.MOUSE_PRESSED) { // e.g. on link activation
+      // this is to prevent mouse released (and dragged, dispatched due to some reason) event to be dispatched into editor
+      // alternative solution would be to activate links on mouse release, not on press
+      eventQueue.blockNextEvents((MouseEvent)currentEvent);
+    }
   }
 
   private static int getTargetOffset(EditorMouseEvent event) {
@@ -323,8 +351,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       this.quickDocMessage = quickDocMessage;
     }
 
-    private JComponent createComponent(Editor editor, Runnable hide) {
-      JComponent c1 = createHighlightInfoComponent(editor, highlightInfo, quickDocMessage == null, hide);
+    private JComponent createComponent(Editor editor, ActionCallback hideCallback) {
+      JComponent c1 = createHighlightInfoComponent(editor, highlightInfo, quickDocMessage == null, hideCallback);
       JComponent c2 = createQuickDocComponent(editor, quickDocMessage, c1 != null);
       if (c1 == null && c2 == null) return null;
       JPanel p = new JPanel(new GridBagLayout());
@@ -338,7 +366,10 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       return p;
     }
 
-    private static JComponent createHighlightInfoComponent(Editor editor, HighlightInfo info, boolean highlightActions, Runnable hide) {
+    private static JComponent createHighlightInfoComponent(Editor editor,
+                                                           HighlightInfo info,
+                                                           boolean highlightActions,
+                                                           ActionCallback hideCallback) {
       if (info == null) return null;
       TooltipAction action = TooltipActionProvider.calcTooltipAction(info, editor);
       ErrorStripTooltipRendererProvider provider = ((EditorMarkupModel)editor.getMarkupModel()).getErrorStripTooltipRendererProvider();
@@ -347,8 +378,32 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       LightweightHint hint = ((LineTooltipRenderer)tooltipRenderer).createHint(editor, new Point(), false, EDITOR_INFO_GROUP,
                                                                                new HintHint().setAwtTooltip(true), highlightActions);
       if (hint == null) return null;
-      hint.addHintListener(e -> hide.run());
+      bindHintHiding(hint, hideCallback);
       return hint.getComponent();
+    }
+
+    private static void bindHintHiding(LightweightHint hint, ActionCallback hideCallback) {
+      AtomicBoolean inProcess = new AtomicBoolean();
+      hint.addHintListener(e -> {
+        if (inProcess.compareAndSet(false, true)) {
+          try {
+            hideCallback.setDone();
+          }
+          finally {
+            inProcess.set(false);
+          }
+        }
+      });
+      hideCallback.doWhenDone(() -> {
+        if (inProcess.compareAndSet(false, true)) {
+          try {
+            hint.hide();
+          }
+          finally {
+            inProcess.set(false);
+          }
+        }
+      });
     }
 
     @Nullable
