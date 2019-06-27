@@ -59,15 +59,20 @@ class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
                 else if (entry.shortName?.identifier == "Composable") return true
             }
         }
-        if(diagnostic.factory == Errors.NAMED_ARGUMENTS_NOT_ALLOWED) {
+        if (diagnostic.factory == Errors.NAMED_ARGUMENTS_NOT_ALLOWED) {
             val functionCall = diagnostic.psiElement.parent.parent.parent.parent as KtExpression
-            if(bindingContext != null) {
-                val call = (diagnostic.psiElement.parent.parent.parent.parent as KtCallExpression).getCall(bindingContext).getResolvedCall(bindingContext)
-                val temporaryTrace = TemporaryBindingTrace.create(BindingTraceContext.createTraceableBindingTrace(), "trace to resolve ktx call", functionCall)
-                if(call != null) return ComposableAnnotationChecker.get(
+            if (bindingContext != null) {
+                val call = (diagnostic.psiElement.parent.parent.parent.parent as KtCallExpression)
+                    .getCall(bindingContext).getResolvedCall(bindingContext)
+                val temporaryTrace = TemporaryBindingTrace.create(
+                    BindingTraceContext.createTraceableBindingTrace(),
+                    "trace to resolve ktx call",
+                    functionCall
+                )
+                if (call != null) return ComposableAnnotationChecker.get(
                     diagnostic.psiElement.project
                 ).shouldInvokeAsTag(temporaryTrace, call)
-                return false;
+                return false
             }
         }
         return false

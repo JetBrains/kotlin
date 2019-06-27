@@ -123,7 +123,8 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
         )
         MAP.put(
             ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,
-            "Functions which invoke @Composable functions must be marked with the @Composable annotation"
+            "Functions which invoke @Composable functions must be marked with the @Composable " +
+                    "annotation"
         )
         MAP.put(
             ComposeErrors.UNRESOLVED_TAG,
