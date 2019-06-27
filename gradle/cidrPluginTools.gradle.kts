@@ -56,7 +56,7 @@ val pluginXmlPath = "META-INF/plugin.xml"
 
 val javaApiArtifacts = listOf("java-api", "java-impl")
 
-val javaPluginId = "com.intellij.java"
+val javaPluginId = "com.intellij.kotlinNative.platformDeps"
 
 val Project.isStandaloneBuild: Boolean
     get() = rootProject.findProject(":idea") == null
@@ -680,7 +680,7 @@ fun Copy.applyCidrVersionRestrictions(
     val javaPluginDependency = if (useJavaPlugin)
         """
         |
-        |  <depends>com.intellij.java</depends>
+        |  <depends>$javaPluginId</depends>
         |  <xi:include href="/META-INF/JavaForCIDRActionPatcher.xml" xpointer="xpointer(/idea-plugin/*)"/>
         """.trimMargin().trimStart()
     else
