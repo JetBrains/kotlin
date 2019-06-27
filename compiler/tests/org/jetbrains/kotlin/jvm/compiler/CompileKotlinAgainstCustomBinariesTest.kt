@@ -77,11 +77,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     private fun analyzeAndGetAllDescriptors(vararg extraClassPath: File): Collection<DeclarationDescriptor> =
         DescriptorUtils.getAllDescriptors(analyzeFileToPackageView(*extraClassPath).memberScope)
 
-    private fun doTestBrokenLibrary(libraryName: String, vararg pathsToDelete: String) {
+    private fun doTestBrokenLibrary(libraryName: String, vararg pathsToDelete: String, additionalOptions: List<String> = emptyList()) {
         // This function compiles a library, then deletes one class file and attempts to compile a Kotlin source against
         // this broken library. The expected result is an error message from the compiler
         val library = copyJarFileWithoutEntry(compileLibrary(libraryName), *pathsToDelete)
-        compileKotlin("source.kt", tmpdir, listOf(library))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = additionalOptions)
     }
 
     private fun doTestKotlinLibraryWithWrongMetadataVersion(
@@ -213,6 +213,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testMissingDependencyNestedAnnotation() {
         doTestBrokenLibrary("library", "a/A\$Anno.class")
+    }
+
+    fun testMissingDependencyNestedAnnotationIr() {
+        doTestBrokenLibrary("library", "a/A\$Anno.class", additionalOptions = listOf("-Xuse-ir"))
     }
 
     fun testMissingDependencyConflictingLibraries() {
