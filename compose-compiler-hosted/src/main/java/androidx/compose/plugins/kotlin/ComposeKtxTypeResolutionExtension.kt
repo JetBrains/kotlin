@@ -52,6 +52,10 @@ class ComposeKtxTypeResolutionExtension : KtxTypeResolutionExtension {
 
         temporaryForKtxCall.commit()
 
-        context.trace.record(ComposeWritableSlices.RESOLVED_KTX_CALL, element, resolvedKtxElementCall)
+        context.trace.record(
+            ComposeWritableSlices.RESOLVED_KTX_CALL,
+            element,
+            resolvedKtxElementCall
+        )
     }
 }

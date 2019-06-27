@@ -39,15 +39,22 @@ import androidx.compose.plugins.kotlin.frames.analysis.FramePackageAnalysisHandl
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 
 object ComposeConfigurationKeys {
-    val COMPOSABLE_CHECKER_MODE_KEY = CompilerConfigurationKey<ComposableAnnotationChecker.Mode>("@composable checker mode")
+    val COMPOSABLE_CHECKER_MODE_KEY = CompilerConfigurationKey<ComposableAnnotationChecker.Mode>(
+        "@composable checker mode"
+    )
 }
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
 
     companion object {
         val PLUGIN_ID = "androidx.compose.plugins.kotlin"
-        val SYNTAX_OPTION = CliOption("syntax", "<ktx_checked|ktx_strict|ktx_pedantic|fcs>", "@composable syntax checker mode",
-                                      required = false, allowMultipleOccurrences = false)
+        val SYNTAX_OPTION = CliOption(
+            "syntax",
+            "<ktx_checked|ktx_strict|ktx_pedantic|fcs>",
+            "@composable syntax checker mode",
+            required = false,
+            allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId =
@@ -62,8 +69,15 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
     ) =
         throw CliOptionProcessingException("Unknown option: ${option.optionName}")
 
-    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        SYNTAX_OPTION -> configuration.put(COMPOSABLE_CHECKER_MODE_KEY, ComposableAnnotationChecker.Mode.valueOf(value.toUpperCase()))
+    override fun processOption(
+        option: AbstractCliOption,
+        value: String,
+        configuration: CompilerConfiguration
+    ) = when (option) {
+        SYNTAX_OPTION -> configuration.put(
+            COMPOSABLE_CHECKER_MODE_KEY,
+            ComposableAnnotationChecker.Mode.valueOf(value.toUpperCase())
+        )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }

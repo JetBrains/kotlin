@@ -87,37 +87,89 @@ import org.jetbrains.kotlin.psi2ir.generators.getResolvedCall
 
 class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
-    override fun visitKtxElement(statementGenerator: StatementGenerator, element: KtxElement): IrStatement {
-        val resolvedKtxCall = statementGenerator.context.bindingContext.get(ComposeWritableSlices.RESOLVED_KTX_CALL, element)
-            ?: error("KTX Element encountered without a resolved KTX call. Something must have gone wrong in type resolution.")
-        val openTagName = element.simpleTagName ?: element.qualifiedTagName ?: error("malformed element")
-        return visitResolvedKtx(element.startOffset, element.endOffset, element.body, statementGenerator, resolvedKtxCall, openTagName)
+    override fun visitKtxElement(
+        statementGenerator: StatementGenerator,
+        element: KtxElement
+    ): IrStatement {
+        val resolvedKtxCall = statementGenerator.context.bindingContext.get(
+            ComposeWritableSlices.RESOLVED_KTX_CALL,
+            element
+        ) ?: error(
+            "KTX Element encountered without a resolved KTX call. Something must have gone wrong " +
+                    "in type resolution."
+        )
+        val openTagName =
+            element.simpleTagName ?: element.qualifiedTagName ?: error("malformed element")
+        return visitResolvedKtx(
+            element.startOffset,
+            element.endOffset,
+            element.body,
+            statementGenerator,
+            resolvedKtxCall,
+            openTagName
+        )
     }
 
-    override fun visitCallExpression(statementGenerator: StatementGenerator, element: KtCallExpression): IrExpression? {
-        val resolvedCall = statementGenerator.getResolvedCall(element) ?: return ErrorExpressionGenerator(statementGenerator).generateErrorCall(element)
+    override fun visitCallExpression(
+        statementGenerator: StatementGenerator,
+        element: KtCallExpression
+    ): IrExpression? {
+        val resolvedCall = statementGenerator.getResolvedCall(element)
+            ?: return ErrorExpressionGenerator(statementGenerator).generateErrorCall(element)
 
         val descriptor = resolvedCall.candidateDescriptor
-        if (descriptor !is ComposeCallResolutionInterceptorExtension.ComposableInvocationDescriptor) return null
+        if (descriptor !is ComposeCallResolutionInterceptorExtension.ComposableInvocationDescriptor)
+            return null
         val resolvedKtxCall = descriptor.ktxCall
         val openTagName = (element as? KtCallExpression)?.calleeExpression ?: element
-        val body = ((resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?)?.bodyExpression?.statements
-        return visitResolvedKtx(element.startOffset, element.endOffset, body, statementGenerator, resolvedKtxCall, openTagName)
+        val body = (
+                (resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?
+        )?.bodyExpression?.statements
+        return visitResolvedKtx(
+            element.startOffset,
+            element.endOffset,
+            body,
+            statementGenerator,
+            resolvedKtxCall,
+            openTagName
+        )
     }
 
-    override fun visitSimpleNameExpression(statementGenerator: StatementGenerator, element: KtSimpleNameExpression): IrExpression? {
-        if(true) return null
+    override fun visitSimpleNameExpression(
+        statementGenerator: StatementGenerator,
+        element: KtSimpleNameExpression
+    ): IrExpression? {
+        if (true) return null
         val resolvedCall = statementGenerator.getResolvedCall(element) ?: return null
 
         val descriptor = resolvedCall.candidateDescriptor
-        if (descriptor !is ComposeCallResolutionInterceptorExtension.ComposableInvocationDescriptor) return null
+        if (descriptor !is
+                    ComposeCallResolutionInterceptorExtension.ComposableInvocationDescriptor) {
+            return null
+        }
         val resolvedKtxCall = descriptor.ktxCall
         val openTagName = (element as? KtCallExpression)?.calleeExpression ?: element
-        val body = ((resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?)?.bodyExpression?.statements
-        return visitResolvedKtx(element.startOffset, element.endOffset, body, statementGenerator, resolvedKtxCall, openTagName)
+        val body = (
+                (resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?
+        )?.bodyExpression?.statements
+        return visitResolvedKtx(
+            element.startOffset,
+            element.endOffset,
+            body,
+            statementGenerator,
+            resolvedKtxCall,
+            openTagName
+        )
     }
 
-    fun visitResolvedKtx(startOffset: Int, endOffset: Int, body: List<KtExpression>?, statementGenerator: StatementGenerator, resolvedKtxCall: ResolvedKtxElementCall, openTagName: KtExpression): IrExpression {
+    fun visitResolvedKtx(
+        startOffset: Int,
+        endOffset: Int,
+        body: List<KtExpression>?,
+        statementGenerator: StatementGenerator,
+        resolvedKtxCall: ResolvedKtxElementCall,
+        openTagName: KtExpression
+    ): IrExpression {
 
         val irBuiltIns = statementGenerator.context.irBuiltIns
 

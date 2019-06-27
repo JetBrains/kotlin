@@ -575,7 +575,7 @@ open class GeneratedViewClassDescriptor(val metadata: ComponentMetadata) : Class
         for (property in metadata.getAttributeDescriptors()) {
 
             val unitType: SimpleType = this.builtIns.unitType
-            val methodName = "set"+property.name.identifier.substring(0, 1).toUpperCase() +
+            val methodName = "set" + property.name.identifier.substring(0, 1).toUpperCase() +
                     property.name.identifier.substring(1)
             val newMethod = SimpleFunctionDescriptorImpl.create(
                 this,
