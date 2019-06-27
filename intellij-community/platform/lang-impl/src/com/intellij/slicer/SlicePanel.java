@@ -143,7 +143,7 @@ public abstract class SlicePanel extends JPanel implements TypeSafeDataProvider,
 
     add(createToolbar().getComponent(), BorderLayout.WEST);
 
-    myTree.getParent().setBackground(UIManager.getColor("Tree.background"));
+    myTree.getParent().setBackground(UIUtil.getTreeBackground());
 
     revalidate();
   }
