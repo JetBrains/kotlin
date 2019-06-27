@@ -261,12 +261,12 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
     public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
       if (myProject.isDisposed()) return null;
 
-      String jvmAgentSetup = getJvmAgentSetup();
+      String jvmParametersSetup = getJvmParametersSetup();
 
       ApplicationManager.getApplication().assertIsDispatchThread();
       FileDocumentManager.getInstance().saveAllDocuments();
 
-      final ExternalSystemExecuteTaskTask task = new ExternalSystemExecuteTaskTask(myProject, mySettings, jvmAgentSetup);
+      final ExternalSystemExecuteTaskTask task = new ExternalSystemExecuteTaskTask(myProject, mySettings, jvmParametersSetup);
       copyUserDataTo(task);
 
       final String executionName = StringUtil.isNotEmpty(mySettings.getExecutionName())
@@ -404,32 +404,33 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
     }
 
     @Nullable
-    private String getJvmAgentSetup() throws ExecutionException {
+    private String getJvmParametersSetup() throws ExecutionException {
       final SimpleJavaParameters extensionsJP = new SimpleJavaParameters();
       EP_NAME.forEachExtensionSafe(
         extension -> extension.updateVMParameters(myConfiguration, extensionsJP, myEnv.getRunnerSettings(), myEnv.getExecutor()));
-      String jvmAgentSetup;
+      String jvmParametersSetup;
       if (myDebugPort > 0) {
-        jvmAgentSetup = DEBUG_SETUP_PREFIX + myDebugPort;
+        jvmParametersSetup = DEBUG_SETUP_PREFIX + myDebugPort;
         if (getForkSocket() != null) {
-          jvmAgentSetup += (" " + DEBUG_FORK_SOCKET_PARAM + getForkSocket().getLocalPort());
+          jvmParametersSetup += (" " + DEBUG_FORK_SOCKET_PARAM + getForkSocket().getLocalPort());
         }
       }
       else {
-        ParametersList parametersList = extensionsJP.getVMParametersList();
+        final ParametersList allVMParameters = new ParametersList();
         final ParametersList data = myEnv.getUserData(ExternalSystemTaskExecutionSettings.JVM_AGENT_SETUP_KEY);
         if (data != null) {
-          parametersList.addAll(data.getList());
+          for (String parameter : data.getList()) {
+            if (parameter.startsWith("-agentlib:")) continue;
+            if (parameter.startsWith("-agentpath:")) continue;
+            if (parameter.startsWith("-javaagent:")) continue;
+            throw new ExecutionException(ExternalSystemBundle.message("run.invalid.jvm.agent.configuration", parameter));
+          }
+          allVMParameters.addAll(data.getParameters());
         }
-        for (String parameter : parametersList.getList()) {
-          if (parameter.startsWith("-agentlib:")) continue;
-          if (parameter.startsWith("-agentpath:")) continue;
-          if (parameter.startsWith("-javaagent:")) continue;
-          throw new ExecutionException(ExternalSystemBundle.message("run.invalid.jvm.agent.configuration", parameter));
-        }
-        jvmAgentSetup = parametersList.getParametersString();
+        allVMParameters.addAll(extensionsJP.getVMParametersList().getParameters());
+        jvmParametersSetup = allVMParameters.getParametersString();
       }
-      return nullize(jvmAgentSetup);
+      return nullize(jvmParametersSetup);
     }
 
     private BuildProgressListener createBuildView(ExternalSystemTaskId id,

@@ -46,9 +46,9 @@ public class ExternalSystemTaskManagerWrapper<S extends ExternalSystemExecutionS
                            @NotNull List<String> taskNames,
                            @NotNull String projectPath,
                            @Nullable S settings,
-                           @Nullable String jvmAgentSetup) throws RemoteException, ExternalSystemException {
+                           @Nullable String jvmParametersSetup) throws RemoteException, ExternalSystemException {
     try {
-      getDelegate().executeTasks(id, taskNames, projectPath, settings, jvmAgentSetup);
+      getDelegate().executeTasks(id, taskNames, projectPath, settings, jvmParametersSetup);
       myProgressManager.onSuccess(id);
     }
     catch (ExternalSystemException e) {

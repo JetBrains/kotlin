@@ -158,23 +158,23 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
   /**
    * Allows extension to contribute to init script
    * @param taskNames gradle task names to be executed
-   * @param jvmAgentSetup jvm agents configuration that will be applied to Gradle jvm
+   * @param jvmParametersSetup jvm configuration that will be applied to Gradle jvm
    * @param initScriptConsumer consumer of init script text. Must be called to add script txt
    */
-  void enhanceTaskProcessing(@NotNull List<String> taskNames, @Nullable String jvmAgentSetup, @NotNull Consumer<String> initScriptConsumer);
+  void enhanceTaskProcessing(@NotNull List<String> taskNames, @Nullable String jvmParametersSetup, @NotNull Consumer<String> initScriptConsumer);
 
   /**
    * Allows extension to contribute to init script
    * @param taskNames gradle task names to be executed
-   * @param jvmAgentSetup jvm agents configuration that will be applied to Gradle jvm
+   * @param jvmParametersSetup jvm configuration that will be applied to Gradle jvm
    * @param initScriptConsumer consumer of init script text. Must be called to add script txt
    * @param testExecutionExpected flag that shows if tasks will be treated as tests invocation by the IDE (e.g., test events are expected)
    */
   @ApiStatus.Experimental
   default void enhanceTaskProcessing(@NotNull List<String> taskNames,
-                             @Nullable String jvmAgentSetup,
+                             @Nullable String jvmParametersSetup,
                              @NotNull Consumer<String> initScriptConsumer,
                              boolean testExecutionExpected) {
-    enhanceTaskProcessing(taskNames, jvmAgentSetup, initScriptConsumer);
+    enhanceTaskProcessing(taskNames, jvmParametersSetup, initScriptConsumer);
   };
 }

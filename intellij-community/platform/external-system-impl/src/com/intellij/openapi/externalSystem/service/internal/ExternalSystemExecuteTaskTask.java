@@ -33,20 +33,20 @@ public class ExternalSystemExecuteTaskTask extends AbstractExternalSystemTask {
   @NotNull private final List<String> myTasksToExecute;
   @Nullable private final String myVmOptions;
   @Nullable private String myArguments;
-  @Nullable private final String myJvmAgentSetup;
+  @Nullable private final String myJvmParametersSetup;
   private final boolean myPassParentEnvs;
   private final Map<String, String> myEnv;
 
   public ExternalSystemExecuteTaskTask(@NotNull Project project,
                                        @NotNull ExternalSystemTaskExecutionSettings settings,
-                                       @Nullable String jvmAgentSetup) throws IllegalArgumentException {
+                                       @Nullable String jvmParametersSetup) throws IllegalArgumentException {
     super(settings.getExternalSystemId(), ExternalSystemTaskType.EXECUTE_TASK, project, settings.getExternalProjectPath());
     myTasksToExecute = ContainerUtilRt.newArrayList(settings.getTaskNames());
     myVmOptions = settings.getVmOptions();
     myArguments = settings.getScriptParameters();
     myPassParentEnvs = settings.isPassParentEnvs();
     myEnv = settings.getEnv();
-    myJvmAgentSetup = jvmAgentSetup;
+    myJvmParametersSetup = jvmParametersSetup;
   }
 
   /**
@@ -58,12 +58,12 @@ public class ExternalSystemExecuteTaskTask extends AbstractExternalSystemTask {
                                        @NotNull List<? extends ExternalTaskPojo> tasksToExecute,
                                        @Nullable String vmOptions,
                                        @Nullable String arguments,
-                                       @Nullable String jvmAgentSetup) throws IllegalArgumentException {
+                                       @Nullable String jvmParametersSetup) throws IllegalArgumentException {
     super(externalSystemId, ExternalSystemTaskType.EXECUTE_TASK, project, getLinkedExternalProjectPath(tasksToExecute));
     myTasksToExecute = ContainerUtil.map(tasksToExecute, ExternalTaskPojo::getName);
     myVmOptions = vmOptions;
     myArguments = arguments;
-    myJvmAgentSetup = jvmAgentSetup;
+    myJvmParametersSetup = jvmParametersSetup;
     myPassParentEnvs = true;
     myEnv = Collections.emptyMap();
   }
@@ -151,7 +151,7 @@ public class ExternalSystemExecuteTaskTask extends AbstractExternalSystemTask {
       throw e;
     }
 
-    taskManager.executeTasks(id, myTasksToExecute, projectPath, settings, myJvmAgentSetup);
+    taskManager.executeTasks(id, myTasksToExecute, projectPath, settings, myJvmParametersSetup);
   }
 
   @Override

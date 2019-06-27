@@ -170,7 +170,7 @@ public abstract class AbstractProjectResolverExtension implements GradleProjectR
 
   @Override
   public void enhanceTaskProcessing(@NotNull List<String> taskNames,
-                                    @Nullable String jvmAgentSetup,
+                                    @Nullable String jvmParametersSetup,
                                     @NotNull Consumer<String> initScriptConsumer) {
   }
 
