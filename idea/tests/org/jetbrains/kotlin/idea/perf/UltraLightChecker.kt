@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -31,6 +35,15 @@ object UltraLightChecker {
     fun checkClassEquivalence(file: KtFile) {
         for (ktClass in allClasses(file)) {
             checkClassEquivalence(ktClass)
+        }
+    }
+
+    fun checkForReleaseCoroutine(sourceFileText: String, module: Module) {
+        if (sourceFileText.contains("//RELEASE_COROUTINE_NEEDED")) {
+            TestCase.assertTrue(
+                "Test should be runned under language version that supports released coroutines",
+                module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+            )
         }
     }
 
