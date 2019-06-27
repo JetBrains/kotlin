@@ -390,15 +390,18 @@ fun Copy.includeProjectTemplates(sourceProject: Project) {
     inputs.property("${project.name}-$name-includeProjectTemplates-templateParameters", templateParameters)
 
     into("templates") {
+        includeEmptyDirs = false
         from(templatesDir)
         eachFile {
+            val fixedPath = path.replace("--", ":")
+
             if (sourceName in cidrProjectTemplatePatchedFiles) {
                 exclude()
 
                 try {
                     val rendered = project.renderTemplate(file, templateParameters)
 
-                    val destinationFile = destinationDir.resolve(path)
+                    val destinationFile = destinationDir.resolve(fixedPath)
                     destinationFile.parentFile.mkdirs()
                     destinationFile.writeText(rendered)
                 } catch (e: Exception) {
@@ -411,6 +414,8 @@ fun Copy.includeProjectTemplates(sourceProject: Project) {
 
                     throw e
                 }
+            } else {
+                path = fixedPath
             }
         }
     }
