@@ -67,5 +67,4 @@ val clionUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         clionPluginZipPath,
         clionCustomPluginRepoUrl,
         if (clionUseJavaPlugin) URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$clionRepo/$clionVersion/CL-plugins/java.zip") else null
-
 )
