@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
@@ -211,7 +211,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : Simp
 
             it to variable.defaultType
         }
-        val substitutor = ConeSubstitutorByMap(substitutionMap.cast())
+        val substitutor = substitutorByMap(substitutionMap.cast())
         for (typeParameter in typeParameters) {
             require(typeParameter is FirTypeParameterSymbol)
             for (upperBound in typeParameter.fir.bounds) {
