@@ -1,2 +1,3 @@
 name=CSV Parser
 openInEditor=src/CSVParserMain/kotlin/CsvParser.kt
+runtimeTemplates=build.gradle.kts

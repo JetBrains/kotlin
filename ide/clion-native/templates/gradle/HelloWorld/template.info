@@ -1,3 +1,4 @@
 name=Hello World
 openInEditor=src/HelloWorldMain/kotlin/Hello.kt
+runtimeTemplates=build.gradle.kts
 weight=-1

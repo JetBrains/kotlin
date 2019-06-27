@@ -10,7 +10,7 @@ kotlin {
     // For ARM, preset function should be changed to iosArm32() or iosArm64()
     // For Linux, preset function should be changed to e.g. linuxX64()
     // For MacOS, preset function should be changed to e.g. macosX64()
-    @@MPP_HOST_PLATFORM@@("HelloWorld") {
+    @@RUNTIME_MPP_HOST_PLATFORM@@("HelloWorld") {
         binaries {
             // Comment the next section to generate Kotlin/Native library (KLIB) instead of executable file:
             executable("HelloWorldApp") {

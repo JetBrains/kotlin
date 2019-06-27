@@ -476,7 +476,6 @@ fun Project.getTemplateParameters(): Map<String, String> {
     }
 
     return mapOf(
-            "MPP_HOST_PLATFORM" to mppPlatform,
             "MPP_GRADLE_PLUGIN_VERSION" to gradlePluginVersion,
             "MPP_CUSTOM_PLUGIN_REPOS_4S" to customPluginRepos(releaseType, kotlinBuildNumber, 4),
             "MPP_CUSTOM_PLUGIN_REPOS_8S" to customPluginRepos(releaseType, kotlinBuildNumber, 8),
@@ -499,19 +498,6 @@ val Project.kotlinBuildNumberByIdeaPlugin: String
         // take it from Big Kotlin
         val buildNumber: String by rootProject.extra
         buildNumber
-    }
-
-val hostOsName: String
-    get() = System.getProperty("os.name")!!.toLowerCase(Locale.US)
-
-// inspired by com.intellij.openapi.util.SystemInfoRt
-val mppPlatform: String
-    get() = with(hostOsName) {
-        when {
-            startsWith("windows") -> "mingwX64"
-            startsWith("mac") -> "macosX64"
-            else -> "linuxX64"
-        }
     }
 
 fun customPluginRepos(releaseType: ReleaseType, kotlinBuildNumber: String, indentSpaces: Int): String {
