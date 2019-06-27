@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -20,6 +19,7 @@ object JsAnnotations {
     val jsNonModuleFqn = FqName("kotlin.js.JsNonModule")
     val jsNameFqn = FqName("kotlin.js.JsName")
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
+    val jsExportFqn = FqName("kotlin.js.JsExport")
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -38,6 +38,8 @@ fun IrAnnotationContainer.getJsQualifier(): String? =
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
 
+fun IrAnnotationContainer.isJsExport(): Boolean =
+    hasAnnotation(JsAnnotations.jsExportFqn)
 
 fun IrDeclarationWithName.getJsNameOrKotlinName(): Name =
     when (val jsName = getJsName()) {

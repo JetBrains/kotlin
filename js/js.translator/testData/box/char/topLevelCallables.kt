@@ -1,11 +1,15 @@
 // SKIP_MINIFICATION
 @JsName("foo")
+@JsExport
 fun foo(): Char = '1'
 
+@JsExport
 val p1: Char = '2'
 
+@JsExport
 var p2: Char = '3'
 
+@JsExport
 var p3: Char = '4'
     get() = field + 1
     set(value) {

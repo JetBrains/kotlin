@@ -48,6 +48,7 @@ class JsIrBackendContext(
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
+    val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration
 ) : CommonBackendContext {
 
@@ -274,6 +275,8 @@ class JsIrBackendContext(
 
     val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
     val defaultThrowableCtor by lazy { throwableConstructors.single { it.owner.valueParameters.size == 0 } }
+
+
 
     private fun referenceOperators(): Map<Name, MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }

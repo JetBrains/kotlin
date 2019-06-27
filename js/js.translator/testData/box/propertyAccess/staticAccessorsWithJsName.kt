@@ -1,8 +1,10 @@
 // EXPECTED_REACHABLE_NODES: 1288
 
+@JsExport
 val x: Int
     @JsName("getX_") get() = 23
 
+@JsExport
 var y: Int = 0
     @JsName("getY_") get() = field + 10
     @JsName("setY_") set(value) {

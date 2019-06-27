@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -93,6 +94,9 @@ class IrModuleToJsTransformer(
             declaration.visibility != Visibilities.PUBLIC) {
             return null
         }
+
+        if (!declaration.isExported())
+            return null
 
         if (declaration.isEffectivelyExternal())
             return null
@@ -277,5 +281,29 @@ class IrModuleToJsTransformer(
             { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
             declarationHandler
         )
+    }
+
+    fun IrDeclarationWithName.isExported(): Boolean {
+        if (fqNameWhenAvailable in backendContext.additionalExportedDeclarations)
+            return true
+
+        // Hack to support properties
+        val correspondingProperty = when {
+            this is IrField -> correspondingPropertySymbol
+            this is IrSimpleFunction -> correspondingPropertySymbol
+            else -> null
+        }
+        correspondingProperty?.let {
+            return it.owner.isExported()
+        }
+
+        if (isJsExport())
+            return true
+
+        return when (val parent = parent) {
+            is IrDeclarationWithName -> parent.isExported()
+            is IrAnnotationContainer -> parent.isJsExport()
+            else -> false
+        }
     }
 }
