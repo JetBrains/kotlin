@@ -62,7 +62,7 @@ class StubSerializationHelper {
     if (myUnmodifiable) {
       id = myNameStorage.tryEnumerate(name);
       if (id == 0) {
-        LOG.info("serialized " + name + " is ignored in unmodifiable stub serialization manager");
+        LOG.debug("serialized " + name + " is ignored in unmodifiable stub serialization manager");
         return;
       }
     }
