@@ -217,7 +217,9 @@ public class DirtyScopeHolder extends UserDataHolderBase implements AsyncFileLis
 
       @Override
       public void afterVfsChange() {
-        after(events);
+        if (!myService.getProject().isDisposed()) {
+          after(events);
+        }
       }
     };
   }
