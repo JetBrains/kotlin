@@ -12,9 +12,11 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -24,11 +26,11 @@ import com.intellij.ui.EditorTextField
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import java.awt.BorderLayout
-import java.awt.GridLayout
+import java.awt.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
+import javax.swing.border.AbstractBorder
 
 // Note: old parameter hints panel is special cased as it rely on global settings, so it doesn't fit to this model,
 // but logically belongs to this settings
@@ -82,7 +84,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     initProviderList(providerSettingsPane)
 
     bottomPanel.layout = BorderLayout()
-    bottomPanel.add(withMargin(editorField), BorderLayout.CENTER)
+    bottomPanel.add(createPreviewPanel(), BorderLayout.CENTER)
     val selected = selectedProvider
     if (selected != null) {
       updateWithInlayPanel(providerSettingsPane, selected)
@@ -138,6 +140,30 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     return editorField
   }
 
+  private fun createPreviewPanel(): JPanel {
+    val previewPanel = JPanel()
+    previewPanel.layout = BorderLayout()
+    previewPanel.add(editorField, BorderLayout.CENTER)
+    previewPanel.border = object : AbstractBorder() {
+      private val LEFT_WHITE_SPACE = 2
+
+      override fun paintBorder(c: Component, g: Graphics, x: Int, y: Int, width: Int, height: Int) {
+        val editor = editorField.editor
+        if (editor is EditorEx) {
+          g.color = editor.backgroundColor
+          g.fillRect(x + 1, y, LEFT_WHITE_SPACE, height)
+        }
+        g.color = OnePixelDivider.BACKGROUND
+        g.fillRect(x, y, 1, height)
+      }
+
+      override fun getBorderInsets(c: Component?, insets: Insets): Insets {
+        insets.set(0, 1 + LEFT_WHITE_SPACE, 0, 0)
+        return insets
+      }
+    }
+    return previewPanel
+  }
   private fun collectAndDrawHints(editor: Editor, file: PsiFile) {
     val provider = selectedProvider
     // if provider == null, old parameter hints panel is current, no preview
