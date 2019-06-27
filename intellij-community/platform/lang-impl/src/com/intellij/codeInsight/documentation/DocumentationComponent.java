@@ -871,11 +871,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     });
   }
 
-  private void showHint() {
-    if (myHint == null) {
-      if (Registry.is("editor.new.mouse.hover.popups")) setPreferredSize(getOptimalSize());
-      return;
-    }
+  protected void showHint() {
+    if (myHint == null) return;
 
     setHintSize();
 

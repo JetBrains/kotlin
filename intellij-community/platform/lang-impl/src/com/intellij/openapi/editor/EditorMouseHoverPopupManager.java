@@ -285,9 +285,9 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       }
 
       String quickDocMessage = null;
+      Ref<PsiElement> targetElementRef = new Ref<>();
       if (elementForQuickDoc != null) {
         PsiElement element = getElementForQuickDoc();
-        Ref<PsiElement> targetElementRef = new Ref<>();
         QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
           if (element.isValid()) {
             targetElementRef.set(DocumentationManager.getInstance(editor.getProject()).findTargetElement(editor, targetOffset,
@@ -300,7 +300,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
           quickDocMessage = DocumentationManager.getInstance(editor.getProject()).generateDocumentation(targetElementRef.get(), element);
         }
       }
-      return info == null && quickDocMessage == null ? null : new Info(info, quickDocMessage);
+      return info == null && quickDocMessage == null ? null : new Info(info, quickDocMessage, targetElementRef.get());
     }
 
     private enum Relation {
@@ -312,18 +312,21 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
 
   private static class Info {
     private final HighlightInfo highlightInfo;
+
     private final String quickDocMessage;
+    private final WeakReference<PsiElement> quickDocElement;
 
 
-    private Info(HighlightInfo highlightInfo, String quickDocMessage) {
+    private Info(HighlightInfo highlightInfo, String quickDocMessage, PsiElement quickDocElement) {
       assert highlightInfo != null || quickDocMessage != null;
       this.highlightInfo = highlightInfo;
       this.quickDocMessage = quickDocMessage;
+      this.quickDocElement = new WeakReference<>(quickDocElement);
     }
 
     private JComponent createComponent(Editor editor, PopupBridge popupBridge) {
-      JComponent c1 = createHighlightInfoComponent(editor, highlightInfo, quickDocMessage == null, popupBridge);
-      JComponent c2 = createQuickDocComponent(editor, quickDocMessage, c1 != null);
+      JComponent c1 = createHighlightInfoComponent(editor, quickDocMessage == null, popupBridge);
+      JComponent c2 = createQuickDocComponent(editor, c1 != null, popupBridge);
       if (c1 == null && c2 == null) return null;
       JPanel p = new JPanel(new GridBagLayout());
       GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
@@ -336,14 +339,13 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       return p;
     }
 
-    private static JComponent createHighlightInfoComponent(Editor editor,
-                                                           HighlightInfo info,
-                                                           boolean highlightActions,
-                                                           PopupBridge popupBridge) {
-      if (info == null) return null;
-      TooltipAction action = TooltipActionProvider.calcTooltipAction(info, editor);
+    private JComponent createHighlightInfoComponent(Editor editor,
+                                                    boolean highlightActions,
+                                                    PopupBridge popupBridge) {
+      if (highlightInfo == null) return null;
+      TooltipAction action = TooltipActionProvider.calcTooltipAction(highlightInfo, editor);
       ErrorStripTooltipRendererProvider provider = ((EditorMarkupModel)editor.getMarkupModel()).getErrorStripTooltipRendererProvider();
-      TooltipRenderer tooltipRenderer = provider.calcTooltipRenderer(Objects.requireNonNull(info.getToolTip()), action, -1);
+      TooltipRenderer tooltipRenderer = provider.calcTooltipRenderer(Objects.requireNonNull(highlightInfo.getToolTip()), action, -1);
       if (!(tooltipRenderer instanceof LineTooltipRenderer)) return null;
       return createHighlightInfoComponent(editor, (LineTooltipRenderer)tooltipRenderer, highlightActions, popupBridge);
     }
@@ -400,16 +402,27 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     }
 
     @Nullable
-    private static JComponent createQuickDocComponent(Editor editor, String quickDocMessage, boolean deEmphasize) {
+    private JComponent createQuickDocComponent(Editor editor,
+                                               boolean deEmphasize,
+                                               PopupBridge popupBridge) {
       if (quickDocMessage == null) return null;
-      DocumentationComponent component = new DocumentationComponent(DocumentationManager.getInstance(editor.getProject()), false);
+      DocumentationComponent component = new DocumentationComponent(DocumentationManager.getInstance(editor.getProject()), false) {
+        @Override
+        protected void showHint() {
+          setPreferredSize(getOptimalSize());
+          AbstractPopup popup = popupBridge.getPopup();
+          if (popup != null) {
+            popup.pack(true, true);
+          }
+        }
+      };
       if (deEmphasize) {
         component.setBackground(UIUtil.getToolTipActionBackground());
         if (component.needsToolbar()) {
           component.setBorder(IdeBorderFactory.createBorder(SideBorder.TOP));
         }
       }
-      component.setData(null, quickDocMessage, null, null, null);
+      component.setData(quickDocElement.get(), quickDocMessage, null, null, null);
       EditorUtil.disposeWithEditor(editor, component);
       return component;
     }
