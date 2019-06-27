@@ -22,11 +22,15 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -42,6 +46,7 @@ internal val interfacePhase = makeIrFilePhase(
 private class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
 
     val state = context.state
+    val removedFunctions = hashMapOf<IrFunctionSymbol, IrFunctionSymbol>()
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isInterface) return
@@ -54,7 +59,10 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
             if (function !is IrSimpleFunction) continue
 
             if (function.modality != Modality.ABSTRACT && function.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
-                val element = context.declarationFactory.getDefaultImplsFunction(function)
+                val element = context.declarationFactory.getDefaultImplsFunction(function).also {
+                    if (shouldRemoveFunction(function))
+                        removedFunctions[function.symbol] = it.symbol
+                }
                 members.add(element)
                 element.body = function.body?.patchDeclarationParents(element)
                 if (function.hasJvmDefault() &&
@@ -69,10 +77,11 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
             }
         }
 
+        // Update IrElements (e.g., IrCalls) to point to the new functions.
         irClass.transformChildrenVoid(this)
 
         irClass.declarations.removeAll {
-            it is IrFunction && shouldRemoveFunction(it)
+            it is IrFunction && removedFunctions.containsKey(it.symbol)
         }
     }
 
@@ -85,7 +94,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
         val startOffset = interfaceMethod.startOffset
         val endOffset = interfaceMethod.endOffset
 
-        return IrCallImpl(interfaceMethod.startOffset, interfaceMethod.endOffset, interfaceMethod.returnType, defaultImpls.symbol).apply {
+        return IrCallImpl(startOffset, endOffset, interfaceMethod.returnType, defaultImpls.symbol).apply {
             passTypeArgumentsFrom(interfaceMethod)
 
             var offset = 0
@@ -99,6 +108,53 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                 putValueArgument(i + offset, IrGetValueImpl(startOffset, endOffset, it.symbol))
             }
         }
+    }
+
+    override fun visitReturn(expression: IrReturn): IrExpression {
+        val newFunction = removedFunctions[expression.returnTargetSymbol]?.owner
+        return super.visitReturn(
+            if (newFunction != null) {
+                with(expression) {
+                    IrReturnImpl(startOffset, endOffset, type, newFunction.symbol, value)
+                }
+            } else {
+                expression
+            }
+        )
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val newFunction = removedFunctions[expression.symbol]?.owner
+        return super.visitCall(
+            if (newFunction != null) {
+                irCall(expression, newFunction, dispatchReceiverAsArgument = true, extensionReceiverAsArgument = true)
+            } else {
+                expression
+            }
+        )
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        val newFunction = removedFunctions[expression.symbol]?.owner
+        return super.visitFunctionReference(
+            if (newFunction != null) {
+                with(expression) {
+                    IrFunctionReferenceImpl(
+                        startOffset,
+                        endOffset,
+                        type,
+                        newFunction.symbol,
+                        newFunction.descriptor,
+                        typeArgumentsCount,
+                        origin
+                    ).apply {
+                        copyTypeAndValueArgumentsFrom(expression, dispatchReceiverAsArgument = true, extensionReceiverAsArgument = true)
+                    }
+                }
+            } else {
+                expression
+            }
+        )
     }
 }
 
