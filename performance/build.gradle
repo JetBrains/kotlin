@@ -4,23 +4,15 @@ import org.jetbrains.kotlin.BuildRegister
 import org.jetbrains.kotlin.MPPTools
 
 buildscript {
-    ext.rootBuildDirectory = file('..')
-
-    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
-    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootProject.projectDir/gradle/kotlinGradlePlugin.gradle"
     repositories {
         maven {
             url 'https://cache-redirector.jetbrains.com/jcenter'
         }
-        maven {
-            url kotlinCompilerRepo
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
+
+def rootBuildDirectory = rootProject.projectDir
 
 task konanRun {
     subprojects.each {
