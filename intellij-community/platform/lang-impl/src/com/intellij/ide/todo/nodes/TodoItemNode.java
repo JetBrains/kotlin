@@ -43,7 +43,7 @@ public final class TodoItemNode extends BaseToDoNode<SmartTodoItemPointer> imple
     LOG.assertTrue(rangeMarker.isValid());
 
     myHighlightedRegions = ContainerUtil.createConcurrentList();
-    myAdditionalLines = new ArrayList<>();
+    myAdditionalLines = ContainerUtil.createConcurrentList();
   }
 
   @Override
