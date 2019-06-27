@@ -127,6 +127,12 @@ task installTestLibrary(type: KlibInstall) {
     dependsOn compileKonanTestLibraryHost
     klib = konanArtifacts.testLibrary.getArtifactByTarget('host')
     repo = rootProject.file(testLibraryDir)
+
+    doLast {
+        // Remove the version in build/, so that we don't link two copies.
+        def file = project.file("build/konan/libs/${project.target.name}/testLibrary.klib")
+        file.delete()
+    }
 }
 
 // Gets tests from the same Kotlin compiler build
