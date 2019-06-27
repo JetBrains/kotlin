@@ -121,6 +121,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private static final boolean ourFlattenModulesDefaults = false;
   private final Map<String, Boolean> myShowExcludedFiles = new THashMap<>();
   private static final boolean ourShowExcludedFilesDefaults = true;
+  private final Map<String, Boolean> myShowVisibilityIcons = new THashMap<>();
+  private static final boolean ourShowVisibilityIconsDefaults = false;
   private final Map<String, Boolean> myShowLibraryContents = new THashMap<>();
   private static final boolean ourShowLibraryContentsDefaults = true;
   private final Map<String, Boolean> myHideEmptyPackages = new THashMap<>();
@@ -165,6 +167,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   @NonNls private static final String ELEMENT_SHOW_MEMBERS = "showMembers";
   @NonNls private static final String ELEMENT_SHOW_MODULES = "showModules";
   @NonNls private static final String ELEMENT_SHOW_EXCLUDED_FILES = "showExcludedFiles";
+  @NonNls private static final String ELEMENT_SHOW_VISIBILITY_ICONS = "showVisibilityIcons";
   @NonNls private static final String ELEMENT_SHOW_LIBRARY_CONTENTS = "showLibraryContents";
   @NonNls private static final String ELEMENT_HIDE_EMPTY_PACKAGES = "hideEmptyPackages";
   @NonNls private static final String ELEMENT_COMPACT_DIRECTORIES = "compactDirectories";
@@ -703,6 +706,24 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     myActionGroup.addAction(new SortByTypeAction()).setAsSecondary(true);
     myActionGroup.addAction(new FoldersAlwaysOnTopAction()).setAsSecondary(true);
     myActionGroup.addAction(ShowExcludedFilesAction.INSTANCE).setAsSecondary(true);
+
+    myActionGroup.addAction(new PaneOptionAction(myShowVisibilityIcons,
+                                                 IdeBundle.message("action.show.visibility.icons.text"),
+                                                 IdeBundle.message("action.show.visibility.icons.description"),
+                                                 null, ourShowVisibilityIconsDefaults) {
+
+      @Override
+      public boolean isSelected(@NotNull AnActionEvent event) {
+        if (isGlobalOptions()) return getGlobalOptions().getShowVisibilityIcons();
+        return super.isSelected(event);
+      }
+
+      @Override
+      public void setSelected(@NotNull AnActionEvent event, boolean showVisibilityIcons) {
+        if (isGlobalOptions()) getGlobalOptions().setShowVisibilityIcons(showVisibilityIcons);
+        super.setSelected(event, showVisibilityIcons);
+      }
+    }).setAsSecondary(true);
 
     getProjectViewPaneById(myCurrentViewId == null ? getDefaultViewId() : myCurrentViewId).addToolbarActions(myActionGroup);
 
@@ -1390,6 +1411,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       readOption(navigatorElement.getChild(ELEMENT_SHOW_MEMBERS), myShowMembers);
       readOption(navigatorElement.getChild(ELEMENT_SHOW_MODULES), myShowModules);
       readOption(navigatorElement.getChild(ELEMENT_SHOW_EXCLUDED_FILES), myShowExcludedFiles);
+      readOption(navigatorElement.getChild(ELEMENT_SHOW_VISIBILITY_ICONS), myShowVisibilityIcons);
       readOption(navigatorElement.getChild(ELEMENT_SHOW_LIBRARY_CONTENTS), myShowLibraryContents);
       readOption(navigatorElement.getChild(ELEMENT_HIDE_EMPTY_PACKAGES), myHideEmptyPackages);
       readOption(navigatorElement.getChild(ELEMENT_COMPACT_DIRECTORIES), myCompactDirectories);
@@ -1469,6 +1491,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     writeOption(navigatorElement, myShowMembers, ELEMENT_SHOW_MEMBERS);
     writeOption(navigatorElement, myShowModules, ELEMENT_SHOW_MODULES);
     writeOption(navigatorElement, myShowExcludedFiles, ELEMENT_SHOW_EXCLUDED_FILES);
+    writeOption(navigatorElement, myShowVisibilityIcons, ELEMENT_SHOW_VISIBILITY_ICONS);
     writeOption(navigatorElement, myShowLibraryContents, ELEMENT_SHOW_LIBRARY_CONTENTS);
     writeOption(navigatorElement, myHideEmptyPackages, ELEMENT_HIDE_EMPTY_PACKAGES);
     writeOption(navigatorElement, myCompactDirectories, ELEMENT_COMPACT_DIRECTORIES);
@@ -1669,6 +1692,13 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     else if (ShowExcludedFilesAction.INSTANCE.isSupported(this, paneId)) {
       setPaneOption(myShowExcludedFiles, showExcludedFiles, paneId, updatePane);
     }
+  }
+
+  @Override
+  public boolean isShowVisibilityIcons(String paneId) {
+    return isGlobalOptions()
+           ? getGlobalOptions().getShowVisibilityIcons()
+           : getPaneOptionValue(myShowVisibilityIcons, paneId, ourShowVisibilityIconsDefaults);
   }
 
   @Override

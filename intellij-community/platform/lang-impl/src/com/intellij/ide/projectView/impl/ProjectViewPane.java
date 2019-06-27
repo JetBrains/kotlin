@@ -230,6 +230,11 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
     }
 
     @Override
+    public boolean isShowVisibilityIcons() {
+      return ProjectView.getInstance(myProject).isShowVisibilityIcons(ID);
+    }
+
+    @Override
     public boolean isUseFileNestingRules() {
       return myUseFileNestingRules;
     }
