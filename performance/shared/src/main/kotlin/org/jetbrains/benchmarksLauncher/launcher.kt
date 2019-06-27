@@ -51,6 +51,7 @@ abstract class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int, v
             var autoEvaluatedNumberOfMeasureIteration = 1
             while (true) {
                 var j = autoEvaluatedNumberOfMeasureIteration
+                cleanup()
                 val time = measureNanoTime {
                     while (j-- > 0) {
                         benchmark()
@@ -64,6 +65,7 @@ abstract class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int, v
             val samples = DoubleArray(numberOfAttempts)
             for (k in samples.indices) {
                 i = autoEvaluatedNumberOfMeasureIteration
+                cleanup()
                 val time = measureNanoTime {
                     while (i-- > 0) {
                         benchmark()
