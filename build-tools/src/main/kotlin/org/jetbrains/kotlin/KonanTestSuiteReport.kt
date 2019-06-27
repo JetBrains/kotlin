@@ -155,7 +155,7 @@ private class TeamCityTestPrinter(val project:Project) {
      * Teamcity require escaping some symbols in pipe manner.
      * https://github.com/GitTools/GitVersion/issues/94
      */
-    private fun String?.toTeamCityFormat(): String = this?.also {
+    private fun String?.toTeamCityFormat(): String = this?.let {
         it.replace("\\|", "||")
                 .replace("\r", "|r")
                 .replace("\n", "|n")
