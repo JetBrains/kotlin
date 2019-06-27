@@ -16,7 +16,7 @@ import com.intellij.projectImport.DeprecatedProjectBuilderForImport
 import com.intellij.projectImport.ProjectImportBuilder
 import com.intellij.projectImport.ProjectImportProvider.getDefaultPath
 import icons.GradleIcons
-import org.jetbrains.plugins.gradle.service.project.open.importProject
+import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import javax.swing.Icon
@@ -30,8 +30,8 @@ import javax.swing.Icon
  * Use [com.intellij.ide.impl.ProjectUtil.openOrImport] to open (import) a new project.
  *
  * Internal experimental Api
- * Use [org.jetbrains.plugins.gradle.service.project.open.openProject] to open (import) a new gradle project.
- * Use [org.jetbrains.plugins.gradle.service.project.open.importProject] to attach a gradle project to an opened idea project.
+ * Use [org.jetbrains.plugins.gradle.service.project.open.openGradleProject] to open (import) a new gradle project.
+ * Use [org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject] to attach a gradle project to an opened idea project.
  */
 class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedProjectBuilderForImport {
 
@@ -75,7 +75,7 @@ class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedPr
                       model: ModifiableModuleModel?,
                       modulesProvider: ModulesProvider?,
                       artifactModel: ModifiableArtifactModel?): List<Module> {
-    importProject(fileToImport, project)
+    linkAndRefreshGradleProject(fileToImport, project)
     return emptyList()
   }
 }

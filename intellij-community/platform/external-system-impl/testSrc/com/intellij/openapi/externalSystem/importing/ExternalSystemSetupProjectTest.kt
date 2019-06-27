@@ -3,7 +3,7 @@ package com.intellij.openapi.externalSystem.importing
 
 import org.junit.Test
 
-interface ExternalSystemImportTest : ExternalSystemImportTestCase {
+interface ExternalSystemSetupProjectTest : ExternalSystemSetupProjectTestCase {
 
   @Test
   fun `test project open`() {

@@ -2,11 +2,11 @@
 package org.jetbrains.plugins.gradle.service.project.open
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.externalSystem.importing.AbstractExternalSystemImportProvider
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
-import com.intellij.openapi.externalSystem.importing.AbstractExternalSystemImportProvider
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.DumbService
@@ -34,14 +34,14 @@ internal class GradleExternalSystemImportProvider : AbstractExternalSystemImport
     return !file.isDirectory && GradleConstants.BUILD_FILE_EXTENSIONS.any { file.name.endsWith(it) }
   }
 
-  override fun doImportProject(projectDirectory: String, project: Project) {
+  override fun linkAndRefreshProject(projectDirectory: String, project: Project) {
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk
     val gradleProjectSettings = GradleProjectSettings()
     setupGradleSettings(gradleProjectSettings, projectDirectory, project, projectSdk)
     attachGradleProjectAndRefresh(gradleProjectSettings, project)
   }
 
-  override fun doQuickImport(projectDirectory: String, project: Project) {
+  override fun finalizeProjectSetup(projectDirectory: String, project: Project) {
     GradleUnlinkedProjectProcessor.enableNotifications(project)
   }
 

@@ -2,8 +2,8 @@
 package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.openapi.externalSystem.action.AttachExternalProjectAction
-import com.intellij.openapi.externalSystem.importing.ExternalSystemImportTest
-import com.intellij.openapi.externalSystem.importing.ExternalSystemImportTestCase
+import com.intellij.openapi.externalSystem.importing.ExternalSystemSetupProjectTest
+import com.intellij.openapi.externalSystem.importing.ExternalSystemSetupProjectTestCase
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
@@ -13,10 +13,10 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 import org.junit.runners.Parameterized
 
-class GradleProjectImportTest : ExternalSystemImportTest, GradleImportingTestCase() {
+class GradleSetupProjectTest : ExternalSystemSetupProjectTest, GradleImportingTestCase() {
   override fun getSystemId(): ProjectSystemId = SYSTEM_ID
 
-  override fun generateProject(id: String): ExternalSystemImportTestCase.ProjectInfo {
+  override fun generateProject(id: String): ExternalSystemSetupProjectTestCase.ProjectInfo {
     val name = "${System.currentTimeMillis()}-$id"
     createProjectSubFile("$name-composite/settings.gradle", "rootProject.name = '$name-composite'")
     createProjectSubFile("$name-project/settings.gradle", """
@@ -30,12 +30,12 @@ class GradleProjectImportTest : ExternalSystemImportTest, GradleImportingTestCas
     createProjectSubFile("$name-module/build.gradle", buildScript)
     createProjectSubFile("$name-project/module/build.gradle", buildScript)
     val projectFile = createProjectSubFile("$name-project/build.gradle", buildScript)
-    return ExternalSystemImportTestCase.ProjectInfo(projectFile,
-                                                    "$name-project", "$name-project.main", "$name-project.test",
-                                                    "$name-project.module", "$name-project.module.main", "$name-project.module.test",
-                                                    "$name-project.$name-module", "$name-project.$name-module.main",
-                                                    "$name-project.$name-module.test",
-                                                    "$name-composite", "$name-composite.main", "$name-composite.test")
+    return ExternalSystemSetupProjectTestCase.ProjectInfo(projectFile,
+                                                          "$name-project", "$name-project.main", "$name-project.test",
+                                                          "$name-project.module", "$name-project.module.main", "$name-project.module.test",
+                                                          "$name-project.$name-module", "$name-project.$name-module.main",
+                                                          "$name-project.$name-module.test",
+                                                          "$name-composite", "$name-composite.main", "$name-composite.test")
   }
 
   override fun assertDefaultProjectSettings(project: Project) {

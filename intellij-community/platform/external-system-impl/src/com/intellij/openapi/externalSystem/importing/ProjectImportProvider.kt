@@ -8,9 +8,9 @@ import org.jetbrains.annotations.ApiStatus
 @ApiStatus.Experimental
 interface ProjectImportProvider {
 
-  fun canImportProjectFrom(file: VirtualFile): Boolean
+  fun canSetupProjectFrom(file: VirtualFile): Boolean
 
   fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project?
 
-  fun importProject(projectFile: VirtualFile, project: Project): Boolean
+  fun linkAndRefreshProject(projectFile: VirtualFile, project: Project): Boolean
 }

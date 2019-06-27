@@ -24,7 +24,7 @@ import org.junit.Assert.assertEquals
 import org.picocontainer.MutablePicoContainer
 import java.awt.Component
 
-interface ExternalSystemImportTestCase {
+interface ExternalSystemSetupProjectTestCase {
 
   data class ProjectInfo(val projectFile: VirtualFile, val modules: List<String>) {
     constructor(projectFile: VirtualFile, vararg modules: String) : this(projectFile, modules.toList())

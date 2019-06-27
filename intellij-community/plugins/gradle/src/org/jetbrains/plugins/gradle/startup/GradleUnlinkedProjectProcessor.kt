@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.plugins.gradle.service.project.GradleNotification
-import org.jetbrains.plugins.gradle.service.project.open.importProject
+import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -44,12 +44,12 @@ class GradleUnlinkedProjectProcessor : StartupActivity, DumbAware {
         NotificationType.INFORMATION)
       notification.addAction(NotificationAction.createSimple(
         GradleBundle.message("gradle.notifications.unlinked.project.found.import")) {
-        notification.expire();
-        importProject(externalProjectPath, project)
+        notification.expire()
+        linkAndRefreshGradleProject(externalProjectPath, project)
       })
       notification.addAction(NotificationAction.createSimple(
         GradleBundle.message("gradle.notifications.unlinked.project.found.skip")) {
-        notification.expire();
+        notification.expire()
         disableNotifications(project)
       })
 

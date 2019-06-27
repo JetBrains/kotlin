@@ -72,8 +72,8 @@ public final class GradleProjectImportBuilder extends AbstractExternalProjectImp
              " Use `com.intellij.ide.actions.ImportModuleAction.doImport` to import (attach) a new project.\n" +
              " Use `com.intellij.ide.impl.ProjectUtil.openOrImport` to open (import) a new project.\n" +
              "Internal experimental Api\n" +
-             " Use `org.jetbrains.plugins.gradle.service.project.open.openProject` to open (import) a new gradle project.\n" +
-             " Use `org.jetbrains.plugins.gradle.service.project.open.importProject` to attach a gradle project to an opened idea project.",
+             " Use `org.jetbrains.plugins.gradle.service.project.open.openGradleProject` to open (import) a new gradle project.\n" +
+             " Use `org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject` to link a gradle project to an opened idea project.",
              new Throwable());
   }
 

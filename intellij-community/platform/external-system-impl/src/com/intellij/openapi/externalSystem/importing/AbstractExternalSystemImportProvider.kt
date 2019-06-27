@@ -22,54 +22,46 @@ abstract class AbstractExternalSystemImportProvider : ProjectImportProvider {
 
   protected abstract fun isProjectFile(file: VirtualFile): Boolean
 
-  /**
-   * Call if project cannot be loaded like idea project
-   */
-  protected abstract fun doImportProject(projectDirectory: String, project: Project)
+  protected abstract fun linkAndRefreshProject(projectDirectory: String, project: Project)
 
-  /**
-   * Call after loading of idea project from file system
-   */
-  protected abstract fun doQuickImport(projectDirectory: String, project: Project)
+  protected open fun finalizeProjectSetup(projectDirectory: String, project: Project) {}
 
-  override fun canImportProjectFrom(file: VirtualFile): Boolean {
+  override fun canSetupProjectFrom(file: VirtualFile): Boolean {
     if (!file.isDirectory) return isProjectFile(file)
     return file.children.any(::isProjectFile)
   }
 
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
-    LOG.info("Open project from $projectFile")
+    debug("Open project from $projectFile")
     val projectDirectory = getProjectDirectory(projectFile) ?: return null
     if (focusOnOpenedSameProject(projectDirectory.path)) return null
     if (canOpenPlatformProject(projectDirectory)) {
       return openPlatformProject(projectDirectory, projectToClose, forceOpenInNewFrame)
     }
     val project = createProject(projectDirectory) ?: return null
-    doImportProject(projectDirectory.path, project)
+    linkAndRefreshProject(projectDirectory.path, project)
     ProjectUtil.updateLastProjectLocation(projectDirectory.path)
-    project.save()
     if (!forceOpenInNewFrame) closePreviousProject(projectToClose)
     ProjectManagerEx.getInstanceEx().openProject(project)
+    finalizeProjectSetup(projectDirectory.path, project)
     return project
   }
 
-  override fun importProject(projectFile: VirtualFile, project: Project): Boolean {
-    LOG.info("Import project from $projectFile")
+  override fun linkAndRefreshProject(projectFile: VirtualFile, project: Project): Boolean {
+    debug("Import project from $projectFile")
     val projectDirectory = getProjectDirectory(projectFile) ?: return false
-    doImportProject(projectDirectory.path, project)
-    ProjectUtil.updateLastProjectLocation(projectDirectory.path)
-    project.save()
+    linkAndRefreshProject(projectDirectory.path, project)
     return true
   }
 
   private fun canOpenPlatformProject(projectDirectory: VirtualFile): Boolean {
     if (!PlatformProjectOpenProcessor.getInstance().canOpenProject(projectDirectory)) return false
-    if (isChildExistsUsingIo(projectDirectory, Project.DIRECTORY_STORE_FOLDER)) return true
-    if (isChildExistsUsingIo(projectDirectory, projectDirectory.name + ProjectFileType.DOT_DEFAULT_EXTENSION)) return true
+    if (isChildExistUsingIo(projectDirectory, Project.DIRECTORY_STORE_FOLDER)) return true
+    if (isChildExistUsingIo(projectDirectory, projectDirectory.name + ProjectFileType.DOT_DEFAULT_EXTENSION)) return true
     return false
   }
 
-  private fun isChildExistsUsingIo(parent: VirtualFile, name: String): Boolean {
+  private fun isChildExistUsingIo(parent: VirtualFile, name: String): Boolean {
     return try {
       Paths.get(FileUtil.toSystemDependentName(parent.path), name).exists()
     }
@@ -92,7 +84,7 @@ abstract class AbstractExternalSystemImportProvider : ProjectImportProvider {
     val openProcessor = PlatformProjectOpenProcessor.getInstance()
     val project = openProcessor.doOpenProject(projectDirectory, projectToClose, forceOpenInNewFrame)
     if (project == null) return null
-    doQuickImport(projectDirectory.path, project)
+    finalizeProjectSetup(projectDirectory.path, project)
     return project
   }
 
@@ -107,7 +99,7 @@ abstract class AbstractExternalSystemImportProvider : ProjectImportProvider {
   }
 
   private fun getProjectDirectory(file: VirtualFile): VirtualFile? {
-    if (!canImportProjectFrom(file)) return null
+    if (!canSetupProjectFrom(file)) return null
     if (!file.isDirectory) return file.parent
     return file
   }
@@ -121,5 +113,11 @@ abstract class AbstractExternalSystemImportProvider : ProjectImportProvider {
 
   companion object {
     protected val LOG = Logger.getInstance(AbstractExternalSystemImportProvider::class.java)
+
+    fun debug(message: String) {
+      if (LOG.isDebugEnabled) {
+        LOG.debug(message)
+      }
+    }
   }
 }
