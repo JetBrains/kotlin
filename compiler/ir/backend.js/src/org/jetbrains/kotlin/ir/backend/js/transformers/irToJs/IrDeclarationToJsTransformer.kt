@@ -24,12 +24,7 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
     override fun visitClass(declaration: IrClass, context: JsGenerationContext): JsStatement {
         return JsClassGenerator(
             declaration,
-            context.newDeclaration(
-                JsDeclarationScope(
-                    context.currentScope,
-                    "scope for class ${declaration.name.asString()}"
-                )
-            )
+            context.newDeclaration()
         ).generate()
     }
 

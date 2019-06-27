@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -50,7 +49,7 @@ class IrModuleToJsTransformer(
 
         module.files.forEach {
             statements.add(JsDocComment(mapOf("file" to it.path)).makeStmt())
-            statements.add(it.accept(IrFileToJsTransformer(), context))
+            statements.addAll(it.accept(IrFileToJsTransformer(), context).statements)
         }
 
         // sort member forwarding code
@@ -145,20 +144,17 @@ class IrModuleToJsTransformer(
             irNamer = nameGenerator
         )
         val rootContext = JsGenerationContext(
-            parent = null,
-            currentBlock = program.globalBlock,
             currentFunction = null,
-            currentScope = program.rootScope,
             staticContext = staticContext
         )
 
         val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function")
-        val internalModuleName = rootFunction.scope.declareName("_")
+        val internalModuleName = JsName("_")
 
         val (importStatements, importedJsModules) =
             generateImportStatements(
                 getNameForExternalDeclaration = { rootContext.getNameForStaticDeclaration(it) },
-                declareFreshGlobal = { rootFunction.scope.declareFreshName(sanitizeName(it)) }
+                declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
             )
 
         val moduleBody = generateModuleBody(module, rootContext)

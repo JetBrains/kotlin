@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.parser.parse
 
 
-fun translateJsCode(call: IrCall, scope: JsScope): JsNode {
+fun translateJsCode(call: IrCall): JsNode {
     //TODO check non simple compile time constants (expressions)
 
     fun foldString(expression: IrExpression): String {
@@ -38,7 +38,7 @@ fun translateJsCode(call: IrCall, scope: JsScope): JsNode {
     }
 
     val code = call.getValueArgument(0)!!
-    val statements = parseJsCode(code.run(::foldString), JsFunctionScope(scope, "<js-code>")).orEmpty()
+    val statements = parseJsCode(foldString(code)).orEmpty()
     val size = statements.size
 
     return when (size) {
@@ -48,15 +48,15 @@ fun translateJsCode(call: IrCall, scope: JsScope): JsNode {
     }
 }
 
-private fun parseJsCode(jsCode: String, currentScope: JsScope): List<JsStatement>? {
+private fun parseJsCode(jsCode: String): List<JsStatement>? {
     // Parser can change local or global scope.
     // In case of js we want to keep new local names,
     // but no new global ones.
-    assert(currentScope is JsFunctionScope) { "Usage of js outside of function is unexpected" }
+
     val temporaryRootScope = JsRootScope(JsProgram())
-    val scope = DelegatingJsFunctionScopeWithTemporaryParent(currentScope as JsFunctionScope, temporaryRootScope)
+    val currentScope = JsFunctionScope(temporaryRootScope, "js")
 
     // TODO write debug info, see how it's done in CallExpressionTranslator.parseJsCode
 
-    return parse(jsCode, ThrowExceptionOnErrorReporter, scope, "<js-code>")
+    return parse(jsCode, ThrowExceptionOnErrorReporter, currentScope, "<js-code>")
 }

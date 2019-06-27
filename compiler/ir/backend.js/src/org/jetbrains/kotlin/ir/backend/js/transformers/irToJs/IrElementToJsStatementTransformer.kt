@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.COROUTINE_SWITCH
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -83,7 +84,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsCatch = aTry.catches.singleOrNull()?.let {
             val name = context.getNameForValueDeclaration(it.catchParameter)
             val jsCatchBlock = it.result.accept(this, context)
-            JsCatch(context.currentScope, name.ident, jsCatchBlock)
+            JsCatch(emptyScope, name.ident, jsCatchBlock)
         }
 
         val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()

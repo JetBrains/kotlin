@@ -277,7 +277,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             if (jsDispatchReceiver != null) {
                 // TODO: Do not create IIFE when receiver expression is simple or has no side effects
                 // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
-                val receiverName = context.currentScope.declareFreshName("\$externalVarargReceiverTmp")
+                val receiverName = JsName("\$externalVarargReceiverTmp")
                 val receiverRef = receiverName.makeRef()
                 JsInvocation(
                     // Create scope for temporary variable holding dispatch receiver
@@ -285,7 +285,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     JsNameRef(
                     "call",
                     JsFunction(
-                        context.currentScope,
+                        emptyScope,
                         JsBlock(
                             JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
                             JsReturn(

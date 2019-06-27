@@ -9,18 +9,19 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.js.backend.ast.*
 
+val emptyScope: JsScope
+    get() = object : JsScope("nil") {
+        override fun doCreateName(ident: String): JsName {
+            error("Trying to create name in empty scope")
+        }
+    }
+
 class JsGenerationContext(
-    val parent: JsGenerationContext?,
-    val currentBlock: JsBlock,
-    val currentScope: JsScope,
     val currentFunction: IrFunction?,
     val staticContext: JsStaticContext
 ): IrNamer by staticContext {
-    fun newDeclaration(scope: JsScope, func: IrFunction? = null): JsGenerationContext {
+    fun newDeclaration(func: IrFunction? = null): JsGenerationContext {
         return JsGenerationContext(
-            parent = this,
-            currentBlock = if (func != null) JsBlock() else JsGlobalBlock(),
-            currentScope = scope,
             currentFunction = func,
             staticContext = staticContext
         )
@@ -31,7 +32,7 @@ class JsGenerationContext(
             JsThisRef()
         } else {
             if (currentFunction!!.descriptor.isSuspend) {
-                JsNameRef(currentScope.declareName(Namer.CONTINUATION))
+                JsNameRef(Namer.CONTINUATION)
             } else {
                 getNameForValueDeclaration(currentFunction.valueParameters.last()).makeRef()
             }

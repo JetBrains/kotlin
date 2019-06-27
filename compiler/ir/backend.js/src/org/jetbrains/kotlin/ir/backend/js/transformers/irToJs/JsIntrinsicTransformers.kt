@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -121,12 +122,12 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             addIfNotNull(intrinsics.jsCode) { call, context ->
-                val jsCode = translateJsCode(call as IrCall, context.currentScope)
+                val jsCode = translateJsCode(call as IrCall)
 
                 when (jsCode) {
                     is JsExpression -> jsCode
                 // TODO don't generate function for this case
-                    else -> JsInvocation(JsFunction(context.currentScope, jsCode as? JsBlock ?: JsBlock(jsCode as JsStatement), ""))
+                    else -> JsInvocation(JsFunction(emptyScope, jsCode as? JsBlock ?: JsBlock(jsCode as JsStatement), ""))
                 }
             }
 

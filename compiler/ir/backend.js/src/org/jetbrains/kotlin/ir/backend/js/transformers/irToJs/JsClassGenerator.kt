@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -126,7 +127,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val getterName = context.getNameForMemberFunction(delegate)
         val returnStatement = JsReturn(JsInvocation(JsNameRef(getterName, JsThisRef())))
 
-        return JsFunction(JsFunctionScope(context.currentScope, ""), JsBlock(returnStatement), "")
+        return JsFunction(emptyScope, JsBlock(returnStatement), "")
     }
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): JsStatement? {
@@ -182,7 +183,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun maybeGenerateObjectInstance(): List<JsStatement> {
         val instanceVarName = className.objectInstanceName()
         val getInstanceFunName = "${className.ident}_getInstance"
-        val jsVarNode = context.currentScope.declareName(instanceVarName)
+        val jsVarNode = JsName(instanceVarName) // TODO: Use namer?
         val varStmt = JsVars(JsVars.JsVar(jsVarNode))
         val function = generateGetInstanceFunction(jsVarNode, getInstanceFunName)
         return listOf(varStmt, function.makeStmt())
@@ -190,8 +191,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateGetInstanceFunction(instanceVar: JsName, instanceFunName: String): JsFunction {
         val functionBody = JsBlock()
-        val func = JsFunction(JsFunctionScope(context.currentScope, "getInstance for ${irClass.name} object"), functionBody, "getInstance")
-        func.name = context.currentScope.declareName(instanceFunName)
+        val func = JsFunction(emptyScope, functionBody, "getInstance")
+        func.name = JsName(instanceFunName) // TODO: Use namer?
 
         functionBody.statements += JsIf(
             JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(0))),
@@ -204,7 +205,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun maybeGeneratePrimaryConstructor() {
         if (!irClass.declarations.any { it is IrConstructor }) {
-            val func = JsFunction(JsFunctionScope(context.currentScope, "Ctor for ${irClass.name}"), JsBlock(), "Ctor for ${irClass.name}")
+            val func = JsFunction(emptyScope, JsBlock(), "Ctor for ${irClass.name}")
             func.name = className
             classBlock.statements += func.makeStmt()
             classModel.preDeclarationBlock.statements += generateInheritanceCode()
