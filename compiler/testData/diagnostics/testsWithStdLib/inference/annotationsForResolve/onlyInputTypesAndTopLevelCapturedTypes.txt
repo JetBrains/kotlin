@@ -1,0 +1,40 @@
+package
+
+public fun test(/*0*/ invStar: Inv<*>, /*1*/ invOut: Inv<out kotlin.Number>, /*2*/ invIn: Inv<in kotlin.Number>): kotlin.Unit
+public fun test2(/*0*/ value: kotlin.Any?): kotlin.Unit
+public fun test3(/*0*/ h: kotlin.collections.HashMap<*, *> /* = java.util.HashMap<*, *> */): kotlin.Unit
+public fun test4(): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes K> Inv<in K>.onlyIn(/*0*/ e: K): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes K> Inv<out K>.onlyOut(/*0*/ e: K): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes K : kotlin.Number> Inv<out K>.onlyOutUB(/*0*/ e: K): kotlin.Unit
+
+public final class A</*0*/ T> {
+    public constructor A</*0*/ T>()
+    public final val children: kotlin.collections.MutableList<B<T>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B</*0*/ T> {
+    public constructor B</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test5 {
+    public constructor Test5()
+    public final var a: A<*>?
+    public final var b: B<*>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
