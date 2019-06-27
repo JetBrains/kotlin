@@ -29,7 +29,6 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.*;
@@ -51,6 +50,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -58,7 +59,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
 
   private final Alarm myAlarm;
-  private WeakReference<JBPopup> myPopupReference;
+  private WeakReference<AbstractPopup> myPopupReference;
   private Context myContext;
   private ProgressIndicator myCurrentProgress;
 
@@ -104,17 +105,17 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         if (progress != myCurrentProgress) return;
         myCurrentProgress = null;
         if (info != null && !EditorMouseHoverPopupControl.arePopupsDisabled(editor) && editor.getContentComponent().isShowing()) {
-          ActionCallback hideCallback = new ActionCallback();
-          JComponent component = info.createComponent(editor, hideCallback);
+          PopupBridge popupBridge = new PopupBridge();
+          JComponent component = info.createComponent(editor, popupBridge);
           if (component == null) {
             closeHint();
           }
           else {
             if (relation == Context.Relation.SIMILAR && isHintShown()) {
-              updateHint(component, hideCallback);
+              updateHint(component, popupBridge);
             }
             else {
-              AbstractPopup hint = createHint(component, hideCallback);
+              AbstractPopup hint = createHint(component, popupBridge);
               showHintInEditor(hint, editor, context);
               myPopupReference = new WeakReference<>(hint);
             }
@@ -138,55 +139,24 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     if (window != null) window.setFocusableWindowState(true);
   }
 
-  private static AbstractPopup createHint(JComponent component, ActionCallback hideCallback) {
-    JPanel wrapper = new JPanel(new BorderLayout());
-    wrapper.setBorder(null);
-    wrapper.add(component, BorderLayout.CENTER);
+  private static AbstractPopup createHint(JComponent component, PopupBridge popupBridge) {
+    WrapperPanel wrapper = new WrapperPanel(component);
     AbstractPopup popup = (AbstractPopup)JBPopupFactory.getInstance()
       .createComponentPopupBuilder(wrapper, component)
       .setResizable(true)
       .createPopup();
-    bindPopupHiding(popup, hideCallback);
+    popupBridge.setPopup(popup);
     return popup;
   }
 
-  private void updateHint(JComponent component, ActionCallback hideCallback) {
-    JBPopup popup = SoftReference.dereference(myPopupReference);
+  private void updateHint(JComponent component, PopupBridge popupBridge) {
+    AbstractPopup popup = SoftReference.dereference(myPopupReference);
     if (popup != null) {
-      JPanel wrapper = (JPanel)popup.getContent();
-      wrapper.removeAll();
-      wrapper.add(component, BorderLayout.CENTER);
+      WrapperPanel wrapper = (WrapperPanel)popup.getComponent();
+      wrapper.setContent(component);
       popup.pack(true, true);
-      bindPopupHiding(popup, hideCallback);
+      popupBridge.setPopup(popup);
     }
-  }
-
-  private static void bindPopupHiding(JBPopup popup, ActionCallback hideCallback) {
-    AtomicBoolean inProcess = new AtomicBoolean();
-    hideCallback.doWhenDone(() -> {
-      if (inProcess.compareAndSet(false, true)) {
-        try {
-          popup.cancel();
-          blockFurtherMouseEvents();
-        }
-        finally {
-          inProcess.set(true);
-        }
-      }
-    });
-    popup.addListener(new JBPopupListener() {
-      @Override
-      public void onClosed(@NotNull LightweightWindowEvent event) {
-        if (inProcess.compareAndSet(false, true)) {
-          try {
-            hideCallback.setDone();
-          }
-          finally {
-            inProcess.set(false);
-          }
-        }
-      }
-    });
   }
 
   private static void blockFurtherMouseEvents() {
@@ -351,8 +321,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       this.quickDocMessage = quickDocMessage;
     }
 
-    private JComponent createComponent(Editor editor, ActionCallback hideCallback) {
-      JComponent c1 = createHighlightInfoComponent(editor, highlightInfo, quickDocMessage == null, hideCallback);
+    private JComponent createComponent(Editor editor, PopupBridge popupBridge) {
+      JComponent c1 = createHighlightInfoComponent(editor, highlightInfo, quickDocMessage == null, popupBridge);
       JComponent c2 = createQuickDocComponent(editor, quickDocMessage, c1 != null);
       if (c1 == null && c2 == null) return null;
       JPanel p = new JPanel(new GridBagLayout());
@@ -369,32 +339,55 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     private static JComponent createHighlightInfoComponent(Editor editor,
                                                            HighlightInfo info,
                                                            boolean highlightActions,
-                                                           ActionCallback hideCallback) {
+                                                           PopupBridge popupBridge) {
       if (info == null) return null;
       TooltipAction action = TooltipActionProvider.calcTooltipAction(info, editor);
       ErrorStripTooltipRendererProvider provider = ((EditorMarkupModel)editor.getMarkupModel()).getErrorStripTooltipRendererProvider();
       TooltipRenderer tooltipRenderer = provider.calcTooltipRenderer(Objects.requireNonNull(info.getToolTip()), action, -1);
       if (!(tooltipRenderer instanceof LineTooltipRenderer)) return null;
-      LightweightHint hint = ((LineTooltipRenderer)tooltipRenderer).createHint(editor, new Point(), false, EDITOR_INFO_GROUP,
-                                                                               new HintHint().setAwtTooltip(true), highlightActions);
-      if (hint == null) return null;
-      bindHintHiding(hint, hideCallback);
-      return hint.getComponent();
+      return createHighlightInfoComponent(editor, (LineTooltipRenderer)tooltipRenderer, highlightActions, popupBridge);
     }
 
-    private static void bindHintHiding(LightweightHint hint, ActionCallback hideCallback) {
+    private static JComponent createHighlightInfoComponent(Editor editor,
+                                                           LineTooltipRenderer renderer,
+                                                           boolean highlightActions,
+                                                           PopupBridge popupBridge) {
+      Ref<WrapperPanel> wrapperPanelRef = new Ref<>();
+      LightweightHint hint =
+        renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, new HintHint().setAwtTooltip(true), highlightActions, expand -> {
+          LineTooltipRenderer newRenderer = renderer.createRenderer(renderer.getText(), expand ? 1 : 0);
+          JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge);
+          AbstractPopup popup = popupBridge.getPopup();
+          WrapperPanel wrapper = wrapperPanelRef.get();
+          if (newComponent != null && popup != null && wrapper != null) {
+            wrapper.setContent(newComponent);
+            popup.pack(true, true);
+          }
+        });
+      if (hint == null) return null;
+      bindHintHiding(hint, popupBridge);
+      WrapperPanel wrapper = new WrapperPanel(hint.getComponent());
+      wrapperPanelRef.set(wrapper);
+      return wrapper;
+    }
+
+    private static void bindHintHiding(LightweightHint hint, PopupBridge popupBridge) {
       AtomicBoolean inProcess = new AtomicBoolean();
       hint.addHintListener(e -> {
         if (inProcess.compareAndSet(false, true)) {
           try {
-            hideCallback.setDone();
+            AbstractPopup popup = popupBridge.getPopup();
+            if (popup != null) {
+              popup.cancel();
+              blockFurtherMouseEvents();
+            }
           }
           finally {
             inProcess.set(false);
           }
         }
       });
-      hideCallback.doWhenDone(() -> {
+      popupBridge.performOnCancel(() -> {
         if (inProcess.compareAndSet(false, true)) {
           try {
             hint.hide();
@@ -419,6 +412,44 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       component.setData(null, quickDocMessage, null, null, null);
       EditorUtil.disposeWithEditor(editor, component);
       return component;
+    }
+  }
+
+  private static class PopupBridge {
+    private final List<Runnable> actionsOnCancel = new ArrayList<>();
+    private AbstractPopup popup;
+
+    private void setPopup(@NotNull AbstractPopup popup) {
+      assert this.popup == null;
+      this.popup = popup;
+      popup.addListener(new JBPopupListener() {
+        @Override
+        public void onClosed(@NotNull LightweightWindowEvent event) {
+          actionsOnCancel.forEach(a -> a.run());
+        }
+      });
+    }
+
+    @Nullable
+    private AbstractPopup getPopup() {
+      return popup;
+    }
+
+    private void performOnCancel(@NotNull Runnable runnable) {
+      actionsOnCancel.add(runnable);
+    }
+  }
+
+  private static class WrapperPanel extends JPanel {
+    private WrapperPanel(JComponent content) {
+      super(new BorderLayout());
+      setBorder(null);
+      setContent(content);
+    }
+
+    private void setContent(JComponent content) {
+      removeAll();
+      add(content, BorderLayout.CENTER);
     }
   }
 }
