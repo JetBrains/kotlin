@@ -77,7 +77,7 @@ constexpr size_t kGcThreshold = 16 * 1024;
 // increase GC threshold by 1.5 times.
 constexpr double kGcToComputeRatioThreshold = 0.5;
 // Never exceed this value when increasing GC threshold.
-constexpr size_t kMaxErgonomicThreshold = 1024 * 1024;
+constexpr size_t kMaxErgonomicThreshold = 4 * 1024;
 #endif  // GC_ERGONOMICS
 // Threshold of size for toFree set, triggering actual cycle collector.
 constexpr size_t kMaxToFreeSize = 8 * 1024;
