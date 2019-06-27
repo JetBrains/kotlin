@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.nj2k.postProcessing
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.progress.ProcessCanceledException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -35,6 +37,9 @@ import org.jetbrains.kotlin.nj2k.postProcessing.processings.*
 import org.jetbrains.kotlin.psi.*
 
 class NewJ2kPostProcessor : PostProcessor {
+    @Suppress("PrivatePropertyName")
+    private val LOG = Logger.getInstance("@org.jetbrains.kotlin.nj2k.postProcessing.NewJ2kPostProcessor")
+
     override fun insertImport(file: KtFile, fqName: FqName) {
         ApplicationManager.getApplication().invokeAndWait {
             runWriteAction {
@@ -56,8 +61,15 @@ class NewJ2kPostProcessor : PostProcessor {
             for ((i, group) in processings.withIndex()) {
                 onPhaseChanged?.invoke(i + 1, group.description)
                 for (processing in group.processings) {
-                    processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
-                    commitFile(file)
+                    try {
+                        processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
+                    } catch (e: ProcessCanceledException) {
+                        throw e
+                    } catch (t: Throwable) {
+                        LOG.error(t)
+                    } finally {
+                        commitFile(file)
+                    }
                 }
             }
         }
