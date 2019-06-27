@@ -76,6 +76,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
 
     horizontalSplitter.firstComponent = withMargin(typesListPane)
     val providerSettingsPane = JBScrollPane()
+    providerSettingsPane.border = null
     horizontalSplitter.secondComponent = withMargin(providerSettingsPane)
 
     initProviderList(providerSettingsPane)
