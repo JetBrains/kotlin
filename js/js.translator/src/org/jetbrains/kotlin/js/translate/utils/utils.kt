@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
@@ -141,6 +142,8 @@ fun getReferenceToJsClass(classifierDescriptor: ClassifierDescriptor?, context: 
         else -> {
             throw IllegalStateException("Can't get reference for $classifierDescriptor")
         }
+    }.also {
+        it.primitiveKClass = ExpressionVisitor.getPrimitiveClass(context, classifierDescriptor)
     }
 }
 

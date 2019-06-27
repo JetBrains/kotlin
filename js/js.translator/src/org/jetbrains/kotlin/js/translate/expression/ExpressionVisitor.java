@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
@@ -288,11 +289,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public static JsExpression getObjectKClass(@NotNull TranslationContext context, @Nullable ClassifierDescriptor descriptor) {
         JsExpression primitiveExpression = getPrimitiveClass(context, descriptor);
         if (primitiveExpression != null) return primitiveExpression;
-        return new JsInvocation(context.getReferenceToIntrinsic(GET_KCLASS), UtilsKt.getReferenceToJsClass(descriptor, context));
+        return new JsInvocation(context.getNameForSpecialFunction(SpecialFunction.GET_KCLASS).makeRef(), UtilsKt.getReferenceToJsClass(descriptor, context));
     }
 
     @Nullable
-    private static JsExpression getPrimitiveClass(@NotNull TranslationContext context, @Nullable ClassifierDescriptor classifierDescriptor) {
+    public static JsExpression getPrimitiveClass(@NotNull TranslationContext context, @Nullable ClassifierDescriptor classifierDescriptor) {
         if (!context.getConfig().isAtLeast(LanguageVersion.KOTLIN_1_2) || findPrimitiveClassesObject(context) == null) return null;
         if (!(classifierDescriptor instanceof ClassDescriptor)) return null;
         ClassDescriptor descriptor = (ClassDescriptor) classifierDescriptor;
