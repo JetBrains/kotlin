@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
@@ -69,7 +69,9 @@ fun <T : Any> mapType(
         )
     }
 
-    mapBuiltInType(kotlinType, factory, mode)?.let { builtInType ->
+    with(SimpleClassicTypeSystemContext) {
+        mapBuiltInType(kotlinType, factory, mode)
+    }?.let { builtInType ->
         val jvmType = factory.boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
         writeGenericType(kotlinType, jvmType, mode)
         return jvmType
@@ -203,31 +205,31 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
             && descriptor !is PropertyGetterDescriptor
 }
 
-private fun <T : Any> mapBuiltInType(
-    type: KotlinType,
+fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
+    type: KotlinTypeMarker,
     typeFactory: JvmTypeFactory<T>,
     mode: TypeMappingMode
 ): T? {
-    val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+    val constructor = type.typeConstructor()
+    if (!constructor.isClassTypeConstructor()) return null
 
-    val primitiveType = KotlinBuiltIns.getPrimitiveType(descriptor)
+    val primitiveType = constructor.getPrimitiveType()
     if (primitiveType != null) {
         val jvmType = typeFactory.createFromString(JvmPrimitiveType.get(primitiveType).desc)
-        val isNullableInJava = TypeUtils.isNullableType(type) || type.hasEnhancedNullability()
+        val isNullableInJava = type.isNullableType() || hasEnhancedNullability(type)
         return typeFactory.boxTypeIfNeeded(jvmType, isNullableInJava)
     }
 
-    val arrayElementType = KotlinBuiltIns.getPrimitiveArrayType(descriptor)
+    val arrayElementType = constructor.getPrimitiveArrayType()
     if (arrayElementType != null) {
         return typeFactory.createFromString("[" + JvmPrimitiveType.get(arrayElementType).desc)
     }
 
-    if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
-        val classId = JavaToKotlinClassMap.mapKotlinToJava(descriptor.fqNameUnsafe)
+    if (constructor.isUnderKotlinPackage()) {
+        val classId = constructor.getClassFqNameUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava)
         if (classId != null) {
-            if (!mode.kotlinCollectionsToJavaCollections &&
-                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }
-            ) return null
+            if (!mode.kotlinCollectionsToJavaCollections && JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId })
+                return null
 
             return typeFactory.createObjectType(JvmClassName.byClassId(classId).internalName)
         }

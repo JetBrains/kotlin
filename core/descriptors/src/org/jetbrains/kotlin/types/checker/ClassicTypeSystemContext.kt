@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExactAnnotation
@@ -516,6 +519,26 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
         require(this is KotlinType, this::errorMessage)
         return substitutedUnderlyingType()
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
+        require(this is TypeConstructor, this::errorMessage)
+        return KotlinBuiltIns.getPrimitiveType(declarationDescriptor as ClassDescriptor)
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
+        require(this is TypeConstructor, this::errorMessage)
+        return KotlinBuiltIns.getPrimitiveArrayType(declarationDescriptor as ClassDescriptor)
+    }
+
+    override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return declarationDescriptor?.let(KotlinBuiltIns::isUnderKotlinPackage) == true
+    }
+
+    override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe {
+        require(this is TypeConstructor, this::errorMessage)
+        return (declarationDescriptor as ClassDescriptor).fqNameUnsafe
     }
 }
 

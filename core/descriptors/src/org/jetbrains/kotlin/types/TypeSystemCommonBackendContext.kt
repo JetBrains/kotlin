@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.model.*
 
 interface TypeSystemCommonBackendContext : TypeSystemContext {
@@ -33,4 +35,10 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
         asSimpleType()?.withNullability(true) ?: this
+
+    fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType?
+    fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType?
+
+    fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean
+    fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe?
 }
