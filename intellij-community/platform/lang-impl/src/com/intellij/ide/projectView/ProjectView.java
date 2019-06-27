@@ -89,6 +89,10 @@ public abstract class ProjectView {
     return true;
   }
 
+  public boolean isShowVisibilityIcons(String paneId) {
+    return false;
+  }
+
   public abstract boolean isShowLibraryContents(String paneId);
 
   public abstract void setShowLibraryContents(@NotNull String paneId, boolean showLibraryContents);

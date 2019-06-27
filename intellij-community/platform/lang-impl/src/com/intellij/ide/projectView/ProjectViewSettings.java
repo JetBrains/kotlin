@@ -14,6 +14,10 @@ import org.jetbrains.annotations.Nullable;
 public interface ProjectViewSettings extends ViewSettings {
   boolean isShowExcludedFiles();
 
+  default boolean isShowVisibilityIcons() {
+    return false;
+  }
+
   /**
    * If {@code true} then {@link com.intellij.ide.projectView.impl.NestingTreeStructureProvider} will modify the tree presentation
    * according to the rules managed by {@link com.intellij.ide.projectView.impl.ProjectViewFileNestingService}: some peer files will be
@@ -26,17 +30,24 @@ public interface ProjectViewSettings extends ViewSettings {
     public static final ProjectViewSettings DEFAULT = new ProjectViewSettings.Immutable(null);
 
     private final boolean myShowExcludedFiles;
+    private final boolean myShowVisibilityIcons;
     private final boolean myUseFileNestingRules;
 
     public Immutable(ProjectViewSettings settings) {
       super(settings);
       myShowExcludedFiles = settings != null && settings.isShowExcludedFiles();
+      myShowVisibilityIcons = settings != null && settings.isShowVisibilityIcons();
       myUseFileNestingRules = settings == null || settings.isUseFileNestingRules();
     }
 
     @Override
     public boolean isShowExcludedFiles() {
       return myShowExcludedFiles;
+    }
+
+    @Override
+    public boolean isShowVisibilityIcons() {
+      return myShowVisibilityIcons;
     }
 
     @Override
@@ -50,6 +61,7 @@ public interface ProjectViewSettings extends ViewSettings {
       if (!super.equals(object)) return false;
       ProjectViewSettings settings = (ProjectViewSettings)object;
       return settings.isShowExcludedFiles() == isShowExcludedFiles() &&
+             settings.isShowVisibilityIcons() == isShowVisibilityIcons() &&
              settings.isUseFileNestingRules() == isUseFileNestingRules();
     }
 
@@ -57,6 +69,7 @@ public interface ProjectViewSettings extends ViewSettings {
     public int hashCode() {
       int result = super.hashCode();
       result = 31 * result + Boolean.hashCode(isShowExcludedFiles());
+      result = 31 * result + Boolean.hashCode(isShowVisibilityIcons());
       result = 31 * result + Boolean.hashCode(isUseFileNestingRules());
       return result;
     }
@@ -79,6 +92,12 @@ public interface ProjectViewSettings extends ViewSettings {
     public boolean isShowExcludedFiles() {
       ProjectView view = getProjectView();
       return view != null && view.isShowExcludedFiles(getPaneID(view));
+    }
+
+    @Override
+    public boolean isShowVisibilityIcons() {
+      ProjectView view = getProjectView();
+      return view != null && view.isShowVisibilityIcons(getPaneID(view));
     }
 
     @Override

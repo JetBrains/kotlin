@@ -7,6 +7,7 @@ import com.intellij.ide.bookmarks.Bookmark;
 import com.intellij.ide.bookmarks.BookmarkManager;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
+import com.intellij.ide.projectView.ProjectViewSettings;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.CompoundProjectViewNodeDecorator;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -19,7 +20,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.FileStatusManager;
 import com.intellij.openapi.vfs.VFileProperty;
@@ -169,7 +169,11 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
 
   @Iconable.IconFlags
   protected int getIconableFlags() {
-    int flags = Registry.is("ide.projectView.show.visibility") ? Iconable.ICON_FLAG_VISIBILITY : 0;
+    int flags = 0;
+    ViewSettings settings = getSettings();
+    if (settings instanceof ProjectViewSettings && ((ProjectViewSettings)settings).isShowVisibilityIcons()) {
+      flags |= Iconable.ICON_FLAG_VISIBILITY;
+    }
     if (isMarkReadOnly()) {
       flags |= Iconable.ICON_FLAG_READ_STATUS;
     }
