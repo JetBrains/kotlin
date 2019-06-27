@@ -296,6 +296,7 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
     targetPlatform?.let {
+        element.setAttribute("platform", it.oldFashionedDescription)
         element.setAttribute("allPlatforms", it.componentPlatforms.map { it.serializeToString() }.joinToString(separator = "/"))
     }
     if (!useProjectSettings) {
