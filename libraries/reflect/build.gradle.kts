@@ -109,13 +109,12 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
 
 val reflectShadowJar by task<ShadowJar> {
     archiveClassifier.set("shadow")
+    duplicatesStrategy = DuplicatesStrategy.FAIL
     configurations = listOf(embedded)
 
     callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
 
     exclude("**/*.proto")
-
-    mergeServiceFiles()
 
     if (kotlinBuildProperties.relocation) {
         transform(KotlinModuleShadowTransformer(logger))
