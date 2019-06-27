@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
@@ -36,6 +37,8 @@ class JvmBackendContext(
     override val builtIns = state.module.builtIns
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(state)
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
+
+    val typeMapper = IrTypeMapper(this)
 
     private val symbolTable = symbolTable.lazyWrapper
     override val ir = JvmIr(irModuleFragment, this.symbolTable)

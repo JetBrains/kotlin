@@ -45,7 +45,7 @@ open class ClassCodegen protected constructor(
 
     val state = context.state
 
-    val typeMapper = IrTypeMapper(context.state.typeMapper)
+    val typeMapper = context.typeMapper
 
     val descriptor = irClass.descriptor
 
@@ -202,7 +202,7 @@ open class ClassCodegen protected constructor(
         if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
 
         val fieldType = typeMapper.mapType(field)
-        val fieldSignature = typeMapper.mapFieldSignature(field.type, field)
+        val fieldSignature = typeMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
         // The ConstantValue attribute makes the initializer part of the ABI, which is why since 1.4
         // it is no longer set unless the property is explicitly `const`.
