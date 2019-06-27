@@ -85,6 +85,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             stdoutThread.join(100)
             TestCase.assertFalse("stdout thread not finished", stdoutThread.isAlive)
             TestCase.assertNull(stdoutException.value)
+            stderrThread.join(100)
             TestCase.assertFalse("stderr thread not finished", stderrThread.isAlive)
             TestCase.assertNull(stderrException.value)
             TestCase.assertFalse("stdin thread not finished", stdinThread.isAlive)
