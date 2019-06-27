@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.invoke
@@ -92,7 +92,7 @@ fun createToFreshVariableSubstitutorAndAddInitialConstraints(
 
     val freshTypeVariables = typeParameters.map { TypeParameterBasedTypeVariable(it.symbol) }
 
-    val toFreshVariables = ConeSubstitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType })
+    val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType })
 
     for (freshVariable in freshTypeVariables) {
         csBuilder.registerVariable(freshVariable)

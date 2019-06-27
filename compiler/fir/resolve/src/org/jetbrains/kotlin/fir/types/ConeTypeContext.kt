@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.calls.hasNullableSuperType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
@@ -435,7 +435,7 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
                     parameter.symbol as ConeTypeParameterSymbol to ((argument as? ConeTypedProjection)?.type
                         ?: StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
-            ConeSubstitutorByMap(substitution)
+            substitutorByMap(substitution)
         } else {
             ConeSubstitutor.Empty
         }

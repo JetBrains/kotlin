@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.*
@@ -68,7 +68,7 @@ class JavaClassUseSiteScope(
         val types = base.typeParameters.map {
             ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
         }
-        val substitution = ConeSubstitutorByMap(overriddenInJava.typeParameters.map { it.symbol }.zip(types).toMap())
+        val substitution = substitutorByMap(overriddenInJava.typeParameters.map { it.symbol }.zip(types).toMap())
         if (!overriddenInJava.typeParameters.zip(base.typeParameters).all { (a, b) ->
                 a.bounds.size == b.bounds.size && a.bounds.zip(b.bounds).all { (aBound, bBound) ->
                     isEqualTypes(aBound, bBound, substitution)
