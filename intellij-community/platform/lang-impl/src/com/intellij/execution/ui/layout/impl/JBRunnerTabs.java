@@ -8,11 +8,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.*;
-import com.intellij.ui.tabs.newImpl.SingleHeightTabs;
-import com.intellij.ui.tabs.newImpl.TabLabel;
-import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
-import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
-import com.intellij.util.ui.JBUI;
+import com.intellij.ui.tabs.impl.SingleHeightTabs;
+import com.intellij.ui.tabs.impl.TabLabel;
+import com.intellij.ui.tabs.impl.singleRow.ScrollableSingleRowLayout;
+import com.intellij.ui.tabs.impl.singleRow.SingleRowLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,9 +25,7 @@ import java.util.Map;
 public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   public static JBRunnerTabsBase create(@Nullable Project project, @NotNull Disposable parentDisposable) {
     IdeFocusManager focusManager = project != null ? IdeFocusManager.getInstance(project) : null;
-    return JBTabsFactory.getUseNewTabs()
-           ? new JBRunnerTabs(project, ActionManager.getInstance(), focusManager, parentDisposable)
-           : new JBRunnerTabsOld(project, ActionManager.getInstance(), focusManager, parentDisposable);
+    return new JBRunnerTabs(project, ActionManager.getInstance(), focusManager, parentDisposable);
   }
 
   @Override
