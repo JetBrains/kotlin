@@ -20,7 +20,12 @@ import org.jetbrains.kotlin.name.NameUtils
 
 private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: CommonBackendContext, input: IrFile): IrFile {
+        override fun invoke(
+            phaseConfig: PhaseConfig,
+            phaserState: PhaserState<IrFile>,
+            context: CommonBackendContext,
+            input: IrFile
+        ): IrFile {
             input.acceptVoid(PatchDeclarationParentsVisitor())
             return input
         }
@@ -59,12 +64,6 @@ private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-private val defaultArgumentStubPhase = makeIrFilePhase<CommonBackendContext>(
-    { context -> DefaultArgumentStubGenerator(context, false) },
-    name = "DefaultArgumentsStubGenerator",
-    description = "Generate synthetic stubs for functions with default parameter values"
-)
-
 private val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     { context ->
         LocalDeclarationsLowering(context, object : LocalNameProvider {
@@ -75,6 +74,13 @@ private val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     name = "JvmLocalDeclarations",
     description = "Move local declarations to classes",
     prerequisite = setOf(sharedVariablesPhase)
+)
+
+private val defaultArgumentStubPhase = makeIrFilePhase<CommonBackendContext>(
+    { context -> DefaultArgumentStubGenerator(context, false) },
+    name = "DefaultArgumentsStubGenerator",
+    description = "Generate synthetic stubs for functions with default parameter values",
+    prerequisite = setOf(localDeclarationsPhase)
 )
 
 private val innerClassesPhase = makeIrFilePhase(
@@ -105,11 +111,7 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
             tailrecPhase then
 
             jvmInlineClassPhase then
-            defaultArgumentStubPhase then
 
-            interfacePhase then
-            interfaceDelegationPhase then
-            interfaceSuperCallsPhase then
             sharedVariablesPhase then
 
             makePatchParentsPhase(1) then
@@ -117,6 +119,12 @@ val jvmPhases = namedIrFilePhase<JvmBackendContext>(
             enumWhenPhase then
             singletonReferencesPhase then
             localDeclarationsPhase then
+            defaultArgumentStubPhase then
+
+            interfacePhase then
+            interfaceDelegationPhase then
+            interfaceSuperCallsPhase then
+
             singleAbstractMethodPhase then
             addContinuationPhase then
             callableReferencePhase then
