@@ -17,6 +17,6 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
-    dependsOn(":dist", ":kotlin-main-kts:dist")
+    dependsOn(":dist")
     workingDir = rootDir
 }
