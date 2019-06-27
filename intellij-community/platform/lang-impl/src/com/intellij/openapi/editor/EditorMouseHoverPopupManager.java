@@ -100,7 +100,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       ApplicationManager.getApplication().invokeLater(() -> {
         if (progress != myCurrentProgress) return;
         myCurrentProgress = null;
-        if (info != null && editor.getContentComponent().isShowing()) {
+        if (info != null && !EditorMouseHoverPopupControl.arePopupsDisabled(editor) && editor.getContentComponent().isShowing()) {
           ActionCallback hideCallback = new ActionCallback();
           JComponent component = info.createComponent(editor, hideCallback::setDone);
           if (component == null) {
