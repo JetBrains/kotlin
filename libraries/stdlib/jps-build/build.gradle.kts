@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.*
-import org.jetbrains.gradle.ext.TopLevelArtifact
-import java.util.regex.Pattern
-
 description = "Stdlib configuration for JPS build (to be interpreted during IDEA project import)"
 
 val stdlibMinimal by configurations.creating
@@ -33,22 +29,4 @@ dependencies {
 
     commonStdlib("org.jetbrains.kotlin:kotlin-stdlib-common:$bootstrapKotlinVersion")
     commonStdlibSources("org.jetbrains.kotlin:kotlin-stdlib-common:$bootstrapKotlinVersion:sources")
-}
-
-val distDir: String by rootProject.extra
-val distLibDir: File by rootProject.extra
-
-task<Copy>("distRoot") {
-    destinationDir = File(distDir)
-    dependsOn(stdlibMinimal)
-    from(stdlibMinimal)
-    rename("-${Pattern.quote(bootstrapKotlinVersion)}", "")
-}
-
-task<Copy>("distLib") {
-    destinationDir = distLibDir
-    dependsOn(compilerLib)
-    from(compilerLib)
-
-    rename("-${Pattern.quote(bootstrapKotlinVersion)}", "")
 }
