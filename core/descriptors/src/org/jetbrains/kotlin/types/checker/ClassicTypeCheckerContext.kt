@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker.transformToNewType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -32,7 +31,7 @@ open class ClassicTypeCheckerContext(
 
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
         require(type is KotlinType, type::errorMessage)
-        return transformToNewType(type.unwrap())
+        return NewKotlinTypeChecker.Default.transformToNewType(type.unwrap())
     }
 
     @UseExperimental(TypeRefinement::class)

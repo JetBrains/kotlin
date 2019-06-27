@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.OnlyInputTypesDiagnostic
 import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
