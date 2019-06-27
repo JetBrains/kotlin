@@ -3531,11 +3531,6 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @TestMetadata("maxStackWithCrossinline.kt")
-        public void testMaxStackWithCrossinline_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/maxStackWithCrossinline.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("maxStackWithCrossinline.kt")
         public void testMaxStackWithCrossinline_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/maxStackWithCrossinline.kt", "kotlin.coroutines");
         }
