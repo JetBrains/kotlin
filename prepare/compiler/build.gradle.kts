@@ -44,10 +44,13 @@ val compilerPlugins by configurations.creating  {
 
 val sources by configurations.creating {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+    isTransitive = false
 }
 
 // contents of dist/maven directory
-val distMavenContents by configurations.creating
+val distMavenContents by configurations.creating {
+    isTransitive = false
+}
 // contents of dist/common directory
 val distCommonContents by configurations.creating
 val distStdlibMinimalForTests by configurations.creating
@@ -337,5 +340,6 @@ inline fun <reified T : AbstractCopyTask> Project.distTask(
 ) = tasks.register<T>(name) {
     duplicatesStrategy = DuplicatesStrategy.FAIL
     rename(quote("-$version"), "")
+    rename(quote("-$bootstrapKotlinVersion"), "")
     block()
 }

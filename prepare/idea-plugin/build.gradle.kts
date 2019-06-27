@@ -174,4 +174,5 @@ tasks.register<Sync>("ideaPlugin") {
     }
 
     rename(quote("-$version"), "")
+    rename(quote("-$bootstrapKotlinVersion"), "")
 }

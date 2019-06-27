@@ -10,3 +10,14 @@ kotlin.compiler.newInferenceEnabled=true
 #signingRequired=true
 
 intellijUltimateEnabled=false
+
+## The following properties can be added to your local.properties file to customize the build:
+
+#jpsBuild=true
+#cidrPluginsEnabled=true
+
+## Used for compare gradle and jps build
+
+#kotlin.build.postprocessing=false
+#kotlin.build.java9=false
+#kotlin.build.useBootstrapStdlib=true

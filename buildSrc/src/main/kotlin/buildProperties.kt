@@ -52,10 +52,10 @@ class KotlinBuildProperties(
         get() = isJpsBuildEnabled && isInIdeaSync
 
     val includeJava9: Boolean
-        get() = !isInJpsBuildIdeaSync
+        get() = !isInJpsBuildIdeaSync && getBoolean("kotlin.build.java9", true)
 
     val useBootstrapStdlib: Boolean
-        get() = isInJpsBuildIdeaSync
+        get() = isInJpsBuildIdeaSync || getBoolean("kotlin.build.useBootstrapStdlib", false)
 
     val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
 
