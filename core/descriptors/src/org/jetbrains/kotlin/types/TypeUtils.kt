@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
-import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
@@ -260,10 +257,17 @@ fun KotlinType.unCapture(): KotlinType = unwrap().unCapture()
 fun UnwrappedType.unCapture(): UnwrappedType = when (this) {
     is AbbreviatedType -> unCapture()
     is SimpleType -> unCapture()
-    is FlexibleType -> FlexibleTypeImpl(lowerBound.unCapture(), upperBound.unCapture())
+    is FlexibleType ->
+        FlexibleTypeImpl(
+            lowerBound.unCapture() as? SimpleType ?: lowerBound,
+            upperBound.unCapture() as? SimpleType ?: upperBound
+        )
 }
 
-fun SimpleType.unCapture(): SimpleType {
+fun SimpleType.unCapture(): UnwrappedType {
+    if (this is NewCapturedType)
+        return unCaptureTopLevelType()
+
     val newArguments = arguments.map { projection ->
         projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.let {
             it.projection
@@ -274,5 +278,14 @@ fun SimpleType.unCapture(): SimpleType {
 
 fun AbbreviatedType.unCapture(): SimpleType {
     val newType = expandedType.unCapture()
-    return AbbreviatedType(newType, abbreviation)
+    return AbbreviatedType(newType as? SimpleType ?: expandedType, abbreviation)
+}
+
+private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {
+    if (lowerType != null) return lowerType
+
+    val supertypes = constructor.supertypes
+    if (supertypes.isNotEmpty()) return intersectTypes(supertypes)
+
+    return constructor.projection.type.unwrap()
 }
