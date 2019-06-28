@@ -45,7 +45,7 @@ class DependenciesReport extends DefaultTask {
       if (!configuration.isCanBeResolved()) continue
       ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult()
       RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
-      graph.add(toNode(gson, root, configuration.name, project.path, true, [:]))
+      graph.add(toNode(gson, root, configuration.name, project.path, true, [:], new IdGenerator()))
     }
     outputFile.parentFile.mkdirs()
     outputFile.text = gson.toJson(graph)
@@ -56,8 +56,9 @@ class DependenciesReport extends DefaultTask {
                               String configurationName,
                               String projectPath,
                               boolean isConfigurationNode,
-                              Map<Object, ComponentNode> added) {
-    def id = "${dependency.id.toString()}_$configurationName".hashCode()
+                              Map<Object, ComponentNode> added,
+                              IdGenerator idGenerator) {
+    def id = idGenerator.getId(dependency, configurationName)
     ComponentNode alreadySeenNode = added.get(id)
     if (alreadySeenNode != null) {
       return new ReferenceNode(id)
@@ -84,8 +85,23 @@ class DependenciesReport extends DefaultTask {
 
     added.put(id, node)
     dependency.getChildren().each { RenderableDependency child ->
-      node.children.add(toNode(gson, child, configurationName, projectPath, false, added))
+      node.children.add(toNode(gson, child, configurationName, projectPath, false, added, idGenerator))
     }
     return node
+  }
+
+  static class IdGenerator {
+    private Map<String, Long> idMap = new HashMap<>()
+    private long value
+
+    private long getId(RenderableDependency dependency, String configurationName) {
+      def key = dependency.id.toString() + '_' + configurationName
+      def id = idMap.get(key)
+      if(id == null) {
+        idMap[key] = ++value
+        id = value
+      }
+      return id
+    }
   }
 }
