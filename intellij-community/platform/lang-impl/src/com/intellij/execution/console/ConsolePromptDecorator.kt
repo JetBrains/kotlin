@@ -24,6 +24,8 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
   var mainPrompt: String = ""
     set(mainPrompt) {
       if (this.mainPrompt != mainPrompt) {
+        // to be compatible with LanguageConsoleView we should reset the indent prompt
+        indentPrompt = ""
         field = mainPrompt
         update()
       }
@@ -38,7 +40,7 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
 
   var indentPrompt: String = ""
     set(indentPrompt) {
-      field = extend(indentPrompt, mainPrompt.length)
+      field = indentPrompt
       update()
     }
 
@@ -80,16 +82,6 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
 
   companion object {
     private val promptColor = ColorKey.createColorKey("CONSOLE_PROMPT_COLOR")
-
-    private fun extend(s: String, len: Int): String {
-      var res = s
-      while (res.length < len) {
-        res = " $res"
-      }
-
-      return res
-
-    }
   }
 }
 
