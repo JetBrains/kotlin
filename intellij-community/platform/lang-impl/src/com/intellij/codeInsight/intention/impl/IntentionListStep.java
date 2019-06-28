@@ -167,9 +167,9 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
   @Override
   @NotNull
   public String getTextFor(final IntentionActionWithTextCaching action) {
-    final String text = action.getAction().getText();
+    final String text = action.getText();
     if (LOG.isDebugEnabled() && text.startsWith("<html>")) {
-      LOG.info("IntentionAction.getText() returned HTML: action=" + action + " text=" + text);
+      LOG.info("IntentionAction.getText() returned HTML: action=" + action.getAction().getClass() + " text=" + text);
     }
     return text;
   }
