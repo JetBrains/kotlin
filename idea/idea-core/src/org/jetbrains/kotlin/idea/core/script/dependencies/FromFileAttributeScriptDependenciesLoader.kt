@@ -18,7 +18,7 @@ import kotlin.script.experimental.api.asSuccess
 class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDependenciesLoader(project) {
 
     override fun isApplicable(file: VirtualFile): Boolean {
-        return file.scriptDependencies != null
+        return file.scriptDependencies != null || file.scriptCompilationConfiguration != null
     }
 
     override fun loadDependencies(file: VirtualFile) {
