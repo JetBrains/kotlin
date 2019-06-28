@@ -10,10 +10,10 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.JBTabPainter;
 import com.intellij.ui.tabs.JBTabsBorder;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.newImpl.SingleHeightTabs;
-import com.intellij.ui.tabs.newImpl.TabLabel;
-import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
-import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
+import com.intellij.ui.tabs.impl.SingleHeightTabs;
+import com.intellij.ui.tabs.impl.TabLabel;
+import com.intellij.ui.tabs.impl.singleRow.ScrollableSingleRowLayout;
+import com.intellij.ui.tabs.impl.singleRow.SingleRowLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

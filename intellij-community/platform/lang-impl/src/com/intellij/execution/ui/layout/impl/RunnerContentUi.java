@@ -39,7 +39,7 @@ import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.ui.tabs.JBTabs;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
-import com.intellij.ui.tabs.newImpl.JBTabsImpl;
+import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;

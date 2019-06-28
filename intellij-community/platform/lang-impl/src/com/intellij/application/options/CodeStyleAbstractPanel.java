@@ -32,7 +32,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.ui.tabs.JBTabs;
-import com.intellij.ui.tabs.newImpl.TabLabel;
+import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.Alarm;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.LocalTimeCounter;

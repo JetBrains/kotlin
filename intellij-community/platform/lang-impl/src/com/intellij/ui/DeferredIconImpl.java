@@ -14,7 +14,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ScalableIcon;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.icons.RowIcon;
-import com.intellij.ui.tabs.newImpl.TabLabel;
+import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.Alarm;
 import com.intellij.util.Function;
 import com.intellij.util.IconUtil;
