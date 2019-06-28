@@ -52,7 +52,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
 
         return if (produceFramework) {
-            val mapper = ObjCExportMapper()
+            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver)
             val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
             val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
             val namer = ObjCExportNamerImpl(

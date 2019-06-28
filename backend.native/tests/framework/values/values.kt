@@ -491,3 +491,173 @@ class TestInvalidIdentifiers {
     val `$` = '$'
     val `_` = '_'
 }
+
+@Suppress("UNUSED_PARAMETER")
+open class TestDeprecation() {
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) open class OpenHidden : TestDeprecation()
+    @Suppress("DEPRECATION_ERROR") class ExtendingHidden : OpenHidden()
+
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) interface HiddenInterface {
+        fun effectivelyHidden(): Any
+    }
+
+    @Suppress("DEPRECATION_ERROR") open class ImplementingHidden : Any(), HiddenInterface {
+        override fun effectivelyHidden(): Int = -1
+    }
+
+    @Suppress("DEPRECATION_ERROR")
+    fun callEffectivelyHidden(obj: Any): Int = (obj as HiddenInterface).effectivelyHidden() as Int
+
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) class Hidden : TestDeprecation()
+    @Suppress("DEPRECATION_ERROR") fun getHidden() = Hidden()
+
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) constructor(hidden: Byte) : this()
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) fun hidden() {}
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) val hiddenVal: Any? = null
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) var hiddenVar: Any? = null
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) open fun openHidden() {}
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) open val openHiddenVal: Any? = null
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) open var openHiddenVar: Any? = null
+
+    @Deprecated("error", level = DeprecationLevel.ERROR) open class OpenError : TestDeprecation()
+    @Suppress("DEPRECATION_ERROR") class ExtendingError : OpenError()
+
+    @Deprecated("error", level = DeprecationLevel.ERROR) interface ErrorInterface
+    @Suppress("DEPRECATION_ERROR") class ImplementingError : ErrorInterface
+
+    @Deprecated("error", level = DeprecationLevel.ERROR) class Error : TestDeprecation()
+    @Suppress("DEPRECATION_ERROR") fun getError() = Error()
+
+    @Deprecated("error", level = DeprecationLevel.ERROR) constructor(error: Short) : this()
+    @Deprecated("error", level = DeprecationLevel.ERROR) fun error() {}
+    @Deprecated("error", level = DeprecationLevel.ERROR) val errorVal: Any? = null
+    @Deprecated("error", level = DeprecationLevel.ERROR) var errorVar: Any? = null
+    @Deprecated("error", level = DeprecationLevel.ERROR) open fun openError() {}
+    @Deprecated("error", level = DeprecationLevel.ERROR) open val openErrorVal: Any? = null
+    @Deprecated("error", level = DeprecationLevel.ERROR) open var openErrorVar: Any? = null
+
+    @Deprecated("warning", level = DeprecationLevel.WARNING) open class OpenWarning : TestDeprecation()
+    @Suppress("DEPRECATION") class ExtendingWarning : OpenWarning()
+
+    @Deprecated("warning", level = DeprecationLevel.WARNING) interface WarningInterface
+    @Suppress("DEPRECATION") class ImplementingWarning : WarningInterface
+
+    @Deprecated("warning", level = DeprecationLevel.WARNING) class Warning : TestDeprecation()
+    @Suppress("DEPRECATION") fun getWarning() = Warning()
+
+    @Deprecated("warning", level = DeprecationLevel.WARNING) constructor(warning: Int) : this()
+    @Deprecated("warning", level = DeprecationLevel.WARNING) fun warning() {}
+    @Deprecated("warning", level = DeprecationLevel.WARNING) val warningVal: Any? = null
+    @Deprecated("warning", level = DeprecationLevel.WARNING) var warningVar: Any? = null
+    @Deprecated("warning", level = DeprecationLevel.WARNING) open fun openWarning() {}
+    @Deprecated("warning", level = DeprecationLevel.WARNING) open val openWarningVal: Any? = null
+    @Deprecated("warning", level = DeprecationLevel.WARNING) open var openWarningVar: Any? = null
+
+    constructor(normal: Long) : this()
+    fun normal() {}
+    val normalVal: Any? = null
+    var normalVar: Any? = null
+    open fun openNormal(): Int = 1
+    open val openNormalVal: Any? = null
+    open var openNormalVar: Any? = null
+
+    class HiddenOverride() : TestDeprecation() {
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) constructor(hidden: Byte) : this()
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override fun openHidden() {}
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override val openHiddenVal: Any? = null
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override var openHiddenVar: Any? = null
+
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) constructor(error: Short) : this()
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override fun openError() {}
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override val openErrorVal: Any? = null
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override var openErrorVar: Any? = null
+
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) constructor(warning: Int) : this()
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override fun openWarning() {}
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override val openWarningVal: Any? = null
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override var openWarningVar: Any? = null
+
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) constructor(normal: Long) : this()
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override fun openNormal(): Int = 2
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override val openNormalVal: Any? = null
+        @Deprecated("hidden", level = DeprecationLevel.HIDDEN) override var openNormalVar: Any? = null
+    }
+
+    class ErrorOverride() : TestDeprecation() {
+        @Deprecated("error", level = DeprecationLevel.ERROR) constructor(hidden: Byte) : this()
+        @Deprecated("error", level = DeprecationLevel.ERROR) override fun openHidden() {}
+        @Deprecated("error", level = DeprecationLevel.ERROR) override val openHiddenVal: Any? = null
+        @Deprecated("error", level = DeprecationLevel.ERROR) override var openHiddenVar: Any? = null
+
+        @Deprecated("error", level = DeprecationLevel.ERROR) constructor(error: Short) : this()
+        @Deprecated("error", level = DeprecationLevel.ERROR) override fun openError() {}
+        @Deprecated("error", level = DeprecationLevel.ERROR) override val openErrorVal: Any? = null
+        @Deprecated("error", level = DeprecationLevel.ERROR) override var openErrorVar: Any? = null
+
+        @Deprecated("error", level = DeprecationLevel.ERROR) constructor(warning: Int) : this()
+        @Deprecated("error", level = DeprecationLevel.ERROR) override fun openWarning() {}
+        @Deprecated("error", level = DeprecationLevel.ERROR) override val openWarningVal: Any? = null
+        @Deprecated("error", level = DeprecationLevel.ERROR) override var openWarningVar: Any? = null
+
+        @Deprecated("error", level = DeprecationLevel.ERROR) constructor(normal: Long) : this()
+        @Deprecated("error", level = DeprecationLevel.ERROR) override fun openNormal(): Int = 3
+        @Deprecated("error", level = DeprecationLevel.ERROR) override val openNormalVal: Any? = null
+        @Deprecated("error", level = DeprecationLevel.ERROR) override var openNormalVar: Any? = null
+    }
+
+    class WarningOverride() : TestDeprecation() {
+        @Deprecated("warning", level = DeprecationLevel.WARNING) constructor(hidden: Byte) : this()
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override fun openHidden() {}
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override val openHiddenVal: Any? = null
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override var openHiddenVar: Any? = null
+
+        @Deprecated("warning", level = DeprecationLevel.WARNING) constructor(error: Short) : this()
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override fun openError() {}
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override val openErrorVal: Any? = null
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override var openErrorVar: Any? = null
+
+        @Deprecated("warning", level = DeprecationLevel.WARNING) constructor(warning: Int) : this()
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override fun openWarning() {}
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override val openWarningVal: Any? = null
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override var openWarningVar: Any? = null
+
+        @Deprecated("warning", level = DeprecationLevel.WARNING) constructor(normal: Long) : this()
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override fun openNormal(): Int = 4
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override val openNormalVal: Any? = null
+        @Deprecated("warning", level = DeprecationLevel.WARNING) override var openNormalVar: Any? = null
+    }
+
+    class NormalOverride() : TestDeprecation() {
+        constructor(hidden: Byte) : this()
+        override fun openHidden() {}
+        override val openHiddenVal: Any? = null
+        override var openHiddenVar: Any? = null
+
+        constructor(error: Short) : this()
+        override fun openError() {}
+        override val openErrorVal: Any? = null
+        override var openErrorVar: Any? = null
+
+        constructor(warning: Int) : this()
+        override fun openWarning() {}
+        override val openWarningVal: Any? = null
+        override var openWarningVar: Any? = null
+
+        constructor(normal: Long) : this()
+        override fun openNormal(): Int = 5
+        override val openNormalVal: Any? = null
+        override var openNormalVar: Any? = null
+    }
+}
+
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN) fun hidden() {}
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN) val hiddenVal: Any? = null
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN) var hiddenVar: Any? = null
+
+@Deprecated("error", level = DeprecationLevel.ERROR) fun error() {}
+@Deprecated("error", level = DeprecationLevel.ERROR) val errorVal: Any? = null
+@Deprecated("error", level = DeprecationLevel.ERROR) var errorVar: Any? = null
+
+@Deprecated("warning", level = DeprecationLevel.WARNING) fun warning() {}
+@Deprecated("warning", level = DeprecationLevel.WARNING) val warningVal: Any? = null
+@Deprecated("warning", level = DeprecationLevel.WARNING) var warningVar: Any? = null

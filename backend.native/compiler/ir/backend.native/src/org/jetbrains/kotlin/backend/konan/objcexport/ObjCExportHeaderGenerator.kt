@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -365,8 +367,7 @@ internal class ObjCExportTranslatorImpl(
                     ?.forEach {
                         val selector = getSelector(it)
                         if (selector !in presentConstructors) {
-                            val c = buildMethod(it, it, ObjCNoneExportScope)
-                            +ObjCMethod(c.descriptor, c.isInstanceMethod, c.returnType, c.selectors, c.parameters, c.attributes + "unavailable")
+                            +buildMethod(it, it, ObjCNoneExportScope, unavailable = true)
 
                             if (selector == "init") {
                                 +ObjCMethod(null, false, ObjCInstanceType, listOf("new"), emptyList(), listOf("unavailable"))
@@ -598,10 +599,18 @@ internal class ObjCExportTranslatorImpl(
         val getterSelector = getSelector(baseProperty.getter!!)
         val getterName: String? = if (getterSelector != name) getterSelector else null
 
-        return ObjCProperty(name, property, type, attributes, setterName, getterName, listOf(swiftNameAttribute(name)))
+        val declarationAttributes = mutableListOf(swiftNameAttribute(name))
+        declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
+
+        return ObjCProperty(name, property, type, attributes, setterName, getterName, declarationAttributes)
     }
 
-    private fun buildMethod(method: FunctionDescriptor, baseMethod: FunctionDescriptor, objCExportScope: ObjCExportScope): ObjCMethod {
+    private fun buildMethod(
+            method: FunctionDescriptor,
+            baseMethod: FunctionDescriptor,
+            objCExportScope: ObjCExportScope,
+            unavailable: Boolean = false
+    ): ObjCMethod {
         fun collectParameters(baseMethodBridge: MethodBridge, method: FunctionDescriptor): List<ObjCParameter> {
             fun unifyName(initialName: String, usedNames: Set<String>): String {
                 var unique = initialName.toValidObjCSwiftIdentifier()
@@ -670,6 +679,12 @@ internal class ObjCExportTranslatorImpl(
 
         if (method is ConstructorDescriptor && !method.constructedClass.isArray) { // TODO: check methodBridge instead.
             attributes += "objc_designated_initializer"
+        }
+
+        if (unavailable) {
+            attributes += "unavailable"
+        } else {
+            attributes.addIfNotNull(mapper.getDeprecation(method)?.toDeprecationAttribute())
         }
 
         return ObjCMethod(method, isInstanceMethod, returnType, selectorParts, parameters, attributes)
@@ -789,8 +804,8 @@ internal class ObjCExportTranslatorImpl(
             return mapObjCObjectReferenceTypeIgnoringNullability(classDescriptor)
         }
 
-        // Workaround for https://github.com/JetBrains/kotlin-native/issues/3053
         if (!mapper.shouldBeExposed(classDescriptor)) {
+            // There are number of tricky corner cases getting here.
             return ObjCIdType
         }
 
@@ -1199,3 +1214,16 @@ internal fun Variance.objcDeclaration():String = when(this){
 private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? = descriptor.typeConstructor.supertypes.filter { !it.isInterface() }.firstOrNull()
 
 internal const val OBJC_SUBCLASSING_RESTRICTED = "objc_subclassing_restricted"
+
+private fun Deprecation.toDeprecationAttribute(): String {
+    val attribute = when (deprecationLevel) {
+        DeprecationLevelValue.WARNING -> "deprecated"
+        DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> "unavailable"
+    }
+
+    // TODO: consider avoiding code generation for unavailable.
+
+    val message = this.message.orEmpty()
+
+    return "$attribute(\"$message\")"
+}

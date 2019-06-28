@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportWarningCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.dumpObjCHeader
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
+    this.useImpl<FrontendServices>()
+
     if (config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE) != null) {
         this.useImpl<ObjCExportLazyImpl>()
         this.useInstance(ObjCExportWarningCollector.SILENT)
@@ -35,8 +37,12 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
     }
 }
 
-internal fun ComponentProvider.postprocessComponents(configuration: CompilerConfiguration, files: Collection<KtFile>) {
-    configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {
+internal fun ComponentProvider.postprocessComponents(context: Context, files: Collection<KtFile>) {
+    context.frontendServices = this.get<FrontendServices>()
+
+    context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {
         this.get<ObjCExportLazy>().dumpObjCHeader(files, it)
     }
 }
+
+class FrontendServices(val deprecationResolver: DeprecationResolver)

@@ -193,6 +193,7 @@ internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler 
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
+    lateinit var frontendServices: FrontendServices
     lateinit var environment: KotlinCoreEnvironment
     lateinit var bindingContext: BindingContext
 
