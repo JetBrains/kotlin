@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -498,4 +500,59 @@ fun IrClass.addFakeOverrides() {
         .toMutableMap()
 
     declarations += fakeOverriddenFunctions.values
+}
+
+fun createStaticFunctionWithReceivers(
+    irParent: IrDeclarationParent,
+    name: Name,
+    oldFunction: IrFunction,
+    dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
+    origin: IrDeclarationOrigin = oldFunction.origin,
+    copyBody: Boolean = true
+): IrSimpleFunction {
+    val descriptor = WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
+    return IrFunctionImpl(
+        oldFunction.startOffset, oldFunction.endOffset,
+        origin,
+        IrSimpleFunctionSymbolImpl(descriptor),
+        name,
+        oldFunction.visibility,
+        Modality.FINAL,
+        oldFunction.returnType,
+        isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+    ).apply {
+        descriptor.bind(this)
+        parent = irParent
+
+        copyTypeParametersFrom(oldFunction)
+
+        annotations.addAll(oldFunction.annotations)
+
+        var offset = 0
+        val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
+            this,
+            name = Name.identifier("this"),
+            index = offset++,
+            type = dispatchReceiverType!!
+        )
+        val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
+            this,
+            name = Name.identifier("receiver"),
+            index = offset++
+        )
+        valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
+                                       oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
+        )
+
+        val mapping: Map<IrValueParameter, IrValueParameter> =
+            (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
+                .zip(valueParameters).toMap()
+        if (copyBody) {
+            body = oldFunction.body
+                ?.transform(VariableRemapper(mapping), null)
+                ?.patchDeclarationParents(this)
+        }
+
+        metadata = oldFunction.metadata
+    }
 }

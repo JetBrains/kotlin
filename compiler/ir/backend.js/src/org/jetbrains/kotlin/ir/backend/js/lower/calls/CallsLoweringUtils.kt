@@ -47,7 +47,7 @@ internal fun <K> MutableMap<K, (IrFunctionAccessExpression) -> IrExpression>.add
 internal typealias MemberToTransformer = HashMap<SimpleMemberKey, (IrFunctionAccessExpression) -> IrExpression>
 
 internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrFunctionSymbol) {
-    add(type, name) { irCall(it, v, dispatchReceiverAsArgument = true) }
+    add(type, name) { irCall(it, v, receiversAsArguments = true) }
 }
 
 internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrFunction) {
