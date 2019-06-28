@@ -100,19 +100,20 @@ class KtLightParameter(
     override fun getParent(): PsiElement = method.parameterList
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        val result = ApplicationManager.getApplication().runReadAction(Computable {
-            val kotlinOrigin = kotlinOrigin
-            if (kotlinOrigin?.isEquivalentTo(another) == true) return@Computable true
+        if (this === another) return true
 
-            if (another is KtLightParameter && kotlinOrigin != null) {
-                kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
-            } else {
-                null
+        return ApplicationManager.getApplication().runReadAction(Computable<Boolean> {
+            if (another is KtParameter) {
+                val kotlinOrigin = kotlinOrigin
+                if (kotlinOrigin?.isEquivalentTo(another) == true) return@Computable true
             }
-        })
-        result?.let { return it }
 
-        return super.isEquivalentTo(another)
+            if (another is KtLightParameter) {
+                return@Computable kotlinOrigin != null && kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
+            }
+
+            false
+        })
     }
 
     override fun equals(other: Any?): Boolean {
