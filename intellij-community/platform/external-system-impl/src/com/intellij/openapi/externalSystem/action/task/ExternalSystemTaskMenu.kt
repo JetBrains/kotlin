@@ -3,14 +3,13 @@ package com.intellij.openapi.externalSystem.action.task
 
 import com.intellij.execution.Executor
 import com.intellij.execution.ExecutorRegistry
-import com.intellij.execution.actions.RunContextAction
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.statistics.ExternalSystemActionsCollector
 import com.intellij.openapi.project.DumbAware
 
 class ExternalSystemTaskMenu : DefaultActionGroup(), DumbAware {
-
+  private val actionManager = ActionManager.getInstance()
   override fun update(e: AnActionEvent) {
     val project = AnAction.getEventProject(e) ?: return
 
@@ -21,7 +20,12 @@ class ExternalSystemTaskMenu : DefaultActionGroup(), DumbAware {
     ExecutorRegistry.getInstance().registeredExecutors
       .filter { it.isApplicable(project) }
       .reversed()
-      .forEach { add(wrap(RunContextAction(it), it), Constraints.FIRST) }
+      .forEach {
+        val contextAction = actionManager.getAction(it.contextActionId)
+        if (contextAction != null) {
+          add(wrap(contextAction, it), Constraints.FIRST)
+        }
+      }
   }
 
   private interface MyDelegatingAction
