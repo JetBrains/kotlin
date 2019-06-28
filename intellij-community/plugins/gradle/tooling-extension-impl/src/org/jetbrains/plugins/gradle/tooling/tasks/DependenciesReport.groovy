@@ -57,7 +57,7 @@ class DependenciesReport extends DefaultTask {
                               String projectPath,
                               boolean isConfigurationNode,
                               Map<Object, ComponentNode> added) {
-    def id = "${gson.toJson(dependency.id)}_$configurationName".hashCode()
+    def id = "${dependency.id.toString()}_$configurationName".hashCode()
     ComponentNode alreadySeenNode = added.get(id)
     if (alreadySeenNode != null) {
       return new ReferenceNode(id)
