@@ -22,7 +22,6 @@ import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +37,7 @@ import java.util.List;
 import java.util.*;
 
 import static com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts;
+import static com.intellij.ui.tree.TreePathUtil.toTreePathArray;
 
 public class MemberChooser<T extends ClassMember> extends DialogWrapper implements TypeSafeDataProvider {
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.MemberChooser");
@@ -242,7 +242,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
         selectionPaths.add(new TreePath(((DefaultMutableTreeNode)treeNode).getPath()));
       }
     }
-    final TreePath[] paths = selectionPaths.toArray(new TreePath[0]);
+    final TreePath[] paths = toTreePathArray(selectionPaths);
     myTree.setSelectionPaths(paths);
 
     if (paths.length > 0) {
@@ -633,7 +633,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
     }
 
     if (!toSelect.isEmpty()) {
-      myTree.setSelectionPaths(toSelect.toArray(new TreePath[0]));
+      myTree.setSelectionPaths(toTreePathArray(toSelect));
     }
 
     ElementNode leadNode = pair.first;
