@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.*
-import org.jetbrains.kotlin.backend.common.ir.addChild
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -177,6 +174,7 @@ class LocalDeclarationsLowering(
                         val body = argument.defaultValue!!
                         oldParameterToNew[argument]!!.defaultValue = body
                     }
+                    acceptChildren(SetDeclarationsParentVisitor, this)
                 }
                 it.ownerForLoweredDeclaration.addChild(it.transformedDeclaration)
             }
