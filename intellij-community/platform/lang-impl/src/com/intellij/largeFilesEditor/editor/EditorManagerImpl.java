@@ -14,6 +14,7 @@ import com.intellij.largeFilesEditor.search.SearchManagerImpl;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.SearchResultsPanelManagerAccessorImpl;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.undo.UndoUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -23,6 +24,7 @@ import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -65,18 +67,20 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
     document = createSpecialDocument(vFile);
 
     editorModel = new EditorModel(document, project, implementDataProviderForEditorModel());
+    editorModel.putUserDataToEditor(KEY_EDITOR_MARK, new Object());
+    editorModel.putUserDataToEditor(KEY_EDITOR_MANAGER, this);
 
     try {
       fileManager = new LargeFileManagerImpl(vFile, customPageSize, customBorderShift);
     }
     catch (FileNotFoundException e) {
       logger.warn(e);
+      editorModel.setBrokenMode();
       Messages.showWarningDialog("Can't open file: file not found.", "Warning");
+      requestClosingEditorTab();
       return;
     }
 
-    editorModel.putUserDataToEditor(KEY_EDITOR_MARK, new Object());
-    editorModel.putUserDataToEditor(KEY_EDITOR_MANAGER, this);
 
     searchManager = new SearchManagerImpl(
       this, fileManager.getFileDataProviderForSearch(), new SearchResultsPanelManagerAccessorImpl());
@@ -85,6 +89,11 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
     PlatformActionsReplacer.makeAdaptingOfPlatformActionsIfNeed();
 
     editorModel.addCaretListener(new MyCaretListener());
+  }
+
+  private void requestClosingEditorTab() {
+    ApplicationManager.getApplication().invokeLater(
+      () -> FileEditorManager.getInstance(project).closeFile(vFile));
   }
 
   private void createAndAddSpecialWidgetIfNeed(Project project) {

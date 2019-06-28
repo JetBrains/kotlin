@@ -50,9 +50,10 @@ public class EditorModel {
   private final DocumentOfPagesModel documentOfPagesModel;
   private final Collection<RangeHighlighter> pageRangeHighlighters;
 
-  private EvictingQueue<Page> pagesCash = EvictingQueue.create(PAGES_CASH_CAPACITY);
-  private List<Long> numbersOfRequestedForReadingPages = new LinkedList<>();
-  private AtomicBoolean isUpdateRequested = new AtomicBoolean(false);
+  private final EvictingQueue<Page> pagesCash = EvictingQueue.create(PAGES_CASH_CAPACITY);
+  private final List<Long> numbersOfRequestedForReadingPages = new LinkedList<>();
+  private final AtomicBoolean isUpdateRequested = new AtomicBoolean(false);
+  private boolean isBrokenMode = false;
 
   private final AbsoluteEditorPosition targetVisiblePosition = new AbsoluteEditorPosition(0, 0);
   private boolean isLocalScrollBarStabilized = false;
@@ -172,6 +173,11 @@ public class EditorModel {
     return myRootComponent;
   }
 
+  void setBrokenMode() {
+    isBrokenMode = true;
+    requestUpdate();
+  }
+
   void addCaretListener(CaretListener caretListener) {
     editor.getCaretModel().addCaretListener(caretListener);
   }
@@ -257,6 +263,11 @@ public class EditorModel {
 
   @CalledInAwt
   private void update() {
+    if (isBrokenMode) {
+      documentOfPagesModel.removeAllPages(dataProvider.getProject());
+      return;
+    }
+
     long pagesAmountInFile;
     try {
       pagesAmountInFile = dataProvider.getPagesAmount();
