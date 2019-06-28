@@ -218,9 +218,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
     }
 
-    override fun createArguments(): K2NativeCompilerArguments {
-        return K2NativeCompilerArguments()
-    }
+    override fun createArguments() = K2NativeCompilerArguments()
 
     override fun executableScriptFileName() = "kotlinc-native"
 

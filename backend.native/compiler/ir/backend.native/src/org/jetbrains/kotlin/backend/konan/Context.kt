@@ -427,19 +427,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         printIr()
         printBitCode()
     }
-
-    fun shouldVerifyDescriptors() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_DESCRIPTORS)
-
-    fun shouldVerifyIr() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_IR)
-
     fun shouldVerifyBitCode() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)
-
-    fun shouldPrintDescriptors() = config.configuration.getBoolean(KonanConfigKeys.PRINT_DESCRIPTORS)
-
-    fun shouldPrintIr() = config.configuration.getBoolean(KonanConfigKeys.PRINT_IR)
-
-    fun shouldPrintIrWithDescriptors()=
-            config.configuration.getBoolean(KonanConfigKeys.PRINT_IR_WITH_DESCRIPTORS)
 
     fun shouldPrintBitCode() = config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE)
 

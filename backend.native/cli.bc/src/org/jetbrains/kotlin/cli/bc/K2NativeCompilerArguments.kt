@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.bc
 
-import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -198,6 +197,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             super.configureAnalysisFlags(collector).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>
                 it[AnalysisFlags.useExperimental] = useExperimental + listOf("kotlin.ExperimentalUnsignedTypes")
+                if (printIr)
+                    phasesToDumpAfter = arrayOf("ALL")
             }
 }
 
