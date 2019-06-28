@@ -351,7 +351,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         // This is needed because updateScriptDependencies invalidates psiFile that was stored in myFile field
         myFile = psiManager.findFile(script)
 
-        val isFatalErrorPresent = myFile.virtualFile.getUserData(IdeScriptReportSink.Reports)?.any { it.severity == ScriptReport.Severity.FATAL } == true
+        val isFatalErrorPresent = IdeScriptReportSink.getReports(script).any { it.severity == ScriptReport.Severity.FATAL }
         assert(isFatalErrorPresent || KotlinHighlightingUtil.shouldHighlight(myFile)) {
             "Highlighting is switched off for ${myFile.virtualFile.path}"
         }

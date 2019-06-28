@@ -77,9 +77,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
     }
 
     private fun attachReportsIfChanged(result: ResultWithDiagnostics<*>, file: VirtualFile) {
-        if (file.getUserData(IdeScriptReportSink.Reports) != result.reports.takeIf { it.isNotEmpty() }) {
-            reporter.attachReports(file, result.reports.mapToLegacyReports())
-        }
+        reporter.attachReports(file, result.reports.mapToLegacyReports())
     }
 
     private fun save(compilationConfigurationResult: ScriptCompilationConfigurationResult?, file: VirtualFile) {
