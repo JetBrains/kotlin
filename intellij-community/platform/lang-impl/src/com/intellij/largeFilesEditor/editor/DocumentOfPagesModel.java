@@ -1,7 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.editor;
 
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -72,7 +73,7 @@ public class DocumentOfPagesModel {
       (symbolOffsetToEndOfPage.isEmpty() ? 0 : symbolOffsetToEndOfPage.get(symbolOffsetToEndOfPage.size() - 1))
       + page.getText().length());
 
-    WriteCommandAction.runWriteCommandAction(
+    runAsWriteAction(
       project,
       myDocument.getTextLength() == 0 ? () -> myDocument.setText(page.getText())
                                       : () -> myDocument.insertString(myDocument.getTextLength(), page.getText()));
@@ -84,7 +85,7 @@ public class DocumentOfPagesModel {
       Page lastPage = pagesInDocument.get(indexOfLastPage);
       pagesInDocument.remove(indexOfLastPage);
       symbolOffsetToEndOfPage.remove(indexOfLastPage);
-      WriteCommandAction.runWriteCommandAction(
+      runAsWriteAction(
         project,
         () -> myDocument.deleteString(
           myDocument.getTextLength() - lastPage.getText().length(), myDocument.getTextLength()));
@@ -92,11 +93,16 @@ public class DocumentOfPagesModel {
   }
 
   public void removeAllPages(Project project) {
-    pagesInDocument.clear();
-    symbolOffsetToEndOfPage.clear();
-    WriteCommandAction.runWriteCommandAction(
-      project,
-      () -> myDocument.deleteString(0, myDocument.getTextLength()));
+    if (!pagesInDocument.isEmpty()) {
+      pagesInDocument.clear();
+      symbolOffsetToEndOfPage.clear();
+      runAsWriteAction(project, () -> myDocument.deleteString(0, myDocument.getTextLength()));
+    }
+  }
+
+  private static void runAsWriteAction(Project project, Runnable action) {
+    CommandProcessor.getInstance().executeCommand(
+      project, () -> ApplicationManager.getApplication().runWriteAction(action), null, null);
   }
 
   public AbsoluteSymbolPosition offsetToAbsoluteSymbolPosition(int offset) {
