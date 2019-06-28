@@ -1302,6 +1302,20 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertTrue(output.contains("Kotlin/Native distribution: "))
             }
+
+            build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
+                assertSuccessful()
+                val dists = output.lineSequence().filter {
+                    it.contains("Kotlin/Native distribution: ")
+                }
+
+                // Restricted distribution is available for Mac hosts only.
+                if (HostManager.hostIsMac) {
+                    assertTrue(dists.all { it.contains("-restricted-") })
+                } else {
+                    assertTrue(dists.none { it.contains("-restricted-") })
+                }
+            }
         }
     }
 

@@ -108,6 +108,17 @@ internal class PropertiesProvider(private val project: Project) {
     val individualTaskReports: Boolean?
         get() = booleanProperty("kotlin.tests.individualTaskReports")
 
+    /**
+     * Forces using a "restricted" distribution of Kotlin/Native.
+     *
+     * A restricted distribution is available for MacOS only and doesn't contain platform libraries.
+     * If a host platform is not MacOS, the flag is ignored.
+     */
+    val nativeRestrictedDistribution: Boolean?
+        get() = booleanProperty("kotlin.native.restrictedDistribution")
+
+    // TODO: Add other native props here.
+
     private fun booleanProperty(propName: String): Boolean? =
         property(propName)?.toBoolean()
 
