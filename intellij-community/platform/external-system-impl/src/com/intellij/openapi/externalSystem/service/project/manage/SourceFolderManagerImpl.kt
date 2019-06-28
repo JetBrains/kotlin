@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
@@ -21,6 +22,8 @@ import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import java.util.stream.Stream
+import kotlin.streams.asStream
 
 class SourceFolderManagerImpl(private val project: Project) : SourceFolderManager, Disposable {
 
@@ -56,6 +59,16 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     synchronized(mutex) {
       val moduleModel = sourceFoldersByModule.remove(module.name) ?: return
       moduleModel.sourceFolders.forEach { sourceFolders.remove(it) }
+    }
+  }
+
+  override fun getSourceFolders(): Stream<Pair<String, JpsModuleSourceRootType<*>>> {
+    synchronized(mutex) {
+      return sourceFoldersByModule.asSequence().flatMap { it.value.sourceFolders.asSequence() }.mapNotNull { folderUrl ->
+        sourceFolders[folderUrl]?.let { folderModel ->
+          Pair.create(folderUrl, folderModel.type)
+        }
+      }.asStream()
     }
   }
 
