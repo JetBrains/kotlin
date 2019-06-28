@@ -633,6 +633,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("idea/testData/quickfix/autoImports/importAliasPropertyAlreadyExists.before.Main.kt");
         }
 
+        @TestMetadata("importFromRoot.before.Main.kt")
+        public void testImportFromRoot() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/importFromRoot.before.Main.kt");
+        }
+
         @TestMetadata("importInFirstPartInQualifiedExpression.before.Main.kt")
         public void testImportInFirstPartInQualifiedExpression() throws Exception {
             runTest("idea/testData/quickfix/autoImports/importInFirstPartInQualifiedExpression.before.Main.kt");

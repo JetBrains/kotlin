@@ -1,0 +1,8 @@
+// IMPORT: class: RootClass
+package non.root.name
+
+import RootClass
+
+fun test() {
+    RootClass()
+}
