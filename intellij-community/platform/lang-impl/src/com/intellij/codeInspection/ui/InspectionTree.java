@@ -56,6 +56,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static com.intellij.codeInspection.CommonProblemDescriptor.DESCRIPTOR_COMPARATOR;
+import static com.intellij.ui.tree.TreePathUtil.toTreePathArray;
 
 public class InspectionTree extends Tree {
   private static final Logger LOG = Logger.getInstance(InspectionTree.class);
@@ -456,7 +457,7 @@ public class InspectionTree extends Tree {
     for (InspectionTreeNode parent : parents) {
       parent.dropProblemCountCaches();
     }
-    TreeUtil.selectPath(this, TreeUtil.findCommonPath(pathsToSelect.toArray(new TreePath[0])));
+    TreeUtil.selectPath(this, TreeUtil.findCommonPath(toTreePathArray(pathsToSelect)));
 
     revalidate();
     repaint();

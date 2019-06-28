@@ -91,6 +91,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
+import static com.intellij.ui.tree.TreePathUtil.toTreePathArray;
+
 @State(name = "ProjectView", storages = {
   @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE),
   @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
@@ -1896,7 +1898,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
           }
         }
         if (!paths.isEmpty()) {
-          tree.setSelectionPaths(paths.toArray(new TreePath[0]));
+          tree.setSelectionPaths(toTreePathArray(paths));
         }
       }
       else {

@@ -181,7 +181,7 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
       TreeBuilderUtil.storePaths(builder, (DefaultMutableTreeNode)myTree.getModel().getRoot(), pathsToExpand, selectionPaths, true);
       afterUpdate = () -> {
         if (myTree != null && !builder.isDisposed()) {
-          myTree.setSelectionPaths(new TreePath[0]);
+          myTree.clearSelection();
           TreeBuilderUtil.restorePaths(builder, pathsToExpand, selectionPaths, true);
         }
         cb.setDone();
