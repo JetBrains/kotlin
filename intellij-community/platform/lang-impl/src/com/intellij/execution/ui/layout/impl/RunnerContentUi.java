@@ -15,7 +15,6 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.AbstractPainter;
-import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.ActiveRunnable;
 import com.intellij.openapi.util.Disposer;
@@ -38,7 +37,6 @@ import com.intellij.ui.docking.DragSession;
 import com.intellij.ui.docking.impl.DockManagerImpl;
 import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.ui.tabs.JBTabs;
-import com.intellij.ui.tabs.JBTabsFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.newImpl.JBTabsImpl;
@@ -185,10 +183,6 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     myToolbar.setContent(tb.getComponent());
     myLeftToolbarActions = group;
 
-    if(!JBTabsFactory.getUseNewTabs()) {
-      tb.getComponent().setBorder(
-        JBUI.Borders.merge(tb.getComponent().getBorder(), JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 0, 0, 0, 1), true));
-    }
     myComponent.revalidate();
     myComponent.repaint();
   }
