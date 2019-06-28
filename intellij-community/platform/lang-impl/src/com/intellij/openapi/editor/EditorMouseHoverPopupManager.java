@@ -163,8 +163,9 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     }
   }
 
-  private static void validatePopupSize(AbstractPopup popup) {
-    popup.setSize(popup.getComponent().getPreferredSize());
+  private static void validatePopupSize(@NotNull AbstractPopup popup) {
+    JComponent component = popup.getComponent();
+    if (component != null) popup.setSize(component.getPreferredSize());
   }
 
   private static void closePopup(AbstractPopup popup) {
