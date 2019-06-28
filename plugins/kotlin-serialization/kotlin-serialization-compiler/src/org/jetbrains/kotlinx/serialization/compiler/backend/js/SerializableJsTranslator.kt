@@ -121,6 +121,7 @@ class SerializableJsTranslator(
 
         f.name = context.getInnerNameForDescriptor(constructorDescriptor)
         context.addDeclarationStatement(f.makeStmt())
+        context.export(constructorDescriptor)
     }
 
     private fun JsBlockBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor, thisParameter: JsExpression) {
@@ -139,7 +140,7 @@ class SerializableJsTranslator(
         thisParameter: JsExpression,
         propertiesStart: Int
     ): Int {
-        val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(superClass, context.bindingContext())
+        val constrDesc = superClass.constructors.single(ClassConstructorDescriptor::isSerializationCtor)
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
         val superProperties = bindingContext.serializablePropertiesFor(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
