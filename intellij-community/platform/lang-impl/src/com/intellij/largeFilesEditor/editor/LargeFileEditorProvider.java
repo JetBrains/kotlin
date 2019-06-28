@@ -25,10 +25,11 @@ public class LargeFileEditorProvider implements DefaultPlatformFileEditorProvide
 
   @Override
   public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
-    return Experiments.isFeatureEnabled("new.large.text.file.viewer")
-           && TextEditorProvider.isTextFile(file)
-           && !file.getFileType().isBinary()
-           && SingleRootFileViewProvider.isTooLargeForContentLoading(file);
+    return TextEditorProvider.isTextFile(file)
+           && SingleRootFileViewProvider.isTooLargeForContentLoading(file)
+           && (Experiments.isFeatureEnabled("new.large.text.file.viewer")
+               && !file.getFileType().isBinary()
+               && file.isInLocalFileSystem());
   }
 
   @NotNull
