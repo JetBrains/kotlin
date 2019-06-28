@@ -107,7 +107,7 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
 
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 
-    val symbolName = topLevelClass(RuntimeNames.symbolName)
+    val symbolName = topLevelClass(RuntimeNames.symbolNameAnnotation)
     val filterExceptions = topLevelClass(RuntimeNames.filterExceptions)
     val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
 

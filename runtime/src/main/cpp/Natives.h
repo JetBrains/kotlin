@@ -84,72 +84,10 @@ inline const KRef* ArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
 extern "C" {
 #endif
 
-// RuntimeUtils.kt.
 OBJ_GETTER0(TheEmptyString);
-
-// Any.kt
-KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other);
-KInt Kotlin_Any_hashCode(KConstRef thiz);
-OBJ_GETTER(Kotlin_Any_toString, KConstRef thiz);
-
-// Arrays.kt
-// TODO: those must be compiler intrinsics afterwards.
-OBJ_GETTER(Kotlin_Array_clone, KConstRef thiz);
-OBJ_GETTER(Kotlin_Array_get, KConstRef thiz, KInt index);
-void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value);
-KInt Kotlin_Array_getArrayLength(KConstRef thiz);
-
-OBJ_GETTER(Kotlin_ByteArray_clone, KConstRef thiz);
-KByte Kotlin_ByteArray_get(KConstRef thiz, KInt index);
-void Kotlin_ByteArray_set(KRef thiz, KInt index, KByte value);
-KInt Kotlin_ByteArray_getArrayLength(KConstRef thiz);
-
-OBJ_GETTER(Kotlin_CharArray_clone, KConstRef thiz);
-KChar Kotlin_CharArray_get(KConstRef thiz, KInt index);
-void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value);
-KInt Kotlin_CharArray_getArrayLength(KConstRef thiz);
-
-OBJ_GETTER(Kotlin_IntArray_clone, KConstRef thiz);
-KInt Kotlin_IntArray_get(KConstRef thiz, KInt index);
-void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value);
-KInt Kotlin_IntArray_getArrayLength(KConstRef thiz);
-
-KLong Kotlin_LongArray_get(KConstRef thiz, KInt index);
-void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value);
-
-KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index);
-void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value);
-KInt Kotlin_NativePtrArray_getArrayLength(KConstRef thiz);
-
-// io/Console.kt
-void Kotlin_io_Console_print(KString message);
-void Kotlin_io_Console_println(KString message);
 void Kotlin_io_Console_println0();
-OBJ_GETTER0(Kotlin_io_Console_readLine);
-
-// Primitives.kt.
-OBJ_GETTER(Kotlin_Int_toString, KInt value);
-
-// String.kt
-KInt Kotlin_String_hashCode(KString thiz);
-KBoolean Kotlin_String_equals(KString thiz, KConstRef other);
-KInt Kotlin_String_compareTo(KString thiz, KString other);
-KInt Kotlin_String_compareToIgnoreCase(KString thiz, KConstRef other);
-KChar Kotlin_String_get(KString thiz, KInt index);
-OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef array, KInt start, KInt size);
-OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef array, KInt start, KInt size);
-OBJ_GETTER(Kotlin_String_plusImpl, KString thiz, KString other);
-KInt Kotlin_String_getStringLength(KString thiz);
-OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endIndex);
-
-OBJ_GETTER0(Kotlin_getCurrentStackTrace);
-
-OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace);
-
-OBJ_GETTER0(Kotlin_native_internal_undefined);
-
-void Kotlin_native_internal_GC_suspend(KRef);
-void Kotlin_native_internal_GC_resume(KRef);
+void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value);
+KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index);
 
 #ifdef __cplusplus
 }

@@ -426,11 +426,30 @@ void ResumeMemory(MemoryState* state);
 // Escape analysis algorithm is the provider of information for decision on exact aux slot
 // selection, and comes from upper bound esteemation of object lifetime.
 //
+OBJ_GETTER(AllocInstanceStrict, const TypeInfo* type_info) RUNTIME_NOTHROW;
+OBJ_GETTER(AllocInstanceRelaxed, const TypeInfo* type_info) RUNTIME_NOTHROW;
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) RUNTIME_NOTHROW;
+
+OBJ_GETTER(AllocArrayInstanceStrict, const TypeInfo* type_info, int32_t elements);
+OBJ_GETTER(AllocArrayInstanceRelaxed, const TypeInfo* type_info, int32_t elements);
 OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements);
+
+OBJ_GETTER(InitInstanceStrict,
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitInstanceRelaxed,
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitInstance,
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+
+OBJ_GETTER(InitSharedInstanceStrict,
+    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitSharedInstanceRelaxed,
+    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitSharedInstance,
+    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+
+// Cleanup references inside object.
 void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
-OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* type_info,
-           void (*ctor)(ObjHeader*));
 
 // Weak reference operations.
 // Atomically clears counter object reference.

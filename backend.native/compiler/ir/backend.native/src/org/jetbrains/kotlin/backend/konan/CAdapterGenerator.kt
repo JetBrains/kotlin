@@ -104,8 +104,6 @@ internal val cKeywords = setOf(
         "xor_eq"
 )
 
-private val cnameAnnotation = FqName("kotlin.native.CName")
-
 private fun org.jetbrains.kotlin.types.KotlinType.isGeneric() =
         constructor.declarationDescriptor is TypeParameterDescriptor
 
@@ -143,7 +141,7 @@ private fun AnnotationDescriptor.properValue(key: String) =
 
 private fun functionImplName(descriptor: DeclarationDescriptor, default: String, shortName: Boolean): String {
     assert(descriptor is FunctionDescriptor)
-    val annotation = descriptor.annotations.findAnnotation(cnameAnnotation) ?: return default
+    val annotation = descriptor.annotations.findAnnotation(RuntimeNames.cnameAnnotation) ?: return default
     val key = if (shortName) "shortName" else "externName"
     val value = annotation.properValue(key)
     return value.takeIf { value != null && value.isNotEmpty() } ?: default
@@ -265,9 +263,10 @@ private class ExportedElement(val kind: ElementKind,
     val isFunction = declaration is FunctionDescriptor
     val isTopLevelFunction: Boolean
         get() {
-            if (declaration !is FunctionDescriptor || !declaration.annotations.hasAnnotation(cnameAnnotation))
+            if (declaration !is FunctionDescriptor ||
+                    !declaration.annotations.hasAnnotation(RuntimeNames.cnameAnnotation))
                 return false
-            val annotation = declaration.annotations.findAnnotation(cnameAnnotation)!!
+            val annotation = declaration.annotations.findAnnotation(RuntimeNames.cnameAnnotation)!!
             val externName = annotation.properValue("externName")
             return externName != null && externName.isNotEmpty()
         }

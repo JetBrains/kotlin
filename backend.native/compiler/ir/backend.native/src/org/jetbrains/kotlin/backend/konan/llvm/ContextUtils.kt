@@ -260,7 +260,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             throw IllegalArgumentException("function $name already exists")
         }
 
-        val externalFunction = LLVMGetNamedFunction(otherModule, name)!!
+        val externalFunction = LLVMGetNamedFunction(otherModule, name) ?:
+            throw Error("function $name not found")
 
         val functionType = getFunctionType(externalFunction)
         val function = LLVMAddFunction(llvmModule, name, functionType)!!
@@ -418,13 +419,15 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
+    private fun importModelSpecificRtFunction(name: String) =
+            importRtFunction(name + context.memoryModel.suffix)
 
     private fun importRtGlobal(name: String) = importGlobal(name, runtime.llvmModule)
 
-    val allocInstanceFunction = importRtFunction("AllocInstance")
-    val allocArrayFunction = importRtFunction("AllocArrayInstance")
-    val initInstanceFunction = importRtFunction("InitInstance")
-    val initSharedInstanceFunction = importRtFunction("InitSharedInstance")
+    val allocInstanceFunction = importModelSpecificRtFunction("AllocInstance")
+    val allocArrayFunction = importModelSpecificRtFunction("AllocArrayInstance")
+    val initInstanceFunction = importModelSpecificRtFunction("InitInstance")
+    val initSharedInstanceFunction = importModelSpecificRtFunction("InitSharedInstance")
     val updateHeapRefFunction = importRtFunction("UpdateHeapRef")
     val updateStackRefFunction = importRtFunction("UpdateStackRef")
     val updateReturnRefFunction = importRtFunction("UpdateReturnRef")

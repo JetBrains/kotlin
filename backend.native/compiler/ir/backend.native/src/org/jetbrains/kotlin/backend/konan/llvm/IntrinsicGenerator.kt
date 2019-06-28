@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.descriptors.TypedIntrinsic
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -113,7 +113,7 @@ internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): Intrinsi
 
 private fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType {
     val function = callSite.symbol.owner
-    val annotation = function.descriptor.annotations.findAnnotation(TypedIntrinsic)!!
+    val annotation = function.descriptor.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
     val value = annotation.allValueArguments.getValue(Name.identifier("kind")).value as String
     return IntrinsicType.valueOf(value)
 }

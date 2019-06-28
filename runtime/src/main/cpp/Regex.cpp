@@ -548,6 +548,14 @@ KInt getCanonicalClass(KInt ch) {
   return canonicalClassesValues[index];
 }
 
+const Decomposition* getDecomposition(KInt codePoint) {
+  int index = binarySearchRange(decompositionKeys, ARRAY_SIZE(decompositionKeys), codePoint);
+  if (decompositionKeys[index] != codePoint) {
+    return nullptr;
+  }
+  return &decompositionValues[index];
+}
+
 } // namespace
 
 extern "C" {
@@ -559,14 +567,6 @@ KInt Kotlin_text_regex_getCanonicalClassInternal(KInt ch) {
 KBoolean Kotlin_text_regex_hasSingleCodepointDecompositionInternal(KInt ch) {
   int index = binarySearchRange(singleDecompositions, ARRAY_SIZE(singleDecompositions), ch);
   return singleDecompositions[index] == ch;
-}
-
-const Decomposition* getDecomposition(KInt codePoint) {
-  int index = binarySearchRange(decompositionKeys, ARRAY_SIZE(decompositionKeys), codePoint);
-  if (decompositionKeys[index] != codePoint) {
-    return nullptr;
-  }
-  return &decompositionValues[index];
 }
 
 OBJ_GETTER(Kotlin_text_regex_getDecompositionInternal, KInt ch) {

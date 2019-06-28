@@ -128,6 +128,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val defaultNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")
+        add(if (memoryModel == MemoryModel.STRICT) "strict.bc" else "relaxed.bc")
         if (produce == CompilerOutputKind.PROGRAM) {
             addAll(distribution.launcherFiles)
         }

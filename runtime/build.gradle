@@ -19,6 +19,8 @@ targetList.each { targetName ->
         dependsOn "${targetName}Launcher"
         dependsOn "${targetName}Debug"
         dependsOn "${targetName}Release"
+        dependsOn "${targetName}Strict"
+        dependsOn "${targetName}Relaxed"
         target targetName
         includeRuntime(delegate)
         linkerArgs project.file("../common/build/$targetName/hash.bc").path
@@ -41,6 +43,20 @@ targetList.each { targetName ->
     task ("${targetName}Release", type: CompileCppToBitcode) {
         name "release"
         srcRoot file('src/release')
+        target targetName
+        includeRuntime(delegate)
+    }
+
+    task ("${targetName}Strict", type: CompileCppToBitcode) {
+        name "strict"
+        srcRoot file('src/strict')
+        target targetName
+        includeRuntime(delegate)
+    }
+
+    task ("${targetName}Relaxed", type: CompileCppToBitcode) {
+        name "relaxed"
+        srcRoot file('src/relaxed')
         target targetName
         includeRuntime(delegate)
     }
