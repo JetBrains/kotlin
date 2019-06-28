@@ -31,6 +31,9 @@ import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.*;
 import com.intellij.reference.SoftReference;
 import com.intellij.ui.HintHint;
@@ -164,7 +167,9 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     popup.setSize(popup.getComponent().getPreferredSize());
   }
 
-  private static void blockFurtherMouseEvents() {
+  private static void closePopup(AbstractPopup popup) {
+    popup.cancel();
+
     IdeEventQueue eventQueue = IdeEventQueue.getInstance();
     AWTEvent currentEvent = eventQueue.getTrueCurrentEvent();
     if (currentEvent instanceof MouseEvent && currentEvent.getID() == MouseEvent.MOUSE_PRESSED) { // e.g. on link activation
@@ -385,8 +390,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
           try {
             AbstractPopup popup = popupBridge.getPopup();
             if (popup != null) {
-              popup.cancel();
-              blockFurtherMouseEvents();
+              closePopup(popup);
             }
           }
           finally {
@@ -411,7 +415,9 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
                                                boolean deEmphasize,
                                                PopupBridge popupBridge) {
       if (quickDocMessage == null) return null;
-      DocumentationComponent component = new DocumentationComponent(DocumentationManager.getInstance(editor.getProject()), false) {
+      Project project = Objects.requireNonNull(editor.getProject());
+      DocumentationManager documentationManager = DocumentationManager.getInstance(project);
+      DocumentationComponent component = new DocumentationComponent(documentationManager, false) {
         @Override
         protected void showHint() {
           setPreferredSize(getOptimalSize());
@@ -427,11 +433,29 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
           component.setBorder(IdeBorderFactory.createBorder(SideBorder.TOP));
         }
       }
-      component.setData(quickDocElement.get(), quickDocMessage, null, null, null);
+      PsiElement element = quickDocElement.get();
+      component.setData(element, quickDocMessage, null, null, null);
+      component.setToolwindowCallback(() -> {
+        documentationManager.createToolWindow(element, extractOriginalElement(element));
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.DOCUMENTATION);
+        if (toolWindow != null) {
+          toolWindow.setAutoHide(false);
+        }
+        AbstractPopup popup = popupBridge.getPopup();
+        if (popup != null) {
+          closePopup(popup);
+        }
+      });
       popupBridge.performWhenAvailable(component::setHint);
       EditorUtil.disposeWithEditor(editor, component);
       return component;
     }
+  }
+
+  private static PsiElement extractOriginalElement(PsiElement element) {
+    if (element == null) return null;
+    SmartPsiElementPointer originalElementPointer = element.getUserData(DocumentationManager.ORIGINAL_ELEMENT_KEY);
+    return originalElementPointer == null ? null : originalElementPointer.getElement();
   }
 
   private static class PopupBridge {
