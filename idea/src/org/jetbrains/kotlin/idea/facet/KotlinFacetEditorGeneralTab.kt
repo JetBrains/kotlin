@@ -21,7 +21,6 @@ import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.HoverHyperlinkLabel
-import com.intellij.util.ui.CheckBox
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -37,12 +36,37 @@ import java.awt.BorderLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import kotlin.reflect.full.findAnnotation
+import com.intellij.openapi.util.registry.Registry
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import java.awt.Component
+import java.awt.GridLayout
 
 class KotlinFacetEditorGeneralTab(
     private val configuration: KotlinFacetConfiguration,
     private val editorContext: FacetEditorContext,
     private val validatorsManager: FacetValidatorsManager
 ) : FacetEditorTab() {
+
+    //TODO(auskov): remove this hack as far as inconsistent equals in JdkPlatform is removed
+    // what it actually does: if version of JVM target platform changed the TargetPlatform will
+    // return true because equals in JvmPlatform is declared in the following way:
+    // override fun equals(other: Any?): Boolean = other is JdkPlatform
+    class TargetPlatformWrapper(val targetPlatform: TargetPlatform) {
+
+        override fun equals(other: Any?): Boolean {
+            if (other is TargetPlatformWrapper) {
+                if (this.targetPlatform == other.targetPlatform) {
+                    return if (this.targetPlatform.size == 1) {
+                        this.targetPlatform.componentPlatforms.singleOrNull() === other.targetPlatform.componentPlatforms.singleOrNull()
+                    } else {
+                        true
+                    }
+                }
+            }
+            return false
+        }
+    }
+
     class EditorComponent(
         private val project: Project,
         private val configuration: KotlinFacetConfiguration?
@@ -60,10 +84,33 @@ class KotlinFacetEditorGeneralTab(
 
         lateinit var useProjectSettingsCheckBox: ThreeStateCheckBox
 
-        lateinit var platformToCheckbox: Map<SimplePlatform, ThreeStateCheckBox>
-        lateinit var hmppCheckbox: ThreeStateCheckBox
+        // UI components related to MPP target platforms
+        lateinit var targetPlatformSelectSingleCombobox: ComboBox<TargetPlatformWrapper>
+        lateinit var targetPlatformWrappers: List<TargetPlatformWrapper>
+        lateinit var targetPlatformSelectMultipleCheckboxes: Map<SimplePlatform, ThreeStateCheckBox>
+        private fun isTargetPlatformForceEditable() = Registry.`is`("kotlin.mpp.editTargetPlatformEnabled")
+
 
         private lateinit var projectSettingsLink: HoverHyperlinkLabel
+
+        private fun FormBuilder.addTargetPlatformComponents(): FormBuilder {
+            return if (configuration?.settings?.isHmppEnabled == true) {
+                val targetPlatformsPanel = JPanel()
+                targetPlatformsPanel.layout = GridLayout(0, 1)
+                targetPlatformSelectMultipleCheckboxes.values.forEach {
+                    targetPlatformsPanel.add(it)
+                    it.isEnabled = isTargetPlatformForceEditable()
+                    if (!isTargetPlatformForceEditable()) {
+                        it.toolTipText = "The project is imported from external build system and could not be edited"
+                    }
+
+                }
+                this.addComponent(JLabel("Selected target platforms:"))
+                this.addLabeledComponent("", targetPlatformsPanel)
+            } else {
+                this.addLabeledComponent("&Target platform: ", targetPlatformSelectSingleCombobox)
+            }
+        }
 
         fun initialize() {
             if (isMultiEditor) {
@@ -92,12 +139,30 @@ class KotlinFacetEditorGeneralTab(
             )
 
             useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
-            platformToCheckbox = CommonPlatforms
+            targetPlatformSelectMultipleCheckboxes = CommonPlatforms
                 .allSimplePlatforms
                 .flatMap { it.componentPlatforms }
-                .distinct()
-                .sortedBy { it.platformName }
-                .associate { Pair(it, ThreeStateCheckBox(it.platformName).apply { isThirdStateEnabled = isMultiEditor }) }
+                .sortedBy(SimplePlatform::platformName)
+                .associateWith { ThreeStateCheckBox(it.platformName).apply { isThirdStateEnabled = isMultiEditor } }
+            targetPlatformWrappers = CommonPlatforms.allDefaultTargetPlatforms.sortedBy { it.oldFashionedDescription }.map { TargetPlatformWrapper(it) }
+            targetPlatformSelectSingleCombobox =
+                ComboBox(targetPlatformWrappers.toTypedArray()).apply {
+                    setRenderer(object : DefaultListCellRenderer() {
+                        override fun getListCellRendererComponent(
+                            list: JList<*>?,
+                            value: Any?,
+                            index: Int,
+                            isSelected: Boolean,
+                            cellHasFocus: Boolean
+                        ): Component {
+                            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus).apply {
+                                text =
+                                    (value as? TargetPlatformWrapper)?.targetPlatform?.componentPlatforms?.singleOrNull()?.oldFashionedDescription
+                                        ?: "Multiplatform"
+                            }
+                        }
+                    })
+                }
             projectSettingsLink = HoverHyperlinkLabel("Edit project settings").apply {
                 addHyperlinkListener {
                     ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
@@ -107,21 +172,12 @@ class KotlinFacetEditorGeneralTab(
                 }
             }
 
-            val targetPlatformsPanel = JPanel()
-            platformToCheckbox.values.forEach {
-                targetPlatformsPanel.add(it)
-                it.isEnabled = true //TODO(auskov): think about enabling/disabling editing facet settings
-            }
-            hmppCheckbox = ThreeStateCheckBox().apply {
-                this.isEnabled = false
-            }
             val contentPanel = FormBuilder
                 .createFormBuilder()
                 .addComponent(JPanel(BorderLayout()).apply {
                     add(useProjectSettingsCheckBox, BorderLayout.WEST)
                     add(projectSettingsLink, BorderLayout.EAST)
-                }).addLabeledComponent("Selected target platforms:", targetPlatformsPanel)
-                .addLabeledComponent("HMPP enabled:", hmppCheckbox)
+                }).addTargetPlatformComponents()
                 .addComponent(compilerConfigurable.createComponent()!!.apply {
                     border = null
                 })
@@ -135,10 +191,13 @@ class KotlinFacetEditorGeneralTab(
                 updateCompilerConfigurable()
             }
 
-            platformToCheckbox.values.forEach {
+            targetPlatformSelectMultipleCheckboxes.values.forEach {
                 it.addActionListener {
                     updateCompilerConfigurable()
                 }
+            }
+            targetPlatformSelectSingleCombobox.addActionListener {
+                updateCompilerConfigurable()
             }
         }
 
@@ -164,8 +223,12 @@ class KotlinFacetEditorGeneralTab(
         }
 
         fun getChosenPlatform(): TargetPlatform? {
-            val simplePlatforms = platformToCheckbox.filter { it.value.isSelected }.map { it.key }.toSet()
-            return if (simplePlatforms.isEmpty()) null else TargetPlatform(simplePlatforms)
+            return if (configuration?.settings?.isHmppEnabled == true) {
+                val simplePlatforms = targetPlatformSelectMultipleCheckboxes.filter { it.value.isSelected }.map { it.key }.toSet()
+                if (simplePlatforms.isEmpty()) null else TargetPlatform(simplePlatforms)
+            } else {
+                targetPlatformSelectSingleCombobox.selectedItemTyped?.targetPlatform
+            }
         }
     }
 
@@ -286,9 +349,10 @@ class KotlinFacetEditorGeneralTab(
             apiVersionComboBox.validateOnChange()
             coroutineSupportComboBox.validateOnChange()
         }
-        editor.platformToCheckbox.values.forEach {
+        editor.targetPlatformSelectMultipleCheckboxes.values.forEach {
             it.validateOnChange()
         }
+        editor.targetPlatformSelectSingleCombobox.validateOnChange()
 
         editor.updateCompilerConfigurable()
         isInitialized = true
@@ -303,7 +367,21 @@ class KotlinFacetEditorGeneralTab(
     override fun isModified(): Boolean {
         if (!isInitialized) return false
         if (editor.useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
-        if (editor.getChosenPlatform() != configuration.settings.targetPlatform) return true
+        val chosenPlatform = editor.getChosenPlatform()
+        if (chosenPlatform != configuration.settings.targetPlatform) return true
+
+        // work-around for hacked equals in JvmPlatform
+        if (!configuration?.settings?.isHmppEnabled) {
+            if (configuration.settings.targetPlatform?.let { TargetPlatformWrapper(it) } != editor.targetPlatformSelectSingleCombobox.selectedItemTyped) {
+                return true
+            }
+        }
+        val chosenSingle = chosenPlatform?.componentPlatforms?.singleOrNull()
+        if (chosenSingle != null && chosenSingle == JvmPlatforms.defaultJvmPlatform) {
+            if (chosenSingle !== configuration.settings.targetPlatform) {
+                return true
+            }
+        }
         return !editor.useProjectSettingsCheckBox.isSelected && editor.compilerConfigurable.isModified
     }
 
@@ -311,10 +389,17 @@ class KotlinFacetEditorGeneralTab(
         if (!isInitialized) return
         validateOnce {
             editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
-            editor.platformToCheckbox.forEach {
+            editor.targetPlatformSelectMultipleCheckboxes.forEach {
                 it.value.isSelected = configuration.settings.targetPlatform?.contains(it.key) ?: false
             }
-            editor.hmppCheckbox.isSelected = configuration.settings.isHmppEnabled
+            editor.targetPlatformSelectSingleCombobox.selectedItem = configuration.settings.targetPlatform?.let {
+                val index = editor.targetPlatformWrappers.indexOf(TargetPlatformWrapper(it))
+                if (index >= 0) {
+                    editor.targetPlatformWrappers.get(index)
+                } else {
+                    null
+                }
+            }
             editor.compilerConfigurable.reset()
             editor.updateCompilerConfigurable()
         }
@@ -341,6 +426,7 @@ class KotlinFacetEditorGeneralTab(
                         }
                     }
                 }
+                configuration.settings.targetPlatform = editor.getChosenPlatform()
                 updateMergedArguments()
             }
         }

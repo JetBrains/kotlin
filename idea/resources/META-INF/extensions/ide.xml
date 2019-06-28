@@ -93,5 +93,9 @@
                              description="Use new Java to Kotlin Converter (experimental)"
                              defaultValue="false"
                              restartRequired="false"/>
+        <registryKey key="kotlin.mpp.editTargetPlatformEnabled"
+                     description="Enable manual editing of MPP target platforms"
+                     defaultValue="false"
+                     restartRequired="false"/>
     </extensions>
 </idea-plugin>
