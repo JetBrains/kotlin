@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.perf
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -74,7 +75,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         stats.perfTest(
             testName = name,
             setUp = { setUpBody() },
-            test = { myFixture.doHighlighting() },
+            test = { perfTestCore() },
             tearDown = {
                 assertNotNull("no reasons to validate output as it is a performance test", it)
 
@@ -84,5 +85,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
             }
         )
     }
+
+    private fun perfTestCore(): MutableList<HighlightInfo> = myFixture.doHighlighting()
 
 }

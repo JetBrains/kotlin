@@ -50,55 +50,9 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         val errors = Array<Throwable?>(iterations, init = { null })
 
         tcSuite(namePrefix) {
-            for (attempt in 0 until warmUpIterations) {
-                val n = "$namePrefix warm-up #$attempt"
-                println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
+            warmUpPhase<K, T>(warmUpIterations, namePrefix, setUp, test, tearDown)
 
-                try {
-                    val setupValue: T? = setUp()
-                    var value: K? = null
-                    var spentNs: Long = 0
-                    try {
-                        spentNs = measureNanoTime {
-                            value = test(setupValue)
-                        }
-                    } catch (t: Throwable) {
-                        println("error at $n:")
-                        tcPrintErrors(n, listOf(t))
-                    } finally {
-                        tearDown(value)
-                    }
-                    val spentMs = spentNs.nsToMs
-                    println("##teamcity[buildStatisticValue key='$n' value='$spentMs']")
-                    println("##teamcity[testFinished name='$n' duration='$spentMs']")
-                } catch (t: Throwable) {
-                    println("error at $n:")
-                    tcPrintErrors(n, listOf(t))
-                    throw t
-                }
-            }
-
-            try {
-                for (attempt in 0 until iterations) {
-                    val setupValue: T? = setUp()
-                    var value: K? = null
-                    try {
-                        val spentNs = measureNanoTime {
-                            value = test(setupValue)
-                        }
-                        timingsNs[attempt] = spentNs
-                    } catch (t: Throwable) {
-                        println("error at $namePrefix #$attempt:")
-                        errors[attempt] = t
-                    } finally {
-                        tearDown(value)
-                    }
-                }
-            } catch (t: Throwable) {
-                println("error at $namePrefix:")
-                tcPrintErrors(namePrefix, listOf(t))
-            }
-
+            mainPhase<K, T>(iterations, setUp, test, timingsNs, namePrefix, errors, tearDown)
 
             val meanNs = timingsNs.average()
             val meanMs = meanNs.toLong().nsToMs
@@ -122,6 +76,74 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
             println("##teamcity[buildStatisticValue key='$namePrefix stdDev' value='${stdDivMs}']")
 
             append(arrayOf(namePrefix, meanMs, stdDivMs))
+        }
+    }
+
+    private fun <K, T> mainPhase(
+        iterations: Int,
+        setUp: () -> T?,
+        test: (t: T?) -> K,
+        timingsNs: LongArray,
+        namePrefix: String,
+        errors: Array<Throwable?>,
+        tearDown: (t: K?) -> Unit
+    ) {
+        try {
+            for (attempt in 0 until iterations) {
+                val setupValue: T? = setUp()
+                var value: K? = null
+                try {
+                    val spentNs = measureNanoTime {
+                        value = test(setupValue)
+                    }
+                    timingsNs[attempt] = spentNs
+                } catch (t: Throwable) {
+                    println("error at $namePrefix #$attempt:")
+                    errors[attempt] = t
+                } finally {
+                    tearDown(value)
+                }
+            }
+        } catch (t: Throwable) {
+            println("error at $namePrefix:")
+            tcPrintErrors(namePrefix, listOf(t))
+        }
+    }
+
+    private fun <K, T> warmUpPhase(
+        warmUpIterations: Int,
+        namePrefix: String,
+        setUp: () -> T?,
+        test: (t: T?) -> K,
+        tearDown: (t: K?) -> Unit
+    ) {
+        for (attempt in 0 until warmUpIterations) {
+            val n = "$namePrefix warm-up #$attempt"
+            println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
+
+            try {
+                val setupValue: T? = setUp()
+                var value: K? = null
+                var spentNs: Long = 0
+                try {
+                    spentNs = measureNanoTime {
+                        value = test(setupValue)
+                    }
+                } catch (t: Throwable) {
+                    println("error at $n:")
+                    tcPrintErrors(n, listOf(t))
+                } finally {
+                    tearDown(value)
+                }
+                val spentMs = spentNs.nsToMs
+                println("##teamcity[buildStatisticValue key='$n' value='$spentMs']")
+                println("##teamcity[testFinished name='$n' duration='$spentMs']")
+            } catch (t: Throwable) {
+                println("##teamcity[testFinished name='$n']")
+                println("error at $n:")
+                tcPrintErrors(n, listOf(t))
+                throw t
+            }
         }
     }
 

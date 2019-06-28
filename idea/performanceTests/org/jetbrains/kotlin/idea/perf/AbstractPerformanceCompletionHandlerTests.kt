@@ -133,14 +133,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
                 setUpFixture(testPath)
             },
             test = {
-                fixture.complete(completionType, time)
-
-                if (lookupString != null || itemText != null || tailText != null) {
-                    val item = getExistentLookupElement(lookupString, itemText, tailText)
-                    if (item != null) {
-                        selectItem(item, completionChar)
-                    }
-                }
+                perfTestCore(completionType, time, lookupString, itemText, tailText, completionChar)
             },
             tearDown = {
                 assertNotNull(it)
@@ -149,6 +142,24 @@ abstract class AbstractPerformanceCompletionHandlerTests(
                 fixture.configureByText(KotlinFileType.INSTANCE, "")
                 commitAllDocuments()
             })
+    }
+
+    private fun perfTestCore(
+        completionType: CompletionType,
+        time: Int,
+        lookupString: String?,
+        itemText: String?,
+        tailText: String?,
+        completionChar: Char
+    ) {
+        fixture.complete(completionType, time)
+
+        if (lookupString != null || itemText != null || tailText != null) {
+            val item = getExistentLookupElement(lookupString, itemText, tailText)
+            if (item != null) {
+                selectItem(item, completionChar)
+            }
+        }
     }
 
     protected open fun setUpFixture(testPath: String) {

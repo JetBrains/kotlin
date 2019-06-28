@@ -103,7 +103,7 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
             stats.perfTest(
                 testName = name,
                 setUp = setUpBody,
-                test = { myFixture.complete(CompletionType.BASIC) },
+                test = { perfTestCore() },
                 tearDown = {
                     // no reasons to validate output as it is a performance test
                     assertNotNull(it)
@@ -117,4 +117,6 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
             CompletionBindingContextProvider.ENABLED = false
         }
     }
+
+    private fun perfTestCore() = myFixture.complete(CompletionType.BASIC)
 }

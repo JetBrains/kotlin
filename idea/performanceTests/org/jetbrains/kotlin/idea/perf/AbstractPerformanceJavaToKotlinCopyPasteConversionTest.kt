@@ -99,7 +99,7 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
                 ConvertJavaCopyPasteProcessor.conversionPerformed = false
             },
             test = {
-                myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+                perfTestCore()
             },
             tearDown = {
                 commitAllDocuments()
@@ -108,6 +108,10 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
                 myFixture.performEditorAction(IdeActions.ACTION_UNDO)
             }
         )
+    }
+
+    private fun perfTestCore() {
+        myFixture.performEditorAction(IdeActions.ACTION_PASTE)
     }
 
     private fun stats() = stats[j2kIndex()]

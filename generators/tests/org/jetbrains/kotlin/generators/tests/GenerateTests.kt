@@ -1190,6 +1190,11 @@ fun main(args: Array<String>) {
             model("highlighter", testMethod = "doPerfTest")
         }
 
+        testClass<AbstractPerformanceAddImportTest> {
+            model("addImport", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+
     }
 
     testGroup("idea/performanceTests", "idea/idea-completion/testData") {
