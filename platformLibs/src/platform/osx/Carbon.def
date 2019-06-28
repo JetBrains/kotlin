@@ -1,7 +1,0 @@
-depends = ApplicationServices CFNetwork ColorSync CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
-language = Objective-C
-package = platform.Carbon
-modules = Carbon
-
-compilerOpts = -framework Carbon
-linkerOpts = -framework Carbon

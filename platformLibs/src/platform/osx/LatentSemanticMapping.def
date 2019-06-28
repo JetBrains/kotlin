@@ -1,7 +1,0 @@
-depends = ApplicationServices CFNetwork Carbon ColorSync CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
-language = Objective-C
-package = platform.LatentSemanticMapping
-modules = LatentSemanticMapping
-
-compilerOpts = -framework LatentSemanticMapping
-linkerOpts = -framework LatentSemanticMapping
