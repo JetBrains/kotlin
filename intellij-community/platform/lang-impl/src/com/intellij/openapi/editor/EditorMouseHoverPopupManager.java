@@ -155,9 +155,13 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     if (popup != null) {
       WrapperPanel wrapper = (WrapperPanel)popup.getComponent();
       wrapper.setContent(component);
-      popup.pack(true, true);
+      validatePopupSize(popup);
       popupBridge.setPopup(popup);
     }
+  }
+
+  private static void validatePopupSize(AbstractPopup popup) {
+    popup.setSize(popup.getComponent().getPreferredSize());
   }
 
   private static void blockFurtherMouseEvents() {
@@ -364,7 +368,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
           WrapperPanel wrapper = wrapperPanelRef.get();
           if (newComponent != null && popup != null && wrapper != null) {
             wrapper.setContent(newComponent);
-            popup.pack(true, true);
+            validatePopupSize(popup);
           }
         });
       if (hint == null) return null;
@@ -413,7 +417,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
           setPreferredSize(getOptimalSize());
           AbstractPopup popup = popupBridge.getPopup();
           if (popup != null) {
-            popup.pack(true, true);
+            validatePopupSize(popup);
           }
         }
       };
