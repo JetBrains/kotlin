@@ -46,8 +46,10 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
     val entry: File
-        @Input get() = compilation.compileKotlinTask.outputFile
+        get() = compilation.compileKotlinTask.outputFile
 
     @Suppress("unused")
     val runtimeClasspath: FileCollection
