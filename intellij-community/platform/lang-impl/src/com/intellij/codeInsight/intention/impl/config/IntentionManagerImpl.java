@@ -196,22 +196,17 @@ public final class IntentionManagerImpl extends IntentionManager {
     }
     checkedForDuplicates = true;
     List<String> duplicates = myActions.stream()
-       .collect(Collectors.groupingBy(action -> unwrap(action).getClass()))
+       .collect(Collectors.groupingBy(action -> IntentionActionDelegate.unwrap(action).getClass()))
        .values().stream()
        .filter(list -> list.size() > 1)
-       .map(dupList -> dupList.size() + " intention duplicates found for " + unwrap(dupList.get(0))
+       .map(dupList -> dupList.size() + " intention duplicates found for " + IntentionActionDelegate.unwrap(dupList.get(0))
                        + " (" + dupList.get(0).getClass()
-                       +"; plugin " + PluginManagerCore.getPluginOrPlatformByClassName(dupList.get(0).getClass().getName()) +")")
+                       + "; plugin " + PluginManagerCore.getPluginOrPlatformByClassName(dupList.get(0).getClass().getName()) + ")")
        .collect(Collectors.toList());
 
     if (!duplicates.isEmpty()) {
       throw new IllegalStateException(duplicates.toString());
     }
-  }
-
-  @NotNull
-  private static IntentionAction unwrap(@NotNull IntentionAction action) {
-    return action instanceof IntentionActionDelegate ? unwrap(((IntentionActionDelegate)action).getDelegate()) : action;
   }
 
   public boolean hasActiveRequests() {

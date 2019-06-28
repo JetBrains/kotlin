@@ -462,10 +462,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
       if (source instanceof DataProvider) {
         final Object selectedItem = PlatformDataKeys.SELECTED_ITEM.getData((DataProvider)source);
         if (selectedItem instanceof IntentionActionWithTextCaching) {
-          IntentionAction action = ((IntentionActionWithTextCaching)selectedItem).getAction();
-          if (action instanceof IntentionActionDelegate) {
-            action = ((IntentionActionDelegate)action).getDelegate();
-          }
+          IntentionAction action = IntentionActionDelegate.unwrap(((IntentionActionWithTextCaching)selectedItem).getAction());
           if (action instanceof SuppressIntentionActionFromFix) {
             if (injectedFile != null && ((SuppressIntentionActionFromFix)action).isShouldBeAppliedToInjectionHost() == ThreeState.NO) {
               final PsiElement at = injectedFile.findElementAt(injectedEditor.getCaretModel().getOffset());

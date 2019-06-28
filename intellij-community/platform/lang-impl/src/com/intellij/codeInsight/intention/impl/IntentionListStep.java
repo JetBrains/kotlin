@@ -66,10 +66,7 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
 
   @Override
   public PopupStep onChosen(IntentionActionWithTextCaching action, final boolean finalChoice) {
-    IntentionAction a = action.getAction();
-    while (a instanceof IntentionActionDelegate) {
-      a = ((IntentionActionDelegate)a).getDelegate();
-    }
+    IntentionAction a = IntentionActionDelegate.unwrap(action.getAction());
 
     if (finalChoice && !(a instanceof AbstractEmptyIntentionAction)) {
       applyAction(action);

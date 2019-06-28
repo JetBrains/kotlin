@@ -122,11 +122,7 @@ public class CachedIntentions {
     }
 
     private Class<? extends IntentionAction> getActionClass(IntentionActionWithTextCaching o1) {
-      IntentionAction action = o1.getAction();
-      if (action instanceof IntentionActionDelegate) {
-        return ((IntentionActionDelegate)action).getDelegate().getClass();
-      }
-      return action.getClass();
+      return IntentionActionDelegate.unwrap(o1.getAction()).getClass();
     }
   };
 

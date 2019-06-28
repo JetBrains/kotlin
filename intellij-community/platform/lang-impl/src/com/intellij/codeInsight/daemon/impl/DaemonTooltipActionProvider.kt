@@ -6,7 +6,6 @@ import com.intellij.codeInsight.intention.AbstractEmptyIntentionAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.IntentionActionDelegate
 import com.intellij.codeInsight.intention.impl.CachedIntentions
-import com.intellij.codeInsight.intention.impl.IntentionActionWithTextCaching
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
 import com.intellij.ide.actions.ActionsCollector
 import com.intellij.openapi.application.ApplicationManager
@@ -15,7 +14,6 @@ import com.intellij.openapi.editor.ex.TooltipAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.xml.util.XmlStringUtil
-import org.jetbrains.annotations.NotNull
 import java.awt.event.InputEvent
 import java.util.*
 
@@ -101,10 +99,7 @@ fun getFirstAvailableAction(psiFile: PsiFile,
   if (allActions.isEmpty()) return null
 
   allActions.forEach {
-    var action = it.action
-    if (action is IntentionActionDelegate) {
-      action = action.delegate
-    }
+    val action = IntentionActionDelegate.unwrap(it.action)
 
     if (action !is AbstractEmptyIntentionAction && action.isAvailable(project, editor, psiFile)) {
       val text = it.text
