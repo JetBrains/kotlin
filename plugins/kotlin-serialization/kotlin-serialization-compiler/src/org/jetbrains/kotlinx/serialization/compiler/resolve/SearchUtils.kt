@@ -13,13 +13,21 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 
-internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean =
-    kind == CallableMemberDescriptor.Kind.SYNTHESIZED && valueParameters.lastOrNull()?.name == SerialEntityNames.dummyParamName
+internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean {
+    /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/
+    return valueParameters.lastOrNull()?.run {
+        name == SerialEntityNames.dummyParamName && type.constructor.declarationDescriptor?.classId == ClassId(
+            SerializationPackages.packageFqName,
+            SerialEntityNames.SERIAL_CTOR_MARKER_NAME
+        )
+    } == true
+}
 
 // finds constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>
 internal fun findSerializerConstructorForTypeArgumentsSerializers(

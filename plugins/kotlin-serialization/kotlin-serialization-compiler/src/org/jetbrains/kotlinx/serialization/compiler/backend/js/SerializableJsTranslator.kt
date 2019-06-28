@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -121,6 +121,7 @@ class SerializableJsTranslator(
 
         f.name = context.getInnerNameForDescriptor(constructorDescriptor)
         context.addDeclarationStatement(f.makeStmt())
+        context.export(constructorDescriptor)
     }
 
     private fun JsBlockBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor, thisParameter: JsExpression) {
@@ -139,7 +140,7 @@ class SerializableJsTranslator(
         thisParameter: JsExpression,
         propertiesStart: Int
     ): Int {
-        val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(superClass, context.bindingContext())
+        val constrDesc = superClass.constructors.single(ClassConstructorDescriptor::isSerializationCtor)
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
         val superProperties = SerializableProperties(superClass, bindingContext).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
