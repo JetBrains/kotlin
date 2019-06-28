@@ -131,7 +131,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
           }
         }
       });
-    }, progress), Registry.intValue("editor.new.mouse.hover.popups.delay"));
+    }, progress), context.getShowingDelay());
   }
 
   private Rectangle getCurrentHintBounds() {
@@ -278,6 +278,11 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       return Objects.equals(getElementForQuickDoc(), other.getElementForQuickDoc())
              ? Relation.SAME
              : highlightInfo == null ? Relation.DIFFERENT : Relation.SIMILAR;
+    }
+
+    private long getShowingDelay() {
+      return getHighlightInfo() == null ? EditorSettingsExternalizable.getInstance().getQuickDocOnMouseOverElementDelayMillis()
+                                        : Registry.intValue("ide.tooltip.initialDelay.highlighter");
     }
 
     @NotNull
