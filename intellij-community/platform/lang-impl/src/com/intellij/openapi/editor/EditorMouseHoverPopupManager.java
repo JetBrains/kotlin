@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
@@ -423,24 +424,21 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         }
       }
       component.setData(quickDocElement.get(), quickDocMessage, null, null, null);
+      popupBridge.performWhenAvailable(component::setHint);
       EditorUtil.disposeWithEditor(editor, component);
       return component;
     }
   }
 
   private static class PopupBridge {
-    private final List<Runnable> actionsOnCancel = new ArrayList<>();
     private AbstractPopup popup;
+    private List<Consumer<AbstractPopup>> consumers = new ArrayList<>();
 
     private void setPopup(@NotNull AbstractPopup popup) {
       assert this.popup == null;
       this.popup = popup;
-      popup.addListener(new JBPopupListener() {
-        @Override
-        public void onClosed(@NotNull LightweightWindowEvent event) {
-          actionsOnCancel.forEach(a -> a.run());
-        }
-      });
+      consumers.forEach(c -> c.accept(popup));
+      consumers = null;
     }
 
     @Nullable
@@ -448,8 +446,22 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       return popup;
     }
 
+    private void performWhenAvailable(@NotNull Consumer<AbstractPopup> consumer) {
+      if (popup == null) {
+        consumers.add(consumer);
+      }
+      else {
+        consumer.accept(popup);
+      }
+    }
+
     private void performOnCancel(@NotNull Runnable runnable) {
-      actionsOnCancel.add(runnable);
+      performWhenAvailable(popup -> popup.addListener(new JBPopupListener() {
+        @Override
+        public void onClosed(@NotNull LightweightWindowEvent event) {
+          runnable.run();
+        }
+      }));
     }
   }
 
