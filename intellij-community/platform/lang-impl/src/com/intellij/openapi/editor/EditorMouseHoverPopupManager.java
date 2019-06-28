@@ -36,10 +36,7 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.*;
 import com.intellij.reference.SoftReference;
-import com.intellij.ui.HintHint;
-import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.LightweightHint;
-import com.intellij.ui.SideBorder;
+import com.intellij.ui.*;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.PopupPositionManager;
@@ -61,8 +58,10 @@ import java.util.function.Consumer;
 
 public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
+  private static final int BORDER_TOLERANCE_PX = 5;
 
   private final Alarm myAlarm;
+  private Point myPrevMouseLocation;
   private WeakReference<AbstractPopup> myPopupReference;
   private Context myContext;
   private ProgressIndicator myCurrentProgress;
@@ -75,6 +74,11 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   @Override
   public void mouseMoved(@NotNull EditorMouseEvent e) {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
+
+    Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
+    boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, getCurrentHintBounds());
+    myPrevMouseLocation = currentMouseLocation;
+    if (movesTowardsPopup) return;
 
     myAlarm.cancelAllRequests();
     if (myCurrentProgress != null) {
@@ -128,6 +132,16 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         }
       });
     }, progress), Registry.intValue("editor.new.mouse.hover.popups.delay"));
+  }
+
+  private Rectangle getCurrentHintBounds() {
+    JBPopup popup = SoftReference.dereference(myPopupReference);
+    if (popup == null || !popup.isVisible()) return null;
+    Dimension size = popup.getSize();
+    if (size == null) return null;
+    Rectangle result = new Rectangle(popup.getLocationOnScreen(), size);
+    result.grow(BORDER_TOLERANCE_PX, BORDER_TOLERANCE_PX);
+    return result;
   }
 
   private void showHintInEditor(AbstractPopup hint, Editor editor, Context context) {
