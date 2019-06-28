@@ -64,7 +64,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
           } ?: run {
             ApplicationManager.getApplication().invokeLater(
               {
-                RecentProjectsManagerBase.getInstanceEx().doOpenProject(recentProjectAction.projectPath, null, false, null)?.let {
+                RecentProjectsManagerBase.getInstanceEx().doOpenProject(recentProjectAction.projectPath, null, false)?.let {
                   StartupManager.getInstance(it).registerPostStartupActivity(Runnable { findAndNavigateToReference(it, parameters) })
                 }
               }, ModalityState.NON_MODAL)
