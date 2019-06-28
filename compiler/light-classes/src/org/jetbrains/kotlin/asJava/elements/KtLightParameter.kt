@@ -28,7 +28,7 @@ class KtLightParameter(
     private val index: Int,
     method: KtLightMethod
 ) : LightParameter(dummyDelegate.name ?: "p$index", dummyDelegate.type, method, KotlinLanguage.INSTANCE),
-        KtLightDeclaration<KtParameter, PsiParameter> {
+    KtLightDeclaration<KtParameter, PsiParameter> {
 
     private val lazyDelegate by lazyPub { clsDelegateProvider() ?: dummyDelegate }
 
@@ -106,8 +106,7 @@ class KtLightParameter(
 
             if (another is KtLightParameter && kotlinOrigin != null) {
                 kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
-            }
-            else {
+            } else {
                 null
             }
         })

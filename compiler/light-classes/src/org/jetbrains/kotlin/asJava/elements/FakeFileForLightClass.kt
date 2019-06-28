@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
 open class FakeFileForLightClass(
-        val ktFile: KtFile,
-        private val lightClass: () -> KtLightClass,
-        private val stub: () -> PsiClassHolderFileStub<*>,
-        private val packageFqName: FqName = ktFile.packageFqName
+    val ktFile: KtFile,
+    private val lightClass: () -> KtLightClass,
+    private val stub: () -> PsiClassHolderFileStub<*>,
+    private val packageFqName: FqName = ktFile.packageFqName
 ) : ClsFileImpl(ktFile.viewProvider) {
 
     override fun getVirtualFile(): VirtualFile =
@@ -78,8 +78,7 @@ open class FakeFileForLightClass(
     override fun setPackageName(packageName: String) {
         if (lightClass() is KtLightClassForFacade) {
             ktFile.packageDirective?.fqName = FqName(packageName)
-        }
-        else {
+        } else {
             super.setPackageName(packageName)
         }
     }

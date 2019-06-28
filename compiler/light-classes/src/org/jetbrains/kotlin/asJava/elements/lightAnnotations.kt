@@ -141,7 +141,7 @@ class KtLightAnnotationForSourceEntry(
 
     override fun getParameterList(): PsiAnnotationParameterList = ktLightAnnotationParameterList
 
-    inner class KtLightAnnotationParameterList() : KtLightElementBase(this),
+    inner class KtLightAnnotationParameterList : KtLightElementBase(this),
         PsiAnnotationParameterList {
         override val kotlinOrigin: KtElement? get() = null
 
