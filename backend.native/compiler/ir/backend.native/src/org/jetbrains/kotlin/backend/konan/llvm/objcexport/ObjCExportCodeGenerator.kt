@@ -1148,7 +1148,7 @@ private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
 
     return generateObjCToKotlinSyntheticGetter(selector) {
         initRuntimeIfNeeded() // For instance methods it gets called when allocating.
-        val value = getObjectValue(irClass, locationInfo = null, exceptionHandler = ExceptionHandler.Caller)
+        val value = getObjectValue(irClass, startLocationInfo = null, exceptionHandler = ExceptionHandler.Caller)
         ret(kotlinToObjC(value, ReferenceBridge))
     }
 }

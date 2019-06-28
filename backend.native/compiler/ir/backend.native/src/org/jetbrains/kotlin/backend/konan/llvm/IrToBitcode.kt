@@ -467,7 +467,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private inner class LoopScope(val loop: IrLoop) : InnerScopeImpl() {
-        val loopExit  = functionGenerationContext.basicBlock("loop_exit", loop.condition.startLocation)
+        val loopExit  = functionGenerationContext.basicBlock("loop_exit", loop.endLocation)
         val loopCheck = functionGenerationContext.basicBlock("loop_check", loop.condition.startLocation)
 
         override fun genBreak(destination: IrBreak) {
@@ -806,7 +806,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             functionGenerationContext.getObjectValue(
                     value.symbol.owner,
                     currentCodeContext.exceptionHandler,
-                    value.startLocation
+                    value.startLocation,
+                    value.endLocation
             )
 
 
@@ -1052,7 +1053,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val needsPhi = isUnconditional(expression.branches.last()) && !expression.type.isUnit()
         val llvmType = codegen.getLLVMType(expression.type)
 
-        val bbExit = lazy { functionGenerationContext.basicBlock("when_exit", expression.startLocation) }
+        val bbExit = lazy { functionGenerationContext.basicBlock("when_exit", expression.endLocation) }
 
         val resultPhi = lazy {
             functionGenerationContext.appendingTo(bbExit.value) {
@@ -1070,7 +1071,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val bbNext = if (it == expression.branches.last())
                              null
                          else
-                             functionGenerationContext.basicBlock("when_next", it.startLocation)
+                             functionGenerationContext.basicBlock("when_next", it.startLocation, it.endLocation)
             generateWhenCase(whenEmittingContext, it, bbNext)
         }
 
@@ -1089,7 +1090,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val brResult = if (isUnconditional(branch))
             evaluateExpression(branch.result)
         else {
-            val bbCase = functionGenerationContext.basicBlock("when_case", branch.startLocation)
+            val bbCase = functionGenerationContext.basicBlock("when_case", branch.startLocation, branch.endLocation)
             val condition = evaluateExpression(branch.condition)
             functionGenerationContext.condBr(condition, bbCase, bbNext ?: whenEmittingContext.bbExit.value)
             functionGenerationContext.positionAtEnd(bbCase)
@@ -1558,9 +1559,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
+        private val functionScope: DIScopeOpaqueRef?
+            get() = returnableBlock.inlineFunctionSymbol?.owner?.scope()
+        private val outerScope = currentCodeContext.scope()
 
         private fun getExit(): LLVMBasicBlockRef {
-            if (bbExit == null) bbExit = functionGenerationContext.basicBlock("returnable_block_exit", returnableBlock.startLocation)
+            val location = returnableBlock.inlineFunctionSymbol?.let {
+                location(it.owner.endLine(), it.owner.endColumn())
+            } ?: returnableBlock.statements.lastOrNull()?.let {
+                location(it.endLine(), it.endColumn())
+            }
+            if (bbExit == null) bbExit = functionGenerationContext.basicBlock("returnable_block_exit", location)
             return bbExit!!
         }
 
@@ -1591,12 +1600,18 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         override fun location(line: Int, column: Int): LocationInfo? {
             return if (returnableBlock.inlineFunctionSymbol != null) {
-                val diScope = returnableBlock.inlineFunctionSymbol?.owner?.scope() ?: return null
-                LocationInfo(diScope, line, column, outerContext.location(returnableBlock.startLine(), returnableBlock.endLine()))
+                val diScope = functionScope ?: return null
+                val outerFileEntry = outerFileEntry()
+                val inlinedAt = outerContext.location(outerFileEntry.line(returnableBlock.startOffset), outerFileEntry.column(returnableBlock.startOffset))
+                LocationInfo(diScope, line, column, inlinedAt)
             } else {
                 outerContext.location(line, column)
             }
         }
+
+        private fun outerFileEntry() =
+                (outerContext.fileScope() as? FileScope)?.file?.fileEntry
+                        ?: error("returnable block should be inlined at some file")
 
 
         /**
@@ -1736,10 +1751,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun file() = (currentCodeContext.fileScope() as FileScope).file
 
     //-------------------------------------------------------------------------//
-    private fun updateBuilderDebugLocation(element: IrElement): DILocationRef? {
-        if (!context.shouldContainDebugInfo() || currentCodeContext.functionScope() == null) return null
-        @Suppress("UNCHECKED_CAST")
-        return element.startLocation?.let { functionGenerationContext.debugLocation(it) }
+    private fun updateBuilderDebugLocation(element: IrElement) {
+        if (!context.shouldContainDebugInfo() || currentCodeContext.functionScope() == null || element.startLocation == null) return
+        functionGenerationContext.debugLocation(element.startLocation!!, element.endLocation!!)
     }
 
     private val IrElement.startLocation: LocationInfo?
