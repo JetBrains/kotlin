@@ -87,21 +87,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
         context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
-        ClassKind.OBJECT -> {
-            val obj = expression.symbol.owner
-            if (obj.isEffectivelyExternal()) {
-                context.getRefForExternalClass(obj)
-            } else {
-                val className = context.getNameForClass(expression.symbol.owner)
-                // TODO: Don't use implicit naming
-                val getInstanceName = className.ident + "_getInstance"
-                JsInvocation(JsNameRef(getInstanceName))
-            }
-        }
-        else -> TODO()
+    override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
+        val obj = expression.symbol.owner
+        assert(obj.kind == ClassKind.OBJECT)
+        assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
+        return context.getRefForExternalClass(obj)
     }
-
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
         val fieldName = context.getNameForField(expression.symbol.owner)

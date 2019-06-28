@@ -57,16 +57,15 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 is IrClass -> {
                     classBlock.statements += JsClassGenerator(declaration, context).generate()
                 }
-                is IrVariable -> {
-                    classBlock.statements += declaration.accept(transformer, context)
+                is IrField -> {
                 }
                 else -> {
+                    error("Unexpected declaration in class: $declaration")
                 }
             }
         }
 
         classBlock.statements += generateClassMetadata()
-        irClass.onlyIf({ kind == ClassKind.OBJECT }) { classBlock.statements += maybeGenerateObjectInstance() }
         if (irClass.superTypes.any { it.isThrowable() }) {
             classBlock.statements += generateThrowableProperties()
         } else if (!irClass.defaultType.isThrowable()) {
@@ -178,29 +177,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
 
         return (throwableAccessorImpl(irClass.defaultType).classifierOrFail as IrClassSymbol).owner
-    }
-
-    private fun maybeGenerateObjectInstance(): List<JsStatement> {
-        val instanceVarName = className.objectInstanceName()
-        val getInstanceFunName = "${className.ident}_getInstance"
-        val jsVarNode = JsName(instanceVarName) // TODO: Use namer?
-        val varStmt = JsVars(JsVars.JsVar(jsVarNode))
-        val function = generateGetInstanceFunction(jsVarNode, getInstanceFunName)
-        return listOf(varStmt, function.makeStmt())
-    }
-
-    private fun generateGetInstanceFunction(instanceVar: JsName, instanceFunName: String): JsFunction {
-        val functionBody = JsBlock()
-        val func = JsFunction(emptyScope, functionBody, "getInstance")
-        func.name = JsName(instanceFunName) // TODO: Use namer?
-
-        functionBody.statements += JsIf(
-            JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(0))),
-            jsAssignment(instanceVar.makeRef(), JsNew(classNameRef)).makeStmt()
-        )
-        functionBody.statements += JsReturn(instanceVar.makeRef())
-
-        return func
     }
 
     private fun maybeGeneratePrimaryConstructor() {

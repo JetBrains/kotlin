@@ -116,7 +116,9 @@ class IrModuleToJsTransformer(
         val expression =
             if (declaration is IrClass && declaration.isObject) {
                 // TODO: Use export names for properties
-                defineProperty(internalModuleName.makeRef(), name.ident, getter = JsNameRef("${name.ident}_getInstance"))
+                val instanceGetter = backendContext.objectToGetInstanceFunction[declaration.symbol]!!
+                val instanceGetterName: JsName = context.getNameForStaticFunction(instanceGetter)
+                defineProperty(internalModuleName.makeRef(), name.ident, getter = JsNameRef(instanceGetterName))
             } else {
                 jsAssignment(JsNameRef(exportName, internalModuleName.makeRef()), name.makeRef())
             }

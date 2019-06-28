@@ -364,6 +364,17 @@ private val staticMembersLoweringPhase = makeJsModulePhase(
     description = "Move static member declarations to top-level"
 )
 
+private val objectDeclarationLoweringPhase = makeJsModulePhase(
+    ::ObjectDeclarationLowering,
+    name = "ObjectDeclarationLowering",
+    description = "Create lazy object instance generator functions"
+)
+
+private val objectUsageLoweringPhase = makeJsModulePhase(
+    ::ObjectUsageLowering,
+    name = "ObjectUsageLowering",
+    description = "Transform IrGetObjectValue into instance generator call"
+)
 
 val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
@@ -410,6 +421,8 @@ val jsPhases = namedIrModulePhase(
             blockDecomposerLoweringPhase then
             primitiveCompanionLoweringPhase then
             constLoweringPhase then
+            objectDeclarationLoweringPhase then
+            objectUsageLoweringPhase then
             callsLoweringPhase then
             staticMembersLoweringPhase then
             validateIrAfterLowering
