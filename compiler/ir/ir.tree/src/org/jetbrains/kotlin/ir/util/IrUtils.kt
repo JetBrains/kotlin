@@ -401,23 +401,23 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
 
 /**
  * Create new call based on given [call] and [newFunction]
- * [dispatchReceiverAsFirstArgument]: optionally convert call with dispatch receiver to static call
- * [firstArgumentAsDispatchReceiver]: optionally convert static call to call with dispatch receiver
+ * [receiversAsArguments]: optionally convert call with dispatch receiver to static call
+ * [argumentsAsReceivers]: optionally convert static call to call with dispatch receiver
  */
 
 fun irConstructorCall(
     call: IrFunctionAccessExpression,
     newFunction: IrConstructor,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ): IrConstructorCall =
-    irConstructorCall(call, newFunction.symbol, dispatchReceiverAsFirstArgument, firstArgumentAsDispatchReceiver)
+    irConstructorCall(call, newFunction.symbol, receiversAsArguments, argumentsAsReceivers)
 
 fun irConstructorCall(
     call: IrFunctionAccessExpression,
     newSymbol: IrConstructorSymbol,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsDispatchers: Boolean = false
 ): IrConstructorCall =
     call.run {
         IrConstructorCallImpl(
@@ -433,8 +433,8 @@ fun irConstructorCall(
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,
-                dispatchReceiverAsFirstArgument,
-                firstArgumentAsDispatchReceiver
+                receiversAsArguments,
+                argumentsAsDispatchers
             )
         }
     }
@@ -442,27 +442,21 @@ fun irConstructorCall(
 fun irCall(
     call: IrFunctionAccessExpression,
     newFunction: IrFunction,
-    dispatchReceiverAsArgument: Boolean = false,
-    argumentAsDispatchReceiver: Boolean = false,
-    extensionReceiverAsArgument: Boolean = false,
-    argumentAsExtensionReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ): IrCall =
     irCall(
         call,
         newFunction.symbol,
-        dispatchReceiverAsArgument,
-        argumentAsDispatchReceiver,
-        extensionReceiverAsArgument,
-        argumentAsExtensionReceiver
+        receiversAsArguments,
+        argumentsAsReceivers
     )
 
 fun irCall(
     call: IrFunctionAccessExpression,
     newSymbol: IrFunctionSymbol,
-    dispatchReceiverAsArgument: Boolean = false,
-    argumentAsDispatchReceiver: Boolean = false,
-    extensionReceiverAsArgument: Boolean = false,
-    argumentAsExtensionReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ): IrCall =
     call.run {
         IrCallImpl(
@@ -476,54 +470,42 @@ fun irCall(
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,
-                dispatchReceiverAsArgument,
-                argumentAsDispatchReceiver,
-                extensionReceiverAsArgument,
-                argumentAsExtensionReceiver
+                receiversAsArguments,
+                argumentsAsReceivers
             )
         }
     }
 
 fun IrFunctionAccessExpression.copyTypeAndValueArgumentsFrom(
     src: IrFunctionAccessExpression,
-    dispatchReceiverAsArgument: Boolean = false,
-    argumentAsDispatchReceiver: Boolean = false,
-    extensionReceiverAsArgument: Boolean = false,
-    argumentAsExtensionReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ) = copyTypeAndValueArgumentsFrom(
     src,
     src.symbol.owner,
     symbol.owner,
-    dispatchReceiverAsArgument,
-    argumentAsDispatchReceiver,
-    extensionReceiverAsArgument,
-    argumentAsExtensionReceiver
+    receiversAsArguments,
+    argumentsAsReceivers
 )
 
 fun IrFunctionReference.copyTypeAndValueArgumentsFrom(
     src: IrFunctionReference,
-    dispatchReceiverAsArgument: Boolean = false,
-    argumentAsDispatchReceiver: Boolean = false,
-    extensionReceiverAsArgument: Boolean = false,
-    argumentAsExtensionReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ) = copyTypeAndValueArgumentsFrom(
     src,
     src.symbol.owner,
     symbol.owner,
-    dispatchReceiverAsArgument,
-    argumentAsDispatchReceiver,
-    extensionReceiverAsArgument,
-    argumentAsExtensionReceiver
+    receiversAsArguments,
+    argumentsAsReceivers
 )
 
 private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
     src: IrMemberAccessExpression,
     srcFunction: IrFunction,
     destFunction: IrFunction,
-    dispatchReceiverAsArgument: Boolean = false,
-    argumentAsDispatchReceiver: Boolean = false,
-    extensionReceiverAsArgument: Boolean = false,
-    argumentAsExtensionReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ) {
     copyTypeArgumentsFrom(src)
 
@@ -531,10 +513,10 @@ private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
     var srcValueArgumentIndex = 0
 
     when {
-        dispatchReceiverAsArgument && srcFunction.dispatchReceiverParameter != null -> {
+        receiversAsArguments && srcFunction.dispatchReceiverParameter != null -> {
             putValueArgument(destValueArgumentIndex++, src.dispatchReceiver)
         }
-        argumentAsDispatchReceiver && destFunction.dispatchReceiverParameter != null -> {
+        argumentsAsReceivers && destFunction.dispatchReceiverParameter != null -> {
             dispatchReceiver = src.getValueArgument(srcValueArgumentIndex++)
         }
         else -> {
@@ -543,10 +525,10 @@ private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
     }
 
     when {
-        extensionReceiverAsArgument && srcFunction.extensionReceiverParameter != null -> {
+        receiversAsArguments && srcFunction.extensionReceiverParameter != null -> {
             putValueArgument(destValueArgumentIndex++, src.extensionReceiver)
         }
-        argumentAsExtensionReceiver && destFunction.extensionReceiverParameter != null -> {
+        argumentsAsReceivers && destFunction.extensionReceiverParameter != null -> {
             extensionReceiver = src.getValueArgument(srcValueArgumentIndex++)
         }
         else -> {

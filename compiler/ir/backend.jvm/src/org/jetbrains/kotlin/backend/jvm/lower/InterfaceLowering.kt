@@ -6,36 +6,27 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering.Companion.clinitName
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.Name
 
 internal val interfacePhase = makeIrFilePhase(
     ::InterfaceLowering,
@@ -127,7 +118,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
         val newFunction = removedFunctions[expression.symbol]?.owner
         return super.visitCall(
             if (newFunction != null) {
-                irCall(expression, newFunction, dispatchReceiverAsArgument = true, extensionReceiverAsArgument = true)
+                irCall(expression, newFunction, receiversAsArguments = true)
             } else {
                 expression
             }
@@ -148,65 +139,12 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                         typeArgumentsCount,
                         origin
                     ).apply {
-                        copyTypeAndValueArgumentsFrom(expression, dispatchReceiverAsArgument = true, extensionReceiverAsArgument = true)
+                        copyTypeAndValueArgumentsFrom(expression, receiversAsArguments = true)
                     }
                 }
             } else {
                 expression
             }
         )
-    }
-}
-
-
-internal fun createStaticFunctionWithReceivers(
-    irParent: IrDeclarationParent,
-    name: Name,
-    oldFunction: IrFunction,
-    dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
-    origin: IrDeclarationOrigin = oldFunction.origin
-): IrSimpleFunction {
-    val descriptor = WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
-    return IrFunctionImpl(
-        oldFunction.startOffset, oldFunction.endOffset,
-        origin,
-        IrSimpleFunctionSymbolImpl(descriptor),
-        name,
-        oldFunction.visibility,
-        Modality.FINAL,
-        oldFunction.returnType,
-        isInline = false, isExternal = false, isTailrec = false, isSuspend = false
-    ).apply {
-        descriptor.bind(this)
-        parent = irParent
-
-        copyTypeParametersFrom(oldFunction)
-
-        annotations.addAll(oldFunction.annotations)
-
-        var offset = 0
-        val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
-            this,
-            name = Name.identifier("this"),
-            index = offset++,
-            type = dispatchReceiverType!!
-        )
-        val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
-            this,
-            name = Name.identifier("receiver"),
-            index = offset++
-        )
-        valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
-                                       oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
-        )
-
-        val mapping: Map<IrValueParameter, IrValueParameter> =
-            (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
-                .zip(valueParameters).toMap()
-        body = oldFunction.body
-            ?.transform(VariableRemapper(mapping), null)
-            ?.patchDeclarationParents(this)
-
-        metadata = oldFunction.metadata
     }
 }

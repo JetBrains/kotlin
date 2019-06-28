@@ -29,9 +29,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(Name.identifier("toString")) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsAnyToString, dispatchReceiverAsArgument = true)
+                        irCall(call, intrinsics.jsAnyToString, receiversAsArguments = true)
                     } else {
-                        irCall(call, intrinsics.jsToString, dispatchReceiverAsArgument = true)
+                        irCall(call, intrinsics.jsToString, receiversAsArguments = true)
                     }
                 } else {
                     call
@@ -41,9 +41,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(Name.identifier("hashCode")) { call ->
                 if (call.symbol.owner.isFakeOverriddenFromAny()) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsGetObjectHashCode, dispatchReceiverAsArgument = true)
+                        irCall(call, intrinsics.jsGetObjectHashCode, receiversAsArguments = true)
                     } else {
-                        irCall(call, intrinsics.jsHashCode, dispatchReceiverAsArgument = true)
+                        irCall(call, intrinsics.jsHashCode, receiversAsArguments = true)
                     }
                 } else {
                     call
