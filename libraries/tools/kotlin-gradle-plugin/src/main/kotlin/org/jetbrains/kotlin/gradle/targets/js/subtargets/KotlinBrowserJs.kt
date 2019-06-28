@@ -43,7 +43,10 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
             val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
+            it.dependsOn(
+                target.project.nodeJs.root.npmResolveTask,
+                compileKotlinTask
+            )
 
             it.compilation = compilation
             it.description = "build webpack bundle"
@@ -56,7 +59,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             it.dependsOn(
                 target.project.nodeJs.root.npmResolveTask,
                 compileKotlinTask,
-                project.getTasksByName(compilation.processResourcesTaskName, false)
+                compilation.processResourcesTaskName
             )
 
             it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
