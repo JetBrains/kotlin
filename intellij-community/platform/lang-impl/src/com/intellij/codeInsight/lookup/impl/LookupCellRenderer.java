@@ -444,7 +444,8 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
                    EditorUtil.scaleIconAccordingEditorFont(firstIcon, editor) : firstIcon;
           }
         }
-      } else if (icon.getIconWidth() > standard.getIconHeight()) {
+      }
+      else if (icon.getIconWidth() > standard.getIconWidth() || icon.getIconHeight() > standard.getIconHeight()) {
         icon = IconUtil.cropIcon(icon, new Rectangle(standard.getIconWidth(), standard.getIconHeight()));
       }
     }
