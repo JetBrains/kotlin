@@ -444,11 +444,10 @@ class RunExternalTestGroup extends OldKonanTest {
                     if (line.contains("$pkg.") && ! (line =~ packagePattern || line =~ importRegex)
                             && ! vars.contains(pkg)) {
                         def idx = 0
-                        while ((idx = line.indexOf(pkg, idx)) >= 0) {
-                            if (!Character.isJavaIdentifierPart(line.charAt(idx - 1))) {
-                                line = line.substring(0, idx) + "$sourceName.$pkg" + line.substring(idx + pkg.length())
-                                idx += sourceName.length() + pkg.length() + 1
-                            }
+                        while ((idx = line.indexOf(pkg, idx)) >= 0 &&
+                                !Character.isJavaIdentifierPart(line.charAt(idx - 1))) {
+                            line = line.substring(0, idx) + "$sourceName.$pkg" + line.substring(idx + pkg.length())
+                            idx += sourceName.length() + pkg.length() + 1
                         }
                     }
                 }
