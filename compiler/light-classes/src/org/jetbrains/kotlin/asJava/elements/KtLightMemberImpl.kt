@@ -70,13 +70,9 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (lightMemberOrigin?.originalElement?.isEquivalentTo(another) == true) return true
-
-        val isEquivalentByOrigin =
-            another is KtLightMember<*> &&
-                    lightMemberOrigin?.isEquivalentTo(another.lightMemberOrigin) == true
-
-        return isEquivalentByOrigin || this == another
+        return this == another ||
+                lightMemberOrigin?.isEquivalentTo(another) == true ||
+                another is KtLightMember<*> && lightMemberOrigin?.isEquivalentTo(another.lightMemberOrigin) == true
     }
 }
 

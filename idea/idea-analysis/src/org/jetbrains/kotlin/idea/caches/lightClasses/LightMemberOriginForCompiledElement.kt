@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.lightClasses
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
@@ -47,6 +48,14 @@ interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin
 
     override val originKind: JvmDeclarationOriginKind
         get() = JvmDeclarationOriginKind.OTHER
+
+    override fun isEquivalentTo(other: PsiElement?): Boolean {
+        return when (other) {
+            is KtDeclaration -> originalElement?.isEquivalentTo(other) ?: false
+            is PsiMember -> member.isEquivalentTo(other)
+            else -> false
+        }
+    }
 
     override fun isValid(): Boolean = member.isValid
 }
