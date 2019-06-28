@@ -39,13 +39,13 @@ import javax.swing.border.EmptyBorder
 import kotlin.reflect.full.findAnnotation
 
 class KotlinFacetEditorGeneralTab(
-        private val configuration: KotlinFacetConfiguration,
-        private val editorContext: FacetEditorContext,
-        private val validatorsManager: FacetValidatorsManager
+    private val configuration: KotlinFacetConfiguration,
+    private val editorContext: FacetEditorContext,
+    private val validatorsManager: FacetValidatorsManager
 ) : FacetEditorTab() {
     class EditorComponent(
-            private val project: Project,
-            private val configuration: KotlinFacetConfiguration?
+        private val project: Project,
+        private val configuration: KotlinFacetConfiguration?
     ) : JPanel(BorderLayout()) {
         private val isMultiEditor: Boolean
             get() = configuration == null
@@ -74,9 +74,9 @@ class KotlinFacetEditorGeneralTab(
             } else {
                 editableCommonArguments = configuration!!.settings.compilerArguments!!
                 editableJvmArguments = editableCommonArguments as? K2JVMCompilerArguments
-                        ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments
+                    ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments
                 editableJsArguments = editableCommonArguments as? K2JSCompilerArguments
-                        ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments
+                    ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments
                 editableCompilerSettings = configuration.settings.compilerSettings!!
             }
 
@@ -97,7 +97,7 @@ class KotlinFacetEditorGeneralTab(
                 .flatMap { it.componentPlatforms }
                 .distinct()
                 .sortedBy { it.platformName }
-                .associate { Pair(it, ThreeStateCheckBox(it.platformName).apply {isThirdStateEnabled = isMultiEditor} ) }
+                .associate { Pair(it, ThreeStateCheckBox(it.platformName).apply { isThirdStateEnabled = isMultiEditor }) }
             projectSettingsLink = HoverHyperlinkLabel("Edit project settings").apply {
                 addHyperlinkListener {
                     ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
@@ -116,19 +116,19 @@ class KotlinFacetEditorGeneralTab(
                 this.isEnabled = false
             }
             val contentPanel = FormBuilder
-                    .createFormBuilder()
-                    .addComponent(JPanel(BorderLayout()).apply {
-                        add(useProjectSettingsCheckBox, BorderLayout.WEST)
-                        add(projectSettingsLink, BorderLayout.EAST)
-                    }).addLabeledComponent("Selected target platforms:", targetPlatformsPanel)
-                    .addLabeledComponent("HMPP enabled:", hmppCheckbox)
-                    .addComponent(compilerConfigurable.createComponent()!!.apply {
-                        border = null
-                    })
-                    .panel
-                    .apply {
-                        border = EmptyBorder(10, 10, 10, 10)
-                    }
+                .createFormBuilder()
+                .addComponent(JPanel(BorderLayout()).apply {
+                    add(useProjectSettingsCheckBox, BorderLayout.WEST)
+                    add(projectSettingsLink, BorderLayout.EAST)
+                }).addLabeledComponent("Selected target platforms:", targetPlatformsPanel)
+                .addLabeledComponent("HMPP enabled:", hmppCheckbox)
+                .addComponent(compilerConfigurable.createComponent()!!.apply {
+                    border = null
+                })
+                .panel
+                .apply {
+                    border = EmptyBorder(10, 10, 10, 10)
+                }
             add(contentPanel, BorderLayout.NORTH)
 
             useProjectSettingsCheckBox.addActionListener {
@@ -147,12 +147,14 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.setTargetPlatform(getChosenPlatform()?.idePlatformKind)
             compilerConfigurable.setEnabled(!useProjectSettings)
             if (useProjectSettings) {
-                compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as CommonCompilerArguments?
-                compilerConfigurable.k2jvmCompilerArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments?
-                compilerConfigurable.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments?
+                compilerConfigurable.commonCompilerArguments =
+                    KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as CommonCompilerArguments?
+                compilerConfigurable.k2jvmCompilerArguments =
+                    Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments?
+                compilerConfigurable.k2jsCompilerArguments =
+                    Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments?
                 compilerConfigurable.compilerSettings = KotlinCompilerSettings.getInstance(project).settings.unfrozen() as CompilerSettings?
-            }
-            else {
+            } else {
                 compilerConfigurable.commonCompilerArguments = editableCommonArguments
                 compilerConfigurable.k2jvmCompilerArguments = editableJvmArguments
                 compilerConfigurable.k2jsCompilerArguments = editableJsArguments
@@ -172,10 +174,10 @@ class KotlinFacetEditorGeneralTab(
             val platform = editor.getChosenPlatform() ?: return ValidationResult("At least one target platform should be selected")
             val primaryArguments = platform.createArguments {
                 editor.compilerConfigurable.applyTo(
-                        this,
-                        this as? K2JVMCompilerArguments ?: K2JVMCompilerArguments(),
-                        this as? K2JSCompilerArguments ?: K2JSCompilerArguments(),
-                        CompilerSettings()
+                    this,
+                    this as? K2JVMCompilerArguments ?: K2JVMCompilerArguments(),
+                    this as? K2JSCompilerArguments ?: K2JSCompilerArguments(),
+                    CompilerSettings()
                 )
             }
             val argumentClass = primaryArguments.javaClass
@@ -358,4 +360,5 @@ class KotlinFacetEditorGeneralTab(
 }
 
 @Suppress("UNCHECKED_CAST")
-val <T> ComboBox<T>.selectedItemTyped: T? get() = selectedItem as T?
+val <T> ComboBox<T>.selectedItemTyped: T?
+    get() = selectedItem as T?
