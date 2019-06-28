@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import java.io.File
 import java.util.*
 
@@ -117,7 +118,31 @@ internal class PropertiesProvider(private val project: Project) {
     val nativeRestrictedDistribution: Boolean?
         get() = booleanProperty("kotlin.native.restrictedDistribution")
 
-    // TODO: Add other native props here.
+    /**
+     * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
+     */
+    val nativeHome: String?
+        get() = propertyWithDeprecatedVariant(KOTLIN_NATIVE_HOME, "org.jetbrains.kotlin.native.home")
+
+    /**
+     * Allows a user to override Kotlin/Native version.
+     */
+    val nativeVersion: String?
+        get() = propertyWithDeprecatedVariant("kotlin.native.version", "org.jetbrains.kotlin.native.version")
+
+    /**
+     * Allows a user to specify additional arguments of a JVM executing a K/N compiler.
+     */
+    val nativeJvmArgs: String?
+        get() = propertyWithDeprecatedVariant("kotlin.native.jvmArgs", "org.jetbrains.kotlin.native.jvmArgs")
+
+    private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
+        val deprecatedProperty = property(deprecatedPropName)
+        if (deprecatedProperty != null) {
+            SingleWarningPerBuild.show(project, "Project property '$deprecatedPropName' is deprecated. Please use '$propName' instead.")
+        }
+        return property(propName) ?: deprecatedProperty
+    }
 
     private fun booleanProperty(propName: String): Boolean? =
         property(propName)?.toBoolean()
@@ -128,4 +153,8 @@ internal class PropertiesProvider(private val project: Project) {
         } else {
             localProperties.getProperty(propName)
         }
+
+    companion object {
+        internal const val KOTLIN_NATIVE_HOME = "kotlin.native.home"
+    }
 }
