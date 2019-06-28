@@ -96,6 +96,16 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         Assert.assertEquals(moduleFileContentBefore, moduleFileContentAfter)
     }
 
+
+    fun testLoadAndSaveOldNativeFacet() {
+        val moduleFileContentBefore = String(module.moduleFile!!.contentsToByteArray())
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.isSaveAllowed = true
+        application.saveAll()
+        val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
+        Assert.assertEquals(moduleFileContentBefore.replace("platform=\"Native \"", "platform=\"Native \" allPlatforms=\"Native []\""), moduleFileContentAfter)
+    }
+
     //TODO(auskov): test parsing common target platform with multiple versions of java, add parsing common platforms
     fun testLoadAndSaveProjectWithV2OldPlatformFacetConfig() {
         val moduleFileContentBefore = String(module.moduleFile!!.contentsToByteArray())
