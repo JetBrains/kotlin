@@ -9,6 +9,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Exec
 import org.jetbrains.konan.gradle.KotlinNativeHomeEvaluator.getKotlinNativeHome
 import org.jetbrains.konan.gradle.KonanModel.Companion.NO_KOTLIN_NATIVE_HOME
 import org.jetbrains.konan.gradle.KonanModel.Companion.NO_TASK_PATH
@@ -43,8 +44,11 @@ class KonanModelBuilder : ModelBuilderService {
     // This is for Kotlin 1.3.20+:
     private fun collectArtifacts1320(targets: Collection<*>) = targets
         .flatMap { target -> target["getBinaries"] as? Collection<*> ?: emptyList<Any>() }
-        .mapNotNull { binary -> binary["getLinkTask"] as? Task }
-        .mapNotNull { task -> buildArtifact(task) }
+        .mapNotNull { binary ->
+            val linkTask = binary["getLinkTask"] as? Task ?: return@mapNotNull null
+            val runTask = binary["getRunTask"] as? Exec
+            buildArtifact(linkTask, runTask)
+        }
 
     // Legacy way (< 1.3.20):
     private fun collectArtifactsLegacy(targets: Collection<*>) = targets
@@ -60,22 +64,37 @@ class KonanModelBuilder : ModelBuilderService {
                 }
             }
         }
-        .mapNotNull { buildArtifact(it) }
+        .mapNotNull { buildArtifact(it, null) }
 
-    private fun buildArtifact(buildArtifactTask: Task): KonanModelArtifact? {
-        val outputKind = buildArtifactTask["getOutputKind"]["name"] as? String ?: return null
-        val konanTargetName = buildArtifactTask["getTarget"] as? String ?: error("No arch target found")
-        val outputFile = (buildArtifactTask["getOutputFile"] as? Provider<*>)?.orNull as? File ?: return null
-        val compilationTarget = buildArtifactTask["getCompilation"]["getTarget"]
+    @Suppress("UNCHECKED_CAST")
+    private fun buildArtifact(linkTask: Task, runTask: Exec?): KonanModelArtifact? {
+        val outputKind = linkTask["getOutputKind"]["name"] as? String ?: return null
+        val konanTargetName = linkTask["getTarget"] as? String ?: error("No arch target found")
+        val outputFile = (linkTask["getOutputFile"] as? Provider<*>)?.orNull as? File ?: return null
+        val compilationTarget = linkTask["getCompilation"]["getTarget"]
         val compilationTargetName = compilationTarget["getName"] as? String ?: return null
-        val isTests = buildArtifactTask["getProcessTests"] as? Boolean ?: return null
+        val isTests = linkTask["getProcessTests"] as? Boolean ?: return null
+
+        val execConfiguration = if (runTask != null) {
+            val workingDir: String = runTask.workingDir.path
+            val programParameters: List<String> = runTask.args as List<String>? ?: emptyList()
+            val environmentVariables: Map<String, String> = (runTask.environment as Map<String, Any>?)
+                    ?.mapValues { it.value.toString() } ?: emptyMap()
+
+            KonanModelArtifactExecConfigurationImpl(
+                    workingDir,
+                    programParameters,
+                    environmentVariables
+            )
+        } else null
 
         return KonanModelArtifactImpl(
             compilationTargetName,
             CompilerOutputKind.valueOf(outputKind),
             konanTargetName,
             outputFile,
-            buildArtifactTask.path,
+            linkTask.path,
+            execConfiguration,
             isTests
         )
     }

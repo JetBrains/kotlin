@@ -44,7 +44,16 @@ class KonanProjectResolver : AbstractProjectResolverExtension() {
             override val targetPlatform: String = artifact.targetPlatform
             override val file: File = artifact.file
             override val buildTaskPath: String = artifact.buildTaskPath
+            override val execConfiguration: KonanModelArtifactExecConfiguration? = artifact.execConfiguration?.let { MyKonanModelArtifactExecConfiguration(it) }
             override val isTests: Boolean = artifact.isTests
+        }
+
+        private class MyKonanModelArtifactExecConfiguration(
+                execConfiguration: KonanModelArtifactExecConfiguration
+        ) : KonanModelArtifactExecConfiguration {
+            override val workingDir: String = execConfiguration.workingDir
+            override val programParameters: List<String> = execConfiguration.programParameters
+            override val environmentVariables: Map<String, String> = execConfiguration.environmentVariables
         }
     }
 

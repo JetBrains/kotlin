@@ -21,6 +21,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
+import com.intellij.util.execution.ParametersListUtil
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType
 import org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer
@@ -83,6 +84,27 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
             val configuration = runConfiguration.configuration as GradleKonanAppRunConfiguration
             configuration.name = suggestedName
             configurationProducer.setupTarget(configuration, listOf(buildTarget))
+
+            /*
+             * Each build configuration in a build target may have different execution parameters (working dir,
+             * program parameters and environment variables). This likely is a rare case, though this is possible.
+             *
+             * CIDR run configuration is created as an aggregation of several build configurations, and there is
+             * no way to preserve execution parameters for each of build configurations in a single created run configuration.
+             * Thus, lets take exec parameters from the default build configuration (i.e. with "Debug" profile).
+             *
+             * TODO: In the future, we need to use the appropriate Gradle Exec tasks to run Konan binaries instead of
+             * CIDR platform runner. Then we will not have any issues with passing the right exec parameters.
+             */
+            buildTarget.buildConfigurations
+                    .filter { it.profileName == "Debug" || it.profileName == "Release" }
+                    .minBy { /* Debug should go the first */ it.profileName }
+                    ?.execConfiguration
+                    ?.let {
+                        configuration.workingDirectory = it.workingDir
+                        configuration.programParameters = ParametersListUtil.join(it.programParameters)
+                        configuration.envs = it.environmentVariables
+                    }
 
             runManager.addConfiguration(runConfiguration)
             if (runConfigurationToSelect == null) {

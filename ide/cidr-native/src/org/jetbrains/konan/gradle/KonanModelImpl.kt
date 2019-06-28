@@ -16,10 +16,17 @@ data class KonanModelImpl(
 ) : KonanModel
 
 data class KonanModelArtifactImpl(
-    override val name: String,
-    override val type: CompilerOutputKind,
-    override val targetPlatform: String,
-    override val file: File,
-    override val buildTaskPath: String,
-    override val isTests: Boolean
+        override val name: String,
+        override val type: CompilerOutputKind,
+        override val targetPlatform: String,
+        override val file: File,
+        override val buildTaskPath: String,
+        override val execConfiguration: KonanModelArtifactExecConfiguration?,
+        override val isTests: Boolean
 ) : KonanModelArtifact
+
+data class KonanModelArtifactExecConfigurationImpl(
+    override val workingDir: String,
+    override val programParameters: List<String>,
+    override val environmentVariables: Map<String, String>
+) : KonanModelArtifactExecConfiguration

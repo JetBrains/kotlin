@@ -139,15 +139,16 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
             val profileName = if (artifact.buildTaskPath.contains("Debug", ignoreCase = true)) "Debug" else "Release"
 
             val configuration = GradleKonanConfiguration(
-                    configurationId,
-                    configurationName,
-                    profileName,
-                    artifact.file,
-                    artifact.type,
-                    artifact.buildTaskPath,
-                    konanModel.cleanTaskPath,
-                    rootProjectPath,
-                    artifact.isTests
+                    id = configurationId,
+                    name = configurationName,
+                    profileName = profileName,
+                    productFile = artifact.file,
+                    targetType = artifact.type,
+                    artifactBuildTaskPath = artifact.buildTaskPath,
+                    artifactCleanTaskPath = konanModel.cleanTaskPath,
+                    projectPath = rootProjectPath,
+                    execConfiguration = artifact.execConfiguration,
+                    isTests = artifact.isTests
             )
 
             configurationsMap.computeIfAbsent(ConfigurationKey(moduleId, artifact.name)) {

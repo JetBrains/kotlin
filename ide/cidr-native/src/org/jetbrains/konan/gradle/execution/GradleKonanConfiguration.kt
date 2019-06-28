@@ -8,6 +8,7 @@ package org.jetbrains.konan.gradle.execution
 import com.intellij.openapi.roots.ProjectModelBuildableElement
 import com.intellij.openapi.roots.ProjectModelExternalSource
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
+import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 import java.io.File
@@ -25,6 +26,7 @@ class GradleKonanConfiguration(
     val artifactBuildTaskPath: String,
     artifactCleanTaskPath: String?,
     val projectPath: String,
+    val execConfiguration: KonanModelArtifactExecConfiguration?,
     val isTests: Boolean
 ) : Serializable, CidrBuildConfiguration, ProjectModelBuildableElement {
     val isExecutable: Boolean

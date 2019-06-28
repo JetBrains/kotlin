@@ -27,5 +27,12 @@ interface KonanModelArtifact : Serializable {
     val targetPlatform: String
     val file: File
     val buildTaskPath: String
+    val execConfiguration: KonanModelArtifactExecConfiguration?
     val isTests: Boolean
+}
+
+interface KonanModelArtifactExecConfiguration : Serializable {
+    val workingDir: String
+    val programParameters: List<String>
+    val environmentVariables: Map<String, String>
 }
