@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -25,9 +26,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -101,7 +105,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             DeepCopyIrTreeWithSymbolsForInliner(context, typeArguments, parent)
         }
 
-        val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
+        val substituteMap = mutableMapOf<IrValueParameter, IrElement>()
 
         fun inline() = inlineFunction(callSite, callee)
 
@@ -125,7 +129,10 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(copiedCallee.descriptor.original)
             val startOffset = callee.startOffset
             val endOffset = callee.endOffset
-            val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, startOffset, endOffset)
+            /* creates irBuilder appending to the end of the given returnable block: thus why we initialize
+             * irBuilder with (..., endOffset, endOffset).
+             */
+            val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, endOffset, endOffset)
 
             if (callee.isInlineConstructor) {
                 // Copier sets parent to be the current function but
@@ -197,9 +204,13 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 val newExpression = super.visitGetValue(expression) as IrGetValue
                 val argument = substituteMap[newExpression.symbol.owner] ?: return newExpression
-
                 argument.transformChildrenVoid(this) // Default argument can contain subjects for substitution.
-                return copyIrElement.copy(argument) as IrExpression
+                return if (argument is IrVariable) {
+                    IrGetValueImpl(startOffset = newExpression.startOffset,
+                            endOffset = newExpression.endOffset,
+                            symbol = argument.symbol)
+
+                } else (copyIrElement.copy(argument) as IrExpression)
             }
 
             //-----------------------------------------------------------------//
@@ -403,13 +414,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                         isMutable = false)
 
                 evaluationStatements.add(newVariable)
-                val getVal = IrGetValueImpl(
-                        startOffset = currentScope.irElement.startOffset,
-                        endOffset = currentScope.irElement.endOffset,
-                        type = newVariable.type,
-                        symbol = newVariable.symbol
-                )
-                substituteMap[it.parameter] = getVal
+                substituteMap[it.parameter] = newVariable
             }
             return evaluationStatements
         }
