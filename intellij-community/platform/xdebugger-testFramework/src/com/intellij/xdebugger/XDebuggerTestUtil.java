@@ -553,9 +553,9 @@ public class XDebuggerTestUtil {
   void setDefaultBreakpointEnabled(@NotNull final Project project, Class<? extends XBreakpointType<B, ?>> bpTypeClass, boolean enabled) {
     final XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
     XBreakpointType<B, ?> bpType = XDebuggerUtil.getInstance().findBreakpointType(bpTypeClass);
-    XBreakpoint<?> bp = breakpointManager.getDefaultBreakpoint(bpType);
-    if (bp != null) {
-      bp.setEnabled(enabled);
+    Set<B> defaultBreakpoints = breakpointManager.getDefaultBreakpoints(bpType);
+    for (B defaultBreakpoint : defaultBreakpoints) {
+      defaultBreakpoint.setEnabled(enabled);
     }
   }
 
