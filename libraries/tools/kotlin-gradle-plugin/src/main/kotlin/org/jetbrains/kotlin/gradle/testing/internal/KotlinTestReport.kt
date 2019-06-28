@@ -11,7 +11,9 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.*
+import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import java.io.File
 import java.net.URI
 
@@ -61,6 +63,8 @@ open class KotlinTestReport : TestReport() {
     private val hasFailedTests: Boolean
         get() = hasOwnFailedTests || children.any { it.hasFailedTests }
 
+    private val ownSuppressedRunningFailures = mutableListOf<Pair<KotlinTest, Error>>()
+
     private val failedTestsListener = object : TestListener {
         override fun beforeTest(testDescriptor: TestDescriptor) {
         }
@@ -98,6 +102,11 @@ open class KotlinTestReport : TestReport() {
     fun registerTestTask(task: AbstractTestTask) {
         testTasks.add(task)
         task.addTestListener(failedTestsListener)
+        if (task is KotlinTest) task.addRunListener(object : KotlinTestRunnerListener {
+            override fun runningFailure(failure: Error) {
+                ownSuppressedRunningFailures.add(task to failure)
+            }
+        })
         reportOn(task)
 
         addToParents(task)
@@ -125,19 +134,71 @@ open class KotlinTestReport : TestReport() {
 
     @TaskAction
     fun checkFailedTests() {
-        if (checkFailedTests && hasFailedTests) {
-            val message = StringBuilder("There were failing tests.")
+        if (checkFailedTests) {
+            checkSuppressedRunningFailures()
 
-            val reportUrl = htmlReportUrl
-            if (reportUrl != null) {
-                message.append(" See the report at: $reportUrl")
+            if (hasFailedTests) {
+                if (ignoreFailures) {
+                    logger.warn(getFailingTestsMessage())
+                } else {
+                    throw GradleException(getFailingTestsMessage())
+                }
+            }
+        }
+    }
+
+    private fun getFailingTestsMessage(): String {
+        val message = StringBuilder("There were failing tests.")
+
+        val reportUrl = htmlReportUrl
+        if (reportUrl != null) {
+            message.append(" See the report at: $reportUrl")
+        }
+        return message.toString()
+    }
+
+    private fun checkSuppressedRunningFailures() {
+        val allSuppressedRunningFailures = mutableListOf<Pair<KotlinTest, Error>>()
+
+        fun visitSuppressedRunningFailures(report: KotlinTestReport) {
+            report.ownSuppressedRunningFailures.forEach {
+                allSuppressedRunningFailures.add(it)
             }
 
-            if (ignoreFailures) {
-                logger.warn(message.toString())
-            } else {
-                throw GradleException(message.toString())
+            report.children.forEach {
+                visitSuppressedRunningFailures(it)
             }
+        }
+
+        visitSuppressedRunningFailures(this)
+
+        if (allSuppressedRunningFailures.isNotEmpty()) {
+            val allErrors = mutableListOf<Error>()
+            val msg = buildString {
+                appendln("Failed to execute all tests:")
+                allSuppressedRunningFailures.groupBy { it.first }.forEach { test, errors ->
+                    append(test.path)
+                    append(": ")
+                    var first = true
+                    errors.forEach { (_, error) ->
+                        allErrors.add(error)
+                        append(error.message)
+                        if (first) first = false else appendln()
+                    }
+                }
+
+                if (hasFailedTests) {
+                    val failedTestsMessage = getFailingTestsMessage()
+                    if (ignoreFailures) {
+                        logger.warn(getFailingTestsMessage())
+                    } else {
+                        allErrors.add(Error(failedTestsMessage))
+                        appendln("Also: $failedTestsMessage")
+                    }
+                }
+            }
+
+            throw MultiCauseException(msg, allErrors)
         }
     }
 
@@ -175,6 +236,9 @@ open class KotlinTestReport : TestReport() {
 
     private fun disableTestReporting(task: AbstractTestTask) {
         task.ignoreFailures = true
+        if (task is KotlinTest) {
+            task.ignoreRunFailures = true
+        }
 
         @Suppress("UnstableApiUsage")
         task.reports.html.isEnabled = false
