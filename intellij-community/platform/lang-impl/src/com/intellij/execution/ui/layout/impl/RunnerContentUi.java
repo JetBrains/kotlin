@@ -1567,10 +1567,12 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
   @Override
   public void minimize(final Content content, final CellTransform.Restore restore) {
+    getStateFor(content).setMinimizedInGrid(true);
     myManager.removeContent(content, false);
     saveUiState();
     updateTabsUI(false);
   }
+  
   public void restore(Content content) {
     final GridImpl grid = getGridFor(content, false);
     if (grid == null) {
