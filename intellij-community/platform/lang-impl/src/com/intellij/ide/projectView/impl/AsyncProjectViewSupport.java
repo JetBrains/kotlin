@@ -63,7 +63,7 @@ class AsyncProjectViewSupport {
         else {
           long time = System.currentTimeMillis();
           LOG.debug("found ", updatedFiles.size(), " changed files");
-          TreeCollector<VirtualFile> collector = TreeCollector.createFileRootsCollector();
+          TreeCollector<VirtualFile> collector = TreeCollector.VirtualFileRoots.create();
           for (VirtualFile file : updatedFiles) {
             if (!file.isDirectory()) file = file.getParent();
             if (file != null && findArea(file, project) != null) collector.add(file);

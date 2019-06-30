@@ -30,6 +30,7 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SmartExpander;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.tree.AsyncTreeModel;
+import com.intellij.ui.tree.TreeCollector.TreePathRoots;
 import com.intellij.ui.tree.TreePathUtil;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ArrayUtil;
@@ -395,7 +396,7 @@ public class InspectionTree extends Tree {
 
   public int getSelectedProblemCount() {
     int count = 0;
-    for (TreePath path : TreeUtil.selectMaximals(getSelectionPaths())) {
+    for (TreePath path : TreePathRoots.collect(getSelectionPaths())) {
       LevelAndCount[] levels = ((InspectionTreeNode)path.getLastPathComponent()).getProblemLevels();
       for (LevelAndCount level : levels) {
         count += level.getCount();
