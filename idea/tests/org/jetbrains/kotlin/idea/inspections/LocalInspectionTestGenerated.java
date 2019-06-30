@@ -8234,6 +8234,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableTypeWithRuntime2.kt");
         }
 
+        @TestMetadata("objectCallChain.kt")
+        public void testObjectCallChain() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/objectCallChain.kt");
+        }
+
         @TestMetadata("secondaryConstructor.kt")
         public void testSecondaryConstructor() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/secondaryConstructor.kt");
