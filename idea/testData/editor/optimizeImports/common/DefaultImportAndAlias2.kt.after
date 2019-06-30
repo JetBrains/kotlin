@@ -1,3 +1,4 @@
+// WITH_MESSAGE: "Removed 1 import"
 import pack1.a
 import pack1.a as a1
 import kotlin.run as run1

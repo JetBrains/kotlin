@@ -6,16 +6,23 @@
 package org.jetbrains.kotlin.idea.imports
 
 import com.intellij.testFramework.LightProjectDescriptor
+import junit.framework.TestCase
 import org.jetbrains.kotlin.AbstractImportsTest
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractOptimizeImportsTest : AbstractImportsTest() {
     override fun doTest(file: KtFile): String {
         OptimizedImportsBuilder.testLog = StringBuilder()
         try {
-            KotlinImportOptimizer().processFile(file).run()
+            val optimizer = KotlinImportOptimizer().processFile(file)
+            optimizer.run()
+            val message = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_MESSAGE: ")
+            if (message != null) {
+                TestCase.assertEquals(message, optimizer.userNotificationInfo)
+            }
             return OptimizedImportsBuilder.testLog.toString()
         } finally {
             OptimizedImportsBuilder.testLog = null

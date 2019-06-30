@@ -1,3 +1,4 @@
+// WITH_MESSAGE: "Removed 4 imports, added 1 import"
 import duration.minutes
 import duration.hours as hour
 import duration.seconds as second

@@ -1,3 +1,4 @@
+// WITH_MESSAGE: "Rearranged imports"
 import pack1.a
 import kotlin.collections.List
 import kotlin.run
