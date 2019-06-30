@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.PlatformModifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 class ValueParameter(
-    val isVal: Boolean,
-    val isVar: Boolean,
-    val modifier: Modifier,
+    private val isVal: Boolean,
+    private val isVar: Boolean,
+    private val modifier: Modifier,
     val firValueParameter: FirValueParameter
 ) {
-    fun isValOrVar(): Boolean {
+    fun hasValOrVar(): Boolean {
         return isVal || isVar
     }
 
