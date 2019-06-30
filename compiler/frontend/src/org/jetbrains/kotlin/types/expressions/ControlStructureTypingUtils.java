@@ -123,24 +123,30 @@ public class ControlStructureTypingUtils {
 
     /*package*/ ResolvedCall<FunctionDescriptor> resolveTryAsCall(
             @NotNull Call call,
-            @NotNull KtTryExpression tryExpression,
             @NotNull List<Pair<KtExpression, VariableDescriptor>> catchedExceptions,
             @NotNull ExpressionTypingContext context,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         List<String> argumentNames = Lists.newArrayList("tryBlock");
         List<Boolean> argumentsNullability = Lists.newArrayList(false);
-        for (int i = 0; i < tryExpression.getCatchClauses().size(); i++) {
-            argumentNames.add("catchBlock" + i);
-            argumentsNullability.add(false);
-        }
-        SimpleFunctionDescriptorImpl function =
-                createFunctionDescriptorForSpecialConstruction(ResolveConstruct.TRY, argumentNames, argumentsNullability);
+
+        int counter = 0;
         for (Pair<KtExpression, VariableDescriptor> descriptorPair : catchedExceptions) {
+            // catchedExceptions are corresponding to PSI arguments that were used to create a call
+            // therefore, it's important to use only them to have consistent parameters
+            argumentNames.add("catchBlock" + counter);
+            argumentsNullability.add(false);
+
             KtExpression catchBlock = descriptorPair.getFirst();
             VariableDescriptor catchedExceptionDescriptor = descriptorPair.getSecond();
             context.trace.record(BindingContext.NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER, catchBlock, Ref.create(catchedExceptionDescriptor));
+
+            counter++;
         }
+
+        SimpleFunctionDescriptorImpl function =
+                createFunctionDescriptorForSpecialConstruction(ResolveConstruct.TRY, argumentNames, argumentsNullability);
+
         return resolveSpecialConstructionAsCall(call, function, ResolveConstruct.TRY, context, dataFlowInfoForArguments);
     }
 
