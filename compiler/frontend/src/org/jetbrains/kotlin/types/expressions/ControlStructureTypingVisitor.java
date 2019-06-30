@@ -611,7 +611,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfTryCall(callForTry, dataFlowInfoBeforeTry, dataFlowInfoBeforeTry);
         }
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils
-                .resolveTryAsCall(callForTry, tryExpression, catchClausesBlocksAndParameters, tryInputContext, dataFlowInfoForArguments);
+                .resolveTryAsCall(callForTry, catchClausesBlocksAndParameters, tryInputContext, dataFlowInfoForArguments);
         KotlinType resultType = resolvedCall.getResultingDescriptor().getReturnType();
 
         BindingContext bindingContext = tryInputContext.trace.getBindingContext();

@@ -9299,6 +9299,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteEquals.kt");
             }
 
+            @TestMetadata("incompleteTryCatchBlock.kt")
+            public void testIncompleteTryCatchBlock() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteTryCatchBlock.kt");
+            }
+
             @TestMetadata("kt1955.kt")
             public void testKt1955() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/incompleteCode/kt1955.kt");
