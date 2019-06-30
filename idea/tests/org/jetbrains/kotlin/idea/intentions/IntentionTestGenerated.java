@@ -8663,6 +8663,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/importMember"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("ClassCallChain.kt")
+        public void testClassCallChain() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain.kt");
+        }
+
+        @TestMetadata("ClassCallChain2.kt")
+        public void testClassCallChain2() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain2.kt");
+        }
+
+        @TestMetadata("ClassCallChain3.kt")
+        public void testClassCallChain3() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain3.kt");
+        }
+
         @TestMetadata("EnumMember.kt")
         public void testEnumMember() throws Exception {
             runTest("idea/testData/intentions/importMember/EnumMember.kt");

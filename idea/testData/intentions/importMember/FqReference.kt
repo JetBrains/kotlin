@@ -1,5 +1,5 @@
-// INTENTION_TEXT: "Add import for 'java.util.ArrayList'"
 // WITH_RUNTIME
+// IS_APPLICABLE: false
 
 fun test() {
     val myList = java.util<caret>.ArrayList<Int>()
