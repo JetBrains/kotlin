@@ -2,6 +2,7 @@
 
 package com.intellij.ide.fileTemplates.impl;
 
+import com.intellij.diagnostic.PluginException;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplatesScheme;
@@ -227,7 +228,7 @@ public class FileTemplateManagerImpl extends FileTemplateManager implements Pers
         result.add(getInternalTemplate(bean.name));
       }
       catch (Exception e) {
-        LOG.error("Can't find template " + bean.name + " from " + bean.getPluginId(), e);
+        LOG.error("Can't find template " + bean.name, new PluginException(e, bean.getPluginId()));
       }
     }
     return result.toArray(FileTemplate.EMPTY_ARRAY);
