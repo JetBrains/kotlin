@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.WrappedTypeFactory
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 class LocalClassifierAnalyzer(
     private val globalContext: GlobalContext,
@@ -65,7 +66,8 @@ class LocalClassifierAnalyzer(
     private val supertypeLoopChecker: SupertypeLoopChecker,
     private val languageVersionSettings: LanguageVersionSettings,
     private val delegationFilter: DelegationFilter,
-    private val wrappedTypeFactory: WrappedTypeFactory
+    private val wrappedTypeFactory: WrappedTypeFactory,
+    private val kotlinTypeChecker: NewKotlinTypeChecker
 ) {
     fun processClassOrObject(
         scope: LexicalWritableScope?,
@@ -98,7 +100,8 @@ class LocalClassifierAnalyzer(
                 languageVersionSettings,
                 SyntheticResolveExtension.getInstance(project),
                 delegationFilter,
-                wrappedTypeFactory
+                wrappedTypeFactory,
+                kotlinTypeChecker
             ),
             analyzerServices
         )
@@ -126,7 +129,8 @@ class LocalClassDescriptorHolder(
     val languageVersionSettings: LanguageVersionSettings,
     val syntheticResolveExtension: SyntheticResolveExtension,
     val delegationFilter: DelegationFilter,
-    val wrappedTypeFactory: WrappedTypeFactory
+    val wrappedTypeFactory: WrappedTypeFactory,
+    val kotlinTypeChecker: NewKotlinTypeChecker
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -166,6 +170,7 @@ class LocalClassDescriptorHolder(
                     override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
                     override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
                     override val wrappedTypeFactory: WrappedTypeFactory = this@LocalClassDescriptorHolder.wrappedTypeFactory
+                    override val kotlinTypeChecker: NewKotlinTypeChecker = this@LocalClassDescriptorHolder.kotlinTypeChecker
                 },
                 containingDeclaration,
                 classOrObject.nameAsSafeName,

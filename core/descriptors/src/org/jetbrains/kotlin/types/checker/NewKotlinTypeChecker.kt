@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorImpl
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
@@ -57,6 +58,7 @@ object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
 
 interface NewKotlinTypeChecker : KotlinTypeChecker {
     val kotlinTypeRefiner: KotlinTypeRefiner
+    val overridingUtil: OverridingUtil
 
     fun transformToNewType(type: UnwrappedType): UnwrappedType
 
@@ -67,6 +69,7 @@ interface NewKotlinTypeChecker : KotlinTypeChecker {
 
 
 class NewKotlinTypeCheckerImpl(override val kotlinTypeRefiner: KotlinTypeRefiner) : NewKotlinTypeChecker {
+    override val overridingUtil: OverridingUtil = OverridingUtil.createWithTypeRefiner(kotlinTypeRefiner)
 
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
         ClassicTypeCheckerContext(true, kotlinTypeRefiner = kotlinTypeRefiner)

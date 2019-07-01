@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.WrappedTypeFactory
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 interface LazyClassContext {
     val declarationScopeProvider: DeclarationScopeProvider
@@ -43,4 +44,5 @@ interface LazyClassContext {
     val syntheticResolveExtension: SyntheticResolveExtension
     val delegationFilter: DelegationFilter
     val wrappedTypeFactory: WrappedTypeFactory
+    val kotlinTypeChecker: NewKotlinTypeChecker
 }

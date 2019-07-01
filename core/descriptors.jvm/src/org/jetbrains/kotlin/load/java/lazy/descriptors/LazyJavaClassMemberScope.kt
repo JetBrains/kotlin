@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -280,7 +281,8 @@ class LazyJavaClassMemberScope(
 
         // Merge functions with same signatures
         val mergedFunctionFromSuperTypes = resolveOverridesForNonStaticMembers(
-            name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING
+            name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING,
+            c.components.kotlinTypeChecker.overridingUtil
         )
 
         // add declarations
@@ -309,7 +311,8 @@ class LazyJavaClassMemberScope(
     ) {
 
         val additionalOverrides = resolveOverridesForNonStaticMembers(
-            name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter
+            name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter,
+            c.components.kotlinTypeChecker.overridingUtil
         )
 
         if (!isSpecialBuiltinName) {
@@ -451,7 +454,12 @@ class LazyJavaClassMemberScope(
 
         result.addAll(
             resolveOverridesForNonStaticMembers(
-                name, propertiesFromSupertypes + propertiesOverridesFromSuperTypes, result, ownerDescriptor, c.components.errorReporter
+                name,
+                propertiesFromSupertypes + propertiesOverridesFromSuperTypes,
+                result,
+                ownerDescriptor,
+                c.components.errorReporter,
+                c.components.kotlinTypeChecker.overridingUtil
             )
         )
     }

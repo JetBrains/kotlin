@@ -42,18 +42,20 @@ public final class DescriptorResolverUtils {
 
     @NotNull
     public static <D extends CallableMemberDescriptor> Collection<D> resolveOverridesForNonStaticMembers(
-        @NotNull Name name, @NotNull Collection<D> membersFromSupertypes, @NotNull Collection<D> membersFromCurrent,
-        @NotNull ClassDescriptor classDescriptor, @NotNull ErrorReporter errorReporter
-) {
-        return resolveOverrides(name, membersFromSupertypes, membersFromCurrent, classDescriptor, errorReporter, false);
+            @NotNull Name name, @NotNull Collection<D> membersFromSupertypes, @NotNull Collection<D> membersFromCurrent,
+            @NotNull ClassDescriptor classDescriptor, @NotNull ErrorReporter errorReporter,
+            @NotNull OverridingUtil overridingUtil
+    ) {
+        return resolveOverrides(name, membersFromSupertypes, membersFromCurrent, classDescriptor, errorReporter, overridingUtil, false);
     }
 
     @NotNull
     public static <D extends CallableMemberDescriptor> Collection<D> resolveOverridesForStaticMembers(
-        @NotNull Name name, @NotNull Collection<D> membersFromSupertypes, @NotNull Collection<D> membersFromCurrent,
-        @NotNull ClassDescriptor classDescriptor, @NotNull ErrorReporter errorReporter
-) {
-        return resolveOverrides(name, membersFromSupertypes, membersFromCurrent, classDescriptor, errorReporter, true);
+            @NotNull Name name, @NotNull Collection<D> membersFromSupertypes, @NotNull Collection<D> membersFromCurrent,
+            @NotNull ClassDescriptor classDescriptor, @NotNull ErrorReporter errorReporter,
+            @NotNull OverridingUtil overridingUtil
+    ) {
+        return resolveOverrides(name, membersFromSupertypes, membersFromCurrent, classDescriptor, errorReporter, overridingUtil, true);
     }
 
     @NotNull
@@ -63,11 +65,12 @@ public final class DescriptorResolverUtils {
             @NotNull Collection<D> membersFromCurrent,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull final ErrorReporter errorReporter,
+            @NotNull OverridingUtil overridingUtil,
             final boolean isStaticContext
     ) {
         final Set<D> result = new LinkedHashSet<D>();
 
-        OverridingUtil.generateOverridesInFunctionGroup(
+        overridingUtil.generateOverridesInFunctionGroup(
                 name, membersFromSupertypes, membersFromCurrent, classDescriptor,
                 new NonReportingOverrideStrategy() {
                     @Override

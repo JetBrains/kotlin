@@ -245,7 +245,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         ) {
             final Set<D> result = new LinkedHashSet<D>();
 
-            OverridingUtil.generateOverridesInFunctionGroup(
+            OverridingUtil.DEFAULT.generateOverridesInFunctionGroup(
                     name, fromSupertypes, Collections.<D>emptySet(), EnumEntrySyntheticClassDescriptor.this,
                     new NonReportingOverrideStrategy() {
                         @Override

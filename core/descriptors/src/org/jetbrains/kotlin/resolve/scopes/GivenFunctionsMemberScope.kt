@@ -61,7 +61,7 @@ abstract class GivenFunctionsMemberScope(
                 .filterIsInstance<CallableMemberDescriptor>()
         for ((name, group) in allSuperDescriptors.groupBy { it.name }) {
             for ((isFunction, descriptors) in group.groupBy { it is FunctionDescriptor }) {
-                OverridingUtil.generateOverridesInFunctionGroup(
+                OverridingUtil.DEFAULT.generateOverridesInFunctionGroup(
                         name,
                         /* membersFromSupertypes = */ descriptors,
                         /* membersFromCurrent = */ if (isFunction) functionsFromCurrent.filter { it.name == name } else listOf(),

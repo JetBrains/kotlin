@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -49,22 +50,40 @@ public class OverridingUtil {
                     ExternalOverridabilityCondition.class.getClassLoader()
             ));
 
-    public static final OverridingUtil DEFAULT = new OverridingUtil(new KotlinTypeChecker.TypeConstructorEquality() {
-        @Override
-        public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
-            return a.equals(b);
-        }
-    });
+    public static final OverridingUtil DEFAULT;
+
+    private static final KotlinTypeChecker.TypeConstructorEquality DEFAULT_TYPE_CONSTRUCTOR_EQUALITY =
+            new KotlinTypeChecker.TypeConstructorEquality() {
+                @Override
+                public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+                    return a.equals(b);
+                }
+            };
+
+    static {
+
+        DEFAULT = new OverridingUtil(DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, KotlinTypeRefiner.Default.INSTANCE);
+    }
 
     @NotNull
     public static OverridingUtil createWithEqualityAxioms(@NotNull KotlinTypeChecker.TypeConstructorEquality equalityAxioms) {
-        return new OverridingUtil(equalityAxioms);
+        return new OverridingUtil(equalityAxioms, KotlinTypeRefiner.Default.INSTANCE);
     }
 
+    @NotNull
+    public static OverridingUtil createWithTypeRefiner(@NotNull KotlinTypeRefiner kotlinTypeRefiner) {
+        return new OverridingUtil(DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, kotlinTypeRefiner);
+    }
+
+    private final KotlinTypeRefiner kotlinTypeRefiner;
     private final KotlinTypeChecker.TypeConstructorEquality equalityAxioms;
 
-    private OverridingUtil(KotlinTypeChecker.TypeConstructorEquality axioms) {
+    private OverridingUtil(
+            @NotNull KotlinTypeChecker.TypeConstructorEquality axioms,
+            @NotNull KotlinTypeRefiner kotlinTypeRefiner
+    ) {
         equalityAxioms = axioms;
+        this.kotlinTypeRefiner = kotlinTypeRefiner;
     }
 
     /**
@@ -279,7 +298,12 @@ public class OverridingUtil {
 
             if (superReturnType != null && subReturnType != null) {
                 boolean bothErrors = KotlinTypeKt.isError(subReturnType) && KotlinTypeKt.isError(superReturnType);
-                if (!bothErrors && !typeChecker.isSubtypeOf(subReturnType, superReturnType)) {
+                if (!bothErrors &&
+                    !typeChecker.isSubtypeOf(
+                            kotlinTypeRefiner.refineType(subReturnType),
+                            kotlinTypeRefiner.refineType(superReturnType)
+                    )
+                ) {
                     return OverrideCompatibilityInfo.conflict("Return type mismatch");
                 }
             }
@@ -356,18 +380,19 @@ public class OverridingUtil {
         return null;
     }
 
-    private static boolean areTypesEquivalent(
+    private boolean areTypesEquivalent(
             @NotNull KotlinType typeInSuper,
             @NotNull KotlinType typeInSub,
             @NotNull KotlinTypeChecker typeChecker
     ) {
         boolean bothErrors = KotlinTypeKt.isError(typeInSuper) && KotlinTypeKt.isError(typeInSub);
-        return bothErrors || typeChecker.equalTypes(typeInSuper, typeInSub);
+        if (bothErrors) return true;
+        return typeChecker.equalTypes(kotlinTypeRefiner.refineType(typeInSuper), kotlinTypeRefiner.refineType(typeInSub));
     }
 
     // See JLS 8, 8.4.4 Generic Methods
     // TODO: use TypeSubstitutor instead
-    private static boolean areTypeParametersEquivalent(
+    private boolean areTypeParametersEquivalent(
             @NotNull TypeParameterDescriptor superTypeParameter,
             @NotNull TypeParameterDescriptor subTypeParameter,
             @NotNull KotlinTypeChecker typeChecker
@@ -404,7 +429,7 @@ public class OverridingUtil {
         return parameters;
     }
 
-    public static void generateOverridesInFunctionGroup(
+    public void generateOverridesInFunctionGroup(
             @SuppressWarnings("UnusedParameters")
             @NotNull Name name, //DO NOT DELETE THIS PARAMETER: needed to make sure all descriptors have the same name
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromSupertypes,
@@ -428,7 +453,7 @@ public class OverridingUtil {
                Visibilities.isVisibleIgnoringReceiver(fromSuper, overriding);
     }
 
-    private static Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
+    private Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
             @NotNull CallableMemberDescriptor fromCurrent,
             @NotNull Collection<? extends CallableMemberDescriptor> descriptorsFromSuper,
             @NotNull ClassDescriptor current,
@@ -437,7 +462,7 @@ public class OverridingUtil {
         Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
         Collection<CallableMemberDescriptor> overridden = SmartSet.create();
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
-            OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
+            OverrideCompatibilityInfo.Result result = isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
             boolean isVisibleForOverride = isVisibleForOverride(fromCurrent, fromSupertype);
 

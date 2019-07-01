@@ -151,7 +151,7 @@ open class LazyClassMemberScope(
         result: MutableCollection<D>,
         exactDescriptorClass: Class<out D>
     ) {
-        OverridingUtil.generateOverridesInFunctionGroup(
+        c.kotlinTypeChecker.overridingUtil.generateOverridesInFunctionGroup(
             name,
             fromSupertypes,
             ArrayList(result),

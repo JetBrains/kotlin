@@ -305,7 +305,7 @@ class CollectionStubMethodGenerator(
                 }.groupBy { it.name }
 
         for ((name, fromSupertypes) in membersFromSupertypesByName) {
-            OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, emptyList(), classDescriptor, strategy)
+            OverridingUtil.DEFAULT.generateOverridesInFunctionGroup(name, fromSupertypes, emptyList(), classDescriptor, strategy)
         }
     }
 

@@ -64,7 +64,14 @@ class LazyJavaStaticClassScope(
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
-        result.addAll(resolveOverridesForStaticMembers(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
+        result.addAll(resolveOverridesForStaticMembers(
+            name,
+            functionsFromSupertypes,
+            result,
+            ownerDescriptor,
+            c.components.errorReporter,
+            c.components.kotlinTypeChecker.overridingUtil
+        ))
 
         if (jClass.isEnum) {
             when (name) {
@@ -81,13 +88,23 @@ class LazyJavaStaticClassScope(
 
         if (result.isNotEmpty()) {
             result.addAll(
-                resolveOverridesForStaticMembers(name, propertiesFromSupertypes, result, ownerDescriptor, c.components.errorReporter)
+                resolveOverridesForStaticMembers(
+                    name,
+                    propertiesFromSupertypes,
+                    result,
+                    ownerDescriptor,
+                    c.components.errorReporter,
+                    c.components.kotlinTypeChecker.overridingUtil
+                )
             )
         } else {
             result.addAll(propertiesFromSupertypes.groupBy {
                 it.realOriginal
             }.flatMap {
-                resolveOverridesForStaticMembers(name, it.value, result, ownerDescriptor, c.components.errorReporter)
+                resolveOverridesForStaticMembers(
+                    name, it.value, result, ownerDescriptor, c.components.errorReporter,
+                    c.components.kotlinTypeChecker.overridingUtil
+                )
             })
         }
     }

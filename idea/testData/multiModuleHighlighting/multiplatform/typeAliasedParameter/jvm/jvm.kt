@@ -7,7 +7,9 @@ actual interface BaseI {
     actual fun f(p: Upper)
 }
 
-internal class Impl : I {
+internal class Impl : I, Base2 {
     override fun f(p: Upper) {
     }
+
+    override fun foo(p: Upper) {}
 }
