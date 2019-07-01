@@ -3,25 +3,25 @@ package com.intellij.openapi.externalSystem.service.project.autoimport;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.*;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
   protected abstract boolean isRelevant(String path);
   
   protected abstract void prepareFileDeletion(@NotNull VirtualFile file); 
 
-  protected abstract void updateFile(VirtualFile file, VFileEvent event);
+  protected abstract void updateFile(@NotNull VirtualFile file, @NotNull VFileEvent event);
 
   protected abstract void reset();
 
@@ -35,6 +35,7 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
   @Nullable
   @Override
   public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    List<VFileEvent> relevantEvents = new ArrayList<>();
     try {
       for (VFileEvent each : events) {
         ProgressManager.checkCanceled();
@@ -44,10 +45,11 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
         }
         else {
           if (!isRelevant(each.getPath())) continue;
-          if (each instanceof VFilePropertyChangeEvent) {
-            if (isRenamed(each)) {
-              deleteRecursively(each.getFile());
-            }
+
+          relevantEvents.add(each);
+
+          if (each instanceof VFilePropertyChangeEvent && ((VFilePropertyChangeEvent)each).isRename()) {
+            deleteRecursively(each.getFile());
           }
           else if (each instanceof VFileMoveEvent) {
             VFileMoveEvent moveEvent = (VFileMoveEvent)each;
@@ -72,7 +74,7 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
 
       @Override
       public void afterVfsChange() {
-        after(events);
+        after(relevantEvents);
       }
     };
   }
@@ -95,13 +97,10 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
     });
   }
 
-  private void after(@NotNull List<? extends VFileEvent> events) {
-    for (VFileEvent each : events) {
-      if (!isRelevant(each.getPath())) continue;
-
+  private void after(@NotNull List<? extends VFileEvent> relevantEvents) {
+    for (VFileEvent each : relevantEvents) {
       if (each instanceof VFileCreateEvent) {
-        VFileCreateEvent createEvent = (VFileCreateEvent)each;
-        VirtualFile newChild = createEvent.getParent().findChild(createEvent.getChildName());
+        VirtualFile newChild = each.getFile();
         if (newChild != null) {
           updateFile(newChild, each);
         }
@@ -113,24 +112,13 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
           updateFile(newChild, each);
         }
       }
-      else if (each instanceof VFileContentChangeEvent) {
-        updateFile(each.getFile(), each);
-      }
-      else if (each instanceof VFilePropertyChangeEvent) {
-        if (isRenamed(each)) {
-          updateFile(each.getFile(), each);
-        }
-      }
-      else if (each instanceof VFileMoveEvent) {
-        updateFile(each.getFile(), each);
+      else if (each instanceof VFileContentChangeEvent ||
+               each instanceof VFileMoveEvent ||
+               each instanceof VFilePropertyChangeEvent && ((VFilePropertyChangeEvent)each).isRename()) {
+        updateFile(Objects.requireNonNull(each.getFile()), each);
       }
     }
     apply();
   }
 
-  @Contract(pure=true)
-  private static boolean isRenamed(VFileEvent each) {
-    return ((VFilePropertyChangeEvent)each).getPropertyName().equals(VirtualFile.PROP_NAME)
-           && !Comparing.equal(((VFilePropertyChangeEvent)each).getOldValue(), ((VFilePropertyChangeEvent)each).getNewValue());
-  }
 }

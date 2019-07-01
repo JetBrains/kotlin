@@ -760,7 +760,7 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
     }
 
     @Override
-    protected void updateFile(VirtualFile file, VFileEvent event) {
+    protected void updateFile(@NotNull VirtualFile file, @NotNull VFileEvent event) {
       init();
       debug("File changed '" + file.getPath() + "'");
       refreshFileCrcInfo(file);
