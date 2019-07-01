@@ -30,7 +30,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.impl.compiler.ArtifactCompileScope;
+import com.intellij.task.ProjectTaskContext;
 import com.intellij.task.ProjectTaskManager;
+import com.intellij.task.ProjectTaskNotification;
+import com.intellij.task.ProjectTaskResult;
 import com.intellij.testFramework.*;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
@@ -412,11 +415,17 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
   private void build(@NotNull Object[] buildableElements) {
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
+    ProjectTaskNotification callback = new ProjectTaskNotification() {
+      @Override
+      public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
+        semaphore.up();
+      }
+    };
     if (buildableElements instanceof Module[]) {
-      ProjectTaskManager.getInstance(myProject).build((Module[])buildableElements, executionResult -> semaphore.up());
+      ProjectTaskManager.getInstance(myProject).build((Module[])buildableElements, callback);
     }
     else if (buildableElements instanceof Artifact[]) {
-      ProjectTaskManager.getInstance(myProject).build((Artifact[])buildableElements, executionResult -> semaphore.up());
+      ProjectTaskManager.getInstance(myProject).build((Artifact[])buildableElements, callback);
     }
     else {
       assert false : "Unsupported buildableElements: " + Arrays.toString(buildableElements);

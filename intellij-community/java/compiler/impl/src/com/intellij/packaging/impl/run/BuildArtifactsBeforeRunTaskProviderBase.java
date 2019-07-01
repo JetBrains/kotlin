@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.run;
 
 import com.intellij.execution.BeforeRunTaskProvider;
@@ -125,7 +125,7 @@ public abstract class BuildArtifactsBeforeRunTaskProviderBase<T extends BuildArt
 
     final ProjectTaskNotification callback = new ProjectTaskNotification() {
       @Override
-      public void finished(@NotNull ProjectTaskResult executionResult) {
+      public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
         result.set(!executionResult.isAborted() && executionResult.getErrors() == 0);
         finished.up();
       }
@@ -138,7 +138,9 @@ public abstract class BuildArtifactsBeforeRunTaskProviderBase<T extends BuildArt
       ProjectTask artifactsBuildProjectTask = createProjectTask(myProject, artifacts);
       finished.down();
       Object sessionId = ExecutionManagerImpl.EXECUTION_SESSION_ID_KEY.get(env);
-      ProjectTaskManager.getInstance(myProject).run(new ProjectTaskContext(sessionId), artifactsBuildProjectTask, callback);
+      ProjectTaskContext projectTaskContext = new ProjectTaskContext(sessionId);
+      env.copyUserDataTo(projectTaskContext);
+      ProjectTaskManager.getInstance(myProject).run(projectTaskContext, artifactsBuildProjectTask, callback);
     }, ModalityState.NON_MODAL);
 
     finished.waitFor();

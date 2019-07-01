@@ -168,22 +168,22 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
           listener.beforeRun(context);
         }
         catch (ExecutionException e) {
-          sendAbortedNotify(new ListenerNotificator(context, callback));
+          sendAbortedNotify(context, new ListenerNotificator(callback));
           return;
         }
       }
 
       if (toRun.isEmpty()) {
-        sendSuccessNotify(new ListenerNotificator(context, callback));
+        sendSuccessNotify(context, new ListenerNotificator(callback));
         return;
       }
 
       ProjectTaskResultsAggregator callbacksCollector =
-        new ProjectTaskResultsAggregator(new ListenerNotificator(context, callback), toRun.size());
+        new ProjectTaskResultsAggregator(context, new ListenerNotificator(callback), toRun.size());
       for (Pair<ProjectTaskRunner, Collection<? extends ProjectTask>> pair : toRun) {
         ProjectTaskRunnerNotification notification = new ProjectTaskRunnerNotification(pair.second, callbacksCollector);
         if (pair.second.isEmpty()) {
-          sendSuccessNotify(notification);
+          sendSuccessNotify(context, notification);
         }
         else {
           pair.first.run(myProject, context, notification, pair.second);
@@ -203,15 +203,15 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     myListeners.add(listener);
   }
 
-  private static void sendSuccessNotify(@Nullable ProjectTaskNotification notification) {
+  private static void sendSuccessNotify(@NotNull ProjectTaskContext context, @Nullable ProjectTaskNotification notification) {
     if (notification != null) {
-      notification.finished(new ProjectTaskResult(false, 0, 0));
+      notification.finished(context, new ProjectTaskResult(false, 0, 0));
     }
   }
 
-  private static void sendAbortedNotify(@Nullable ProjectTaskNotification notification) {
+  private static void sendAbortedNotify(@NotNull ProjectTaskContext context, @Nullable ProjectTaskNotification notification) {
     if (notification != null) {
-      notification.finished(new ProjectTaskResult(true, 0, 0));
+      notification.finished(context, new ProjectTaskResult(true, 0, 0));
     }
   }
 
@@ -251,7 +251,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
                     @NotNull ProjectTaskContext context,
                     @Nullable ProjectTaskNotification callback,
                     @NotNull Collection<? extends ProjectTask> tasks) {
-      sendSuccessNotify(callback);
+      sendSuccessNotify(context, callback);
     }
 
     @Override
@@ -262,34 +262,31 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
 
   private class ListenerNotificator implements ProjectTaskNotification {
     @Nullable private final ProjectTaskNotification myDelegate;
-    @NotNull private final ProjectTaskContext myContext;
 
-    private ListenerNotificator(@NotNull ProjectTaskContext context,
-                                @Nullable ProjectTaskNotification delegate) {
-      myContext = context;
+    private ListenerNotificator(@Nullable ProjectTaskNotification delegate) {
       myDelegate = delegate;
     }
 
     @Override
-    public void finished(@NotNull ProjectTaskResult executionResult) {
+    public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
       if (!executionResult.isAborted() && executionResult.getErrors() == 0) {
         // do not run after tasks on EDT
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           try {
             for (ProjectTaskManagerListener listener : myListeners) {
-              listener.afterRun(myContext, executionResult);
+              listener.afterRun(context, executionResult);
             }
-            notify(myContext, executionResult);
+            notify(context, executionResult);
           }
           catch (ExecutionException e) {
             LOG.debug(e);
-            notify(myContext, new ProjectTaskResult(
+            notify(context, new ProjectTaskResult(
               false, executionResult.getErrors() + 1, executionResult.getWarnings(), executionResult.getTasksState()));
           }
         });
       }
       else {
-        notify(myContext, executionResult);
+        notify(context, executionResult);
       }
     }
 
@@ -299,7 +296,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
           myEventPublisher.finished(context, executionResult);
         }
         if (myDelegate != null) {
-          myDelegate.finished(executionResult);
+          myDelegate.finished(context, executionResult);
         }
       }, ModalityState.defaultModalityState());
     }
@@ -316,7 +313,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     }
 
     @Override
-    public void finished(@NotNull ProjectTaskResult result) {
+    public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult result) {
       if (result.getTasksState().isEmpty()) {
         final boolean aborted = result.isAborted();
         final int errors = result.getErrors();
@@ -339,6 +336,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   }
 
   private static class ProjectTaskResultsAggregator {
+    private final ProjectTaskContext myContext;
     private final ProjectTaskNotification myDelegate;
     private final AtomicInteger myProgressCounter;
     private final AtomicInteger myErrorsCounter;
@@ -346,7 +344,10 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     private final AtomicBoolean myAbortedFlag;
     private final Map<ProjectTask, ProjectTaskState> myTasksState = ContainerUtil.newConcurrentMap();
 
-    private ProjectTaskResultsAggregator(@NotNull ProjectTaskNotification delegate, int expectedResults) {
+    private ProjectTaskResultsAggregator(@NotNull ProjectTaskContext context,
+                                         @NotNull ProjectTaskNotification delegate,
+                                         int expectedResults) {
+      myContext = context;
       myDelegate = delegate;
       myProgressCounter = new AtomicInteger(expectedResults);
       myErrorsCounter = new AtomicInteger();
@@ -364,7 +365,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
       }
       if (inProgress <= 0) {
         ProjectTaskResult result = new ProjectTaskResult(myAbortedFlag.get(), allErrors, allWarnings, myTasksState);
-        myDelegate.finished(result);
+        myDelegate.finished(myContext, result);
       }
     }
   }
