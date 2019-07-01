@@ -108,7 +108,7 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
   @NotNull
   @Override
   public List<AnAction> getActions(@NotNull Runnable onChanged) {
-    return Collections.singletonList(new SearchEverywhereUI.CheckBoxAction(includeNonProjectItemsText()) {
+    return Collections.singletonList(new CheckBoxSearchEverywhereToggleAction(includeNonProjectItemsText()) {
       @Override
       public boolean isEverywhere() {
         return myDisabledActions;

@@ -16,7 +16,6 @@ import com.intellij.ide.util.gotoByName.SearchEverywhereConfiguration;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
-import com.intellij.openapi.actionSystem.ex.CheckboxAction;
 import com.intellij.openapi.actionSystem.impl.ActionMenu;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
@@ -30,7 +29,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.progress.util.ProgressWindow;
 import com.intellij.openapi.progress.util.TooManyUsagesStatus;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -442,7 +440,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   private class SETab extends JLabel {
     final SearchEverywhereContributor<?> contributor;
     final List<AnAction> actions;
-    final EverywhereToggleAction everywhereAction;
+    final SearchEverywhereToggleAction everywhereAction;
 
     SETab(@Nullable SearchEverywhereContributor<?> contributor) {
       super(contributor == null ? IdeBundle.message("searcheverywhere.allelements.tab.name") : contributor.getGroupName());
@@ -452,7 +450,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
         rebuildList();
       };
       if (contributor == null) {
-        actions = Arrays.asList(new SearchEverywhereUI.CheckBoxAction(
+        actions = Arrays.asList(new CheckBoxSearchEverywhereToggleAction(
           IdeBundle.message("checkbox.include.non.project.items", IdeUICustomization.getInstance().getProjectConceptName())) {
           final SearchEverywhereManagerImpl seManager = (SearchEverywhereManagerImpl)SearchEverywhereManager.getInstance(myProject);
           @Override
@@ -473,7 +471,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       else {
         actions = new ArrayList<>(contributor.getActions(onChanged));
       }
-      everywhereAction = (EverywhereToggleAction)ContainerUtil.find(actions, o -> o instanceof EverywhereToggleAction);
+      everywhereAction = (SearchEverywhereToggleAction)ContainerUtil.find(actions, o -> o instanceof SearchEverywhereToggleAction);
       Insets insets = JBUI.CurrentTheme.BigPopup.tabInsets();
       setBorder(JBUI.Borders.empty(insets.top, insets.left, insets.bottom, insets.right));
       addMouseListener(new MouseAdapter() {
@@ -1448,33 +1446,6 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       e.getPresentation().setEnabled(contributor == null || contributor.showInFindResults());
       e.getPresentation().setIcon(
         ToolWindowManagerEx.getInstanceEx(myProject).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab));
-    }
-  }
-
-  interface EverywhereToggleAction {
-    boolean isEverywhere();
-    void setEverywhere(boolean everywhere);
-    boolean canToggleEverywhere();
-  }
-
-  static abstract class CheckBoxAction extends CheckboxAction implements DumbAware, EverywhereToggleAction {
-    CheckBoxAction(@NotNull String text) {
-      super(text);
-    }
-
-    @Override
-    public boolean isSelected(@NotNull AnActionEvent e) {
-      return isEverywhere();
-    }
-
-    @Override
-    public void setSelected(@NotNull AnActionEvent e, boolean state) {
-      setEverywhere(state);
-    }
-
-    @Override
-    public boolean canToggleEverywhere() {
-      return true;
     }
   }
 
