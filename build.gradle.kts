@@ -745,17 +745,24 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     }
 }
 
-tasks.create("findShadowJarsInClasspath").doLast {
+tasks.create("findNonStandardShadowJarsInClasspath").doLast {
     fun Collection<File>.printSorted(indent: String = "    ") {
         sortedBy { it.path }.forEach { println(indent + it.relativeTo(rootProject.projectDir)) }
     }
 
+    val mainJars = hashSetOf<File>()
     val shadowJars = hashSetOf<File>()
     for (project in rootProject.allprojects) {
+        project.withJavaPlugin {
+            project.sourceSets.forEach { sourceSet ->
+                val jarTask = project.tasks.findByPath(sourceSet.jarTaskName) as? Jar
+                jarTask?.outputFile?.let { mainJars.add(it) }
+            }
+        }
         for (task in project.tasks) {
             when (task) {
                 is ShadowJar -> {
-                    shadowJars.add(fileFrom(task.archivePath))
+                    shadowJars.add(fileFrom(task.outputFile))
                 }
                 is ProGuardTask -> {
                     shadowJars.addAll(task.outputs.files.toList())
@@ -764,7 +771,8 @@ tasks.create("findShadowJarsInClasspath").doLast {
         }
     }
 
-    println("Shadow jars:")
+    shadowJars.removeAll(mainJars)
+    println("Shadow jars that might break incremental compilation:")
     shadowJars.printSorted()
 
     fun Project.checkConfig(configName: String) {
@@ -778,7 +786,14 @@ tasks.create("findShadowJarsInClasspath").doLast {
     }
 
     for (project in rootProject.allprojects) {
-        project.checkConfig("compileClasspath")
-        project.checkConfig("testCompileClasspath")
+        project.sourceSetsOrNull?.forEach { sourceSet ->
+            project.checkConfig(sourceSet.compileClasspathConfigurationName)
+        }
     }
 }
+
+val Jar.outputFile: File
+    get() = archiveFile.get().asFile
+
+val Project.sourceSetsOrNull: SourceSetContainer?
+    get() = convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets
