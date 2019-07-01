@@ -169,22 +169,37 @@ fun addIdeaNativeModuleDeps(project: Project) = with(project) {
             val intellijUltimateEnabled: Boolean? by rootProject.extra
             val ideName = if (intellijUltimateEnabled == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
             val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+            val ideBranch = ideVersion.substringBefore('.').toIntOrNull() ?: error("Invalid product version format: $ideVersion")
 
-            
-            
-            val cidrDependencies = javaApiArtifacts + listOf(
+            val javaModuleName = if (ideBranch >= 192) "java" else ideName
+            val javaModuleDependencies = javaApiArtifacts + "external-system-impl"
+
+            add("compile", "kotlin.build:$javaModuleName:$ideVersion") {
+                javaModuleDependencies.forEach { jarName ->
+                    artifact {
+                        name = jarName
+                        type = "jar"
+                        extension = "jar"
+                    }
+                }
+                isTransitive = false
+            }
+
+            val ijPlatformDependencies = listOf(
                 "idea",
                 "openapi",
                 "platform-api",
                 "platform-impl",
                 "util",
                 "extensions",
-                "jdom",
-                "external-system-impl"
-            )
+                "jdom"
+            ) + if (ideBranch >= 192)
+                listOf("intellij-dvcs", "platform-util-ui", "platform-util-ex")
+            else
+                emptyList()
 
             add("compile", "kotlin.build:$ideName:$ideVersion") {
-                cidrDependencies.forEach { jarName ->
+                ijPlatformDependencies.forEach { jarName ->
                     artifact {
                         name = jarName
                         type = "jar"
