@@ -104,7 +104,8 @@ internal class KtUltraLightMethodForSourceDeclaration(
     delegate: PsiMethod,
     lightMemberOrigin: LightMemberOrigin?,
     support: KtUltraLightSupport,
-    containingClass: KtLightClass
+    containingClass: KtLightClass,
+    private val forceToSkipNullabilityAnnotation: Boolean = false
 ) : KtUltraLightMethod(
     delegate,
     lightMemberOrigin,
@@ -119,7 +120,7 @@ internal class KtUltraLightMethodForSourceDeclaration(
     ) : this(delegate, LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER), support, containingClass)
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
-        get() = kotlinOrigin?.getKotlinType()
+        get() = if (forceToSkipNullabilityAnnotation) null else kotlinOrigin?.getKotlinType()
 
     override fun buildTypeParameterList(): PsiTypeParameterList {
         val origin = kotlinOrigin

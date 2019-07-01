@@ -169,12 +169,9 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun getLBrace(): PsiElement? = null
 
     private val _ownFields: List<KtLightField> by lazyPub {
+
         val result = arrayListOf<KtLightField>()
         val usedNames = hashSetOf<String>()
-
-        for (parameter in propertyParameters()) {
-            membersBuilder.createPropertyField(parameter, usedNames, forceStatic = false)?.let(result::add)
-        }
 
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             result.add(
@@ -191,6 +188,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 if (isInterface && !property.isConstOrJvmField()) continue
                 membersBuilder.createPropertyField(property, usedNames, true)?.let(result::add)
             }
+        }
+
+        if (isAnnotationType) return@lazyPub result
+
+        for (parameter in propertyParameters()) {
+            membersBuilder.createPropertyField(parameter, usedNames, forceStatic = false)?.let(result::add)
         }
 
         if (!isInterface) {
