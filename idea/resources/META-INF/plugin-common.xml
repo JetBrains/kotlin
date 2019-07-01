@@ -3388,7 +3388,6 @@
                      language="kotlin"
     />
 
-
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection"
                      displayName="Function should have 'operator' modifier"
                      groupPath="Kotlin"
@@ -3397,7 +3396,6 @@
                      level="WEAK WARNING"
                      language="kotlin"
     />
-
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEmptyInitializerBlockInspection"
                      displayName="Redundant empty initializer block"
