@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
 
 object YarnSimple : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: NpmProjectPackage) {
@@ -21,5 +21,5 @@ object YarnSimple : YarnBasics() {
         }
     }
 
-    override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) = Unit
+    override fun resolveRootProject(rootProject: Project, subProjects: Collection<NpmProjectPackage>) = Unit
 }

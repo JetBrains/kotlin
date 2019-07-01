@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import java.io.File
 
@@ -25,8 +25,8 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
     val nodeJsSetupTask: NodeJsSetupTask
         get() = project.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
 
-    val npmResolveTask: NpmResolveTask
-        get() = project.tasks.getByName(NpmResolveTask.NAME) as NpmResolveTask
+    val npmInstallTask: KotlinNpmInstallTask
+        get() = project.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
 
     val rootPackageDir: File
         get() = project.buildDir.resolve("js")

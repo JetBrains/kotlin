@@ -10,7 +10,9 @@ import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinNpmResolver
 import java.io.File
 
 val KotlinJsCompilation.npmProject: NpmProject
@@ -41,6 +43,9 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val packageJsonFile: File
         get() = dir.resolve(PACKAGE_JSON)
 
+    val packageJsonTaskName: String
+        get() = compilation.disambiguateName("packageJson")
+
     val main: String
         get() = "kotlin/$name.js"
 
@@ -61,7 +66,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        NpmResolver.requireResolved(project)
+        KotlinNpmResolver.requireResolved(project)
         return modules.require(request)
     }
 

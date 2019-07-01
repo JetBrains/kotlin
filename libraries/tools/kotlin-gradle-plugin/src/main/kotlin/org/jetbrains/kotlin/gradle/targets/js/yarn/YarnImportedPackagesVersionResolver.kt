@@ -9,13 +9,13 @@ import com.google.gson.Gson
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import java.io.File
 
 class YarnImportedPackagesVersionResolver(
     private val rootProject: Project,
-    private val npmProjects: MutableList<NpmProjectPackage>,
+    private val npmProjects: Collection<NpmProjectPackage>,
     private val nodeJsWorldDir: File
 ) {
     private val resolvedVersion = mutableMapOf<String, String>()

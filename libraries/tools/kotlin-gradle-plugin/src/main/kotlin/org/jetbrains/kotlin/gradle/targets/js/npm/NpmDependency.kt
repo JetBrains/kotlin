@@ -16,7 +16,9 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver.ResolutionCallResult.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinNpmResolver
 import java.io.File
 
 data class NpmDependency(
@@ -82,20 +84,17 @@ data class NpmDependency(
     }
 
     private fun resolveProject(): NpmProjectPackage? {
-        val result =
-            if (isInIdeaSync) NpmResolver.resolveIfNeeded(project)
-            else NpmResolver.getAlreadyResolvedOrNull(project)
+        val resolvedProject =
+            if (isInIdeaSync) KotlinNpmResolver.resolveIfNeeded(project)
+            else KotlinNpmResolver.getAlreadyResolvedOrNull(project)
 
-        return when (result) {
+        return when (resolvedProject) {
             null -> null
-            is AlreadyInProgress -> null
-            is AlreadyResolved -> findIn(result.resolution)
-                ?: error("Project hierarchy is already resolved in NPM without $this")
-            is ResolvedNow -> findIn(result.resolution) ?: error("Cannot find $this after NPM project resolve")
+            else -> findIn(resolvedProject) ?: error("Project hierarchy is already resolved in NPM without $this")
         }
     }
 
-    private fun findIn(npmProjects: NpmProjects) =
+    private fun findIn(npmProjects: KotlinProjectNpmResolution) =
         npmProjects.npmProjectsByNpmDependency[this]
 
     val key: String = if (org == null) name else "@$org/$name"

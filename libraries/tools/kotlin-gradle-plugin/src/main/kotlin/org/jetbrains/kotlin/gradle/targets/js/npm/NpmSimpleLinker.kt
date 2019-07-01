@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.StringWriter

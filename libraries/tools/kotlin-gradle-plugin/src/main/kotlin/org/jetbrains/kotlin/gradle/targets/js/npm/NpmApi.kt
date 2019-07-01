@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
 
 /**
  * NodeJS package manager API
@@ -17,7 +18,7 @@ interface NpmApi {
 
     fun resolveRootProject(
         rootProject: Project,
-        subProjects: MutableList<NpmProjectPackage>
+        subProjects: Collection<NpmProjectPackage>
     )
 
     companion object {

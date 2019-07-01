@@ -39,7 +39,7 @@ class KotlinNodeJs(target: KotlinJsTarget) :
             runTask.description = "run compiled js in nodejs"
 
             val compileKotlinTask = compilation.compileKotlinTask
-            runTask.dependsOn(target.project.nodeJs.root.npmResolveTask, compileKotlinTask)
+            runTask.dependsOn(target.project.nodeJs.root.npmInstallTask, compileKotlinTask)
 
             runTask.args(compileKotlinTask.outputFile)
         }
@@ -57,7 +57,7 @@ class KotlinNodeJs(target: KotlinJsTarget) :
             runtimeOnly(kotlin("test-nodejs-runner"))
         }
 
-        target.project.nodeJs.root.npmResolveTask.doLast {
+        target.project.nodeJs.root.npmInstallTask.doLast {
             runTaskHolder.configure { runTask ->
                 runTask.args(
                     "--require",

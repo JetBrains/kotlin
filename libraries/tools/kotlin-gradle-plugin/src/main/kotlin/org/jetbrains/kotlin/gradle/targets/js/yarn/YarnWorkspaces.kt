@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
 import java.io.File
 
 object YarnWorkspaces : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: NpmProjectPackage) = Unit
 
-    override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) {
+    override fun resolveRootProject(rootProject: Project, subProjects: Collection<NpmProjectPackage>) {
         check(rootProject == rootProject.rootProject)
         setup(rootProject)
         resolveWorkspaces(rootProject, subProjects)
@@ -21,7 +22,7 @@ object YarnWorkspaces : YarnBasics() {
 
     private fun resolveWorkspaces(
         rootProject: Project,
-        npmProjects: MutableList<NpmProjectPackage>
+        npmProjects: Collection<NpmProjectPackage>
     ) {
         val upToDateChecks = npmProjects.map {
             YarnUpToDateCheck(it.npmProject)
@@ -43,7 +44,7 @@ object YarnWorkspaces : YarnBasics() {
 
     private fun saveRootProjectWorkspacesPackageJson(
         rootProject: Project,
-        npmProjects: MutableList<NpmProjectPackage>,
+        npmProjects: Collection<NpmProjectPackage>,
         nodeJsWorldDir: File
     ) {
         val rootPackageJson = PackageJson(rootProject.name, rootProject.version.toString())

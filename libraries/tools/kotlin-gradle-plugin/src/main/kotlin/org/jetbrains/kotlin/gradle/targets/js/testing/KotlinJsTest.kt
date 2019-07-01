@@ -13,7 +13,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import java.io.File
 
 open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     @get:Internal
@@ -93,7 +92,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     }
 
     override fun executeTests() {
-        NpmResolver.checkRequiredDependencies(project, this)
+        KotlinNpmResolver.checkRequiredDependencies(project, this)
         super.executeTests()
     }
 

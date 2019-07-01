@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Delete
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 
 open class NodeJsPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -20,7 +20,7 @@ open class NodeJsPlugin : Plugin<Project> {
             it.description = "Download and install a local node/npm version"
         }
 
-        tasks.create(NpmResolveTask.NAME, NpmResolveTask::class.java) {
+        tasks.create(KotlinNpmInstallTask.NAME, KotlinNpmInstallTask::class.java) {
             it.dependsOn(setupTask)
             it.outputs.upToDateWhen { false }
             it.group = TASKS_GROUP_NAME
