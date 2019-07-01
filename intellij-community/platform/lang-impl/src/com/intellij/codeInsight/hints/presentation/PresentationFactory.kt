@@ -236,8 +236,9 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun changeOnHover(
     default: InlayPresentation,
     onHover: () -> InlayPresentation,
-    onHoverPredicate: (MouseEvent) -> Boolean = { true }
-  ): InlayPresentation = ChangeOnHoverPresentation(default, onHover, onHoverPredicate)
+    onHoverPredicate: (MouseEvent) -> Boolean = { true },
+    onMouseExited: () -> Unit = {}
+  ): InlayPresentation = ChangeOnHoverPresentation(default, onHover, onHoverPredicate, onMouseExited)
 
   @Contract(pure = true)
   fun reference(base: InlayPresentation, onClickAction: () -> Unit): InlayPresentation {
@@ -253,7 +254,7 @@ class PresentationFactory(private val editor: EditorImpl) {
       onClick(withRefAttributes, EnumSet.of(MouseButton.Left, MouseButton.Middle)) { _, _ ->
         onClickAction()
       }
-    }) { isControlDown(it) }
+    }, { isControlDown(it) })
   }
 
   @Contract(pure = true)

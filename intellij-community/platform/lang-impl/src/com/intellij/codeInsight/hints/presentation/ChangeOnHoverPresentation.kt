@@ -12,7 +12,8 @@ import java.awt.event.MouseEvent
 class ChangeOnHoverPresentation(
   private val noHover: InlayPresentation,
   private val hover: () -> InlayPresentation,
-  private val onHoverPredicate: (MouseEvent) -> Boolean = { true }
+  private val onHoverPredicate: (MouseEvent) -> Boolean = { true },
+  private val onMouseExited: () -> Unit = {}
 ) : StatefulPresentation<ChangeOnHoverPresentation.State>(State(false), STATE_MARK) {
   override fun getPresentation(): InlayPresentation = when (state.isInside) {
     true -> hover()
@@ -42,6 +43,7 @@ class ChangeOnHoverPresentation(
     if (state.isInside) {
       state = State(false)
     }
+    onMouseExited()
   }
 
   data class State(val isInside: Boolean)
