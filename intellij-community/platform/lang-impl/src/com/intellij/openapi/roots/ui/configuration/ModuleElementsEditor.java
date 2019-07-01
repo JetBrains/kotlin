@@ -105,7 +105,7 @@ public abstract class ModuleElementsEditor implements ModuleConfigurationEditor 
 
   protected abstract JComponent createComponentImpl();
 
-  interface ModuleElementsEditorListener extends EventListener {
+  public interface ModuleElementsEditorListener extends EventListener {
     void configurationChanged();
   }
 }
