@@ -1424,8 +1424,11 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
       }
       if (CloseAction.CloseTarget.KEY.is(dataId)) {
         Content content = getContentManager().getSelectedContent();
-        if (content != null && content.getManager().canCloseContents() && content.isCloseable()) {
-          return (CloseAction.CloseTarget)() -> content.getManager().removeContent(content, true, true, true);
+        if (content != null && content.isCloseable()) {
+          ContentManager contentManager = Objects.requireNonNull(content.getManager());
+          if (contentManager.canCloseContents()) {
+            return (CloseAction.CloseTarget)() -> contentManager.removeContent(content, true, true, true);
+          }
         }
       }
 
@@ -1567,7 +1570,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     saveUiState();
     updateTabsUI(false);
   }
-  
+
   public void restore(Content content) {
     final GridImpl grid = getGridFor(content, false);
     if (grid == null) {
