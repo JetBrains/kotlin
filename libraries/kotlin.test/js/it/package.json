@@ -11,7 +11,7 @@
     "jest": "^20.0.4",
     "mocha": "^3.4.2",
     "qunit": "^1.0.0",
-    "tape": "^4.6.3"
+    "tape": "~4.10.0"
   },
   "jest": {
     "testResultsProcessor": "<rootDir>/js/jest-reporter.js",
