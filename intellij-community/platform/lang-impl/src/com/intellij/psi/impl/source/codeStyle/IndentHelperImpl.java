@@ -143,7 +143,7 @@ public class IndentHelperImpl extends IndentHelper {
   }
 
   /**
-   * @depreacted Do not use the implementation, see {@link IndentHelper}
+   * @deprecated Do not use the implementation, see {@link IndentHelper}
    */
   @Deprecated
   public static int getIndent(Project project, FileType fileType, String text, boolean includeNonSpace) {
