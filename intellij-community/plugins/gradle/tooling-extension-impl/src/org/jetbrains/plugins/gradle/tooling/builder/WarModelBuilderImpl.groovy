@@ -60,12 +60,6 @@ class WarModelBuilderImpl implements ModelBuilderService {
 
     def warModels = []
 
-    Set<File> excludeDirs = new HashSet<File>()
-    def configuredExcludes = project.hasProperty("idea") ? project.idea?.module?.excludeDirs : null
-    if (configuredExcludes != null) {
-      excludeDirs.addAll((Collection)configuredExcludes)
-    }
-
     project.tasks.each { Task task ->
       if (task instanceof War) {
         final WarModelImpl warModel =
@@ -79,19 +73,19 @@ class WarModelBuilderImpl implements ModelBuilderService {
             @Override
             void visitSourcePath(String relativePath, String path) {
               def file = new File(path)
-              addPath(excludeDirs, webResources, relativePath, "", file.absolute ? file : new File(warTask.project.projectDir, path))
+              addPath(webResources, relativePath, "", file.absolute ? file : new File(warTask.project.projectDir, path))
             }
 
             @Override
             void visitDir(String relativePath, FileVisitDetails dirDetails) {
-              addPath(excludeDirs, webResources, relativePath, dirDetails.path, dirDetails.file)
+              addPath(webResources, relativePath, dirDetails.path, dirDetails.file)
             }
 
             @Override
             void visitFile(String relativePath, FileVisitDetails fileDetails) {
               if (warTask.webXml == null ||
                   !fileDetails.file.canonicalPath.equals(warTask.webXml.canonicalPath)) {
-                addPath(Collections.emptySet(), webResources, relativePath, fileDetails.path, fileDetails.file)
+                addPath(webResources, relativePath, fileDetails.path, fileDetails.file)
               }
             }
           })
@@ -134,14 +128,7 @@ class WarModelBuilderImpl implements ModelBuilderService {
     ).withDescription("Web Facets/Artifacts will not be configured properly")
   }
 
-  private static addPath(Set<File> excludeList,
-                         List<WebConfiguration.WebResource> webResources,
-                         String warRelativePath,
-                         String fileRelativePath,
-                         File file) {
-    if (excludeList.contains(file)) {
-      return
-    }
+  private static addPath(List<WebConfiguration.WebResource> webResources, String warRelativePath, String fileRelativePath, File file) {
     warRelativePath = warRelativePath == null ? "" : warRelativePath
 
     WebConfiguration.WebResource webResource = new WebResourceImpl(warRelativePath, fileRelativePath, file)
