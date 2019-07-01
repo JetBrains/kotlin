@@ -132,7 +132,7 @@ class BlackListDialog(val language: Language) : DialogWrapper(null) {
   }
 
   private fun storeBlackListDiff(language: Language, text: String) {
-    val updatedBlackList = text.split("\n").filter { e -> !e.trim { it <= ' ' }.isEmpty() }.toSet()
+    val updatedBlackList = text.split("\n").filter { e -> e.trim { it <= ' ' }.isNotEmpty() }.toSet()
 
     val provider = InlayParameterHintsExtension.forLanguage(language)
     val defaultBlackList = provider.defaultBlackList

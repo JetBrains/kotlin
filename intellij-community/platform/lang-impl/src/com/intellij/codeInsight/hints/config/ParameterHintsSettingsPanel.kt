@@ -6,7 +6,6 @@ import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.Language
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
-import java.awt.Dimension
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
