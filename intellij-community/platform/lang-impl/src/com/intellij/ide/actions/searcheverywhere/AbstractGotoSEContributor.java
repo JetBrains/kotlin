@@ -76,7 +76,6 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
   );
   protected static final Pattern patternToDetectAnonymousClasses = Pattern.compile("([.\\w]+)((\\$[\\d]+)*(\\$)?)");
   protected static final Pattern patternToDetectMembers = Pattern.compile("(.+)(#)(.*)");
-  protected static final Pattern patternToDetectSignatures = Pattern.compile("(.+#.*)\\(.*\\)");
 
   protected final Project myProject;
   protected final PsiElement psiContext;
