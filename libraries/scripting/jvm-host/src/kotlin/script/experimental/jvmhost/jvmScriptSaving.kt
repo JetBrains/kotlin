@@ -5,16 +5,20 @@
 
 package kotlin.script.experimental.jvmhost
 
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
 import org.jetbrains.kotlin.utils.KotlinPaths
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.impl.*
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.impl.copyWithoutModule
+import kotlin.script.experimental.jvm.impl.scriptMetadataPath
+import kotlin.script.experimental.jvm.impl.toBytes
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
-import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
 
 // TODO: generate execution code (main)
 

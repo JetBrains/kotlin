@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import junit.framework.Assert.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
 import org.junit.Test
 import java.io.File
 import java.io.InputStream
@@ -71,9 +72,7 @@ class mainKtsIT {
             assertFalse("stderr thread not finished", stderrThread.isAlive)
             assertNull(stderrException.value)
             assertEquals(expectedOutPatterns.size, processOut.size)
-            for (i in 0 until expectedOutPatterns.size) {
-                val expectedPattern = expectedOutPatterns[i]
-                val actualLine = processOut[i]
+            for ((expectedPattern, actualLine) in expectedOutPatterns.zip(processOut)) {
                 assertTrue(
                     "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
                     Regex(expectedPattern).matches(actualLine)
@@ -91,5 +90,10 @@ class mainKtsIT {
     @Test
     fun testResolveJunit() {
         runWithKotlinc("$TEST_DATA_ROOT/hello-resolve-junit.main.kts", listOf("Hello, World!"))
+    }
+
+    @Test
+    fun testImport() {
+        runWithK2JVMCompiler("$TEST_DATA_ROOT/import-test.main.kts", listOf("Hi from common", "Hi from middle", "sharedVar == 5"))
     }
 }

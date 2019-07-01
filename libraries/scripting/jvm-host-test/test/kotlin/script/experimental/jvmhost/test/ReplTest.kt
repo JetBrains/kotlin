@@ -9,6 +9,7 @@ import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.BasicReplStageHistory
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerImpl
 import org.junit.Assert
 import org.junit.Test
 import kotlin.script.experimental.annotations.KotlinScript
@@ -16,7 +17,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
-import kotlin.script.experimental.jvmhost.impl.KJvmReplCompilerImpl
 
 class ReplTest : TestCase() {
 
@@ -46,7 +46,8 @@ class ReplTest : TestCase() {
         evaluationConfiguration: ScriptEvaluationConfiguration,
         snippets: Sequence<String>
     ): Sequence<ResultWithDiagnostics<EvaluationResult>> {
-        val replCompilerProxy = KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
+        val replCompilerProxy =
+            KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
         val compilationState = replCompilerProxy.createReplCompilationState(compilationConfiguration)
         val compilationHistory = BasicReplStageHistory<ScriptDescriptor>()
         val replEvaluator = BasicJvmScriptEvaluator()

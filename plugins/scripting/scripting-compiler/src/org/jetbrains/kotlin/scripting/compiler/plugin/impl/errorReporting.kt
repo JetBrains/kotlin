@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.impl
+package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -17,7 +17,7 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asErrorDiagnostics
 
-internal class ScriptDiagnosticsMessageCollector : MessageCollector {
+internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
 
     private val _diagnostics = arrayListOf<ScriptDiagnostic>()
 
@@ -25,11 +25,11 @@ internal class ScriptDiagnosticsMessageCollector : MessageCollector {
 
     override fun clear() {
         _diagnostics.clear()
+        parentMessageCollector?.clear()
     }
 
     override fun hasErrors(): Boolean =
-        _diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR }
-
+        _diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR } || parentMessageCollector?.hasErrors() == true
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
         val mappedSeverity = when (severity) {
@@ -53,6 +53,7 @@ internal class ScriptDiagnosticsMessageCollector : MessageCollector {
             }
             _diagnostics.add(ScriptDiagnostic(message, mappedSeverity, location?.path, mappedLocation))
         }
+        parentMessageCollector?.report(severity, message, location)
     }
 }
 

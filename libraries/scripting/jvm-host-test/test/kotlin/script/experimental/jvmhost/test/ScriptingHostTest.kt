@@ -7,6 +7,8 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -27,8 +29,6 @@ import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvmhost.*
-import kotlin.script.experimental.jvmhost.impl.CompiledScriptClassLoader
-import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
 import kotlin.script.templates.standard.SimpleScriptTemplate
 
 class ScriptingHostTest : TestCase() {

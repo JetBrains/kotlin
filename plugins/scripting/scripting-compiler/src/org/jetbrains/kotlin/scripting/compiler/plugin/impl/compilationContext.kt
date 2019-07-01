@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.impl
+package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -42,14 +42,14 @@ import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.withUpdatedClasspath
 
 internal class SharedScriptCompilationContext(
-    val disposable: Disposable,
+    val disposable: Disposable?,
     val baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     val environment: KotlinCoreEnvironment,
     val ignoredOptionsReportingState: IgnoredOptionsReportingState
 )
 
-internal fun createSharedCompilationContext(
-    scriptCompilationConfiguration: ScriptCompilationConfiguration,
+internal fun createIsolatedCompilationContext(
+    baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
     disposable: Disposable
@@ -57,9 +57,7 @@ internal fun createSharedCompilationContext(
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
     val (initialScriptCompilationConfiguration, kotlinCompilerConfiguration) =
-        createInitialConfigurations(
-            scriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState
-        )
+        createInitialConfigurations(baseScriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState)
     val environment =
         KotlinCoreEnvironment.createForProduction(
             disposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -67,6 +65,25 @@ internal fun createSharedCompilationContext(
 
     return SharedScriptCompilationContext(
         disposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
+    )
+}
+
+internal fun createCompilationContextFromEnvironment(
+    baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
+    environment: KotlinCoreEnvironment,
+    messageCollector: ScriptDiagnosticsMessageCollector
+): SharedScriptCompilationContext {
+    val ignoredOptionsReportingState = IgnoredOptionsReportingState()
+
+    val initialScriptCompilationConfiguration =
+        baseScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(environment.configuration)
+
+    initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
+        environment.configuration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
+    }
+
+    return SharedScriptCompilationContext(
+        null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
     )
 }
 
@@ -105,9 +122,17 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
     val compilerArguments = K2JVMCompilerArguments()
     parseCommandLineArguments(compilerOptions, compilerArguments)
 
-    reportArgumentsIgnoredGenerally(compilerArguments, messageCollector, ignoredOptionsReportingState)
+    reportArgumentsIgnoredGenerally(
+        compilerArguments,
+        messageCollector,
+        ignoredOptionsReportingState
+    )
     if (isRefinement) {
-        reportArgumentsIgnoredFromRefinement(compilerArguments, messageCollector, ignoredOptionsReportingState)
+        reportArgumentsIgnoredFromRefinement(
+            compilerArguments,
+            messageCollector,
+            ignoredOptionsReportingState
+        )
     }
 
     setupCommonArguments(compilerArguments)

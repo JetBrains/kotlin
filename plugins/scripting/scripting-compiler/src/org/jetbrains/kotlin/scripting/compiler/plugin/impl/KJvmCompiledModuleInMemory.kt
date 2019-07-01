@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.impl
+package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import java.io.Serializable
 import kotlin.script.experimental.jvm.impl.KJvmCompiledModule

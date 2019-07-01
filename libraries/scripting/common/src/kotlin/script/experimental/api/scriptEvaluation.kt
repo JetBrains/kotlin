@@ -36,6 +36,18 @@ open class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<
 }
 
 /**
+ * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+ * to the original one, otherwise returns original
+ */
+fun ScriptEvaluationConfiguration?.with(body: ScriptEvaluationConfiguration.Builder.() -> Unit): ScriptEvaluationConfiguration {
+    val newConfiguration =
+        if (this == null) ScriptEvaluationConfiguration(body = body)
+        else ScriptEvaluationConfiguration(this, body = body)
+    return if (newConfiguration != this) newConfiguration else this
+}
+
+
+/**
  * The list of actual script implicit receiver object, in the same order as specified in {@link ScriptCompilationConfigurationKeys#implicitReceivers}
  */
 val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()

@@ -35,19 +35,21 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
 
     object Default : ScriptCompilationConfiguration()
 
-    /**
-     * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
-     * to the original one, otherwise returns original
-     */
-    fun withUpdates(body: Builder.() -> Unit = {}): ScriptCompilationConfiguration {
-        val newConfiguration = ScriptCompilationConfiguration(this, body = body)
-        return if (newConfiguration == this) this
-        else newConfiguration
-    }
-
     override fun toString(): String {
         return "ScriptCompilationConfiguration($providedProperties)"
     }
+}
+
+
+/**
+ * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+ * to the original one, otherwise returns original
+ */
+fun ScriptCompilationConfiguration?.with(body: ScriptCompilationConfiguration.Builder.() -> Unit): ScriptCompilationConfiguration {
+    val newConfiguration =
+        if (this == null) ScriptCompilationConfiguration(body = body)
+        else ScriptCompilationConfiguration(this, body = body)
+    return if (newConfiguration == this) this else newConfiguration
 }
 
 /**

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.impl
+package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
@@ -20,18 +20,23 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.KJvmReplCompilerProxy
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.repl.ReplCodeAnalyzer
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.jvmhost.repl.JvmReplCompilerState
-import kotlin.script.experimental.jvmhost.repl.KJvmReplCompilerProxy
 
 class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvmReplCompilerProxy {
 
     override fun createReplCompilationState(scriptCompilationConfiguration: ScriptCompilationConfiguration): JvmReplCompilerState.Compilation {
         val context = withMessageCollectorAndDisposable(disposeOnSuccess = false) { messageCollector, disposable ->
-            createSharedCompilationContext(scriptCompilationConfiguration, hostConfiguration, messageCollector, disposable).asSuccess()
+            createIsolatedCompilationContext(
+                scriptCompilationConfiguration,
+                hostConfiguration,
+                messageCollector,
+                disposable
+            ).asSuccess()
         }.valueOr { throw IllegalStateException("Unable to initialize repl compiler:\n  ${it.reports.joinToString("\n  ")}") }
         return ReplCompilationState(context)
     }
@@ -42,7 +47,12 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
         project: Project
     ): ResultWithDiagnostics<Boolean> =
         withMessageCollector(script) { messageCollector ->
-            val ktFile = getScriptKtFile(script, scriptCompilationConfiguration, project, messageCollector)
+            val ktFile = getScriptKtFile(
+                script,
+                scriptCompilationConfiguration,
+                project,
+                messageCollector
+            )
                 .valueOr { return it }
             val errorHolder = object : MessageCollectorBasedReporter {
                 override val messageCollector = messageCollector
@@ -80,19 +90,34 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
             }
 
             val snippetKtFile =
-                getScriptKtFile(snippet, context.baseScriptCompilationConfiguration, context.environment.project, messageCollector)
+                getScriptKtFile(
+                    snippet,
+                    context.baseScriptCompilationConfiguration,
+                    context.environment.project,
+                    messageCollector
+                )
                     .valueOr { return it }
 
-            val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(context, snippetKtFile, messageCollector)
+            val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(
+                context,
+                snippetKtFile,
+                messageCollector
+            )
 
             val analysisResult =
                 compilationState.analyzerEngine.analyzeReplLineWithImportedScripts(snippetKtFile, sourceFiles.drop(1), codeLine)
             AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
 
             val scriptDescriptor = when (analysisResult) {
-                is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return failure(messageCollector)
+                is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return failure(
+                    messageCollector
+                )
                 is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
-                else -> return failure(snippet, messageCollector, "Unexpected result ${analysisResult::class.java}")
+                else -> return failure(
+                    snippet,
+                    messageCollector,
+                    "Unexpected result ${analysisResult::class.java}"
+                )
             }
 
             val type = (scriptDescriptor as ScriptDescriptor).resultValue?.returnType
@@ -121,7 +146,12 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
 
             val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
             val compiledScript =
-                makeCompiledScript(generationState, snippet, sourceFiles.first(), sourceDependencies) { ktFile ->
+                makeCompiledScript(
+                    generationState,
+                    snippet,
+                    sourceFiles.first(),
+                    sourceDependencies
+                ) { ktFile ->
                     dependenciesProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                 }
@@ -131,7 +161,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
 }
 
 internal class ReplCompilationState(val context: SharedScriptCompilationContext) : JvmReplCompilerState.Compilation {
-    override val disposable: Disposable get() = context.disposable
+    override val disposable: Disposable? get() = context.disposable
     override val baseScriptCompilationConfiguration: ScriptCompilationConfiguration get() = context.baseScriptCompilationConfiguration
     override val environment: KotlinCoreEnvironment get() = context.environment
     override val analyzerEngine: ReplCodeAnalyzer by lazy {

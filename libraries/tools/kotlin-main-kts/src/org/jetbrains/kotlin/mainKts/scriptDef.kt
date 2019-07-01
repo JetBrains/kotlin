@@ -23,7 +23,11 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 
 @Suppress("unused")
-@KotlinScript(fileExtension = "main.kts", compilationConfiguration = MainKtsScriptDefinition::class)
+@KotlinScript(
+    fileExtension = "main.kts",
+    compilationConfiguration = MainKtsScriptDefinition::class,
+    evaluationConfiguration = MainKtsEvaluationConfiguration::class
+)
 abstract class MainKtsScript(val args: Array<String>)
 
 object MainKtsScriptDefinition : ScriptCompilationConfiguration(
@@ -39,6 +43,12 @@ object MainKtsScriptDefinition : ScriptCompilationConfiguration(
             acceptedLocations(ScriptAcceptedLocation.Everywhere)
         }
     })
+
+object MainKtsEvaluationConfiguration : ScriptEvaluationConfiguration(
+    {
+        scriptsInstancesSharing(true)
+    }
+)
 
 class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
     private val resolver = FilesAndIvyResolver()
