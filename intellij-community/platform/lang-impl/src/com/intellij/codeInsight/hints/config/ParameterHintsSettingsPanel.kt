@@ -6,6 +6,7 @@ import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.Language
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
+import java.awt.Component
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
@@ -18,6 +19,7 @@ class ParameterHintsSettingsPanel(val language: Language,
     layout = BoxLayout(this, BoxLayout.Y_AXIS)
     border = JBUI.Borders.empty(5)
     val panel = JPanel()
+    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
     if (options.isNotEmpty()) {
       add(JLabel("Show hints:"))
       panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
@@ -31,9 +33,11 @@ class ParameterHintsSettingsPanel(val language: Language,
     }
     if (blackListSupported) {
       panel.add(Box.createRigidArea(JBUI.size(0, 10)))
-      panel.add(LinkLabel.create("Black list...") {
+      val label = LinkLabel.create("Black list...") {
         BlackListDialog(language).show()
-      })
+      }
+      label.alignmentX = Component.LEFT_ALIGNMENT
+      panel.add(label)
     }
     add(panel)
   }
