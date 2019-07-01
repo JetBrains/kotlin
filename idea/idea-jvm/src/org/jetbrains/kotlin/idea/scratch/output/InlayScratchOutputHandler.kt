@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.scratch.output
 
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 
@@ -55,7 +55,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     private fun createInlay(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        UIUtil.invokeLaterIfNeeded {
+        TransactionGuard.submitTransaction(file.project, Runnable {
             val editor = file.editor.editor
             val line = expression.lineStart
 
@@ -88,7 +88,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
             } else {
                 addInlay(output.text)
             }
-        }
+        })
     }
 
     private fun printToToolWindow(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -106,10 +106,10 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     private fun clearInlays(editor: TextEditor) {
-        UIUtil.invokeLaterIfNeeded {
+        TransactionGuard.submitTransaction(editor, Runnable {
             editor
                 .editor.inlayModel.getInlays(0, editor.editor.document.textLength)
                 .forEach { Disposer.dispose(it) }
-        }
+        })
     }
 }
