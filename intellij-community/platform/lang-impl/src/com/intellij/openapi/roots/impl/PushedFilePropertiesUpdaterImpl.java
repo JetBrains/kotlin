@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
 import com.intellij.ui.GuiUtils;
@@ -355,7 +354,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   }
 
   private static void reloadPsi(final VirtualFile file, final Project project) {
-    final FileManagerImpl fileManager = (FileManagerImpl)((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
+    final FileManagerImpl fileManager = (FileManagerImpl)(PsiManagerEx.getInstanceEx(project)).getFileManager();
     if (fileManager.findCachedViewProvider(file) != null) {
       Runnable runnable = () -> WriteAction.run(() -> fileManager.forceReload(file));
       if (ApplicationManager.getApplication().isDispatchThread()) {
