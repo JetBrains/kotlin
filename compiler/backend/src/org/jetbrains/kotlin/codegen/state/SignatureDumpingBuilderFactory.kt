@@ -107,19 +107,20 @@ class SignatureDumpingBuilderFactory(
             outputStream.append("\t\t").appendNameValue("class", javaClassName).append(",\n")
 
             outputStream.append("\t\t").appendQuoted("members").append(": [\n")
-            signatures.joinTo(outputStream, ",\n") { buildString {
-                val (signature, descriptor) = it
-                append("\t\t\t{")
-                descriptor?.let {
-                    (it as? DeclarationDescriptorWithVisibility)?.visibility?.let {
-                        appendNameValue("visibility", it.displayName).append(",\t")
+            signatures.map {
+                buildString {
+                    val (signature, descriptor) = it
+                    append("\t\t\t{")
+                    descriptor?.let {
+                        (it as? DeclarationDescriptorWithVisibility)?.visibility?.let {
+                            appendNameValue("visibility", it.displayName).append(",\t")
+                        }
+                        appendNameValue("declaration", MEMBER_RENDERER.render(it)).append(", ")
                     }
-                    appendNameValue("declaration", MEMBER_RENDERER.render(it)).append(", ")
-
+                    appendNameValue("name", signature.name).append(", ")
+                    appendNameValue("desc", signature.desc).append("}")
                 }
-                appendNameValue("name", signature.name).append(", ")
-                appendNameValue("desc", signature.desc).append("}")
-            }}
+            }.sorted().joinTo(outputStream, ",\n")
             outputStream.append("\n\t\t]\n\t}")
 
             super.done()

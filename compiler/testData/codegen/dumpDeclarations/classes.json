@@ -4,8 +4,8 @@
 		"visibility": "public",
 		"class": "PublicClass$ObjPublic",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPublicClass$ObjPublic;"},
+			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"visibility": "public",	"declaration": "object ObjPublic", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -14,9 +14,9 @@
 		"visibility": "internal",
 		"class": "PublicClass$ObjInternal",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjInternal()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPublicClass$ObjInternal;"},
-			{"visibility": "internal",	"declaration": "object ObjInternal", "name": "<clinit>", "desc": "()V"}
+			{"visibility": "internal",	"declaration": "object ObjInternal", "name": "<clinit>", "desc": "()V"},
+			{"visibility": "private",	"declaration": "constructor ObjInternal()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -24,8 +24,8 @@
 		"visibility": "protected",
 		"class": "PublicClass$ObjProtected",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjProtected()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPublicClass$ObjProtected;"},
+			{"visibility": "private",	"declaration": "constructor ObjProtected()", "name": "<init>", "desc": "()V"},
 			{"visibility": "protected",	"declaration": "object ObjProtected", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -34,8 +34,8 @@
 		"visibility": "private",
 		"class": "PublicClass$ObjPrivate",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPublicClass$ObjPrivate;"},
+			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"visibility": "private",	"declaration": "object ObjPrivate", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -76,8 +76,8 @@
 		"visibility": "public",
 		"class": "PublicClass$InnerPublic",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerPublic()", "name": "<init>", "desc": "(LPublicClass;)V"},
-			{"name": "this$0", "desc": "LPublicClass;"}
+			{"name": "this$0", "desc": "LPublicClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerPublic()", "name": "<init>", "desc": "(LPublicClass;)V"}
 		]
 	},
 	{
@@ -85,8 +85,8 @@
 		"visibility": "internal",
 		"class": "PublicClass$InnerInternal",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerInternal()", "name": "<init>", "desc": "(LPublicClass;)V"},
-			{"name": "this$0", "desc": "LPublicClass;"}
+			{"name": "this$0", "desc": "LPublicClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerInternal()", "name": "<init>", "desc": "(LPublicClass;)V"}
 		]
 	},
 	{
@@ -94,8 +94,8 @@
 		"visibility": "protected",
 		"class": "PublicClass$InnerProtected",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerProtected()", "name": "<init>", "desc": "(LPublicClass;)V"},
-			{"name": "this$0", "desc": "LPublicClass;"}
+			{"name": "this$0", "desc": "LPublicClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerProtected()", "name": "<init>", "desc": "(LPublicClass;)V"}
 		]
 	},
 	{
@@ -103,8 +103,8 @@
 		"visibility": "private",
 		"class": "PublicClass$InnerPrivate",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerPrivate()", "name": "<init>", "desc": "(LPublicClass;)V"},
-			{"name": "this$0", "desc": "LPublicClass;"}
+			{"name": "this$0", "desc": "LPublicClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerPrivate()", "name": "<init>", "desc": "(LPublicClass;)V"}
 		]
 	},
 	{
@@ -121,9 +121,9 @@
 		"visibility": "public",
 		"class": "PublicClass",
 		"members": [
+			{"name": "Companion", "desc": "LPublicClass$Companion;"},
 			{"visibility": "public",	"declaration": "constructor PublicClass()", "name": "<init>", "desc": "()V"},
-			{"visibility": "public",	"declaration": "final class PublicClass", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LPublicClass$Companion;"}
+			{"visibility": "public",	"declaration": "final class PublicClass", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -140,9 +140,9 @@
 		"visibility": "internal",
 		"class": "InternalClass",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InternalClass()", "name": "<init>", "desc": "()V"},
+			{"name": "Companion", "desc": "LInternalClass$Companion;"},
 			{"visibility": "internal",	"declaration": "final class InternalClass", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LInternalClass$Companion;"}
+			{"visibility": "public",	"declaration": "constructor InternalClass()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -159,9 +159,9 @@
 		"visibility": "internal",
 		"class": "InternalClassInternalCompanion",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InternalClassInternalCompanion()", "name": "<init>", "desc": "()V"},
+			{"name": "Companion", "desc": "LInternalClassInternalCompanion$Companion;"},
 			{"visibility": "internal",	"declaration": "final class InternalClassInternalCompanion", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LInternalClassInternalCompanion$Companion;"}
+			{"visibility": "public",	"declaration": "constructor InternalClassInternalCompanion()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -178,9 +178,9 @@
 		"visibility": "internal",
 		"class": "InternalClassPrivateCompanion",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InternalClassPrivateCompanion()", "name": "<init>", "desc": "()V"},
+			{"name": "Companion", "desc": "LInternalClassPrivateCompanion$Companion;"},
 			{"visibility": "internal",	"declaration": "final class InternalClassPrivateCompanion", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LInternalClassPrivateCompanion$Companion;"}
+			{"visibility": "public",	"declaration": "constructor InternalClassPrivateCompanion()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -188,8 +188,8 @@
 		"visibility": "public",
 		"class": "PrivateClass$ObjPublic",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPrivateClass$ObjPublic;"},
+			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"visibility": "public",	"declaration": "object ObjPublic", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -198,9 +198,9 @@
 		"visibility": "internal",
 		"class": "PrivateClass$ObjInternal",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjInternal()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPrivateClass$ObjInternal;"},
-			{"visibility": "internal",	"declaration": "object ObjInternal", "name": "<clinit>", "desc": "()V"}
+			{"visibility": "internal",	"declaration": "object ObjInternal", "name": "<clinit>", "desc": "()V"},
+			{"visibility": "private",	"declaration": "constructor ObjInternal()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -208,8 +208,8 @@
 		"visibility": "protected",
 		"class": "PrivateClass$ObjProtected",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjProtected()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPrivateClass$ObjProtected;"},
+			{"visibility": "private",	"declaration": "constructor ObjProtected()", "name": "<init>", "desc": "()V"},
 			{"visibility": "protected",	"declaration": "object ObjProtected", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -218,8 +218,8 @@
 		"visibility": "private",
 		"class": "PrivateClass$ObjPrivate",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPrivateClass$ObjPrivate;"},
+			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"visibility": "private",	"declaration": "object ObjPrivate", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -260,8 +260,8 @@
 		"visibility": "public",
 		"class": "PrivateClass$InnerPublic",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerPublic()", "name": "<init>", "desc": "(LPrivateClass;)V"},
-			{"name": "this$0", "desc": "LPrivateClass;"}
+			{"name": "this$0", "desc": "LPrivateClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerPublic()", "name": "<init>", "desc": "(LPrivateClass;)V"}
 		]
 	},
 	{
@@ -269,8 +269,8 @@
 		"visibility": "internal",
 		"class": "PrivateClass$InnerInternal",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerInternal()", "name": "<init>", "desc": "(LPrivateClass;)V"},
-			{"name": "this$0", "desc": "LPrivateClass;"}
+			{"name": "this$0", "desc": "LPrivateClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerInternal()", "name": "<init>", "desc": "(LPrivateClass;)V"}
 		]
 	},
 	{
@@ -278,8 +278,8 @@
 		"visibility": "protected",
 		"class": "PrivateClass$InnerProtected",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerProtected()", "name": "<init>", "desc": "(LPrivateClass;)V"},
-			{"name": "this$0", "desc": "LPrivateClass;"}
+			{"name": "this$0", "desc": "LPrivateClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerProtected()", "name": "<init>", "desc": "(LPrivateClass;)V"}
 		]
 	},
 	{
@@ -287,8 +287,8 @@
 		"visibility": "private",
 		"class": "PrivateClass$InnerPrivate",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor InnerPrivate()", "name": "<init>", "desc": "(LPrivateClass;)V"},
-			{"name": "this$0", "desc": "LPrivateClass;"}
+			{"name": "this$0", "desc": "LPrivateClass;"},
+			{"visibility": "public",	"declaration": "constructor InnerPrivate()", "name": "<init>", "desc": "(LPrivateClass;)V"}
 		]
 	},
 	{
@@ -305,9 +305,9 @@
 		"visibility": "private",
 		"class": "PrivateClass",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor PrivateClass()", "name": "<init>", "desc": "()V"},
+			{"name": "Companion", "desc": "LPrivateClass$Companion;"},
 			{"visibility": "private",	"declaration": "final class PrivateClass", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LPrivateClass$Companion;"}
+			{"visibility": "public",	"declaration": "constructor PrivateClass()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -324,9 +324,9 @@
 		"visibility": "private",
 		"class": "PrivateClassInternalCompanion",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor PrivateClassInternalCompanion()", "name": "<init>", "desc": "()V"},
+			{"name": "Companion", "desc": "LPrivateClassInternalCompanion$Companion;"},
 			{"visibility": "private",	"declaration": "final class PrivateClassInternalCompanion", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LPrivateClassInternalCompanion$Companion;"}
+			{"visibility": "public",	"declaration": "constructor PrivateClassInternalCompanion()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -343,9 +343,9 @@
 		"visibility": "private",
 		"class": "PrivateClassPrivateCompanion",
 		"members": [
-			{"visibility": "public",	"declaration": "constructor PrivateClassPrivateCompanion()", "name": "<init>", "desc": "()V"},
+			{"name": "Companion", "desc": "LPrivateClassPrivateCompanion$Companion;"},
 			{"visibility": "private",	"declaration": "final class PrivateClassPrivateCompanion", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LPrivateClassPrivateCompanion$Companion;"}
+			{"visibility": "public",	"declaration": "constructor PrivateClassPrivateCompanion()", "name": "<init>", "desc": "()V"}
 		]
 	}
 ]

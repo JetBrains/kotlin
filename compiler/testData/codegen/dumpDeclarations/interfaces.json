@@ -4,8 +4,8 @@
 		"visibility": "public",
 		"class": "PublicInterface$ObjPublic",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPublicInterface$ObjPublic;"},
+			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"visibility": "public",	"declaration": "object ObjPublic", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -14,8 +14,8 @@
 		"visibility": "private",
 		"class": "PublicInterface$ObjPrivate",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPublicInterface$ObjPrivate;"},
+			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"visibility": "private",	"declaration": "object ObjPrivate", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -58,8 +58,8 @@
 		"visibility": "public",
 		"class": "PublicInterface",
 		"members": [
-			{"visibility": "public",	"declaration": "interface PublicInterface", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LPublicInterface$Companion;"}
+			{"name": "Companion", "desc": "LPublicInterface$Companion;"},
+			{"visibility": "public",	"declaration": "interface PublicInterface", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -85,8 +85,8 @@
 		"visibility": "internal",
 		"class": "InternalInterface",
 		"members": [
-			{"visibility": "internal",	"declaration": "interface InternalInterface", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LInternalInterface$Companion;"}
+			{"name": "Companion", "desc": "LInternalInterface$Companion;"},
+			{"visibility": "internal",	"declaration": "interface InternalInterface", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -102,9 +102,9 @@
 		"visibility": "private",
 		"class": "InternalInterfacePrivateCompanion$Companion",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"},
 			{"visibility": "private",	"declaration": "companion object", "name": "$$INSTANCE", "desc": "LInternalInterfacePrivateCompanion$Companion;"},
-			{"visibility": "private",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"}
+			{"visibility": "private",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"},
+			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -112,8 +112,8 @@
 		"visibility": "internal",
 		"class": "InternalInterfacePrivateCompanion",
 		"members": [
-			{"visibility": "internal",	"declaration": "interface InternalInterfacePrivateCompanion", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LInternalInterfacePrivateCompanion$Companion;"}
+			{"name": "Companion", "desc": "LInternalInterfacePrivateCompanion$Companion;"},
+			{"visibility": "internal",	"declaration": "interface InternalInterfacePrivateCompanion", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -121,8 +121,8 @@
 		"visibility": "public",
 		"class": "PrivateInterface$ObjPublic",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPrivateInterface$ObjPublic;"},
+			{"visibility": "private",	"declaration": "constructor ObjPublic()", "name": "<init>", "desc": "()V"},
 			{"visibility": "public",	"declaration": "object ObjPublic", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -131,8 +131,8 @@
 		"visibility": "private",
 		"class": "PrivateInterface$ObjPrivate",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LPrivateInterface$ObjPrivate;"},
+			{"visibility": "private",	"declaration": "constructor ObjPrivate()", "name": "<init>", "desc": "()V"},
 			{"visibility": "private",	"declaration": "object ObjPrivate", "name": "<clinit>", "desc": "()V"}
 		]
 	},
@@ -175,8 +175,8 @@
 		"visibility": "private",
 		"class": "PrivateInterface",
 		"members": [
-			{"visibility": "private",	"declaration": "interface PrivateInterface", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LPrivateInterface$Companion;"}
+			{"name": "Companion", "desc": "LPrivateInterface$Companion;"},
+			{"visibility": "private",	"declaration": "interface PrivateInterface", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -192,9 +192,9 @@
 		"visibility": "private",
 		"class": "PrivateInterfacePrivateCompanion$Companion",
 		"members": [
-			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"},
 			{"visibility": "private",	"declaration": "companion object", "name": "$$INSTANCE", "desc": "LPrivateInterfacePrivateCompanion$Companion;"},
-			{"visibility": "private",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"}
+			{"visibility": "private",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"},
+			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"}
 		]
 	},
 	{
@@ -202,8 +202,8 @@
 		"visibility": "private",
 		"class": "PrivateInterfacePrivateCompanion",
 		"members": [
-			{"visibility": "private",	"declaration": "interface PrivateInterfacePrivateCompanion", "name": "<clinit>", "desc": "()V"},
-			{"name": "Companion", "desc": "LPrivateInterfacePrivateCompanion$Companion;"}
+			{"name": "Companion", "desc": "LPrivateInterfacePrivateCompanion$Companion;"},
+			{"visibility": "private",	"declaration": "interface PrivateInterfacePrivateCompanion", "name": "<clinit>", "desc": "()V"}
 		]
 	}
 ]
