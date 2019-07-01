@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.is64Bit
 import org.jetbrains.kotlin.backend.konan.optimizations.*
@@ -1237,6 +1239,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrTypeOperator.INSTANCEOF                -> evaluateInstanceOf(value)
             IrTypeOperator.NOT_INSTANCEOF            -> evaluateNotInstanceOf(value)
             IrTypeOperator.SAM_CONVERSION            -> TODO(ir2string(value))
+            IrTypeOperator.IMPLICIT_DYNAMIC_CAST     -> TODO(ir2string(value))
         }
     }
 
