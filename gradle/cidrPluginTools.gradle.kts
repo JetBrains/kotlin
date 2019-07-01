@@ -164,11 +164,14 @@ fun addIdeaNativeModuleDeps(project: Project) = with(project) {
             add("compile", project(":idea:idea-native"))
             add("compile", project(":idea:idea-gradle-native"))
 
-            // Detect IDE name and version TODO: add dependency on base project artificats
+            // Detect IDE name and version
+            // TODO: add dependency on base project artifacts
             val intellijUltimateEnabled: Boolean? by rootProject.extra
             val ideName = if (intellijUltimateEnabled == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
             val ideVersion = rootProject.extra["versions.intellijSdk"] as String
 
+            
+            
             val cidrDependencies = javaApiArtifacts + listOf(
                 "idea",
                 "openapi",
