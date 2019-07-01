@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 public class PublicClass {
 
     companion object {}

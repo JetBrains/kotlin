@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 @Retention(AnnotationRetention.RUNTIME)
 internal annotation class Ann(
         val i: Int,

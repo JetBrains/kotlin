@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // properties
 
 public val publicVal: Int = 1

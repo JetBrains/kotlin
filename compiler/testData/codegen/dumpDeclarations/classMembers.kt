@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 public class ClassWithProperties {
 
     public val publicVal: Int = 1

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: Part1.kt
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MultifileFacade")

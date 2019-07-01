@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: Part1.kt
 class A {
     fun a() : String {
