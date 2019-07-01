@@ -20,7 +20,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 
 /**
- * Please use {@link com.intellij.openapi.options.ConfigurableEP#parentId} to put your configurable under Compiler Settings
+ * @deprecated Please use {@link com.intellij.openapi.options.ConfigurableEP#parentId} to put your configurable under Compiler Settings
  * @author Eugene Zhuravlev
  */
 @Deprecated
