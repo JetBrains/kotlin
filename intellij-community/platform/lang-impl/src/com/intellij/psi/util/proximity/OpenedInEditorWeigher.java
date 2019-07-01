@@ -16,6 +16,7 @@
 package com.intellij.psi.util.proximity;
 
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -33,7 +34,8 @@ public class OpenedInEditorWeigher extends ProximityWeigher {
 
   @Override
   public Comparable weigh(@NotNull final PsiElement element, @NotNull final ProximityLocation location) {
-    if (location.getProject() == null){
+    Project project = location.getProject();
+    if (project == null || project.isDefault()) {
       return null;
     }
     final PsiFile psiFile = element.getContainingFile();
