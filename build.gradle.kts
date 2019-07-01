@@ -743,9 +743,30 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     tasks.withType<Test> {
         executable = File(javaHome, "bin/java").canonicalPath
     }
+
+    plugins.withId("java-base") {
+        configureShadowJarSubstitutionInCompileClasspath()
+    }
 }
 
-tasks.create("findNonStandardShadowJarsInClasspath").doLast {
+fun Project.configureShadowJarSubstitutionInCompileClasspath() {
+    val substitutionMap = mapOf(":kotlin-reflect" to ":kotlin-reflect-api")
+
+    fun configureSubstitution(substitution: DependencySubstitution) {
+        val requestedProject = (substitution.requested as? ProjectComponentSelector)?.projectPath ?: return
+        val replacementProject = substitutionMap[requestedProject] ?: return
+        substitution.useTarget(project(replacementProject), "Non-default shadow jars should not be used in compile classpath")
+    }
+
+    sourceSets.all {
+        val compileClasspathConfig = configurations.getByName(compileClasspathConfigurationName)
+        compileClasspathConfig.resolutionStrategy.dependencySubstitution {
+            all(::configureSubstitution)
+        }
+    }
+}
+
+tasks.create("findShadowJarsInClasspath").doLast {
     fun Collection<File>.printSorted(indent: String = "    ") {
         sortedBy { it.path }.forEach { println(indent + it.relativeTo(rootProject.projectDir)) }
     }
