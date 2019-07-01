@@ -312,6 +312,12 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
       myAggregator = aggregator;
     }
 
+    // support ProjectTaskRunners which still uses deprecated method
+    @Override
+    public void finished(@NotNull ProjectTaskResult executionResult) {
+      finished(myAggregator.myContext, executionResult);
+    }
+
     @Override
     public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult result) {
       if (result.getTasksState().isEmpty()) {
