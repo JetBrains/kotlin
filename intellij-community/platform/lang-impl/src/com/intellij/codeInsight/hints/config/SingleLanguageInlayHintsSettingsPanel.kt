@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
 import com.intellij.ui.CheckBoxList
 import com.intellij.ui.EditorTextField
+import com.intellij.ui.JBColor
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
@@ -31,6 +32,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 import javax.swing.border.AbstractBorder
+import javax.swing.border.LineBorder
 
 // Note: old parameter hints panel is special cased as it rely on global settings, so it doesn't fit to this model,
 // but logically belongs to this settings
@@ -114,6 +116,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     }
     val scheme = EditorColorsManager.getInstance().globalScheme
     editorField.font = scheme.getFont(EditorFontType.PLAIN)
+    editorField.border = LineBorder(JBColor.border())
     editorField.addSettingsProvider { editor ->
       editor.setVerticalScrollbarVisible(true)
       editor.setHorizontalScrollbarVisible(true)
@@ -121,6 +124,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
       with(editor.settings) {
         additionalLinesCount = 2
         isAutoCodeFoldingEnabled = false
+        isLineNumbersShown = true
       }
       // Sadly, but we can't use daemon here, because we need specific kind of settings instance here.
       editor.document.addDocumentListener(object: DocumentListener {
@@ -144,24 +148,6 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val previewPanel = JPanel()
     previewPanel.layout = BorderLayout()
     previewPanel.add(editorField, BorderLayout.CENTER)
-    previewPanel.border = object : AbstractBorder() {
-      private val LEFT_WHITE_SPACE = 2
-
-      override fun paintBorder(c: Component, g: Graphics, x: Int, y: Int, width: Int, height: Int) {
-        val editor = editorField.editor
-        if (editor is EditorEx) {
-          g.color = editor.backgroundColor
-          g.fillRect(x + 1, y, LEFT_WHITE_SPACE, height)
-        }
-        g.color = OnePixelDivider.BACKGROUND
-        g.fillRect(x, y, 1, height)
-      }
-
-      override fun getBorderInsets(c: Component?, insets: Insets): Insets {
-        insets.set(0, 1 + LEFT_WHITE_SPACE, 0, 0)
-        return insets
-      }
-    }
     return previewPanel
   }
   private fun collectAndDrawHints(editor: Editor, file: PsiFile) {
