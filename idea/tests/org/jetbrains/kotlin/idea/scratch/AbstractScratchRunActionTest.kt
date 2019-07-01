@@ -106,7 +106,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             fileName.replace(".kts", ".comp.after")
         }
         val expectedFile = File(testDataPath, expectedFileName)
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actualOutput.toString())
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actualOutput)
     }
 
     protected fun String.inlinePropertiesValues(
@@ -116,7 +116,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         return replace("~REPL_MODE~", isRepl.toString()).replace("~INTERACTIVE_MODE~", isInteractiveMode.toString())
     }
 
-    private fun getFileTextWithInlays(): StringBuilder {
+    protected fun getFileTextWithInlays(): String {
         val doc = myFixture.getDocument(myFixture.file) ?: error("Document for ${myFixture.file.name} is null")
         val actualOutput = StringBuilder(myFixture.file.text)
         for (line in doc.lineCount - 1 downTo 0) {
@@ -130,7 +130,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
                     )
                 }
         }
-        return actualOutput
+        return actualOutput.toString().trim()
     }
 
     protected fun getInlays(start: Int = 0, end: Int = myFixture.file.textLength): List<InlayScratchFileRenderer> {
