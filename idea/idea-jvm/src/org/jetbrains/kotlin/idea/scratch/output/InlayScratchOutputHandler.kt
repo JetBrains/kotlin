@@ -29,6 +29,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     private const val minSpaceCount = 4
 
     override fun onStart(file: ScratchFile) {
+        getToolwindowHandler().onStart(file)
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -46,7 +47,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun onFinish(file: ScratchFile) {
-
+        getToolwindowHandler().onFinish(file)
     }
 
     override fun clear(file: ScratchFile) {

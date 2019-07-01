@@ -32,7 +32,6 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiFile
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -169,22 +168,40 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
 }
 
 private object TestOutputHandler : ScratchOutputHandlerAdapter() {
+    private val errors = arrayListOf<String>()
+    private val inlays = arrayListOf<Pair<ScratchExpression, String>>()
+
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        testPrint(file, output.text, expression)
+        inlays.add(expression to output.text)
     }
 
     override fun error(file: ScratchFile, message: String) {
-        testPrint(file, message)
+        errors.add(message)
     }
 
-    private fun testPrint(file: ScratchFile, output: String, expression: ScratchExpression? = null) {
+    override fun onFinish(file: ScratchFile) {
         ApplicationManager.getApplication().invokeLater {
-            WriteCommandAction.runWriteCommandAction(file.project) {
+            if (inlays.isNotEmpty()) {
                 val psiFile = file.getPsiFile()!!
+                testPrint(file, inlays.map { (expression, text) ->
+                    "/** ${getLineInfo(psiFile, expression)} $text */"
+                })
+                inlays.clear()
+            }
+
+            if (errors.isNotEmpty()) {
+                testPrint(file, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
+                errors.clear()
+            }
+        }
+    }
+
+    private fun testPrint(file: ScratchFile, comments: List<String>) {
+        WriteCommandAction.runWriteCommandAction(file.project) {
+            val psiFile = file.getPsiFile()!!
+            for (comment in comments) {
                 psiFile.addAfter(
-                    KtPsiFactory(file.project).createComment(
-                        "/** ${expression?.let { getLineInfo(psiFile, expression) + " " } ?: ""}$output */"
-                    ),
+                    KtPsiFactory(file.project).createComment(comment),
                     psiFile.lastChild
                 )
             }
