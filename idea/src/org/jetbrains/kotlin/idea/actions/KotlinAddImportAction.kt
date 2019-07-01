@@ -347,7 +347,11 @@ private class SingleImportVariant(
     val descriptors: Collection<DeclarationDescriptor>
 ) : AutoImportVariant {
     override val descriptorsToImport: Collection<DeclarationDescriptor>
-        get() = listOf(descriptors.singleOrNull() ?: descriptors.minBy { if (it is ClassDescriptor) 0 else 1 }!!)
+        get() = listOf(
+            descriptors.singleOrNull()
+                ?: descriptors.minBy { if (it is ClassDescriptor) 0 else 1 }
+                ?: error("we create the class with not-empty descriptors always")
+        )
 
     override val hint: String get() = excludeFqNameCheck.asString()
 }

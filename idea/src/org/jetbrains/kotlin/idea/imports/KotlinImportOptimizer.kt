@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.imports
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
@@ -52,18 +53,8 @@ class KotlinImportOptimizer : ImportOptimizer {
 
         return object : ImportOptimizer.CollectingInfoRunnable {
             override fun getUserNotificationInfo(): String = if (remove == 0) "Rearranged imports"
-            else buildString {
-                append("Removed ")
-                append(remove)
-                append(" import")
-                if (remove > 1) append("s")
-                if (add > 0) {
-                    append(", added ")
-                    append(add)
-                    append(" import")
-                    if (add > 1) append("s")
-                }
-            }
+            else "Removed $remove ${StringUtil.pluralize("import", remove)}" +
+                    if (add > 0) ", added $add ${StringUtil.pluralize("import", add)}" else ""
 
             override fun run() = replaceImports(ktFile, imports)
         }
