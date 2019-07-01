@@ -67,6 +67,7 @@ class mainKtsIT {
             stdoutThread.join(100)
             assertFalse("stdout thread not finished", stdoutThread.isAlive)
             assertNull(stdoutException.value)
+            stderrThread.join(100)
             assertFalse("stderr thread not finished", stderrThread.isAlive)
             assertNull(stderrException.value)
             assertEquals(expectedOutPatterns.size, processOut.size)
