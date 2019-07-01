@@ -396,21 +396,24 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
                                                            boolean highlightActions,
                                                            PopupBridge popupBridge) {
       Ref<WrapperPanel> wrapperPanelRef = new Ref<>();
-      LightweightHint hint =
-        renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, new HintHint().setAwtTooltip(true), highlightActions, expand -> {
-          LineTooltipRenderer newRenderer = renderer.createRenderer(renderer.getText(), expand ? 1 : 0);
-          JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge);
-          AbstractPopup popup = popupBridge.getPopup();
-          WrapperPanel wrapper = wrapperPanelRef.get();
-          if (newComponent != null && popup != null && wrapper != null) {
-            wrapper.setContent(newComponent);
-            validatePopupSize(popup);
-          }
-        });
+      HintHint hintHint = new HintHint().setAwtTooltip(true);
+      LightweightHint hint = renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, hintHint, highlightActions, expand -> {
+        LineTooltipRenderer newRenderer = renderer.createRenderer(renderer.getText(), expand ? 1 : 0);
+        JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge);
+        AbstractPopup popup = popupBridge.getPopup();
+        WrapperPanel wrapper = wrapperPanelRef.get();
+        if (newComponent != null && popup != null && wrapper != null) {
+          wrapper.setContent(newComponent);
+          validatePopupSize(popup);
+        }
+      });
       if (hint == null) return null;
       bindHintHiding(hint, popupBridge);
       WrapperPanel wrapper = new WrapperPanel(hint.getComponent());
       wrapperPanelRef.set(wrapper);
+      // emulating LightweightHint+IdeTooltipManager+BalloonImpl - they use the same background
+      wrapper.setBackground(hintHint.getTextBackground());
+      wrapper.setOpaque(true);
       return wrapper;
     }
 
