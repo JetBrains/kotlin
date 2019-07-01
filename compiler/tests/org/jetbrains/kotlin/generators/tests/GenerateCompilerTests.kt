@@ -427,6 +427,10 @@ fun main(args: Array<String>) {
         testClass<AbstractIrBytecodeTextTest> {
             model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR)
         }
+
+        testClass<AbstractIrDumpDeclarationsTest> {
+            model("codegen/dumpDeclarations", targetBackend = TargetBackend.JVM_IR)
+        }
     }
 
     testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
