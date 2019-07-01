@@ -115,7 +115,7 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
               CompilerUtil.refreshOutputRoots(affectedRoots);
             }
           }
-          callback.finished(new ProjectTaskResult(false, errors, 0));
+          callback.finished(context, new ProjectTaskResult(false, errors, 0));
         }
       }
     };
