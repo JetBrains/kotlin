@@ -10,12 +10,12 @@ import java.awt.geom.RoundRectangle2D
  */
 class RoundPresentation(presentation: InlayPresentation, val arcWidth: Int, val arcHeight: Int) : StaticDelegatePresentation(presentation) {
   override fun paint(g: Graphics2D, attributes: TextAttributes) {
-    val savedClip = g.clip
-    g.clip = RoundRectangle2D.Double(0.0, 0.0, width.toDouble(), height.toDouble(), arcWidth.toDouble(), arcHeight.toDouble())
+    val oldClip = g.clip
     try {
+      g.clip(RoundRectangle2D.Double(0.0, 0.0, width.toDouble(), height.toDouble(), arcWidth.toDouble(), arcHeight.toDouble()))
       presentation.paint(g, attributes)
     } finally {
-      g.clip = savedClip
+      g.clip = oldClip
     }
   }
 }
