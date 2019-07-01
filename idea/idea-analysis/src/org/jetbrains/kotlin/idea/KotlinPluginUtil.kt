@@ -20,10 +20,10 @@ object KotlinPluginUtil {
         "org.jetbrains.kotlin",
         "org.jetbrains.kotlin.native.clion",
         "org.jetbrains.kotlin.native.appcode"
-    ).map { PluginId.getId(it) }
+    )
 
     private val KOTLIN_PLUGIN_INFO: KotlinPluginInfo by lazy {
-        val plugin = PluginManagerCore.getPlugins().firstOrNull { it.pluginId in KNOWN_KOTLIN_PLUGIN_IDS }
+        val plugin = PluginManagerCore.getPlugins().firstOrNull { it.pluginId.idString in KNOWN_KOTLIN_PLUGIN_IDS }
             ?: error("Kotlin plugin not found: " + Arrays.toString(PluginManagerCore.getPlugins()))
 
         KotlinPluginInfo(plugin)
