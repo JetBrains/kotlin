@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -20,6 +20,8 @@ import com.intellij.ui.content.ContentManagerEvent;
 import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public abstract class BaseContentCloseListener extends ContentManagerAdapter implements VetoableProjectManagerListener {
   private static final Key<Boolean> PROJECT_DISPOSING = Key.create("Project disposing is in progress");
@@ -89,12 +91,14 @@ public abstract class BaseContentCloseListener extends ContentManagerAdapter imp
 
   @Override
   public boolean canClose(@NotNull Project project) {
-    if (myContent == null || project != myProject) return true;
+    if (myContent == null || project != myProject) {
+      return true;
+    }
 
-    final boolean canClose = closeQuery(myContent, true);
-    // Content could be removed during close query
+    boolean canClose = closeQuery(myContent, true);
+    // content could be removed during close query
     if (canClose && myContent != null) {
-      myContent.getManager().removeContent(myContent, true);
+      Objects.requireNonNull(myContent.getManager()).removeContent(myContent, true);
       myContent = null;
     }
     return canClose;
