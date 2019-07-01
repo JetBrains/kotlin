@@ -1,0 +1,7 @@
+public final inline fun a(): R|kotlin/Unit|
+
+public final inline fun b(): R|kotlin/Unit|
+
+public final inline fun c(crossinline f: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit|
+
+public final inline fun d(): R|kotlin/Unit|

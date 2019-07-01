@@ -21,7 +21,8 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
     KtCallElement::class.java,
@@ -32,13 +33,16 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
         if (arguments.all { it.isNamed() || it is LambdaArgument }) return null
 
         val resolvedCall = element.resolveToCall() ?: return null
-        if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
+        if (!resolvedCall.candidateDescriptor.hasStableParameterNames()) return null
 
         if (arguments.all {
                 AddNameToArgumentIntention.argumentMatchedAndCouldBeNamedInCall(it, resolvedCall, element.languageVersionSettings)
             }
         ) {
-            return element.calleeExpression?.textRange
+            val calleeExpression = element.calleeExpression ?: return null
+            if (arguments.size < 2) return calleeExpression.textRange
+            val endOffset = (arguments.firstOrNull() as? KtValueArgument)?.endOffset ?: return null
+            return TextRange(calleeExpression.startOffset, endOffset)
         }
 
         return null
@@ -49,14 +53,7 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
         val resolvedCall = element.resolveToCall() ?: return
         for (argument in arguments) {
             if (argument !is KtValueArgument || argument is KtLambdaArgument) continue
-            val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: continue
-            val name = argumentMatch.valueParameter.name
-            val newArgument = KtPsiFactory(element).createArgument(
-                argument.getArgumentExpression()!!,
-                name,
-                argument.getSpreadElement() != null
-            )
-            argument.replace(newArgument)
+            AddNameToArgumentIntention.apply(argument, resolvedCall)
         }
     }
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 // NO_CHECK_LAMBDA_INLINING
 package test

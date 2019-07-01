@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Test {
 
   public var prop: Int = 0;

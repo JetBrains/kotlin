@@ -1,11 +1,8 @@
 import java.util.*
 import java.io.*
 
-var propertiesFile: File = rootProject.file("gradle/versions.properties")
-if (!propertiesFile.exists()) {
-    //work-around for buildSrc
-    propertiesFile = rootProject.file("../gradle/versions.properties")
-}
+val scriptDirectory: File = File(buildscript.sourceURI!!.rawPath).parentFile
+val propertiesFile: File = File(scriptDirectory , "versions.properties")
 
 FileReader(propertiesFile).use {
     val properties = Properties()

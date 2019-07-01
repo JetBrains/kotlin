@@ -1,0 +1,6 @@
+package
+
+public fun usesGlobal(/*0*/ p: kotlin.collections.List<Global /* = kotlin.String */>): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.myMap(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
+public fun kotlin.String.toUpperCase(): kotlin.String
+public typealias Global = kotlin.String

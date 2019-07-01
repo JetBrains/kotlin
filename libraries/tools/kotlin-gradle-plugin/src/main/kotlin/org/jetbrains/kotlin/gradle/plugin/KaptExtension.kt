@@ -42,10 +42,10 @@ open class KaptExtension {
     @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
 
-    /** Explicit opt-in switch for Kapt caching. Should be used when annotation processors used by this project are
-     * certain NOT to use anything aside from the task inputs in their logic and are guaranteed to produce the same
+    /** Opt-out switch for Kapt caching. Should be used when annotation processors used by this project are suspected of
+     * using anything aside from the task inputs in their logic and are not guaranteed to produce the same
      * output on subsequent runs without input changes. */
-    var useBuildCache: Boolean = false
+    var useBuildCache: Boolean = true
 
     private val apOptionsActions =
         mutableListOf<(KaptAnnotationProcessorOptions) -> Unit>()

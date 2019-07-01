@@ -3,7 +3,7 @@ interface T {
 }
 
 class A(val n: Int) {
-    val foo
+    val foo<caret>
         get() = object : T {
             override fun bar() {
 

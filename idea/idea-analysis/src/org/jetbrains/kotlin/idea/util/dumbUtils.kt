@@ -26,7 +26,7 @@ fun <T> Project.runReadActionInSmartMode(action: () -> T): T {
 }
 
 fun <T> Project.runWithAlternativeResolveEnabled(action: () -> T): T {
-    var result: T = null as T
+    @Suppress("UNCHECKED_CAST") var result: T = null as T
     DumbService.getInstance(this).withAlternativeResolveEnabled { result = action() }
     @Suppress("USELESS_CAST")
     return result as T

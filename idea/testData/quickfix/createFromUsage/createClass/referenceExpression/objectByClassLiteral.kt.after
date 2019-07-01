@@ -5,6 +5,6 @@
     }
 }
 
-<caret>object Foo {
+object <caret>Foo {
 
 }

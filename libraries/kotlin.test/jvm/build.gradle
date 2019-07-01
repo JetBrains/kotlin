@@ -4,17 +4,16 @@ apply plugin: 'kotlin-platform-jvm'
 apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 
 pill {
     importAsLibrary = true
 }
 
-def jpsBuild = findProperty("jpsBuild")?.toString() == "true"
+def includeJava9 = BuildPropertiesKt.getKotlinBuildProperties(project).includeJava9
 
 sourceSets {
-    if (!jpsBuild) {
+    if (includeJava9) {
         java9
     }
 }
@@ -40,21 +39,18 @@ task modularJar(type: Jar) {
     classifier = 'modular'
 
     from zipTree(jar.outputs.files.singleFile)
-    if (!jpsBuild) {
+    if (includeJava9) {
         from sourceSets.java9.output
     }
 }
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
     archives modularJar
 }
 
 javadocJar()
-
-dist {
-    from (jar, sourcesJar)
-}
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
@@ -66,6 +62,6 @@ compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
 
-if (!jpsBuild) {
+if (includeJava9) {
     compileJava9Sources(project, 'kotlin.test')
 }

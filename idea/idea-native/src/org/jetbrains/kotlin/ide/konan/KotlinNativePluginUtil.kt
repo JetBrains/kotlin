@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ide.konan
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.konan.library.createKonanLibrary
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 
 const val KOTLIN_NATIVE_CURRENT_ABI_VERSION = 1

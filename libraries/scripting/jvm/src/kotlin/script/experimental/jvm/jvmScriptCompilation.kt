@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.script.experimental.jvm
@@ -15,6 +15,8 @@ import kotlin.script.experimental.util.PropertiesCollection
 data class JvmDependency(val classpath: List<File>) : ScriptDependency {
     @Suppress("unused")
     constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
+
+    companion object { private const val serialVersionUID: Long = 1L }
 }
 
 interface JvmScriptCompilationConfigurationKeys
@@ -29,17 +31,24 @@ fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassContext(
     dependenciesFromClassloader(*libraries, classLoader = contextClass.java.classLoader, wholeClasspath = wholeClasspath)
 }
 
-fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
-    dependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath)
+fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext(
+    vararg libraries: String,
+    wholeClasspath: Boolean = false,
+    unpackJarCollections: Boolean = false
+) {
+    dependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath, unpackJarCollections = unpackJarCollections)
 }
 
 fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassloader(
     vararg libraries: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
-    wholeClasspath: Boolean = false
+    wholeClasspath: Boolean = false,
+    unpackJarCollections: Boolean = false
 ) {
     updateClasspath(
-        scriptCompilationClasspathFromContext(*libraries, classLoader = classLoader, wholeClasspath = wholeClasspath)
+        scriptCompilationClasspathFromContext(
+            *libraries, classLoader = classLoader, wholeClasspath = wholeClasspath, unpackJarCollections = unpackJarCollections
+        )
     )
 }
 
@@ -75,6 +84,7 @@ private fun Collection<File>.filterNewClasspath(known: Collection<ScriptDependen
 }
 
 @Deprecated("Unused")
+@Suppress("DEPRECATION")
 val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.javaHome)
 
 val JvmScriptCompilationConfigurationKeys.jdkHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.jdkHome)

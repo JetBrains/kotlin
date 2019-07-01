@@ -10,4 +10,5 @@ class Outer {
 }
 
 // FILE: kotlinInnerClass.kt
+// FIR_IDENTICAL
 fun test(inner: Outer.Inner) = inner.foo()

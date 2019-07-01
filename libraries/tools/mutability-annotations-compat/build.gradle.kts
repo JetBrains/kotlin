@@ -16,5 +16,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-
-dist()

@@ -1,6 +1,5 @@
 // FILE: 1.kt
 // WITH_REFLECT
-// IGNORE_BACKEND: JVM_IR
 
 package foo
 

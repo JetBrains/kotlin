@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin
@@ -43,6 +43,9 @@ interface KotlinDependencyHandler {
         project(listOf("path", "configuration").zip(listOfNotNull(path, configuration)).toMap())
 
     fun project(notation: Map<String, Any?>): ProjectDependency
+
+    fun npm(packageName: String, version: String = "*"): Dependency
+    fun npm(org: String, packageName: String, version: String = "*"): Dependency
 }
 
 interface HasKotlinDependencies {

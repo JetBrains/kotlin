@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Disposer;
 import kotlin.Pair;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -49,13 +48,12 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
-        assert javaFilesDir == null : ".java files are not supported yet in this test";
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) {
         doTwoFileTest(files);
     }
 
     @NotNull
-    protected Pair<ClassFileFactory, ClassFileFactory> doTwoFileTest(@NotNull List<TestFile> files) throws Exception {
+    protected Pair<ClassFileFactory, ClassFileFactory> doTwoFileTest(@NotNull List<TestFile> files) {
         // Note that it may be beneficial to improve this test to handle many files, compiling them successively against all previous
         assert files.size() == 2 || (files.size() == 3 && files.get(2).name.equals("CoroutineUtil.kt")) : "There should be exactly two files in this test";
         TestFile fileA = files.get(0);

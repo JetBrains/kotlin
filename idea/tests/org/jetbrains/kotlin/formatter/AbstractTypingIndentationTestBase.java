@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.formatter;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +61,7 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
     }
 
     public static CodeStyleSettings getSettings() {
-        return CodeStyleSettingsManager.getSettings(getProject());
+        return CodeStyle.getSettings(getProject());
     }
 
     @NotNull

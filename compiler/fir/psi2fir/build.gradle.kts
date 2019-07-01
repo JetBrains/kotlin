@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 plugins {
@@ -14,9 +14,9 @@ dependencies {
     compile(project(":compiler:fir:tree"))
     compile(project(":compiler:ir.tree"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    
-    testRuntime(intellijDep())
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+
+    testCompile(intellijDep())
 
     testCompile(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
@@ -26,7 +26,10 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
 
-
+    Platform[192].orHigher {
+        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+        testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    }
 }
 
 sourceSets {
@@ -34,7 +37,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
 

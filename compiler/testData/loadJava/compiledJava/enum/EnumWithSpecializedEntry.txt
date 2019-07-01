@@ -1,6 +1,6 @@
 package test
 
-public open enum class EnumWithSpecializedEntry : kotlin.Enum<test.EnumWithSpecializedEntry!> {
+public final enum class EnumWithSpecializedEntry : kotlin.Enum<test.EnumWithSpecializedEntry!> {
     enum entry E1
 
     enum entry E2

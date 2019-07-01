@@ -73,18 +73,6 @@ class IrValueParameterImpl(
     ) :
             this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), type, varargElementType)
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ParameterDescriptor,
-        type: IrType,
-        varargElementType: IrType?,
-        defaultValue: IrExpressionBody?
-    ) : this(startOffset, endOffset, origin, descriptor, type, varargElementType) {
-        this.defaultValue = defaultValue
-    }
-
     override val descriptor: ParameterDescriptor = symbol.descriptor
 
     init {

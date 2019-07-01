@@ -67,10 +67,10 @@ class IntegerValueTypeConstructor(
     }
 
     private fun addUnsignedSuperTypes() {
-        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uInt))
-        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uByte))
-        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uShort))
-        supertypes.add(unsignedType(KotlinBuiltIns.FQ_NAMES.uLong))
+        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltIns.FQ_NAMES.uInt))
+        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltIns.FQ_NAMES.uByte))
+        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltIns.FQ_NAMES.uShort))
+        supertypes.add(module.unsignedType(KotlinBuiltIns.FQ_NAMES.uLong))
     }
 
     private fun checkBoundsAndAddSuperType(value: Long, kotlinType: KotlinType) {
@@ -78,8 +78,6 @@ class IntegerValueTypeConstructor(
             supertypes.add(kotlinType)
         }
     }
-
-    private fun unsignedType(classId: ClassId): SimpleType = module.findClassAcrossModuleDependencies(classId)!!.defaultType
 
     override fun getSupertypes(): Collection<KotlinType> = supertypes
 
@@ -98,30 +96,5 @@ class IntegerValueTypeConstructor(
     }
 
     override fun toString() = "IntegerValueType($value)"
-}
-
-private fun KotlinType.minValue(): Long {
-    if (UnsignedTypes.isUnsignedType(this)) return 0
-    return when {
-        KotlinBuiltIns.isByte(this) -> Byte.MIN_VALUE.toLong()
-        KotlinBuiltIns.isShort(this) -> Short.MIN_VALUE.toLong()
-        KotlinBuiltIns.isInt(this) -> Int.MIN_VALUE.toLong()
-        else -> error("Can't get min value for type: $this")
-    }
-}
-
-@ExperimentalUnsignedTypes
-private fun KotlinType.maxValue(): Long {
-    return when {
-        KotlinBuiltIns.isByte(this) -> Byte.MAX_VALUE.toLong()
-        KotlinBuiltIns.isShort(this) -> Short.MAX_VALUE.toLong()
-        KotlinBuiltIns.isInt(this) -> Int.MAX_VALUE.toLong()
-
-        KotlinBuiltIns.isUByte(this) -> UByte.MAX_VALUE.toLong()
-        KotlinBuiltIns.isUShort(this) -> UShort.MAX_VALUE.toLong()
-        KotlinBuiltIns.isUInt(this) -> UInt.MAX_VALUE.toLong()
-
-        else -> error("Can't get max value for type: $this")
-    }
 }
 

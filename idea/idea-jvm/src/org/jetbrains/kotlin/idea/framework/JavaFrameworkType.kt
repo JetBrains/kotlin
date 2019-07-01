@@ -31,7 +31,7 @@ class JavaFrameworkType : FrameworkTypeEx("kotlin-java-framework-id") {
 
     companion object {
         val instance: JavaFrameworkType
-            get() = FrameworkTypeEx.EP_NAME.findExtension(JavaFrameworkType::class.java)
+            get() = EP_NAME.findExtension(JavaFrameworkType::class.java)
                 ?: error("can't find extension 'JavaFrameworkType'")
     }
 }

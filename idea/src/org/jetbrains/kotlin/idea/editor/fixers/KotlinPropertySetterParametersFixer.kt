@@ -41,7 +41,7 @@ class KotlinPropertySetterParametersFixer : SmartEnterProcessorWithFixers.Fixer<
 
         val doc = editor.document
 
-        val parameterOffset = (psiElement.leftParenthesis?.startOffset ?: return) + 1
+        val parameterOffset = (psiElement.leftParenthesis?.node?.startOffset ?: return) + 1
 
         if (parameter?.text.isNullOrBlank()) {
             if (psiElement.rightParenthesis == null) {

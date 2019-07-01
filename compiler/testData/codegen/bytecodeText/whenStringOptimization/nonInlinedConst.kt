@@ -1,4 +1,5 @@
 // !LANGUAGE: -InlineConstVals
+// IGNORE_BACKEND: JVM_IR
 
 const val y = "cde"
 

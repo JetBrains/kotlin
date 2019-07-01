@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.targets
@@ -14,8 +14,7 @@ import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.storage.BuildDataPaths
-import org.jetbrains.jps.incremental.CompileContext
-import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsSdkDependency
 import org.jetbrains.kotlin.build.GeneratedFile
@@ -55,7 +54,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     override val isIncrementalCompilationEnabled: Boolean
         get() = IncrementalCompilation.isEnabledForJvm()
 
-    override fun createCacheStorage(paths: BuildDataPaths) = JpsIncrementalJvmCache(jpsModuleBuildTarget, paths)
+    override fun createCacheStorage(paths: BuildDataPaths) =
+        JpsIncrementalJvmCache(jpsModuleBuildTarget, paths, kotlinContext.fileToPathConverter)
 
     override val buildMetaInfoFactory
         get() = JvmBuildMetaInfo
@@ -146,6 +146,22 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         }
 
         return true
+    }
+
+    override fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
+        if (kotlinContext.isInstrumentationEnabled) {
+            val (classFiles, nonClassFiles) = outputItems.partition { it is GeneratedJvmClass }
+            super.registerOutputItems(outputConsumer, nonClassFiles)
+
+            for (output in classFiles) {
+                val bytes = output.outputFile.readBytes()
+                val binaryContent = BinaryContent(bytes)
+                val compiledClass = CompiledClass(output.outputFile, output.sourceFiles, ClassReader(bytes).className, binaryContent)
+                outputConsumer.registerCompiledClass(jpsModuleBuildTarget, compiledClass)
+            }
+        } else {
+            super.registerOutputItems(outputConsumer, outputItems)
+        }
     }
 
     private fun generateChunkModuleDescription(dirtyFilesHolder: KotlinDirtySourceFilesHolder): File? {

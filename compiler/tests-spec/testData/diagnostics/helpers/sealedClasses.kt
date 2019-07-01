@@ -27,10 +27,12 @@ class SealedWithMethodsChild3() : SealedClassWithMethods() {
     fun m3() = this.hashCode().toString()
 }
 
-sealed class SealedClassMixed
+sealed class SealedClassMixed {
+    val prop_1: Int? = 10
+}
 data class SealedMixedChild1(val number: Int) : SealedClassMixed()
 data class SealedMixedChild2(val e1: Int, val e2: Int) : SealedClassMixed()
 data class SealedMixedChild3(val m1: Int, val m2: Int) : SealedClassMixed()
-object SealedMixedChildObject1 : SealedClassMixed()
+object SealedMixedChildObject1 : SealedClassMixed() { val prop_2: Int? = 10 }
 object SealedMixedChildObject2 : SealedClassMixed()
 object SealedMixedChildObject3 : SealedClassMixed()

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.parameterInfo
@@ -13,9 +13,12 @@ import com.intellij.testFramework.utils.inlays.InlayHintsChecker
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.junit.Assert
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         const val DISABLE_ACTION_TEXT = "Do not show lambda return expression hints"
@@ -83,11 +86,11 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         val actualText = run {
             val tags = ArrayList<TagsTestDataUtil.TagInfo<*>>()
 
-            tags.addAll(collectActualLineExtensionsTags())
-
             if (editor.caretModel.offset > 0) {
                 tags.add(CaretTag(editor))
             }
+
+            tags.addAll(collectActualLineExtensionsTags())
 
             TagsTestDataUtil.insertTagsInText(tags, editor.document.text)
         }
@@ -154,7 +157,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             val x = run {
                 println("foo")
-                1<caret><hint text=" ^run"/>
+                1<caret><hint text=" "/><hint text="^run"/>
             }
             """
         )
@@ -165,7 +168,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             val x = run {
                 var s = "abc"
-                s.length<caret><hint text=" ^run"/>
+                s.length<caret><hint text=" "/><hint text="^run"/>
             }
             """
         )
@@ -176,9 +179,9 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             val x = run {
                 if (true) {
-                    1<hint text=" ^run"/>
+                    1<hint text=" "/><hint text="^run"/>
                 } else {
-                    0<hint text=" ^run"/>
+                    0<hint text=" "/><hint text="^run"/>
                 }
             }
             """
@@ -190,7 +193,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             val x = run {
                 println(1)
-                if (true) 1 else { 0 }<caret><hint text=" ^run"/>
+                if (true) 1 else { 0 }<caret><hint text=" "/><hint text="^run"/>
             }
             """
         )
@@ -201,8 +204,8 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             val x = run {
                 when (true) {
-                    true -> 1<hint text=" ^run"/>
-                    false ->0<hint text=" ^run"/>
+                    true -> 1<hint text=" "/><hint text="^run"/>
+                    false -> 0<hint text=" "/><hint text="^run"/>
                 }
             }
             """
@@ -224,7 +227,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             val x = run foo@{
                 println("foo")
-                1<hint text=" ^foo"/>
+                1<hint text=" "/><hint text="^foo"/>
             }
             """
         )
@@ -239,10 +242,10 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 run { // Two hints here
                     when (true) {
-                        true -> 1<hint text=" ^run"/>
-                        false -> 0<hint text=" ^run"/>
+                        true -> 1<hint text=" "/><hint text="^run"/>
+                        false -> 0<hint text=" "/><hint text="^run"/>
                     }
-                }<hint text=" ^hello"/>
+                }<hint text=" "/><hint text="^hello"/>
             }
             """
         )
@@ -254,7 +257,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             fun foo() {
                 run {
                     val length: Int? = null
-                    length ?: 0<hint text=" ^run"/>
+                    length ?: 0<hint text=" "/><hint text="^run"/>
                 }
             }
             """
@@ -268,12 +271,12 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 var test = 0
                 run {
                     test
-                    test++<hint text=" ^run"/>
+                    test++<hint text=" "/><hint text="^run"/>
                 }
 
                 run {
                     test
-                    ++test<hint text=" ^run"/>
+                    ++test<hint text=" "/><hint text="^run"/>
                 }
             }
             """
@@ -290,12 +293,12 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 run {
                     val files: Any? = null
                     @Some
-                    12<hint text=" ^run"/>
+                    12<hint text=" "/><hint text="^run"/>
                 }
 
                 run {
                     val files: Any? = null
-                    @Some 12<hint text=" ^run"/>
+                    @Some 12<hint text=" "/><hint text="^run"/>
                 }
             }
             """
@@ -309,12 +312,12 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 run {
                     val files: Any? = null
                     run@
-                    12<hint text=" ^run"/>
+                    12<hint text=" "/><hint text="^run"/>
                 }
 
                 run {
                     val files: Any? = null
-                    run@12<hint text=" ^run"/>
+                    run@12<hint text=" "/><hint text="^run"/>
                 }
             }
             """
@@ -326,7 +329,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             fun test() = run {
                 val a = 1
-                { a }<hint text=" ^run"/>
+                { a }<hint text=" "/><hint text="^run"/>
             }
             """
         )

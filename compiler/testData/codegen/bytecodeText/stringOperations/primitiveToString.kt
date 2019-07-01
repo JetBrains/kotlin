@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun main() {
     false.toString()
     1.toByte().toString()

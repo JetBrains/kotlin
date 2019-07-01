@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
+@Suppress("DEPRECATION")
 class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention::class) {
     override fun problemHighlightType(element: KtObjectLiteralExpression): ProblemHighlightType {
         val (_, baseType, singleFunction) = extractData(element) ?: return super.problemHighlightType(element)
@@ -112,10 +113,10 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
     }
 
     override fun applyTo(element: KtObjectLiteralExpression, editor: Editor?) {
-        val commentSaver = CommentSaver(element)
 
         val (_, baseType, singleFunction) = extractData(element)!!
 
+        val commentSaver = CommentSaver(element)
         val returnSaver = ReturnSaver(singleFunction)
 
         val body = singleFunction.bodyExpression!!
@@ -157,14 +158,13 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         }
 
         val replaced = element.replaced(newExpression)
-        commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
-
         val callee = replaced.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
         val callExpression = callee.parent as KtCallExpression
         val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()!!
 
         val returnLabel = callee.getReferencedNameAsName()
         returnSaver.restore(functionLiteral, returnLabel)
+        commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
 
         val parentCall = ((replaced.parent as? KtValueArgument)
                              ?.parent as? KtValueArgumentList)

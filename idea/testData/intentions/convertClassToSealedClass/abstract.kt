@@ -1,1 +1,0 @@
-<caret>abstract class Test private constructor()

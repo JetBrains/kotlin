@@ -38,9 +38,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import javax.swing.Icon
 
 open class DescriptorMemberChooserObject(
-        psiElement: PsiElement,
-        open val descriptor: DeclarationDescriptor
-) : PsiElementMemberChooserObject(psiElement, DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(psiElement, descriptor)), ClassMemberWithElement {
+    psiElement: PsiElement,
+    open val descriptor: DeclarationDescriptor
+) : PsiElementMemberChooserObject(
+    psiElement,
+    getText(descriptor),
+    getIcon(psiElement, descriptor)
+), ClassMemberWithElement {
 
     override fun getParentNodeDelegate(): MemberChooserObject {
         val parent = descriptor.containingDeclaration ?: error("No parent for $descriptor")
@@ -48,8 +52,7 @@ open class DescriptorMemberChooserObject(
         val declaration = if (psiElement is KtDeclaration) { // kotlin
             PsiTreeUtil.getStubOrPsiParentOfType(psiElement, KtNamedDeclaration::class.java)
                 ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, KtFile::class.java)
-        }
-        else { // java or compiled
+        } else { // java or compiled
             (psiElement as PsiMember).containingClass
         } ?: error("No parent for $psiElement")
 
@@ -80,23 +83,19 @@ open class DescriptorMemberChooserObject(
                 MEMBER_RENDERER.render(descriptor)
         }
 
-        fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon? {
-            if (declaration != null && declaration.isValid) {
-                val isClass = declaration is PsiClass || declaration is KtClass
-                val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY
-                return if (declaration is KtDeclaration) {
-                    // kotlin declaration
-                    // visibility and abstraction better detect by a descriptor
-                    KotlinDescriptorIconProvider.getIcon(descriptor, declaration, flags)
-                }
-                else {
-                    // it is better to show java icons for java code
-                    declaration.getIcon(flags)
-                }
+        fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon? = if (declaration != null && declaration.isValid) {
+            val isClass = declaration is PsiClass || declaration is KtClass
+            val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY
+            if (declaration is KtDeclaration) {
+                // kotlin declaration
+                // visibility and abstraction better detect by a descriptor
+                KotlinDescriptorIconProvider.getIcon(descriptor, declaration, flags)
+            } else {
+                // it is better to show java icons for java code
+                declaration.getIcon(flags)
             }
-            else {
-                return KotlinDescriptorIconProvider.getIcon(descriptor, declaration, 0)
-            }
+        } else {
+            KotlinDescriptorIconProvider.getIcon(descriptor, declaration, 0)
         }
     }
 }

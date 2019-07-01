@@ -3,6 +3,8 @@
 // ACTION: Create member function 'B.foo'
 // ACTION: Rename reference
 // ACTION: Add 'b =' to argument
+// ACTION: Convert to run
+// ACTION: Convert to with
 // ERROR: Unresolved reference: foo
 abstract class A {
     fun bar(b: Boolean) {}

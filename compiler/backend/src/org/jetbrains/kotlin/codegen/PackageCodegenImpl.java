@@ -23,6 +23,7 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -32,10 +33,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
@@ -85,19 +83,11 @@ public class PackageCodegenImpl implements PackageCodegen {
         }
     }
 
-    private void generateClassesAndObjectsInFile(@NotNull List<KtClassOrObject> classOrObjects, @NotNull PackageContext packagePartContext) {
-        for (KtClassOrObject classOrObject : CodegenUtilKt.sortTopLevelClassesAndPrepareContextForSealedClasses(classOrObjects, packagePartContext, state)) {
-            generateClassOrObject(classOrObject, packagePartContext);
-        }
-    }
-
-    private void generateFile(@NotNull KtFile file) {
-        JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
-        if (fileClassInfo.getWithJvmMultifileClass()) return;
-
-        Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
-        PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType, file);
-
+    public static void generateClassesAndObjectsInFile(
+            @NotNull KtFile file,
+            @NotNull CodegenContext<?> context,
+            @NotNull GenerationState state
+    ) {
         List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
         for (KtDeclaration declaration : file.getDeclarations()) {
@@ -117,11 +107,35 @@ public class PackageCodegenImpl implements PackageCodegen {
                 KtScript script = (KtScript) declaration;
 
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
-                    ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
+                    ScriptCodegen.createScriptCodegen(script, state, context).generate();
                 }
             }
         }
-        generateClassesAndObjectsInFile(classOrObjects, packagePartContext);
+
+        List<KtClassOrObject> sortedClasses =
+                CodegenUtilKt.sortTopLevelClassesAndPrepareContextForSealedClasses(classOrObjects, context, state);
+        for (KtClassOrObject classOrObject : sortedClasses) {
+            MemberCodegen.genClassOrObject(context, classOrObject, state, null);
+        }
+    }
+
+    private void generateFile(@NotNull KtFile file) {
+        JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file);
+        if (fileClassInfo.getWithJvmMultifileClass()) return;
+
+        Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
+        PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType, file);
+
+        if (file instanceof KtCodeFragment) {
+            // Avoid generating light classes for code fragments
+            if (state.getClassBuilderMode().generateBodies
+                && state.getGenerateDeclaredClassFilter().shouldGenerateCodeFragment((KtCodeFragment) file)
+            ) {
+                CodeFragmentCodegen.createCodegen((KtCodeFragment) file, state, packagePartContext).generate();
+            }
+        } else {
+            generateClassesAndObjectsInFile(file, packagePartContext, state);
+        }
 
         if (!state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
 
@@ -157,11 +171,6 @@ public class PackageCodegenImpl implements PackageCodegen {
             return null;
         }
         return fragments.get(0);
-    }
-
-    @Override
-    public void generateClassOrObject(@NotNull KtClassOrObject classOrObject, @NotNull PackageContext packagePartContext) {
-        MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null);
     }
 
     @Override

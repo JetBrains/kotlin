@@ -81,10 +81,9 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
     override val fields: Collection<JavaField>
         get() {
             assertNotLightClass()
-            return fields(psi.fields.filter { field ->
-                val name = field.name
+            return fields(psi.fields.filter {
                 // ex. Android plugin generates LightFields for resources started from '.' (.DS_Store file etc)
-                name != null && Name.isValidIdentifier(name)
+                Name.isValidIdentifier(it.name)
             })
         }
 

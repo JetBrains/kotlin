@@ -1,0 +1,7 @@
+fun foo(b: Boolean) {
+    if (!b) bar(2) // comment2
+    else
+        bar(1) // comment1
+}
+
+fun bar(i: Int) {}

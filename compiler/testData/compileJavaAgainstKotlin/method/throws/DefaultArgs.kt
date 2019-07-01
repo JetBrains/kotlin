@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 package test
 
 class E1: Exception()

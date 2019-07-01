@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1340
+// EXPECTED_REACHABLE_NODES: 1709
+// KJS_WITH_FULL_RUNTIME
+
 import common.*
 import kotlin.test.Test
 import kotlin.test.Ignore

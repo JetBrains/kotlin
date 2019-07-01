@@ -137,6 +137,8 @@ open class KtLightMethodImpl protected constructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> =
             typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
+    override fun hasTypeParameters() = typeParameters.isNotEmpty()
+
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature {
         if (substitutor == PsiSubstitutor.EMPTY) {
             return clsDelegate.getSignature(substitutor)
@@ -152,7 +154,7 @@ open class KtLightMethodImpl protected constructor(
         return typeParameters.all { processor.execute(it, state) }
     }
 
-    private val _memberIndex: MemberIndex?
+    protected open val memberIndex: MemberIndex?
         get() = (dummyDelegate ?: clsDelegate).memberIndex
 
     /* comparing origin and member index should be enough to determine equality:
@@ -165,9 +167,9 @@ open class KtLightMethodImpl protected constructor(
              this.name == other.name &&
              this.containingClass == other.containingClass &&
              this.lightMemberOrigin == other.lightMemberOrigin &&
-             this._memberIndex == other._memberIndex)
+             this.memberIndex == other.memberIndex)
 
-    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (_memberIndex?.hashCode() ?: 0)
+    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (memberIndex?.hashCode() ?: 0)
 
     override fun getDefaultValue() = (clsDelegate as? PsiAnnotationMethod)?.defaultValue
 
@@ -217,8 +219,6 @@ open class KtLightMethodImpl protected constructor(
     }
 
     override fun getThrowsList() = clsDelegate.throwsList
-
-    override fun hasTypeParameters() = clsDelegate.hasTypeParameters()
 
     override fun isVarArgs() = (dummyDelegate ?: clsDelegate).isVarArgs
 

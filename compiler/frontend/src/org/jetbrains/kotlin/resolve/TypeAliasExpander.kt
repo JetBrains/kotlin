@@ -214,31 +214,39 @@ class TypeAliasExpander(
                     withAbbreviatedType = false
                 )
 
+                val substitutedType = type.substituteArguments(typeAliasExpansion, recursionDepth)
+
                 // 'dynamic' type can't be abbreviated - will be reported separately
                 val typeWithAbbreviation =
-                    if (nestedExpandedType.isDynamic()) nestedExpandedType else nestedExpandedType.withAbbreviation(type)
+                    if (nestedExpandedType.isDynamic()) nestedExpandedType else nestedExpandedType.withAbbreviation(substitutedType)
 
                 TypeProjectionImpl(originalProjection.projectionKind, typeWithAbbreviation)
             }
             else -> {
-                val substitutedArguments = type.arguments.mapIndexed { i, originalArgument ->
-                    val projection = expandTypeProjection(
-                        originalArgument, typeAliasExpansion, typeConstructor.parameters[i], recursionDepth + 1
-                    )
-                    if (projection.isStarProjection) projection
-                    else TypeProjectionImpl(
-                        projection.projectionKind,
-                        TypeUtils.makeNullableIfNeeded(projection.type, originalArgument.type.isMarkedNullable)
-                    )
-                }
-
-                val substitutedType = type.replace(newArguments = substitutedArguments)
+                val substitutedType = type.substituteArguments(typeAliasExpansion, recursionDepth)
 
                 checkTypeArgumentsSubstitution(type, substitutedType)
 
                 TypeProjectionImpl(originalProjection.projectionKind, substitutedType)
             }
         }
+    }
+
+    private fun SimpleType.substituteArguments(typeAliasExpansion: TypeAliasExpansion, recursionDepth: Int): SimpleType {
+        val typeConstructor = this.constructor
+
+        val substitutedArguments = this.arguments.mapIndexed { i, originalArgument ->
+            val projection = expandTypeProjection(
+                originalArgument, typeAliasExpansion, typeConstructor.parameters[i], recursionDepth + 1
+            )
+            if (projection.isStarProjection) projection
+            else TypeProjectionImpl(
+                projection.projectionKind,
+                TypeUtils.makeNullableIfNeeded(projection.type, originalArgument.type.isMarkedNullable)
+            )
+        }
+
+        return this.replace(newArguments = substitutedArguments)
     }
 
     private fun checkTypeArgumentsSubstitution(unsubstitutedType: KotlinType, substitutedType: KotlinType) {

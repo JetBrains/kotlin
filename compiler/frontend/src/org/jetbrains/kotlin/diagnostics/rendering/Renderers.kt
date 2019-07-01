@@ -21,6 +21,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.moduleInfo
+import org.jetbrains.kotlin.analyzer.unwrapPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.WhenMissingCase
 import org.jetbrains.kotlin.cfg.hasUnknown
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRenderer.Companion.DEBUG_TEXT
@@ -84,15 +87,14 @@ object Renderers {
     val NAME = Renderer<Named> { it.name.asString() }
 
     @JvmField
-    val PLATFORM = Renderer<ModuleDescriptor> {
-        val platform = it.getMultiTargetPlatform()
-        " ${it.getCapability(ModuleInfo.Capability)?.displayedName ?: ""}" + when (platform) {
-            MultiTargetPlatform.Common -> ""
-            is MultiTargetPlatform.Specific -> " for " + platform.platform
-            null -> ""
-        }
-    }
+    val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->
+        val platform = module.platform
+        val moduleName = module.moduleInfo?.unwrapPlatform()?.displayedName ?: ""
+        val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
 
+        moduleName + platformNameIfAny
+    }
+    
     @JvmField
     val VISIBILITY = Renderer<Visibility> {
         if (it == Visibilities.INVISIBLE_FAKE)

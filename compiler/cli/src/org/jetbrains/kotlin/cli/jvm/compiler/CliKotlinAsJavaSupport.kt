@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.jvm.compiler
@@ -39,7 +39,7 @@ class CliKotlinAsJavaSupport(
         return findFacadeFilesInPackage(packageFqName, scope)
             .groupBy { it.javaFileFacadeFqName }
             .mapNotNull { (facadeClassFqName, files) ->
-                KtLightClassForFacade.createForFacade(psiManager, facadeClassFqName, scope, files)
+                KtLightClassForFacade.createForFacade(psiManager, facadeClassFqName, scope)
             }
     }
 
@@ -56,12 +56,7 @@ class CliKotlinAsJavaSupport(
         .orEmpty()
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesForFacade = findFilesForFacade(facadeFqName, scope)
-        if (filesForFacade.isEmpty()) return emptyList()
-
-        return listOfNotNull(
-            KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade)
-        )
+        return listOfNotNull(KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope))
     }
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {

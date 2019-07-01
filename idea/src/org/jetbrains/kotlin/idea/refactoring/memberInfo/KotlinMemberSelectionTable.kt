@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.Icon
 
 class KotlinMemberSelectionTable(
-        memberInfos: List<KotlinMemberInfo>,
-        memberInfoModel: MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>?,
-        abstractColumnHeader: String?
+    memberInfos: List<KotlinMemberInfo>,
+    memberInfoModel: MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>?,
+    abstractColumnHeader: String?
 ) : AbstractMemberSelectionTable<KtNamedDeclaration, KotlinMemberInfo>(memberInfos, memberInfoModel, abstractColumnHeader) {
     override fun getAbstractColumnValue(memberInfo: KotlinMemberInfo): Any? {
         if (memberInfo.isStatic || memberInfo.isCompanionMember) return null
@@ -66,7 +66,7 @@ class KotlinMemberSelectionTable(
     }
 
     override fun getOverrideIcon(memberInfo: KotlinMemberInfo): Icon? {
-        val defaultIcon = AbstractMemberSelectionTable.EMPTY_OVERRIDE_ICON
+        val defaultIcon = EMPTY_OVERRIDE_ICON
 
         val member = memberInfo.member
         if (member !is KtNamedFunction && member !is KtProperty && member !is KtParameter) return defaultIcon

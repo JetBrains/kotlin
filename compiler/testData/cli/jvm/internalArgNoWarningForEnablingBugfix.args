@@ -3,4 +3,4 @@ $TESTDATA_DIR$/simple.kt
 $TEMP_DIR$
 -language-version
 1.2
--XXLanguage:+ProhibitDataClassesOverridingCopy
+-XXLanguage\:+ProhibitDataClassesOverridingCopy

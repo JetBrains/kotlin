@@ -1,0 +1,28 @@
+package
+
+public fun </*0*/ S> create(/*0*/ element: S): InvOut<Inv<S>, S>
+public fun </*0*/ K2, /*1*/ V2> emptyInvOut(): InvOut<K2, V2>
+public fun </*0*/ T> select(/*0*/ x: T, /*1*/ y: T): T
+public fun </*0*/ K1, /*1*/ V1> selectInvOut(/*0*/ a: InvOut<out K1, V1>, /*1*/ b: InvOut<out K1, V1>): InvOut<K1, V1>
+public fun test(/*0*/ s: Sample, /*1*/ b: InvOut<Inv<*>, kotlin.Any?>): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InvOut</*0*/ T, /*1*/ out K> {
+    public constructor InvOut</*0*/ T, /*1*/ out K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Sample {
+    public constructor Sample()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

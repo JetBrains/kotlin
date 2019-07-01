@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -31,14 +30,6 @@ class IrInstanceInitializerCallImpl(
 ) :
     IrTerminalExpressionBase(startOffset, endOffset, type),
     IrInstanceInitializerCall {
-
-    @Deprecated("Creates unbound symbol")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        descriptor: ClassDescriptor,
-        type: IrType
-    ) : this(startOffset, endOffset, IrClassSymbolImpl(descriptor), type)
 
     override val classDescriptor: ClassDescriptor get() = classSymbol.descriptor
 

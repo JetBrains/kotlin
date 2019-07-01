@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.getAbbreviatedType
@@ -30,7 +30,7 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
 ) {
 
     override fun isApplicableTo(element: KtThrowExpression, caretOffset: Int): Boolean {
-        if (element.platform != JvmPlatform) return false
+        if (!element.platform.isJvm()) return false
         val containingDeclaration = element.getContainingDeclaration() ?: return false
 
         val type = element.thrownExpression?.resolveToCall()?.resultingDescriptor?.returnType ?: return false

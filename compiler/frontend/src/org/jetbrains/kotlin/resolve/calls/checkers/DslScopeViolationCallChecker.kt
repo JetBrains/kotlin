@@ -31,7 +31,12 @@ object DslScopeViolationCallChecker : CallChecker {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) return
         val callImplicitReceivers = resolvedCall.getImplicitReceivers()
 
-        for (callImplicitReceiver in callImplicitReceivers) {
+        val originalReceivers = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
+            callImplicitReceivers.map { it.original }
+        else
+            callImplicitReceivers
+
+        for (callImplicitReceiver in originalReceivers) {
             checkCallImplicitReceiver(callImplicitReceiver, resolvedCall, reportOn, context)
         }
     }

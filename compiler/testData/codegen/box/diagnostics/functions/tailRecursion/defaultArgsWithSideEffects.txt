@@ -1,0 +1,6 @@
+package
+
+public var counter: kotlin.Int
+public fun box(): kotlin.String
+public fun inc(): kotlin.Int
+public tailrec fun test(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.Int = ..., /*2*/ z: kotlin.Int = ...): kotlin.Unit

@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
@@ -92,7 +94,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     @NotNull
     @Override
     public PsiReference[] getReferences() {
-        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
+        return KotlinReferenceProvidersService.getReferencesFromProviders(this);
     }
 
     @NotNull

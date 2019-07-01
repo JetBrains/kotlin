@@ -28,6 +28,8 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
@@ -98,7 +100,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
             }
 
             buildScriptData.addPluginDefinitionInPluginsGroup(
-                    getPluginExpression() + if (specifyPluginVersionIfNeeded) " version '$kotlinVersion'" else ""
+                getPluginExpression() + if (specifyPluginVersionIfNeeded) " version '$kotlinVersion'" else ""
             )
         } else {
             if (additionalRepository != null) {
@@ -142,9 +144,10 @@ abstract class GradleKotlinFrameworkSupportProvider(
             ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
+        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
     }
 
-    protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) { }
+    protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {}
 
     protected abstract fun getDependencies(sdk: Sdk?): List<String>
     protected open fun getTestDependencies(): List<String> = listOf()
@@ -157,7 +160,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
 
 open class GradleKotlinJavaFrameworkSupportProvider(
     frameworkTypeId: String = "KOTLIN",
-    displayName: String = "Kotlin (Java)"
+    displayName: String = "Kotlin/JVM"
 ) : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.SMALL_LOGO) {
 
     override fun getPluginId() = KotlinGradleModuleConfigurator.KOTLIN
@@ -184,41 +187,59 @@ open class GradleKotlinJavaFrameworkSupportProvider(
     override fun getDescription() = "A Kotlin library or application targeting the JVM"
 }
 
-open class GradleKotlinJSFrameworkSupportProvider(
-    frameworkTypeId: String = "KOTLIN_JS",
-    displayName: String = "Kotlin (JavaScript)"
+abstract class GradleKotlinJSFrameworkSupportProvider(
+    frameworkTypeId: String,
+    displayName: String
 ) : GradleKotlinFrameworkSupportProvider(frameworkTypeId, displayName, KotlinIcons.JS) {
+    abstract val jsSubTargetName: String
 
-    override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
-    override fun getPluginExpression() = "id 'kotlin2js'"
+    override fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String?
+    ) {
+        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
 
-    override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
-
-    override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
-
-    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-        if (specifyPluginVersionIfNeeded) {
-            settingsBuilder.addResolutionStrategy("kotlin2js")
-        }
+        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
     }
 
+    override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
+    override fun getPluginExpression() = "id 'org.jetbrains.kotlin.js'"
+    override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
+    override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
     override fun getDescription() = "A Kotlin library or application targeting JavaScript"
+}
+
+open class GradleKotlinJSBrowserFrameworkSupportProvider(
+    frameworkTypeId: String = "KOTLIN_JS_BROWSER",
+    displayName: String = "Kotlin/JS for browser"
+) : GradleKotlinJSFrameworkSupportProvider(frameworkTypeId, displayName) {
+    override val jsSubTargetName: String
+        get() = "browser"
+
+    override fun getDescription() = "A Kotlin library or application targeting JavaScript for browser"
+}
+
+open class GradleKotlinJSNodeFrameworkSupportProvider(
+    frameworkTypeId: String = "KOTLIN_JS_NODE",
+    displayName: String = "Kotlin/JS for Node.js"
+) : GradleKotlinJSFrameworkSupportProvider(frameworkTypeId, displayName) {
+    override val jsSubTargetName: String
+        get() = "nodejs"
+
+    override fun getDescription() = "A Kotlin library or application targeting JavaScript for Node.js"
 }
 
 class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
     "KOTLIN_MPP", "Kotlin (Multiplatform - Experimental)", KotlinIcons.MPP
 ) {
-    override fun getPluginId() = "kotlin-multiplatform"
-    override fun getPluginExpression() = "id 'kotlin-multiplatform'"
+    override fun getPluginId() = "org.jetbrains.kotlin.multiplatform"
+    override fun getPluginExpression() = "id 'org.jetbrains.kotlin.multiplatform'"
 
     override fun getDependencies(sdk: Sdk?): List<String> = listOf()
     override fun getTestDependencies(): List<String> = listOf()
-
-    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-        if (specifyPluginVersionIfNeeded) {
-            settingsBuilder.addResolutionStrategy("kotlin-multiplatform")
-        }
-    }
 
     override fun getDescription() = "Kotlin multiplatform code"
 }

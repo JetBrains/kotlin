@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
 class KotlinSetupEnvironmentNotificationProvider(
@@ -68,7 +68,8 @@ class KotlinSetupEnvironmentNotificationProvider(
         }
 
         if (ModuleRootManager.getInstance(module).sdk == null &&
-            TargetPlatformDetector.getPlatform(psiFile) == JvmPlatform) {
+            TargetPlatformDetector.getPlatform(psiFile).isJvm()
+        ) {
             return createSetupSdkPanel(myProject, psiFile)
         }
 

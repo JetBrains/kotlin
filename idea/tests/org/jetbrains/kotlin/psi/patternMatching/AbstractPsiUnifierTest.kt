@@ -1,25 +1,20 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.patternMatching
 
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.psi.KtElement
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import java.io.File
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.KtWhenCondition
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class AbstractPsiUnifierTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(filePath: String) {

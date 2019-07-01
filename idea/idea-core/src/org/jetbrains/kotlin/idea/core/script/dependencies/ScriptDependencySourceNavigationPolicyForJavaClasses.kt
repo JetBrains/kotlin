@@ -50,13 +50,13 @@ class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigation
         val project = file.project
 
         val kotlinScriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
-        if (virtualFile !in kotlinScriptConfigurationManager.getAllScriptsClasspathScope()) return null
+        if (virtualFile !in kotlinScriptConfigurationManager.getAllScriptsDependenciesClassFilesScope()) return null
 
         val sourceFileName = (file.classes.first() as ClsClassImpl).sourceFileName
         val packageName = file.packageName
         val relativePath = if (packageName.isEmpty()) sourceFileName else packageName.replace('.', '/') + '/' + sourceFileName
 
-        for (root in kotlinScriptConfigurationManager.getAllLibrarySources().filter { it.isValid }) {
+        for (root in kotlinScriptConfigurationManager.getAllScriptDependenciesSources().filter { it.isValid }) {
             val sourceFile = root.findFileByRelativePath(relativePath)
             if (sourceFile != null && sourceFile.isValid) {
                 val sourcePsi = file.manager.findFile(sourceFile)

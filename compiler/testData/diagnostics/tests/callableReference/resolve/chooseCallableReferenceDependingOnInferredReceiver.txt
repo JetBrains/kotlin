@@ -1,0 +1,24 @@
+package
+
+public fun </*0*/ T> bar(/*0*/ f: (T) -> kotlin.Unit): T
+public inline fun </*0*/ T, /*1*/ R> myWith(/*0*/ receiver: T, /*1*/ block: T.() -> R): R
+public fun test(): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public final fun baz(/*0*/ i: A): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ i: A): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public final fun baz(/*0*/ s: B): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ s: B): kotlin.Unit
+    public final fun foo(/*0*/ c: kotlin.Char): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

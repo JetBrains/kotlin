@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.contracts.parsing
@@ -37,6 +37,8 @@ interface ContractParsingDiagnosticsCollector {
 }
 
 class TraceBasedCollector(private val bindingTrace: BindingTrace, mainCall: KtExpression) : ContractParsingDiagnosticsCollector {
+    constructor(callContext: ContractCallContext) : this(callContext.trace, callContext.contractCallExpression)
+
     private val reportedErrors: MutableList<Diagnostic> = mutableListOf()
     private val mainCallReportTarget = (mainCall as? KtCallExpression)?.calleeExpression ?: mainCall
 

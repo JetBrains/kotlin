@@ -22,12 +22,12 @@ import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UIfExpression
 
 class KotlinUIfExpression(
-        override val psi: KtIfExpression,
+        override val sourcePsi: KtIfExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UIfExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
-    override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
-    override val thenExpression by lz { KotlinConverter.convertOrNull(psi.then, this) }
-    override val elseExpression by lz { KotlinConverter.convertOrNull(psi.`else`, this) }
+    override val condition by lz { KotlinConverter.convertOrEmpty(sourcePsi.condition, this) }
+    override val thenExpression by lz { KotlinConverter.convertOrNull(sourcePsi.then, this) }
+    override val elseExpression by lz { KotlinConverter.convertOrNull(sourcePsi.`else`, this) }
     override val isTernary = false
 
     override val ifIdentifier: UIdentifier

@@ -18,7 +18,7 @@ dependencies {
     testRuntimeOnly(intellijDep()) {
         includeJars("guava", rootProject = rootProject)
     }
-    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -30,16 +30,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val jar = runtimeJar {}
+runtimeJar()
 
-testsJar {}
+testsJar()
 
-dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kotlin-") + ".jar")
-
-ideaPlugin {
-    from(jar)
-}
-
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }

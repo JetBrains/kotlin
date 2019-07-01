@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.idea.configuration.hasKotlinJvmRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
-    KotlinJavaMavenConfigurator.TEST_LIB_ID,
+    TEST_LIB_ID,
     false,
-    KotlinJavaMavenConfigurator.NAME,
-    KotlinJavaMavenConfigurator.PRESENTABLE_TEXT
+    NAME,
+    PRESENTABLE_TEXT
 ) {
 
     override fun isKotlinModule(module: Module) =
@@ -68,7 +68,10 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
     }
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
+
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform() = JvmPlatforms.CompatJvmPlatform
 
     companion object {
         private const val NAME = "maven"

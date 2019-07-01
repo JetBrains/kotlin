@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirectoryMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.analyzeConflictsInFile
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -86,7 +85,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
         for ((index, usageInfo) in infos.withIndex()) {
             if (usageInfo !is FileUsagesWrapper) continue
 
-            ProgressManager.getInstance().progressIndicatorNullable?.text2 = "Processing ${usageInfo.psiFile.name}"
+            ProgressManager.getInstance().progressIndicator?.text2 = "Processing ${usageInfo.psiFile.name}"
 
             runReadAction {
                 analyzeConflictsInFile(usageInfo.psiFile, usageInfo.usages, moveTarget, files, conflicts) {

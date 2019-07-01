@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class A(val s: String) {
     open inner class B(s: String): A(s)
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -85,5 +86,12 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
 
         PsiElement resolved = referenceElement.resolve();
         return resolved instanceof PsiClass ? (PsiClass) resolved : null;
+    }
+
+    @Override
+    public boolean isIdeExternalAnnotation() {
+        PsiAnnotation psi = getPsi();
+        ExternalAnnotationsManager externalAnnotationManager = ExternalAnnotationsManager.getInstance(psi.getProject());
+        return externalAnnotationManager.isExternalAnnotation(psi);
     }
 }

@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 fun foo(s: String) = s.length
 
 fun baz(s: String?, r: String?): Int {

@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, real-literals -> paragraph 1 -> sentence 3
+ * PLACE: constant-literals, real-literals -> paragraph 1 -> sentence 3
  * NUMBER: 3
  * DESCRIPTION: Real literals with a float suffix and not allowed symbols as a separator of a whole-number part and a fraction part.
  * UNEXPECTED BEHAVIOUR

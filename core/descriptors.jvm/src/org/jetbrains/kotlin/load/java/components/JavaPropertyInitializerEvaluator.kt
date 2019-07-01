@@ -24,6 +24,6 @@ interface JavaPropertyInitializerEvaluator {
     fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>?
 
     object DoNothing : JavaPropertyInitializerEvaluator {
-        override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor) = null
+        override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>? = null
     }
 }

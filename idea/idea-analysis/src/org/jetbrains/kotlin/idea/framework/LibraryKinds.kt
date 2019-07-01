@@ -24,15 +24,15 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.io.JarUtil
 import com.intellij.openapi.vfs.*
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.idea.vfilefinder.KnownLibraryKindForIndex
 import org.jetbrains.kotlin.idea.vfilefinder.getLibraryKindForJar
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.utils.PathUtil
 import java.util.jar.Attributes
 import java.util.regex.Pattern
@@ -43,14 +43,14 @@ interface KotlinLibraryKind {
 
 object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        get() = JsPlatform
+        get() = JsPlatforms.defaultJsPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
 object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        get() = CommonPlatform
+        get() = CommonPlatforms.defaultCommonPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
@@ -58,12 +58,12 @@ object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin
 val PersistentLibraryKind<*>?.platform: TargetPlatform
     get() = when (this) {
         is KotlinLibraryKind -> this.compilerPlatform
-        else -> DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform
+        else -> DefaultIdeTargetPlatformKindProvider.defaultPlatform
     }
 
 fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
-    if (library !is LibraryEx) return DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform
-    if (library.isDisposed) return DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform
+    if (library !is LibraryEx) return DefaultIdeTargetPlatformKindProvider.defaultPlatform
+    if (library.isDisposed) return DefaultIdeTargetPlatformKindProvider.defaultPlatform
 
     return library.effectiveKind(project).platform
 }
@@ -88,7 +88,7 @@ fun detectLibraryKind(roots: Array<VirtualFile>): PersistentLibraryKind<*>? {
 
     if (matchingResolution != null) return matchingResolution.libraryKind
 
-    return DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind.resolution.libraryKind
+    return DefaultIdeTargetPlatformKindProvider.defaultPlatform.idePlatformKind.resolution.libraryKind
 }
 
 fun getLibraryJar(roots: Array<VirtualFile>, jarPattern: Pattern): VirtualFile? {

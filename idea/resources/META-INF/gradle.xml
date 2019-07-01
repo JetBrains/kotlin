@@ -14,6 +14,7 @@
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleOrderEnumerationHandler$Factory" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver"/>
+        <testTasksProvider implementation="org.jetbrains.kotlin.idea.run.KotlinMPPGradleTestTasksProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

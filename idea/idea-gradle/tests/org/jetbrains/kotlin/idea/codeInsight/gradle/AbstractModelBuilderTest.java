@@ -31,6 +31,7 @@ import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.model.ClassSetProjectImportExtraModelProvider;
 import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
@@ -140,7 +141,7 @@ public abstract class AbstractModelBuilderTest {
 
         try {
             ProjectImportAction projectImportAction = new ProjectImportAction(false);
-            projectImportAction.addExtraProjectModelClasses(getModels());
+            projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(getModels()));
             BuildActionExecuter<ProjectImportAction.AllModels> buildActionExecutor = connection.action(projectImportAction);
             File initScript = GradleExecutionHelper.generateInitScript(false, getToolingExtensionClasses());
             assertNotNull(initScript);

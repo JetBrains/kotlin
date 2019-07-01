@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.script.experimental.util
@@ -13,7 +13,9 @@ import kotlin.script.experimental.api.KotlinType
 
 open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = emptyMap()) : Serializable {
 
-    class Key<T>(val name: String, @Transient val defaultValue: T? = null) : Serializable {
+    class Key<T>(val name: String, @Transient val getDefaultValue: PropertiesCollection.() -> T?) : Serializable {
+
+        constructor(name: String, defaultValue: T? = null) : this(name, { defaultValue })
 
         override fun equals(other: Any?): Boolean = if (other is Key<*>) name == other.name else false
         override fun hashCode(): Int = name.hashCode()
@@ -25,9 +27,11 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
         }
     }
 
-    class PropertyKeyDelegate<T>(private val defaultValue: T? = null) {
+    class PropertyKeyDelegate<T>(private val getDefaultValue: PropertiesCollection.() -> T?) {
+        constructor(defaultValue: T?) : this({ defaultValue })
+
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Key<T> =
-            Key(property.name, defaultValue)
+            Key(property.name, getDefaultValue)
     }
 
     class PropertyKeyCopyDelegate<T>(val source: Key<T>) {
@@ -36,8 +40,7 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
 
     @Suppress("UNCHECKED_CAST")
     operator fun <T> get(key: PropertiesCollection.Key<T>): T? =
-        if (key.defaultValue == null) properties[key] as T?
-        else properties.getOrDefault(key, key.defaultValue) as T?
+        (properties[key] ?: if (properties.containsKey(key)) null else key.getDefaultValue(this)) as? T
 
     @Suppress("UNCHECKED_CAST")
     fun <T> getNoDefault(key: PropertiesCollection.Key<T>): T? =
@@ -48,12 +51,18 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
 
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
+    override fun equals(other: Any?): Boolean =
+        (other as? PropertiesCollection)?.let { it.properties == properties } == true
+
+    override fun hashCode(): Int = properties.hashCode()
+
     companion object {
-        fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
-        fun <T> keyCopy(source: Key<T>) = PropertyKeyCopyDelegate(source)
+        fun <T> key(defaultValue: T? = null): PropertyKeyDelegate<T> = PropertyKeyDelegate(defaultValue)
+        fun <T> key(getDefaultValue: PropertiesCollection.() -> T?): PropertyKeyDelegate<T> = PropertyKeyDelegate(getDefaultValue)
+        fun <T> keyCopy(source: Key<T>): PropertyKeyCopyDelegate<T> = PropertyKeyCopyDelegate(source)
 
         @JvmStatic
-        private val serialVersionUID = 0L
+        private val serialVersionUID = 1L
     }
 
     // properties builder base class (DSL for building properties collection)
@@ -68,6 +77,35 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
 
         operator fun <T> PropertiesCollection.Key<T>.invoke(v: T) {
             data[this] = v
+        }
+
+        fun <T> PropertiesCollection.Key<T>.put(v: T) {
+            data[this] = v
+        }
+
+        fun <T> PropertiesCollection.Key<T>.putIfNotNull(v: T?) {
+            if (v != null) {
+                data[this] = v
+            }
+        }
+
+        fun <T> PropertiesCollection.Key<in List<T>>.putIfAny(vals: Iterable<T>?) {
+            if (vals?.any() == true) {
+                data[this] = if (vals is List) vals else vals.toList()
+            }
+        }
+
+        @JvmName("putIfAny_map")
+        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Iterable<Pair<K, V>>?) {
+            if (vals?.any() == true) {
+                data[this] = vals.toMap()
+            }
+        }
+
+        fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Map<K, V>?) {
+            if (vals?.isNotEmpty() == true) {
+                data[this] = vals
+            }
         }
 
         // generic for lists

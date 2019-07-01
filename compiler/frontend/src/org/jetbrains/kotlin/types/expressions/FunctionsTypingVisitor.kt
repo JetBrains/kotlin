@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -120,25 +122,13 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             val functionalTypeExpected = expectedType.isBuiltinFunctionalType()
 
             // We forbid anonymous function expressions to suspend type coercion for now, until `suspend fun` syntax is supported
-            val resultType = functionDescriptor.createFunctionType(suspendFunction = false)
+            val resultType = functionDescriptor.createFunctionType(components.builtIns, suspendFunction = false)
 
             if (components.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) && functionalTypeExpected && !expectedType.isSuspendFunctionType)
                 createTypeInfo(resultType, context)
             else
                 components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, function)
         }
-    }
-
-    private fun SimpleFunctionDescriptor.createFunctionType(suspendFunction: Boolean = false): KotlinType? {
-        return createFunctionType(
-            components.builtIns,
-            Annotations.EMPTY,
-            extensionReceiverParameter?.type,
-            valueParameters.map { it.type },
-            null,
-            returnType ?: return null,
-            suspendFunction = suspendFunction
-        )
     }
 
     override fun visitLambdaExpression(expression: KtLambdaExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
@@ -157,7 +147,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
-        val resultType = functionDescriptor.createFunctionType(suspendFunctionTypeExpected)!!
+        val resultType = functionDescriptor.createFunctionType(components.builtIns, suspendFunctionTypeExpected)!!
         if (functionTypeExpected) {
             // all checks were done before
             return createTypeInfo(resultType, context)
@@ -250,7 +240,6 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         newInferenceLambdaInfo?.let {
             it.lastExpressionInfo.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
-            return null
         }
 
         return computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
@@ -290,6 +279,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         returnedExpressionTypes.addIfNotNull(typeOfBodyExpression)
 
         if (returnedExpressionTypes.isEmpty()) return null
+        if (returnedExpressionTypes.any { it.contains { it.constructor is TypeVariableTypeConstructor }}) return null
         return CommonSupertypes.commonSupertype(returnedExpressionTypes)
     }
 
@@ -362,4 +352,16 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
 
         return returns
     }
+}
+
+fun SimpleFunctionDescriptor.createFunctionType(builtIns: KotlinBuiltIns, suspendFunction: Boolean = false): KotlinType? {
+    return createFunctionType(
+        builtIns,
+        Annotations.EMPTY,
+        extensionReceiverParameter?.type,
+        valueParameters.map { it.type },
+        null,
+        returnType ?: return null,
+        suspendFunction = suspendFunction
+    )
 }

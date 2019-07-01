@@ -1,6 +1,7 @@
 package org.jetbrains.uast.kotlin.expressions
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiVariable
 import org.jetbrains.kotlin.psi.KtFunction
@@ -11,13 +12,13 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 
 internal class KotlinLocalFunctionUVariable(
-        val function: KtFunction,
-        override val psi: PsiVariable,
-        givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UVariable, PsiVariable by psi {
+    val function: KtFunction,
+    override val javaPsi: PsiVariable,
+    givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UVariableExPlaceHolder, PsiVariable by javaPsi {
 
-    override val javaPsi = psi
-    override val sourcePsi: PsiElement? = (psi as? UastKotlinPsiVariable?)?.ktElement ?: psi
+    override val psi get() = javaPsi
+    override val sourcePsi: PsiElement? = (javaPsi as? UastKotlinPsiVariable?)?.ktElement ?: javaPsi
 
     override val uastInitializer: UExpression? by lz {
         createLocalFunctionLambdaExpression(function, this)
@@ -25,20 +26,27 @@ internal class KotlinLocalFunctionUVariable(
     override val typeReference: UTypeReferenceExpression? = null
     override val uastAnchor: UElement? = null
     override val annotations: List<UAnnotation> = emptyList()
+    override fun getOriginalElement(): PsiElement {
+        return psi.originalElement
+    }
+
+    override fun getInitializer(): PsiExpression? {
+        return psi.initializer
+    }
 }
 
 
 private class KotlinLocalFunctionULambdaExpression(
-        override val psi: KtFunction,
+        override val sourcePsi: KtFunction,
         givenParent: UElement?
 ): KotlinAbstractUExpression(givenParent), ULambdaExpression {
     override val functionalInterfaceType: PsiType? = null
 
-    override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
+    override val body by lz { KotlinConverter.convertOrEmpty(sourcePsi.bodyExpression, this) }
 
     override val valueParameters by lz {
-        psi.valueParameters.mapIndexed { i, p ->
-            KotlinUParameter(UastKotlinPsiParameter.create(p, psi, this, i), p, this)
+        sourcePsi.valueParameters.mapIndexed { i, p ->
+            KotlinUParameter(UastKotlinPsiParameter.create(p, sourcePsi, this, i), p, this)
         }
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.components
@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_R
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -31,11 +33,10 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
-    class UnboundReference(val qualifier: QualifierReceiver, receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
-    class BoundValueReference(val qualifier: QualifierReceiver, receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
+    class UnboundReference(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
+    class BoundValueReference(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
     class ScopeReceiver(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
-    class ExplicitValueReceiver(val lhsArgument: SimpleKotlinCallArgument, receiver: ReceiverValueWithSmartCastInfo) :
-        CallableReceiver(receiver)
+    class ExplicitValueReceiver(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
 }
 
 // todo investigate similar code in CheckVisibility
@@ -88,7 +89,7 @@ fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory
             // note that if we use PrioritizedCompositeScopeTowerProcessor then static will win over unbound members
             val staticOrUnbound = SamePriorityCompositeScopeTowerProcessor(static, unbound)
 
-            val asValue = lhsResult.qualifier.classValueReceiverWithSmartCastInfo ?: return staticOrUnbound
+            val asValue = lhsResult.qualifier?.classValueReceiverWithSmartCastInfo ?: return staticOrUnbound
             return PrioritizedCompositeScopeTowerProcessor(staticOrUnbound, factory.createCallableProcessor(asValue))
         }
         is LHSResult.Object -> {
@@ -118,8 +119,10 @@ fun ConstraintSystemOperation.checkCallableReference(
         addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
     }
 
-    addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
-    addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
+    if (!ErrorUtils.isError(candidateDescriptor)) {
+        addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
+        addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
+    }
 
     val invisibleMember = Visibilities.findInvisibleMember(
         dispatchReceiver?.asReceiverValueForVisibilityChecks,
@@ -142,7 +145,8 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
     }
 
     val expectedType = toFreshSubstitutor.safeSubstitute(receiverParameter.value.type.unwrap())
-    val receiverType = receiverArgument.receiver.stableType
+    val receiverType = receiverArgument.receiver.stableType.let { captureFromExpression(it) ?: it }
+
     addSubtypeConstraint(receiverType, expectedType, position)
 }
 
@@ -315,27 +319,26 @@ class CallableReferencesCandidateFactory(
 
                 return callComponents.reflectionTypes.getKFunctionType(
                     Annotations.EMPTY, null, argumentsAndReceivers, null,
-                    returnType, descriptor.builtIns, isSuspend = false
+                    returnType, descriptor.builtIns, descriptor.isSuspend
                 ) to defaults
             }
-            else -> error("Unsupported descriptor type: $descriptor")
+            else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to 0
         }
     }
 
     private fun toCallableReceiver(receiver: ReceiverValueWithSmartCastInfo, isExplicit: Boolean): CallableReceiver {
         if (!isExplicit) return CallableReceiver.ScopeReceiver(receiver)
 
-        val lhsResult = argument.lhsResult
-        return when (lhsResult) {
-            is LHSResult.Expression -> CallableReceiver.ExplicitValueReceiver(lhsResult.lshCallArgument, receiver)
+        return when (val lhsResult = argument.lhsResult) {
+            is LHSResult.Expression -> CallableReceiver.ExplicitValueReceiver(receiver)
             is LHSResult.Type -> {
-                if (lhsResult.qualifier.classValueReceiver?.type == receiver.receiverValue.type) {
-                    CallableReceiver.BoundValueReference(lhsResult.qualifier, receiver)
+                if (lhsResult.qualifier?.classValueReceiver?.type == receiver.receiverValue.type) {
+                    CallableReceiver.BoundValueReference(receiver)
                 } else {
-                    CallableReceiver.UnboundReference(lhsResult.qualifier, receiver)
+                    CallableReceiver.UnboundReference(receiver)
                 }
             }
-            is LHSResult.Object -> CallableReceiver.BoundValueReference(lhsResult.qualifier, receiver)
+            is LHSResult.Object -> CallableReceiver.BoundValueReference(receiver)
             else -> throw IllegalStateException("Unsupported kind of lhsResult: $lhsResult")
         }
     }
@@ -347,15 +350,20 @@ fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: Unwra
     if (expectedType == null) return null
 
     return when {
-        expectedType.isFunctionType ->
+        expectedType.isFunctionType || expectedType.isSuspendFunctionType ->
             extractInputOutputTypesFromFunctionType(expectedType)
 
         ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
             InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
 
-        ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(expectedType) -> {
+        ReflectionTypes.isNumberedKFunction(expectedType) -> {
             val functionFromSupertype = expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()
             extractInputOutputTypesFromFunctionType(functionFromSupertype)
+        }
+
+        ReflectionTypes.isNumberedKSuspendFunction(expectedType) -> {
+            val kSuspendFunctionType = expectedType.immediateSupertypes().first { it.isSuspendFunctionType }.unwrap()
+            extractInputOutputTypesFromFunctionType(kSuspendFunctionType)
         }
 
         ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(expectedType) -> {

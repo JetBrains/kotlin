@@ -1,0 +1,91 @@
+UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:foo: foo
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+    fun foo() {}
+    inline fun inlineFoo() {
+
+    }
+}: A
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = foo) -> KtLightMethodImpl:foo: foo
+    UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:inlineFoo: inlineFoo
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+    fun foo() {}
+    inline fun inlineFoo() {
+
+    }
+}: A
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = inlineFoo) -> KtLightMethodImpl:inlineFoo: inlineFoo
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+    fun foo() {}
+    inline fun inlineFoo() {
+
+    }
+}: A
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = forEach) -> PsiMethod:forEach: forEach
+        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = println) -> PsiMethod:println: println
+        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = it) -> null: null
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = joinToString) -> PsiMethod:joinToString: joinToString
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = size) -> PsiMethod:size: size
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = indices) -> PsiMethod:getIndices: getIndices
+    UTypeReferenceExpression (name = java.util.Date) -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+    UTypeReferenceExpression (name = java.util.Date) -> USimpleNameReferenceExpression (identifier = util) -> PsiPackage:java.util: util
+    UTypeReferenceExpression (name = java.util.Date) -> USimpleNameReferenceExpression (identifier = Date) -> PsiClass:Date: Date
+    ULocalVariable (name = date) -> UQualifiedReferenceExpression -> PsiMethod:Date: Date
+    UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> null: null
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = util) -> PsiPackage:java.util: util
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = Date) -> PsiMethod:Date: Date
+    UBinaryExpression (operator = =) -> UQualifiedReferenceExpression -> null: null
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = date) -> LightVariableBuilder:date: date
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = time) -> PsiMethod:setTime: setTime
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = last) -> PsiMethod:last: last
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> null: null
+    UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = mutableMapOf) -> PsiMethod:mutableMapOf: mutableMapOf
+    UBinaryExpression (operator = <other>) -> USimpleNameReferenceExpression (identifier = to) -> PsiMethod:to: to
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = entries) -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = first) -> PsiMethod:first: first
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = setValue) -> PsiMethod:setValue: setValue
+    UBinaryExpression (operator = ..) -> USimpleNameReferenceExpression (identifier = ..) -> null: null
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = intRange) -> LightVariableBuilder:intRange: intRange
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) -> USimpleNameReferenceExpression (identifier = contains) -> PsiMethod:longRangeContains: longRangeContains
+    UBinaryExpressionWithType -> USimpleNameReferenceExpression (identifier = as) -> null: null
+    UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2)) -> USimpleNameReferenceExpression (identifier = IntRange) -> PsiClass:IntRange: IntRange
+UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+    fun foo() {}
+    inline fun inlineFoo() {
+
+    }
+}: A
+UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
+    UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:foo: foo
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = t) -> Light Parameter: t
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = foo) -> KtLightMethodImpl:foo: foo
+UTypeReferenceExpression (name = java.util.List<? extends A>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
+UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:open class A {
+    fun foo() {}
+    inline fun inlineFoo() {
+
+    }
+}: A
+UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> KotlinLightTypeParameter:T: T
+    UBlockExpression -> UQualifiedReferenceExpression -> null: null
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = listT) -> Light Parameter: listT
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = isEmpty) -> PsiMethod:isEmpty: isEmpty
+    UForEachExpression -> USimpleNameReferenceExpression (identifier = listT) -> Light Parameter: listT
+        UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:foo: foo
+        UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = a) -> VALUE_PARAMETER: a
+        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) -> USimpleNameReferenceExpression (identifier = foo) -> KtLightMethodImpl:foo: foo

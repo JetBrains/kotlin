@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -67,26 +66,6 @@ class IrClassImpl(
                 isExternal = symbol.descriptor.isEffectivelyExternal(),
                 isInline = symbol.descriptor.isInline
             )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassDescriptor,
-        modality: Modality = descriptor.modality
-    ) :
-            this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor), modality)
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassDescriptor,
-        modality: Modality = descriptor.modality,
-        members: List<IrDeclaration> = emptyList()
-    ) : this(startOffset, endOffset, origin, descriptor, modality) {
-        addAll(members)
-    }
 
     init {
         symbol.bind(this)

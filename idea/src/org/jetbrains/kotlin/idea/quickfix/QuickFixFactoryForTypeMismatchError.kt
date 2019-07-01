@@ -126,6 +126,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                 actions.add(wrongPrimitiveLiteralFix)
             }
             actions.add(NumberConversionFix(diagnosticElement, expectedType, wrongPrimitiveLiteralFix))
+            actions.add(RoundNumberFix(diagnosticElement, expectedType, wrongPrimitiveLiteralFix))
         }
 
         if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(expectedType) || KotlinBuiltIns.isStringOrNullableString(expectedType)) {
@@ -168,7 +169,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             actions.add(CastExpressionFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny(), expectedType))
         }
 
-        if (!expectedType.isMarkedNullable && org.jetbrains.kotlin.types.TypeUtils.isNullableType(expressionType)) {
+        if (!expectedType.isMarkedNullable && TypeUtils.isNullableType(expressionType)) {
             val nullableExpected = expectedType.makeNullable()
             if (expressionType.isSubtypeOf(nullableExpected)) {
                 actions.add(AddExclExclCallFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny()))

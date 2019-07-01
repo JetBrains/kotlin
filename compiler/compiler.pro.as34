@@ -52,6 +52,7 @@ messages/**)
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
 -dontwarn com.intellij.util.io.Compressor$Tar
+-dontwarn org.slf4j.**
 
 # Annotations from intellijCore/annotations.jar that not presented in org.jetbrains.annotations
 -dontwarn org.jetbrains.annotations.Async*
@@ -115,8 +116,6 @@ messages/**)
 }
 
 -keep class org.jetbrains.kotlin.container.** { *; }
-
--keep class org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
 
@@ -255,3 +254,13 @@ messages/**)
 
 # used in LazyScriptDescriptor
 -keep class org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt { *; }
+
+-keep class com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem { *; }
+
+# used in REPL
+# TODO: pack jline directly to scripting-compiler jars instead
+-keep class org.jline.reader.LineReaderBuilder { *; }
+-keep class org.jline.reader.LineReader { *; }
+-keep class org.jline.reader.History { *; }
+-keep class org.jline.reader.EndOfFileException { *; }
+-keep class org.jline.reader.UserInterruptException { *; }

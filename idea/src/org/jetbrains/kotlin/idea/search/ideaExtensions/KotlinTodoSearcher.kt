@@ -23,7 +23,7 @@ import com.intellij.psi.impl.cache.TodoCacheManager
 import com.intellij.psi.search.IndexPattern
 import com.intellij.psi.search.IndexPatternOccurrence
 import com.intellij.psi.search.searches.IndexPatternSearch
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
@@ -35,7 +35,7 @@ data class KotlinTodoOccurrence(private val _file: PsiFile, private val _textRan
 }
 
 class KotlinTodoSearcher : QueryExecutorBase<IndexPatternOccurrence, IndexPatternSearch.SearchParameters>(true) {
-    override fun processQuery(queryParameters: IndexPatternSearch.SearchParameters, consumer: ExecutorProcessor<IndexPatternOccurrence>) {
+    override fun processQuery(queryParameters: IndexPatternSearch.SearchParameters, consumer: Processor<in IndexPatternOccurrence>) {
         var pattern = queryParameters.pattern
         if (pattern != null && !pattern.patternString.contains("TODO", true)) return
         if (pattern == null) {

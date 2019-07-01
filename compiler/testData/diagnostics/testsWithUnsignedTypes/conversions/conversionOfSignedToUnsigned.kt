@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 // FILE: annotation.kt
 
@@ -54,7 +55,7 @@ fun test() {
 
     takeUBytes(IMPLICIT_INT, EXPLICIT_INT, 42u)
 
-    takeLong(IMPLICIT_INT)
+    takeLong(<!NI;TYPE_MISMATCH!>IMPLICIT_INT<!>)
 
     takeIntWithoutAnnotation(IMPLICIT_INT)
 
@@ -62,7 +63,7 @@ fun test() {
 
     takeUByte(<!TYPE_MISMATCH!>LONG_CONST<!>)
     takeUByte(<!TYPE_MISMATCH!>NON_CONST<!>)
-    takeUByte(<!TYPE_MISMATCH!>BIGGER_THAN_UBYTE<!>)
+    takeUByte(<!NI;TYPE_MISMATCH, TYPE_MISMATCH!>BIGGER_THAN_UBYTE<!>)
     takeUByte(<!TYPE_MISMATCH!>UINT_CONST<!>)
     takeUIntWithoutAnnotaion(<!TYPE_MISMATCH!>IMPLICIT_INT<!>)
 }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.utils.DFS
-import java.util.*
 import kotlin.test.assertEquals
 
 class BridgeTest : TestCase() {
@@ -91,14 +90,14 @@ class BridgeTest : TestCase() {
             return result
         }
 
-        val vertices = edges.flatMapTo(HashSet<Fun>()) { pair -> listOf(pair.first, pair.second) }
+        val vertices = edges.flatMapTo(HashSet()) { pair -> listOf(pair.first, pair.second) }
 
         for (vertex in vertices) {
             val directConcreteSuperFunctions = vertex.overriddenFunctions.filter { !it.isAbstract }
             assert(directConcreteSuperFunctions.size <= 1) {
                 "Incorrect test data: function $vertex has more than one direct concrete super-function: ${vertex.overriddenFunctions}\n" +
-                "This is not allowed because only classes can contain implementations (concrete functions), and having more than one " +
-                "concrete super-function means having more than one superclass, which is prohibited in Kotlin"
+                        "This is not allowed because only classes can contain implementations (concrete functions), and having more than " +
+                        "one concrete super-function means having more than one superclass, which is prohibited in Kotlin"
             }
 
             if (vertex.isDeclaration) continue
@@ -120,7 +119,7 @@ class BridgeTest : TestCase() {
                 }
                 assert(concreteDeclarations.size == 1) {
                     "Incorrect test data: concrete fake override vertex $vertex has more than one concrete super-declaration: " +
-                    "$concreteDeclarations"
+                            "$concreteDeclarations"
                 }
             }
         }
@@ -130,7 +129,7 @@ class BridgeTest : TestCase() {
         val actualBridges = generateBridges(function, ::Meth)
         assert(actualBridges.firstOrNull { it.from == it.to } == null) {
             "A bridge invoking itself was generated, which makes no sense, since it will result in StackOverflowError" +
-            " once called: $actualBridges"
+                    " once called: $actualBridges"
         }
         assertEquals(expectedBridges, actualBridges, "Expected and actual bridge sets differ for function $function")
     }
@@ -537,9 +536,11 @@ class BridgeTest : TestCase() {
         val h = v("-D8")
         val i = v("-D9")
         val j = v("+F0")
-        graph(d to a, d to b, d to c,
-              g to d, g to e, g to f,
-              j to g, j to h, j to i)
+        graph(
+            d to a, d to b, d to c,
+            g to d, g to e, g to f,
+            j to g, j to h, j to i
+        )
         doTest(d, setOf(bridge(b, a), bridge(c, a)))
         doTest(g, setOf(bridge(e, a), bridge(f, a)))
         doTest(j, setOf(bridge(h, a), bridge(i, a)))

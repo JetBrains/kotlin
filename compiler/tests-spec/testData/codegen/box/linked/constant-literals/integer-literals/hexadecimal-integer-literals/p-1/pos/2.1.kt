@@ -2,7 +2,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, integer-literals, hexadecimal-integer-literals -> paragraph 1 -> sentence 2
+ * PLACE: constant-literals, integer-literals, hexadecimal-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Sequences with hexadecimal digit symbols separated by underscores.
  */

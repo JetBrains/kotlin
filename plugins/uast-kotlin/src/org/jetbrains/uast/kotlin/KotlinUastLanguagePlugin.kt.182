@@ -128,7 +128,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return when (element) {
             is KotlinUSimpleReferenceExpression.KotlinAccessorCallExpression -> element.setterValue != null
             is KotlinAbstractUExpression -> {
-                val ktElement = element.psi as? KtElement ?: return false
+                val ktElement = element.sourcePsi as? KtElement ?: return false
                 ktElement.analyze()[BindingContext.USED_AS_EXPRESSION, ktElement] ?: false
             }
             else -> false
@@ -155,6 +155,7 @@ internal object KotlinConverter {
         is KtSimpleNameStringTemplateEntry -> unwrapElements(element.parent)
         is KtLightParameterList -> unwrapElements(element.parent)
         is KtTypeElement -> unwrapElements(element.parent)
+        is KtSuperTypeList -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -165,7 +166,10 @@ internal object KotlinConverter {
                                    givenParent: UElement?,
                                    requiredType: Class<out UElement>?): UElement? {
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? {
-            return { ctor(element as P, givenParent) }
+            return {
+                @Suppress("UNCHECKED_CAST")
+                ctor(element as P, givenParent)
+            }
         }
 
         return with (requiredType) { when (element) {
@@ -265,7 +269,10 @@ internal object KotlinConverter {
                                    givenParent: UElement?,
                                    requiredType: Class<out UElement>? = null): UExpression? {
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UExpression): () -> UExpression? {
-            return { ctor(expression as P, givenParent) }
+            return {
+                @Suppress("UNCHECKED_CAST")
+                ctor(expression as P, givenParent)
+            }
         }
 
         return with (requiredType) { when (expression) {
@@ -291,7 +298,7 @@ internal object KotlinConverter {
                         val initializer = psiFactory.createAnalyzableExpression("${tempAssignment.name}.component${i + 1}()",
                                                                                 expression.containingFile)
                         initializer.destructuringDeclarationInitializer = true
-                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, declarationsExpression, initializer), entry, declarationsExpression)
+                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.javaPsi, declarationsExpression, initializer), entry, declarationsExpression)
                     }
                     declarations = listOf(tempAssignment) + destructuringAssignments
                 }
@@ -337,7 +344,7 @@ internal object KotlinConverter {
                     KotlinUDeclarationsExpression(givenParent).apply {
                         declarations = listOf(KotlinUClass.create(lightClass, this))
                     }
-                } ?: UastEmptyExpression
+                } ?: UastEmptyExpression(givenParent)
             }
             is KtFunction -> if (expression.name.isNullOrEmpty()) {
                 expr<ULambdaExpression>(build(::createLocalFunctionLambdaExpression))
@@ -383,7 +390,7 @@ internal object KotlinConverter {
                 is KtWhenConditionWithExpression ->
                     condition.expression?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
 
-                else -> expr<UExpression> { UastEmptyExpression }
+                else -> expr<UExpression> { UastEmptyExpression(givenParent) }
             }
         }
     }
@@ -404,13 +411,20 @@ internal object KotlinConverter {
         givenParent: UElement?,
         requiredType: Class<out UElement>?
     ): UElement? {
-        fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? = { ctor(element as P, givenParent) }
+        fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? = {
+            @Suppress("UNCHECKED_CAST")
+            ctor(element as P, givenParent)
+        }
 
-        fun <P : PsiElement, K : KtElement> buildKt(ktElement: K, ctor: (P, K, UElement?) -> UElement): () -> UElement? =
-            { ctor(element as P, ktElement, givenParent) }
+        fun <P : PsiElement, K : KtElement> buildKt(ktElement: K, ctor: (P, K, UElement?) -> UElement): () -> UElement? = {
+            @Suppress("UNCHECKED_CAST")
+            ctor(element as P, ktElement, givenParent)
+        }
 
-        fun <P : PsiElement, K : KtElement> buildKtOpt(ktElement: K?, ctor: (P, K?, UElement?) -> UElement): () -> UElement? =
-            { ctor(element as P, ktElement, givenParent) }
+        fun <P : PsiElement, K : KtElement> buildKtOpt(ktElement: K?, ctor: (P, K?, UElement?) -> UElement): () -> UElement? = {
+            @Suppress("UNCHECKED_CAST")
+            ctor(element as P, ktElement, givenParent)
+        }
 
         val original = element.originalElement
         return with(requiredType) {
@@ -473,8 +487,11 @@ internal object KotlinConverter {
                     }
 
                 is KtParameter -> el<UParameter> {
-                    val ownerFunction = original.ownerFunction as? KtFunction ?: return null
-                    val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return null
+                    val lightMethod = when (val ownerFunction = original.ownerFunction) {
+                        is KtFunction -> LightClassUtil.getLightClassMethod(ownerFunction)
+                        is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(ownerFunction)
+                        else -> null
+                    } ?: return null
                     val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return null
                     KotlinUParameter(lightParameter, original, givenParent)
                 }
@@ -487,6 +504,9 @@ internal object KotlinConverter {
                         el<UAnnotation> { KotlinUNestedAnnotation.tryCreate(original, givenParent) }
                     } else null
                 is KtLightAnnotationForSourceEntry -> convertDeclarationOrElement(original.kotlinOrigin, givenParent, requiredType)
+                is KtDelegatedSuperTypeEntry -> el<KotlinSupertypeDelegationUExpression> {
+                    KotlinSupertypeDelegationUExpression(original, givenParent)
+                }
                 else -> null
             }
         }
@@ -545,6 +565,7 @@ internal object KotlinConverter {
         val file = createAnalyzableFile("dummy.kt", text, context)
         val declarations = file.declarations
         assert(declarations.size == 1) { "${declarations.size} declarations in $text" }
+        @Suppress("UNCHECKED_CAST")
         return declarations.first() as TDeclaration
     }
 }
@@ -556,10 +577,12 @@ private fun convertVariablesDeclaration(
     val declarationsExpression = parent as? KotlinUDeclarationsExpression
             ?: psi.parent.toUElementOfType<UDeclarationsExpression>() as? KotlinUDeclarationsExpression
             ?: KotlinUDeclarationsExpression(null, parent, psi)
-    val parentPsiElement = parent?.psi
+    val parentPsiElement = parent?.javaPsi //TODO: looks weird. mb look for the first non-null `javaPsi` in `parents` ?
     val variable = KotlinUAnnotatedLocalVariable(
             UastKotlinPsiVariable.create(psi, parentPsiElement, declarationsExpression), psi, declarationsExpression) { annotationParent ->
         psi.annotationEntries.map { KotlinUAnnotation(it, annotationParent) }
     }
     return declarationsExpression.apply { declarations = listOf(variable) }
 }
+
+val kotlinUastPlugin get() = UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE } ?: KotlinUastLanguagePlugin()

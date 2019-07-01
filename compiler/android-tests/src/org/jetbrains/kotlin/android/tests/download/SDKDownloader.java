@@ -35,14 +35,16 @@ public class SDKDownloader {
     private final String skdToolsZipPath;
     private final String buildToolsZipPath;
     private final String gradleZipPath;
+    private final String emulatorZipPath;
 
     private final PathManager pathManager;
 
     private static final String PLATFORM_TOOLS = "28.0.1";
-    private static final String SDK_TOOLS = "25.2.5";
+    private static final String SDK_TOOLS = "4333796"; //"26.1.1";
     public static final String BUILD_TOOLS = "28.0.3";
     private static final int ANDROID_VERSION = 19;
     public static final String GRADLE_VERSION = "4.6";
+    public static final String EMULATOR_TOOLS_VERSION = "5264690"; //"28.0.23";
 
 
     public SDKDownloader(PathManager pathManager) {
@@ -51,9 +53,10 @@ public class SDKDownloader {
         armImage = pathManager.getRootForDownload() + "/arm-image.zip";
         x86Image = pathManager.getRootForDownload() + "/x86-image.zip";
         platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools" + PLATFORM_TOOLS + ".zip";
-        skdToolsZipPath = pathManager.getRootForDownload() + "/tools" + SDK_TOOLS + ".zip";
+        skdToolsZipPath = pathManager.getRootForDownload() + "/sdk-tools" + SDK_TOOLS + ".zip";
         buildToolsZipPath = pathManager.getRootForDownload() + "/build-tools" + BUILD_TOOLS + ".zip";
         gradleZipPath = pathManager.getRootForDownload() + "/gradle" + GRADLE_VERSION + ".zip";
+        emulatorZipPath = pathManager.getRootForDownload() + "/emulator" + EMULATOR_TOOLS_VERSION + ".zip";
     }
 
     public void downloadPlatform() {
@@ -70,11 +73,16 @@ public class SDKDownloader {
     }
 
     public void downloadSdkTools() {
-        download(getDownloadUrl("https://dl.google.com/android/repository/tools_r" + SDK_TOOLS), skdToolsZipPath);
+        download("https://dl.google.com/android/repository/sdk-tools-" + getPlatformName() + "-" + SDK_TOOLS + ".zip",
+                 skdToolsZipPath);
     }
 
     public void downloadBuildTools() {
         download(getDownloadUrl("https://dl.google.com/android/repository/build-tools_r" + BUILD_TOOLS), buildToolsZipPath);
+    }
+    public void downloadEmulator() {
+        download("https://dl.google.com/android/repository/emulator-" + getPlatformName() + "-" + EMULATOR_TOOLS_VERSION + ".zip",
+                 emulatorZipPath);
     }
 
     public void downloadGradle() {
@@ -93,9 +101,25 @@ public class SDKDownloader {
             suffix = "-linux.zip";
         }
         else {
-            throw new IllegalStateException("Your operating system doesn't supported yet.");
+            throw new IllegalStateException("Your operating system isn't supported yet.");
         }
         return prefix + suffix;
+    }
+
+
+    private static String getPlatformName() {
+        if (SystemInfo.isWindows) {
+            return "windows";
+        }
+        else if (SystemInfo.isMac) {
+            return "darwin";
+        }
+        else if (SystemInfo.isUnix) {
+            return "linux";
+        }
+        else {
+            throw new IllegalStateException("Your operating system isn't supported yet.");
+        }
     }
 
     public void downloadAll() {
@@ -105,6 +129,7 @@ public class SDKDownloader {
         downloadPlatformTools();
         downloadBuildTools();
         downloadGradle();
+        downloadEmulator();
     }
 
 
@@ -123,10 +148,9 @@ public class SDKDownloader {
 
         //BUILD TOOLS
         String buildTools = androidSdkRoot + "/build-tools/";
-        String buildToolsFolder = buildTools + BUILD_TOOLS + "/";
-        new File(buildToolsFolder).delete();
         unzip(buildToolsZipPath, buildTools);
-        new File(buildTools + "/android-9").renameTo(new File(buildToolsFolder));
+
+        unzip(emulatorZipPath, androidSdkRoot);
     }
 
     public void deleteAll() {

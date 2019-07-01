@@ -124,3 +124,7 @@ public class JavaClass {
         return 0;
     }
 }
+
+public @interface SpecialExternal {
+    String[] names(); //array is used
+}

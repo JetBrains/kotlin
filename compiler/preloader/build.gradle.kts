@@ -22,5 +22,3 @@ sourceSets {
 runtimeJar {
     manifest.attributes.put("Main-Class", "org.jetbrains.kotlin.preloading.Preloader")
 }
-
-dist()

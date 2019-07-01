@@ -23,6 +23,8 @@ import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.project.Project
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
+import kotlin.math.max
+import kotlin.math.min
 
 class HistoryKeyListener(
         private val project: Project, private val consoleEditor: EditorEx, private val history: CommandHistory
@@ -73,7 +75,7 @@ class HistoryKeyListener(
                     unfinishedCommand = document.text
                 }
 
-                historyPos = Math.max(historyPos - 1, 0)
+                historyPos = max(historyPos - 1, 0)
                 WriteCommandAction.runWriteCommandAction(project) {
                     document.setText(history[historyPos].entryText)
                     EditorUtil.scrollToTheEnd(consoleEditor)
@@ -89,7 +91,7 @@ class HistoryKeyListener(
                     return
                 }
 
-                historyPos = Math.min(historyPos + 1, history.size)
+                historyPos = min(historyPos + 1, history.size)
                 WriteCommandAction.runWriteCommandAction(project) {
                     document.setText(if (historyPos == history.size) unfinishedCommand else history[historyPos].entryText)
                     prevCaretOffset = document.textLength

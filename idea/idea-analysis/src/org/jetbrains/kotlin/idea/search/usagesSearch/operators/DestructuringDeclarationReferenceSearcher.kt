@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
@@ -33,7 +33,7 @@ class DestructuringDeclarationReferenceSearcher(
     targetDeclaration: PsiElement,
     private val componentIndex: Int,
     searchScope: SearchScope,
-    consumer: ExecutorProcessor<PsiReference>,
+    consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
     options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtDestructuringDeclaration>(

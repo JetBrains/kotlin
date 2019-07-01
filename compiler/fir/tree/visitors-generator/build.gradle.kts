@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 import tasks.WriteCopyrightToFile
@@ -10,15 +10,17 @@ plugins {
     id("jps-compatible")
 }
 
+val runtimeOnly by configurations
+val compileOnly by configurations
+runtimeOnly.extendsFrom(compileOnly)
+
 dependencies {
     compile(project(":compiler:psi"))
 
-    compile(intellijCoreDep()) { includeJars("intellij-core") }
-    compile(intellijDep()) {
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    compileOnly(intellijDep()) {
         includeJars("trove4j", "picocontainer", rootProject = rootProject)
-        isTransitive = false
     }
-    compile(intellijDep()) { includeJars("guava", rootProject = rootProject) }
 }
 
 val writeCopyright by task<WriteCopyrightToFile> {

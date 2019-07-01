@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration.ui
 
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
-import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 
 internal fun showMigrationNotification(project: Project, migrationInfo: MigrationInfo) {
     val detectedChangeMessage = buildString {

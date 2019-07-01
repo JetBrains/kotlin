@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -14,6 +14,8 @@ package kotlin.collections
 //
 
 import kotlin.random.*
+import kotlin.ranges.contains
+import kotlin.ranges.reversed
 
 /**
  * Returns 1st *element* from the collection.
@@ -581,6 +583,8 @@ public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 /**
  * Returns a list containing all elements except first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Iterable<T>.drop(n: Int): List<T> {
@@ -610,13 +614,15 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
     }
     var count = 0
     for (item in this) {
-        if (count++ >= n) list.add(item)
+        if (count >= n) list.add(item) else ++count
     }
     return list.optimizeReadOnlyList()
 }
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.drop
  */
@@ -765,6 +771,8 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
 /**
  * Returns a list containing first [n] elements.
  * 
+ * @throws IllegalArgumentException if [n] is negative.
+ * 
  * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Iterable<T>.take(n: Int): List<T> {
@@ -786,6 +794,8 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @throws IllegalArgumentException if [n] is negative.
  * 
  * @sample samples.collections.Collections.Transformations.take
  */
@@ -1296,6 +1306,8 @@ public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> 
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
  */
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
@@ -1645,15 +1657,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): 
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
+    if (!iterator.hasNext()) return maxElem
     var maxValue = selector(maxElem)
-    while (iterator.hasNext()) {
+    do {
         val e = iterator.next()
         val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
         }
-    }
+    } while (iterator.hasNext())
     return maxElem
 }
 
@@ -1732,15 +1745,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): 
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
+    if (!iterator.hasNext()) return minElem
     var minValue = selector(minElem)
-    while (iterator.hasNext()) {
+    do {
         val e = iterator.next()
         val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
         }
-    }
+    } while (iterator.hasNext())
     return minElem
 }
 

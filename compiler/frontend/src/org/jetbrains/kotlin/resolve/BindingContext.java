@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve;
@@ -98,6 +98,8 @@ public interface BindingContext {
     WritableSlice<KtExpression, DataFlowInfo> DATA_FLOW_INFO_BEFORE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, KotlinType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtElement, Computation> EXPRESSION_EFFECTS = Slices.createSimpleSlice();
+    WritableSlice<KtElement, Boolean> CONTRACT_NOT_ALLOWED = Slices.createSimpleSlice();
+    WritableSlice<KtElement, Boolean> IS_CONTRACT_DECLARATION_BLOCK = Slices.createSimpleSlice();
     WritableSlice<KtFunction, KotlinType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
     WritableSlice<VariableDescriptor, DataFlowValue> BOUND_INITIALIZER_VALUE = Slices.createSimpleSlice();

@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
@@ -210,7 +210,12 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val result = LinkedHashSet<PsiReference>()
 
         val searchScope = functionPsi.useScope
-        val options = KotlinReferencesSearchOptions(true, false, false, false)
+        val options = KotlinReferencesSearchOptions(
+            acceptCallableOverrides = true,
+            acceptOverloads = false,
+            acceptExtensionsOfDeclarationClass = false,
+            acceptCompanionObjectMembers = false
+        )
         val parameters = KotlinReferencesSearchParameters(functionPsi, searchScope, false, null, options)
         result.addAll(ReferencesSearch.search(parameters).findAll())
         if (functionPsi is KtProperty || functionPsi is KtParameter) {
@@ -234,7 +239,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val functionPsi = functionUsageInfo.element ?: return
 
         for (reference in findReferences(functionPsi)) {
-            val element = reference.element ?: continue
+            val element = reference.element
 
             when {
                 reference is KtInvokeFunctionReference || reference is KtArrayAccessReference -> {

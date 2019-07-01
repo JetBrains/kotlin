@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
+import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -813,6 +816,192 @@ class KotlinGradleIT : BaseGradleIT() {
         build("assemble", "-Pkotlin.build.report.enable=true") {
             assertSuccessful()
             assertContains("Kotlin build report is written to")
+        }
+    }
+
+    @Test
+    fun testKt29971() = with(Project("kt-29971", GradleVersionRequired.AtLeast("5.0"))) {
+        build("jvm-app:build") {
+            assertSuccessful()
+            assertTasksExecuted(":jvm-app:compileKotlin")
+        }
+    }
+
+    @Test
+    fun testDetectingDifferentClassLoaders() = with(Project("kt-27059-pom-rewriting", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+
+        val originalRootBuildScript = gradleBuildScript().readText()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("publish", "-PmppProjectDependency=true") {
+            assertSuccessful()
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
+        }
+
+        // Specify the plugin versions in the subprojects with different plugin sets – this will make Gradle use separate class loaders
+        gradleBuildScript().modify {
+            originalRootBuildScript.checkedReplace("id \"org.jetbrains.kotlin.multiplatform\"", "//")
+        }
+        gradleBuildScript("mpp-lib").modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.multiplatform\"",
+                "id \"org.jetbrains.kotlin.multiplatform\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+        gradleBuildScript("jvm-app").modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.jvm\"",
+                "id \"org.jetbrains.kotlin.jvm\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+        gradleBuildScript("js-app").modify {
+            it.checkedReplace(
+                "id \"kotlin2js\"",
+                "id \"kotlin2js\" version \"<pluginMarkerVersion>\""
+            ).let(::transformBuildScriptWithPluginsDsl)
+        }
+
+        // Also include another project via a composite build:
+        transformProjectWithPluginsDsl("allopenPluginsDsl", directoryPrefix = "pluginsDsl").let { other ->
+            val result = other.projectName
+            other.setupWorkingDir()
+            other.projectDir.copyRecursively(projectDir.resolve(result))
+            gradleSettingsScript().appendText("\nincludeBuild(\"${result}\")")
+            gradleBuildScript().appendText(
+                "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"${result}\").task(\":assemble\"))"
+            )
+            result
+        }
+
+        build("publish", "-PmppProjectDependency=true") {
+            assertSuccessful()
+            assertContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+
+            val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
+                .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
+
+            assertEquals(setOf(":mpp-lib", ":jvm-app", ":js-app"), specificProjectsReported)
+        }
+
+        // Test the flag that turns off the warnings
+        build("publish", "-PmppProjectDependency=true", "-Pkotlin.pluginLoadedInMultipleProjects.ignore=true") {
+            assertSuccessful()
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            assertNotContains(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)
+        }
+    }
+
+    @Test
+    fun testNewModelInOldJvmPlugin() = with(Project("new-model-in-old-plugin", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("publish", "check", "runBenchmark") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileBenchmarkKotlin", ":test", ":runBenchmark")
+
+            // Find the benchmark output:
+            assertContains("f ran at the speed of light")
+
+            val moduleDir = "build/repo/com/example/new-model/1.0/"
+
+            val publishedJar = fileInWorkingDir(moduleDir + "new-model-1.0.jar")
+            ZipFile(publishedJar).use { zip ->
+                val entries = zip.entries().asSequence().map { it.name }
+                assertTrue { "com/example/A.class" in entries }
+            }
+
+            val publishedPom = fileInWorkingDir(moduleDir + "new-model-1.0.pom")
+            val kotlinVersion = defaultBuildOptions().kotlinVersion
+            val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
+            assertTrue { "kotlin-gradle-plugin-api</artifactId><version>$kotlinVersion</version><scope>compile</scope>" in pomText }
+            assertTrue { "kotlin-stdlib-jdk8</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
+
+            assertFileExists(moduleDir + "new-model-1.0-sources.jar")
+        }
+    }
+
+    @Test
+    fun testUserDefinedAttributesInSinglePlatformProject() =
+        with(Project("multiprojectWithDependency", GradleVersionRequired.AtLeast("4.7"))) {
+            setupWorkingDir()
+            gradleBuildScript("projA").appendText(
+                "\n" + """
+                def targetAttribute = Attribute.of("com.example.target", String)
+                def compilationAttribute = Attribute.of("com.example.compilation", String)
+                kotlin.target.attributes.attribute(targetAttribute, "foo")
+                kotlin.target.compilations["main"].attributes.attribute(compilationAttribute, "foo")
+                """.trimIndent()
+            )
+            gradleBuildScript("projB").appendText(
+                "\n" + """
+                def targetAttribute = Attribute.of("com.example.target", String)
+                def compilationAttribute = Attribute.of("com.example.compilation", String)
+                kotlin.target.attributes.attribute(targetAttribute, "foo")
+                kotlin.target.compilations["main"].attributes.attribute(compilationAttribute, "foo")
+                """.trimIndent()
+            )
+            build(":projB:compileKotlin") {
+                assertSuccessful()
+            }
+            // Break dependency resolution by providing incompatible custom attributes in the target:
+            gradleBuildScript("projB").appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
+            build(":projB:compileKotlin") {
+                assertFailed()
+                assertContains("Required com.example.target 'bar'")
+            }
+            // And using the compilation attributes (fix the target attributes first):
+            gradleBuildScript("projB").appendText(
+                "\n" + """
+                kotlin.target.attributes.attribute(targetAttribute, "foo")
+                kotlin.target.compilations["main"].attributes.attribute(compilationAttribute, "bar")
+                """.trimIndent()
+            )
+            build(":projB:compileKotlin") {
+                assertFailed()
+                assertContains("Required com.example.compilation 'bar'")
+            }
+        }
+
+    @Test
+    fun testLoadCompilerEmbeddableAfterOtherKotlinArtifacts() = with(Project("simpleProject")) {
+        setupWorkingDir()
+        val buildscriptClasspathPrefix = "buildscript-classpath = "
+        gradleBuildScript().appendText(
+            "\n" + """
+                println "$buildscriptClasspathPrefix" + Arrays.toString(buildscript.classLoader.getURLs())
+            """.trimIndent()
+        )
+
+        // get the classpath, then reorder it so that kotlin-compiler-embeddable is loaded after all other JARs
+        lateinit var classpath: List<String>
+
+        build {
+            val classpathLine = output.lines().single { buildscriptClasspathPrefix in it }
+            classpath = classpathLine.substringAfter(buildscriptClasspathPrefix).removeSurrounding("[", "]").split(", ")
+        }
+
+        gradleBuildScript().modify {
+            val reorderedClasspath = run {
+                val (kotlinCompilerEmbeddable, others) = classpath.partition { "kotlin-compiler-embeddable" in it }
+                others + kotlinCompilerEmbeddable
+            }
+            val newClasspathString = "classpath files(\n" + reorderedClasspath.joinToString(",\n") { "'$it'" } + "\n)"
+            it.checkedReplace("classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version\"", newClasspathString)
+        }
+
+        build("compileKotlin") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testNoScriptingWarning() = with(Project("simpleProject")) {
+        // KT-31124
+        build {
+            assertNotContains(ScriptingGradleSubplugin.MISCONFIGURATION_MESSAGE_SUFFIX)
         }
     }
 }

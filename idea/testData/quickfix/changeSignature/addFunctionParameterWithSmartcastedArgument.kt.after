@@ -1,4 +1,4 @@
-// "Change the signature of function 'doSmthWithChild'" "true"
+// "Add parameter to function 'doSmthWithChild'" "true"
 // DISABLE-ERRORS
 // COMPILER_ARGUMENTS: -XXLanguage:+NewInference
 

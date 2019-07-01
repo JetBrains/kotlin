@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isFunctionalExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.TypeResolver
@@ -216,6 +217,8 @@ fun processFunctionalExpression(
             )
 
         is KtNamedFunction -> {
+            // if function is a not anonymous function, resolve it as simple expression
+            if (!postponedExpression.isFunctionalExpression()) return null
             val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference, typeResolver)
             val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: emptyArray()
             val returnType = resolveType(outerCallContext, postponedExpression.typeReference, typeResolver)
@@ -304,9 +307,7 @@ internal fun createSimplePSICallArgument(
         ExpressionReceiver.create(ktExpression, baseType, bindingContext),
         languageVersionSettings,
         dataFlowValueFactory
-    ).let {
-        if (onlyResolvedCall == null) it.prepareReceiverRegardingCaptureTypes() else it
-    }
+    ).prepareReceiverRegardingCaptureTypes()
 
     return if (onlyResolvedCall == null) {
         ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)

@@ -55,7 +55,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, disableCallAssertions);
         configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, disableParamAssertions);
 
-        myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        myEnvironment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         myFiles = null;
     }
 
@@ -87,7 +88,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         doTestCallAssertions(true);
     }
 
-    public void testNoAssertionsForKotlinFromSource() throws Exception {
+    public void testNoAssertionsForKotlinFromSource() {
         setUpEnvironment(false, true);
 
         loadFiles(getPrefix() + "/noAssertionsForKotlin.kt", getPrefix() + "/noAssertionsForKotlinMain.kt");
@@ -95,7 +96,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         assertNoIntrinsicsMethodIsCalledInMyClasses(true);
     }
 
-    public void testNoAssertionsForKotlinFromBinary() throws Exception {
+    public void testNoAssertionsForKotlinFromBinary() {
         setUpEnvironment(false, true);
         loadSource("noAssertionsForKotlin.kt");
         OutputFileCollection outputFiles = generateClassesInFile();
@@ -116,7 +117,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         generateFunction().invoke(null);
     }
 
-    public void testDoNotGenerateParamAssertions() throws Exception {
+    public void testDoNotGenerateParamAssertions() {
         setUpEnvironment(true, true);
 
         loadSource("doNotGenerateParamAssertions.kt");
@@ -124,7 +125,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         assertNoIntrinsicsMethodIsCalled("A", true);
     }
 
-    public void testNoParamAssertionForPrivateMethod() throws Exception {
+    public void testNoParamAssertionForPrivateMethod() {
         setUpEnvironment(true, false);
 
         loadSource("noAssertionForPrivateMethod.kt");

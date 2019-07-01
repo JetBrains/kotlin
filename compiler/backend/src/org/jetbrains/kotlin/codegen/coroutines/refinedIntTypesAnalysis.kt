@@ -135,10 +135,9 @@ internal fun performRefinedTypeAnalysis(methodNode: MethodNode, thisName: String
         override fun use(frame: VarExpectedTypeFrame, insn: AbstractInsnNode) {
             val (expectedType, sources) = expectedTypeAndSourcesByInsnIndex[insn.index()] ?: return
 
-            sources.flatMap(SourceValue::insns).forEach {
-                insn ->
-                if (insn.isIntLoad()) {
-                    frame.updateExpectedType((insn as VarInsnNode).`var`, expectedType)
+            sources.flatMap(SourceValue::insns).forEach { insnNode ->
+                if (insnNode.isIntLoad()) {
+                    frame.updateExpectedType((insnNode as VarInsnNode).`var`, expectedType)
                 }
             }
         }

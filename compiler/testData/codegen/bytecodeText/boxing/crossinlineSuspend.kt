@@ -6,5 +6,8 @@ inline fun inlineMe(crossinline c: suspend () -> Int): suspend () -> Int {
     return i
 }
 
+// invokeSuspend$$forInline : valueOf
+// invokeSuspend : boxInt
+
 // 1 valueOf
-// 0 boxInt
+// 1 boxInt

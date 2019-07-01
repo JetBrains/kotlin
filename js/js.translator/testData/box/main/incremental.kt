@@ -1,5 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1281
-// IGNORE_BACKEND: JS_IR
 // CALL_MAIN
 
 // FILE: ok.kt
@@ -17,6 +16,16 @@ import ok.*
 
 fun main(args: Array<String>) {
     ok = "fail: b.b"
+}
+
+// FILE: 0.kt
+
+package b
+
+import ok.*
+
+fun main(args: Array<String>) {
+    ok = "fail: b"
 }
 
 // FILE: 2.kt

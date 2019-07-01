@@ -3,6 +3,10 @@ import org.gradle.util.VersionNumber
 apply plugin: 'com.android.test'
 apply plugin: 'kotlin-android'
 
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "25.0.2"

@@ -42,6 +42,7 @@ public class SpecialFiles {
 
         //Test with no reflection at runtime
         excludedFiles.add("noReflectAtRuntime");
+        excludedFiles.add("noReflect");
         excludedFiles.add("functionNtoStringNoReflect.kt");
         excludedFiles.add("getDelegateWithoutReflection.kt");
 

@@ -16,11 +16,13 @@
 
 package kotlin.reflect.jvm.internal.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.io.InputStream
 
 class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinClassFinder {
@@ -41,8 +43,11 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
     // TODO
     override fun hasMetadataPackage(fqName: FqName): Boolean = false
 
-    // TODO: load built-ins from classLoader
-    override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
+    override fun findBuiltInsData(packageFqName: FqName): InputStream? {
+        if (!packageFqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null
+
+        return classLoader.getResourceAsStream(BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))
+    }
 }
 
 private fun ClassId.toRuntimeFqName(): String {

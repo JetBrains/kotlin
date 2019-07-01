@@ -9,6 +9,8 @@ public final class A<T#0 /* T */> : kotlin/Any {
   public final fun <T#1 /* T */> a(t: T#1): kotlin/Unit
 
   // nested class: B
+
+  // module name: test-module
 }
 // A$B.class
 // ------------------------------------------
@@ -24,6 +26,8 @@ public final inner class A.B<T#1 /* U */, T#2 /* V */ : T#1> : kotlin/Any {
   public final fun bb(t: T#0): kotlin/Unit
 
   // nested class: C
+
+  // module name: test-module
 }
 // A$B$C.class
 // ------------------------------------------
@@ -40,6 +44,8 @@ public final inner class A.B.C<T#3 /* T */, T#4 /* U */> : kotlin/Any {
 
   // signature: z(LA$B$C;)V
   public final fun z(c: A<kotlin/Int>.B<kotlin/Any, kotlin/Byte>.C<kotlin/Unit, kotlin/Long>): kotlin/Unit
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

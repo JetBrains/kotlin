@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertH
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import java.util.*
+import kotlin.math.max
 
 class LookupElementsCollector(
         private val onFlush: () -> Unit,
@@ -157,7 +158,7 @@ class LookupElementsCollector(
         }
 
         val matchingDegree = RealPrefixMatchingWeigher.getBestMatchingDegree(result, prefixMatcher)
-        bestMatchingDegree = Math.max(bestMatchingDegree, matchingDegree)
+        bestMatchingDegree = max(bestMatchingDegree, matchingDegree)
     }
 
     // used to avoid insertion of spaces before/after ',', '=' on just typing

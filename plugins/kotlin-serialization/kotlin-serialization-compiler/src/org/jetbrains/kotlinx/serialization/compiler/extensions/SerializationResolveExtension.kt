@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
@@ -67,6 +68,16 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         KSerializerDescriptorResolver.addSerialInfoSuperType(thisDescriptor, supertypes)
         KSerializerDescriptorResolver.addSerializerSupertypes(thisDescriptor, supertypes)
+    }
+
+    override fun generateSyntheticSecondaryConstructors(
+        thisDescriptor: ClassDescriptor,
+        bindingContext: BindingContext,
+        result: MutableCollection<ClassConstructorDescriptor>
+    ) {
+        if (thisDescriptor.isInternalSerializable) {
+            result.add(KSerializerDescriptorResolver.createLoadConstructorDescriptor(thisDescriptor, bindingContext))
+        }
     }
 
     override fun generateSyntheticMethods(

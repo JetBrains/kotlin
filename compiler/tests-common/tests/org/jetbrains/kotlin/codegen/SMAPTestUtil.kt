@@ -41,7 +41,7 @@ object SMAPTestUtil {
                 }
             }, 0)
 
-            SMAPAndFile.SMAPAndFile(debugInfo, outputFile.sourceFiles.single(), outputFile.relativePath)
+            SMAPAndFile(debugInfo, outputFile.sourceFiles.single(), outputFile.relativePath)
         }
     }
 
@@ -61,7 +61,10 @@ object SMAPTestUtil {
     }
 
     private fun checkExtension(file: CodegenTestCase.TestFile, separateCompilation: Boolean) =
-            file.name.run { endsWith(".smap") || if (separateCompilation) endsWith(".smap-separate-compilation") else endsWith(".smap-nonseparate-compilation") }
+        file.name.run {
+            endsWith(".smap") ||
+                    if (separateCompilation) endsWith(".smap-separate-compilation") else endsWith(".smap-nonseparate-compilation")
+        }
 
     fun checkSMAP(inputFiles: List<CodegenTestCase.TestFile>, outputFiles: Iterable<OutputFile>, separateCompilation: Boolean) {
         if (!GENERATE_SMAP) return
@@ -71,15 +74,15 @@ object SMAPTestUtil {
         val compiledData = compiledSmaps.groupBy {
             it.sourceFile
         }.map {
-            val smap = it.value.sortedByDescending { it.outputFile }.mapNotNull { it.smap }.joinToString("\n")
+            val smap = it.value.sortedByDescending(SMAPAndFile::outputFile).mapNotNull(SMAPAndFile::smap).joinToString("\n")
             SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key, "NOT_SORTED")
         }.associateBy { it.sourceFile }
 
         for (source in sourceData) {
-            val ktFileName = "/" + source.sourceFile.
-                    replace(".smap-nonseparate-compilation", ".kt").
-                    replace(".smap-separate-compilation", ".kt").
-                    replace(".smap", ".kt")
+            val ktFileName = "/" + source.sourceFile
+                .replace(".smap-nonseparate-compilation", ".kt")
+                .replace(".smap-separate-compilation", ".kt")
+                .replace(".smap", ".kt")
             val data = compiledData[ktFileName]
             Assert.assertEquals("Smap data differs for $ktFileName", normalize(source.smap), normalize(data?.smap))
         }
@@ -90,37 +93,32 @@ object SMAPTestUtil {
     private fun checkNoConflictMappings(compiledSmap: List<SMAPAndFile>?) {
         if (compiledSmap == null) return
 
-        compiledSmap.mapNotNull { it.smap }.forEach {
-            val smap = SMAPParser.parse(it)
-            val conflictingLines = smap.fileMappings.flatMap {
-                fileMapping ->
-                fileMapping.lineMappings.flatMap {
-                    lineMapping: RangeMapping ->
+        compiledSmap.mapNotNull(SMAPAndFile::smap).forEach { smapString ->
+            val smap = SMAPParser.parse(smapString)
+            val conflictingLines = smap.fileMappings.flatMap { fileMapping ->
+                fileMapping.lineMappings.flatMap { lineMapping: RangeMapping ->
                     lineMapping.toRange.keysToMap { lineMapping }.entries
                 }
             }.groupBy { it.key }.entries.filter { it.value.size != 1 }
 
-
             Assert.assertTrue(
-                    conflictingLines.joinToString(separator = "\n") {
-                        "Conflicting mapping for line ${it.key} in ${it.value.joinToString { it.toString() }} "
-                    },
-                    conflictingLines.isEmpty()
+                conflictingLines.joinToString(separator = "\n") {
+                    "Conflicting mapping for line ${it.key} in ${it.value.joinToString(transform = Any::toString)}"
+                },
+                conflictingLines.isEmpty()
             )
         }
     }
 
     private fun normalize(text: String?) =
-            text?.let { StringUtil.convertLineSeparators(it.trim()) }
+        text?.let { StringUtil.convertLineSeparators(it.trim()) }
 
     private class SMAPAndFile(val smap: String?, val sourceFile: String, val outputFile: String) {
-        companion object {
-            fun SMAPAndFile(smap: String?, sourceFile: File, outputFile: String) =
-                    SMAPAndFile(smap, getPath(sourceFile), outputFile)
+        constructor(smap: String?, sourceFile: File, outputFile: String) : this(smap, getPath(sourceFile), outputFile)
 
-            fun getPath(file: File): String {
-                return getPath(file.canonicalPath)
-            }
+        companion object {
+            fun getPath(file: File): String =
+                getPath(file.canonicalPath)
 
             fun getPath(canonicalPath: String): String {
                 //There are some problems with disk name on windows cause LightVirtualFile return it without disk name

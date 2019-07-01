@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 
 inline fun <R, T> foo(x : R?, block : (R?) -> T) : T {
     return block(x)

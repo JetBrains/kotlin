@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class ExplicitThisInspection : AbstractKotlinInspection() {
 
@@ -55,6 +56,7 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
             val scope = expression.getResolutionScope(context) ?: return
 
             val referenceExpression = reference as? KtNameReferenceExpression ?: reference.getChildOfType() ?: return
+            val receiverType = context[BindingContext.EXPRESSION_TYPE_INFO, thisExpression]?.type ?: return
 
             //we avoid overload-related problems by enforcing that there is only one candidate
             val name = referenceExpression.getReferencedNameAsName()
@@ -62,10 +64,11 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
             if (referenceExpression.getCallableDescriptor() is SyntheticJavaPropertyDescriptor) {
                 if (candidates.map { it.containingDeclaration }.distinct().size != 1) return
             } else {
-                if (candidates.size != 1) return
+                val candidate = candidates.singleOrNull() ?: return
+                val extensionType = candidate.extensionReceiverParameter?.type
+                if (extensionType != null && extensionType != receiverType && receiverType.isSubtypeOf(extensionType)) return
             }
 
-            val receiverType = context[BindingContext.EXPRESSION_TYPE_INFO, thisExpression]?.type ?: return
             val expressionFactory = scope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType) ?: return
 
             val label = thisExpression.getLabelName() ?: ""
@@ -85,9 +88,7 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val thisExpression = descriptor.psiElement as? KtThisExpression ?: return
-            val parent = thisExpression.parent
-
-            when (parent) {
+            when (val parent = thisExpression.parent) {
                 is KtDotQualifiedExpression -> parent.replace(parent.selectorExpression ?: return)
                 is KtCallableReferenceExpression -> thisExpression.delete()
             }

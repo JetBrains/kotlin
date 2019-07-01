@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
+@Suppress("DEPRECATION")
 class ConvertTwoComparisonsToRangeCheckInspection : IntentionBasedInspection<KtBinaryExpression>(
         ConvertTwoComparisonsToRangeCheckIntention::class
 )

@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.types.KotlinType
 
 class ChangeFunctionLiteralSignatureFix private constructor(
-        functionLiteral: KtFunctionLiteral,
-        functionDescriptor: FunctionDescriptor,
-        private val parameterTypes: List<KotlinType>
+    functionLiteral: KtFunctionLiteral,
+    functionDescriptor: FunctionDescriptor,
+    private val parameterTypes: List<KotlinType>
 ) : ChangeFunctionSignatureFix(functionLiteral, functionDescriptor) {
 
     override fun getText() = "Change the signature of lambda expression"
@@ -42,25 +42,26 @@ class ChangeFunctionLiteralSignatureFix private constructor(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         runChangeSignature(
-                project,
-                functionDescriptor,
-                object : KotlinChangeSignatureConfiguration {
-                    override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                        return originalDescriptor.modify { descriptor ->
-                            val validator = CollectingNameValidator()
-                            descriptor.clearNonReceiverParameters()
-                            for (type in parameterTypes) {
-                                val name = KotlinNameSuggester.suggestNamesByType(type, validator, "param")[0]
-                                descriptor.addParameter(KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, type)))
-                            }
+            project,
+            functionDescriptor,
+            object : KotlinChangeSignatureConfiguration {
+                override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
+                    return originalDescriptor.modify { descriptor ->
+                        val validator = CollectingNameValidator()
+                        descriptor.clearNonReceiverParameters()
+                        for (type in parameterTypes) {
+                            val name = KotlinNameSuggester.suggestNamesByType(type, validator, "param")[0]
+                            descriptor.addParameter(KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, type)))
                         }
                     }
+                }
 
-                    override fun performSilently(affectedFunctions: Collection<PsiElement>) = false
-                    override fun forcePerformForSelectedFunctionOnly() = false
-                },
-                element,
-                text)
+                override fun performSilently(affectedFunctions: Collection<PsiElement>) = false
+                override fun forcePerformForSelectedFunctionOnly() = false
+            },
+            element,
+            text
+        )
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtFunctionLiteral, Companion.Data>() {
@@ -77,7 +78,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
             return Data(descriptor, parameterTypes)
         }
 
-        override fun createFix(originalElement: KtFunctionLiteral, data: Data): IntentionAction?
-                = ChangeFunctionLiteralSignatureFix(originalElement, data.descriptor, data.parameterTypes)
+        override fun createFix(originalElement: KtFunctionLiteral, data: Data): IntentionAction? =
+            ChangeFunctionLiteralSignatureFix(originalElement, data.descriptor, data.parameterTypes)
     }
 }

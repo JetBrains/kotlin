@@ -2,7 +2,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, real-literals -> paragraph 1 -> sentence 3
+ * PLACE: constant-literals, real-literals -> paragraph 1 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: Simple real literals suffixed by f/F (the float suffix) with a different whole-number part and fraction part.
  */

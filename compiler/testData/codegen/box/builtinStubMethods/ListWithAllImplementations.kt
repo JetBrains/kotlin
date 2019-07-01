@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 class MyList<T>(val v: T): List<T> {

@@ -1,4 +1,3 @@
-// ULTRA_LIGHT_CLASSES
 package test
 
 expect interface Closable {

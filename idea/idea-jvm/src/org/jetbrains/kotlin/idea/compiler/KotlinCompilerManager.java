@@ -20,7 +20,7 @@ import com.intellij.diagnostic.PluginException;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
-import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -38,7 +38,7 @@ import java.util.Set;
 import static org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
 import static org.jetbrains.kotlin.config.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
 
-public class KotlinCompilerManager extends AbstractProjectComponent {
+public class KotlinCompilerManager implements ProjectComponent {
     private static final Logger LOG = Logger.getInstance(KotlinCompilerManager.class);
 
     // Comes from external make
@@ -46,7 +46,6 @@ public class KotlinCompilerManager extends AbstractProjectComponent {
     private static final Set<String> FILE_EXTS_WHICH_NEEDS_REFRESH = ContainerUtil.immutableSet(JavaScript.DOT_EXTENSION, ".map");
 
     public KotlinCompilerManager(Project project, CompilerManager manager) {
-        super(project);
         manager.addCompilableFileType(KotlinFileType.INSTANCE);
         manager.addCompilationStatusListener(new CompilationStatusListener() {
             @Override

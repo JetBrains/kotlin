@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jvm.abi
@@ -108,7 +108,7 @@ class JvmAbiAnalysisHandlerExtension(
 
             val visitor = InnerClassesCollectingVisitor()
             output.accept(visitor)
-            val outputInternalName = visitor.ownInternalName!!
+            val outputInternalName = visitor.ownInternalName
             internalNameToFile[outputInternalName] = output.file
             innerClasses[outputInternalName] = visitor.innerClasses
         }

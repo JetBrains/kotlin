@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 var storage = 0
 
 var Int.foo: Int

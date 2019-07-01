@@ -74,16 +74,22 @@ class FunctionReader(
         val fileContent: String,
         val moduleVariable: String,
         val kotlinVariable: String,
-        val specialFunctions: Map<String, SpecialFunction>,
+        specialFunctionsProvider: () -> Map<String, SpecialFunction>,
         offsetToSourceMappingProvider: () -> OffsetToSourceMapping,
-        val sourceMap: SourceMap?,
+        sourceMapProvider: () -> SourceMap?,
         val outputDir: File?
     ) {
+        val specialFunctions: Map<String, SpecialFunction> by lazy(specialFunctionsProvider)
+
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
 
-        val wrapFunctionRegex = specialFunctions.entries
-            .singleOrNull { (_, v) -> v == SpecialFunction.WRAP_FUNCTION }?.key
-            ?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
+        val sourceMap: SourceMap? by lazy(sourceMapProvider)
+
+        val wrapFunctionRegex by lazy {
+            specialFunctions.entries
+                .singleOrNull { (_, v) -> v == SpecialFunction.WRAP_FUNCTION }?.key
+                ?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
+        }
     }
 
     private val moduleNameToInfo by lazy {
@@ -105,21 +111,26 @@ class FunctionReader(
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
 
-                val matcher = SPECIAL_FUNCTION_PATTERN.matcher(content)
-                val specialFunctions = mutableMapOf<String, SpecialFunction>()
-                while (matcher.find()) {
-                    if (matcher.group(2) == kotlinVariable) {
-                        specialFunctions[matcher.group(1)] = specialFunctionsByName[matcher.group(3)]!!
+                val specialFunctionsProvider = {
+                    val matcher = SPECIAL_FUNCTION_PATTERN.matcher(content)
+                    val specialFunctions = mutableMapOf<String, SpecialFunction>()
+                    while (matcher.find()) {
+                        if (matcher.group(2) == kotlinVariable) {
+                            specialFunctions[matcher.group(1)] = specialFunctionsByName[matcher.group(3)]!!
+                        }
                     }
+                    specialFunctions
                 }
 
-                val sourceMap = sourceMapContent?.let {
-                    val sourceMapResult = SourceMapParser.parse(StringReader(it))
-                    when (sourceMapResult) {
-                        is SourceMapSuccess -> sourceMapResult.value
-                        is SourceMapError -> {
-                            reporter.warning("Error parsing source map file for $path: ${sourceMapResult.message}")
-                            null
+                val sourceMapProvider = {
+                    sourceMapContent?.let {
+                        val sourceMapResult = SourceMapParser.parse(it)
+                        when (sourceMapResult) {
+                            is SourceMapSuccess -> sourceMapResult.value
+                            is SourceMapError -> {
+                                reporter.warning("Error parsing source map file for $path: ${sourceMapResult.message}")
+                                null
+                            }
                         }
                     }
                 }
@@ -129,9 +140,9 @@ class FunctionReader(
                     fileContent = content,
                     moduleVariable = moduleVariable,
                     kotlinVariable = kotlinVariable,
-                    specialFunctions = specialFunctions,
+                    specialFunctionsProvider = specialFunctionsProvider,
                     offsetToSourceMappingProvider = { OffsetToSourceMapping(content) },
-                    sourceMap = sourceMap,
+                    sourceMapProvider = sourceMapProvider,
                     outputDir = file?.parentFile
                 )
 

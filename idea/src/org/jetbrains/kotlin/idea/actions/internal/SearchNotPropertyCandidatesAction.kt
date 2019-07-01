@@ -30,7 +30,6 @@ import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.isFromJava
 import org.jetbrains.kotlin.name.FqName
@@ -40,7 +39,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 class SearchNotPropertyCandidatesAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e?.project!!
+        val project = e.project!!
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
 
         val desc = psiFile.findModuleDescriptor()
@@ -48,21 +47,21 @@ class SearchNotPropertyCandidatesAction : AnAction() {
         val packageDesc = try {
             val fqName = FqName.fromSegments(result!!.split('.'))
             desc.getPackage(fqName)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             return
         }
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                {
-                    runReadAction {
-                        ProgressManager.getInstance().progressIndicatorNullable!!.isIndeterminate = true
-                        processAllDescriptors(packageDesc, project)
-                    }
-                },
-                "Searching for Not Property candidates",
-                true,
-                project)
+            {
+                runReadAction {
+                    ProgressManager.getInstance().progressIndicator!!.isIndeterminate = true
+                    processAllDescriptors(packageDesc, project)
+                }
+            },
+            "Searching for Not Property candidates",
+            true,
+            project
+        )
     }
 
 
@@ -85,7 +84,8 @@ class SearchNotPropertyCandidatesAction : AnAction() {
                         val name = desc.fqNameUnsafe.shortName().asString()
                         if (name.length > 3 &&
                             ((name.startsWith("get") && desc.valueParameters.isEmpty() && desc.returnType != null) ||
-                             (name.startsWith("set") && desc.valueParameters.size == 1))) {
+                                    (name.startsWith("set") && desc.valueParameters.size == 1))
+                        ) {
                             if (desc in matchedDescriptors) return
                             matchedDescriptors += desc
                         }
@@ -117,22 +117,22 @@ class SearchNotPropertyCandidatesAction : AnAction() {
 
 
         var i = 0
-        resultDescriptors.forEach { desc ->
-            progress("Step 2: ${i++} of ${resultDescriptors.size}", "$desc")
-            val source = DescriptorToSourceUtilsIde.getAllDeclarations(project, desc)
-                                 .filterIsInstance<PsiMethod>()
-                                 .firstOrNull() ?: return@forEach
+        resultDescriptors.forEach { functionDescriptor ->
+            progress("Step 2: ${i++} of ${resultDescriptors.size}", "$functionDescriptor")
+            val source = DescriptorToSourceUtilsIde.getAllDeclarations(project, functionDescriptor)
+                .filterIsInstance<PsiMethod>()
+                .firstOrNull() ?: return@forEach
             val abstract = source.modifierList.hasModifierProperty(PsiModifier.ABSTRACT)
             if (!abstract) {
                 if (!source.isTrivial()) {
-                    descriptorToPsiBinding[desc] = source
+                    descriptorToPsiBinding[functionDescriptor] = source
                 }
             }
         }
 
         val nonTrivial = mutableSetOf<FunctionDescriptor>()
         i = 0
-        descriptorToPsiBinding.forEach { t, u ->
+        descriptorToPsiBinding.forEach { (t, u) ->
             progress("Step 3: ${i++} of ${descriptorToPsiBinding.size}", "$t")
             val descriptors = t.overriddenDescriptors
             var impl = false
@@ -156,8 +156,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
         if (!ApplicationManager.getApplication().isInternal) {
             e.presentation.isVisible = false
             e.presentation.isEnabled = false
-        }
-        else {
+        } else {
             e.presentation.isVisible = true
             e.presentation.isEnabled = e.getData(CommonDataKeys.PSI_FILE) is KtFile
         }

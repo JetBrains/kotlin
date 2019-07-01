@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
-import org.jetbrains.kotlin.types.FlexibleType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.isIntersectionType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariance
 import org.jetbrains.kotlin.utils.SmartList
 
 
@@ -34,7 +33,7 @@ private typealias Variable = VariableWithConstraints
 class TypeVariableDirectionCalculator(
     private val c: VariableFixationFinder.Context,
     private val postponedKtPrimitives: List<PostponedResolvedAtom>,
-    topLevelType: UnwrappedType
+    topLevelType: KotlinTypeMarker
 ) {
     enum class ResolveDirection {
         TO_SUBTYPE,
@@ -55,7 +54,7 @@ class TypeVariableDirectionCalculator(
     fun getDirection(typeVariable: Variable): ResolveDirection =
         directions.getOrDefault(typeVariable, ResolveDirection.UNKNOWN)
 
-    private fun setupDirections(topReturnType: UnwrappedType) {
+    private fun setupDirections(topReturnType: KotlinTypeMarker) {
         topReturnType.visitType(ResolveDirection.TO_SUBTYPE) { variableWithConstraints, direction ->
             enterToNode(variableWithConstraints, direction)
         }
@@ -105,47 +104,54 @@ class TypeVariableDirectionCalculator(
         !(direction == ResolveDirection.TO_SUBTYPE && constraint.kind == ConstraintKind.UPPER) &&
                 !(direction == ResolveDirection.TO_SUPERTYPE && constraint.kind == ConstraintKind.LOWER)
 
-    private fun UnwrappedType.visitType(
+    private fun KotlinTypeMarker.visitType(
         startDirection: ResolveDirection,
         action: (variable: Variable, direction: ResolveDirection) -> Unit
-    ) =
-        when (this) {
-            is SimpleType -> visitType(startDirection, action)
-            is FlexibleType -> {
-                lowerBound.visitType(startDirection, action)
-                upperBound.visitType(startDirection, action)
+    ) = when (this) {
+        is SimpleTypeMarker -> visitType(startDirection, action)
+        is FlexibleTypeMarker -> {
+            with(c) {
+                lowerBound().visitType(startDirection, action)
+                upperBound().visitType(startDirection, action)
             }
         }
+        else -> error("?!")
+    }
 
-    private fun SimpleType.visitType(startDirection: ResolveDirection, action: (variable: Variable, direction: ResolveDirection) -> Unit) {
-        if (isIntersectionType) {
-            constructor.supertypes.forEach {
-                it.unwrap().visitType(startDirection, action)
+    private fun SimpleTypeMarker.visitType(
+        startDirection: ResolveDirection,
+        action: (variable: Variable, direction: ResolveDirection) -> Unit
+    ): Unit = with(c) {
+        val constructor = typeConstructor()
+        if (constructor.isIntersection()) {
+            constructor.supertypes().forEach {
+                it.visitType(startDirection, action)
             }
             return
         }
 
-        if (arguments.isEmpty()) {
+        if (argumentsCount() == 0) {
             c.notFixedTypeVariables[constructor]?.let {
                 action(it, startDirection)
             }
             return
         }
 
-        val parameters = constructor.parameters
-        if (parameters.size != arguments.size) return // incorrect type
+        if (constructor.parametersCount() != argumentsCount()) return // incorrect type
 
-        for ((argument, parameter) in arguments.zip(parameters)) {
-            if (argument.isStarProjection) continue
+        for (index in 0 until constructor.parametersCount()) {
+            val parameter = constructor.getParameter(index)
+            val argument = getArgument(index)
+            if (argument.isStarProjection()) continue
 
-            val variance = NewKotlinTypeChecker.effectiveVariance(parameter.variance, argument.projectionKind) ?: Variance.INVARIANT
+            val variance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance()) ?: TypeVariance.INV
             val innerDirection = when (variance) {
-                Variance.INVARIANT -> ResolveDirection.UNKNOWN
-                Variance.OUT_VARIANCE -> startDirection
-                Variance.IN_VARIANCE -> startDirection.opposite()
+                TypeVariance.INV -> ResolveDirection.UNKNOWN
+                TypeVariance.OUT -> startDirection
+                TypeVariance.IN -> startDirection.opposite()
             }
 
-            argument.type.unwrap().visitType(innerDirection, action)
+            argument.getType().visitType(innerDirection, action)
         }
     }
 

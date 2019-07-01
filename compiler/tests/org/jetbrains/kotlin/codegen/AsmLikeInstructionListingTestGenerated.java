@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -84,6 +84,16 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
             runTest("compiler/testData/codegen/asmLike/receiverMangling/innerClass.kt");
+        }
+
+        @TestMetadata("localFunctions.kt")
+        public void testLocalFunctions() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/receiverMangling/localFunctions.kt");
+        }
+
+        @TestMetadata("mangledNames.kt")
+        public void testMangledNames() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/receiverMangling/mangledNames.kt");
         }
 
         @TestMetadata("nonInlineReceivers_after.kt")

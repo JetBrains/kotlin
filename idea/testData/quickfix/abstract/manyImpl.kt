@@ -3,7 +3,7 @@
 // ACTION: Create test
 // ACTION: Make internal
 // ACTION: Make private
-// ACTION: Move 'X' to separate file
+// ACTION: Extract 'X' from current file
 
 interface D {
     fun foo()

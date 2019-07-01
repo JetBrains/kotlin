@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jvm.compiler;
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
+import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
@@ -121,6 +121,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File txtFile = getTxtFileFromKtFile(ktFileName);
 
         CompilerConfiguration configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, getClasspath(), Collections.emptyList());
+        updateConfiguration(configuration);
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
@@ -161,7 +162,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
     }
 
-    private static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
+    public static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         Map<String, String> directives = KotlinTestUtils.parseDirectives(content);
         LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings(directives);
         if (languageVersionSettings == null) {
@@ -189,6 +190,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void configureEnvironment(KotlinCoreEnvironment environment) {}
 
+    protected void updateConfiguration(CompilerConfiguration configuration) {}
+
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
         File expectedFile = new File(expectedFileName);
         File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
@@ -196,6 +199,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         FileUtil.copyDir(sourcesDir, new File(tmpdir, "test"), pathname -> pathname.getName().endsWith(".java"));
 
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, getJdkKind());
+        updateConfiguration(configuration);
         ContentRootsKt.addKotlinSourceRoot(configuration, sourcesDir.getAbsolutePath());
         JvmContentRootsKt.addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
         JvmContentRootsKt.addJavaSourceRoot(configuration, tmpdir);
@@ -237,7 +241,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         configureEnvironment(environment);
         KtFile ktFile = KotlinTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
 
-        ModuleDescriptor module = JvmResolveUtil.analyzeAndCheckForErrors(Collections.singleton(ktFile), environment).getModuleDescriptor();
+        ModuleDescriptor module = GenerationUtils.compileFiles(Collections.singletonList(ktFile), environment).getModule();
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assertFalse(packageView.isEmpty());
 

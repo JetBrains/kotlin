@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
 fun generate(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
-    p.println(File("license/LICENSE.txt").readText())
+    p.println(File("license/COPYRIGHT.txt").readText())
     p.println("@file:Suppress(\"DEPRECATION_ERROR\")")
     p.println()
     p.println("package org.jetbrains.kotlin.resolve.constants.evaluate")

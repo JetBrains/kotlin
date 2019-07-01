@@ -125,6 +125,8 @@ public final annotation class A : kotlin/Annotation {
   // getter: za()[Z
   public final val za: kotlin/BooleanArray
     public final get
+
+  // module name: test-module
 }
 // B.class
 // ------------------------------------------
@@ -136,6 +138,8 @@ public final annotation class B : kotlin/Annotation {
   // getter: value()Ljava/lang/String;
   public final val value: kotlin/String
     public final get
+
+  // module name: test-module
 }
 // C.class
 // ------------------------------------------
@@ -149,6 +153,8 @@ public final class C : kotlin/Any {
 
   // signature: returnTypeAnnotation()V
   public final fun returnTypeAnnotation(): @A(z = true, c = 'x', b = 1.toByte(), s = 42.toShort(), i = 42424242, f = -2.72f, j = 239239239239239L, d = 3.14, ui = 1u, ub = 255.toUByte(), us = 3.toUShort(), ul = 4uL, ui_max = 4294967295u, ub_max = 255.toUByte(), us_max = 65535.toUShort(), ul_max = 18446744073709551615uL, za = [true], ca = ['\''], ba = [1.toByte()], sa = [42.toShort()], ia = [42424242], fa = [-2.72f], ja = [239239239239239L], da = [3.14], str = "aba\ncaba'\"\t\u0001\u0002ꙮ", enum = kotlin/annotation/AnnotationTarget.CLASS, klass = C::class, anno = B(value = "aba\ncaba'\"\t\u0001\u0002ꙮ")) kotlin/Unit
+
+  // module name: test-module
 }
 // JvmNamed.class
 // ------------------------------------------
@@ -160,6 +166,8 @@ public final annotation class JvmNamed : kotlin/Annotation {
   // getter: uglyJvmName()Ljava/lang/String;
   public final val value: kotlin/String
     public final get
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

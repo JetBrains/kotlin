@@ -1,5 +1,4 @@
 // !LANGUAGE: +ReleaseCoroutines
-// IGNORE_BACKEND: JVM_IR
 
 suspend fun produce(): Int = 1000
 

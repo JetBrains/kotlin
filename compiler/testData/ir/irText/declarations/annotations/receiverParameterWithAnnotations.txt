@@ -1,70 +1,70 @@
 FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
-  CLASS ANNOTATION_CLASS name:Ann modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Ann flags:
-    CONSTRUCTOR visibility:public <> () returnType:Ann flags:primary
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+  CLASS ANNOTATION_CLASS name:Ann modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Ann 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Ann [primary] 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  CLASS CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
-    CONSTRUCTOR visibility:public <> () returnType:A flags:primary
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN name:f visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.String) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:A flags:
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN name:f visibility:public modality:FINAL <> ($this:<root>.A, $receiver:kotlin.String) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:<root>.A 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
         annotations:
-          CALL 'constructor Ann()' type=Ann origin=null
+          Ann
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='f() on String: String'
+        RETURN type=kotlin.Nothing from='public final fun f (): kotlin.String declared in <root>.A'
           CONST String type=kotlin.String value=""
-    PROPERTY name:p visibility:public modality:FINAL flags:val
-      FUN name:<get-p> visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.String?) returnType:kotlin.String flags:
-        correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:val
-        $this: VALUE_PARAMETER name:<this> type:A flags:
-        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? flags:
+    PROPERTY name:p visibility:public modality:FINAL [val] 
+      FUN name:<get-p> visibility:public modality:FINAL <> ($this:<root>.A, $receiver:kotlin.String?) returnType:kotlin.String 
+        correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.A 
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? 
           annotations:
-            CALL 'constructor Ann()' type=Ann origin=null
+            Ann
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-p>() on String?: String'
+          RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.String declared in <root>.A'
             CONST String type=kotlin.String value=""
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:topLevelF visibility:public modality:FINAL <> ($receiver:kotlin.String?) returnType:kotlin.String flags:
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? flags:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:topLevelF visibility:public modality:FINAL <> ($receiver:kotlin.String?) returnType:kotlin.String 
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? 
       annotations:
-        CALL 'constructor Ann()' type=Ann origin=null
+        Ann
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='topLevelF() on String?: String'
+      RETURN type=kotlin.Nothing from='public final fun topLevelF (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value=""
-  PROPERTY name:topLevelP visibility:public modality:FINAL flags:val
-    FUN name:<get-topLevelP> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String flags:
-      correspondingProperty: PROPERTY name:topLevelP visibility:public modality:FINAL flags:val
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+  PROPERTY name:topLevelP visibility:public modality:FINAL [val] 
+    FUN name:<get-topLevelP> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String 
+      correspondingProperty: PROPERTY name:topLevelP visibility:public modality:FINAL [val] 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
         annotations:
-          CALL 'constructor Ann()' type=Ann origin=null
+          Ann
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-topLevelP>() on String: String'
+        RETURN type=kotlin.Nothing from='public final fun <get-topLevelP> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""

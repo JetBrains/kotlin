@@ -25,6 +25,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBod
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.createNameCounterpartMap
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -55,9 +55,9 @@ import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 class KotlinFunctionCallUsage(
-        element: KtCallElement,
-        private val callee: KotlinCallableDefinitionUsage<*>,
-        forcedResolvedCall: ResolvedCall<*>? = null
+    element: KtCallElement,
+    private val callee: KotlinCallableDefinitionUsage<*>,
+    forcedResolvedCall: ResolvedCall<*>? = null
 ) : KotlinUsageInfo<KtCallElement>(element) {
     private val context = element.analyze(BodyResolveMode.FULL)
     private val resolvedCall = forcedResolvedCall ?: element.getResolvedCall(context)
@@ -78,8 +78,7 @@ class KotlinFunctionCallUsage(
         if (element.valueArgumentList != null) {
             if (changeInfo.isParameterSetOrOrderChanged) {
                 result = updateArgumentsAndReceiver(changeInfo, element, allUsages)
-            }
-            else {
+            } else {
                 changeArgumentNames(changeInfo, element)
             }
         }
@@ -105,10 +104,10 @@ class KotlinFunctionCallUsage(
 
         if (skipUnmatchedArgumentsCheck) return false
 
-        if (!resolvedCall.call.valueArguments.all{ resolvedCall.getArgumentMapping(it) is ArgumentMatch }) return true
+        if (!resolvedCall.call.valueArguments.all { resolvedCall.getArgumentMapping(it) is ArgumentMatch }) return true
 
         val arguments = resolvedCall.valueArguments
-        return !resolvedCall.resultingDescriptor.valueParameters.all{ arguments.containsKey(it) }
+        return !resolvedCall.resultingDescriptor.valueParameters.all { arguments.containsKey(it) }
     }
 
     private val isPropertyJavaUsage: Boolean
@@ -121,8 +120,7 @@ class KotlinFunctionCallUsage(
     private fun changeNameIfNeeded(changeInfo: KotlinChangeInfo, element: KtCallElement) {
         if (!changeInfo.isNameChanged) return
 
-        val callee = element.calleeExpression
-        if (callee !is KtSimpleNameExpression) return
+        val callee = element.calleeExpression as? KtSimpleNameExpression ?: return
 
         var newName = changeInfo.newName
         if (isPropertyJavaUsage) {
@@ -136,9 +134,9 @@ class KotlinFunctionCallUsage(
     }
 
     private fun getReceiverExpressionIfMatched(
-            receiverValue: ReceiverValue?,
-            originalDescriptor: DeclarationDescriptor,
-            psiFactory: KtPsiFactory
+        receiverValue: ReceiverValue?,
+        originalDescriptor: DeclarationDescriptor,
+        psiFactory: KtPsiFactory
     ): KtExpression? {
         if (receiverValue == null) return null
 
@@ -146,8 +144,7 @@ class KotlinFunctionCallUsage(
         // to simplify checking against receiver value in the corresponding resolved call
         val adjustedDescriptor = if (originalDescriptor is CallableDescriptor && originalDescriptor !is ReceiverParameterDescriptor) {
             originalDescriptor.extensionReceiverParameter ?: return null
-        }
-        else originalDescriptor
+        } else originalDescriptor
 
         val currentIsExtension = resolvedCall!!.extensionReceiver == receiverValue
         val originalIsExtension = adjustedDescriptor is ReceiverParameterDescriptor && adjustedDescriptor.value is ExtensionReceiver
@@ -174,9 +171,9 @@ class KotlinFunctionCallUsage(
     }
 
     private fun substituteReferences(
-            expression: KtExpression,
-            referenceMap: Map<PsiReference, DeclarationDescriptor>,
-            psiFactory: KtPsiFactory
+        expression: KtExpression,
+        referenceMap: Map<PsiReference, DeclarationDescriptor>,
+        psiFactory: KtPsiFactory
     ): KtExpression {
         if (referenceMap.isEmpty() || resolvedCall == null) return expression
 
@@ -199,28 +196,30 @@ class KotlinFunctionCallUsage(
 
                 addReceiver = false
                 argumentExpression = argument.getArgumentExpression()
-            }
-            else {
+            } else {
                 addReceiver = descriptor !is ReceiverParameterDescriptor
                 argumentExpression =
-                        getReceiverExpressionIfMatched(resolvedCall.extensionReceiver, descriptor, psiFactory)
+                    getReceiverExpressionIfMatched(resolvedCall.extensionReceiver, descriptor, psiFactory)
                         ?: getReceiverExpressionIfMatched(resolvedCall.dispatchReceiver, descriptor, psiFactory)
             }
             if (argumentExpression == null) continue
 
             if (needSeparateVariable(argumentExpression)
-                && PsiTreeUtil.getNonStrictParentOfType(element,
-                                                        KtConstructorDelegationCall::class.java,
-                                                        KtSuperTypeListEntry::class.java,
-                                                        KtParameter::class.java) == null) {
+                && PsiTreeUtil.getNonStrictParentOfType(
+                    element,
+                    KtConstructorDelegationCall::class.java,
+                    KtSuperTypeListEntry::class.java,
+                    KtParameter::class.java
+                ) == null
+            ) {
 
                 KotlinIntroduceVariableHandler.doRefactoring(
-                        project, null, argumentExpression,
-                        isVar = false,
-                        occurrencesToReplace = listOf(argumentExpression),
-                        onNonInteractiveFinish = {
-                    argumentExpression = psiFactory.createExpression(it.name!!)
-                })
+                    project, null, argumentExpression,
+                    isVar = false,
+                    occurrencesToReplace = listOf(argumentExpression),
+                    onNonInteractiveFinish = {
+                        argumentExpression = psiFactory.createExpression(it.name!!)
+                    })
             }
 
             var expressionToReplace: KtExpression = nameCounterpartMap[ref.element] ?: continue
@@ -239,8 +238,7 @@ class KotlinFunctionCallUsage(
 
                 val replacement = psiFactory.createExpression("${argumentExpression!!.text}.${expressionToReplace.text}")
                 replacements.add(expressionToReplace to replacement)
-            }
-            else {
+            } else {
                 replacements.add(expressionToReplace to argumentExpression!!)
             }
         }
@@ -258,10 +256,10 @@ class KotlinFunctionCallUsage(
     }
 
     class ArgumentInfo(
-            val parameter: KotlinParameterInfo,
-            val parameterIndex: Int,
-            val resolvedArgument: ResolvedValueArgument?,
-            val receiverValue: ReceiverValue?
+        val parameter: KotlinParameterInfo,
+        val parameterIndex: Int,
+        val resolvedArgument: ResolvedValueArgument?,
+        val receiverValue: ReceiverValue?
     ) {
         private val mainValueArgument: ValueArgument?
             get() = resolvedArgument?.arguments?.firstOrNull()
@@ -290,9 +288,9 @@ class KotlinFunctionCallUsage(
             by NotNullablePsiCopyableUserDataProperty(Key.create("GENERATED_ARGUMENT_VALUE"), false)
 
     private fun ArgumentInfo.getArgumentByDefaultValue(
-            element: KtCallElement,
-            allUsages: Array<out UsageInfo>,
-            psiFactory: KtPsiFactory
+        element: KtCallElement,
+        allUsages: Array<out UsageInfo>,
+        psiFactory: KtPsiFactory
     ): KtValueArgument {
         val isInsideOfCallerBody = element.isInsideOfCallerBody(allUsages)
         val defaultValueForCall = parameter.defaultValueForCall
@@ -311,12 +309,16 @@ class KotlinFunctionCallUsage(
     }
 
     private fun ExpressionReceiver.wrapInvalidated(element: KtCallElement): ExpressionReceiver {
-        return object: ExpressionReceiver by this {
+        return object : ExpressionReceiver by this {
             override val expression = element.getQualifiedExpressionForSelector()!!.receiverExpression
         }
     }
 
-    private fun updateArgumentsAndReceiver(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): KtElement {
+    private fun updateArgumentsAndReceiver(
+        changeInfo: KotlinChangeInfo,
+        element: KtCallElement,
+        allUsages: Array<out UsageInfo>
+    ): KtElement {
         if (isPropertyJavaUsage) return updateJavaPropertyCall(changeInfo, element)
 
         val fullCallElement = element.getQualifiedExpressionForSelector() ?: element
@@ -351,17 +353,17 @@ class KotlinFunctionCallUsage(
         val lastParameterIndex = newParameters.lastIndex
         var firstNamedIndex = newArgumentInfos.firstOrNull {
             it.wasNamed
-            || (it.parameter.isNewParameter && purelyNamedCall)
-            || (it.resolvedArgument is VarargValueArgument && it.parameterIndex < lastParameterIndex)
+                    || (it.parameter.isNewParameter && purelyNamedCall)
+                    || (it.resolvedArgument is VarargValueArgument && it.parameterIndex < lastParameterIndex)
         }?.parameterIndex
         if (firstNamedIndex == null) {
             val lastNonDefaultArgIndex = (lastParameterIndex downTo 0).firstOrNull { !newArgumentInfos[it].shouldSkip() }
-                                         ?: -1
+                ?: -1
             firstNamedIndex = (0..lastNonDefaultArgIndex).firstOrNull { newArgumentInfos[it].shouldSkip() }
         }
 
         val lastPositionalIndex = if (firstNamedIndex != null) firstNamedIndex - 1 else lastParameterIndex
-        (lastPositionalIndex + 1 .. lastParameterIndex).forEach { newArgumentInfos[it].makeNamed(callee) }
+        (lastPositionalIndex + 1..lastParameterIndex).forEach { newArgumentInfos[it].makeNamed(callee) }
 
         val psiFactory = KtPsiFactory(element.project)
 
@@ -377,8 +379,7 @@ class KotlinFunctionCallUsage(
                     continue
                 }
 
-                val resolvedArgument = argInfo.resolvedArgument
-                when (resolvedArgument) {
+                when (val resolvedArgument = argInfo.resolvedArgument) {
                     null, is DefaultValueArgument -> addArgument(argInfo.getArgumentByDefaultValue(element, allUsages, psiFactory))
 
                     is ExpressionValueArgument -> {
@@ -413,35 +414,34 @@ class KotlinFunctionCallUsage(
         val lastNewArgument = newArgumentList.arguments.lastOrNull()
         val oldLastResolvedArgument = getResolvedValueArgument(lastNewParameter?.oldIndex ?: -1) as? ExpressionValueArgument
         val lambdaArgumentNotTouched =
-                lastOldArgument is KtLambdaArgument && oldLastResolvedArgument?.valueArgument == lastOldArgument
+            lastOldArgument is KtLambdaArgument && oldLastResolvedArgument?.valueArgument == lastOldArgument
         val newLambdaArgumentAddedLast = lastNewParameter != null
-                                         && lastNewParameter.isNewParameter
-                                         && lastNewParameter.defaultValueForCall is KtLambdaExpression
-                                         && lastNewArgument != null
-                                         && !lastNewArgument.isNamed()
+                && lastNewParameter.isNewParameter
+                && lastNewParameter.defaultValueForCall is KtLambdaExpression
+                && lastNewArgument != null
+                && !lastNewArgument.isNamed()
 
         if (lambdaArgumentNotTouched) {
             newArgumentList.removeArgument(newArgumentList.arguments.last())
-        }
-        else {
+        } else {
             val lambdaArguments = element.lambdaArguments
             if (lambdaArguments.isNotEmpty()) {
                 element.deleteChildRange(lambdaArguments.first(), lambdaArguments.last())
             }
         }
 
-        var oldArgumentList = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
+        val oldArgumentList = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
         replaceListPsiAndKeepDelimiters(oldArgumentList, newArgumentList) { arguments }
 
         element.accept(
-                object: KtTreeVisitorVoid() {
-                    override fun visitArgument(argument: KtValueArgument) {
-                        if (argument.generatedArgumentValue) {
-                            argument.generatedArgumentValue = false
-                            argument.addToShorteningWaitSet(SHORTEN_ARGUMENTS_OPTIONS)
-                        }
+            object : KtTreeVisitorVoid() {
+                override fun visitArgument(argument: KtValueArgument) {
+                    if (argument.generatedArgumentValue) {
+                        argument.generatedArgumentValue = false
+                        argument.addToShorteningWaitSet(SHORTEN_ARGUMENTS_OPTIONS)
                     }
                 }
+            }
         )
 
         var newElement: KtElement = element
@@ -451,12 +451,11 @@ class KotlinFunctionCallUsage(
                 val extensionReceiverExpression = receiverArgument?.getArgumentExpression()
                 val defaultValueForCall = newReceiverInfo.defaultValueForCall
                 val receiver = extensionReceiverExpression?.let { psiFactory.createExpression(it.text) }
-                               ?: defaultValueForCall
-                               ?: psiFactory.createExpression("_")
+                    ?: defaultValueForCall
+                    ?: psiFactory.createExpression("_")
 
                 psiFactory.createExpressionByPattern("$0.$1", receiver, element)
-            }
-            else {
+            } else {
                 psiFactory.createExpression(element.text)
             }
 
@@ -489,7 +488,7 @@ class KotlinFunctionCallUsage(
     }
 
     companion object {
-        private val REVERSED_TEXT_OFFSET_COMPARATOR = Comparator<kotlin.Pair<KtElement, KtElement>> { p1, p2 ->
+        private val REVERSED_TEXT_OFFSET_COMPARATOR = Comparator<Pair<KtElement, KtElement>> { p1, p2 ->
             val offset1 = p1.first.startOffset
             val offset2 = p2.first.startOffset
             when {
@@ -499,7 +498,7 @@ class KotlinFunctionCallUsage(
             }
         }
 
-        private val SHORTEN_ARGUMENTS_OPTIONS = ShortenReferences.Options(true, true)
+        private val SHORTEN_ARGUMENTS_OPTIONS = ShortenReferences.Options(removeThisLabels = true, removeThis = true)
 
         private fun updateJavaPropertyCall(changeInfo: KotlinChangeInfo, element: KtCallElement): KtElement {
             val newReceiverInfo = changeInfo.receiverParameterInfo
@@ -520,8 +519,7 @@ class KotlinFunctionCallUsage(
 
                     if (originalReceiverInfo != null) {
                         firstArgument?.replace(newReceiverArgument)
-                    }
-                    else {
+                    } else {
                         arguments.addArgumentAfter(newReceiverArgument, null)
                     }
                 }

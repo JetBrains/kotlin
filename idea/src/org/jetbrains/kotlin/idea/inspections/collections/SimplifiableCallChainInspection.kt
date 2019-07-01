@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections.collections
@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
@@ -31,7 +31,7 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                 if (conversion.replacement.startsWith("joinTo")) {
                     // Function parameter in map must have String result type
                     if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) {
-                            it.isSubtypeOf(JsPlatform.builtIns.charSequence.defaultType)
+                            it.isSubtypeOf(JsPlatformAnalyzerServices.builtIns.charSequence.defaultType)
                         }
                     ) return@check false
                 }
@@ -72,6 +72,22 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.collections.filter", "kotlin.collections.singleOrNull", "singleOrNull"),
             Conversion("kotlin.collections.filter", "kotlin.collections.isNotEmpty", "any"),
             Conversion("kotlin.collections.filter", "kotlin.collections.List.isEmpty", "none"),
+            Conversion("kotlin.collections.sorted", "kotlin.collections.firstOrNull", "min"),
+            Conversion("kotlin.collections.sorted", "kotlin.collections.lastOrNull", "max"),
+            Conversion("kotlin.collections.sortedDescending", "kotlin.collections.firstOrNull", "max"),
+            Conversion("kotlin.collections.sortedDescending", "kotlin.collections.lastOrNull", "min"),
+            Conversion("kotlin.collections.sortedBy", "kotlin.collections.firstOrNull", "minBy"),
+            Conversion("kotlin.collections.sortedBy", "kotlin.collections.lastOrNull", "maxBy"),
+            Conversion("kotlin.collections.sortedByDescending", "kotlin.collections.firstOrNull", "maxBy"),
+            Conversion("kotlin.collections.sortedByDescending", "kotlin.collections.lastOrNull", "minBy"),
+            Conversion("kotlin.collections.sorted", "kotlin.collections.first", "min", withNotNullAssertion = true),
+            Conversion("kotlin.collections.sorted", "kotlin.collections.last", "max", withNotNullAssertion = true),
+            Conversion("kotlin.collections.sortedDescending", "kotlin.collections.first", "max", withNotNullAssertion = true),
+            Conversion("kotlin.collections.sortedDescending", "kotlin.collections.last", "min", withNotNullAssertion = true),
+            Conversion("kotlin.collections.sortedBy", "kotlin.collections.first", "minBy", withNotNullAssertion = true),
+            Conversion("kotlin.collections.sortedBy", "kotlin.collections.last", "maxBy", withNotNullAssertion = true),
+            Conversion("kotlin.collections.sortedByDescending", "kotlin.collections.first", "maxBy", withNotNullAssertion = true),
+            Conversion("kotlin.collections.sortedByDescending", "kotlin.collections.last", "minBy", withNotNullAssertion = true),
 
             Conversion("kotlin.text.filter", "kotlin.text.first", "first"),
             Conversion("kotlin.text.filter", "kotlin.text.firstOrNull", "firstOrNull"),

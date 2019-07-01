@@ -29,11 +29,11 @@ import com.intellij.refactoring.rename.inplace.MemberInplaceRenamer
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 
 class JavaMemberByKotlinReferenceInplaceRenameHandler : MemberInplaceRenameHandler() {
     class Renamer(
@@ -61,12 +61,12 @@ class JavaMemberByKotlinReferenceInplaceRenameHandler : MemberInplaceRenameHandl
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         super.invoke(project, elements, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
+        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         super.invoke(project, editor, file, dataContext)
-        KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeRefactoringTrigger, this::class.java.name)
+        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
     }
 
 }

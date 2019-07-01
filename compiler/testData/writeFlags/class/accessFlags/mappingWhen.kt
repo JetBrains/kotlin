@@ -1,4 +1,3 @@
-
 enum class BigEnum {
     ITEM1,
     ITEM2

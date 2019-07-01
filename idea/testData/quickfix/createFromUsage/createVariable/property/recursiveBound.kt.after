@@ -1,3 +1,5 @@
+val foo: Cyclic<*>
+
 // "Create property 'foo'" "true"
 // ERROR: Property must be initialized
 class Cyclic<E : Cyclic<E>>
@@ -5,5 +7,3 @@ class Cyclic<E : Cyclic<E>>
 fun test() {
     val c : Cyclic<*> = foo
 }
-
-val foo: Cyclic<*>

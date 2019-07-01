@@ -27,3 +27,7 @@ fun test(list: List<Int>) {
     val map = mutableMapOf<Int, String>()
     list.forEach { map.getOrPut(it, { mutableListOf() }) += "" }
 }
+
+val simple = { }
+
+val another = { 42 }

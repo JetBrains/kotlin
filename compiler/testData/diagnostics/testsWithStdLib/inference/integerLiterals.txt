@@ -1,0 +1,14 @@
+package
+
+public fun getLong(): kotlin.Long
+public fun test_1(/*0*/ list: kotlin.collections.List<X>): kotlin.Unit
+public fun test_2(/*0*/ cond: kotlin.Boolean): kotlin.Unit
+public fun test_3(/*0*/ list: kotlin.collections.List<X>): kotlin.Unit
+
+public final class X {
+    public constructor X()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun toLong(): kotlin.Long?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

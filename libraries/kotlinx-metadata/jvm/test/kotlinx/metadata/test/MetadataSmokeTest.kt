@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlinx.metadata.test
@@ -31,26 +31,11 @@ class MetadataSmokeTest {
             fun bar() {}
         }
 
-        val inlineFunctions = mutableListOf<String>()
+        val classMetadata = KotlinClassMetadata.read(L::class.java.readMetadata()) as KotlinClassMetadata.Class
 
-        val klass = KotlinClassMetadata.read(L::class.java.readMetadata()) as KotlinClassMetadata.Class
-        klass.accept(object : KmClassVisitor() {
-            override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-                return object : KmFunctionVisitor() {
-                    override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
-                        if (type != JvmFunctionExtensionVisitor.TYPE) return null
-
-                        return object : JvmFunctionExtensionVisitor() {
-                            override fun visit(desc: JvmMethodSignature?) {
-                                if (Flag.Function.IS_INLINE(flags) && desc != null) {
-                                    inlineFunctions += desc.asString()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        })
+        val inlineFunctions = classMetadata.toKmClass().functions
+            .filter { Flag.Function.IS_INLINE(it.flags) }
+            .mapNotNull { it.signature?.asString() }
 
         assertEquals(
             listOf("foo(Lkotlin/jvm/functions/Function0;)Ljava/lang/String;"),
@@ -65,28 +50,21 @@ class MetadataSmokeTest {
         //         fun hello(): String = "Hello, world!"
         //     }
 
-        val header = KotlinClassMetadata.Class.Writer().run {
-            visit(flagsOf(Flag.IS_PUBLIC), "Hello")
-            visitConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY))!!.run {
-                (visitExtensions(JvmConstructorExtensionVisitor.TYPE) as JvmConstructorExtensionVisitor).run {
-                    visit(JvmMethodSignature("<init>", "()V"))
-                }
-                visitEnd()
+        val klass = KmClass().apply {
+            name = "Hello"
+            flags = flagsOf(Flag.IS_PUBLIC)
+            constructors += KmConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY)).apply {
+                signature = JvmMethodSignature("<init>", "()V")
             }
-            visitFunction(flagsOf(Flag.IS_PUBLIC, Flag.Function.IS_DECLARATION), "hello")!!.run {
-                visitReturnType(0)!!.run {
-                    visitClass("kotlin/String")
-                    visitEnd()
+            functions += KmFunction(flagsOf(Flag.IS_PUBLIC, Flag.Function.IS_DECLARATION), "hello").apply {
+                returnType = KmType(flagsOf()).apply {
+                    classifier = KmClassifier.Class("kotlin/String")
                 }
-                (visitExtensions(JvmFunctionExtensionVisitor.TYPE) as JvmFunctionExtensionVisitor).run {
-                    visit(JvmMethodSignature("hello", "()Ljava/lang/String;"))
-                }
-                visitEnd()
+                signature = JvmMethodSignature("hello", "()Ljava/lang/String;")
             }
-            visitEnd()
-
-            write().header
         }
+
+        val header = KotlinClassMetadata.Class.Writer().apply(klass::accept).write().header
 
         // Then, produce the bytecode of a .class file with ASM
 
@@ -171,5 +149,24 @@ class MetadataSmokeTest {
         }
         assertEquals("kotlin/coroutines/CoroutineContext.Key", coroutineContextKey)
         assertEquals("kotlin/coroutines/CoroutineContext\$Key", coroutineContextKey.jvmInternalName)
+    }
+
+    @Test
+    fun lambdaVersionRequirement() {
+        val x: suspend Int.(String, String) -> Unit = { _, _ -> }
+        val annotation = x::class.java.getAnnotation(Metadata::class.java)!!
+        val metadata = KotlinClassMetadata.read(
+            KotlinClassHeader(
+                kind = annotation.kind,
+                metadataVersion = annotation.metadataVersion,
+                bytecodeVersion = annotation.bytecodeVersion,
+                data1 = annotation.data1,
+                data2 = annotation.data2,
+                extraInt = annotation.extraInt,
+                extraString = annotation.extraString,
+                packageName = annotation.packageName
+            )
+        ) as KotlinClassMetadata.SyntheticClass
+        metadata.accept(KmLambda())
     }
 }

@@ -1,25 +1,37 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.util.AGPVersion
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-// TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
-class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = AGPVersion.v3_2_0) {
+open class KotlinAndroid33GradleIT : KotlinAndroid32GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_3_2
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("5.0")
+}
+
+open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_2_0
+
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
 
     @Test
-    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("4.7"))) {
+    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
+
+            // KT-30784
+            assertNotContains("API 'variant.getPackageLibrary()' is obsolete and has been replaced")
+
+            assertContains("KT-29964 OK") // Output from lib/build.gradle
 
             assertTasksExecuted(
                 ":lib:compileDebugKotlinAndroidLib",
@@ -194,7 +206,125 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
                 }
             }
         }
+    }
 
+    @Test
+    fun testAndroidMppProductionDependenciesInTests() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
+        // Test the fix for KT-29343
+        setupWorkingDir()
+
+        gradleBuildScript("lib").appendText(
+            "\n" + """
+            kotlin.sourceSets {
+                commonMain {
+                    dependencies {
+                        implementation kotlin("stdlib-common")
+                    }
+                }
+                androidLibDebug {
+                    dependencies {
+                        implementation kotlin("reflect")
+                    }
+                }
+                androidLibRelease {
+                    dependencies {
+                        implementation kotlin("test-junit")
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        val kotlinVersion = defaultBuildOptions().kotlinVersion
+        testResolveAllConfigurations("lib") {
+            assertSuccessful()
+
+            // commonMain:
+            assertContains(">> :lib:debugCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:debugAndroidTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:debugUnitTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseUnitTestCompileClasspath --> kotlin-stdlib-common-$kotlinVersion.jar")
+
+            // androidLibDebug:
+            assertContains(">> :lib:debugCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertNotContains(">> :lib:releaseCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertContains(">> :lib:debugAndroidTestCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertContains(">> :lib:debugUnitTestCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+            assertNotContains(">> :lib:releaseUnitTestCompileClasspath --> kotlin-reflect-$kotlinVersion.jar")
+
+            // androidLibRelease:
+            assertNotContains(">> :lib:debugCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertNotContains(">> :lib:debugAndroidTestCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertNotContains(">> :lib:debugUnitTestCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+            assertContains(">> :lib:releaseUnitTestCompileClasspath --> kotlin-test-junit-$kotlinVersion.jar")
+        }
+    }
+
+    @Test
+    fun testCustomAttributesInAndroidTargets() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
+        // Test the fix for KT-27714
+
+        setupWorkingDir()
+
+        // Enable publishing for all Android variants:
+        gradleBuildScript("lib").appendText("\nkotlin.android('androidLib') { publishAllLibraryVariants() }")
+
+        val groupDir = "lib/build/repo/com/example/"
+
+        build("publish") {
+            assertSuccessful()
+
+            // Also check that custom user-specified attributes are written in all Android modules metadata:
+            assertFileContains(
+                groupDir + "lib-androidlib/1.0/lib-androidlib-1.0.module",
+                "\"com.example.target\": \"androidLib\"",
+                "\"com.example.compilation\": \"release\""
+            )
+            assertFileContains(
+                groupDir + "lib-androidlib-debug/1.0/lib-androidlib-debug-1.0.module",
+                "\"com.example.target\": \"androidLib\"",
+                "\"com.example.compilation\": \"debug\""
+            )
+
+            projectDir.resolve(groupDir).deleteRecursively()
+        }
+
+        // Check that the consumer side uses custom attributes specified in the target and compilations:
+        run {
+            val appBuildScriptBackup = gradleBuildScript("app").readText()
+
+            gradleBuildScript("app").appendText(
+                "\n" + """
+                    kotlin.targets.androidApp.attributes.attribute(
+                        Attribute.of("com.example.target", String),
+                        "notAndroidLib"
+                    )
+                """.trimIndent()
+            )
+
+            build(":app:compileDebugKotlinAndroidApp") {
+                assertFailed() // dependency resolution should fail
+                assertContains("Required com.example.target 'notAndroidLib'")
+            }
+
+            gradleBuildScript("app").writeText(
+                appBuildScriptBackup + "\n" + """
+                    kotlin.targets.androidApp.compilations.all {
+                        attributes.attribute(
+                            Attribute.of("com.example.compilation", String),
+                            "notDebug"
+                        )
+                    }
+                """.trimIndent()
+            )
+
+            build(":app:compileDebugKotlinAndroidApp") {
+                assertFailed()
+                assertContains("Required com.example.compilation 'notDebug'")
+            }
+        }
     }
 
     @Test
@@ -261,12 +391,15 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
     }
 }
 
-class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = AGPVersion.v3_0_0) {
+class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_0_0
+
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.Until("4.10.2")
 }
 
-abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: AGPVersion) : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion) {
+abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
     @Test
     fun testApplyWithFeaturePlugin() {
         val project = Project("AndroidProject")
@@ -295,7 +428,9 @@ abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: AGPVersion) : 
     }
 }
 
-abstract class AbstractKotlinAndroidGradleTests(val androidGradlePluginVersion: AGPVersion) : BaseGradleIT() {
+abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
+
+    abstract val androidGradlePluginVersion: AGPVersion
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
@@ -605,6 +740,37 @@ fun getSomething() = 10
             assertFileExists("libAndroid/build/tmp/kotlin-classes/release/foo/PlatformClass.class")
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
+        }
+    }
+
+    @Test
+    fun testDetectAndroidJava8() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        val kotlinJvmTarget18Regex = Regex("Kotlin compiler args: .* -jvm-target 1.8")
+
+        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
+            assertSuccessful()
+            assertNotContains(kotlinJvmTarget18Regex)
+        }
+
+        gradleBuildScript("Lib").appendText(
+            "\n" + """
+            android.compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_8
+                targetCompatibility JavaVersion.VERSION_1_8
+            }
+            """.trimIndent()
+        )
+
+        build("clean", ":Lib:assembleDebug") {
+            assertSuccessful()
+            assertNotContains(kotlinJvmTarget18Regex)
+        }
+
+        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
+            assertSuccessful()
+            assertContainsRegex(kotlinJvmTarget18Regex)
         }
     }
 }

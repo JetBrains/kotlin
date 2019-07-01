@@ -2,13 +2,16 @@ LineBreakpoint created at stepOverWhenWithInline.kt:5
 Run Java
 Connected to the target VM
 stepOverWhenWithInline.kt:5
+stepOverWhenWithInline.kt:7
 stepOverWhenWithInline.kt:8
 stepOverWhenWithInline.kt:9
 stepOverWhenWithInline.kt:7
+stepOverWhenWithInline.kt:13
 stepOverWhenWithInline.kt:14
 stepOverWhenWithInline.kt:17
 stepOverWhenWithInline.kt:18
 stepOverWhenWithInline.kt:13
+stepOverWhenWithInline.kt:25
 stepOverWhenWithInline.kt:26
 stepOverWhenWithInline.kt:27
 stepOverWhenWithInline.kt:25
@@ -21,14 +24,16 @@ stepOverWhenWithInline.kt:38
 stepOverWhenWithInline.kt:51
 stepOverWhenWithInline.kt:52
 stepOverWhenWithInline.kt:51
+stepOverWhenWithInline.kt:57
 stepOverWhenWithInline.kt:58
 stepOverWhenWithInline.kt:57
+stepOverWhenWithInline.kt:63
 stepOverWhenWithInline.kt:64
 stepOverWhenWithInline.kt:65
 stepOverWhenWithInline.kt:63
+stepOverWhenWithInline.kt:75
 stepOverWhenWithInline.kt:76
 stepOverWhenWithInline.kt:75
-stepOverWhenWithInline.kt:80
 Disconnected from the target VM
 
 Process finished with exit code 0

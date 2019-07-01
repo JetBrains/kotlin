@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 
 abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPackage: Boolean)
     : AbstractDecompiledTextBaseTest(baseDirectory, allowKotlinPackage = allowKotlinPackage) {
-    override fun getFileToDecompile(): VirtualFile = getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
+    override fun getFileToDecompile(): VirtualFile = getClassFile(TEST_PACKAGE, getTestName(false), module!!)
 
     override fun checkStubConsistency(file: VirtualFile, decompiledText: String) {
         val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)

@@ -1,30 +1,27 @@
 FILE fqName:<root> fileName:/eqeqRhsConditionPossiblyAffectingLhs.kt
-  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Boolean flags:
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Boolean 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(Any): Boolean'
-        CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-          arg0: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-          arg1: WHEN type=kotlin.Double origin=null
+      RETURN type=kotlin.Nothing from='public final fun test (x: kotlin.Any): kotlin.Boolean declared in <root>'
+        CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+          arg0: GET_VAR 'x: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
+          arg1: WHEN type=kotlin.Double origin=IF
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
-                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+                GET_VAR 'x: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
               then: BLOCK type=kotlin.Nothing origin=EXCLEXCL
-                VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Nothing? flags:val
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Nothing? [val] 
                   CONST Null type=kotlin.Nothing? value=null
                 WHEN type=kotlin.Nothing origin=null
                   BRANCH
-                    if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'tmp0_notnull: Nothing?' type=kotlin.Nothing? origin=null
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      arg0: GET_VAR 'val tmp0_notnull: kotlin.Nothing? [val] declared in <root>.test' type=kotlin.Nothing? origin=null
                       arg1: CONST Null type=kotlin.Nothing? value=null
-                    then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+                    then: CALL 'public final fun THROW_NPE (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
-                    then: GET_VAR 'tmp0_notnull: Nothing?' type=kotlin.Nothing? origin=null
+                    then: GET_VAR 'val tmp0_notnull: kotlin.Nothing? [val] declared in <root>.test' type=kotlin.Nothing? origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
-                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-
+                GET_VAR 'x: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null

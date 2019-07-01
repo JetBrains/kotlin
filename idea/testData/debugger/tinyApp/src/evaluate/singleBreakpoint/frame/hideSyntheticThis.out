@@ -1,0 +1,14 @@
+LineBreakpoint created at hideSyntheticThis.kt:6
+Run Java
+Connected to the target VM
+hideSyntheticThis.kt:6
+ frame    = invoke
+   local    = this (expression = this)
+     field    = value (expression = this.value)
+       element  = 0 (expression = this.value[0])
+       element  = 1 (expression = this.value[1])
+       element  = 2 (expression = this.value[2])
+     field    = hash (expression = this.hash)
+Disconnected from the target VM
+
+Process finished with exit code 0

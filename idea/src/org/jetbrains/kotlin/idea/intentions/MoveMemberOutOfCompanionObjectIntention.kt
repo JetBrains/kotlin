@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
-import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.psi.*

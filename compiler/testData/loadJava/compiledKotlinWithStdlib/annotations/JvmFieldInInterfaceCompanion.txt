@@ -1,0 +1,12 @@
+package test
+
+public interface I {
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        @field:kotlin.jvm.JvmField public final val x: kotlin.String = "x"
+            public final fun <get-x>(): kotlin.String
+        @field:kotlin.jvm.JvmField public final val y: kotlin.String = "y"
+            public final fun <get-y>(): kotlin.String
+    }
+}

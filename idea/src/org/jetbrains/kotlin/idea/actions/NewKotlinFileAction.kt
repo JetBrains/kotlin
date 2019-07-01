@@ -42,13 +42,13 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.idea.statistics.KotlinEventTrigger
-import org.jetbrains.kotlin.idea.statistics.KotlinStatisticsTrigger
 import java.util.*
 
 class NewKotlinFileAction : CreateFileFromTemplateAction(
@@ -194,7 +194,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
         private val FQNAME_SEPARATORS = charArrayOf('/', '\\', '.')
 
         fun createFileFromTemplateWithStat(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
-            KotlinStatisticsTrigger.trigger(KotlinEventTrigger.KotlinIdeNewFileTemplateTrigger, template.name)
+            KotlinFUSLogger.log(FUSEventGroups.NewFileTemplate, template.name)
             return createFileFromTemplate(name, template, dir)
         }
 

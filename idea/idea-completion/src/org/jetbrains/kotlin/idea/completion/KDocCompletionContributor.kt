@@ -46,16 +46,23 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 
 class KDocCompletionContributor : CompletionContributor() {
     init {
-        extend(CompletionType.BASIC, psiElement().inside(KDocName::class.java),
-               KDocNameCompletionProvider)
+        extend(
+            CompletionType.BASIC, psiElement().inside(KDocName::class.java),
+            KDocNameCompletionProvider
+        )
 
-        extend(CompletionType.BASIC,
-               psiElement().afterLeaf(
-                       StandardPatterns.or(psiElement(KDocTokens.LEADING_ASTERISK), psiElement(KDocTokens.START))),
-               KDocTagCompletionProvider)
+        extend(
+            CompletionType.BASIC,
+            psiElement().afterLeaf(
+                StandardPatterns.or(psiElement(KDocTokens.LEADING_ASTERISK), psiElement(KDocTokens.START))
+            ),
+            KDocTagCompletionProvider
+        )
 
-        extend(CompletionType.BASIC,
-               psiElement(KDocTokens.TAG_NAME), KDocTagCompletionProvider)
+        extend(
+            CompletionType.BASIC,
+            psiElement(KDocTokens.TAG_NAME), KDocTagCompletionProvider
+        )
     }
 }
 
@@ -66,9 +73,9 @@ object KDocNameCompletionProvider : CompletionProvider<CompletionParameters>() {
 }
 
 class KDocNameCompletionSession(
-        parameters: CompletionParameters,
-        toFromOriginalFileMapper: ToFromOriginalFileMapper,
-        resultSet: CompletionResultSet
+    parameters: CompletionParameters,
+    toFromOriginalFileMapper: ToFromOriginalFileMapper,
+    resultSet: CompletionResultSet
 ) : CompletionSession(CompletionSessionConfiguration(parameters), parameters, toFromOriginalFileMapper, resultSet) {
 
     override val descriptorKindFilter: DescriptorKindFilter? get() = null
@@ -81,39 +88,42 @@ class KDocNameCompletionSession(
         val declarationDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return
         if (kdocLink.getTagIfSubject()?.knownTag == KDocKnownTag.PARAM) {
             addParamCompletions(position, declarationDescriptor)
-        }
-        else {
+        } else {
             addLinkCompletions(declarationDescriptor, kdocLink)
         }
     }
 
 
-    private fun addParamCompletions(position: KDocName,
-                                    declarationDescriptor: DeclarationDescriptor) {
+    private fun addParamCompletions(
+        position: KDocName,
+        declarationDescriptor: DeclarationDescriptor
+    ) {
         val section = position.getContainingSection()
         val documentedParameters = section.findTagsByName("param").map { it.getSubjectName() }.toSet()
         getParamDescriptors(declarationDescriptor)
-                .filter { it.name.asString() !in documentedParameters }
-                .forEach {
-                    collector.addElement(basicLookupElementFactory.createLookupElement(it, parametersAndTypeGrayed = true))
-                }
+            .filter { it.name.asString() !in documentedParameters }
+            .forEach {
+                collector.addElement(basicLookupElementFactory.createLookupElement(it, parametersAndTypeGrayed = true))
+            }
     }
 
-    private fun collectDescriptorsForLinkCompletion(declarationDescriptor: DeclarationDescriptor, kDocLink: KDocLink): Collection<DeclarationDescriptor> {
+    private fun collectDescriptorsForLinkCompletion(
+        declarationDescriptor: DeclarationDescriptor,
+        kDocLink: KDocLink
+    ): Collection<DeclarationDescriptor> {
         val contextScope = getKDocLinkResolutionScope(resolutionFacade, declarationDescriptor)
 
         val qualifiedLink = kDocLink.getLinkText().split('.').dropLast(1)
         val nameFilter = descriptorNameFilter.toNameFilter()
-        if (qualifiedLink.isNotEmpty()) {
-            val parentDescriptors = resolveKDocLink(bindingContext, resolutionFacade, declarationDescriptor, kDocLink.getTagIfSubject(), qualifiedLink)
-            return parentDescriptors
-                    .flatMap {
-                        val scope = getKDocLinkMemberScope(it, contextScope)
-                        scope.getContributedDescriptors(nameFilter = nameFilter)
-                    }
-        }
-        else {
-            return contextScope.collectDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter, changeNamesForAliased = true)
+        return if (qualifiedLink.isNotEmpty()) {
+            val parentDescriptors =
+                resolveKDocLink(bindingContext, resolutionFacade, declarationDescriptor, kDocLink.getTagIfSubject(), qualifiedLink)
+            parentDescriptors.flatMap {
+                val scope = getKDocLinkMemberScope(it, contextScope)
+                scope.getContributedDescriptors(nameFilter = nameFilter)
+            }
+        } else {
+            contextScope.collectDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter, changeNamesForAliased = true)
         }
     }
 

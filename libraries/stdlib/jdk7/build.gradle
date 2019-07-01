@@ -4,17 +4,11 @@ apply plugin: 'kotlin'
 apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_17
 
 pill {
     importAsLibrary = true
-}
-
-dependencies {
-    compile project(':kotlin-stdlib')
-    testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {
@@ -26,11 +20,16 @@ sourceSets {
     test {
         kotlin {
             srcDir 'test'
-            if(!System.properties.'idea.active') {
+            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
                 srcDir '../jvm/test'
                 srcDir '../common/test'
                 srcDir '../test'
             }
+        }
+    }
+    noJdk7Test {
+        kotlin {
+            srcDir 'testNoJdk7'
         }
     }
     java9 {
@@ -38,6 +37,15 @@ sourceSets {
             srcDir 'java9'
         }
     }
+}
+
+configurations {
+    noJdk7TestCompile.extendsFrom(testCompile)
+}
+
+dependencies {
+    compile project(':kotlin-stdlib')
+    testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
 jar {
@@ -58,15 +66,12 @@ task modularJar(type: Jar) {
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
+
     archives modularJar
 }
 
 javadocJar()
-
-dist {
-    from (jar, sourcesJar)
-}
-
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_17
@@ -82,7 +87,13 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xmulti-platform",
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+            "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+    ]
 }
 
 compileJava9Sources(project, 'kotlin.stdlib.jdk7')
@@ -101,9 +112,20 @@ task testJdk6Tests(type: Test) {
         testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
         classpath = files(
                 testClassesDirs,
-                configurations.testCompile
+                sourceSets.test.compileClasspath
         )
     }
 }
 
-check.dependsOn testJdk6Tests
+task testNoJdk7(type: Test, dependsOn: noJdk7TestClasses) {
+    group = "verification"
+
+    executable = "$JDK_17/bin/java"
+
+    testClassesDirs = sourceSets.noJdk7Test.output.classesDirs
+    classpath = sourceSets.noJdk7Test.runtimeClasspath
+}
+
+
+check.dependsOn testJdk6Tests, testNoJdk7
+

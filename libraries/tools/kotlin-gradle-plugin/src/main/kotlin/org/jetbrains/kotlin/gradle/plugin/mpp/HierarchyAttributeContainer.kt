@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
@@ -20,6 +20,13 @@ import org.gradle.api.attributes.AttributeContainer
 import java.util.*
 
 // TODO better implementation: attribute invariants (no attrs with same name and different types allowed), thread safety?
+/** An attribute container that delegates attributes lookup to the [parent] when the key matches [filterParentAttributes] and is missing
+ * in this container.
+ *
+ * This container should never be passed to any Gradle API, as Gradle assumes all [AttributeContainer] instances to
+ * implement AttributeContainerInternal.
+ * TODO expose Kotlin-specific API to the users, convert the user attributes to Gradle attributes internally
+ */
 class HierarchyAttributeContainer(
     val parent: AttributeContainer?,
     val filterParentAttributes: (Attribute<*>) -> Boolean = { true }

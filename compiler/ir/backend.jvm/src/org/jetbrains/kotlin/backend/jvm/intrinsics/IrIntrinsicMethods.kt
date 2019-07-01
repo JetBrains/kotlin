@@ -16,51 +16,243 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
-class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
+class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
-    val intrinsics = IntrinsicMethods()
+    private val KOTLIN_INTERNAL_IR = FqName("kotlin.internal.ir")
+    private val KOTLIN_JVM = FqName("kotlin.jvm")
+    private val KOTLIN_JVM_INTERNAL_UNSAFE = FqName("kotlin.jvm.internal.unsafe")
 
-    private val irMapping = hashMapOf<CallableMemberDescriptor, IntrinsicMethod>()
+    private val intrinsicsMap = (
+            listOf(
+                Key(KOTLIN_JVM, FqName("T"),"<get-javaClass>", emptyList()) to JavaClassProperty,
+                Key(
+                    KOTLIN_JVM,
+                    KotlinBuiltIns.FQ_NAMES.kClass.toSafe(),
+                    "<get-java>",
+                    emptyList()
+                ) to KClassJavaProperty,
+                Key(
+                    KOTLIN_JVM_INTERNAL_UNSAFE,
+                    null,
+                    "monitorEnter",
+                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                ) to MonitorInstruction.MONITOR_ENTER,
+                Key(
+                    KOTLIN_JVM_INTERNAL_UNSAFE,
+                    null,
+                    "monitorExit",
+                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                ) to MonitorInstruction.MONITOR_EXIT,
+                Key(
+                    KOTLIN_JVM,
+                    KotlinBuiltIns.FQ_NAMES.array.toSafe(),
+                    "isArrayOf",
+                    emptyList()
+                ) to IsArrayOf,
+                symbols.arrayOf.toKey() to ArrayOf,
+                Key(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    KotlinBuiltIns.FQ_NAMES.any.toSafe(),
+                    "toString",
+                    emptyList()
+                ) to ToString,
+                Key(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    null,
+                    "arrayOfNulls",
+                    listOf(KotlinBuiltIns.FQ_NAMES._int.toSafe())
+                ) to NewArray,
+                Key(
+                    KotlinBuiltIns.FQ_NAMES.cloneable.toSafe(),
+                    null,
+                    "clone",
+                    emptyList()
+                ) to Clone,
+                irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
+                irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
+                irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.float]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
+                irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.double]!!.toKey()!! to Ieee754Equals(Type.DOUBLE_TYPE),
+                irBuiltIns.booleanNotSymbol.toKey()!! to Not,
+                irBuiltIns.enumValueOfSymbol.toKey()!! to IrEnumValueOf,
+                irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
+                irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
+                irBuiltIns.throwNpeSymbol.toKey()!! to ThrowNPE,
+                irBuiltIns.andandSymbol.toKey()!! to AndAnd,
+                irBuiltIns.ororSymbol.toKey()!! to OrOr,
+                symbols.unsafeCoerceIntrinsicSymbol.toKey()!! to UnsafeCoerce
+            ) +
+                    numberConversionMethods() +
+                    unaryFunForPrimitives("plus", UnaryPlus) +
+                    unaryFunForPrimitives("unaryPlus", UnaryPlus) +
+                    unaryFunForPrimitives("minus", UnaryMinus) +
+                    unaryFunForPrimitives("unaryMinus", UnaryMinus) +
+                    unaryFunForPrimitives("inv", Inv) +
+                    unaryFunForPrimitives("inc", INC) +
+                    unaryFunForPrimitives("dec", DEC) +
+                    unaryFunForPrimitives("hashCode", HashCode) +
+                    unaryFunForPrimitives("toString", ToString) +
+                    binaryFunForPrimitives("equals", EQUALS, irBuiltIns.anyClass) +
+                    symbols.primitiveArrayOfByType.values.map { it.toKey() to ArrayOf } +
+                    binaryFunForPrimitivesAcrossPrimitives("rangeTo", RangeTo) +
+                    binaryOp("plus", IADD) +
+                    binaryOp("minus", ISUB) +
+                    binaryOp("times", IMUL) +
+                    binaryOp("div", IDIV) +
+                    binaryOp("mod", IREM) +
+                    binaryOp("rem", IREM) +
+                    binaryOp("shl", ISHL) +
+                    binaryOp("shr", ISHR) +
+                    binaryOp("ushr", IUSHR) +
+                    binaryOp("and", IAND) +
+                    binaryOp("or", IOR) +
+                    binaryOp("xor", IXOR) +
+                    binaryFunForPrimitivesAcrossPrimitives("compareTo", CompareTo) +
+                    createKeyMapping(Not, irBuiltIns.booleanClass, "not") +
+                    createKeyMapping(StringGetChar, irBuiltIns.stringClass, "get", irBuiltIns.intClass) +
+                    symbols.primitiveIteratorsByType.values.map { iteratorClass ->
+                        createKeyMapping(IteratorNext, iteratorClass, "next")
+                    } +
+                    arrayMethods() +
+                    primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
+                    primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
+                    primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
+                    primitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ)
+    ).toMap()
 
-    private fun createPrimitiveComparisonIntrinsics(typeToIrFun: Map<SimpleType, IrSimpleFunction>, operator: KtSingleValueToken) {
-        for ((type, irFun) in typeToIrFun) {
-            irMapping[irFun.descriptor] = PrimitiveComparison(type, operator)
+    private val PrimitiveType.symbol
+        get() = irBuiltIns.primitiveTypeToIrType[this]!!.classOrNull!!
+
+    fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? = intrinsicsMap[symbol.toKey()]
+
+    private fun unaryFunForPrimitives(name: String, intrinsic: IntrinsicMethod): List<Pair<Key, IntrinsicMethod>> =
+        PrimitiveType.values().map { type ->
+            createKeyMapping(intrinsic, type.symbol, name)
         }
-    }
 
-    init {
-        irMapping[irBuiltIns.eqeq] = Equals(KtTokens.EQEQ)
-        irMapping[irBuiltIns.eqeqeq] = Equals(KtTokens.EQEQEQ)
-        irMapping[irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.float]!!.descriptor] = Ieee754Equals(Type.FLOAT_TYPE)
-        irMapping[irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.double]!!.descriptor] = Ieee754Equals(Type.DOUBLE_TYPE)
-        irMapping[irBuiltIns.booleanNot] = Not()
-
-        createPrimitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT)
-        createPrimitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ)
-        createPrimitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT)
-        createPrimitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ)
-
-        irMapping[irBuiltIns.enumValueOf] = IrEnumValueOf()
-        irMapping[irBuiltIns.noWhenBranchMatchedException] = IrNoWhenBranchMatchedException()
-        irMapping[irBuiltIns.illegalArgumentException] = IrIllegalArgumentException()
-        irMapping[irBuiltIns.throwNpe] = ThrowNPE()
-    }
-
-    fun getIntrinsic(descriptor: CallableMemberDescriptor): IntrinsicMethod? {
-        intrinsics.getIntrinsic(descriptor)?.let { return it }
-        if (descriptor is PropertyAccessorDescriptor) {
-            return intrinsics.getIntrinsic(DescriptorUtils.unwrapFakeOverride(descriptor.correspondingProperty))
+    private fun binaryFunForPrimitivesAcrossPrimitives(name: String, intrinsic: IntrinsicMethod): List<Pair<Key, IntrinsicMethod>> =
+        PrimitiveType.values().flatMap { parameter ->
+            binaryFunForPrimitives(name, intrinsic, parameter.symbol)
         }
-        return irMapping[descriptor.original]
+
+
+    private fun binaryFunForPrimitives(
+        name: String,
+        intrinsic: IntrinsicMethod,
+        parameter: IrClassifierSymbol
+    ): List<Pair<Key, IntrinsicMethod>> =
+        PrimitiveType.values().map { type ->
+            createKeyMapping(
+                intrinsic,
+                type.symbol,
+                name,
+                parameter
+            )
+        }
+
+    private fun binaryOp(methodName: String, opcode: Int) = binaryFunForPrimitivesAcrossPrimitives(methodName, BinaryOp(opcode))
+
+    private fun numberConversionMethods(): List<Pair<Key, IntrinsicMethod>> =
+        PrimitiveType.NUMBER_TYPES.flatMap { type ->
+            numberConversionMethods(type.symbol)
+        } + numberConversionMethods(irBuiltIns.numberClass)
+
+    private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
+        symbols.primitiveArrays.flatMap { (key, value) ->
+            arrayMethods(
+                key.symbol,
+                value
+            )
+        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+
+    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
+        listOf(
+            createKeyMapping(ArraySize, arrayClass, "<get-size>"),
+            createKeyMapping(NewArray, arrayClass, "<init>", irBuiltIns.intClass),
+            createKeyMapping(ArraySet, arrayClass, "set", irBuiltIns.intClass, elementClass),
+            createKeyMapping(ArrayGet, arrayClass, "get", irBuiltIns.intClass),
+            createKeyMapping(Clone, arrayClass, "clone"),
+            createKeyMapping(ArrayIterator, arrayClass, "iterator")
+        )
+
+    data class Key(val owner: FqName, val receiverParameterTypeName: FqName?, val name: String, val valueParameterTypeNames: List<FqName?>)
+
+    companion object {
+
+        internal val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
+        private val INC = Increment(1)
+
+        private val DEC = Increment(-1)
+        private val EQUALS = Equals(KtTokens.EQEQ)
+
+        private fun IrFunctionSymbol.toKey(): Key? {
+            val parent = owner.parent
+            val ownerFqName = when {
+                parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS ->
+                    (parent.parent as IrPackageFragment).fqName
+                parent is IrClass -> parent.fqNameWhenAvailable ?: return null
+                parent is IrPackageFragment -> parent.fqName
+                else -> return null
+            }
+            return Key(
+                ownerFqName,
+                getParameterFqName(owner.extensionReceiverParameter),
+                owner.name.asString(),
+                owner.valueParameters.map(::getParameterFqName)
+            )
+        }
+
+        private fun getParameterFqName(parameter: IrValueParameter?): FqName? =
+            getParameterFqName(parameter?.type?.classifierOrNull)
+
+        private fun getParameterFqName(parameter: IrClassifierSymbol?): FqName? =
+            parameter?.owner?.let {
+                when (it) {
+                    is IrClass -> it.fqNameWhenAvailable
+                    is IrTypeParameter -> FqName(it.name.asString())
+                    else -> null
+                }
+            }
+
+        private fun createKeyMapping(
+            intrinsic: IntrinsicMethod,
+            klass: IrClassSymbol,
+            name: String,
+            vararg args: IrClassifierSymbol
+        ): Pair<Key, IntrinsicMethod> =
+            Key(klass.owner.fqNameWhenAvailable!!, null, name, args.map {
+                getParameterFqName(it)
+            }) to intrinsic
+
+        private fun numberConversionMethods(numberClass: IrClassSymbol) =
+            OperatorConventions.NUMBER_CONVERSIONS.map { method ->
+                createKeyMapping(NumberCast, numberClass, method.asString())
+            }
+
+
+        private fun primitiveComparisonIntrinsics(typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>, operator: KtSingleValueToken) =
+            typeToIrFun.map { (type, irFunSymbol) ->
+                irFunSymbol.toKey()!! to PrimitiveComparison(type, operator)
+            }
     }
 }

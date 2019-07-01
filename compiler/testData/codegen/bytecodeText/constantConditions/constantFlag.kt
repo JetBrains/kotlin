@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: util.kt
 const val FLAG = true
 const val OTHER_FLAG = false

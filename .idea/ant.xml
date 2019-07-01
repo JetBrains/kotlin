@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="AntConfiguration">
-    <buildFile url="file://$PROJECT_DIR$/libraries/build-docs.xml">
-      <maximumHeapSize value="1024" />
-    </buildFile>
-  </component>
-</project>

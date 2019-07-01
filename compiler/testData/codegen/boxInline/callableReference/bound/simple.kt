@@ -1,8 +1,6 @@
 // FILE: 1.kt
-
 package test
-
-inline fun foo(x: () -> String, z: String) = x() + z
+inline fun foo(x: () -> String) = x()
 
 fun String.id() = this
 
@@ -10,8 +8,4 @@ fun String.id() = this
 
 import test.*
 
-fun box() : String {
-    var zeroSlot = "fail";
-    val z = "O"
-    return foo(z::id, "K")
-}
+fun box() = foo("OK"::id)

@@ -22,20 +22,22 @@ import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class MultifileClassPartCodegen(
-        v: ClassBuilder,
-        file: KtFile,
-        private val packageFragment: PackageFragmentDescriptor,
-        private val superClassInternalName: String,
-        private val shouldGeneratePartHierarchy: Boolean,
-        partContext: MultifileClassPartContext,
-        state: GenerationState
+    v: ClassBuilder,
+    file: KtFile,
+    private val packageFragment: PackageFragmentDescriptor,
+    private val superClassInternalName: String,
+    private val shouldGeneratePartHierarchy: Boolean,
+    partContext: MultifileClassPartContext,
+    state: GenerationState
 ) : MemberCodegen<KtFile>(state, null, partContext, file, v) {
     private val partType = partContext.filePartType
     private val facadeClassType = partContext.multifileClassType
@@ -97,6 +99,11 @@ class MultifileClassPartCodegen(
         writeKotlinMetadata(v, state, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART, extraFlags) { av ->
             AsmUtil.writeAnnotationData(av, serializer, packageProto)
             av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassType.internalName)
+
+            val kotlinPackageFqName = element.packageFqName
+            if (kotlinPackageFqName != JvmClassName.byInternalName(partType.internalName).packageFqName) {
+                av.visit(METADATA_PACKAGE_NAME_FIELD_NAME, kotlinPackageFqName.asString())
+            }
         }
     }
 

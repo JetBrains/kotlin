@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analyzer
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 
 interface ModuleInfo {
@@ -15,7 +16,8 @@ interface ModuleInfo {
     val displayedName: String get() = name.asString()
     fun dependencies(): List<ModuleInfo>
     val expectedBy: List<ModuleInfo> get() = emptyList()
-    val platform: TargetPlatform? get() = null
+    val platform: TargetPlatform
+    val analyzerServices: PlatformDependentAnalyzerServices
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = mapOf(Capability to this)
@@ -28,7 +30,7 @@ interface ModuleInfo {
     // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
     // additional members dependent on the JDK
     fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-        platform?.dependencyOnBuiltIns() ?: ModuleInfo.DependencyOnBuiltIns.LAST
+        analyzerServices?.dependencyOnBuiltIns() ?: ModuleInfo.DependencyOnBuiltIns.LAST
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
     enum class DependencyOnBuiltIns { NONE, AFTER_SDK, LAST }
@@ -37,3 +39,6 @@ interface ModuleInfo {
         val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
     }
 }
+
+val ModuleDescriptor.moduleInfo: ModuleInfo?
+    get() = getCapability(ModuleInfo.Capability)

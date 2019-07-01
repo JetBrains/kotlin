@@ -1,0 +1,20 @@
+package test
+
+public abstract class A {
+    public constructor A()
+    public open fun getValue(): kotlin.String!
+}
+
+public open class B : test.A, test.I {
+    public constructor B()
+    public open override /*2*/ /*fake_override*/ val value: kotlin.String?
+}
+
+public final class C : test.B, test.I {
+    public constructor C()
+    public open override /*2*/ /*fake_override*/ val value: kotlin.String?
+}
+
+public interface I {
+    public abstract val value: kotlin.String?
+}

@@ -40,19 +40,20 @@ abstract class ExtractionEngineHelper(val operationName: String) {
     open fun validate(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptorWithConflicts = descriptor.validate()
 
     abstract fun configureAndRun(
-            project: Project,
-            editor: Editor,
-            descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
-            onFinish: (ExtractionResult) -> Unit = {}
+        project: Project,
+        editor: Editor,
+        descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
+        onFinish: (ExtractionResult) -> Unit = {}
     )
 }
 
 class ExtractionEngine(
-        val helper: ExtractionEngineHelper
+    val helper: ExtractionEngineHelper
 ) {
-    fun run(editor: Editor,
-            extractionData: ExtractionData,
-            onFinish: (ExtractionResult) -> Unit = {}
+    fun run(
+        editor: Editor,
+        extractionData: ExtractionData,
+        onFinish: (ExtractionResult) -> Unit = {}
     ) {
         val project = extractionData.project
 
@@ -68,8 +69,7 @@ class ExtractionEngine(
                 helper.configureAndRun(project, editor, validationResult) {
                     try {
                         onFinish(it)
-                    }
-                    finally {
+                    } finally {
                         it.dispose()
                         extractionData.dispose()
                     }
@@ -85,24 +85,23 @@ class ExtractionEngine(
 
             AnalysisResult.Status.NON_CRITICAL_ERROR -> {
                 val anchorPoint = RelativePoint(
-                        editor.contentComponent,
-                        editor.visualPositionToXY(editor.selectionModel.selectionStartPosition!!)
+                    editor.contentComponent,
+                    editor.visualPositionToXY(editor.selectionModel.selectionStartPosition!!)
                 )
                 JBPopupFactory.getInstance()!!
-                        .createHtmlTextBalloonBuilder(
-                                "$message<br/><br/><a href=\"EXTRACT\">Proceed with extraction</a>",
-                                MessageType.WARNING,
-                                { event ->
-                                    if (event?.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-                                        validateAndRefactor()
-                                    }
-                                }
-                        )
-                        .setHideOnClickOutside(true)
-                        .setHideOnFrameResize(false)
-                        .setHideOnLinkClick(true)
-                        .createBalloon()
-                        .show(anchorPoint, Balloon.Position.below)
+                    .createHtmlTextBalloonBuilder(
+                        "$message<br/><br/><a href=\"EXTRACT\">Proceed with extraction</a>",
+                        MessageType.WARNING
+                    ) { event ->
+                        if (event?.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+                            validateAndRefactor()
+                        }
+                    }
+                    .setHideOnClickOutside(true)
+                    .setHideOnFrameResize(false)
+                    .setHideOnLinkClick(true)
+                    .createBalloon()
+                    .show(anchorPoint, Balloon.Position.below)
             }
 
             AnalysisResult.Status.SUCCESS -> validateAndRefactor()

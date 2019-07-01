@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.canBeAddedToImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
@@ -32,12 +33,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression>(
-        KtNameReferenceExpression::class.java,
-        "Add import for member"
-){
+    KtNameReferenceExpression::class.java,
+    "Add import for member"
+), HighPriorityAction {
 
-    private fun getFullQualifier(element: KtNameReferenceExpression): KtQualifiedExpression?
-            = element.getTopmostParentOfType<KtQualifiedExpression>()
+    private fun getFullQualifier(element: KtNameReferenceExpression): KtQualifiedExpression? = element.getTopmostParentOfType()
 
     override fun isApplicableTo(element: KtNameReferenceExpression): Boolean {
         if (element.getQualifiedElement() == element) return false //Ignore simple name expressions
@@ -89,7 +89,7 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
 
         val targets = nameExpression.mainReference.resolveToDescriptors(bindingContext)
         if (targets.isEmpty()) return null
-        if (!targets.all { it.canBeReferencedViaImport() }) return null
+        if (!targets.all { it.canBeAddedToImport() }) return null
         return targets.map { it.importableFqName }.singleOrNull()
     }
 }

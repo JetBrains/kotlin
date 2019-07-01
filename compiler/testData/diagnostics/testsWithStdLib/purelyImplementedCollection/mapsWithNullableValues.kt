@@ -17,14 +17,14 @@ fun hashMapTest() {
     x[""] = nullableInt
     x[""] = 1
 
-    val b1: MutableMap<String, Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String, Int> = <!TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String, Int?> = x
-    val b3: Map<String, Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b3: Map<String, Int> = <!TYPE_MISMATCH!>x<!>
     val b4: Map<String, Int?> = x
-    val b5: Map<String?, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b5: Map<String?, Int?> = <!TYPE_MISMATCH!>x<!>
 
-    val b6: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!TYPE_MISMATCH!>x.<!NI;TYPE_MISMATCH!>get("")<!><!>
+    val b6: Int = <!TYPE_MISMATCH!>x[""]<!>
+    val b7: Int = <!TYPE_MISMATCH!>x.get("")<!>
 
     val b8: Int? = x.get("")
 }
@@ -41,14 +41,14 @@ fun treeMapTest() {
     x[""] = nullableInt
     x[""] = 1
 
-    val b1: MutableMap<String, Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String, Int> = <!TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String, Int?> = x
-    val b3: Map<String, Int> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b3: Map<String, Int> = <!TYPE_MISMATCH!>x<!>
     val b4: Map<String, Int?> = x
-    val b5: Map<String?, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b5: Map<String?, Int?> = <!TYPE_MISMATCH!>x<!>
 
-    val b6: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!TYPE_MISMATCH!>x.<!NI;TYPE_MISMATCH!>get("")<!><!>
+    val b6: Int = <!TYPE_MISMATCH!>x[""]<!>
+    val b7: Int = <!TYPE_MISMATCH!>x.get("")<!>
 
     val b8: Int? = x.get("")
 }

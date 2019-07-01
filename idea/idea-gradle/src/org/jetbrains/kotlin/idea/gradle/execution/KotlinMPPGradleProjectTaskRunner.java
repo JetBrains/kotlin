@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.gradle.execution;
@@ -36,16 +36,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.KotlinFacetSettings;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
-import org.jetbrains.kotlin.platform.IdePlatform;
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformUtil;
-import org.jetbrains.kotlin.platform.impl.NativeIdePlatformUtil;
+import org.jetbrains.kotlin.platform.TargetPlatformKt;
+import org.jetbrains.kotlin.platform.TargetPlatform;
+import org.jetbrains.kotlin.platform.konan.KonanPlatformKt;
 import org.jetbrains.plugins.gradle.execution.build.CachedModuleDataFinder;
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
-import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
@@ -56,6 +55,7 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
 import static com.intellij.openapi.util.text.StringUtil.*;
+import static org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunnerUtilKt.isDelegatedBuild;
 import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.resolveProjectPath;
 
 /**
@@ -172,10 +172,13 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
 
     @Override
     public boolean canRun(@NotNull ProjectTask projectTask) {
-        if (!GradleSystemRunningSettings.getInstance().isUseGradleAwareMake()) return false;
         if (projectTask instanceof ModuleBuildTask) {
             final ModuleBuildTask moduleBuildTask = (ModuleBuildTask) projectTask;
             final Module module = moduleBuildTask.getModule();
+
+            if (! isDelegatedBuild(module)) {
+                return false;
+            }
 
             if (!isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)) return false;
 
@@ -292,10 +295,10 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacet kotlinFacet = KotlinFacet.Companion.get(module);
         if (kotlinFacet == null) return false;
 
-        final IdePlatform platform = kotlinFacet.getConfiguration().getSettings().getPlatform();
+        final TargetPlatform platform = kotlinFacet.getConfiguration().getSettings().getTargetPlatform();
         if (platform == null) return false;
 
-        return NativeIdePlatformUtil.isKotlinNative(platform);
+        return KonanPlatformKt.isNative(platform);
     }
 
     private static boolean isCommonProductionSourceModule(Module module) {
@@ -305,10 +308,10 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final KotlinFacetSettings facetSettings = kotlinFacet.getConfiguration().getSettings();
         if (facetSettings.isTestModule()) return false;
 
-        final IdePlatform platform = facetSettings.getPlatform();
+        final TargetPlatform platform = facetSettings.getTargetPlatform();
         if (platform == null) return false;
 
-        return CommonIdePlatformUtil.isCommon(platform);
+        return TargetPlatformKt.isCommon(platform);
     }
 
     private static Collection<String> findNativeGradleBuildTasks(Collection<String> gradleTasks, String sourceSetName) {

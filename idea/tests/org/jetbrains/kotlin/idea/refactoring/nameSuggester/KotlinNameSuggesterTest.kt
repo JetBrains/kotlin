@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.nameSuggester
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException
 import org.jetbrains.kotlin.idea.refactoring.selectElement
@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.lang.AssertionError
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinNameSuggesterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testArrayList() = doTest()
 
@@ -37,6 +39,8 @@ class KotlinNameSuggesterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testNameLong() = doTest()
 
     fun testNameReferenceExpression() = doTest()
+
+    fun testNameReferenceExpressionForConstants() = doTest()
 
     fun testNameString() = doTest()
 

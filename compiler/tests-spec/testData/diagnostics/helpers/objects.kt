@@ -17,6 +17,7 @@ object DeepObject {
                             object G {
                                 object J {
                                     val x: Int? = 10
+                                    val prop_1: Int? = 10
                                 }
                             }
                         }

@@ -28,7 +28,6 @@ fun box(): String {
         return "Fail: should have been an exception"
     }
     catch(e: IllegalStateException) {
-        println(e.message)
         return "OK"
     }
 }

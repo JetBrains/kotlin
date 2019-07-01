@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.configure
@@ -17,14 +17,17 @@ import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JDK7
 import org.jetbrains.kotlin.idea.versions.hasJreSpecificRuntime
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithGradleConfigurator() {
 
     override val name: String = NAME
 
-    override val targetPlatform: TargetPlatform = JvmPlatform
+    override val targetPlatform: TargetPlatform = JvmPlatforms.defaultJvmPlatform
+
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform(): org.jetbrains.kotlin.resolve.TargetPlatform = JvmPlatforms.CompatJvmPlatform
 
     override val presentableText: String = "Android with Gradle"
 
@@ -44,11 +47,11 @@ class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithG
         }
         else {
             manipulator.configureModuleBuildScript(
-                    kotlinPluginName,
-                    getKotlinPluginExpression(file.isKtDsl()),
-                    getStdlibArtifactName(sdk, version),
-                    version,
-                    jvmTarget
+                kotlinPluginName,
+                getKotlinPluginExpression(file.isKtDsl()),
+                getStdlibArtifactName(sdk, version),
+                version,
+                jvmTarget
             )
         }
     }

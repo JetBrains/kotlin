@@ -115,11 +115,13 @@ class OverridesCompletion(
                     val override = KtTokens.OVERRIDE_KEYWORD.value
 
                     tailrec fun calcStartOffset(startOffset: Int, diff: Int = 0): Int {
-                        if (context.document.text[startOffset - 1].isWhitespace()) {
-                            return calcStartOffset(startOffset - 1, diff + 1)
-                        } else if (context.document.text.substring(startOffset - override.length, startOffset) == override) {
-                            return startOffset - override.length
-                        } else return diff + startOffset
+                        return when {
+                            context.document.text[startOffset - 1].isWhitespace() -> calcStartOffset(startOffset - 1, diff + 1)
+                            context.document.text.substring(startOffset - override.length, startOffset) == override -> {
+                                startOffset - override.length
+                            }
+                            else -> diff + startOffset
+                        }
                     }
 
                     val startOffset = calcStartOffset(context.startOffset)

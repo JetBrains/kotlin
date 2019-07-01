@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
+// FULL_JDK
+
+import java.lang.reflect.Modifier
 
 class A {
     val x = "outer"
@@ -18,6 +21,12 @@ fun box(): String {
     if (A().y != "outer") return "Fail outer y"
     if (A.x != "companion") return "Fail companion x"
     if (A.y != "companion") return "Fail companion y"
+
+    if (!Modifier.isStatic(A::class.java.getDeclaredField("x").modifiers))
+        return "Fail: A.x should be static"
+
+    if (Modifier.isStatic(A::class.java.getDeclaredField("x$1").modifiers))
+        return "Fail: A.x$1 should not be static"
 
     return "OK"
 }

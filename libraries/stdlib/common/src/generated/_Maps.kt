@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -14,6 +14,8 @@ package kotlin.collections
 //
 
 import kotlin.random.*
+import kotlin.ranges.contains
+import kotlin.ranges.reversed
 
 /**
  * Returns a [List] containing all key-value pairs.
@@ -56,6 +58,8 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each entry in the original map.
+ * 
+ * @sample samples.collections.Maps.Transformations.mapToList
  */
 public inline fun <K, V, R> Map<out K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
     return mapTo(ArrayList<R>(size), transform)

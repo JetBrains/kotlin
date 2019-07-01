@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -44,7 +43,7 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
         for (klass in element.withExpectedActuals()) {
             klass as? KtClass ?: continue
 
-            val classDescriptor = klass.resolveToDescriptorIfAny() as? ClassDescriptor ?: continue
+            val classDescriptor = klass.resolveToDescriptorIfAny() ?: continue
             val isExpect = classDescriptor.isExpect
             val isActual = classDescriptor.isActual
 

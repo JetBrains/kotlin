@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix.expectactual
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
     declaration: D,
@@ -76,12 +77,19 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                     }
                 }
                 val generatedDeclaration = when {
-                    targetClass != null -> targetClass.addDeclaration(generated as KtNamedDeclaration)
+                    targetClass != null -> {
+                        if (generated is KtPrimaryConstructor && targetClass is KtClass)
+                            targetClass.createPrimaryConstructorIfAbsent().replace(generated)
+                        else
+                            targetClass.addDeclaration(generated as KtNamedDeclaration)
+                    }
                     else -> targetFile.add(generated) as KtElement
                 }
                 val reformatted = CodeStyleManager.getInstance(project).reformat(generatedDeclaration)
                 val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
-                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
+                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(
+                    (shortened as? KtNamedDeclaration)?.nameIdentifier?.startOffset ?: shortened.startOffset
+                )
             }
         }
     }

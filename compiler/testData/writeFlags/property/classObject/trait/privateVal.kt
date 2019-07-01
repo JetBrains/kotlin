@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 interface Test {
   companion object {
     private val prop = 0;

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.sources
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
@@ -38,7 +39,12 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
 
     private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with(project.configurations) {
         sourceSet.relatedConfigurationNames.forEach { configurationName ->
-            maybeCreate(configurationName)
+            maybeCreate(configurationName).apply {
+                if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
+                    isCanBeResolved = false
+                }
+                isCanBeConsumed = false
+            }
         }
     }
 
@@ -73,6 +79,10 @@ internal class DefaultKotlinSourceSetFactory(
                 isVisible = false
                 isCanBeConsumed = false
                 extendsFrom(project.configurations.maybeCreate(configurationName))
+
+                if (project.isKotlinGranularMetadataEnabled) {
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                }
             }
         }
     }

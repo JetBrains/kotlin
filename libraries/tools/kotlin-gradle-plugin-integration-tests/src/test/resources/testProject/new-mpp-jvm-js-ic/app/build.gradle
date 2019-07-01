@@ -1,0 +1,7 @@
+apply from: "$rootDir/configure-targets.gradle"
+
+kotlin.sourceSets.commonMain {
+    dependencies {
+        implementation project(":lib")
+    }
+}

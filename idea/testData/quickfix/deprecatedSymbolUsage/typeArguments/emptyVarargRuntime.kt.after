@@ -1,4 +1,4 @@
-// "Replace with 'newFun(*elements)'" "true"
+// "Replace with 'newFun<String>(*elements)'" "true"
 // WITH_RUNTIME
 
 @Deprecated("", ReplaceWith("newFun(*elements)"))

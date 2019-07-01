@@ -127,7 +127,8 @@ public class CodegenTestFiles {
                 String[] values = valueString.split(" ");
 
                 scriptParameterValues.add(values);
-            } else {
+            }
+            else {
                 scriptParameterValues.add(ArrayUtil.EMPTY_STRING_ARRAY);
             }
         }

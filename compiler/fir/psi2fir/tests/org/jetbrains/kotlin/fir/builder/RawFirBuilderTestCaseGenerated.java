@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.builder;
@@ -79,6 +79,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
         @TestMetadata("genericFunctions.kt")
         public void testGenericFunctions() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/genericFunctions.kt");
+        }
+
+        @TestMetadata("genericProperty.kt")
+        public void testGenericProperty() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/genericProperty.kt");
         }
 
         @TestMetadata("nestedClass.kt")
@@ -204,6 +209,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/genericCalls.kt");
         }
 
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/in.kt");
+        }
+
         @TestMetadata("init.kt")
         public void testInit() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/init.kt");
@@ -222,6 +232,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
         @TestMetadata("modifications.kt")
         public void testModifications() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/modifications.kt");
+        }
+
+        @TestMetadata("namedArgument.kt")
+        public void testNamedArgument() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/expressions/namedArgument.kt");
         }
 
         @TestMetadata("nullability.kt")

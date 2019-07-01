@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class TestClass {
     inline operator fun <T> invoke(task: () -> T) = task()
 }

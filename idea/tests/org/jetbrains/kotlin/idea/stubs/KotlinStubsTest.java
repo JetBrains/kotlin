@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.stubs;
@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinStubsTest extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override

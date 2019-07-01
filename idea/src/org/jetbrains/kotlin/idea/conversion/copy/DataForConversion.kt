@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.idea.core.util.start
+import org.jetbrains.kotlin.idea.core.util.end
+import org.jetbrains.kotlin.idea.core.util.range
 import java.util.*
 
 data class DataForConversion private constructor(

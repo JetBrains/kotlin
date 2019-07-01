@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+fun test() {
+    <caret>run {
+        val a = 42
+        use(a, a)
+        use(a, a)
+    }
+    val a = 33
+}
+
+fun use(i: Int, j: Int) {}

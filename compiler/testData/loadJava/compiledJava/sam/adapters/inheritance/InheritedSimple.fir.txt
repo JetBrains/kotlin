@@ -1,0 +1,2 @@
+public abstract interface InheritedSimple : R|kotlin/Any| {
+}

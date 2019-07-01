@@ -20,12 +20,14 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -91,6 +93,29 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
 }
 
+open class KtUltraLightSimpleModifierList(
+    owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
+) : KtUltraLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
+    override fun hasModifierProperty(name: String) = name in modifiers
+
+    override fun copy() = KtUltraLightSimpleModifierList(owner, modifiers)
+}
+
+abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner: T) :
+    KtLightModifierList<T>(owner) {
+
+    override val clsDelegate: PsiModifierList
+        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+
+    private fun throwInvalidOperation(): Nothing = throw IncorrectOperationException()
+
+    override fun setModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
+
+    override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
+
+    override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
+}
+
 open class KtLightSimpleModifierList(
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
 ) : KtLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
@@ -119,10 +144,17 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
         .groupBy({ it.first }) { it.second }
         .flatMap { (fqName, entries) ->
             entries.mapIndexed { index, entry ->
-                KtLightAnnotationForSourceEntry(fqName, entry, lightModifierList) {
-                    lightModifierList.clsDelegate.annotations.filter { it.qualifiedName == fqName }.getOrNull(index)
-                        ?: KtLightNonExistentAnnotation(lightModifierList)
-                }
+
+                val lazyClsDelegate = if (lightModifierList !is KtUltraLightModifierList) {
+                    lazyPub {
+                        lightModifierList.clsDelegate.annotations
+                            .filter { it.qualifiedName == fqName }
+                            .getOrNull(index)
+                            ?: KtLightNonExistentAnnotation(lightModifierList)
+                    }
+                } else null
+
+                KtLightAnnotationForSourceEntry(fqName, entry, lightModifierList, lazyClsDelegate)
             }
         }
 }

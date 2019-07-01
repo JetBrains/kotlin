@@ -1,26 +1,26 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.IdentifierInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixtureTestCase() {
 

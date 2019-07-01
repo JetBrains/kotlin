@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import java.lang.AssertionError
 import java.util.*
 
 /**

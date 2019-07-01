@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
 
     fun myLocalFun3() {
         // EXPRESSION: myLocalFun1() + 1
-        // RESULT: java.lang.AssertionError : Cannot find local variable: name = myLocalFun1
+        // RESULT: java.lang.AssertionError : Cannot find local variable: name = 'myLocalFun1', type = kotlin.jvm.functions.Function0
         //Breakpoint!
         myLocalFun1() + 1
     }
@@ -56,10 +56,17 @@ fun main(args: Array<String>) {
     i = 1
     fun myLocalFun7() {
         // EXPRESSION: myLocalFun6() + 1
-        // RESULT: java.lang.AssertionError : Cannot find local variable: name = myLocalFun6
+        // RESULT: java.lang.AssertionError : Cannot find local variable: name = 'myLocalFun6', type = kotlin.jvm.functions.Function0
         //Breakpoint!
         myLocalFun6() + 1
     }
 
     myLocalFun7()
+
+    fun <T> myLocalFun8(): T = 1 as T
+
+    // EXPRESSION: myLocalFun8<Int>()
+    // RESULT: 1: I
+    //Breakpoint!
+    myLocalFun8<Int>()
 }

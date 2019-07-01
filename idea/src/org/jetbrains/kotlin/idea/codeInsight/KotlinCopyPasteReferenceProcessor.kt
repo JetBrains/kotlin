@@ -33,12 +33,13 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
-import org.jetbrains.kotlin.idea.conversion.copy.end
-import org.jetbrains.kotlin.idea.conversion.copy.range
-import org.jetbrains.kotlin.idea.conversion.copy.start
+import org.jetbrains.kotlin.idea.core.util.end
+import org.jetbrains.kotlin.idea.core.util.range
+import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.references.*
@@ -49,7 +50,10 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -129,7 +133,10 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         })
 
         val allElementsToResolve = elementsByRange.values.flatten().flatMap { it.collectDescendantsOfType<KtElement>() }
-        val bindingContext = file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
+        val bindingContext =
+            allowResolveInWriteAction {
+                file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
+            }
 
         val result = ArrayList<KotlinReferenceData>()
         for ((range, elements) in elementsByRange) {
@@ -150,8 +157,8 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     ) {
         if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        element.forEachDescendantOfType<KtElement>(canGoInside = { it::class.java as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
-            val reference = element.mainReference ?: return@forEachDescendantOfType
+        element.forEachDescendantOfType<KtElement>(canGoInside = { it::class.java as Class<*> !in IGNORE_REFERENCES_INSIDE }) { ktElement ->
+            val reference = ktElement.mainReference ?: return@forEachDescendantOfType
 
             val descriptors = resolveReference(reference, bindingContext)
             //check whether this reference is unambiguous
@@ -166,11 +173,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
 
                 if (!reference.canBeResolvedViaImport(descriptor, bindingContext)) continue
 
-                val fqName = descriptor.importableFqName!!
+                val fqName = descriptor.importableFqName ?: continue
                 val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
-                val isQualifiable = KotlinReferenceData.isQualifiable(element, descriptor)
-                val relativeStart = element.range.start - startOffset
-                val relativeEnd = element.range.end - startOffset
+                val isQualifiable = KotlinReferenceData.isQualifiable(ktElement, descriptor)
+                val relativeStart = ktElement.range.start - startOffset
+                val relativeEnd = ktElement.range.end - startOffset
                 add(KotlinReferenceData(relativeStart, relativeEnd, fqName.asString(), isQualifiable, kind))
             }
         }
@@ -376,6 +383,6 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     companion object {
-        @TestOnly var declarationsToImportSuggested: Collection<String> = emptyList()
+        @get:TestOnly var declarationsToImportSuggested: Collection<String> = emptyList()
     }
 }

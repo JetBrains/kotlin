@@ -1,0 +1,11 @@
+FILE: Test.kt
+    public final class Tester : R|Inheritor| {
+        public constructor(): R|Tester| {
+            super<R|Inheritor|>()
+        }
+
+        public final fun test(): R|kotlin/Int| {
+            ^test R|/Inheritor.x|
+        }
+
+    }

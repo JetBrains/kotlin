@@ -31,12 +31,10 @@ fun case_3(): Boolean {
 
 /*
  * TESTCASE NUMBER: 4
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-26386
- * EXCEPTION: compiler
  */
 fun case_4(): Boolean? {
-    contract { returns(null) implies case_4() }
+    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!>case_4()<!> }
     return null
 }
 
@@ -48,6 +46,25 @@ fun case_5(): Boolean? {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Boolean): Boolean? {
-    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!>contract { returns(null) implies (!value_1) }<!> }
+    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_MISMATCH!><!CONTRACT_NOT_ALLOWED, CONTRACT_NOT_ALLOWED!>contract<!> { returns(null) implies (!value_1) }<!> }
     return null
+}
+
+// TESTCASE NUMBER: 7
+fun case_7(): Int {
+    contract {
+        callsInPlace(<!ERROR_IN_CONTRACT_DESCRIPTION!>::case_7<!>, InvocationKind.EXACTLY_ONCE)
+    }
+    return 1
+}
+
+/*
+ * TESTCASE NUMBER: 8
+ * ISSUES: KT-26386
+ */
+fun case_8(): () -> Unit {
+    contract {
+        callsInPlace(<!ERROR_IN_CONTRACT_DESCRIPTION!>case_8()<!>, InvocationKind.EXACTLY_ONCE)
+    }
+    return {}
 }

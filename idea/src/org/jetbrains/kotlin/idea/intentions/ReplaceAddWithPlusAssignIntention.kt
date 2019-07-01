@@ -33,7 +33,7 @@ class ReplaceAddWithPlusAssignIntention : SelfTargetingOffsetIndependentIntentio
         KtDotQualifiedExpression::class.java,
         "Replace with '+='"
 ) {
-    private val compatibleNames = setOf("add", "addAll")
+    private val compatibleNames: Set<String> by lazy { setOf("add", "addAll") }
 
     override fun isApplicableTo(element: KtDotQualifiedExpression): Boolean {
         if (element.callExpression?.valueArguments?.size != 1) return false

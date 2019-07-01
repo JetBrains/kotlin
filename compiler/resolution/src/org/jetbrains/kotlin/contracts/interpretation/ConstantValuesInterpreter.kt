@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.contracts.model.structure.ESConstant
 import org.jetbrains.kotlin.contracts.model.structure.ESConstants
 
 internal class ConstantValuesInterpreter {
-    fun interpretConstant(constantReference: ConstantReference, constants: ESConstants): ESConstant? = when (constantReference) {
-        BooleanConstantReference.TRUE -> constants.trueValue
-        BooleanConstantReference.FALSE -> constants.falseValue
-        ConstantReference.NULL -> constants.nullValue
-        ConstantReference.NOT_NULL -> constants.notNullValue
-        ConstantReference.WILDCARD -> constants.wildcard
+    fun interpretConstant(constantReference: ConstantReference): ESConstant? = when (constantReference) {
+        BooleanConstantReference.TRUE -> ESConstants.trueValue
+        BooleanConstantReference.FALSE -> ESConstants.falseValue
+        ConstantReference.NULL -> ESConstants.nullValue
+        ConstantReference.NOT_NULL -> ESConstants.notNullValue
+        ConstantReference.WILDCARD -> ESConstants.wildcard
         else -> null
     }
 }

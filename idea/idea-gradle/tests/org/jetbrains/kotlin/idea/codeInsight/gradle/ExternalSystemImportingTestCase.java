@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
@@ -49,9 +50,13 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.*;
+import org.apache.log4j.Level;
 
 // part of com.intellij.openapi.externalSystem.test.ExternalSystemImportingTestCase
 public abstract class ExternalSystemImportingTestCase extends ExternalSystemTestCase {
+
+    private Logger logger;
+
     @Override
     protected Module getModule(String name) {
         AccessToken accessToken = ApplicationManager.getApplication().acquireReadActionLock();
@@ -74,16 +79,26 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         doImportProject();
     }
 
-    public void ensureIsNotGradleProxyObject(Object o, Map<Object, Object> referencingObjects) {
-        if (o instanceof Proxy) {
-            StringBuilder errMessage = new StringBuilder();
-            errMessage.append(String.format("Object [%s] seems to be a referenced gradle tooling api object. (it may lead to memory leaks during import) Referencing path: ", o));
-            while (o != null) {
-                errMessage.append(String.format("[%s] type: %s <-\r\n", o, o.getClass().toString()));
-                o = referencingObjects.get(o);
-            }
-            //TODO fail(errMessage.toString());
+    public boolean ensureIsNotGradleProxyObject(
+            Object o,
+            Map<Object, Object> referencingObjects,
+            Map<Object, String> referencingFieldNames
+    ) {
+        if (!(o instanceof Proxy)) {
+            return true;
         }
+        StringBuilder errMessage = new StringBuilder();
+        errMessage.append(String.format(
+                "Object [%s] seems to be a referenced gradle tooling api object. (it may lead to memory leaks during import) Referencing path: ",
+                o));
+        while (o != null) {
+            errMessage.append(String.format("[%s].[%s] type: %s <-\r\n", o, referencingFieldNames.get(o), o.getClass().toString()));
+            o = referencingObjects.get(o);
+        }
+        System.err.println(errMessage.toString());
+        //TODO uncomment after fixing IDEA-207782
+        //fail(errMessage.toString());
+        return false;
     }
 
     private boolean shouldBeProcessed(Object toProcess, Set<Object> processed) {
@@ -91,56 +106,83 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     }
 
     public void inspectForGradleMemoryLeaks(DataNode<ProjectData> externalProject) {
+        // Static logger initialisation should not be used because logger factory may be changed on test.setUp
+        if (logger == null) {
+            logger = Logger.getInstance(this.getClass().getName());
+            logger.setLevel(Level.INFO);//not required
+        }
         long start = System.currentTimeMillis();
         Set<Object> processed = new HashSet<>();
         Queue<Object> toProcess = new LinkedList<>();
         Map<Object, Object> referencingObjects = new HashMap<>();
+        Map<Object, String> referencingFieldNames = new HashMap<>();
+        Set<Field> modifiedFields = new HashSet<>();
         toProcess.add(externalProject);
         try {
-            while (! toProcess.isEmpty()) {
+            while (!toProcess.isEmpty()) {
                 Object nextObject = toProcess.poll();
                 processed.add(nextObject);
-                ensureIsNotGradleProxyObject(nextObject, referencingObjects);
+                if (!ensureIsNotGradleProxyObject(nextObject, referencingObjects, referencingFieldNames)) {
+                    break;
+                }
 
                 for (Field field : nextObject.getClass().getDeclaredFields()) {
                     try {
-                        final Object fieldValue;
-                        boolean isAccessible = field.isAccessible();
-                        try {
+
+                        if (!field.isAccessible()) {
                             field.setAccessible(true);
-                            fieldValue = field.get(nextObject);
-                        } finally {
-                            field.setAccessible(isAccessible);
+                            modifiedFields.add(field);
                         }
-                        if (fieldValue == null) {
+                        final Object fieldValue = field.get(nextObject);
+                        if (fieldValue == null || fieldValue.getClass().isPrimitive()) {
                             continue;
                         }
                         if (fieldValue instanceof Collection) {
-                            for (Object o : (Collection)fieldValue) {
-                                saveToProcessIfRequired(processed, toProcess, referencingObjects, nextObject, o);
+                            for (Object o : (Collection) fieldValue) {
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, o,
+                                                        field.getName());
                             }
-                        } else if (fieldValue.getClass().isArray()) {
+                        }
+                        else if (fieldValue.getClass().isArray()) {
                             for (int i = 0; i < Array.getLength(fieldValue); i++) {
                                 Object o = Array.get(fieldValue, i);
-                                saveToProcessIfRequired(processed, toProcess, referencingObjects, nextObject, o);
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, o,
+                                                        field.getName());
                             }
-                        } else {
-                            saveToProcessIfRequired(processed, toProcess, referencingObjects, nextObject, fieldValue);
                         }
-                    } catch (IllegalAccessException e) {
+                        else {
+                            saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, fieldValue,
+                                                    field.getName());
+                        }
+                    }
+                    catch (IllegalAccessException e) {
                         fail(e.getMessage());
                     }
                 }
-
             }
-        } finally {
-            System.out.println("Processed size = " + processed.size() + " Duration: " + (System.currentTimeMillis() - start));
+        }
+        finally {
+            for (Field f : modifiedFields) {
+                f.setAccessible(false);
+            }
+            logger.info(
+                    String.format("Memory leak tracker has finished. Number of processed objects = %s. Duration = %s ms.", processed.size(),
+                                  (System.currentTimeMillis() - start)));
         }
     }
 
-    private void saveToProcessIfRequired(Set<Object> processed, Queue<Object> toProcess, Map<Object, Object> referrers, Object referringObject, Object o) {
+    private void saveToProcessIfRequired(
+            Set<Object> processed,
+            Queue<Object> toProcess,
+            Map<Object, Object> referrers,
+            Map<Object, String> referencingFieldNames,
+            Object referringObject,
+            Object o,
+            String fieldName
+    ) {
         if (shouldBeProcessed(o, processed)) {
             toProcess.add(o);
+            referencingFieldNames.put(o, fieldName);
             referrers.put(o, referringObject);
         }
     }

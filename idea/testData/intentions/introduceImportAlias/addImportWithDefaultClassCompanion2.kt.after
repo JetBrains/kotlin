@@ -1,0 +1,7 @@
+import kotlin.Int.Companion as Int1
+
+// WITH_RUNTIME
+fun foo() {
+    val max = Int1.MAX_VALUE
+    val max2 = Int1.MAX_VALUE
+}

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -48,12 +47,13 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
 
     override fun visitCall(expression: IrCall): IrExpression {
         val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
-        val property = simpleFunction.correspondingProperty ?: return super.visitCall(expression)
+        val property = simpleFunction.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
 
         if (shouldSubstituteAccessorWithField(property, simpleFunction)) {
-            when (expression) {
-                is IrGetterCallImpl -> return substituteGetter(property, expression)
-                is IrSetterCallImpl -> return substituteSetter(property, expression)
+            // property.getter & property.setter might be erased by the above function.
+            when (simpleFunction.valueParameters.size) {
+                0 -> return substituteGetter(property, expression)
+                1 -> return substituteSetter(property, expression)
             }
         }
 
@@ -113,7 +113,7 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
                     receiver.startOffset, receiver.endOffset,
                     context.irBuiltIns.unitType,
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                    context.irBuiltIns.unitType, context.irBuiltIns.unitType.classifierOrFail,
+                    context.irBuiltIns.unitType,
                     receiver
                 )
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 const val N = 42L
 
 fun test(): Long {
@@ -9,6 +8,14 @@ fun test(): Long {
     return sum
 }
 
+// 0 iterator
+// 0 getStart
+// 0 getEnd
+// 0 getFirst
+// 0 getLast
+// 0 getStep
 // 1 LCMP
-// 0 IFEQ
 // 1 IFGT
+// 1 IF
+// 0 L2I
+// 0 I2L

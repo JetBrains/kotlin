@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: JVM_IR
-fun test(): Int {
+fun test(a: Int, b: Int): Int {
     var sum = 0
-    for (i in 1 until 6) {
+    for (i in a until b) {
         sum = sum * 10 + i
     }
     return sum
@@ -12,4 +11,6 @@ fun test(): Int {
 // 0 getEnd
 // 0 getFirst
 // 0 getLast
+// 0 getStep
+// 1 IF_ICMPGE
 // 1 IF

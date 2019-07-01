@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.util.*
 
-internal fun getICReporter(
+fun getICReporter(
     servicesFacade: CompilerServicesFacadeBase,
     compilationResults: CompilationResults,
     compilationOptions: IncrementalCompilationOptions

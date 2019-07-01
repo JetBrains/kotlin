@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 import Color.RED
 
 enum class Color { RED, GREEN, BLUE }

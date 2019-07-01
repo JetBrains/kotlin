@@ -6,6 +6,11 @@ fun test() {
 
     JavaClass.getNull().contentNotInline() // OK
     JavaClass.getMy().contentNonExtensionInlineFun() // OK
+
+    val res = JavaClass.getNull()
+    if (res != null) {
+        res.toBoolean() // OK: KT-29499
+    }
 }
 
 fun String.contentNotInline() {}

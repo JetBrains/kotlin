@@ -87,8 +87,7 @@ class GroovyBuildScriptManipulator(
                     }
                 }
             }
-        }
-        else {
+        } else {
             val applyPluginDirective = getGroovyApplyPluginDirective(kotlinPluginName)
             if (!containsDirective(scriptFile.text, applyPluginDirective)) {
                 val apply = GroovyPsiElementFactory.getInstance(scriptFile.project).createExpressionFromText(applyPluginDirective)
@@ -246,11 +245,11 @@ class GroovyBuildScriptManipulator(
             .getBlockOrCreate("resolutionStrategy")
             .getBlockOrCreate("eachPlugin")
             .addLastStatementInBlockIfNeeded(
-                    """
-                        if (requested.id.id == "$pluginId") {
-                            useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{requested.version}")
-                        }
-                    """.trimIndent()
+                """
+                    if (requested.id.id == "$pluginId") {
+                        useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{requested.version}")
+                    }
+                """.trimIndent()
             )
     }
 
@@ -415,9 +414,9 @@ class GroovyBuildScriptManipulator(
     }
 
     companion object {
-        private val VERSION_TEMPLATE = "\$VERSION$"
+        private const val VERSION_TEMPLATE = "\$VERSION$"
         private val VERSION = String.format("ext.kotlin_version = '%s'", VERSION_TEMPLATE)
-        private val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
+        private const val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
         private val CLASSPATH = "classpath \"$KOTLIN_GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
 
         private fun PsiElement.getBlockByName(name: String): GrClosableBlock? {
@@ -454,13 +453,13 @@ class GroovyBuildScriptManipulator(
         }
 
         fun GrClosableBlock.addLastExpressionInBlockIfNeeded(expressionText: String): Boolean =
-            addExpressionOrStatementInBlockIfNeeded(expressionText, false, false)
+            addExpressionOrStatementInBlockIfNeeded(expressionText, isStatement = false, isFirst = false)
 
         fun GrClosableBlock.addLastStatementInBlockIfNeeded(expressionText: String): Boolean =
-            addExpressionOrStatementInBlockIfNeeded(expressionText, true, false)
+            addExpressionOrStatementInBlockIfNeeded(expressionText, isStatement = true, isFirst = false)
 
         private fun GrClosableBlock.addFirstExpressionInBlockIfNeeded(expressionText: String): Boolean =
-            addExpressionOrStatementInBlockIfNeeded(expressionText, false, true)
+            addExpressionOrStatementInBlockIfNeeded(expressionText, isStatement = false, isFirst = true)
 
         private fun GrClosableBlock.addExpressionOrStatementInBlockIfNeeded(text: String, isStatement: Boolean, isFirst: Boolean): Boolean {
             if (statements.any { StringUtil.equalsIgnoreWhitespaces(it.text, text) }) return false

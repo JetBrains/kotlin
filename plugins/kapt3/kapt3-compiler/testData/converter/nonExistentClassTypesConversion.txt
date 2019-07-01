@@ -304,7 +304,7 @@ public final class Test<G extends java.lang.Object> {
 
     @org.jetbrains.annotations.Nullable()
     public final <T extends java.lang.Object>java.lang.Class<java.lang.Enum<?>> f5(@org.jetbrains.annotations.NotNull()
-    MyType<T> $receiver) {
+    MyType<T> $this$f5) {
         return null;
     }
 

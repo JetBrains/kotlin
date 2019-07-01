@@ -1,24 +1,24 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
-interface NewTypeSubstitutor {
+interface NewTypeSubstitutor: TypeSubstitutorMarker {
     fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType?
 
-    fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type, runCapturedChecks = true, keepAnnotation = false) ?: type
-
-    fun substituteKeepAnnotations(type: UnwrappedType): UnwrappedType =
+    fun safeSubstitute(type: UnwrappedType): UnwrappedType =
         substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
 
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
@@ -36,7 +36,7 @@ interface NewTypeSubstitutor {
                     KotlinTypeFactory.flexibleType(
                         lowerBound?.lowerIfFlexible() ?: type.lowerBound,
                         upperBound?.upperIfFlexible() ?: type.upperBound
-                    )
+                    ).inheritEnhancement(type)
                 }
             }
         }
@@ -74,19 +74,29 @@ interface NewTypeSubstitutor {
             }
             val capturedType = if (type is DefinitelyNotNullType) type.original as NewCapturedType else type as NewCapturedType
             val lower = capturedType.lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
+            if (lower != null && capturedType.lowerType is StubType) {
+                return NewCapturedType(
+                    capturedType.captureStatus,
+                    NewCapturedTypeConstructor(TypeProjectionImpl(typeConstructor.projection.projectionKind, lower)),
+                    lower
+                )
+            }
+
             if (lower != null) throw IllegalStateException(
                 "Illegal type substitutor: $this, " +
                         "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
                         "original lower type: '${capturedType.lowerType}"
             )
 
-            typeConstructor.supertypes.forEach { supertype ->
-                substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
-                    throw IllegalStateException(
-                        "Illegal type substitutor: $this, " +
-                                "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
-                                "original supertype: '$supertype'"
-                    )
+            if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                typeConstructor.supertypes.forEach { supertype ->
+                    substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
+                        throw IllegalStateException(
+                            "Illegal type substitutor: $this, " +
+                                    "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
+                                    "original supertype: '$supertype'"
+                        )
+                    }
                 }
             }
 
@@ -105,7 +115,7 @@ interface NewTypeSubstitutor {
         // simple classifier type
         var replacement = substituteNotNullTypeWithConstructor(typeConstructor) ?: return null
         if (keepAnnotation) {
-            replacement = replacement.replaceAnnotations(type.annotations)
+            replacement = replacement.replaceAnnotations(CompositeAnnotations(replacement.annotations, type.annotations))
         }
         if (type.isMarkedNullable) {
             replacement = replacement.makeNullableAsSpecified(true)

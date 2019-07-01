@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers;
@@ -41,13 +41,6 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
             kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src");
         }
         coroutinesPackage = "";
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        if (javaFilesDir != null) FileUtil.delete(javaFilesDir);
-        if (kotlinSourceRoot != null) FileUtil.delete(kotlinSourceRoot);
-        super.tearDown();
     }
 
     public class ModuleAndDependencies {

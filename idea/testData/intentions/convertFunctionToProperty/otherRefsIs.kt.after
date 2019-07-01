@@ -5,7 +5,7 @@ import p.isFoo
 
 class A(val n: Int)
 
-val A.isFoo: Boolean
+val A.isFoo<caret>: Boolean
     get() = n > 1
 
 fun test() {

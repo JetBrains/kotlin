@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -188,6 +188,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
     }
 
+    @TestMetadata("jvmPackageNameMultifileClass.kt")
+    public void testJvmPackageNameMultifileClass() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameMultifileClass.kt");
+    }
+
     @TestMetadata("jvmPackageNameWithJvmName.kt")
     public void testJvmPackageNameWithJvmName() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");
@@ -213,6 +218,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/kt14012_multi.kt");
     }
 
+    @TestMetadata("kt21775.kt")
+    public void testKt21775() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/kt21775.kt");
+    }
+
     @TestMetadata("multifileClassInlineFunctionAccessingProperty.kt")
     public void testMultifileClassInlineFunctionAccessingProperty() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/multifileClassInlineFunctionAccessingProperty.kt");
@@ -233,9 +243,19 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/nestedEnum.kt");
     }
 
+    @TestMetadata("nestedFunctionTypeAliasExpansion.kt")
+    public void testNestedFunctionTypeAliasExpansion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/nestedFunctionTypeAliasExpansion.kt");
+    }
+
     @TestMetadata("nestedObject.kt")
     public void testNestedObject() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/nestedObject.kt");
+    }
+
+    @TestMetadata("nestedTypeAliasExpansion.kt")
+    public void testNestedTypeAliasExpansion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/nestedTypeAliasExpansion.kt");
     }
 
     @TestMetadata("optionalAnnotation.kt")

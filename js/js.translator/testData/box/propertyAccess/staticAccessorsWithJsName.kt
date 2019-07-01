@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1288
-package foo
 
 val x: Int
     @JsName("getX_") get() = 23
@@ -12,7 +10,7 @@ var y: Int = 0
     }
 
 
-fun getPackage() = js("return JS_TESTS.foo")
+fun getPackage() = js("return JS_TESTS")
 
 fun box(): String {
     assertEquals(23, x)

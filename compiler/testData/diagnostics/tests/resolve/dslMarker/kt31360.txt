@@ -1,0 +1,21 @@
+package
+
+public val </*0*/ T> Scope<*, T>.property: T
+public fun f(): kotlin.Unit
+public fun scoped1(/*0*/ block: Scope<kotlin.Int, kotlin.String>.() -> kotlin.Unit): kotlin.Unit
+public fun scoped2(/*0*/ block: Scope<*, kotlin.String>.() -> kotlin.Unit): kotlin.Unit
+
+@kotlin.DslMarker public final annotation class MyDsl : kotlin.Annotation {
+    public constructor MyDsl()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@MyDsl public interface Scope</*0*/ A, /*1*/ B> {
+    public abstract val something: A
+    public abstract val value: B
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

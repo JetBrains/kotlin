@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.move
@@ -11,16 +11,19 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.PsiTestUtil
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler
-import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.extractMultipleMarkerOffsets
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase()
 

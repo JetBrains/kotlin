@@ -27,12 +27,18 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.daemon.TestMessageCollector
 import org.jetbrains.kotlin.daemon.assertHasMessage
 import org.jetbrains.kotlin.daemon.toFile
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
+import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.junit.Assert
 import java.io.File
 import java.io.OutputStream
@@ -43,11 +49,9 @@ import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
-import kotlin.script.dependencies.KotlinScriptExternalDependencies
-import kotlin.script.dependencies.ScriptContents
-import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -230,7 +234,7 @@ class ScriptTemplateTest : KtUsefulTestCase() {
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
-            val anObj =  tryConstructClassFromStringArgs(aClass!!, listOf("4"))
+            val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4"))
             Assert.assertNotNull(anObj)
         }.let {
             assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, it)
@@ -324,16 +328,17 @@ class ScriptTemplateTest : KtUsefulTestCase() {
             messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false),
             includeKotlinRuntime: Boolean = true
     ): Class<*>? =
-            compileScriptImpl("compiler/testData/script/" + scriptPath, KotlinScriptDefinitionFromAnnotatedTemplate(
-                    scriptTemplate, environment
-            ), runIsolated, messageCollector, includeKotlinRuntime)
+            compileScriptImpl("compiler/testData/script/" + scriptPath,
+                              KotlinScriptDefinitionFromAnnotatedTemplate(
+                                  scriptTemplate, environment
+                              ), runIsolated, messageCollector, includeKotlinRuntime)
 
     private fun compileScriptImpl(
-            scriptPath: String,
-            scriptDefinition: KotlinScriptDefinition,
-            runIsolated: Boolean,
-            messageCollector: MessageCollector,
-            includeKotlinRuntime: Boolean
+        scriptPath: String,
+        scriptDefinition: KotlinScriptDefinition,
+        runIsolated: Boolean,
+        messageCollector: MessageCollector,
+        includeKotlinRuntime: Boolean
     ): Class<*>? {
         val rootDisposable = Disposer.newDisposable()
         try {
@@ -345,7 +350,13 @@ class ScriptTemplateTest : KtUsefulTestCase() {
                     *additionalClasspath)
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.addKotlinSourceRoot(scriptPath)
-            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+            configuration.add(
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
+                ScriptDefinition.FromLegacy(
+                    defaultJvmScriptingHostConfiguration,
+                    scriptDefinition
+                )
+            )
             configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 

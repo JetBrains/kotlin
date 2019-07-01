@@ -1,0 +1,43 @@
+package
+
+package a {
+
+    private final class Queue {
+        public constructor Queue()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        private companion object Companion {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+package b {
+
+    public open class Queue {
+        public constructor Queue()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public open fun empty(): b.Queue!
+    }
+}
+
+package c {
+    public fun </*0*/ T> invBuilder(/*0*/ @kotlin.BuilderInference block: c.Inv<T>.() -> kotlin.Unit): kotlin.Unit
+    public fun test(): kotlin.Unit
+
+    public interface Inv</*0*/ T> {
+        public abstract fun emit(/*0*/ e: T): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

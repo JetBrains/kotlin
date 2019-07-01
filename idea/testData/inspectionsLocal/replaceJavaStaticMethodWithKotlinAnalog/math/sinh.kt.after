@@ -1,0 +1,6 @@
+import kotlin.math.sinh
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    sinh(x)
+}

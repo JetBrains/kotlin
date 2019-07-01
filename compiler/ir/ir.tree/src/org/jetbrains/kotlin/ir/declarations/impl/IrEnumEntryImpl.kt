@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -43,26 +42,6 @@ class IrEnumEntryImpl(
         symbol: IrEnumEntrySymbol
     ) :
             this(startOffset, endOffset, origin, symbol, symbol.descriptor.name)
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassDescriptor
-    ) :
-            this(startOffset, endOffset, origin, IrEnumEntrySymbolImpl(descriptor))
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassDescriptor,
-        correspondingClass: IrClass?,
-        initializerExpression: IrExpression?
-    ) : this(startOffset, endOffset, origin, descriptor) {
-        this.correspondingClass = correspondingClass
-        this.initializerExpression = initializerExpression
-    }
 
     init {
         symbol.bind(this)

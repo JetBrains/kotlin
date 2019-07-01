@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js
@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
@@ -26,7 +28,9 @@ import java.util.*
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
     private val externalPackageFragmentSymbol = IrExternalPackageFragmentSymbolImpl(context.internalPackageFragmentDescriptor)
-    private val externalPackageFragment = IrExternalPackageFragmentImpl(externalPackageFragmentSymbol)
+    val externalPackageFragment = IrExternalPackageFragmentImpl(externalPackageFragmentSymbol)
+
+    // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
     // Equality operations:
 
@@ -114,9 +118,11 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val isArraySymbol = getInternalFunction("isArray")
     //    val isCharSymbol = getInternalFunction("isChar")
     val isObjectSymbol = getInternalFunction("isObject")
+    val isSuspendFunctionSymbol = getInternalFunction("isSuspendFunction")
 
     val isNumberSymbol = getInternalFunction("isNumber")
     val isComparableSymbol = getInternalFunction("isComparable")
+    val isCharSequenceSymbol = getInternalFunction("isCharSequence")
 
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
@@ -153,12 +159,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // Coroutines
 
-    val jsCoroutineContext = context.symbolTable.referenceSimpleFunction(context.coroutineContextProperty.getter!!)
+    val jsCoroutineContext
+        get() = context.ir.symbols.coroutineContextGetter
 
-    val jsGetContinuation = context.run {
-        val f = getInternalFunctions("getContinuation")
-        symbolTable.referenceSimpleFunction(f.single())
-    }
+    val jsGetContinuation = getInternalFunction("getContinuation")
     val jsGetKClass = getInternalWithoutPackage("getKClass")
     val jsGetKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
     val jsClass = getInternalFunction("jsClass")
@@ -214,7 +218,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsPrimitiveArrayIteratorFunctions =
         PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCase()}ArrayIterator") }
 
-    val arrayLiteral = unOp("arrayLiteral").symbol
+    val arrayLiteral = unOp("arrayLiteral")
 
     val primitiveToTypedArrayMap = EnumMap(
         mapOf(
@@ -229,27 +233,28 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveToSizeConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}Array").symbol
+                unOp("${it.toLowerCase()}Array")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}Array"))
         }
 
     val primitiveToLiteralConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}ArrayOf").symbol
+                unOp("${it.toLowerCase()}ArrayOf")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}ArrayOf"))
         }
 
     val arrayConcat = getInternalWithoutPackage("arrayConcat")
 
     val primitiveArrayConcat = getInternalWithoutPackage("primitiveArrayConcat")
+    val taggedArrayCopy = getInternalWithoutPackage("taggedArrayCopy")
 
-    val jsArraySlice = unOp("slice")
+    val jsArraySlice = defineJsSliceIntrinsic().symbol
 
     val jsBind = defineJsBindIntrinsic()
 
     // TODO move to IntrinsifyCallsLowering
-    val doNotIntrinsifyAnnotationSymbol = context.symbolTable.referenceClass(context.getInternalClass("DoNotIntrinsify"))
+    val doNotIntrinsifyAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
@@ -271,7 +276,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     // Helpers:
 
     private fun getInternalFunction(name: String) =
-        context.symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
+        context.symbolTable.referenceSimpleFunction(context.getJsInternalFunction(name))
 
     private fun getInternalWithoutPackage(name: String) =
         context.symbolTable.referenceSimpleFunction(context.getFunctions(FqName(name)).single())
@@ -321,6 +326,27 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             }
             externalPackageFragment.declarations += it
         }
+
+    private fun defineJsSliceIntrinsic(): IrSimpleFunction {
+        val typeParameter = JsIrBuilder.buildTypeParameter(Name.identifier("A"), 0, true).apply {
+            superTypes += irBuiltIns.anyType
+        }
+        val type = IrSimpleTypeBuilder().run {
+            classifier = typeParameter.symbol
+            buildSimpleType()
+        }
+
+        return JsIrBuilder.buildFunction(
+            "slice",
+            returnType = type,
+            parent = externalPackageFragment,
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+        ).also {
+            it.typeParameters += typeParameter.also { t -> t.parent = it }
+            it.valueParameters += JsIrBuilder.buildValueParameter("a", 0, type).also { v -> v.parent = it }
+            externalPackageFragment.declarations += it
+        }
+    }
 
     private fun defineSetJSPropertyIntrinsic() =
         JsIrBuilder.buildFunction(

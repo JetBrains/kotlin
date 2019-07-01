@@ -20,7 +20,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.conversion.copy.range
+import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 
+@Suppress("DEPRECATION")
 class RemoveEmptyParenthesesFromLambdaCallInspection : IntentionBasedInspection<KtValueArgumentList>(
     RemoveEmptyParenthesesFromLambdaCallIntention::class
 ), CleanupLocalInspectionTool {

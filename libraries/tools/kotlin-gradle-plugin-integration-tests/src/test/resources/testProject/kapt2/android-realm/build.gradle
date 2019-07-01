@@ -41,6 +41,19 @@ android {
     dexOptions {
         incremental false
     }
+
+    packagingOptions {
+        // Workaround for org.jetbrains.kotlin.gradle.Kapt3Android33IT#testRealm
+        // Android Plugin 3.3.2 fails with:
+        // Execution failed for task ':transformResourcesWithMergeJavaResForDebug'.
+        // com.android.builder.merge.DuplicateRelativeFileException: (these appear one by one if you exclude single files)
+        // - More than one file was found with OS independent path 'kotlin/reflect/reflect.kotlin_builtins'
+        // - More than one file was found with OS independent path 'kotlin/coroutines/coroutines.kotlin_builtins'
+        // - More than one file was found with OS independent path 'kotlin/collections/collections.kotlin_builtins'
+        // - More than one file was found with OS independent path 'kotlin/internal/internal.kotlin_builtins'
+        // (maybe more)
+        exclude '**/*.kotlin_builtins'
+    }
 }
 
 repositories {

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.targets
@@ -9,6 +9,7 @@ import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.incremental.ProjectBuildException
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -207,6 +208,12 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean
+
+    open fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
+        for (output in outputItems) {
+            outputConsumer.registerOutputFile(jpsModuleBuildTarget, output.outputFile, output.sourceFiles.map { it.path })
+        }
+    }
 
     protected fun reportAndSkipCircular(environment: JpsCompilerEnvironment): Boolean {
         if (chunk.targets.size > 1) {

@@ -22,6 +22,7 @@ import gnu.trove.THashSet
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position

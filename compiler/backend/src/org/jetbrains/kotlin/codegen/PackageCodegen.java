@@ -17,17 +17,10 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtFile;
-
-import java.util.Collection;
 
 public interface PackageCodegen {
     void generate(@NotNull CompilationErrorHandler errorHandler);
-
-    void generateClassOrObject(@NotNull KtClassOrObject classOrObject, @NotNull PackageContext packagePartContext);
 
     PackageFragmentDescriptor getPackageFragment();
 }

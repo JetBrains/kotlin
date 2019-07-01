@@ -28,8 +28,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 object BranchedFoldingUtils {
     private fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
@@ -56,19 +59,25 @@ object BranchedFoldingUtils {
                     it.getTargetLabel() == null
         }
 
-    private fun KtBinaryExpression.checkAssignmentsMatch(other: KtBinaryExpression, rightTypeConstructor: TypeConstructor): Boolean {
-        return left?.text == other.left?.text
-                && operationToken == other.operationToken
-                && rightTypeConstructor == other.rightTypeConstructor()
+    private fun KtBinaryExpression.checkAssignmentsMatch(
+        other: KtBinaryExpression,
+        leftType: KotlinType,
+        rightTypeConstructor: TypeConstructor
+    ): Boolean {
+        val left = this.left ?: return false
+        val otherLeft = other.left ?: return false
+        if (left.text != otherLeft.text || operationToken != other.operationToken) return false
+        val rightType = other.rightType() ?: return false
+        return rightType.constructor == rightTypeConstructor || (operationToken == KtTokens.EQ && rightType.isSubtypeOf(leftType))
     }
 
-    private fun KtBinaryExpression.rightTypeConstructor(): TypeConstructor? {
+    private fun KtBinaryExpression.rightType(): KotlinType? {
         val right = this.right ?: return null
         val context = this.analyze()
         val diagnostics = context.diagnostics
         fun hasTypeMismatchError(e: KtExpression) = diagnostics.forElement(e).any { it.factory == Errors.TYPE_MISMATCH }
         if (hasTypeMismatchError(this) || hasTypeMismatchError(right)) return null
-        return right.getType(context)?.constructor
+        return right.getType(context)
     }
 
     internal fun getFoldableAssignmentNumber(expression: KtExpression?): Int {
@@ -104,16 +113,17 @@ object BranchedFoldingUtils {
             else -> false
         }
         if (!collectAssignmentsAndCheck(expression)) return -1
-        val firstAssignment = assignments.firstOrNull() ?: return 0
-        val rightTypeConstructor = firstAssignment.rightTypeConstructor() ?: return -1
-        if (assignments.any { !firstAssignment.checkAssignmentsMatch(it, rightTypeConstructor) }) {
+        val firstAssignment = assignments.firstOrNull { !it.right.isNullExpression() } ?: assignments.firstOrNull() ?: return 0
+        val leftType = firstAssignment.left?.let { it.getType(it.analyze(BodyResolveMode.PARTIAL)) } ?: return 0
+        val rightTypeConstructor = firstAssignment.rightType()?.constructor ?: return -1
+        if (assignments.any { !firstAssignment.checkAssignmentsMatch(it, leftType, rightTypeConstructor) }) {
             return -1
         }
         if (expression.anyDescendantOfType<KtBinaryExpression>(
                 predicate = {
                     if (it.operationToken in KtTokens.ALL_ASSIGNMENTS)
                         if (it.getNonStrictParentOfType<KtFinallySection>() != null)
-                            firstAssignment.checkAssignmentsMatch(it, rightTypeConstructor)
+                            firstAssignment.checkAssignmentsMatch(it, leftType, rightTypeConstructor)
                         else
                             it !in assignments
                     else

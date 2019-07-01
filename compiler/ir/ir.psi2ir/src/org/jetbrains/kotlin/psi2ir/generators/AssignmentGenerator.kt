@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.psi2ir.unwrappedSetMethod
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -72,6 +73,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 val opCall = statementGenerator.pregenerateCallReceivers(opResolvedCall)
                 opCall.setExplicitReceiverValue(irLValue)
                 opCall.irValueArgumentsByIndex[0] = ktRight.genExpr()
+                statementGenerator.generateSamConversionForValueArgumentsIfRequired(opCall, opResolvedCall.resultingDescriptor)
                 val irOpCall = CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
 
                 if (isSimpleAssignment) {
@@ -172,15 +174,17 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             return generateArrayAccessAssignmentReceiver(ktLeft, origin)
         }
 
-        val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")
+        val resolvedCall = getResolvedCall(ktLeft)
+            ?: return generateExpressionAssignmentReceiver(ktLeft, origin, isAssignmentStatement)
         val descriptor = resolvedCall.resultingDescriptor
 
+        val startOffset = ktLeft.startOffsetSkippingComments
+        val endOffset = ktLeft.endOffset
         return when (descriptor) {
             is SyntheticFieldDescriptor -> {
                 val receiverValue =
                     statementGenerator.generateBackingFieldReceiver(
-                        ktLeft.startOffsetSkippingComments,
-                        ktLeft.endOffset,
+                        startOffset, endOffset,
                         resolvedCall,
                         descriptor
                     )
@@ -191,7 +195,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(
                         context,
-                        ktLeft.startOffsetSkippingComments, ktLeft.endOffset,
+                        startOffset, endOffset,
                         descriptor.type.toIrType(),
                         descriptor.getter?.let { context.symbolTable.referenceDeclaredFunction(it) },
                         descriptor.setter?.let { context.symbolTable.referenceDeclaredFunction(it) },
@@ -206,6 +210,24 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             else ->
                 OnceExpressionValue(ktLeft.genExpr())
         }
+    }
+
+    private fun generateExpressionAssignmentReceiver(
+        ktLeft: KtExpression,
+        origin: IrStatementOrigin,
+        isAssignmentStatement: Boolean
+    ): AssignmentReceiver {
+        // This is a somewhat special case when LHS of the augmented assignment operator is an arbitrary expression without resolved call.
+        // This can happen only in case of compound assignment resolved to '<op>Assign' operator, e.g.,
+        //      (a as MutableList<Any>) += 42
+        if (!isAssignmentStatement) {
+            throw AssertionError("Arbitrary assignment receiver found in assignment-like expression: ${ktLeft.parent.text}")
+        }
+
+        return SpecialExpressionAssignmentReceiver(
+            statementGenerator, ktLeft, origin,
+            context.bindingContext.getType(ktLeft)?.toIrType() ?: throw AssertionError("No type for expression ${ktLeft.text}")
+        )
     }
 
     private fun createVariableValue(
@@ -280,6 +302,12 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             }
         }
 
+    private fun PropertyDescriptor.unwrapPropertyDescriptor() =
+        when (this) {
+            is PropertyImportedFromObject -> callableFromObject
+            else -> this
+        }
+
     private fun createPropertyLValue(
         ktExpression: KtExpression,
         descriptor: PropertyDescriptor,
@@ -290,8 +318,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     ): PropertyLValueBase {
         val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
 
-        val getterDescriptor = descriptor.unwrappedGetMethod
-        val setterDescriptor = descriptor.unwrappedSetMethod
+        val unwrappedPropertyDescriptor = descriptor.unwrapPropertyDescriptor()
+        val getterDescriptor = unwrappedPropertyDescriptor.unwrappedGetMethod
+        val setterDescriptor = unwrappedPropertyDescriptor.unwrappedSetMethod
 
         val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
         val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
@@ -320,7 +349,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 context,
                 scope,
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
-                context.symbolTable.referenceField(descriptor),
+                context.symbolTable.referenceField(unwrappedPropertyDescriptor.original),
                 propertyIrType,
                 propertyReceiver,
                 superQualifierSymbol

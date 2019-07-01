@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils;
+import org.jetbrains.kotlin.idea.core.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
 
 public abstract class KotlinStatementsSurrounder implements Surrounder {

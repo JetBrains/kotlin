@@ -1,1 +1,2 @@
-MyClass().protectedFun() + MyClass().protectedVal + MyClass.ProtectedClass().a
+@Suppress("INVISIBLE_MEMBER")
+(MyClass().protectedFun() + MyClass().protectedVal + MyClass.ProtectedClass().a)

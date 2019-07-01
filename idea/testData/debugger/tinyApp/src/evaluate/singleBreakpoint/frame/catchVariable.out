@@ -2,20 +2,6 @@ LineBreakpoint created at catchVariable.kt:9
 Run Java
 Connected to the target VM
 catchVariable.kt:9
-package catchVariable
-
-fun main(args: Array<String>) {
-    try {
-        throw Exception()
-
-    }
-    //Breakpoint!
-    catch (e: Exception) {
-
-    }
-}
-
-// PRINT_FRAME
  frame    = main:9, CatchVariableKt {catchVariable}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = catchVariable.kt, 3)
 Disconnected from the target VM

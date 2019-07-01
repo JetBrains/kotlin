@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
@@ -27,7 +27,7 @@ private const val CHECK_PACKAGE_DIRECTIVE = "CHECK_PACKAGE"
 
 abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
     AbstractDecompiledTextBaseTest(baseDirectory, true, withRuntime = true) {
-    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, myModule!!)
+    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, module!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
         assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile::class.java)

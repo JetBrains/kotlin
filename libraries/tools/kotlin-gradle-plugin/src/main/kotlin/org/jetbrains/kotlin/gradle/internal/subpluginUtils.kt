@@ -43,15 +43,35 @@ fun encodePluginOptions(options: Map<String, List<String>>): String {
     return Base64.getEncoder().encodeToString(os.toByteArray())
 }
 
-internal fun CompilerPluginOptions.withWrappedKaptOptions(withApClasspath: Iterable<File>): CompilerPluginOptions {
+internal fun CompilerPluginOptions.withWrappedKaptOptions(
+    withApClasspath: Iterable<File>,
+    changedFiles: List<File> = emptyList(),
+    classpathChanges: List<String> = emptyList(),
+    compiledSourcesDir: List<File> = emptyList(),
+    processIncrementally: Boolean = false
+): CompilerPluginOptions {
     val resultOptionsByPluginId: MutableMap<String, List<SubpluginOption>> =
         subpluginOptionsByPluginId.toMutableMap()
 
     resultOptionsByPluginId.compute(Kapt3KotlinGradleSubplugin.KAPT_SUBPLUGIN_ID) { _, kaptOptions ->
-        val kaptOptionsWithClasspath =
-            kaptOptions.orEmpty() + withApClasspath.map { FilesSubpluginOption("apclasspath", listOf(it)) }
+        val changedFilesOption = FilesSubpluginOption("changedFile", changedFiles).takeIf { changedFiles.isNotEmpty() }
+        val classpathChangesOption = SubpluginOption(
+            "classpathChange",
+            classpathChanges.joinToString(separator = File.pathSeparator)
+        ).takeIf { classpathChanges.isNotEmpty() }
+        val processIncrementallyOption = SubpluginOption("processIncrementally", processIncrementally.toString())
+        val compiledSourcesOption =
+            FilesSubpluginOption("compiledSourcesDir", compiledSourcesDir).takeIf { compiledSourcesDir.isNotEmpty() }
 
-        wrapPluginOptions(kaptOptionsWithClasspath, "configuration")
+        val kaptOptionsWithClasspath =
+            kaptOptions.orEmpty() +
+                    withApClasspath.map { FilesSubpluginOption("apclasspath", listOf(it)) } +
+                    changedFilesOption +
+                    classpathChangesOption +
+                    compiledSourcesOption +
+                    processIncrementallyOption
+
+        wrapPluginOptions(kaptOptionsWithClasspath.filterNotNull(), "configuration")
     }
 
     val result = CompilerPluginOptions()

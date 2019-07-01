@@ -8,11 +8,11 @@ dependencies {
 
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
+    compileOnly(project(":idea:idea-native")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))
 
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:frontend.script"))
 
     compile(project(":js:js.frontend"))
 
@@ -21,6 +21,12 @@ dependencies {
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijPluginDep("junit"))
     compileOnly(intellijPluginDep("testng"))
+
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java"))
+        testCompileOnly(intellijPluginDep("java"))
+        testRuntimeOnly(intellijPluginDep("java"))
+    }
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-test-framework"))
@@ -69,7 +75,7 @@ sourceSets {
 
 testsJar()
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
     useAndroidSdk()
 }

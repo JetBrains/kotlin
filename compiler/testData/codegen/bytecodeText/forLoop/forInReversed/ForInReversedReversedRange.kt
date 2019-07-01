@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 import kotlin.test.*
 
 fun intRange() = 1 .. 4
@@ -28,3 +27,8 @@ fun box(): String {
 }
 
 // 0 reversed
+// 0 iterator
+// 0 getStart
+// 0 getEnd
+// 3 getFirst
+// 3 getLast

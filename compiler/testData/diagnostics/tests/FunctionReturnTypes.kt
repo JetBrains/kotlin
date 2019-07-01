@@ -45,7 +45,7 @@ fun intFunctionLiteral(): Int = <!TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN!>{ 1
 fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
 fun blockReturnValueTypeMismatch() : Int {return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>3.4<!>}
 fun blockReturnValueTypeMatch() : Int {return 1}
-fun blockReturnValueTypeMismatchUnit() : Int {return <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>Unit<!>}
+fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit<!>}
 
 fun blockAndAndMismatch() : Int {
     <!UNUSED_EXPRESSION!>true && false<!>

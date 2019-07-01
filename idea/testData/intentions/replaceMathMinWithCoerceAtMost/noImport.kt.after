@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun foo() {
-    2.coerceAtMost(1)
-}

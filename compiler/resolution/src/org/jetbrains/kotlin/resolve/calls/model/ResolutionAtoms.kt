@@ -1,18 +1,26 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
+import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
+import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.unCapture
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Call, Callable reference, lambda & function expression, collection literal.
@@ -71,9 +79,15 @@ class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : 
     }
 }
 
-sealed class PostponedResolvedAtom : ResolvedAtom() {
-    abstract val inputTypes: Collection<UnwrappedType>
-    abstract val outputType: UnwrappedType?
+interface PostponedResolvedAtomMarker {
+    val inputTypes: Collection<KotlinTypeMarker>
+    val outputType: KotlinTypeMarker?
+    val analyzed: Boolean
+}
+
+sealed class PostponedResolvedAtom : ResolvedAtom(), PostponedResolvedAtomMarker {
+    abstract override val inputTypes: Collection<UnwrappedType>
+    abstract override val outputType: UnwrappedType?
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
@@ -94,7 +108,8 @@ class ResolvedLambdaAtom(
     val receiver: UnwrappedType?,
     val parameters: List<UnwrappedType>,
     val returnType: UnwrappedType,
-    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
+    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?,
+    val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
     lateinit var resultArguments: List<KotlinCallArgument>
         private set
@@ -111,7 +126,7 @@ class ResolvedLambdaAtom(
     override val outputType: UnwrappedType get() = returnType
 }
 
-class ResolvedCallableReferenceAtom(
+abstract class ResolvedCallableReferenceAtom(
     override val atom: CallableReferenceKotlinCallArgument,
     val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
@@ -125,6 +140,23 @@ class ResolvedCallableReferenceAtom(
         this.candidate = candidate
         setAnalyzedResults(subResolvedAtoms)
     }
+
+}
+
+class EagerCallableReferenceAtom(
+    atom: CallableReferenceKotlinCallArgument,
+    expectedType: UnwrappedType?
+) : ResolvedCallableReferenceAtom(atom, expectedType) {
+
+    override val inputTypes: Collection<UnwrappedType> get() = emptyList()
+    override val outputType: UnwrappedType? get() = null
+
+    fun transformToPostponed(): PostponedCallableReferenceAtom = PostponedCallableReferenceAtom(this)
+}
+
+class PostponedCallableReferenceAtom(
+    eagerCallableReferenceAtom: EagerCallableReferenceAtom
+) : ResolvedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType) {
 
     override val inputTypes: Collection<UnwrappedType>
         get() = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.inputTypes ?: listOfNotNull(expectedType)
@@ -153,6 +185,15 @@ sealed class CallResolutionResult(
 
     final override fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
         super.setAnalyzedResults(subResolvedAtoms)
+    }
+
+    fun completedDiagnostic(substitutor: NewTypeSubstitutor): List<KotlinCallDiagnostic> {
+        return diagnostics.map {
+            if (it !is NewConstraintError) return@map it
+            val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
+            val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
+            NewConstraintError(newLowerType, it.upperType, it.position)
+        }
     }
 
     override val atom: ResolutionAtom? get() = null
@@ -185,8 +226,10 @@ class ErrorCallResolutionResult(
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
 class AllCandidatesResolutionResult(
-    val allCandidates: Collection<KotlinResolutionCandidate>
+    val allCandidates: Collection<CandidateWithDiagnostics>
 ) : CallResolutionResult(null, emptyList(), ConstraintStorage.Empty)
+
+data class CandidateWithDiagnostics(val candidate: KotlinResolutionCandidate, val diagnostics: List<KotlinCallDiagnostic>)
 
 fun CallResolutionResult.resultCallAtom(): ResolvedCallAtom? =
     if (this is SingleCallResolutionResult) resultCallAtom else null

@@ -28,14 +28,12 @@ import kotlin.collections.ArrayList
 
 abstract class AbstractLineNumberTest : CodegenTestCase() {
 
-    override fun doMultiFileTest(
-        wholeFile: File, files: MutableList<CodegenTestCase.TestFile>, javaFilesDir: File?
-    ) {
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
         val isCustomTest = wholeFile.parentFile.name.equals("custom", ignoreCase = true)
         if (!isCustomTest) {
             files.add(createLineNumberDeclaration())
         }
-        compile(files, javaFilesDir)
+        compile(files)
 
         val psiFile = myFiles.psiFiles.single { file -> file.name == wholeFile.name }
 
@@ -110,7 +108,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
             }
 
             override fun visitLineNumber(line: Int, start: Label) {
-                labels2LineNumbers[start] = Integer.toString(line)
+                labels2LineNumbers[start] = line.toString()
             }
         }
     }
@@ -147,7 +145,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         for (i in lines.indices) {
             val matcher = TEST_LINE_NUMBER_PATTERN.matcher(lines[i])
             if (matcher.matches()) {
-                lineNumbers.add(Integer.toString(i + 1))
+                lineNumbers.add((i + 1).toString())
             }
         }
 
@@ -159,7 +157,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         private val TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test.$LINE_NUMBER_FUN\\(\\).*$")
 
         private fun createLineNumberDeclaration() =
-            CodegenTestCase.TestFile(
+            TestFile(
                 "$LINE_NUMBER_FUN.kt",
                 "package test;\n\npublic fun $LINE_NUMBER_FUN(): Int = 0\n"
             )

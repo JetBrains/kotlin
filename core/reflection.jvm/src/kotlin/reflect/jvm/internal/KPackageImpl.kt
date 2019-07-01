@@ -16,10 +16,10 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
@@ -42,26 +41,24 @@ internal class KPackageImpl(
 ) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
         private val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
-            // TODO: do not read ReflectKotlinClass multiple times
             ReflectKotlinClass.create(jClass)
         }
 
-        val descriptor: PackageViewDescriptor by ReflectProperties.lazySoft {
-            with(moduleData) {
-                kotlinClass?.packageModuleName?.let(packagePartProvider::registerModule)
-                module.getPackage(jClass.classId.packageFqName)
-            }
+        val scope: MemberScope by ReflectProperties.lazySoft {
+            val klass = kotlinClass
+
+            if (klass != null)
+                moduleData.packagePartScopeCache.getPackagePartScope(klass)
+            else MemberScope.Empty
         }
 
-        val methodOwner: Class<*> by ReflectProperties.lazy {
+        val multifileFacade: Class<*>? by ReflectProperties.lazy {
             val facadeName = kotlinClass?.classHeader?.multifileClassName
             // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
             // The default value for 'xs' is empty string, as declared in kotlin.Metadata
-            if (facadeName != null && facadeName.isNotEmpty()) {
+            if (facadeName != null && facadeName.isNotEmpty())
                 jClass.classLoader.loadClass(facadeName.replace('/', '.'))
-            } else {
-                jClass
-            }
+            else null
         }
 
         val metadata: Triple<JvmNameResolver, ProtoBuf.Package, JvmMetadataVersion>? by ReflectProperties.lazy {
@@ -76,20 +73,15 @@ internal class KPackageImpl(
         }
 
         val members: Collection<KCallableImpl<*>> by ReflectProperties.lazySoft {
-            getMembers(scope, DECLARED).filter { member ->
-                val callableDescriptor = member.descriptor as DeserializedCallableMemberDescriptor
-                val packageFragment = callableDescriptor.containingDeclaration as PackageFragmentDescriptor
-                val source = (packageFragment as? LazyJavaPackageFragment)?.source as? KotlinJvmBinaryPackageSourceElement
-                (source?.getContainingBinaryClass(callableDescriptor) as? ReflectKotlinClass)?.klass == jClass
-            }
+            getMembers(scope, DECLARED)
         }
     }
 
     private val data = ReflectProperties.lazy { Data() }
 
-    override val methodOwner: Class<*> get() = data().methodOwner
+    override val methodOwner: Class<*> get() = data().multifileFacade ?: jClass
 
-    private val scope: MemberScope get() = data().descriptor.memberScope
+    private val scope: MemberScope get() = data().scope
 
     override val members: Collection<KCallable<*>> get() = data().members
 
@@ -119,8 +111,6 @@ internal class KPackageImpl(
     override fun hashCode(): Int =
         jClass.hashCode()
 
-    override fun toString(): String {
-        val fqName = jClass.classId.packageFqName
-        return "package " + (if (fqName.isRoot) "<default>" else fqName.asString())
-    }
+    override fun toString(): String =
+        "file class ${jClass.classId.asSingleFqName()}"
 }

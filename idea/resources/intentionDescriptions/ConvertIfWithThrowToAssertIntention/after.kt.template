@@ -1,3 +1,0 @@
-fun foo() {
-    <spot>assert(!true, "text")</spot>
-}

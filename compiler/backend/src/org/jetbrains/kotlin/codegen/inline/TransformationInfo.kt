@@ -67,7 +67,7 @@ class WhenMappingTransformationInfo(
 class AnonymousObjectTransformationInfo internal constructor(
     override val oldClassName: String,
     private val needReification: Boolean,
-    val lambdasToInline: Map<Int, LambdaInfo>,
+    val functionalArguments: Map<Int, FunctionalArgument>,
     private val capturedOuterRegenerated: Boolean,
     private val alreadyRegenerated: Boolean,
     val constructorDesc: String?,
@@ -99,7 +99,7 @@ class AnonymousObjectTransformationInfo internal constructor(
 
     override fun shouldRegenerate(sameModule: Boolean): Boolean =
         !alreadyRegenerated &&
-                (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated)
+                (!functionalArguments.isEmpty() || !sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated)
 
     override fun canRemoveAfterTransformation(): Boolean {
         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda

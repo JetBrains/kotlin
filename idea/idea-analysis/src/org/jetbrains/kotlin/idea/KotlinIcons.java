@@ -49,6 +49,8 @@ public interface KotlinIcons {
     Icon CLASS_INITIALIZER = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/classInitializerKotlin." + IconExtensionChooser.iconExtension());
     Icon TYPE_ALIAS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/typeAlias." + IconExtensionChooser.iconExtension());
 
+    Icon DSL_MARKER_ANNOTATION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/dslMarkerAnnotation.svg");
+
     Icon SUSPEND_CALL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/suspendCall." + IconExtensionChooser.iconExtension());
 
     Icon ACTUAL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/actual." + IconExtensionChooser.iconExtension());

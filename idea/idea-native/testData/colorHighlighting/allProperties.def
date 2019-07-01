@@ -30,6 +30,7 @@ nonStrictEnums.wasm32 = non strict
 noStringConversion.linux_arm32_hfp = no string
 strictEnums.android_arm64 = strict enums
 
+modules.osx = baba
 
 ---
 

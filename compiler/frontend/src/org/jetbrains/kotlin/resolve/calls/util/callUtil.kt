@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
@@ -78,8 +79,10 @@ fun <C : ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionCo
     return arguments.any(fun(argument: KtExpression?): Boolean {
         if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, context)) return false
 
-        val resolvedCall = argument.getResolvedCall(context.trace.bindingContext) as MutableResolvedCall<*>?
-        if (resolvedCall != null && !resolvedCall.hasInferredReturnType()) return false
+        when (val resolvedCall = argument.getResolvedCall(context.trace.bindingContext)) {
+            is MutableResolvedCall<*> -> if (!resolvedCall.hasInferredReturnType()) return false
+            is NewResolvedCallImpl<*> -> if (resolvedCall.resultingDescriptor.returnType?.isError == true) return false
+        }
 
         val expressionType = context.trace.bindingContext.getType(argument)
         return expressionType == null || expressionType.isError

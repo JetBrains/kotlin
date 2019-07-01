@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.parsers
@@ -47,7 +47,11 @@ private fun SpecTestCase.save(
 }
 
 fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
-    val testCasesSet = SpecTestCasesSet(mutableMapOf(), mutableMapOf(), mutableMapOf())
+    val testCasesSet = SpecTestCasesSet(
+        mutableMapOf<String, TestCasesByNumbers>(),
+        mutableMapOf<String, NavigableMap<Int, TestCasesByNumbers>>(),
+        mutableMapOf<Int, SpecTestCase>()
+    )
     var rangeOffset = 0
 
     for ((filename, fileContent) in testFiles) {
@@ -55,8 +59,8 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
         var startFind = 0
 
         if (!testCasesSet.byFiles.contains(filename)) {
-            testCasesSet.byFiles[filename] = mutableMapOf()
-            testCasesSet.byRanges[filename] = TreeMap()
+            testCasesSet.byFiles[filename] = mutableMapOf<Int, SpecTestCase>()
+            testCasesSet.byRanges[filename] = TreeMap<Int, TestCasesByNumbers>()
         }
 
         val testCasesOfFile = testCasesSet.byFiles[filename]!!

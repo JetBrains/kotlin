@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -68,7 +69,12 @@ private class RemoveRequireNotNullCallFix(private val functionName: String) : Lo
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val callExpression = descriptor.psiElement.getStrictParentOfType<KtCallExpression>() ?: return
-        val qualifiedExpression = callExpression.getQualifiedExpressionForSelector()
-        (qualifiedExpression ?: callExpression).delete()
+        val argument = callExpression.valueArguments.firstOrNull()?.getArgumentExpression() ?: return
+        val target = callExpression.getQualifiedExpressionForSelector() ?: callExpression
+        if (callExpression.isUsedAsExpression(callExpression.analyze(BodyResolveMode.PARTIAL))) {
+            target.replace(argument)            
+        } else {
+            target.delete()
+        }
     }
 }

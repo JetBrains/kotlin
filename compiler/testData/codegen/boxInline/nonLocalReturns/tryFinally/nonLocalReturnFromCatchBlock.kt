@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // MODULE: lib
 // FILE: lib.kt
 

@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
 import org.junit.Assert
 
 
-class TemplateTokenSequenceTest:UsefulTestCase() {
-    fun doTest(input: String, expected:String) {
+class TemplateTokenSequenceTest : TestCase() {
+    fun doTest(input: String, expected: String) {
         val output = createTemplateSequenceTokenString(input)
         Assert.assertEquals("Unexpected template sequence output for $input: " , expected, output)
     }

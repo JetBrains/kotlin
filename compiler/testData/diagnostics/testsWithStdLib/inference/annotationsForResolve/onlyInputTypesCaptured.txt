@@ -1,0 +1,54 @@
+package
+
+public fun test_0(/*0*/ x: Inv2<in kotlin.Number, out kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv2<kotlin.Any, kotlin.Int>>): kotlin.Unit
+public fun test_1(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Number>>): kotlin.Unit
+public fun test_11(/*0*/ x: In<kotlin.Number>, /*1*/ list: kotlin.collections.List<In<kotlin.Number>>): kotlin.Unit
+public fun test_12(/*0*/ x: In<kotlin.Number>, /*1*/ list: kotlin.collections.List<In<kotlin.Int>>): kotlin.Unit
+public fun test_13(/*0*/ x: In<kotlin.Number>, /*1*/ list: kotlin.collections.List<In<kotlin.Any>>): kotlin.Unit
+public fun test_2(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Int>>): kotlin.Unit
+public fun test_21(/*0*/ x: Out<kotlin.Number>, /*1*/ list: kotlin.collections.List<Out<kotlin.Number>>): kotlin.Unit
+public fun test_22(/*0*/ x: Out<kotlin.Number>, /*1*/ list: kotlin.collections.List<Out<kotlin.Int>>): kotlin.Unit
+public fun test_23(/*0*/ x: Out<kotlin.Number>, /*1*/ list: kotlin.collections.List<Out<kotlin.Any>>): kotlin.Unit
+public fun test_3(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Any>>): kotlin.Unit
+public fun test_31(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<in kotlin.Number>>): kotlin.Unit
+public fun test_32(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<in kotlin.Int>>): kotlin.Unit
+public fun test_33(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<in kotlin.Any>>): kotlin.Unit
+public fun test_34(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<out kotlin.Number>>): kotlin.Unit
+public fun test_35(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<out kotlin.Int>>): kotlin.Unit
+public fun test_36(/*0*/ x: Inv<kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<out kotlin.Any>>): kotlin.Unit
+public fun test_4(/*0*/ x: Inv<in kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Any>>): kotlin.Unit
+public fun test_5(/*0*/ x: Inv<in kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Number>>): kotlin.Unit
+public fun test_6(/*0*/ x: Inv<in kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Int>>): kotlin.Unit
+public fun test_7(/*0*/ x: Inv<out kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Any>>): kotlin.Unit
+public fun test_8(/*0*/ x: Inv<out kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Number>>): kotlin.Unit
+public fun test_9(/*0*/ x: Inv<out kotlin.Number>, /*1*/ list: kotlin.collections.List<Inv<kotlin.Int>>): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Boolean
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes T> kotlin.collections.Iterable<T>.foo(/*0*/ element: T): T
+
+public final class In</*0*/ in T> {
+    public constructor In</*0*/ in T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv2</*0*/ T, /*1*/ R> {
+    public constructor Inv2</*0*/ T, /*1*/ R>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out T> {
+    public constructor Out</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -24,14 +24,14 @@
 // EXIST:  sealed class
 // EXIST:  sealed class TopScope
 // EXIST:  data class
-// EXIST:  data class TopScope
+// EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" TopScope(...)", "attributes":"bold" }
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
 // EXIST:  annotation class TopScope
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.lower
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -61,7 +60,7 @@ class InlineClassLowering(val context: BackendContext) {
                 // Secondary ctors of inline class must delegate to some other constructors.
                 // Use these delegating call later to initialize this variable.
                 lateinit var thisVar: IrVariable
-                val parameterMapping = result.valueParameters.associateBy { it ->
+                val parameterMapping = result.valueParameters.associateBy {
                     irConstructor.valueParameters[it.index].symbol
                 }
 
@@ -70,9 +69,8 @@ class InlineClassLowering(val context: BackendContext) {
                         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                             expression.transformChildrenVoid()
                             return irBlock(expression) {
-                                thisVar = irTemporary(
+                                thisVar = createTmpVariable(
                                     expression,
-                                    typeHint = irClass.defaultType.toKotlinType(),
                                     irType = irClass.defaultType
                                 )
                                 thisVar.parent = result
@@ -185,33 +183,45 @@ class InlineClassLowering(val context: BackendContext) {
         override fun lower(irFile: IrFile) {
             irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
 
-                override fun visitCall(call: IrCall): IrExpression {
-                    call.transformChildrenVoid(this)
-                    val function = call.symbol.owner
-                    if (
-                        function.isDynamic() ||
-                        function.parent !is IrClass ||
+                override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    val function = expression.symbol.owner
+                    if (!function.parentAsClass.isInline || function.isPrimary) {
+                        return expression
+                    }
+
+                    return irCall(expression, getOrCreateStaticMethod(function), dispatchReceiverAsFirstArgument = false)
+                }
+
+                override fun visitCall(expression: IrCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    val function = expression.symbol.owner
+                    if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
                         !function.parentAsClass.isInline ||
                         (function is IrSimpleFunction && !function.isReal) ||
                         (function is IrConstructor && function.isPrimary)
                     ) {
-                        return call
+                        return expression
                     }
 
-                    return irCall(call, getOrCreateStaticMethod(function), dispatchReceiverAsFirstArgument = (function is IrSimpleFunction))
+                    return irCall(
+                        expression,
+                        getOrCreateStaticMethod(function),
+                        dispatchReceiverAsFirstArgument = (function is IrSimpleFunction)
+                    )
                 }
 
-                override fun visitDelegatingConstructorCall(call: IrDelegatingConstructorCall): IrExpression {
-                    call.transformChildrenVoid(this)
-                    val function = call.symbol.owner
+                override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    val function = expression.symbol.owner
                     val klass = function.parentAsClass
                     return when {
-                        !klass.isInline -> call
-                        function.isPrimary -> irCall(call, function)
-                        else -> irCall(call, getOrCreateStaticMethod(function)).apply {
-                            (0 until call.valueArgumentsCount).forEach {
-                                putValueArgument(it, call.getValueArgument(it)!!)
+                        !klass.isInline -> expression
+                        function.isPrimary -> irConstructorCall(expression, function)
+                        else -> irCall(expression, getOrCreateStaticMethod(function)).apply {
+                            (0 until expression.valueArgumentsCount).forEach {
+                                putValueArgument(it, expression.getValueArgument(it)!!)
                             }
                         }
                     }

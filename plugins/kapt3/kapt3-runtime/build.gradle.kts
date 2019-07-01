@@ -16,10 +16,8 @@ sourceSets {
     "test" {}
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-dist(targetName = "kotlin-annotation-processing-runtime.jar")
-
-publish()

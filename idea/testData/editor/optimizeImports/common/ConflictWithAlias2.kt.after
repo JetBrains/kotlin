@@ -1,0 +1,8 @@
+import duration.minutes
+import duration.hours as hour
+import duration.seconds as second
+
+fun main() {
+    val totalDuration = 1.hour - 30.minutes + 1.second
+    println(totalDuration)
+}

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -49,7 +48,7 @@ open class AddModifierFix(
 ) : KotlinCrossLanguageQuickFixAction<KtModifierListOwner>(element), KotlinUniversalQuickFix {
     override fun getText(): String {
         val element = element ?: return ""
-        if (modifier in modalityModifiers || modifier in KtTokens.VISIBILITY_MODIFIERS || modifier == KtTokens.CONST_KEYWORD) {
+        if (modifier in modalityModifiers || modifier in VISIBILITY_MODIFIERS || modifier == CONST_KEYWORD) {
             return "Make ${getElementName(element)} ${modifier.value}"
         }
         return "Add '${modifier.value}' modifier"
@@ -60,10 +59,10 @@ open class AddModifierFix(
     private fun invokeOnElement(element: KtModifierListOwner?) {
         element?.addModifier(modifier)
 
-        if (modifier == KtTokens.ABSTRACT_KEYWORD && (element is KtProperty || element is KtNamedFunction)) {
+        if (modifier == ABSTRACT_KEYWORD && (element is KtProperty || element is KtNamedFunction)) {
             element.containingClass()?.run {
-                if (!hasModifier(KtTokens.ABSTRACT_KEYWORD) && !hasModifier(KtTokens.SEALED_KEYWORD)) {
-                    addModifier(KtTokens.ABSTRACT_KEYWORD)
+                if (!hasModifier(ABSTRACT_KEYWORD) && !hasModifier(SEALED_KEYWORD)) {
+                    addModifier(ABSTRACT_KEYWORD)
                 }
             }
         }
@@ -85,7 +84,7 @@ open class AddModifierFix(
     companion object {
 
         private fun KtModifierKeywordToken.isMultiplatformPersistent(): Boolean =
-            this in KtTokens.MODALITY_MODIFIERS || this == KtTokens.INLINE_KEYWORD
+            this in MODALITY_MODIFIERS || this == INLINE_KEYWORD
 
         private val modalityModifiers = setOf(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD)
 
@@ -133,7 +132,7 @@ open class AddModifierFix(
                     }
                     if (modifier == ABSTRACT_KEYWORD
                         && modifierListOwner is KtClass
-                        && modifierListOwner.hasModifier(KtTokens.INLINE_KEYWORD)
+                        && modifierListOwner.hasModifier(INLINE_KEYWORD)
                     ) return null
                 }
                 INNER_KEYWORD -> {
@@ -156,13 +155,9 @@ open class AddModifierFix(
     object MakeClassOpenFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeReference = diagnostic.psiElement as KtTypeReference
-            val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)
-            val type = bindingContext[BindingContext.TYPE, typeReference] ?: return null
-            val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
-            if (!declaration.canRefactor()) return null
+            val declaration = typeReference.classForRefactor() ?: return null
             if (declaration.isEnum() || declaration.isData()) return null
-            return AddModifierFix(declaration, KtTokens.OPEN_KEYWORD)
+            return AddModifierFix(declaration, OPEN_KEYWORD)
         }
     }
 
@@ -177,7 +172,16 @@ open class AddModifierFix(
             if (TypeUtils.isNullableType(type)) return null
             if (KotlinBuiltIns.isPrimitiveType(type)) return null
 
-            return AddModifierFix(property, KtTokens.LATEINIT_KEYWORD)
+            return AddModifierFix(property, LATEINIT_KEYWORD)
         }
     }
+}
+
+fun KtTypeReference.classForRefactor(): KtClass? {
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
+    val type = bindingContext[BindingContext.TYPE, this] ?: return null
+    val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+    val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
+    if (!declaration.canRefactor()) return null
+    return declaration
 }

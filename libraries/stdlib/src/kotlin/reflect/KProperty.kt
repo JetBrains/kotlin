@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
@@ -10,7 +10,7 @@ package kotlin.reflect
  * Represents a property, such as a named `val` or `var` declaration.
  * Instances of this class are obtainable by the `::` operator.
  * 
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/reflection.html)
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/reflection.html)
  * for more information.
  *
  * @param R the type of the property.

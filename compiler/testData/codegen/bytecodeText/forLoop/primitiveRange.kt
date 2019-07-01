@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun f(r: IntRange) {
     for (i in r) {
     }

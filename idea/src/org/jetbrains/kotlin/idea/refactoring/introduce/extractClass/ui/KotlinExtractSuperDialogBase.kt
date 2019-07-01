@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.unquote
+import org.jetbrains.kotlin.idea.core.util.onTextChange
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinUsesAndInterfacesDependencyMemberInfoModel
-import org.jetbrains.kotlin.idea.util.onTextChange
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -44,12 +44,12 @@ import java.awt.BorderLayout
 import javax.swing.*
 
 abstract class KotlinExtractSuperDialogBase(
-        protected val originalClass: KtClassOrObject,
-        protected val targetParent: PsiElement,
-        private val conflictChecker: (KotlinExtractSuperDialogBase) -> Boolean,
-        private val isExtractInterface: Boolean,
-        refactoringName: String,
-        private val refactoring: (ExtractSuperInfo) -> Unit
+    protected val originalClass: KtClassOrObject,
+    protected val targetParent: PsiElement,
+    private val conflictChecker: (KotlinExtractSuperDialogBase) -> Boolean,
+    private val isExtractInterface: Boolean,
+    refactoringName: String,
+    private val refactoring: (ExtractSuperInfo) -> Unit
 ) : JavaExtractSuperBaseDialog(originalClass.project, originalClass.toLightClass()!!, emptyList(), refactoringName) {
     private var initComplete: Boolean = false
 
@@ -61,10 +61,15 @@ abstract class KotlinExtractSuperDialogBase(
     private val fileNameField = JTextField()
 
     open class MemberInfoModelBase(
-            originalClass: KtClassOrObject,
-            val memberInfos: List<KotlinMemberInfo>,
-            interfaceContainmentVerifier: (KtNamedDeclaration) -> Boolean
-    ) : KotlinUsesAndInterfacesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(originalClass, null, false, interfaceContainmentVerifier) {
+        originalClass: KtClassOrObject,
+        val memberInfos: List<KotlinMemberInfo>,
+        interfaceContainmentVerifier: (KtNamedDeclaration) -> Boolean
+    ) : KotlinUsesAndInterfacesDependencyMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>(
+        originalClass,
+        null,
+        false,
+        interfaceContainmentVerifier
+    ) {
         override fun isMemberEnabled(member: KotlinMemberInfo): Boolean {
             val declaration = member.member ?: return false
             return !declaration.hasModifier(KtTokens.CONST_KEYWORD)
@@ -73,8 +78,8 @@ abstract class KotlinExtractSuperDialogBase(
         override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
             val member = memberInfo.member
             return !(member.hasModifier(KtTokens.INLINE_KEYWORD) ||
-                     member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
-                     member.hasModifier(KtTokens.LATEINIT_KEYWORD))
+                    member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
+                    member.hasModifier(KtTokens.LATEINIT_KEYWORD))
         }
 
         override fun isFixedAbstract(memberInfo: KotlinMemberInfo?) = true
@@ -140,9 +145,9 @@ abstract class KotlinExtractSuperDialogBase(
 
         return JPanel(BorderLayout()).apply {
             val memberSelectionPanel = KotlinMemberSelectionPanel(
-                    RefactoringBundle.message(if (isExtractInterface) "members.to.form.interface" else "members.to.form.superclass"),
-                    memberInfoModel.memberInfos,
-                    RefactoringBundle.message("make.abstract")
+                RefactoringBundle.message(if (isExtractInterface) "members.to.form.interface" else "members.to.form.superclass"),
+                memberInfoModel.memberInfos,
+                RefactoringBundle.message("make.abstract")
             )
             memberSelectionPanel.table.memberInfoModel = memberInfoModel
             memberSelectionPanel.table.addMemberInfoChangeListener(memberInfoModel)
@@ -178,13 +183,13 @@ abstract class KotlinExtractSuperDialogBase(
 
     override fun executeRefactoring() {
         val extractInfo = ExtractSuperInfo(
-                mySourceClass.unwrapped as KtClassOrObject,
-                selectedMembers,
-                if (targetParent is PsiDirectory) targetDirectory else targetParent,
-                targetFileName,
-                extractedSuperName.quoteIfNeeded(),
-                isExtractInterface,
-                DocCommentPolicy<PsiComment>(docCommentPolicy)
+            mySourceClass.unwrapped as KtClassOrObject,
+            selectedMembers,
+            if (targetParent is PsiDirectory) targetDirectory else targetParent,
+            targetFileName,
+            extractedSuperName.quoteIfNeeded(),
+            isExtractInterface,
+            DocCommentPolicy<PsiComment>(docCommentPolicy)
         )
         refactoring(extractInfo)
     }

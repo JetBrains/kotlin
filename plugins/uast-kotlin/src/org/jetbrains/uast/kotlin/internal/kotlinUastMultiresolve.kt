@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.uast.kotlin.internal
@@ -34,7 +34,7 @@ internal fun UElement.getResolveResultVariants(ktExpression: KtExpression?): Ite
     val referenceVariants = getReferenceVariants(ktExpression, ktExpression.name ?: ktExpression.text)
 
     fun asCandidateInfo(descriptor: DeclarationDescriptor): CandidateInfo? =
-        descriptor.toSource()?.getMaybeLightElement(this)?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) }
+        descriptor.toSource()?.getMaybeLightElement()?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) }
 
     return referenceVariants.mapNotNull(::asCandidateInfo).asIterable()
 }

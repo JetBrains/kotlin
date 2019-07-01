@@ -1,5 +1,19 @@
 # kotlinx-metadata-jvm
 
+## 0.1.0
+
+- [`KT-26602`](https://youtrack.jetbrains.com/issue/KT-26602) Provide a value-based API
+
+## 0.0.6
+
+- [`KT-31308`](https://youtrack.jetbrains.com/issue/KT-31308) Add module name extensions to kotlinx-metadata-jvm
+- [`KT-31338`](https://youtrack.jetbrains.com/issue/KT-31338) Retain "is moved from interface companion" property flag in kotlinx-metadata-jvm
+    - Breaking change: JvmPropertyExtensionVisitor.visit has a new parameter `jvmFlags: Flags`
+- Correctly write "null" constant value in effect expression of a contract
+- Rename `desc` parameters to `signature` in JvmFunctionExtensionVisitor, JvmPropertyExtensionVisitor, JvmConstructorExtensionVisitor
+- Do not expose KmExtensionType internals
+- Add KmExtensionVisitor.type to get dynamic type of an extension visitor
+
 ## 0.0.5
 
 - [`KT-25371`](https://youtrack.jetbrains.com/issue/KT-25371) Support unsigned integers in kotlinx-metadata-jvm

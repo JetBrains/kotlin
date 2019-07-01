@@ -12,15 +12,28 @@ public fun case_3(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ 
 public fun </*0*/ T> T.case_4(): kotlin.Boolean
     Returns(FALSE) -> <this> is Char || <this> == null
 
+public operator fun Class?.dec(): Class?
+public operator fun Class?.inc(): Class?
+public operator fun Class?.minus(/*0*/ x: Class?): Class?
+public operator fun Class?.plus(/*0*/ x: Class?): Class?
+
 public final class Class {
     public constructor Class()
     public final val prop_1: kotlin.Int = 1
+    public final val prop_10: kotlin.Number? = 3.0.toFloat()
+    public final val prop_11: kotlin.Int = 10
+    public final var prop_12: kotlin.String
+    public final val prop_13: kotlin.Any? = ""
+    public final val prop_14: kotlin.Comparable<*>? = ""
+    public final val prop_15: kotlin.collections.Iterable<*>? = ""
     public final val prop_2: kotlin.Int = 2
     public final val prop_3: kotlin.Int = 3
     public final val prop_4: kotlin.Float? = 3.0.toFloat()
     public final val prop_5: kotlin.Float = 3.0.toFloat()
     public final val prop_6: kotlin.String = "..."
-    public final val prop_7: kotlin.Nothing? = "..."
+    public final val prop_7: kotlin.Nothing? = null
+    public final val prop_8: Class? = null
+    public final var prop_9: kotlin.Boolean
     public final operator fun contains(/*0*/ a: kotlin.Char): kotlin.Boolean
     public final operator fun contains(/*0*/ a: kotlin.Int): kotlin.Boolean
     public final operator fun contains(/*0*/ a: kotlin.Long): kotlin.Boolean
@@ -28,14 +41,22 @@ public final class Class {
     public final fun fun_1(): (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
     public final fun fun_2(/*0*/ value_1: kotlin.Int): kotlin.Int
     public final fun fun_3(/*0*/ value_1: kotlin.Int): (kotlin.Int) -> kotlin.Int
+    public final fun fun_4(): Class?
+    public final operator fun get(/*0*/ i1: kotlin.Int): kotlin.Int
+    public final operator fun get(/*0*/ i1: kotlin.Int, /*1*/ i2: kotlin.Int): kotlin.Int
     public final fun getCharArray(): kotlin.CharArray
     public final fun getIntArray(): kotlin.IntArray
     public final fun getLongArray(): kotlin.LongArray
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun invoke(): kotlin.Unit
+    public final operator fun invoke(/*0*/ x: [ERROR : Type annotation was missing for parameter x]): (kotlin.Any) -> kotlin.Any
+    public final operator fun invoke(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any): kotlin.Unit
+    public final operator fun set(/*0*/ i1: kotlin.Int, /*1*/ el: kotlin.Int): kotlin.Unit
+    public final operator fun set(/*0*/ i1: kotlin.Int, /*1*/ i2: kotlin.Int, /*2*/ el: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final class _NestedClass {
-        public constructor _NestedClass()
+    public final class NestedClass {
+        public constructor NestedClass()
         public final val prop_4: kotlin.Int = 4
         public final val prop_5: kotlin.Int = 5
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -58,6 +79,33 @@ public open class ClassLevel2 : ClassLevel1 {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun test1(): kotlin.Unit
     public final fun test2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ClassLevel21 : ClassLevel1 {
+    public constructor ClassLevel21()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun test1(): kotlin.Unit
+    public final fun test21(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ClassLevel22 : ClassLevel1 {
+    public constructor ClassLevel22()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun test1(): kotlin.Unit
+    public final fun test22(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ClassLevel23 : ClassLevel1 {
+    public constructor ClassLevel23()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun test1(): kotlin.Unit
+    public final fun test23(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -121,14 +169,43 @@ public final class ClassWithCompanionObject {
     }
 }
 
-public final class ClassWithSixTypeParameters</*0*/ K, /*1*/ in L, /*2*/ out M, /*3*/ O, /*4*/ in P, /*5*/ out R> {
-    public constructor ClassWithSixTypeParameters</*0*/ K, /*1*/ in L, /*2*/ out M, /*3*/ O, /*4*/ in P, /*5*/ out R>()
+public open class ClassWithCostructorParam {
+    public constructor ClassWithCostructorParam(/*0*/ x: kotlin.Any)
+    public final val x: kotlin.Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class ClassWithThreeTypeParameters</*0*/ K, /*1*/ L, /*2*/ M> {
+public open class ClassWithCostructorTwoParams {
+    public constructor ClassWithCostructorTwoParams(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any)
+    public final val x: kotlin.Any
+    public final val y: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ClassWithCustomEquals {
+    public constructor ClassWithCustomEquals()
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ClassWithSixTypeParameters</*0*/ K, /*1*/ in L, /*2*/ out M, /*3*/ O, /*4*/ in P, /*5*/ out R> {
+    public constructor ClassWithSixTypeParameters</*0*/ K, /*1*/ in L, /*2*/ out M, /*3*/ O, /*4*/ in P, /*5*/ out R>(/*0*/ u: R, /*1*/ x: K, /*2*/ y: M, /*3*/ z: O)
+    public final val u: R
+    public final val x: K
+    public final val y: M
+    public final val z: O
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ClassWithThreeTypeParameters</*0*/ K, /*1*/ L, /*2*/ M> {
     public constructor ClassWithThreeTypeParameters</*0*/ K, /*1*/ L, /*2*/ M>(/*0*/ x: K, /*1*/ y: L, /*2*/ z: M)
     public final val x: K
     public final val y: L
@@ -165,6 +242,10 @@ public final class In</*0*/ in T> {
 
 public final class Inv</*0*/ T> {
     public constructor Inv</*0*/ T>(/*0*/ x: T = ...)
+    public final val prop_1: Inv<T>? = null
+    public final val prop_2: T? = null
+    public final val prop_3: T
+    public final val prop_4: kotlin.Int = 10
     public final val x: T
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun get(): T
@@ -177,6 +258,8 @@ public final class Inv</*0*/ T> {
 
 public final class Out</*0*/ out T> {
     public constructor Out</*0*/ out T>(/*0*/ x: T = ...)
+    public final val prop_1: Inv<T>? = null
+    public final val prop_2: T? = null
     public final val x: T
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun get(): T

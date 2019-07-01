@@ -30,7 +30,6 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,26 +38,27 @@ import javax.swing.SwingUtilities
 
 class CheckComponentsUsageSearchAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val selectedFiles = selectedKotlinFiles(e).toList()
-        val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext) ?: return
+        val selectedKotlinFiles = selectedKotlinFiles(e).toList()
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                {
-                    runReadAction { process(selectedFiles, project) }
-                },
-                "Checking Data Classes",
-                true,
-                project)
+            {
+                runReadAction { process(selectedKotlinFiles, project) }
+            },
+            "Checking Data Classes",
+            true,
+            project
+        )
     }
 
     private fun process(files: Collection<KtFile>, project: Project) {
         val dataClasses = files.asSequence()
-                .flatMap { it.declarations.asSequence() }
-                .filterIsInstance<KtClass>()
-                .filter { it.isData() }
-                .toList()
+            .flatMap { it.declarations.asSequence() }
+            .filterIsInstance<KtClass>()
+            .filter { it.isData() }
+            .toList()
 
-        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
+        val progressIndicator = ProgressManager.getInstance().progressIndicator
         for ((i, dataClass) in dataClasses.withIndex()) {
             progressIndicator?.text = "Checking data class ${i + 1} of ${dataClasses.size}..."
             progressIndicator?.text2 = dataClass.fqName?.asString() ?: ""
@@ -68,24 +68,31 @@ class CheckComponentsUsageSearchAction : AnAction() {
                 try {
                     var smartRefsCount = 0
                     var goldRefsCount = 0
-                    ProgressManager.getInstance().runProcess({
-                        ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
+                    ProgressManager.getInstance().runProcess(
+                        {
+                            ExpressionsOfTypeProcessor.mode =
+                                ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
 
-                        smartRefsCount = ReferencesSearch.search(parameter).findAll().size
+                            smartRefsCount = ReferencesSearch.search(parameter).findAll().size
 
-                        ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN
+                            ExpressionsOfTypeProcessor.mode =
+                                ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN
 
-                        goldRefsCount = ReferencesSearch.search(parameter).findAll().size
-                    }, EmptyProgressIndicator())
+                            goldRefsCount = ReferencesSearch.search(parameter).findAll().size
+                        }, EmptyProgressIndicator()
+                    )
 
                     if (smartRefsCount != goldRefsCount) {
                         SwingUtilities.invokeLater {
-                            Messages.showInfoMessage(project, "Difference found for data class ${dataClass.fqName?.asString()}. Found $smartRefsCount usage(s) but $goldRefsCount expected", "Error")
+                            Messages.showInfoMessage(
+                                project,
+                                "Difference found for data class ${dataClass.fqName?.asString()}. Found $smartRefsCount usage(s) but $goldRefsCount expected",
+                                "Error"
+                            )
                         }
                         return
                     }
-                }
-                finally {
+                } finally {
                     ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.PLAIN_WHEN_NEEDED
                 }
             }
@@ -102,10 +109,9 @@ class CheckComponentsUsageSearchAction : AnAction() {
         if (!ApplicationManager.getApplication().isInternal) {
             e.presentation.isVisible = false
             e.presentation.isEnabled = false
-        }
-        else {
+        } else {
             e.presentation.isVisible = true
-            e.presentation.isEnabled = selectedKotlinFiles(e).any()
+            e.presentation.isEnabled = true
         }
     }
 
@@ -118,8 +124,8 @@ class CheckComponentsUsageSearchAction : AnAction() {
     private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<KtFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
-                .asSequence()
-                .mapNotNull { manager.findFile(it) as? KtFile }
+            .asSequence()
+            .mapNotNull { manager.findFile(it) as? KtFile }
     }
 
     private fun allFiles(filesOrDirs: Array<VirtualFile>): Collection<VirtualFile> {

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle
@@ -10,13 +10,15 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.presentableDescription
 
 class MessageCollector {
     private val builder = StringBuilder()
@@ -108,11 +110,11 @@ class ModuleInfo(
         }
     }
 
-    fun platform(platform: IdePlatform<*, *>) {
+    fun platform(platform: TargetPlatform) {
         val actualPlatform = module.platform
         if (actualPlatform != platform) {
             projectInfo.messageCollector.report(
-                "Module '${module.name}': expected platform '${platform.description}' but found '${actualPlatform?.description}'"
+                "Module '${module.name}': expected platform '${platform.presentableDescription}' but found '${actualPlatform?.presentableDescription}'"
             )
         }
     }
@@ -147,7 +149,7 @@ class ModuleInfo(
         expectedDependencyNames += libraryEntry.presentableName
     }
 
-    fun moduleDependency(moduleName: String, scope: DependencyScope) {
+    fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null) {
         val moduleEntry = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().singleOrNull { it.moduleName == moduleName }
         if (moduleEntry == null) {
             val allModules = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().map { it.moduleName }.joinToString(", ")
@@ -155,6 +157,7 @@ class ModuleInfo(
             return
         }
         checkDependencyScope(moduleEntry, scope)
+        checkProductionOnTest(moduleEntry, productionOnTest)
         expectedDependencyNames += moduleEntry.presentableName
     }
 
@@ -240,6 +243,23 @@ class ModuleInfo(
                 "Module '${module.name}': Dependency '${library.presentableName}': expected scope '$scope' but found '$actualScope'"
             )
         }
+    }
+
+    private fun checkProductionOnTest(library: ExportableOrderEntry, productionOnTest: Boolean?) {
+        if (productionOnTest == null) return
+        val actualFlag = (library as? ModuleOrderEntryImpl)?.isProductionOnTestDependency
+        if (actualFlag == null) {
+            projectInfo.messageCollector.report(
+                "Module '${module.name}': Dependency '${library.presentableName}' has no productionOnTest property"
+            )
+        } else {
+            if (actualFlag != productionOnTest) {
+                projectInfo.messageCollector.report(
+                    "Module '${module.name}': Dependency '${library.presentableName}': expected productionOnTest '$productionOnTest' but found '$actualFlag'"
+                )
+            }
+        }
+
     }
 }
 

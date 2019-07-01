@@ -1,104 +1,67 @@
 FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
-  CLASS ANNOTATION_CLASS name:TestAnnWithIntArray modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnWithIntArray flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:TestAnnWithIntArray flags:primary
-      VALUE_PARAMETER name:x index:0 type:kotlin.IntArray flags:
-    PROPERTY name:x visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:public flags:final
+  CLASS ANNOTATION_CLASS name:TestAnnWithIntArray modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnnWithIntArray 
+    CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:<root>.TestAnnWithIntArray [primary] 
+      VALUE_PARAMETER name:x index:0 type:kotlin.IntArray 
+    PROPERTY name:x visibility:public modality:FINAL [val] 
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'value-parameter x: IntArray' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnnWithIntArray) returnType:kotlin.IntArray flags:
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
-        $this: VALUE_PARAMETER name:<this> type:TestAnnWithIntArray flags:
+          GET_VAR 'x: kotlin.IntArray declared in <root>.TestAnnWithIntArray.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnnWithIntArray) returnType:kotlin.IntArray 
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestAnnWithIntArray 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
-            GET_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
-              receiver: GET_VAR 'this@TestAnnWithIntArray: TestAnnWithIntArray' type=TestAnnWithIntArray origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.IntArray declared in <root>.TestAnnWithIntArray'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:public [final] ' type=kotlin.IntArray origin=null
+              receiver: GET_VAR '<this>: <root>.TestAnnWithIntArray declared in <root>.TestAnnWithIntArray.<get-x>' type=<root>.TestAnnWithIntArray origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  CLASS ANNOTATION_CLASS name:TestAnnWithStringArray modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnWithStringArray flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Array<kotlin.String>) returnType:TestAnnWithStringArray flags:primary
-      VALUE_PARAMETER name:x index:0 type:kotlin.Array<kotlin.String> flags:
-    PROPERTY name:x visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:public flags:final
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  CLASS ANNOTATION_CLASS name:TestAnnWithStringArray modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnnWithStringArray 
+    CONSTRUCTOR visibility:public <> (x:kotlin.Array<kotlin.String>) returnType:<root>.TestAnnWithStringArray [primary] 
+      VALUE_PARAMETER name:x index:0 type:kotlin.Array<kotlin.String> 
+    PROPERTY name:x visibility:public modality:FINAL [val] 
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'value-parameter x: Array<String>' type=kotlin.Array<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnnWithStringArray) returnType:kotlin.Array<kotlin.String> flags:
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
-        $this: VALUE_PARAMETER name:<this> type:TestAnnWithStringArray flags:
+          GET_VAR 'x: kotlin.Array<kotlin.String> declared in <root>.TestAnnWithStringArray.<init>' type=kotlin.Array<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnnWithStringArray) returnType:kotlin.Array<kotlin.String> 
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestAnnWithStringArray 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): Array<String>'
-            GET_FIELD 'x: Array<String>' type=kotlin.Array<kotlin.String> origin=null
-              receiver: GET_VAR 'this@TestAnnWithStringArray: TestAnnWithStringArray' type=TestAnnWithStringArray origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Array<kotlin.String> declared in <root>.TestAnnWithStringArray'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:public [final] ' type=kotlin.Array<kotlin.String> origin=null
+              receiver: GET_VAR '<this>: <root>.TestAnnWithStringArray declared in <root>.TestAnnWithStringArray.<get-x>' type=<root>.TestAnnWithStringArray origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'constructor TestAnnWithIntArray(IntArray)' type=TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
-      CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="a"
-          CONST String type=kotlin.String value="b"
-          CONST String type=kotlin.String value="c"
-      CALL 'constructor TestAnnWithIntArray(IntArray)' type=TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
-      CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="a"
-          CONST String type=kotlin.String value="b"
-          CONST String type=kotlin.String value="c"
+      TestAnnWithIntArray(x = ['1', '2', '3'])
+      TestAnnWithStringArray(x = ['a', 'b', 'c'])
     BLOCK_BODY
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     annotations:
-      CALL 'constructor TestAnnWithIntArray(IntArray)' type=TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=4
-          CONST Int type=kotlin.Int value=5
-          CONST Int type=kotlin.Int value=6
-      CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="d"
-          CONST String type=kotlin.String value="e"
-          CONST String type=kotlin.String value="f"
-      CALL 'constructor TestAnnWithIntArray(IntArray)' type=TestAnnWithIntArray origin=null
-        x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-          CONST Int type=kotlin.Int value=4
-          CONST Int type=kotlin.Int value=5
-          CONST Int type=kotlin.Int value=6
-      CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
-        x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value="d"
-          CONST String type=kotlin.String value="e"
-          CONST String type=kotlin.String value="f"
+      TestAnnWithIntArray(x = ['4', '5', '6'])
+      TestAnnWithStringArray(x = ['d', 'e', 'f'])
     BLOCK_BODY
-

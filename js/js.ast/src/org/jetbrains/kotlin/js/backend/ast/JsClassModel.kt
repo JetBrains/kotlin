@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.js.backend.ast
 
 class JsClassModel(val name: JsName, val superName: JsName?) {
     val interfaces: MutableSet<JsName> = mutableSetOf()
-    val preDeclarationBlock = JsGlobalBlock()
+    val preDeclarationBlock = JsGlobalBlock() // TODO only used in IR backend => hide from current backend
     val postDeclarationBlock = JsGlobalBlock()
 }

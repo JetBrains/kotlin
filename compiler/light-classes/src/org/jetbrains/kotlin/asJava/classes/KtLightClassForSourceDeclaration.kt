@@ -1,27 +1,16 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.google.common.collect.Lists
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSubstitutorImpl
@@ -38,7 +27,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
@@ -53,12 +41,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -70,12 +56,36 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 import javax.swing.Icon
 
-abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtClassOrObject) : KtLazyLightClass(classOrObject.manager),
+private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
+    KtLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
+
+    private val modifiers by lazyPub { computeModifiers() }
+
+    override fun hasModifierProperty(name: String): Boolean =
+        if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
+
+}
+
+abstract class KtLightClassForSourceDeclaration(
+    protected val classOrObject: KtClassOrObject,
+    private val forceUsingOldLightClasses: Boolean = false
+) : KtLazyLightClass(classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
+    override fun getText() = kotlinOrigin.text ?: ""
+
+    override fun getTextRange(): TextRange = kotlinOrigin.textRange ?: TextRange.EMPTY_RANGE
+
+    override fun getTextOffset() = kotlinOrigin.textOffset
+
+    override fun getStartOffsetInParent() = kotlinOrigin.startOffsetInParent
+
+    override fun isWritable() = kotlinOrigin.isWritable
+
     private val _extendsList by lazyPub { createExtendsList() }
     private val _implementsList by lazyPub { createImplementsList() }
+    private val _deprecated by lazyPub { classOrObject.isDeprecated() }
 
     protected open fun createExtendsList(): PsiReferenceList? = super.getExtendsList()?.let { KtLightPsiReferenceList(it, this) }
     protected open fun createImplementsList(): PsiReferenceList? = super.getImplementsList()?.let { KtLightPsiReferenceList(it, this) }
@@ -139,7 +149,8 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override fun getNavigationElement(): PsiElement = classOrObject
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is KtLightClassForSourceDeclaration && Comparing.equal(another.qualifiedName, qualifiedName)
+        return kotlinOrigin.isEquivalentTo(another) ||
+                another is KtLightClassForSourceDeclaration && Comparing.equal(another.qualifiedName, qualifiedName)
     }
 
     override fun getElementIcon(flags: Int): Icon? {
@@ -173,7 +184,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     private val _typeParameterList: PsiTypeParameterList by lazyPub { buildTypeParameterList() }
 
-    open protected fun buildTypeParameterList() = LightClassUtil.buildLightTypeParameterList(this, classOrObject)
+    protected open fun buildTypeParameterList() = LightClassUtil.buildLightTypeParameterList(this, classOrObject)
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
 
@@ -181,7 +192,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
-    private val _modifierList: PsiModifierList by lazyPub { KtLightClassModifierList(this) }
+    private val _modifierList: PsiModifierList by lazyPub { KtLightClassModifierList(this) { computeModifiers() } }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
@@ -226,39 +237,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    override fun isDeprecated(): Boolean {
-        val jetModifierList = classOrObject.modifierList ?: return false
-
-        val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
-        val deprecatedName = deprecatedFqName.shortName().asString()
-
-        for (annotationEntry in jetModifierList.annotationEntries) {
-            val typeReference = annotationEntry.typeReference ?: continue
-
-            val typeElement = typeReference.typeElement
-            if (typeElement !is KtUserType) continue // If it's not a user type, it's definitely not a ref to deprecated
-
-            val fqName = toQualifiedName(typeElement) ?: continue
-
-            if (deprecatedFqName == fqName) return true
-            if (deprecatedName == fqName.asString()) return true
-        }
-        return false
-    }
-
-    private fun toQualifiedName(userType: KtUserType): FqName? {
-        val reversedNames = Lists.newArrayList<String>()
-
-        var current: KtUserType? = userType
-        while (current != null) {
-            val name = current.referencedName ?: return null
-
-            reversedNames.add(name)
-            current = current.qualifier
-        }
-
-        return FqName.fromSegments(ContainerUtil.reverse(reversedNames))
-    }
+    override fun isDeprecated(): Boolean = _deprecated
 
     override fun isInterface(): Boolean {
         if (classOrObject !is KtClass) return false
@@ -302,7 +281,12 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             // inner classes with null names can't be searched for and can't be used from java anyway
             // we can't prohibit creating light classes with null names either since they can contain members
             .filter { it.name != null }
-            .mapNotNullTo(result) { create(it) }
+            .mapNotNullTo(result) {
+                if (!forceUsingOldLightClasses)
+                    create(it)
+                else
+                    createNoCache(it, forceUsingOldLightClasses = true)
+            }
 
         if (classOrObject.hasInterfaceDefaultImpls) {
             result.add(KtLightClassForInterfaceDefaultImpls(classOrObject))
@@ -333,15 +317,24 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
             CachedValuesManager.getCachedValue(classOrObject) {
                 CachedValueProvider.Result
-                    .create(createNoCache(classOrObject), OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                    .create(
+                        createNoCache(classOrObject, KtUltraLightSupport.forceUsingOldLightClasses),
+                        OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                    )
             }
 
-        fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+        fun createNoCache(classOrObject: KtClassOrObject, forceUsingOldLightClasses: Boolean): KtLightClassForSourceDeclaration? {
+            val containingFile = classOrObject.containingFile
+            if (containingFile is KtCodeFragment) {
+                // Avoid building light classes for code fragments
+                return null
+            }
+
             if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
             }
 
-            if (KtUltraLightClass.forceUsingUltraLightClasses || Registry.`is`("kotlin.use.ultra.light.classes", false)) {
+            if (!forceUsingOldLightClasses && Registry.`is`("kotlin.use.ultra.light.classes", true)) {
                 LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)?.let { return it }
             }
 
@@ -353,7 +346,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                     KtLightClassForLocalDeclaration(classOrObject)
 
                 else ->
-                    KtLightClassImpl(classOrObject)
+                    KtLightClassImpl(classOrObject, forceUsingOldLightClasses)
             }
         }
 
@@ -454,16 +447,6 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override val originKind: LightClassOriginKind
         get() = LightClassOriginKind.SOURCE
 
-    private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration) :
-        KtLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
-
-        private val modifiers by lazyPub { containingClass.computeModifiers() }
-
-        override fun hasModifierProperty(name: String): Boolean =
-            if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
-
-    }
-
     open fun isFinal(isFinalByPsi: Boolean): Boolean {
         // annotations can make class open via 'allopen' plugin
         if (!isPossiblyAffectedByAllOpen() || !isFinalByPsi) return isFinalByPsi
@@ -476,10 +459,8 @@ fun KtLightClassForSourceDeclaration.isPossiblyAffectedByAllOpen() =
     !isAnnotationType && !isInterface && kotlinOrigin.annotationEntries.isNotEmpty()
 
 fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
-    val outermostClass = KtPsiUtil.getOutermostClassOrObject(classOrObject)
+    return KtPsiUtil.getOutermostClassOrObject(classOrObject)
         ?: throw IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.text)
-
-    return outermostClass
 }
 
 interface LightClassInheritanceHelper {

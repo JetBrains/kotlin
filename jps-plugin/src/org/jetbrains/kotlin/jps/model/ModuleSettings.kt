@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.model
@@ -11,13 +11,13 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 val JpsModule.kotlinFacet: JpsKotlinFacetModuleExtension?
     get() = container.getChild(JpsKotlinFacetModuleExtension.KIND)
 
-val JpsModule.platform: IdePlatform<*, *>?
-    get() = kotlinFacet?.settings?.platform
+val JpsModule.platform: TargetPlatform?
+    get() = kotlinFacet?.settings?.targetPlatform
 
 val JpsModule.kotlinKind: KotlinModuleKind
     get() = kotlinFacet?.settings?.kind ?: KotlinModuleKind.DEFAULT

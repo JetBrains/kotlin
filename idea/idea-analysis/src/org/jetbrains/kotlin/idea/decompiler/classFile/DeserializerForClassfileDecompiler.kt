@@ -35,8 +35,6 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -55,7 +53,6 @@ class DeserializerForClassfileDecompiler(
         packageDirectory: VirtualFile,
         directoryPackageFqName: FqName
 ) : DeserializerForDecompilerBase(directoryPackageFqName) {
-    override val targetPlatform: TargetPlatform get() = JvmPlatform
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
     private val classFinder = DirectoryBasedClassFinder(packageDirectory, directoryPackageFqName)

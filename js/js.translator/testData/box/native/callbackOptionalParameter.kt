@@ -5,6 +5,7 @@ package foo
 var global = ""
 
 open class A {
+    @JsName("foo")
     open fun foo(x: Int = 23) {
         global += "A.foo($x);"
     }

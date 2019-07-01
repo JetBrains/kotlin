@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile files('libs/android-support-v4.jar')
     // unused but needed for IncrementalCompilationMultiProjectIT.testAndroid to check if non-local dependency affects IC
     compile 'io.reactivex:rxjava:1.1.9'

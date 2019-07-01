@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.internal
@@ -21,8 +21,9 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.Alarm
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
@@ -38,9 +39,13 @@ import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.join
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -50,6 +55,7 @@ import java.util.*
 import javax.swing.JButton
 import javax.swing.JCheckBox
 import javax.swing.JPanel
+import kotlin.math.min
 
 sealed class BytecodeGenerationResult {
     data class Bytecode(val text: String) : BytecodeGenerationResult()
@@ -151,10 +157,10 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                     val byteCodeDocument = myEditor.document
 
                     val linesRange = mapLines(byteCodeDocument.text, startLine, endLine)
-                    val endSelectionLineIndex = Math.min(linesRange.second + 1, byteCodeDocument.lineCount)
+                    val endSelectionLineIndex = min(linesRange.second + 1, byteCodeDocument.lineCount)
 
                     val startOffset = byteCodeDocument.getLineStartOffset(linesRange.first)
-                    val endOffset = Math.min(byteCodeDocument.getLineStartOffset(endSelectionLineIndex), byteCodeDocument.textLength)
+                    val endOffset = min(byteCodeDocument.getLineStartOffset(endSelectionLineIndex), byteCodeDocument.textLength)
 
                     myEditor.caretModel.moveToOffset(endOffset)
                     myEditor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
@@ -277,10 +283,10 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             configuration: CompilerConfiguration
         ): GenerationState? {
             val platform = ktFile.platform
-            if (platform !is CommonPlatform && platform !is JvmPlatform) return null
+            if (!platform.isCommon() && !platform.isJvm()) return null
 
             val resolutionFacade = KotlinCacheService.getInstance(ktFile.project)
-                .getResolutionFacadeByFile(ktFile, JvmPlatform)
+                .getResolutionFacadeByFile(ktFile, JvmPlatforms.unspecifiedJvmPlatform)
                     ?: return null
 
             val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext
@@ -306,6 +312,8 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 override fun shouldGenerateScript(script: KtScript): Boolean {
                     return script.containingKtFile === ktFile
                 }
+
+                override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
             }
 
             val state = GenerationState.Builder(
@@ -315,7 +323,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 .generateDeclaredClassFilter(generateClassFilter)
                 .codegenFactory(
                     if (configuration.getBoolean(JVMConfigurationKeys.IR))
-                        JvmIrCodegenFactory
+                        JvmIrCodegenFactory(PhaseConfig(jvmPhases))
                     else
                         DefaultCodegenFactory
                 )

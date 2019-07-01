@@ -33,7 +33,6 @@ import java.util.*
 
 abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlinConverterTest() {
     fun doTest(dirPath: String) {
-        val project = LightPlatformTestCase.getProject()!!
         val psiManager = PsiManager.getInstance(project)
 
         val filesToConvert = File(dirPath).listFiles { _, name -> name.endsWith(".java") }
@@ -53,7 +52,7 @@ abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlin
             assert(psiFile is PsiJavaFile || psiFile is KtFile)
         }
 
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
+        val converter = OldJavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
         val (results, externalCodeProcessor) = converter.filesToKotlin(psiFilesToConvert, J2kPostProcessor(formatCode = true))
 
         val process = externalCodeProcessor?.prepareWriteOperation(EmptyProgressIndicator())

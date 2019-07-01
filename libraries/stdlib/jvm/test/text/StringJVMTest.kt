@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.text
@@ -66,5 +66,36 @@ class StringJVMTest {
         assertEquals("UTF-32", Charsets.UTF_32.name())
         assertEquals("UTF-32LE", Charsets.UTF_32LE.name())
         assertEquals("UTF-32BE", Charsets.UTF_32BE.name())
+    }
+
+    @Test fun capitalizeLocale() {
+        assertEquals("ABC", "ABC".capitalize(Locale.US))
+        assertEquals("Abc", "Abc".capitalize(Locale.US))
+        assertEquals("Abc", "abc".capitalize(Locale.US))
+
+        // Locale-specific case mappings.
+        assertEquals("İii", "iii".capitalize(Locale("tr", "TR")))
+        assertEquals("Iii", "iii".capitalize(Locale.US))
+
+        // Case mapping that results in multiple characters (validating Character.toUpperCase was not used).
+        assertEquals("SSßß", "ßßß".capitalize(Locale.US))
+
+        // Case mapping where title case is different than uppercase and so Character.toTitleCase is preferred.
+        assertEquals("ǲǳǳ", "ǳǳǳ".capitalize(Locale.US))
+        assertEquals("ǱǱǱ", "ǱǱǱ".capitalize(Locale.US))
+    }
+
+    @Test fun decapitalizeLocale() {
+        assertEquals("aBC", "ABC".decapitalize(Locale.US))
+        assertEquals("abc", "Abc".decapitalize(Locale.US))
+        assertEquals("abc", "abc".decapitalize(Locale.US))
+
+        // Locale-specific case mappings.
+        assertEquals("ıII", "III".decapitalize(Locale("tr", "TR")))
+        assertEquals("iII", "III".decapitalize(Locale.US))
+
+        // Case mapping where title case is different than uppercase.
+        assertEquals("ǳǳǳ", "Ǳǳǳ".decapitalize(Locale.US))
+        assertEquals("ǳǳǳ", "ǲǳǳ".decapitalize(Locale.US))
     }
 }

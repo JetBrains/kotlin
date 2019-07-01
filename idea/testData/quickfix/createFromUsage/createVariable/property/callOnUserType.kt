@@ -2,6 +2,8 @@
 // ACTION: Create extension function 'A<Int>.bar'
 // ACTION: Create member function 'A.bar'
 // ACTION: Rename reference
+// ACTION: Convert to run
+// ACTION: Convert to with
 // ERROR: Unresolved reference: bar
 // ERROR: Unresolved reference: foo
 

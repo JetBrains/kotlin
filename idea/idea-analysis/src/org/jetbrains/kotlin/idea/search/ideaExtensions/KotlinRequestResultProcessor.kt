@@ -22,7 +22,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.ReferenceRange
 import com.intellij.psi.search.RequestResultProcessor
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.isCallableOverrideUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.isExtensionOfDeclarationClassUsage
@@ -38,7 +38,7 @@ class KotlinRequestResultProcessor(
 ) : RequestResultProcessor(unwrappedElement, originalElement, filter, options) {
     private val referenceService = PsiReferenceService.getService()
 
-    override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: ExecutorProcessor<PsiReference>): Boolean {
+    override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
         val references = if (element is KtDestructuringDeclaration)
             element.entries.flatMap { referenceService.getReferences(it, PsiReferenceService.Hints.NO_HINTS) }
         else

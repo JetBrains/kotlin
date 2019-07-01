@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce
 
-import com.intellij.refactoring.actions.*
-import com.intellij.psi.*
-import org.jetbrains.kotlin.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.actions.BasePlatformRefactoringAction
+import org.jetbrains.kotlin.psi.KtElement
 
 abstract class AbstractIntroduceAction : BasePlatformRefactoringAction() {
     init {
         setInjectedContext(true)
     }
 
-    override final fun setInjectedContext(worksInInjected: Boolean) {
+    final override fun setInjectedContext(worksInInjected: Boolean) {
         super.setInjectedContext(worksInInjected)
     }
 
     override fun isAvailableInEditorOnly(): Boolean = true
 
     override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean =
-            elements.all { it is KtElement }
+        elements.all { it is KtElement }
 }

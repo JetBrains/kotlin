@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.caches.resolve
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 
 class JvmPlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
@@ -27,9 +27,11 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
     override val kind get() = JvmIdePlatformKind
 
     override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = JvmAnalyzerFacade
+        get() = JvmResolverForModuleFactory
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
-        return if (settings.sdk != null) JvmBuiltIns(projectContext.storageManager) else DefaultBuiltIns.Instance
-    }
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns =
+        if (settings.sdk != null)
+            JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
+        else
+            DefaultBuiltIns.Instance
 }

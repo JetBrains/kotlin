@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -29,10 +29,10 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.shared"
 
-    override fun getPresentableName() = "Kotlin (Multiplatform Library)"
+    override fun getPresentableName() = "Multiplatform Library | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow sharing the same Kotlin code between all three main platforms (JVM, JS, Native)."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms (JVM, JS, and Native)"
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
@@ -182,7 +182,12 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
             kotlin {
                 jvm()
-                js()
+                js {
+                    browser {
+                    }
+                    nodejs {
+                    }
+                }
                 // For ARM, should be changed to iosArm32 or iosArm64
                 // For Linux, should be changed to e.g. linuxX64
                 // For MacOS, should be changed to e.g. macosX64

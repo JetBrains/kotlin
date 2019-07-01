@@ -23,17 +23,19 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.getCallableSubstitutor
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.setValOrVar
+import org.jetbrains.kotlin.idea.refactoring.dropOperatorKeywordIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.idea.refactoring.dropOperatorKeywordIfNecessary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -131,7 +133,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
             val receiverTypeText = changeInfo.renderReceiverType(this)
             val receiverTypeRef = if (receiverTypeText != null) psiFactory.createType(receiverTypeText) else null
             val newReceiverTypeRef = element.setReceiverTypeReference(receiverTypeRef)
-            newReceiverTypeRef?.addToShorteningWaitSet(ShortenReferences.Options.DEFAULT)
+            newReceiverTypeRef?.addToShorteningWaitSet(Options.DEFAULT)
         }
 
         if (changeInfo.isVisibilityChanged() && !KtPsiUtil.isLocal(element as KtDeclaration)) {

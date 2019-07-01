@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.diagnostic.debug
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -34,15 +37,16 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -58,127 +62,159 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.ConcurrentMap
 
 class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
+
+    private inner class KtUltraLightSupportImpl(private val element: KtElement, private val module: Module) : KtUltraLightSupport {
+
+        private fun KtDeclaration.forLogString(): String? = when (this) {
+            is KtClassOrObject -> this.fqName?.asString()
+            is KtFile -> this.packageFqNameByTree.asString()
+            else -> this.text
+        }
+
+        override val isReleasedCoroutine
+            get() = module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+
+        override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
+            val facet = KotlinFacet.get(module)
+            val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
+            if (!pluginClasspaths.isNullOrEmpty()) {
+                val stringifiedClasspaths = pluginClasspaths.joinToString()
+                LOG.debug { "Using heavy light classes for ${element.forLogString()} because of compiler plugins $stringifiedClasspaths" }
+                return true
+            }
+
+            val problem = findTooComplexDeclaration(element)
+            if (problem != null) {
+                LOG.debug {
+                    "Using heavy light classes for ${element.forLogString()} because of ${StringUtil.trimLog(problem.text, 100)}"
+                }
+                return true
+            }
+            return false
+        }
+
+        override val moduleDescriptor by lazyPub {
+            element.getResolutionFacade().moduleDescriptor
+        }
+
+        override val moduleName: String by lazyPub {
+            JvmCodegenUtil.getModuleName(moduleDescriptor)
+        }
+
+        override fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
+            val candidates = owner.annotationEntries.filter {
+                it.shortName == fqName.shortName() || owner.containingKtFile.hasAlias(it.shortName)
+            }
+            for (entry in candidates) {
+                val descriptor = analyze(entry).get(BindingContext.ANNOTATION, entry)
+                if (descriptor?.fqName == fqName) {
+                    return Pair(entry, descriptor)
+                }
+            }
+
+            if (owner is KtPropertyAccessor) {
+                // We might have from the beginning just resolve the descriptor of the accessor
+                // But we trying to avoid analysis in case property doesn't have any relevant annotations at all
+                // (in case of `findAnnotation` returns null)
+                if (findAnnotation(owner.property, fqName) == null) return null
+
+                val accessorDescriptor = owner.resolveToDescriptorIfAny() ?: return null
+
+                // Just reuse the logic of use-site targeted annotation from the compiler
+                val annotationDescriptor = accessorDescriptor.annotations.findAnnotation(fqName) ?: return null
+                val entry = annotationDescriptor.source.getPsi() as? KtAnnotationEntry ?: return null
+
+                return entry to annotationDescriptor
+            }
+
+            return null
+        }
+
+        override val deprecationResolver: DeprecationResolver by lazyPub {
+            element.getResolutionFacade().getFrontendService(DeprecationResolver::class.java)
+        }
+
+        override val typeMapper: KotlinTypeMapper by lazyPub {
+            KotlinTypeMapper(
+                BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
+                moduleName, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
+                jvmTarget = JvmTarget.JVM_1_8,
+                typePreprocessor = KotlinType::cleanFromAnonymousTypes
+            )
+        }
+
+        private fun findTooComplexDeclaration(declaration: KtDeclaration): PsiElement? {
+            if (declaration.hasExpectModifier() || declaration.hasModifier(KtTokens.ANNOTATION_KEYWORD)) {
+                return declaration
+            }
+
+            if (declaration is KtClassOrObject) {
+                declaration.primaryConstructor?.let { findTooComplexDeclaration(it) }?.let { return it }
+
+                for (d in declaration.declarations) {
+                    if (d is KtClassOrObject && !(d is KtObjectDeclaration && d.isCompanion())) continue
+
+                    findTooComplexDeclaration(d)?.let { return it }
+                }
+
+                if (implementsKotlinCollection(declaration)) {
+                    return declaration.getSuperTypeList()
+                }
+            }
+            if (declaration is KtCallableDeclaration) {
+                declaration.valueParameters.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
+            }
+            if (declaration is KtProperty) {
+                declaration.accessors.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
+            }
+
+            return null
+        }
+    }
+
+    override fun createUltraLightClassForFacade(
+        manager: PsiManager,
+        facadeClassFqName: FqName,
+        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
+        files: Collection<KtFile>
+    ): KtUltraLightClassForFacade? {
+
+        if (files.any { it.isScript() }) return null
+
+        val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
+            val module = ModuleUtilCore.findModuleForPsiElement(it) ?: return null
+            it to KtUltraLightSupportImpl(it, module)
+        }
+
+        return KtUltraLightClassForFacade(
+            manager,
+            facadeClassFqName,
+            lightClassDataCache,
+            files,
+            filesToSupports
+        )
+    }
+
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
         if (element.shouldNotBeVisibleAsLightClass() ||
             element is KtObjectDeclaration && element.isObjectLiteral() ||
             element.isLocal ||
-            element is KtEnumEntry
+            element is KtEnumEntry ||
+            element.containingKtFile.isScript()
         ) {
             return null
         }
 
         val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
-        return KtUltraLightClass(element, object : UltraLightSupport {
-            override fun isTooComplexForUltraLightGeneration(element: KtClassOrObject): Boolean {
-                val facet = KotlinFacet.get(module)
-                val pluginClasspath = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
-                if (!pluginClasspath.isNullOrEmpty()) {
-                    LOG.debug { "Using heavy light classes for ${element.fqName?.asString()} because of compiler plugins $pluginClasspath" }
-                    return true
-                }
 
-                val problem = findTooComplexDeclaration(element)
-                if (problem != null) {
-                    LOG.debug {
-                        "Using heavy light classes for ${element.fqName?.asString()} because of ${StringUtil.trimLog(problem.text, 100)}"
-                    }
-                    return true
-                }
-                return false
-            }
-
-            override val moduleDescriptor by lazyPub {
-                element.getResolutionFacade().moduleDescriptor
-            }
-
-            override val moduleName: String by lazyPub {
-                JvmCodegenUtil.getModuleName(moduleDescriptor)
-            }
-
-            override fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
-                val candidates = owner.annotationEntries.filter {
-                    it.shortName == fqName.shortName() || owner.containingKtFile.hasAlias(it.shortName)
-                }
-                for (entry in candidates) {
-                    val descriptor = analyze(entry).get(BindingContext.ANNOTATION, entry)
-                    if (descriptor?.fqName == fqName) {
-                        return Pair(entry, descriptor)
-                    }
-                }
-
-                if (owner is KtPropertyAccessor) {
-                    // We might have from the beginning just resolve the descriptor of the accessor
-                    // But we trying to avoid analysis in case property doesn't have any relevant annotations at all
-                    // (in case of `findAnnotation` returns null)
-                    if (findAnnotation(owner.property, fqName) == null) return null
-
-                    val accessorDescriptor = owner.resolveToDescriptorIfAny() ?: return null
-
-                    // Just reuse the logic of use-site targeted annotation from the compiler
-                    val annotationDescriptor = accessorDescriptor.annotations.findAnnotation(fqName) ?: return null
-                    val entry = annotationDescriptor.source.getPsi() as? KtAnnotationEntry ?: return null
-
-                    return entry to annotationDescriptor
-                }
-
-                return null
-            }
-
-            override val deprecationResolver: DeprecationResolver by lazyPub {
-                element.getResolutionFacade().getFrontendService(DeprecationResolver::class.java)
-            }
-
-            override val typeMapper: KotlinTypeMapper by lazyPub {
-                KotlinTypeMapper(
-                    BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
-                    IncompatibleClassTracker.DoNothing, moduleName,
-                    JvmTarget.JVM_1_8,
-                    KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
-                    false,
-                    KotlinType::cleanFromAnonymousTypes
-                )
-            }
-        })
-    }
-
-    private fun findTooComplexDeclaration(declaration: KtDeclaration): PsiElement? {
-        if (declaration.hasExpectModifier() ||
-            declaration.hasModifier(KtTokens.ANNOTATION_KEYWORD) ||
-            declaration.hasModifier(KtTokens.INLINE_KEYWORD) && declaration is KtClassOrObject ||
-            declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)
-        ) {
-            return declaration
+        return KtUltraLightSupportImpl(element, module).let {
+            if (element.hasModifier(KtTokens.INLINE_KEYWORD)) KtUltraLightInlineClass(element, it)
+            else KtUltraLightClass(element, it)
         }
-
-
-        if (declaration is KtClassOrObject) {
-            declaration.primaryConstructor?.let { findTooComplexDeclaration(it) }?.let { return it }
-
-            for (d in declaration.declarations) {
-                if (d is KtClassOrObject && !(d is KtObjectDeclaration && d.isCompanion())) continue
-
-                findTooComplexDeclaration(d)?.let { return it }
-            }
-
-            if (implementsKotlinCollection(declaration)) {
-                return declaration.getSuperTypeList()
-            }
-        }
-        if (declaration is KtCallableDeclaration) {
-            declaration.valueParameters.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
-            if (declaration.typeReference?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true) {
-                return declaration.typeReference
-            }
-        }
-        if (declaration is KtProperty) {
-            declaration.accessors.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
-        }
-
-        return null
-
     }
 
     private fun implementsKotlinCollection(classOrObject: KtClassOrObject): Boolean {

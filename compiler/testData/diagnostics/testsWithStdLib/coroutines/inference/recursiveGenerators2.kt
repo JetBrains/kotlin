@@ -18,7 +18,7 @@ suspend fun <S> GenericController<List<S>>.yieldGenerate(g: suspend GenericContr
 
 val test1 = generate {
     // TODO: KT-15185
-    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR, OI;TYPE_MISMATCH!>yieldGenerate<!> {
+    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR, OI;TYPE_MISMATCH!>yieldGenerate<!> {
         yield(4)
     }
 }

@@ -1,0 +1,10 @@
+// "Convert to anonymous object" "true"
+interface B<T, U> {
+    fun bar(x: T): U
+}
+
+val b = object : B<Int, String> {
+    override fun bar(x: Int): String {
+        return ""
+    }
+}

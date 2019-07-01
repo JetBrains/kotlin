@@ -26,7 +26,7 @@ val normal = generate {
 }
 
 val extension = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    extensionYield("foo")
+    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>extensionYield("foo")<!>
 }
 
 val safeExtension = generate {

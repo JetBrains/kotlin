@@ -231,7 +231,7 @@ class QualifiedExpressionResolver {
             val packageOrClassDescriptor = resolveToPackageOrClass(
                 path, moduleDescriptor, trace, packageFragmentForCheck,
                 scopeForFirstPart = null, position = QualifierPosition.IMPORT
-            ) ?: return null
+            ).classDescriptorFromTypeAlias() ?: return null
 
             if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton && lastPart.expression != null) {
                 trace.report(
@@ -247,6 +247,10 @@ class QualifiedExpressionResolver {
         } else {
             return processSingleImport(moduleDescriptor, trace, importDirective, path, lastPart, packageFragmentForCheck)
         }
+    }
+
+    private fun DeclarationDescriptor?.classDescriptorFromTypeAlias(): DeclarationDescriptor? {
+        return if (this is TypeAliasDescriptor) classDescriptor else this
     }
 
     private fun computePackageFragmentToCheck(

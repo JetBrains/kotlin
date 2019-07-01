@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface Callback {
     fun invoke(): String
 }

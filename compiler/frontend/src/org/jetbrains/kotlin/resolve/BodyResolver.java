@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -303,7 +304,9 @@ public class BodyResolver {
                 if (delegateExpression != null) {
                     LexicalScope scope = scopeForConstructor == null ? scopeForMemberResolution : scopeForConstructor;
                     KotlinType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
-                    typeInferrer.getType(scope, delegateExpression, expectedType, outerDataFlowInfo, trace);
+                    typeInferrer.getType(
+                            scope, delegateExpression, expectedType, outerDataFlowInfo, InferenceSession.Companion.getDefault(), trace
+                    );
                 }
 
                 if (descriptor.isExpect()) {
@@ -660,7 +663,8 @@ public class BodyResolver {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(
                     (KtDeclaration) anonymousInitializer.getParent().getParent(), trace, languageVersionSettings);
             expressionTypingServices.getTypeInfo(
-                    scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace, /*isStatement = */true
+                    scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo,
+                    InferenceSession.Companion.getDefault(), trace, /*isStatement = */true
             );
         }
         processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
@@ -864,6 +868,7 @@ public class BodyResolver {
                                                           propertyDescriptor,
                                                           delegateExpression,
                                                           propertyHeaderScope,
+                                                          InferenceSession.Companion.getDefault(),
                                                           trace);
     }
 
@@ -878,7 +883,7 @@ public class BodyResolver {
         KotlinType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         if (propertyDescriptor.getCompileTimeInitializer() == null) {
             expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,
-                                             outerDataFlowInfo, trace);
+                                             outerDataFlowInfo, InferenceSession.Companion.getDefault(), trace);
         }
     }
 

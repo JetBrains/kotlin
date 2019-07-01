@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-fun foo() {
-    val x = true
-    val y = false
-    if (!(x || y)) {
-        throw AssertionError("text")
-    }
-}

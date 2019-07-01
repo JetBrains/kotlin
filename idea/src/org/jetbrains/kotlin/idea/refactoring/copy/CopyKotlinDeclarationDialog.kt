@@ -49,6 +49,7 @@ import java.awt.Font
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
+import kotlin.math.max
 
 // Based on com.intellij.refactoring.copy.CopyClassDialog
 class CopyKotlinDeclarationDialog(
@@ -97,7 +98,7 @@ class CopyKotlinDeclarationDialog(
     override fun createNorthPanel(): JComponent? {
         val qualifiedName = qualifiedName
         packageNameField = PackageNameReferenceEditorCombo(qualifiedName, project, RECENTS_KEY, RefactoringBundle.message("choose.destination.package"))
-        packageNameField.setTextFieldPreferredWidth(Math.max(qualifiedName.length + 5, 40))
+        packageNameField.setTextFieldPreferredWidth(max(qualifiedName.length + 5, 40))
         packageLabel.text = RefactoringBundle.message("destination.package")
         packageLabel.labelFor = packageNameField
 

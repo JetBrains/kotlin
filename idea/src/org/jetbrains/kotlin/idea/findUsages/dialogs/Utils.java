@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.findUsages.dialogs;
 
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -31,8 +32,12 @@ class Utils {
 
     public static void configureLabelComponent(
             @NotNull SimpleColoredComponent coloredComponent,
-            @NotNull KtNamedDeclaration declaration) {
-        coloredComponent.append(DescriptorRenderer.COMPACT.render(UtilsKt.getDescriptor(declaration)));
+            @NotNull KtNamedDeclaration declaration
+    ) {
+        DeclarationDescriptor descriptor = UtilsKt.getDescriptor(declaration);
+        if (descriptor != null) {
+            coloredComponent.append(DescriptorRenderer.COMPACT.render(descriptor));
+        }
     }
 
     static boolean renameCheckbox(@NotNull JPanel panel, @NotNull String srcText, @NotNull String destText) {
@@ -49,17 +54,15 @@ class Utils {
         return false;
     }
 
-    static boolean removeCheckbox(@NotNull JPanel panel, @NotNull String srcText) {
+    static void removeCheckbox(@NotNull JPanel panel, @NotNull String srcText) {
         for (Component component : panel.getComponents()) {
             if (component instanceof JCheckBox) {
                 JCheckBox checkBox = (JCheckBox) component;
                 if (checkBox.getText().equals(srcText)) {
                     panel.remove(checkBox);
-                    return true;
+                    return;
                 }
             }
         }
-
-        return false;
     }
 }

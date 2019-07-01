@@ -1,0 +1,63 @@
+package
+
+public fun f(): kotlin.Unit
+
+package test {
+
+    public final class ClassSample {
+        public constructor ClassSample()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class Nested1 {
+            public constructor Nested1()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public final enum class EnumSample : kotlin.Enum<test.EnumSample> {
+        enum entry Entry
+
+        private constructor EnumSample()
+        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumSample): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.EnumSample!>!
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class Nested3 {
+            public constructor Nested3()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumSample
+        public final /*synthesized*/ fun values(): kotlin.Array<test.EnumSample>
+    }
+
+    public object ObjectSample {
+        private constructor ObjectSample()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class Nested2 {
+            public constructor Nested2()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+    public typealias ClassAlias = test.ClassSample
+    public typealias EnumAlias = test.EnumSample
+    public typealias ObjectAlias = test.ObjectSample
+}

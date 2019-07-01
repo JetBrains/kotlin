@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
@@ -119,7 +122,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
         val referenceExpressions = mutableListOf<KtExpression>()
         val conflictUsages = MultiMap.create<PsiElement, String>()
         for (ref in references) {
-            val refElement = ref.element ?: continue
+            val refElement = ref.element
             if (refElement !is KtElement) {
                 conflictUsages.putValue(refElement, "Non-Kotlin usage: ${refElement.text}")
                 continue

@@ -1,0 +1,1 @@
+public final fun listOfAny(): R|kotlin/collections/List<kotlin/Any>|

@@ -2,39 +2,39 @@
 // FUN: max
 BB 0
 CONTENT
-      1 FUN name:max visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Int flags:
-      2 WHEN type=kotlin.Int origin=null
-      3 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-      4 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
+      1 FUN name:max visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Int 
+      2 WHEN type=kotlin.Int origin=IF
+      3 GET_VAR 'x: kotlin.Int declared in <root>.max' type=kotlin.Int origin=null
+      4 GET_VAR 'y: kotlin.Int declared in <root>.max' type=kotlin.Int origin=null
 OUTGOING -> BB 1, 2
-    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
 BB 1
 INCOMING <- BB 0
-    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
 CONTENT
 OUTGOING -> BB 3
     CONST Boolean type=kotlin.Boolean value=true
 BB 2
 INCOMING <- BB 0
-    CALL 'greater(Int, Int): Boolean' type=kotlin.Boolean origin=GT
+    CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
 CONTENT
-      1 GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
+      1 GET_VAR 'x: kotlin.Int declared in <root>.max' type=kotlin.Int origin=null
 OUTGOING -> BB 4
-    When exit: WHEN type=kotlin.Int origin=null
+    When exit: WHEN type=kotlin.Int origin=IF
 BB 3
 INCOMING <- BB 1
     CONST Boolean type=kotlin.Boolean value=true
 CONTENT
-      1 GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=null
+      1 GET_VAR 'y: kotlin.Int declared in <root>.max' type=kotlin.Int origin=null
 OUTGOING -> BB 4
-    When exit: WHEN type=kotlin.Int origin=null
+    When exit: WHEN type=kotlin.Int origin=IF
 BB 4
 INCOMING <- BB 2, 3
-    When exit: WHEN type=kotlin.Int origin=null
+    When exit: WHEN type=kotlin.Int origin=IF
 CONTENT
-      1 RETURN type=kotlin.Nothing from='max(Int, Int): Int'
+      1 RETURN type=kotlin.Nothing from='public final fun max (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:max visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Int flags:
+    Function exit: FUN name:max visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Int 
 
 // END FUN: max
 

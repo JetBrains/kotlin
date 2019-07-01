@@ -1,11 +1,12 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
@@ -77,12 +78,14 @@ interface FunctionExpression : LambdaKotlinCallArgument {
  * D.E::foo <-> Expression
  */
 sealed class LHSResult {
-    class Type(val qualifier: QualifierReceiver, resolvedType: UnwrappedType) : LHSResult() {
+    class Type(val qualifier: QualifierReceiver?, resolvedType: UnwrappedType) : LHSResult() {
         val unboundDetailedReceiver: ReceiverValueWithSmartCastInfo
 
         init {
-            assert(qualifier.descriptor is ClassDescriptor) {
-                "Should be ClassDescriptor: ${qualifier.descriptor}"
+            if (qualifier != null) {
+                assert(qualifier.descriptor is ClassDescriptor || qualifier.descriptor is TypeAliasDescriptor) {
+                    "Should be ClassDescriptor: ${qualifier.descriptor}"
+                }
             }
 
             val unboundReceiver = TransientReceiver(resolvedType)

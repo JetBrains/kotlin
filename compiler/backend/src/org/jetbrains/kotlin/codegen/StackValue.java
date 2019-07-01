@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -103,12 +103,16 @@ public abstract class StackValue {
         put(type, kotlinType, v);
     }
 
-    public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
-        put(type, kotlinType, v, false);
+    public void put(@NotNull InstructionAdapter v) {
+        put(type, null, v, false);
     }
 
     public void put(@NotNull Type type, @NotNull InstructionAdapter v) {
         put(type, null, v, false);
+    }
+
+    public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        put(type, kotlinType, v, false);
     }
 
     public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v, boolean skipReceiver) {
@@ -445,7 +449,7 @@ public abstract class StackValue {
         v.invokevirtual(methodOwner.getInternalName(), type.getClassName() + "Value", "()" + type.getDescriptor(), false);
     }
 
-    private static void boxInlineClass(@NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
+    public static void boxInlineClass(@NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
         Type boxedType = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(kotlinType);
         Type underlyingType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
 

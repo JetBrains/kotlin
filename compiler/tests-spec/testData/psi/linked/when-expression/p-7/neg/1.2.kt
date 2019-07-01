@@ -2,10 +2,11 @@
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: when-expression -> paragraph 7 -> sentence 1
+ * PLACE: when-expression -> paragraph 7 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: 'When' with bound value and 'when condition' with type checking operator and non-type value.
  * UNEXPECTED BEHAVIOUR
+ * EXCEPTION: compiler
  */
 
 fun case_2() {

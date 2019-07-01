@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger
@@ -14,8 +14,8 @@ val DEX_BEFORE_PATCH_EXTENSION = "before_dex"
 fun String.needDexPatch() = split('.').any { it.endsWith("Dex") }
 
 fun patchDexTests(dir: File) {
-    dir.listFiles({ file -> file.isDirectory && file.name.needDexPatch() }).forEach { dir ->
-        dir.listFiles { testOutputFile -> testOutputFile.extension == "class" }.forEach(::applyDexLikePatch)
+    dir.listFiles { file -> file.isDirectory && file.name.needDexPatch() }.forEach {
+        it.listFiles { testOutputFile -> testOutputFile.extension == "class" }.forEach(::applyDexLikePatch)
     }
 }
 

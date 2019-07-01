@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import java.lang.AssertionError
 
 interface IrElement {
     val startOffset: Int

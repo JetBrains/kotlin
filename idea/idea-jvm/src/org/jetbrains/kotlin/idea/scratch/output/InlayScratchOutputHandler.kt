@@ -29,7 +29,6 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     private const val minSpaceCount = 4
 
     override fun onStart(file: ScratchFile) {
-        clear(file)
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -74,16 +73,15 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
                 if (shortText != text) {
                     printToToolWindow(file, expression, output)
                 }
-                editor.inlayModel.addInlineElement(
+                editor.inlayModel.addInlay(
                     lineEndOffset,
-                    true,
                     InlayScratchFileRenderer(" ".repeat(spaceCount) + shortText, output.type)
                 )
             }
 
             val existing = editor.inlayModel
-                .getInlineElementsInRange(lineEndOffset, lineEndOffset)
-                .singleOrNull { it.renderer is InlayScratchFileRenderer }
+                .getInlays(lineEndOffset, lineEndOffset)
+                .singleOrNull()
             if (existing != null) {
                 existing.dispose()
                 addInlay(((existing.renderer as InlayScratchFileRenderer).text + "; " + output.text).drop(spaceCount))
@@ -110,8 +108,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     private fun clearInlays(editor: TextEditor) {
         UIUtil.invokeLaterIfNeeded {
             editor
-                .editor.inlayModel.getInlineElementsInRange(0, editor.editor.document.textLength)
-                .filter { it.renderer is InlayScratchFileRenderer }
+                .editor.inlayModel.getInlays(0, editor.editor.document.textLength)
                 .forEach { Disposer.dispose(it) }
         }
     }

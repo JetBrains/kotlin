@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
@@ -13,11 +13,11 @@ object ProjectCodeStyleImporter {
     fun apply(project: Project, codeStyleStr: String?): Boolean {
         return when (codeStyleStr) {
             KotlinObsoleteCodeStyle.CODE_STYLE_SETTING -> {
-                ProjectCodeStyleImporter.apply(project, KotlinObsoleteCodeStyle.INSTANCE)
+                apply(project, KotlinObsoleteCodeStyle.INSTANCE)
                 true
             }
             KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING -> {
-                ProjectCodeStyleImporter.apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
+                apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
                 true
             }
             else -> false

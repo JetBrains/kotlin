@@ -21,11 +21,11 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJsRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 class KotlinJavascriptMavenConfigurator :
-    KotlinMavenConfigurator(null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
+    KotlinMavenConfigurator(null, false, NAME, PRESENTABLE_TEXT) {
 
     override fun getStdlibArtifactId(module: Module, version: String) = MAVEN_JS_STDLIB_ID
 
@@ -43,7 +43,10 @@ class KotlinJavascriptMavenConfigurator :
     }
 
     override val targetPlatform: TargetPlatform
-        get() = JsPlatform
+        get() = JsPlatforms.defaultJsPlatform
+
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform() = JsPlatforms.CompatJsPlatform
 
     override fun getMinimumSupportedVersion() = "1.1.0"
 

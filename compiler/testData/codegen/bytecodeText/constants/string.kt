@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     return "O" + "K".toString() + 1.toLong()
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions.impl
@@ -18,7 +18,7 @@ class FirWhenExpressionImpl(
     psiElement: PsiElement?,
     override var subject: FirExpression? = null,
     override var subjectVariable: FirVariable? = null
-) : FirAbstractExpression(session, psiElement), FirWhenExpression {
+) : FirWhenExpression(session, psiElement) {
     override val branches = mutableListOf<FirWhenBranch>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
@@ -28,6 +28,6 @@ class FirWhenExpressionImpl(
             subject = subject?.transformSingle(transformer, data)
         }
         branches.transformInplace(transformer, data)
-        return super<FirAbstractExpression>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 }

@@ -100,6 +100,20 @@ public class ClassFileFactory implements OutputFileCollection {
         return answer;
     }
 
+    @NotNull
+    public ClassBuilder newVisitor(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull Type asmType,
+            @NotNull List<File> sourceFiles
+    ) {
+        ClassBuilder answer = builderFactory.newClassBuilder(origin);
+        generators.put(
+                asmType.getInternalName() + ".class",
+                new ClassBuilderAndSourceFileList(answer, sourceFiles)
+        );
+        return answer;
+    }
+
     public void done() {
         if (!isDone) {
             isDone = true;

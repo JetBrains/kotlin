@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 object KotlinExtractInterfaceHandler : KotlinExtractSuperHandlerBase(true) {
-    val REFACTORING_NAME = "Extract Interface"
+    const val REFACTORING_NAME = "Extract Interface"
 
     override fun getErrorMessage(klass: KtClassOrObject): String? {
         val superMessage = super.getErrorMessage(klass)
@@ -33,9 +33,9 @@ object KotlinExtractInterfaceHandler : KotlinExtractSuperHandlerBase(true) {
 
     override fun createDialog(klass: KtClassOrObject, targetParent: PsiElement) =
         KotlinExtractInterfaceDialog(
-                originalClass = klass,
-                targetParent = targetParent,
-                conflictChecker = { checkConflicts(klass, it) },
-                refactoring = { ExtractSuperRefactoring(it).performRefactoring() }
+            originalClass = klass,
+            targetParent = targetParent,
+            conflictChecker = { checkConflicts(klass, it) },
+            refactoring = { ExtractSuperRefactoring(it).performRefactoring() }
         )
 }

@@ -9,9 +9,11 @@ dependencies {
     compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":compiler:util"))
-    runtime(project(":kotlin-reflect"))
 
-    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":kotlin-scripting-compiler"))
+
     testCompile(commonDep("junit"))
 }
 

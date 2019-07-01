@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
 import org.jetbrains.kotlin.contracts.model.MutableContextInfo
 import org.jetbrains.kotlin.contracts.model.structure.*
 
-class InfoCollector(
-    private val observedEffect: ESEffect,
-    private val constants: ESConstants
-) : ESExpressionVisitor<MutableContextInfo> {
+class InfoCollector(private val observedEffect: ESEffect, private val builtIns: KotlinBuiltIns) : ESExpressionVisitor<MutableContextInfo> {
     private var isInverted: Boolean = false
 
     fun collectFromSchema(schema: List<ESEffect>): MutableContextInfo =
@@ -41,18 +38,19 @@ class InfoCollector(
 
         // Check for information from conditional effects
         return when (observedEffect.isImplies(effect.simpleEffect)) {
-        // observed effect implies clause's effect => clause's effect was fired => clause's condition is true
+            // observed effect implies clause's effect => clause's effect was fired => clause's condition is true
             true -> effect.condition.accept(this)
 
-        // Observed effect *may* or *doesn't* implies clause's - no useful information
+            // Observed effect *may* or *doesn't* implies clause's - no useful information
             null, false -> null
         }
     }
 
     override fun visitIs(isOperator: ESIs): MutableContextInfo = with(isOperator) {
-        if (functor.isNegated != isInverted) MutableContextInfo.EMPTY.notSubtype(left, type) else MutableContextInfo.EMPTY.subtype(
+        val isType = type.toKotlinType(builtIns)
+        if (functor.isNegated != isInverted) MutableContextInfo.EMPTY.notSubtype(left, isType) else MutableContextInfo.EMPTY.subtype(
             left,
-            type
+            isType
         )
     }
 
@@ -76,10 +74,10 @@ class InfoCollector(
     }
 
     override fun visitVariable(esVariable: ESVariable): MutableContextInfo =
-        if (esVariable.type.let { it == null || !KotlinBuiltIns.isBoolean(it) })
+        if (esVariable.type.let { !it.isBoolean() })
             MutableContextInfo.EMPTY
         else
-            MutableContextInfo.EMPTY.equal(esVariable, constants.booleanValue(!isInverted))
+            MutableContextInfo.EMPTY.equal(esVariable, ESConstants.booleanValue(!isInverted))
 
     override fun visitConstant(esConstant: ESConstant): MutableContextInfo = MutableContextInfo.EMPTY
 

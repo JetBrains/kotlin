@@ -88,6 +88,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
         )
 
         val args = K2JVMCompilerArguments().apply {
+            disableDefaultScriptingPlugin = true
             buildFile = moduleFile.canonicalPath
             reportOutputFiles = true
         }
@@ -122,7 +123,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
         if (header != null) {
             register(
                 IncrementalDataProvider::class.java,
-                IncrementalDataProviderImpl(header!!, packageParts, JsMetadataVersion.INSTANCE.toArray())
+                IncrementalDataProviderImpl(header!!, packageParts, JsMetadataVersion.INSTANCE.toArray(), emptyMap()) // TODO pass correct metadata
             )
         }
 

@@ -34,6 +34,8 @@ public final class C : kotlin/Any {
   // getter: getDelegated(Ljava/lang/Number;)Ljava/util/List;
   public final /* delegated */ val <T#0 /* T */ : kotlin/Number> T#0.delegated: kotlin/collections/List<kotlin/Nothing>
     public final /* non-default */ get
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

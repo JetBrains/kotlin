@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 package qualified_expressions
 
 fun test(s: IntRange?) {

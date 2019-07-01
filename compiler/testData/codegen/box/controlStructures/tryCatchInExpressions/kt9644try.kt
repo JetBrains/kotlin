@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 inline fun doCall(f: () -> Any) = f()
 
 fun test1() {

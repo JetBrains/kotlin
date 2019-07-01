@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.range.SimpleBoundedValue
+import org.jetbrains.kotlin.codegen.range.BoundedValue
 import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.org.objectweb.asm.Label
@@ -38,7 +38,7 @@ class ForInSimpleProgressionLoopGenerator(
     constructor(
         codegen: ExpressionCodegen,
         forExpression: KtForExpression,
-        boundedValue: SimpleBoundedValue,
+        boundedValue: BoundedValue,
         inverseBoundsEvaluationOrder: Boolean,
         comparisonGenerator: ComparisonGenerator,
         step: Int
@@ -57,7 +57,7 @@ class ForInSimpleProgressionLoopGenerator(
         fun fromBoundedValueWithStep1(
             codegen: ExpressionCodegen,
             forExpression: KtForExpression,
-            boundedValue: SimpleBoundedValue,
+            boundedValue: BoundedValue,
             comparisonGenerator: ComparisonGenerator,
             inverseBoundsEvaluationOrder: Boolean = false
         ) =
@@ -66,7 +66,7 @@ class ForInSimpleProgressionLoopGenerator(
         fun fromBoundedValueWithStepMinus1(
             codegen: ExpressionCodegen,
             forExpression: KtForExpression,
-            boundedValue: SimpleBoundedValue,
+            boundedValue: BoundedValue,
             comparisonGenerator: ComparisonGenerator,
             inverseBoundsEvaluationOrder: Boolean = false
         ) =

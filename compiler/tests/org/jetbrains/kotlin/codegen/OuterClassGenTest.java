@@ -41,110 +41,110 @@ public class OuterClassGenTest extends CodegenTestCase {
         return "outerClassInfo";
     }
 
-    public void testClass() throws Exception {
+    public void testClass() {
         doTest("foo.Foo", "outerClassInfo");
     }
 
-    public void testClassObject() throws Exception {
+    public void testClassObject() {
         doTest("foo.Foo$" + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString(), "outerClassInfo");
     }
 
-    public void testInnerClass() throws Exception {
+    public void testInnerClass() {
         doTest("foo.Foo$InnerClass", "outerClassInfo");
     }
 
-    public void testInnerObject() throws Exception {
+    public void testInnerObject() {
         doTest("foo.Foo$InnerObject", "outerClassInfo");
     }
 
-    public void testLocalClassInFunction() throws Exception {
+    public void testLocalClassInFunction() {
         doTest("foo.Foo$foo$LocalClass", "foo.Foo$1LocalClass", "outerClassInfo");
     }
 
-    public void testLocalObjectInFunction() throws Exception {
+    public void testLocalObjectInFunction() {
         doTest("foo.Foo$foo$LocalObject", "foo.Foo$1LocalObject", "outerClassInfo");
     }
 
-    public void testObjectInPackageClass() throws Exception {
+    public void testObjectInPackageClass() {
         doTest("foo.PackageInnerObject", "outerClassInfo");
     }
 
-    public void testLambdaInNoInlineFun() throws Exception {
+    public void testLambdaInNoInlineFun() {
         doTest("foo.Foo$foo$1", "foo.Foo$1Lambda", "outerClassInfo");
     }
 
-    public void testLambdaInConstructor() throws Exception {
+    public void testLambdaInConstructor() {
         doTest("foo.Foo$s$1", "foo.Foo$1LambdaInConstructor", "outerClassInfo");
     }
 
-    public void testObjectLiteralInPackageClass() throws Exception {
+    public void testObjectLiteralInPackageClass() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", null, null);
         doCustomTest("foo/OuterClassInfoKt\\$packageObjectLiteral\\$1", expectedInfo, "outerClassInfo");
     }
 
-    public void testLocalClassInTopLevelFunction() throws Exception {
+    public void testLocalClassInTopLevelFunction() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", "packageMethod", "(Lfoo/Foo;)V");
         doCustomTest("foo/OuterClassInfoKt\\$packageMethod\\$PackageLocalClass", expectedInfo, "outerClassInfo");
     }
 
-    public void testLocalObjectInTopLevelFunction() throws Exception {
+    public void testLocalObjectInTopLevelFunction() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", "packageMethod", "(Lfoo/Foo;)V");
         doCustomTest("foo/OuterClassInfoKt\\$packageMethod\\$PackageLocalObject", expectedInfo, "outerClassInfo");
     }
 
-    public void testLocalObjectInInlineFunction() throws Exception {
+    public void testLocalObjectInInlineFunction() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/jvm/functions/Function0;)V");
         doCustomTest("foo/Foo\\$inlineFoo\\$localObject\\$1", expectedInfo, "inlineObject");
     }
 
-    public void testLocalObjectInlined() throws Exception {
+    public void testLocalObjectInlined() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "callToInline", "()V");
         doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineObject");
     }
 
-    public void testLocalObjectInInlineLambda() throws Exception {
+    public void testLocalObjectInInlineLambda() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
         doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineObject");
     }
 
-    public void testLocalObjectInLambdaInlinedIntoObject() throws Exception {
+    public void testLocalObjectInLambdaInlinedIntoObject() {
         OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineObject");
     }
 
-    public void testLocalObjectInLambdaInlinedIntoObject2() throws Exception {
+    public void testLocalObjectInLambdaInlinedIntoObject2() {
         OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "run", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
                      objectInLambda, "inlineObject");
     }
 
-    public void testLambdaInInlineFunction() throws Exception {
+    public void testLambdaInInlineFunction() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/jvm/functions/Function0;)V");
         doCustomTest("foo/Foo\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
     }
 
-    public void testLambdaInlined() throws Exception {
+    public void testLambdaInlined() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "callToInline", "()V");
         doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
     }
 
-    public void testLambdaInInlineLambda() throws Exception {
+    public void testLambdaInInlineLambda() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
         doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineLambda");
     }
 
-    public void testLambdaInLambdaInlinedIntoObject() throws Exception {
+    public void testLambdaInLambdaInlinedIntoObject() {
         OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineLambda");
     }
 
-    public void testLambdaInLambdaInlinedIntoObject2() throws Exception {
+    public void testLambdaInLambdaInlinedIntoObject2() {
         OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "invoke", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
                      objectInLambda, "inlineLambda");
     }
 
-    private void doTest(@NotNull String classFqName, @NotNull String testDataFile) throws Exception {
+    private void doTest(@NotNull String classFqName, @NotNull String testDataFile) {
         doTest(classFqName, classFqName, testDataFile);
     }
 
@@ -154,7 +154,7 @@ public class OuterClassGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) throws Exception {
+    private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) {
         File javaOut = CodegenTestUtil.compileJava(
                 Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
                 Collections.emptyList(),
@@ -176,14 +176,10 @@ public class OuterClassGenTest extends CodegenTestCase {
     ) {
         ClassReader kotlinReader = getKotlinClassReader(internalNameRegexp, testDataFile);
         OuterClassInfo kotlinInfo = readOuterClassInfo(kotlinReader);
+        assertNotNull(kotlinInfo);
         String message = "Error in enclosingMethodInfo info for class: " + kotlinReader.getClassName();
-        if (kotlinInfo == null) {
-            assertNull(expectedInfo.getOwner());
-        }
-        else {
-            assertTrue(message + "\n" + kotlinInfo.getOwner() + " doesn't start with " + expectedInfo.getOwner(),
-                       kotlinInfo.getOwner().startsWith(expectedInfo.getOwner()));
-        }
+        assertTrue(message + "\n" + kotlinInfo.getOwner() + " doesn't start with " + expectedInfo.getOwner(),
+                   kotlinInfo.getOwner().startsWith(expectedInfo.getOwner()));
         assertEquals(message, expectedInfo.getMethodName(), kotlinInfo.getMethodName());
         assertEquals(message, expectedInfo.getMethodDesc(), kotlinInfo.getMethodDesc());
     }

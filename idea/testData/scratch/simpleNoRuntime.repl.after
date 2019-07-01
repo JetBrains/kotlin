@@ -1,0 +1,4 @@
+// REPL_MODE: true
+// NO_MODULE
+
+arrayListOf(1, 2).size    // RESULT: res0: kotlin.Int = 2

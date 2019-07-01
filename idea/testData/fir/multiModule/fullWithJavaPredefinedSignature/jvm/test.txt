@@ -1,0 +1,8 @@
+FILE: test.kt
+    public abstract interface UseIterable : R|MyIterable<kotlin/String>| {
+        public open fun test(): R|kotlin/Unit| {
+            lval it: R|ft<kotlin/collections/MutableIterator<ft<T, T?>>, kotlin/collections/Iterator<ft<T, T?>>?>|! = R|FakeOverride<java/lang/Iterable.iterator: R|ft<kotlin/collections/MutableIterator<ft<T, T?>>, kotlin/collections/Iterator<ft<T, T?>>?>|!>|()
+            lval split: R|ft<java/util/Spliterator<ft<T, T>>, java/util/Spliterator<ft<T, T>>>| = R|FakeOverride<java/lang/Iterable.spliterator: R|ft<java/util/Spliterator<ft<T, T>>, java/util/Spliterator<ft<T, T>>>|>|()
+        }
+
+    }

@@ -136,7 +136,7 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
             val fullExpression = expression.getQualifiedExpressionForSelectorOrThis()
             fullExpression.getAssignmentByLHS()?.let { assignment ->
                 val rhs = assignment.right ?: return expression
-                val operationToken = assignment.operationToken as? KtSingleValueToken
+                val operationToken = assignment.operationToken as? KtSingleValueToken ?: return expression
                 val counterpartOp = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[operationToken]
                 val setterArgument = if (counterpartOp != null) {
                     val getterCall = if (getter) fullExpression.createCall(psiFactory, newGetterName) else fullExpression

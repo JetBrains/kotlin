@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 interface IFoo<T : IFoo<T>> {
     fun foo(t: T): String = t.bar()

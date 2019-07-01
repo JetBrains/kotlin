@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -44,7 +44,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
     init {
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
-            KotlinMigrationProjectComponent.getInstanceIfNotDisposed(project)?.onImportFinished()
+            getInstanceIfNotDisposed(project)?.onImportFinished()
         })
     }
 
@@ -165,8 +165,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
 
             val changedFiles = ChangeListManager.getInstance(project).affectedPaths
             for (changedFile in changedFiles) {
-                val extension = changedFile.extension
-                when (extension) {
+                when (changedFile.extension) {
                     "gradle" -> return true
                     "properties" -> return true
                     "kts" -> return true

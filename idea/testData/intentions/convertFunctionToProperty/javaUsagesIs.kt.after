@@ -1,4 +1,4 @@
 package test
 
-val isFoo: Boolean
+val isFoo<caret>: Boolean
     get() = true

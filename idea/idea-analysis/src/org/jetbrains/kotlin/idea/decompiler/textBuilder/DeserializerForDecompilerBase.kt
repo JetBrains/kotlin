@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassifierTypeSettings
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.types.SimpleType
 abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName) : ResolverForDecompiler {
     protected abstract val deserializationComponents: DeserializationComponents
 
-    protected abstract val targetPlatform: TargetPlatform
     protected abstract val builtIns: KotlinBuiltIns
 
     protected val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS

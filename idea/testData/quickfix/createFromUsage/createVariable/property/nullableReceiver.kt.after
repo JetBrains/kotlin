@@ -1,11 +1,11 @@
+private val String?.notExistingVal: Int
+    get() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 // "Create extension property 'String?.notExistingVal'" "true"
 fun foo(n: Int) {}
 
 fun context(p: String?) {
     foo(p.notExistingVal)
 }
-
-private val String?.notExistingVal: Int
-    get() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }

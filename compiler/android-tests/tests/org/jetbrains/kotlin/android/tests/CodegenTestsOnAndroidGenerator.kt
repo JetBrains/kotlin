@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.tests
@@ -41,6 +41,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
     private val generatedTestNames = Lists.newArrayList<String>()
 
+    private val pathFilter: String? = System.getProperties().getProperty("kotlin.test.android.path.filter")
+
     private fun generateOutputFiles() {
         prepareAndroidModule()
         generateAndSave()
@@ -80,7 +82,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         FileWriter(File(testSourceFilePath).also { it.parentFile.mkdirs() }).use {
             val p = Printer(it)
-            p.print(FileUtil.loadFile(File("license/LICENSE.txt")))
             p.println(
                 """package $testClassPackage;
                 |
@@ -195,6 +196,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             } else if (FileUtilRt.getExtension(file.name) != KotlinFileType.EXTENSION) {
                 // skip non kotlin files
             } else {
+                if (pathFilter != null && !file.path.contains(pathFilter)) {
+                    continue
+                }
+
                 if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file)) {
                     continue
                 }

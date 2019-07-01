@@ -27,7 +27,7 @@ interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
         get() = element?.declaredAnnotations?.getAnnotations() ?: emptyList()
 
     override fun findAnnotation(fqName: FqName) =
-            element?.declaredAnnotations?.findAnnotation(fqName)
+        element?.declaredAnnotations?.findAnnotation(fqName)
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = false

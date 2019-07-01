@@ -19,13 +19,16 @@ package org.jetbrains.uast.kotlin
 import com.intellij.lang.Language
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclarationOrElement
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
@@ -75,15 +79,15 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
 
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
         if (!element.isJvmElement) return null
-        return convertDeclarationOrElement(element, parent, requiredType)
+        return convertDeclarationOrElement(element, parent, elementTypes(requiredType))
     }
 
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
         if (!element.isJvmElement) return null
-        if (element is PsiFile) return convertDeclaration(element, null, requiredType)
-        if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
+        if (element is PsiFile) return convertDeclaration(element, null, elementTypes(requiredType))
+        if (element is KtLightClassForFacade) return convertDeclaration(element, null, elementTypes(requiredType))
 
-        return convertDeclarationOrElement(element, null, requiredType)
+        return convertDeclarationOrElement(element, null, elementTypes(requiredType))
     }
 
     override fun getMethodCallExpression(
@@ -130,21 +134,50 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return when (element) {
             is KotlinUSimpleReferenceExpression.KotlinAccessorCallExpression -> element.setterValue != null
             is KotlinAbstractUExpression -> {
-                val ktElement = element.psi as? KtElement ?: return false
+                val ktElement = element.sourcePsi as? KtElement ?: return false
                 ktElement.analyze()[BindingContext.USED_AS_EXPRESSION, ktElement] ?: false
             }
             else -> false
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : UElement> convertElement(element: PsiElement, parent: UElement?, expectedTypes: Array<out Class<out T>>): T? {
+        if (!element.isJvmElement) return null
+        val nonEmptyExpectedTypes = expectedTypes.nonEmptyOr(DEFAULT_TYPES_LIST)
+        return (convertDeclaration(element, parent, nonEmptyExpectedTypes)
+            ?: KotlinConverter.convertPsiElement(element, parent, nonEmptyExpectedTypes)) as? T
+    }
+
+    override fun <T : UElement> convertElementWithParent(element: PsiElement, requiredTypes: Array<out Class<out T>>): T? {
+        return convertElement(element, null, requiredTypes)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : UElement> convertToAlternatives(element: PsiElement, requiredTypes: Array<out Class<out T>>): Sequence<T> =
+        if (!element.isJvmElement) emptySequence() else when {
+            element is KtFile -> KotlinConverter.convertKtFile(element, null, requiredTypes) as Sequence<T>
+            (element is KtProperty && !element.isLocal) ->
+                KotlinConverter.convertNonLocalProperty(element, null, requiredTypes) as Sequence<T>
+            element is KtParameter -> KotlinConverter.convertParameter(element, null, requiredTypes) as Sequence<T>
+            element is KtClassOrObject -> KotlinConverter.convertClassOrObject(element, null, requiredTypes) as Sequence<T>
+            else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
+        }
 }
 
-internal inline fun <reified ActualT : UElement> Class<out UElement>?.el(f: () -> UElement?): UElement? {
+internal inline fun <reified ActualT : UElement> Class<*>?.el(f: () -> UElement?): UElement? {
     return if (this == null || isAssignableFrom(ActualT::class.java)) f() else null
 }
 
-internal inline fun <reified ActualT : UElement> Class<out UElement>?.expr(f: () -> UExpression?): UExpression? {
-    return if (this == null || isAssignableFrom(ActualT::class.java)) f() else null
+internal inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.el(f: () -> UElement?): UElement? {
+    return if (isAssignableFrom(ActualT::class.java)) f() else null
 }
+
+internal inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.expr(f: () -> UExpression?): UExpression? {
+    return if (isAssignableFrom(ActualT::class.java)) f() else null
+}
+
+internal fun Array<out Class<out UElement>>.isAssignableFrom(cls: Class<*>) = any { it.isAssignableFrom(cls) }
 
 
 
@@ -157,6 +190,7 @@ internal object KotlinConverter {
         is KtSimpleNameStringTemplateEntry -> unwrapElements(element.parent)
         is KtLightParameterList -> unwrapElements(element.parent)
         is KtTypeElement -> unwrapElements(element.parent)
+        is KtSuperTypeList -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -165,12 +199,16 @@ internal object KotlinConverter {
 
     internal fun convertPsiElement(element: PsiElement?,
                                    givenParent: UElement?,
-                                   requiredType: Class<out UElement>?): UElement? {
+                                   expectedTypes: Array<out Class<out UElement>>
+    ): UElement? {
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? {
-            return { ctor(element as P, givenParent) }
+            return {
+                @Suppress("UNCHECKED_CAST")
+                ctor(element as P, givenParent)
+            }
         }
 
-        return with (requiredType) { when (element) {
+        return with (expectedTypes) { when (element) {
             is KtParameterList -> el<UDeclarationsExpression> {
                 val declarationsExpression = KotlinUDeclarationsExpression(givenParent)
                 declarationsExpression.apply {
@@ -183,11 +221,7 @@ internal object KotlinConverter {
             is KtCatchClause -> el<UCatchClause>(build(::KotlinUCatchClause))
             is KtVariableDeclaration ->
                 if (element is KtProperty && !element.isLocal) {
-                    el<UField> {
-                        LightClassUtil.getLightClassBackingField(element)?.let {
-                            KotlinUField(it, element, givenParent)
-                        }
-                    }
+                    convertNonLocalProperty(element, givenParent, this).firstOrNull()
                 }
                 else {
                     el<UVariable> {
@@ -195,19 +229,19 @@ internal object KotlinConverter {
                     }
                 }
 
-            is KtExpression -> KotlinConverter.convertExpression(element, givenParent, requiredType)
-            is KtLambdaArgument -> element.getLambdaExpression()?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
+            is KtExpression -> KotlinConverter.convertExpression(element, givenParent, expectedTypes)
+            is KtLambdaArgument -> element.getLambdaExpression()?.let { KotlinConverter.convertExpression(it, givenParent, expectedTypes) }
             is KtLightElementBase -> {
                 val expression = element.kotlinOrigin
                 when (expression) {
-                    is KtExpression -> KotlinConverter.convertExpression(expression, givenParent, requiredType)
+                    is KtExpression -> KotlinConverter.convertExpression(expression, givenParent, expectedTypes)
                     else -> el<UExpression> { UastEmptyExpression(givenParent) }
                 }
             }
             is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> el<ULiteralExpression>(build(::KotlinStringULiteralExpression))
-            is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, requiredType) } ?: expr<UExpression> { UastEmptyExpression }
+            is KtStringTemplateEntry -> element.expression?.let { convertExpression(it, givenParent, expectedTypes) } ?: expr<UExpression> { UastEmptyExpression(givenParent) }
             is KtWhenEntry -> el<USwitchClauseExpressionWithBody>(build(::KotlinUSwitchEntry))
-            is KtWhenCondition -> convertWhenCondition(element, givenParent, requiredType)
+            is KtWhenCondition -> convertWhenCondition(element, givenParent, expectedTypes)
             is KtTypeReference -> el<UTypeReferenceExpression> { LazyKotlinUTypeReferenceExpression(element, givenParent) }
             is KtConstructorDelegationCall ->
                 el<UCallExpression> { KotlinUFunctionCallExpression(element, givenParent) }
@@ -245,7 +279,8 @@ internal object KotlinConverter {
 
     internal fun convertEntry(entry: KtStringTemplateEntry,
                               givenParent: UElement?,
-                              requiredType: Class<out UElement>? = null): UExpression? {
+                              requiredType: Array<out Class<out UElement>>
+    ): UExpression? {
         return with(requiredType) {
             if (entry is KtStringTemplateEntryWithExpression) {
                 expr<UExpression> {
@@ -263,11 +298,21 @@ internal object KotlinConverter {
         }
     }
 
+    var forceUInjectionHost = Registry.`is`("kotlin.uast.force.uinjectionhost", false)
+        @TestOnly
+        set(value) {
+            field = value
+        }
+
     internal fun convertExpression(expression: KtExpression,
                                    givenParent: UElement?,
-                                   requiredType: Class<out UElement>? = null): UExpression? {
+                                   requiredType: Array<out Class<out UElement>>
+    ): UExpression? {
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UExpression): () -> UExpression? {
-            return { ctor(expression as P, givenParent) }
+            return {
+                @Suppress("UNCHECKED_CAST")
+                ctor(expression as P, givenParent)
+            }
         }
 
         return with (requiredType) { when (expression) {
@@ -275,13 +320,16 @@ internal object KotlinConverter {
 
             is KtStringTemplateExpression -> {
                 when {
+                    forceUInjectionHost || requiredType.contains(UInjectionHost::class.java) ->
+                        expr<UInjectionHost> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
                     expression.entries.isEmpty() -> {
                         expr<ULiteralExpression> { KotlinStringULiteralExpression(expression, givenParent, "") }
                     }
+
                     expression.entries.size == 1 -> convertEntry(expression.entries[0], givenParent, requiredType)
-                    else -> {
-                        expr<UExpression> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
-                    }
+
+                    else ->
+                        expr<KotlinStringTemplateUPolyadicExpression> { KotlinStringTemplateUPolyadicExpression(expression, givenParent) }
                 }
             }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
@@ -293,7 +341,7 @@ internal object KotlinConverter {
                         val initializer = psiFactory.createAnalyzableExpression("${tempAssignment.name}.component${i + 1}()",
                                                                                 expression.containingFile)
                         initializer.destructuringDeclarationInitializer = true
-                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.psi, declarationsExpression, initializer), entry, declarationsExpression)
+                        KotlinULocalVariable(UastKotlinPsiVariable.create(entry, tempAssignment.javaPsi, declarationsExpression, initializer), entry, declarationsExpression)
                     }
                     declarations = listOf(tempAssignment) + destructuringAssignments
                 }
@@ -339,7 +387,7 @@ internal object KotlinConverter {
                     KotlinUDeclarationsExpression(givenParent).apply {
                         declarations = listOf(KotlinUClass.create(lightClass, this))
                     }
-                } ?: UastEmptyExpression
+                } ?: UastEmptyExpression(givenParent)
             }
             is KtFunction -> if (expression.name.isNullOrEmpty()) {
                 expr<ULambdaExpression>(build(::createLocalFunctionLambdaExpression))
@@ -354,7 +402,7 @@ internal object KotlinConverter {
 
     internal fun convertWhenCondition(condition: KtWhenCondition,
                                       givenParent: UElement?,
-                                      requiredType: Class<out UElement>? = null
+                                      requiredType: Array<out Class<out UElement>>
     ): UExpression? {
         return with(requiredType) {
             when (condition) {
@@ -385,7 +433,7 @@ internal object KotlinConverter {
                 is KtWhenConditionWithExpression ->
                     condition.expression?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
 
-                else -> expr<UExpression> { UastEmptyExpression }
+                else -> expr<UExpression> { UastEmptyExpression(givenParent) }
             }
         }
     }
@@ -404,18 +452,25 @@ internal object KotlinConverter {
     internal fun convertDeclaration(
         element: PsiElement,
         givenParent: UElement?,
-        requiredType: Class<out UElement>?
+        expectedTypes: Array<out Class<out UElement>>
     ): UElement? {
-        fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? = { ctor(element as P, givenParent) }
+        fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? = {
+            @Suppress("UNCHECKED_CAST")
+            ctor(element as P, givenParent)
+        }
 
-        fun <P : PsiElement, K : KtElement> buildKt(ktElement: K, ctor: (P, K, UElement?) -> UElement): () -> UElement? =
-            { ctor(element as P, ktElement, givenParent) }
+        fun <P : PsiElement, K : KtElement> buildKt(ktElement: K, ctor: (P, K, UElement?) -> UElement): () -> UElement? = {
+            @Suppress("UNCHECKED_CAST")
+            ctor(element as P, ktElement, givenParent)
+        }
 
-        fun <P : PsiElement, K : KtElement> buildKtOpt(ktElement: K?, ctor: (P, K?, UElement?) -> UElement): () -> UElement? =
-            { ctor(element as P, ktElement, givenParent) }
+        fun <P : PsiElement, K : KtElement> buildKtOpt(ktElement: K?, ctor: (P, K?, UElement?) -> UElement): () -> UElement? = {
+            @Suppress("UNCHECKED_CAST")
+            ctor(element as P, ktElement, givenParent)
+        }
 
         val original = element.originalElement
-        return with(requiredType) {
+        return with(expectedTypes) {
             when (original) {
                 is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
                 is KtLightClass -> when (original.kotlinOrigin) {
@@ -433,11 +488,7 @@ internal object KotlinConverter {
                 is KtEnumEntry -> el<UEnumConstant> {
                     convertEnumEntry(original, givenParent)
                 }
-                is KtClassOrObject -> el<UClass> {
-                    original.toLightClass()?.let { lightClass ->
-                        KotlinUClass.create(lightClass, givenParent)
-                    }
-                }
+                is KtClassOrObject -> convertClassOrObject(original, givenParent, this).firstOrNull()
                 is KtFunction ->
                     if (original.isLocal) {
                         el<ULambdaExpression> {
@@ -446,66 +497,65 @@ internal object KotlinConverter {
                                 KotlinULambdaExpression(parent, givenParent) // your parent is the ULambdaExpression
                             } else if (original.name.isNullOrEmpty()) {
                                 createLocalFunctionLambdaExpression(original, givenParent)
-                            }
-                            else {
+                            } else {
                                 val uDeclarationsExpression = createLocalFunctionDeclaration(original, givenParent)
                                 val localFunctionVar = uDeclarationsExpression.declarations.single() as KotlinLocalFunctionUVariable
                                 localFunctionVar.uastInitializer
                             }
                         }
-                    }
-                    else {
+                    } else {
                         el<UMethod> {
                             val lightMethod = LightClassUtil.getLightClassMethod(original) ?: return null
-                            convertDeclaration(lightMethod, givenParent, requiredType)
+                            convertDeclaration(lightMethod, givenParent, expectedTypes)
                         }
                     }
 
                 is KtPropertyAccessor -> el<UMethod> {
                     val lightMethod = LightClassUtil.getLightClassAccessorMethod(original) ?: return null
-                    convertDeclaration(lightMethod, givenParent, requiredType)
+                    convertDeclaration(lightMethod, givenParent, expectedTypes)
                 }
 
                 is KtProperty ->
                     if (original.isLocal) {
-                        KotlinConverter.convertPsiElement(element, givenParent, requiredType)
-                    }
-                    else {
-                        convertNonLocalProperty(original, givenParent, requiredType)
+                        KotlinConverter.convertPsiElement(element, givenParent, expectedTypes)
+                    } else {
+                        convertNonLocalProperty(original, givenParent, expectedTypes).firstOrNull()
                     }
 
-                is KtParameter -> el<UParameter> {
-                    val ownerFunction = original.ownerFunction as? KtFunction ?: return null
-                    val lightMethod = LightClassUtil.getLightClassMethod(ownerFunction) ?: return null
-                    val lightParameter = lightMethod.parameterList.parameters.find { it.name == original.name } ?: return null
-                    KotlinUParameter(lightParameter, original, givenParent)
-                }
+                is KtParameter -> convertParameter(original, givenParent, this).firstOrNull()
 
-                is KtFile -> el<UFile> { KotlinUFile(original) }
+                is KtFile -> convertKtFile(original, givenParent, this).firstOrNull()
                 is FakeFileForLightClass -> el<UFile> { KotlinUFile(original.navigationElement) }
                 is KtAnnotationEntry -> el<UAnnotation>(build(::KotlinUAnnotation))
                 is KtCallExpression ->
-                    if (requiredType != null && UAnnotation::class.java.isAssignableFrom(requiredType)) {
+                    if (expectedTypes.isAssignableFrom(KotlinUNestedAnnotation::class.java) && !expectedTypes.isAssignableFrom(UCallExpression::class.java)) {
                         el<UAnnotation> { KotlinUNestedAnnotation.tryCreate(original, givenParent) }
                     } else null
-                is KtLightAnnotationForSourceEntry -> convertDeclarationOrElement(original.kotlinOrigin, givenParent, requiredType)
+                is KtLightAnnotationForSourceEntry -> convertDeclarationOrElement(original.kotlinOrigin, givenParent, expectedTypes)
+                is KtDelegatedSuperTypeEntry -> el<KotlinSupertypeDelegationUExpression> {
+                    KotlinSupertypeDelegationUExpression(original, givenParent)
+                }
                 else -> null
             }
         }
     }
 
 
-    fun convertDeclarationOrElement(element: PsiElement, givenParent: UElement?, requiredType: Class<out UElement>?): UElement? {
+    fun convertDeclarationOrElement(
+        element: PsiElement,
+        givenParent: UElement?,
+        expectedTypes: Array<out Class<out UElement>>
+    ): UElement? {
         if (element is UElement) return element
 
         if (element.isValid) {
             element.getUserData(KOTLIN_CACHED_UELEMENT_KEY)?.get()?.let { cachedUElement ->
-                return if (requiredType == null || requiredType.isInstance(cachedUElement)) cachedUElement else null
+                return if (expectedTypes.isAssignableFrom(cachedUElement.javaClass)) cachedUElement else null
             }
         }
 
-        val uElement = convertDeclaration(element, givenParent, requiredType)
-            ?: KotlinConverter.convertPsiElement(element, givenParent, requiredType)
+        val uElement = convertDeclaration(element, givenParent, expectedTypes)
+            ?: KotlinConverter.convertPsiElement(element, givenParent, expectedTypes)
         /*
         if (uElement != null) {
             element.putUserData(KOTLIN_CACHED_UELEMENT_KEY, WeakReference(uElement))
@@ -514,27 +564,74 @@ internal object KotlinConverter {
         return uElement
     }
 
-    private fun convertNonLocalProperty(
+    private fun convertToPropertyAlternatives(
+        methods: LightClassUtil.PropertyAccessorsPsiMethods?,
+        givenParent: UElement?
+    ): Array<UElementAlternative<*>> = if (methods != null) arrayOf(
+        alternative { methods.backingField?.let { KotlinUField(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, givenParent) } },
+        alternative { methods.getter?.let { convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod } },
+        alternative { methods.setter?.let { convertDeclaration(it, givenParent, arrayOf(UMethod::class.java)) as? UMethod } }
+    ) else emptyArray()
+
+    fun convertNonLocalProperty(
         property: KtProperty,
         givenParent: UElement?,
-        requiredType: Class<out UElement>?
-    ): UElement? {
-        val methods = LightClassUtil.getLightClassPropertyMethods(property)
-        return methods.backingField?.let { backingField ->
-            with(requiredType) {
-                el<UField> { KotlinUField(backingField, (backingField as? KtLightElement<*,*>)?.kotlinOrigin,  givenParent) }
+        expectedTypes: Array<out Class<out UElement>>
+    ): Sequence<UElement> =
+        expectedTypes.accommodate(*convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(property), givenParent))
+
+
+    fun convertParameter(
+        element: KtParameter,
+        givenParent: UElement?,
+        expectedTypes: Array<out Class<out UElement>>
+    ): Sequence<UElement> = expectedTypes.accommodate(
+        alternative uParam@{
+            val lightMethod = when (val ownerFunction = element.ownerFunction) {
+                is KtFunction -> LightClassUtil.getLightClassMethod(ownerFunction)
+                is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(ownerFunction)
+                else -> null
+            } ?: return@uParam null
+            val lightParameter = lightMethod.parameterList.parameters.find { it.name == element.name } ?: return@uParam null
+            KotlinUParameter(lightParameter, element, givenParent)
+        },
+        *convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(element), givenParent)
+    )
+
+    fun convertClassOrObject(
+        element: KtClassOrObject,
+        givenParent: UElement?,
+        expectedTypes: Array<out Class<out UElement>>
+    ): Sequence<UElement> {
+        val ktLightClass = element.toLightClass() ?: return emptySequence()
+        val uClass = KotlinUClass.create(ktLightClass, givenParent)
+        return expectedTypes.accommodate(
+            alternative { uClass },
+            alternative primaryConstructor@{
+                val primaryConstructor = element.primaryConstructor ?: return@primaryConstructor null
+                uClass.methods.asSequence()
+                    .filter { it.sourcePsi == primaryConstructor }
+                    .firstOrNull()
             }
-        } ?: methods.getter?.let { getter ->
-            convertDeclaration(getter, givenParent, requiredType)
-        }
+        )
     }
 
+    fun convertKtFile(
+        element: KtFile,
+        givenParent: UElement?,
+        requiredTypes: Array<out Class<out UElement>>
+    ): Sequence<UElement> = requiredTypes.accommodate(
+        alternative { KotlinUFile(element) },
+        alternative { element.findFacadeClass()?.let { KotlinUClass.create(it, givenParent) } }
+    )
+
+
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement?): UExpression {
-        return expression?.let { convertExpression(it, parent, null) } ?: UastEmptyExpression
+        return expression?.let { convertExpression(it, parent, DEFAULT_EXPRESSION_TYPES_LIST) } ?: UastEmptyExpression(parent)
     }
 
     internal fun convertOrNull(expression: KtExpression?, parent: UElement?): UExpression? {
-        return if (expression != null) convertExpression(expression, parent, null) else null
+        return if (expression != null) convertExpression(expression, parent, DEFAULT_EXPRESSION_TYPES_LIST) else null
     }
 
     internal fun KtPsiFactory.createAnalyzableExpression(text: String, context: PsiElement): KtExpression =
@@ -547,6 +644,7 @@ internal object KotlinConverter {
         val file = createAnalyzableFile("dummy.kt", text, context)
         val declarations = file.declarations
         assert(declarations.size == 1) { "${declarations.size} declarations in $text" }
+        @Suppress("UNCHECKED_CAST")
         return declarations.first() as TDeclaration
     }
 }
@@ -558,10 +656,31 @@ private fun convertVariablesDeclaration(
     val declarationsExpression = parent as? KotlinUDeclarationsExpression
             ?: psi.parent.toUElementOfType<UDeclarationsExpression>() as? KotlinUDeclarationsExpression
             ?: KotlinUDeclarationsExpression(null, parent, psi)
-    val parentPsiElement = parent?.psi
+    val parentPsiElement = parent?.javaPsi //TODO: looks weird. mb look for the first non-null `javaPsi` in `parents` ?
     val variable = KotlinUAnnotatedLocalVariable(
             UastKotlinPsiVariable.create(psi, parentPsiElement, declarationsExpression), psi, declarationsExpression) { annotationParent ->
         psi.annotationEntries.map { KotlinUAnnotation(it, annotationParent) }
     }
     return declarationsExpression.apply { declarations = listOf(variable) }
 }
+
+val kotlinUastPlugin get() = UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE } ?: KotlinUastLanguagePlugin()
+
+private fun expressionTypes(requiredType: Class<out UElement>?) = requiredType?.let { arrayOf(it) } ?: DEFAULT_EXPRESSION_TYPES_LIST
+
+private fun elementTypes(requiredType: Class<out UElement>?) = requiredType?.let { arrayOf(it) } ?: DEFAULT_TYPES_LIST
+
+private fun <T : UElement> Array<out Class<out T>>.nonEmptyOr(default: Array<out Class<out UElement>>) = takeIf { it.isNotEmpty() }
+    ?: default
+
+private fun <U : UElement> Array<out Class<out UElement>>.accommodate(vararg makers: UElementAlternative<out U>): Sequence<UElement> {
+    val makersSeq = makers.asSequence()
+    return this.asSequence()
+        .flatMap { requiredType -> makersSeq.filter { requiredType.isAssignableFrom(it.uType) } }
+        .distinct()
+        .mapNotNull { it.make.invoke() }
+}
+
+private inline fun <reified U : UElement> alternative(noinline make: () -> U?) = UElementAlternative(U::class.java, make)
+
+private class UElementAlternative<U : UElement>(val uType: Class<U>, val make: () -> U?)

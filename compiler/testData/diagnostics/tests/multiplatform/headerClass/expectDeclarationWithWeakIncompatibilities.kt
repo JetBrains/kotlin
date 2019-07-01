@@ -10,7 +10,7 @@ expect fun foo2(): Int
 
 expect val s: String
 
-expect open class <!JVM:PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
+expect open class <!JVM:AMBIGUOUS_ACTUALS, JVM:PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
 
 // MODULE: m2-jvm(m1-common)
 

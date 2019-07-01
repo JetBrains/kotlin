@@ -4,7 +4,6 @@ apply plugin: 'kotlin-platform-jvm'
 apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 
 pill {
@@ -24,13 +23,10 @@ jar {
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
 }
 
 javadocJar()
-
-dist {
-    from (jar, sourcesJar)
-}
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]

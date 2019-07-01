@@ -29,7 +29,7 @@ class UastKotlinPsiParameter(
 ) : LightParameter(name, type, parent, language, isVarArgs) {
     companion object {
         fun create(parameter: KtParameter, parent: PsiElement, containingElement: UElement, index: Int): PsiParameter {
-            val psiParent = containingElement.getParentOfType<UDeclaration>()?.psi ?: parent
+            val psiParent = containingElement.getParentOfType<UDeclaration>()?.javaPsi ?: parent
             return UastKotlinPsiParameter(
                     parameter.name ?: "p$index",
                     (parameter.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, parameter] as? VariableDescriptor)

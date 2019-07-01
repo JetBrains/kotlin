@@ -1,6 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR, NATIVE
+// IGNORE_BACKEND: NATIVE
 
 inline class SnekDirection(val direction: Int) {
     companion object {

@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUC
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
+import org.jetbrains.plugins.groovy.codeInspection.BaseInspection
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 
-class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
+class DifferentStdlibGradleVersionInspection : BaseInspection() {
     override fun buildVisitor(): BaseInspectionVisitor = MyVisitor(KOTLIN_GROUP_ID, JvmIdePlatformKind.tooling.mavenLibraryIds)
 
     override fun buildErrorString(vararg args: Any) =

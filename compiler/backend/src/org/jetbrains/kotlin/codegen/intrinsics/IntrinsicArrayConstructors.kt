@@ -14,98 +14,112 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused", "UNCHECKED_CAST")
-
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.inline.ReificationArgument
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-// Bodies of methods in this file are used in InlineCodegen to inline array constructors. It is loaded via reflection at runtime.
-// TODO: generate the bytecode manually instead, do not depend on the previous compiler working correctly here
+internal object IntrinsicArrayConstructors {
+    fun generateArrayConstructorBody(method: Method): MethodNode {
+        val node = MethodNode(
+            Opcodes.ASM6, Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC or Opcodes.ACC_FINAL, method.name, method.descriptor, null, null
+        )
 
-internal val classId: ClassId =
-        ClassId.topLevel(FqName("org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt"))
+        val arrayType = method.returnType
+        val elementType = AsmUtil.correctElementType(arrayType)
 
-internal val bytecode: ByteArray by lazy {
-    val stream = object {}::class.java.classLoader.getResourceAsStream("${classId.asString()}.class")
-    stream.readBytes().apply {
-        stream.close()
+        val size = StackValue.local(0, Type.INT_TYPE)
+        val lambda = StackValue.local(1, AsmTypes.FUNCTION1)
+        val loopIndex = StackValue.local(2, Type.INT_TYPE)
+        val array = StackValue.local(3, arrayType)
+
+        /*
+        inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
+            val result = arrayOfNulls<T>(size)
+            for (i in 0 until size) {
+                result[i] = init(i)
+            }
+            return result as Array<T>
+        }
+         */
+
+        val iv = InstructionAdapter(node)
+        size.put(iv)
+        if (elementType.sort == Type.OBJECT) {
+            ReifiedTypeInliner.putReifiedOperationMarker(ReifiedTypeInliner.OperationKind.NEW_ARRAY, ReificationArgument("T", true, 0), iv)
+        }
+        iv.newarray(elementType)
+        array.store(StackValue.onStack(arrayType), iv)
+        loopIndex.store(StackValue.constant(0), iv)
+        val begin = Label()
+        iv.visitLabel(begin)
+        loopIndex.put(iv)
+        size.put(iv)
+        val end = Label()
+        iv.ificmpge(end)
+        array.put(iv)
+        loopIndex.put(iv)
+        lambda.put(iv)
+        loopIndex.put(AsmUtil.boxType(Type.INT_TYPE), iv)
+        iv.invokeinterface(
+            AsmTypes.FUNCTION1.internalName, OperatorNameConventions.INVOKE.asString(),
+            Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE)
+        )
+        StackValue.coerce(AsmTypes.OBJECT_TYPE, elementType, iv)
+        iv.astore(elementType)
+        iv.iinc(loopIndex.index, 1)
+        iv.goTo(begin)
+        iv.visitLabel(end)
+        array.put(iv)
+        iv.areturn(arrayType)
+        iv.visitMaxs(5, 4)
+
+        return node
     }
-}
 
-private inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
+    fun generateEmptyArrayBody(method: Method): MethodNode {
+        val node = MethodNode(
+            Opcodes.ASM6, Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC or Opcodes.ACC_FINAL, method.name, method.descriptor, null, null
+        )
 
-private inline fun <reified T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
+        /*
+        inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
+         */
 
-private inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
-    val result = arrayOfNulls<T>(size)
-    for (i in result.indices) {
-        result[i] = init(i)
+        val iv = InstructionAdapter(node)
+        iv.iconst(0)
+        ReifiedTypeInliner.putReifiedOperationMarker(ReifiedTypeInliner.OperationKind.NEW_ARRAY, ReificationArgument("T", true, 0), iv)
+        iv.newarray(AsmTypes.OBJECT_TYPE)
+        iv.areturn(AsmTypes.OBJECT_TYPE)
+        iv.visitMaxs(3, 1)
+
+        return node
     }
-    return result as Array<T>
-}
 
-private inline fun DoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
-    val result = DoubleArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
-    }
-    return result
-}
+    fun generateArrayOfBody(method: Method): MethodNode {
+        val node = MethodNode(
+            Opcodes.ASM6, Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC or Opcodes.ACC_FINAL, method.name, method.descriptor, null, null
+        )
 
-private inline fun FloatArray(size: Int, init: (Int) -> Float): FloatArray {
-    val result = FloatArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
-    }
-    return result
-}
+        /*
+        inline fun <reified T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
+         */
 
-private inline fun LongArray(size: Int, init: (Int) -> Long): LongArray {
-    val result = LongArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
-    }
-    return result
-}
+        val iv = InstructionAdapter(node)
+        iv.load(0, AsmTypes.OBJECT_TYPE)
+        iv.areturn(AsmTypes.OBJECT_TYPE)
+        iv.visitMaxs(1, 1)
 
-private inline fun IntArray(size: Int, init: (Int) -> Int): IntArray {
-    val result = IntArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
+        return node
     }
-    return result
-}
-
-private inline fun CharArray(size: Int, init: (Int) -> Char): CharArray {
-    val result = CharArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
-    }
-    return result
-}
-
-private inline fun ShortArray(size: Int, init: (Int) -> Short): ShortArray {
-    val result = ShortArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
-    }
-    return result
-}
-
-private inline fun ByteArray(size: Int, init: (Int) -> Byte): ByteArray {
-    val result = ByteArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
-    }
-    return result
-}
-
-private inline fun BooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray {
-    val result = BooleanArray(size)
-    for (i in result.indices) {
-        result[i] = init(i)
-    }
-    return result
 }

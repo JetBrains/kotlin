@@ -338,8 +338,9 @@ class JpsKotlinCompilerRunner {
             environment.progressReporter.progress("connecting to daemon")
             val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
             val compilerPath = File(libPath, "kotlin-compiler.jar")
+            val daemonJarPath = File(libPath, "kotlin-daemon.jar")
             val toolsJarPath = CompilerRunnerUtil.jdkToolsJar
-            val compilerId = CompilerId.makeCompilerId(listOfNotNull(compilerPath, toolsJarPath))
+            val compilerId = CompilerId.makeCompilerId(listOfNotNull(compilerPath, toolsJarPath, daemonJarPath))
             val daemonOptions = configureDaemonOptions()
             val additionalJvmParams = mutableListOf<String>()
 

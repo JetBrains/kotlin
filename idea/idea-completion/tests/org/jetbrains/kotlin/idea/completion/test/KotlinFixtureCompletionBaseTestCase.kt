@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.test.CompilerTestDirectives
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import java.io.File
 
 abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtureTestCase() {

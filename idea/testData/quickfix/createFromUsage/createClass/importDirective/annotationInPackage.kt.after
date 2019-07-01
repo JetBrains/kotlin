@@ -3,4 +3,4 @@ package p
 
 import p.A
 
-annotation class A
+annotation class <caret>A

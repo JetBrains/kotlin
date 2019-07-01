@@ -20,6 +20,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskInputs
 import org.gradle.api.tasks.TaskOutputs
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.GradleVersion
 
 internal val Task.inputsCompatible: TaskInputs get() = inputs
@@ -53,5 +54,23 @@ internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = Gradl
             "Current version of Gradle $currentVersion is not compatible with Kotlin plugin. " +
                     "Please use Gradle $minSupportedVersion or newer or previous version of Kotlin plugin."
         )
+    }
+}
+
+internal fun AbstractArchiveTask.setArchiveAppendixCompatible(appendixProvider: () -> String) {
+    if (isGradleVersionAtLeast(5, 2)) {
+        archiveAppendix.set(project.provider { appendixProvider() })
+    } else {
+        @Suppress("DEPRECATION")
+        appendix = appendixProvider()
+    }
+}
+
+internal fun AbstractArchiveTask.setArchiveClassifierCompatible(classifierProvider: () -> String) {
+    if (isGradleVersionAtLeast(5, 2)) {
+        archiveClassifier.set(project.provider { classifierProvider() })
+    } else {
+        @Suppress("DEPRECATION")
+        classifier = classifierProvider()
     }
 }

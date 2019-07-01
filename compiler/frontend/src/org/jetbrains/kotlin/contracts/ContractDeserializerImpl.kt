@@ -41,14 +41,14 @@ class ContractDeserializerImpl(
         ownerFunction: FunctionDescriptor,
         typeTable: TypeTable,
         typeDeserializer: TypeDeserializer
-    ): Pair<CallableDescriptor.UserDataKey<*>, LazyContractProvider>? {
+    ): Pair<CallableDescriptor.UserDataKey<*>, AbstractContractProvider>? {
         if (!proto.hasContract()) return null
 
         if (!configuration.readDeserializedContracts) return null
 
         val worker = ContractDeserializationWorker(typeTable, typeDeserializer, ownerFunction, storageManager)
-        val contract = worker.deserializeContract(proto.contract)
-        return ContractProviderKey to LazyContractProvider.createInitialized(contract)
+        val contract = worker.deserializeContract(proto.contract) ?: return null
+        return ContractProviderKey to ContractProviderImpl(contract)
     }
 
     private class ContractDeserializationWorker(

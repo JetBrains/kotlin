@@ -1,0 +1,15 @@
+// "Create property 'foo'" "true"
+// ERROR: Property must be initialized or be abstract
+
+class Test {
+    private val foo: Int
+    val foo1 = 1
+
+    fun test(): Int {
+        return foo
+    }
+
+    val foo2 = 42
+}
+
+val bar = 1

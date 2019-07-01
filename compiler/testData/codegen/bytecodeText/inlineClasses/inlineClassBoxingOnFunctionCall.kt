@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class InlineNotNullPrimitive(val x: Int)
 inline class InlineNotNullReference(val y: String)

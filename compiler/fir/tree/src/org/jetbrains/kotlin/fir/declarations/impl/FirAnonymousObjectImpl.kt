@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 class FirAnonymousObjectImpl(
     session: FirSession,
     psi: PsiElement?
-) : FirAbstractAnnotatedDeclaration(session, psi), FirAnonymousObject, FirModifiableClass {
+) : FirAnonymousObject(session, psi), FirModifiableClass {
     override val superTypeRefs = mutableListOf<FirTypeRef>()
 
     override val declarations = mutableListOf<FirDeclaration>()
@@ -31,6 +31,6 @@ class FirAnonymousObjectImpl(
         superTypeRefs.transformInplace(transformer, data)
         declarations.transformInplace(transformer, data)
 
-        return super<FirAbstractAnnotatedDeclaration>.transformChildren(transformer, data)
+        return super<FirAnonymousObject>.transformChildren(transformer, data)
     }
 }

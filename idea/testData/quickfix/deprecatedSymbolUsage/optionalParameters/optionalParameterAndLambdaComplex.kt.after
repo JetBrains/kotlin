@@ -1,5 +1,6 @@
 // "Replace with 'addA(d(createDummy, dummyParam1, initDummy), dummyParam)'" "true"
 // WITH_RUNTIME
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 typealias NewDummyRef<V> = (Any) -> V
 

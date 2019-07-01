@@ -31,7 +31,7 @@ object KotlinUsageTypeProvider : UsageTypeProviderEx {
         return convertEnumToUsageType(usageType)
     }
 
-    fun convertEnumToUsageType(usageType: UsageTypeEnum): UsageType = when (usageType) {
+    private fun convertEnumToUsageType(usageType: UsageTypeEnum): UsageType = when (usageType) {
         TYPE_CONSTRAINT -> KotlinUsageTypes.TYPE_CONSTRAINT
         VALUE_PARAMETER_TYPE -> KotlinUsageTypes.VALUE_PARAMETER_TYPE
         NON_LOCAL_PROPERTY_TYPE -> KotlinUsageTypes.NON_LOCAL_PROPERTY_TYPE

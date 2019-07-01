@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.platform.jvm.JvmPlatformKt;
 
 import java.util.List;
 
@@ -116,7 +116,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
 
         KtFile ktFile = (KtFile) leaf.getContainingFile();
 
-        if (TargetPlatformDetector.getPlatform(ktFile) != JvmPlatform.INSTANCE) {
+        if (!JvmPlatformKt.isJvm(TargetPlatformDetector.getPlatform(ktFile))) {
             return false;
         }
 

@@ -55,7 +55,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             diagnostics: Diagnostics,
             private val importedModules: List<String>,
             val moduleDescriptor: ModuleDescriptor,
-            val bindingContext: BindingContext
+            val bindingContext: BindingContext,
+            val packageMetadata: Map<FqName, ByteArray>
     ) : TranslationResult(diagnostics) {
         @Suppress("unused") // Used in kotlin-web-demo in WebDemoTranslatorFacade
         fun getCode(): String {
@@ -111,8 +112,9 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     kind = config.moduleKind,
                     imported = importedModules
                 )
-                val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(
-                    bindingContext, moduleDescription,
+                val serializedMetadata = KotlinJavascriptSerializationUtil.SerializedMetadata(
+                    packageMetadata,
+                    moduleDescription,
                     config.configuration.languageVersionSettings,
                     config.configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE
                 )

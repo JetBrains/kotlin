@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.range
@@ -32,11 +32,15 @@ fun isPrimitiveProgression(rangeType: KotlinType) =
 fun isUnsignedProgression(rangeType: KotlinType) =
     isClassTypeWithFqn(rangeType, UNSIGNED_PROGRESSION_FQNS)
 
-private fun isClassTypeWithFqn(kotlinType: KotlinType, fqns: Set<String>): Boolean {
-    val declarationDescriptor = kotlinType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-    val fqName = DescriptorUtils.getFqName(declarationDescriptor).takeIf { it.isSafe } ?: return false
-    return fqName.asString() in fqns
-}
+private val KotlinType.classFqnString: String?
+    get() {
+        val declarationDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return null
+        val fqn = DescriptorUtils.getFqName(declarationDescriptor)
+        return if (fqn.isSafe) fqn.asString() else null
+    }
+
+private fun isClassTypeWithFqn(kotlinType: KotlinType, fqns: Set<String>): Boolean =
+    kotlinType.classFqnString in fqns
 
 internal const val CHAR_RANGE_FQN = "kotlin.ranges.CharRange"
 internal const val INT_RANGE_FQN = "kotlin.ranges.IntRange"

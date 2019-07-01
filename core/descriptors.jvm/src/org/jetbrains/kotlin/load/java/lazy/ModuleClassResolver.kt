@@ -25,7 +25,7 @@ interface ModuleClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
 }
 
-class SingleModuleClassResolver() : ModuleClassResolver {
+class SingleModuleClassResolver : ModuleClassResolver {
     override fun resolveClass(javaClass: JavaClass): ClassDescriptor? = resolver.resolveClass(javaClass)
 
     // component dependency cycle
@@ -33,6 +33,6 @@ class SingleModuleClassResolver() : ModuleClassResolver {
         @Inject set
 }
 
-class ModuleClassResolverImpl(private val descriptorResolverByJavaClass: (JavaClass) -> JavaDescriptorResolver): ModuleClassResolver {
+class ModuleClassResolverImpl(private val descriptorResolverByJavaClass: (JavaClass) -> JavaDescriptorResolver) : ModuleClassResolver {
     override fun resolveClass(javaClass: JavaClass): ClassDescriptor? = descriptorResolverByJavaClass(javaClass).resolveClass(javaClass)
 }

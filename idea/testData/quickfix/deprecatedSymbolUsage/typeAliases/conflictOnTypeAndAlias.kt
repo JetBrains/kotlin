@@ -1,4 +1,5 @@
 // "Replace with 'NewClass'" "false"
+// ACTION: Introduce import alias
 // ACTION: Introduce local variable
 // ACTION: Replace usages of 'typealias Old = OldClass' in whole project
 // ACTION: Replace with 'New'

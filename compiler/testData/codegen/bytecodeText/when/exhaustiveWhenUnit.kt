@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 enum class AccessMode { READ, WRITE, EXECUTE }
 
 fun whenExpr(access: AccessMode) {

@@ -29,21 +29,22 @@ import javax.inject.Inject
 
 abstract class AbstractJavaClassFinder : JavaClassFinder {
 
-    lateinit var project: Project
-        @Inject set
-
-    protected lateinit var baseScope: GlobalSearchScope
+    protected lateinit var project: Project
     protected lateinit var javaSearchScope: GlobalSearchScope
 
 
     @Inject
     fun setScope(scope: GlobalSearchScope) {
-        this.baseScope = scope
+        javaSearchScope = FilterOutKotlinSourceFilesScope(scope)
+    }
+
+    @Inject
+    open fun setProjectInstance(project: Project) {
+        this.project = project
     }
 
     @PostConstruct
     open fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
-        javaSearchScope = FilterOutKotlinSourceFilesScope(baseScope)
         CodeAnalyzerInitializer.getInstance(project).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
     }
 

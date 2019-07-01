@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -74,7 +75,8 @@ class LocalVariableResolver(
             context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter))
         }
 
-        val propertyDescriptor = resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.trace)
+        val propertyDescriptor =
+            resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.inferenceSession, context.trace)
 
         val delegateExpression = property.delegateExpression
         if (delegateExpression != null) {
@@ -94,6 +96,7 @@ class LocalVariableResolver(
                     propertyDescriptor,
                     delegateExpression,
                     typingContext.scope,
+                    typingContext.inferenceSession,
                     typingContext.trace
                 )
                 propertyDescriptor.getter?.updateAccessorFlagsFromResolvedCallForDelegatedProperty(typingContext.trace)
@@ -153,6 +156,7 @@ class LocalVariableResolver(
         scope: LexicalScope,
         variable: KtVariableDeclaration,
         dataFlowInfo: DataFlowInfo,
+        inferenceSession: InferenceSession,
         trace: BindingTrace
     ): VariableDescriptor {
         val containingDeclaration = scope.ownerDescriptor
@@ -176,7 +180,9 @@ class LocalVariableResolver(
                 variable is KtProperty && variable.hasDelegate()
             )
             // For a local variable the type must not be deferred
-            type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, trace, local = true)
+            type = variableTypeAndInitializerResolver.resolveType(
+                propertyDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true
+            )
 
             val receiverParameter = (containingDeclaration as ScriptDescriptor).thisAsReceiverParameter
             propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null)
@@ -186,11 +192,14 @@ class LocalVariableResolver(
         } else {
             val variableDescriptor = resolveLocalVariableDescriptorWithType(scope, variable, null, trace)
             // For a local variable the type must not be deferred
-            type = variableTypeAndInitializerResolver.resolveType(variableDescriptor, scope, variable, dataFlowInfo, trace, local = true)
+            type = variableTypeAndInitializerResolver.resolveType(
+                variableDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true
+            )
             variableDescriptor.setOutType(type)
             result = variableDescriptor
         }
-        variableTypeAndInitializerResolver.setConstantForVariableIfNeeded(result, scope, variable, dataFlowInfo, type, trace)
+        variableTypeAndInitializerResolver
+            .setConstantForVariableIfNeeded(result, scope, variable, dataFlowInfo, type, inferenceSession, trace)
         // Type annotations also should be resolved
         ForceResolveUtil.forceResolveAllContents(type.annotations)
         return result

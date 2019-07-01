@@ -1,0 +1,123 @@
+final class Arr : java/lang/Object {
+    private final int a1
+
+    private final int a2
+
+    private final int a3
+
+    private final int a4
+
+    private final int a5
+
+    public void <init>(int a1, int a2, int a3, int a4, int a5) {
+        Local variables:
+            0 this: LArr;
+            1 a1: I
+            2 a2: I
+            3 a3: I
+            4 a4: I
+            5 a5: I
+    }
+
+    public void <init>(int p0, int p1, int p2, int p3, int p4, int p5, kotlin.jvm.internal.DefaultConstructorMarker p6)
+
+    public void <init>()
+
+    public final int component1() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int component2() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int component3() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int component4() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int component5() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final Arr copy(int a1, int a2, int a3, int a4, int a5) {
+        Local variables:
+            0 this: LArr;
+            1 a1: I
+            2 a2: I
+            3 a3: I
+            4 a4: I
+            5 a5: I
+    }
+
+    public static Arr copy$default(Arr p0, int p1, int p2, int p3, int p4, int p5, int p6, java.lang.Object p7)
+
+    public boolean equals(java.lang.Object p0)
+
+    public final int getA1() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int getA2() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int getA3() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int getA4() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public final int getA5() {
+        Local variables:
+            0 this: LArr;
+    }
+
+    public int hashCode()
+
+    public java.lang.String toString()
+}
+
+final class MangledNamesKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+    public final static MangledNamesKt$foo$1 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public java.lang.Object invoke(java.lang.Object p0)
+
+    public final void invoke(Arr $dstr$a_u20b$b_u24c$c_u2dd$b_u24_u24c_u2d_u2dd$a_u28_u29§_u26_u2a_u26_u5e_u40あ化) {
+        Local variables:
+            0 this: LMangledNamesKt$foo$1;
+            1 $dstr$a_u20b$b_u24c$c_u2dd$b_u24_u24c_u2d_u2dd$a_u28_u29§_u26_u2a_u26_u5e_u40あ化: LArr;
+            2 a b: I
+            3 b$c: I
+            4 c-d: I
+            5 b$$c--d: I
+            6 a()§&*&^@あ化: I
+    }
+}
+
+public final class MangledNamesKt : java/lang/Object {
+    public final static void foo()
+
+    private final static void t(kotlin.jvm.functions.Function1 block) {
+        Local variables:
+            0 block: Lkotlin/jvm/functions/Function1;
+    }
+}

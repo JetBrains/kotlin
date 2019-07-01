@@ -31,14 +31,18 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
+import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import java.util.*
 
@@ -70,7 +74,7 @@ class ResolveElementCache(
     // drop whole cache after change "out of code block", each entry is checked with own modification stamp
     private val fullResolveCache: CachedValue<MutableMap<KtElement, CachedFullResolve>> =
         CachedValuesManager.getManager(project).createCachedValue(
-            CachedValueProvider<MutableMap<KtElement, ResolveElementCache.CachedFullResolve>> {
+            CachedValueProvider<MutableMap<KtElement, CachedFullResolve>> {
                 CachedValueProvider.Result.create(
                     ContainerUtil.createConcurrentWeakKeySoftValueMap<KtElement, CachedFullResolve>(),
                     PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
@@ -96,7 +100,7 @@ class ResolveElementCache(
 
     private val partialBodyResolveCache: CachedValue<MutableMap<KtExpression, CachedPartialResolve>> =
         CachedValuesManager.getManager(project).createCachedValue(
-            CachedValueProvider<MutableMap<KtExpression, ResolveElementCache.CachedPartialResolve>> {
+            CachedValueProvider<MutableMap<KtExpression, CachedPartialResolve>> {
                 CachedValueProvider.Result.create(
                     ContainerUtil.createConcurrentWeakKeySoftValueMap<KtExpression, CachedPartialResolve>(),
                     PsiModificationTracker.MODIFICATION_COUNT,
@@ -410,13 +414,7 @@ class ResolveElementCache(
         }
 
         if (bodyResolveMode.doControlFlowAnalysis) {
-            val controlFlowTrace = DelegatingBindingTrace(
-                trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true
-            )
-            ControlFlowInformationProvider(
-                resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
-            ).checkDeclaration()
-            controlFlowTrace.addOwnDataTo(trace, null, false)
+            analyzeControlFlow(resolveSession, resolveElement, trace)
         }
 
         return Pair(trace.bindingContext, statementFilterUsed)
@@ -455,15 +453,12 @@ class ResolveElementCache(
     }
 
     private fun codeFragmentAdditionalResolve(codeFragment: KtCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
-        val trace = createDelegatingTrace(codeFragment, bodyResolveMode.bindingTraceFilter)
-
         val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
             BodyResolveMode.PARTIAL_FOR_COMPLETION
         else
             bodyResolveMode
-        codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, trace, contextResolveMode)
 
-        return trace
+        return codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, contextResolveMode)
     }
 
     private fun annotationAdditionalResolve(resolveSession: ResolveSession, ktAnnotationEntry: KtAnnotationEntry): BindingTrace {
@@ -718,8 +713,9 @@ class ResolveElementCache(
             trace,
             targetPlatform,
             statementFilter,
-            file.jvmTarget,
-            file.languageVersionSettings
+            targetPlatform.findAnalyzerServices,
+            file.languageVersionSettings,
+            IdeaModuleStructureOracle()
         ).get()
     }
 
@@ -758,7 +754,7 @@ class ResolveElementCache(
 
         override fun getDeclaringScope(declaration: KtDeclaration): LexicalScope? = declaringScopes(declaration)
 
-        override fun getScripts(): MutableMap<KtScript, LazyScriptDescriptor> = hashMapOf()
+        override fun getScripts(): MutableMap<KtScript, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
         override fun getOuterDataFlowInfo(): DataFlowInfo = DataFlowInfo.EMPTY
 

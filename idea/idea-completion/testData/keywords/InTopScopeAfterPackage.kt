@@ -25,14 +25,14 @@ package Test
 // EXIST:  sealed class
 // EXIST:  sealed class InTopScopeAfterPackage
 // EXIST:  data class
-// EXIST:  data class InTopScopeAfterPackage
+// EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" InTopScopeAfterPackage(...)", "attributes":"bold" }
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
 // EXIST:  annotation class InTopScopeAfterPackage
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual

@@ -1,15 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
+import com.intellij.psi.util.PsiUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.sun.tools.javac.util.Convert.shortName
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -20,9 +22,12 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.runner.RunWith
 import kotlin.reflect.KMutableProperty0
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private lateinit var cacheInstance: PsiShortNamesCache
@@ -81,16 +86,18 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         assertContainsElements(allClassNameList, "O1")
     }
 
+    fun PsiMember.fqName() = PsiUtil.getMemberQualifiedName(this)
+
     fun methodArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightMethod).getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun accessorArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} property=${(it.lightMemberOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightMethod).fqName()} property=${(it.lightMemberOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun checkMethodFound(methods: Array<PsiMethod>, stringFqName: String, static: Boolean) {
         assertNotNull("Method $stringFqName with static=$static not found\n" + methodArrayDebugToString(methods),
                       methods.find {
-                          stringFqName == (it as KtLightMethod).clsDelegate.getKotlinFqName().toString()
+                          stringFqName == (it as KtLightMethod).fqName().toString()
                           &&
                           it.hasModifierProperty(PsiModifier.STATIC) == static
                       })
@@ -169,7 +176,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     fun checkAccessorFound(methods: Array<PsiMethod>, stringFqName: String, propertyFqName: String, static: Boolean) {
         assertNotNull("Accessor $stringFqName property=$propertyFqName static=$static not found\n" + accessorArrayDebugToString(methods),
                       methods.find {
-                          stringFqName == (it as KtLightMethod).clsDelegate.getKotlinFqName().toString()
+                          stringFqName == (it as KtLightMethod).fqName().toString()
                           &&
                           (it.lightMemberOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
                           &&
@@ -179,7 +186,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testGetMethodsByNameWithFunctions() {
         myFixture.configureByFile("kotlinShortNamesCacheTestDataMethods.kt")
-        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
+        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
         checkIsSingleMethodFound(scope, "KotlinShortNamesCacheTestDataMethodsKt.topLevelFunction", true)
         checkIsSingleMethodFound(scope, "B1.staticMethodOfObject", true)
         checkIsSingleMethodFound(scope, "B1.nonStaticMethodOfObject", false)
@@ -190,7 +197,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun doTestGetMethodsByNameWithAccessors(file: String) {
         myFixture.configureByFile(file)
-        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
+        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
         checkIsVarAccessorsFound(scope, "topLevelVar", "KotlinShortNameCacheTestData.getTopLevelVar",
                                  "KotlinShortNameCacheTestData.setTopLevelVar", true)
 
@@ -212,14 +219,14 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     fun checkFieldFound(methods: Array<PsiField>, stringFqName: String, static: Boolean) {
         assertNotNull("Field $stringFqName with static=$static not found\n" + fieldArrayDebugToString(methods),
                       methods.find {
-                          stringFqName == (it as KtLightField).clsDelegate.getKotlinFqName().toString()
+                          stringFqName == (it as KtLightField).fqName().toString()
                           &&
                           it.hasModifierProperty(PsiModifier.STATIC) == static
                       })
     }
 
     fun fieldArrayDebugToString(a: Array<PsiField>)
-            = a.map { "${(it as KtLightField).clsDelegate.getKotlinFqName()} property=${(it.kotlinOrigin as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightField).fqName()} property=${(it.kotlinOrigin as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
 
     fun checkIsSingleFieldFound(scope: GlobalSearchScope, stringFqName: String, static: Boolean, query: String = shortName(stringFqName)) {
@@ -231,7 +238,7 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testGetFieldsByName() {
         myFixture.configureByFile("kotlinShortNamesCacheTestDataFields.kt")
-        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule)
+        val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
         checkIsSingleFieldFound(scope, "KotlinShortNamesCacheTestDataFieldsKt.topLevelVar", true)
         checkIsSingleFieldFound(scope, "B1.objectVar", true)
         checkIsSingleFieldFound(scope, "C1.classVar", false)

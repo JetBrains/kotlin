@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.AGPVersion
+import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -17,6 +18,24 @@ open class Kapt3Android32IT : Kapt3AndroidIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
+}
+
+open class Kapt3Android33IT : Kapt3AndroidIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_3_2
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("5.2")
+
+    @Test
+    fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
+        // KT-30735
+        build("assembleDebug") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/navigation-args/debug/test/androidx/navigation/StartFragmentDirections.java")
+            assertFileExists("build/tmp/kotlin-classes/debug/test/androidx/navigation/StartFragmentKt.class")
+        }
+    }
 }
 
 class Kapt3Android31IT : Kapt3AndroidIT() {
@@ -125,6 +144,33 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertFileExists("build/generated/source/kapt/debug/io/realm/DefaultRealmModule.java")
             assertFileExists("build/generated/source/kapt/debug/io/realm/DefaultRealmModuleMediator.java")
         }
+    }
+
+    @Test
+    fun testInterProjectIC() = with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
+        build("assembleDebug") {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+
+        fun modifyAndCheck(utilFileName: String, useUtilFileName: String) {
+            val utilKt = projectDir.getFileByName(utilFileName)
+            utilKt.modify {
+                it.checkedReplace("Int", "Number")
+            }
+
+            build("assembleDebug") {
+                assertSuccessful()
+                val affectedFile = projectDir.getFileByName(useUtilFileName)
+                assertCompiledKotlinSources(
+                    relativize(affectedFile),
+                    tasks = listOf("app:kaptGenerateStubsDebugKotlin", "app:compileDebugKotlin")
+                )
+            }
+        }
+
+        modifyAndCheck("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+        modifyAndCheck("libJvmUtil.kt", "useLibJvmUtil.kt")
     }
 
     @Test

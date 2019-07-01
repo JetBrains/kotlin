@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
+@Suppress("DEPRECATION")
 class RemoveEmptySecondaryConstructorBodyInspection : IntentionBasedInspection<KtBlockExpression>(
         RemoveEmptySecondaryConstructorBodyIntention::class
 ), CleanupLocalInspectionTool {

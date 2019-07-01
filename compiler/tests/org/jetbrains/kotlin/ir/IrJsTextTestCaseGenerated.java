@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir;
@@ -131,9 +131,19 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/dynamic/dynamicUnaryOperator.kt");
         }
 
-        @TestMetadata("dynamicWithImplicitCast.kt")
-        public void testDynamicWithImplicitCast() throws Exception {
-            runTest("compiler/testData/ir/irJsText/dynamic/dynamicWithImplicitCast.kt");
+        @TestMetadata("dynamicWithSmartCast.kt")
+        public void testDynamicWithSmartCast() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/dynamicWithSmartCast.kt");
+        }
+
+        @TestMetadata("implicitCastFromDynamic.kt")
+        public void testImplicitCastFromDynamic() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/implicitCastFromDynamic.kt");
+        }
+
+        @TestMetadata("implicitCastToDynamic.kt")
+        public void testImplicitCastToDynamic() throws Exception {
+            runTest("compiler/testData/ir/irJsText/dynamic/implicitCastToDynamic.kt");
         }
 
         @TestMetadata("invokeOperator.kt")

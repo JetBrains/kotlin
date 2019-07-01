@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers
 
 abstract class SerializerCodegen(
     protected val serializerDescriptor: ClassDescriptor,
@@ -32,7 +31,7 @@ abstract class SerializerCodegen(
 ) : AbstractSerialGenerator(bindingContext, serializerDescriptor) {
     val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
     protected val serialName: String = serializableDescriptor.annotations.serialNameValue ?: serializableDescriptor.fqNameUnsafe.asString()
-    protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
+    protected val properties = bindingContext.serializablePropertiesFor(serializableDescriptor)
     protected val serializableProperties = properties.serializableProperties
 
     private fun checkSerializability() {

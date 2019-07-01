@@ -1,10 +1,11 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.visitors.generator
 
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -88,7 +89,7 @@ class DataCollector {
                     return
                 }
                 val classNameWithParameters = NameWithTypeParameters(className, klass.typeParameterList?.text ?: "")
-                if (klass.isInterface()) {
+                if (klass.isInterface() || (klass.hasModifier(KtTokens.ABSTRACT_KEYWORD) && "Abstract" !in (klass.name ?: ""))) {
                     packagePerClass[classNameWithParameters] = file.packageFqName
                     val isBaseTT = klass.annotationEntries.any {
                         it.shortName?.asString() == BASE_TRANSFORMED_TYPE_ANNOTATION_NAME

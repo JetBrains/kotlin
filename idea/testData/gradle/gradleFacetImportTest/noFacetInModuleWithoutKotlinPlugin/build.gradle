@@ -1,0 +1,23 @@
+group 'gr01'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.1"
+    }
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.1"
+} 

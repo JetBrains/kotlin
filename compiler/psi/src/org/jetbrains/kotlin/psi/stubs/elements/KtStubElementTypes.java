@@ -20,7 +20,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
-    KtFileElementType FILE = new KtFileElementType();
+    KtFileElementType FILE = KtFileElementType.INSTANCE;
 
     KtClassElementType CLASS = new KtClassElementType("CLASS");
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");

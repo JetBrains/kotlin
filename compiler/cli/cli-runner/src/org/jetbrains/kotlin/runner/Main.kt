@@ -20,6 +20,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
 import java.util.*
+import kotlin.system.exitProcess
 
 object Main {
     private val KOTLIN_HOME: File
@@ -28,7 +29,7 @@ object Main {
         val home = System.getProperty("kotlin.home")
         if (home == null) {
             System.err.println("error: no kotlin.home system property was passed")
-            System.exit(1)
+            exitProcess(1)
         }
         KOTLIN_HOME = File(home)
     }
@@ -120,7 +121,7 @@ object Main {
         }
         catch (e: RunnerException) {
             System.err.println("error: " + e.message)
-            System.exit(1)
+            exitProcess(1)
         }
     }
 
@@ -143,7 +144,7 @@ where command may be one of:
   -version                   Display Kotlin version
   -help (-h)                 Print a synopsis of options
 """)
-        System.exit(0)
+        exitProcess(0)
     }
 
     private fun printVersionAndExit() {
@@ -155,6 +156,6 @@ where command may be one of:
         }
 
         println("Kotlin version " + version + " (JRE " + System.getProperty("java.runtime.version") + ")")
-        System.exit(0)
+        exitProcess(0)
     }
 }

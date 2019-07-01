@@ -1,0 +1,21 @@
+public final class MyColor {
+    @org.jetbrains.annotations.NotNull private final var x: int
+    @org.jetbrains.annotations.NotNull private final var y: int
+    @org.jetbrains.annotations.NotNull private final var z: int
+    public final fun getX() : int = UastEmptyExpression
+    public final fun getY() : int = UastEmptyExpression
+    public final fun getZ() : int = UastEmptyExpression
+    public fun MyColor(@org.jetbrains.annotations.NotNull x: int, @org.jetbrains.annotations.NotNull y: int, @org.jetbrains.annotations.NotNull z: int) = UastEmptyExpression
+}
+
+public final class Some {
+    @org.jetbrains.annotations.NotNull private final var delegate$delegate: kotlin.Lazy
+    @org.jetbrains.annotations.NotNull private final var lambda: kotlin.Lazy<MyColor> = lazy({ 
+        <init>(1, 2, 3)
+    })
+    @org.jetbrains.annotations.NotNull private final var nonLazy: MyColor = <init>(1, 2, 3)
+    public final fun getDelegate() : MyColor = UastEmptyExpression
+    public final fun getLambda() : kotlin.Lazy<MyColor> = UastEmptyExpression
+    public final fun getNonLazy() : MyColor = UastEmptyExpression
+    public fun Some() = UastEmptyExpression
+}

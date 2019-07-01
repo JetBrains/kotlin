@@ -111,7 +111,7 @@ public final class MutableClosure implements CalculatedClosure {
                 return AsmUtil.CAPTURED_RECEIVER_FIELD;
             }
 
-            String labeledThis = AsmUtil.getLabeledThisNameForReceiver(
+            String labeledThis = AsmUtil.getNameForCapturedReceiverField(
                     enclosingFunWithReceiverDescriptor, bindingContext, languageVersionSettings);
 
             return AsmUtil.getCapturedFieldName(labeledThis);

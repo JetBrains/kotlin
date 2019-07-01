@@ -34,7 +34,7 @@ class InputsCache(
     }
 
     internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile))
-    private val sourceToOutputMap = registerMap(FilesMap(SOURCE_TO_OUTPUT_FILES.storageFile))
+    private val sourceToOutputMap = registerMap(SourceToOutputFilesMap(SOURCE_TO_OUTPUT_FILES.storageFile))
 
     fun removeOutputForSourceFiles(sources: Iterable<File>) {
         for (sourceFile in sources) {

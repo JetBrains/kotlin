@@ -34,13 +34,17 @@ object AllOpenConfigurationKeys {
 
 class AllOpenCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val SUPPORTED_PRESETS = mapOf("spring" to listOf(
-                "org.springframework.stereotype.Component",
-                "org.springframework.transaction.annotation.Transactional",
-                "org.springframework.scheduling.annotation.Async",
-                "org.springframework.cache.annotation.Cacheable",
-                "org.springframework.boot.test.context.SpringBootTest",
-                "org.springframework.validation.annotation.Validated"))
+        val SUPPORTED_PRESETS = mapOf(
+                "spring" to listOf(
+                    "org.springframework.stereotype.Component",
+                    "org.springframework.transaction.annotation.Transactional",
+                    "org.springframework.scheduling.annotation.Async",
+                    "org.springframework.cache.annotation.Cacheable",
+                    "org.springframework.boot.test.context.SpringBootTest",
+                    "org.springframework.validation.annotation.Validated"),
+                "quarkus" to listOf(
+                    "javax.enterprise.context.ApplicationScoped",
+                    "javax.enterprise.context.RequestScoped"))
 
         val ANNOTATION_OPTION = CliOption("annotation", "<fqname>", "Annotation qualified names",
                                           required = false, allowMultipleOccurrences = true)

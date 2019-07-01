@@ -1,1 +1,0 @@
-abstract class Abstract<caret>Bean

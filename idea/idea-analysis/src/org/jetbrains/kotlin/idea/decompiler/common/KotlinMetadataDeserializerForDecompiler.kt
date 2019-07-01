@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -39,7 +38,6 @@ class KotlinMetadataDeserializerForDecompiler(
         private val proto: ProtoBuf.PackageFragment,
         private val nameResolver: NameResolver,
         private val metadataVersion: BinaryVersion,
-        override val targetPlatform: TargetPlatform,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) : DeserializerForDecompilerBase(packageFqName) {

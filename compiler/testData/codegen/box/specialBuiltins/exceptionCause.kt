@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class CustomException : Throwable {
     constructor(message: String?, cause: Throwable?) : super(message, cause)
 

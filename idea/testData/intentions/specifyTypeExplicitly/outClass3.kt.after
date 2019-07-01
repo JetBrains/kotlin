@@ -1,0 +1,8 @@
+open class F
+class B<T>
+class K<out T>
+
+private fun check(): () -> B<*> = {
+    class Local : F()
+    B<K<Local>>()
+}

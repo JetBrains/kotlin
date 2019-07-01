@@ -136,7 +136,7 @@ sealed class TreeBasedClassifierType<out T : JCTree>(
     override val presentableText: String
         get() = classifierQualifiedName
 
-    override val typeArguments: List<JavaType>
+    override val typeArguments: List<JavaType?>
         get() {
             var tree: JCTree = tree
             if (tree is JCTree.JCTypeApply) {
@@ -230,9 +230,9 @@ class TreeBasedGenericClassifierType(
                    ?: super.annotations
         }
 
-    override val typeArguments: List<JavaType>
+    override val typeArguments: List<JavaType?>
         get() = tree.arguments.map { create(it, compilationUnit, javac, emptyList(), containingElement) }
-                .toMutableList()
+                .toMutableList<JavaType?>()
                 .apply { addAll(super.typeArguments) }
 
     override val isRaw: Boolean

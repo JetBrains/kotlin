@@ -1,0 +1,7 @@
+// "Add SOURCE retention" "true"
+annotation class Retention
+
+@kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+@Retention
+@Target(AnnotationTarget.EXPRESSION)
+annotation class Ann

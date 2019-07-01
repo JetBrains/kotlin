@@ -24,13 +24,14 @@ kotlin {
 	val macos64 = macosX64("macos64")
 
     configure(listOf(wasm32, linux64, mingw64, macos64)) {
-    	compilations.getByName("main") {
-	    	outputKinds.add(EXECUTABLE)
-	        entryPoint = "com.example.app.native.main"
+        binaries.executable("main") {
+            entryPoint = "com.example.app.native.main"
+        }
+
+        binaries.all {
             // Check that linker options are correctly passed to the compiler.
             linkerOpts = mutableListOf("-L.")
-	    }
-        compilations["test"].linkerOpts = mutableListOf("-L.")
+        }
     }
 
     sourceSets {
@@ -58,23 +59,6 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
             }
-        }
-    }
-
-    tasks.create("checkBinaryGetters") {
-        doLast {
-            println("Wasm binary file: ${wasm32.compilations.getByName("main").getBinary("EXECUTABLE", "RELEASE").name}")
-            println("Wasm link task: ${wasm32.compilations.getByName("main").getLinkTask("EXECUTABLE", "RELEASE").name}")
-            println("Wasm link task name: ${wasm32.compilations.getByName("main").linkTaskName("EXECUTABLE", "RELEASE")}")
-
-            println("Windows test file: ${mingw64.compilations.getByName("test").getBinary("EXECUTABLE", "DEBUG").name}")
-            println("Windows test link task: ${mingw64.compilations.getByName("test").getLinkTask("EXECUTABLE", "DEBUG").name}")
-
-            println("MacOS test file: ${macos64.compilations.getByName("test").getBinary("EXECUTABLE", "DEBUG").name}")
-            println("MacOS test link task: ${macos64.compilations.getByName("test").getLinkTask("EXECUTABLE", "DEBUG").name}")
-
-            println("Linux test file: ${linux64.compilations.getByName("test").getBinary("EXECUTABLE", "DEBUG").name}")
-            println("Linux test link task: ${linux64.compilations.getByName("test").getLinkTask("EXECUTABLE", "DEBUG").name}")
         }
     }
 }

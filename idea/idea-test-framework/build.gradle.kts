@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:frontend.script"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":idea"))
     testCompile(project(":idea:idea-jvm"))
@@ -16,6 +15,9 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
     testCompileOnly(intellijDep())
+    Platform[192].orHigher {
+        testCompileOnly(intellijPluginDep("java"))
+    }
 }
 
 sourceSets {

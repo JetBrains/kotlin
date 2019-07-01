@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.util.*
 
 fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<BinaryVersionedFile<JvmMetadataVersion>> {
     return getLibraryRootsWithAbiIncompatibleVersion(module, JvmMetadataVersion.INSTANCE, KotlinJvmMetadataVersionIndex)
@@ -92,7 +91,7 @@ enum class LibraryJarDescriptor(
     RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, { it.stdlibPath }) {
         override fun findExistingJar(library: Library): VirtualFile? {
             if (isExternalLibrary(library)) return null
-            return JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)))
+            return JavaRuntimeDetectionUtil.getRuntimeJar(listOf(*library.getFiles(OrderRootType.CLASSES)))
         }
     },
 
@@ -132,7 +131,7 @@ enum class LibraryJarDescriptor(
 
     open fun findExistingJar(library: Library): VirtualFile? {
         if (isExternalLibrary(library)) return null
-        return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(orderRootType)), jarName)
+        return LibraryUtils.getJarFile(listOf(*library.getFiles(orderRootType)), jarName)
     }
 
     fun getPathInPlugin() = getPath(PathUtil.kotlinPathsForIdeaPlugin)
@@ -190,14 +189,6 @@ fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
         jarName + " is not found. Make sure plugin is properly installed.",
         "No Runtime Found"
     )
-}
-
-fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
-    return runReadAction {
-        project.runWithAlternativeResolveEnabled {
-            JavaPsiFacade.getInstance(project).findClass(KotlinBuiltIns.FQ_NAMES.unit.asString(), scope)
-        }
-    }
 }
 
 private val KOTLIN_JS_FQ_NAME = FqName("kotlin.js")

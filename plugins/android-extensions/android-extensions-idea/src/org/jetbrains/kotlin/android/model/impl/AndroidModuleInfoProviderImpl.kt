@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.model.impl
@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.android.model.impl
 import com.android.builder.model.SourceProvider
 import com.android.tools.idea.gradle.project.GradleProjectInfo
 import com.android.tools.idea.gradle.project.model.AndroidModuleModel
-import com.android.tools.idea.res.AppResourceRepository
+import com.android.tools.idea.res.ResourceRepositoryManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.android.facet.AndroidFacet
@@ -36,7 +36,7 @@ class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModule
     }
 
     override fun getApplicationResourceDirectories(createIfNecessary: Boolean): Collection<VirtualFile> {
-        return AppResourceRepository.getOrCreateInstance(module)?.resourceDirs ?: emptyList()
+        return ResourceRepositoryManager.getOrCreateInstance(module)?.getAppResources(createIfNecessary)?.resourceDirs ?: emptyList()
     }
 
     override fun getAllSourceProviders(): List<AndroidModuleInfoProvider.SourceProviderMirror> {

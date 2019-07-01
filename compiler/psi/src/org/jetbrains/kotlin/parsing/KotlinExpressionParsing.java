@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.parsing;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeType;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -155,7 +157,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         AS(AS_KEYWORD, AS_SAFE) {
             @Override
-            public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
+            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 parser.myKotlinParsing.parseTypeRef();
                 return BINARY_WITH_TYPE;
             }
@@ -173,7 +175,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         ELVIS(KtTokens.ELVIS),
         IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
             @Override
-            public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
+            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
                     parser.myKotlinParsing.parseTypeRef();
                     return IS_EXPRESSION;
@@ -216,7 +218,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
          * @param parser the parser object
          * @return node type of the result
          */
-        public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
+        public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
             parseHigherPrecedence(parser);
             return BINARY_EXPRESSION;
         }
@@ -316,7 +318,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             parseOperationReference();
 
-            KtNodeType resultType = precedence.parseRightHandSide(operation, this);
+            IElementType resultType = precedence.parseRightHandSide(operation, this);
             expression.done(resultType);
             expression = expression.precede();
         }
@@ -1008,7 +1010,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         parseAsCollectionLiteralExpression(COLLECTION_LITERAL_EXPRESSION, true, "Expecting an element");
     }
 
-    private void parseAsCollectionLiteralExpression(KtNodeType nodeType, boolean canBeEmpty, String missingElementErrorMessage) {
+    private void parseAsCollectionLiteralExpression(IElementType nodeType, boolean canBeEmpty, String missingElementErrorMessage) {
         assert _at(LBRACKET);
 
         PsiBuilder.Marker innerExpressions = mark();
@@ -1094,6 +1096,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     /**
      * If it has no ->, it's a block, otherwise a function literal
+     *
+     * Please update {@link org.jetbrains.kotlin.BlockExpressionElementType#isParsable(ASTNode, CharSequence, Language, Project)} if any changes occurs!
      */
     public void parseFunctionLiteral(boolean preferBlock, boolean collapse) {
         assert _at(LBRACE);
@@ -1139,7 +1143,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
 
         if (collapse) {
-            advanceLambdaBlock();
+            myKotlinParsing.advanceBalancedBlock();
             literal.done(FUNCTION_LITERAL);
             literalExpression.collapse(LAMBDA_EXPRESSION);
         }
@@ -1156,24 +1160,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
 
         myBuilder.restoreNewlinesState();
-    }
-
-    private void advanceLambdaBlock() {
-        int braceCount = 1;
-        while (!eof()) {
-            if (_at(LBRACE)) {
-                braceCount++;
-            }
-            else if (_at(RBRACE)) {
-                braceCount--;
-            }
-
-            advance();
-
-            if (braceCount == 0) {
-                break;
-            }
-        }
     }
 
     private boolean rollbackOrDropAt(PsiBuilder.Marker rollbackMarker, IElementType dropAt) {
@@ -1627,7 +1613,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      * : "continue" getEntryPoint?
      * : "break" getEntryPoint?
      */
-    private void parseJump(KtNodeType type) {
+    private void parseJump(IElementType type) {
         assert _at(BREAK_KEYWORD) || _at(CONTINUE_KEYWORD);
 
         PsiBuilder.Marker marker = mark();

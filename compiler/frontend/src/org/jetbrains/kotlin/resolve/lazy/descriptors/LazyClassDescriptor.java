@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
-import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -446,7 +444,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 /* parentClassOrObject= */ classOrObject,
                 this, syntheticCompanionName, getSource(),
                 /* outerScope= */ getOuterScope(),
-                Modality.FINAL, PUBLIC, PRIVATE, ClassKind.OBJECT, true);
+                Modality.FINAL, PUBLIC, Annotations.Companion.getEMPTY(), PRIVATE, ClassKind.OBJECT, true);
         companionDescriptor.initialize();
         return companionDescriptor;
     }
@@ -454,7 +452,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Nullable
     private static KtClassLikeInfo getCompanionObjectInfo(@Nullable KtObjectDeclaration companionObject) {
         if (companionObject != null) {
-            return KtClassInfoUtil.createClassLikeInfo(companionObject);
+            return KtClassInfoUtil.createClassOrObjectInfo(companionObject);
         }
 
         return null;

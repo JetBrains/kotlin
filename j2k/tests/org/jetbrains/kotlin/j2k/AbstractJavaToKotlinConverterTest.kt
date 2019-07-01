@@ -22,14 +22,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
 import java.io.File
 
-abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
 

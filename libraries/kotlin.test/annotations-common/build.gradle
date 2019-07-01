@@ -3,9 +3,7 @@ description = 'Kotlin Test Annotations Common'
 apply plugin: 'kotlin-platform-common'
 apply plugin: 'pill-configurable'
 
-configureDist(project)
 configurePublishing(project)
-
 
 dependencies {
     compile kotlinStdlib("common")

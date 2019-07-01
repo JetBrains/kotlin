@@ -37,7 +37,6 @@ import com.intellij.openapi.wm.ex.StatusBarEx
 import com.intellij.psi.PsiFile
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.script.experimental.dependencies.ScriptReport
 
@@ -51,21 +50,6 @@ class ScriptExternalHighlightingPass(
         val document = document ?: return
 
         if (!file.isScript()) return
-
-        if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
-            UIUtil.invokeLaterIfNeeded {
-                val ideFrame = WindowManager.getInstance().getIdeFrame(file.project)
-                if (ideFrame != null) {
-                    val statusBar = ideFrame.statusBar as StatusBarEx
-                    statusBar.notifyProgressByBalloon(
-                        MessageType.WARNING,
-                        "Highlighting in scripts is not available until all Script Definitions are loaded",
-                        null,
-                        null
-                    )
-                }
-            }
-        }
 
         val reports = file.virtualFile.getUserData(IdeScriptReportSink.Reports) ?: return
 
@@ -115,6 +99,21 @@ class ScriptExternalHighlightingPass(
             ScriptReport.Severity.WARNING -> WARNING
             ScriptReport.Severity.INFO -> INFORMATION
             ScriptReport.Severity.DEBUG -> if (ApplicationManager.getApplication().isInternal) INFORMATION else null
+        }
+    }
+
+    private fun showNotification(file: KtFile, message: String) {
+        UIUtil.invokeLaterIfNeeded {
+            val ideFrame = WindowManager.getInstance().getIdeFrame(file.project)
+            if (ideFrame != null) {
+                val statusBar = ideFrame.statusBar as StatusBarEx
+                statusBar.notifyProgressByBalloon(
+                    MessageType.WARNING,
+                    message,
+                    null,
+                    null
+                )
+            }
         }
     }
 

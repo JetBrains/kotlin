@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), RawType {
     init {
-        assert (KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
+        assert(KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
             "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
         }
     }
@@ -41,15 +41,15 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
     override val memberScope: MemberScope
         get() {
             val classDescriptor = constructor.declarationDescriptor as? ClassDescriptor
-                                  ?: error("Incorrect classifier: ${constructor.declarationDescriptor}")
+                ?: error("Incorrect classifier: ${constructor.declarationDescriptor}")
             return classDescriptor.getMemberScope(RawSubstitution)
         }
 
-    override fun replaceAnnotations(newAnnotations: Annotations)
-            = RawTypeImpl(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
+    override fun replaceAnnotations(newAnnotations: Annotations) =
+        RawTypeImpl(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
 
-    override fun makeNullableAsSpecified(newNullability: Boolean)
-            = RawTypeImpl(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
+    override fun makeNullableAsSpecified(newNullability: Boolean) =
+        RawTypeImpl(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
         fun onlyOutDiffers(first: String, second: String) = first == second.removePrefix("out ") || second == "*"
@@ -73,9 +73,9 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
         val upperArgs = renderArguments(upperBound)
         val newArgs = lowerArgs.joinToString(", ") { "(raw) $it" }
         val newUpper =
-                if (lowerArgs.zip(upperArgs).all { onlyOutDiffers(it.first, it.second) })
-                    upperRendered.replaceArgs(newArgs)
-                else upperRendered
+            if (lowerArgs.zip(upperArgs).all { onlyOutDiffers(it.first, it.second) })
+                upperRendered.replaceArgs(newArgs)
+            else upperRendered
         val newLower = lowerRendered.replaceArgs(newArgs)
         if (newLower == newUpper) return newLower
         return renderer.renderFlexibleType(newLower, newUpper, builtIns)
@@ -98,8 +98,7 @@ internal object RawSubstitution : TypeSubstitution() {
 
                 if (isRawL || isRawU) {
                     RawTypeImpl(lower, upper)
-                }
-                else {
+                } else {
                     KotlinTypeFactory.flexibleType(lower, upper)
                 }
             }
@@ -109,46 +108,45 @@ internal object RawSubstitution : TypeSubstitution() {
 
     // false means that type cannot be raw
     private fun eraseInflexibleBasedOnClassDescriptor(
-            type: SimpleType, declaration: ClassDescriptor, attr: JavaTypeAttributes
+        type: SimpleType, declaration: ClassDescriptor, attr: JavaTypeAttributes
     ): Pair<SimpleType, Boolean> {
         if (type.constructor.parameters.isEmpty()) return type to false
 
         if (KotlinBuiltIns.isArray(type)) {
             val componentTypeProjection = type.arguments[0]
             val arguments = listOf(
-                    TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
+                TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
             )
             return KotlinTypeFactory.simpleType(
-                    type.annotations, type.constructor, arguments, type.isMarkedNullable
+                type.annotations, type.constructor, arguments, type.isMarkedNullable
             ) to false
         }
 
         if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}") to false
 
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                type.annotations, type.constructor,
-                type.constructor.parameters.map {
-                    parameter ->
-                    computeProjection(parameter, attr)
-                },
-                type.isMarkedNullable, declaration.getMemberScope(RawSubstitution)
+            type.annotations, type.constructor,
+            type.constructor.parameters.map { parameter ->
+                computeProjection(parameter, attr)
+            },
+            type.isMarkedNullable, declaration.getMemberScope(RawSubstitution)
         ) to true
     }
 
     fun computeProjection(
-            parameter: TypeParameterDescriptor,
-            attr: JavaTypeAttributes,
-            erasedUpperBound: KotlinType = parameter.getErasedUpperBound()
+        parameter: TypeParameterDescriptor,
+        attr: JavaTypeAttributes,
+        erasedUpperBound: KotlinType = parameter.getErasedUpperBound()
     ) = when (attr.flexibility) {
         // Raw(List<T>) => (List<Any?>..List<*>)
         // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)
         // In the last case upper bound is equal to star projection `Enum<*>`,
         // but we want to keep matching tree structure of flexible bounds (at least they should have the same size)
         JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND -> TypeProjectionImpl(
-                // T : String -> String
-                // in T : String -> String
-                // T : Enum<T> -> Enum<*>
-                Variance.INVARIANT, erasedUpperBound
+            // T : String -> String
+            // in T : String -> String
+            // T : Enum<T> -> Enum<*>
+            Variance.INVARIANT, erasedUpperBound
         )
         JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND, JavaTypeFlexibility.INFLEXIBLE -> {
             if (!parameter.variance.allowsOutPosition)

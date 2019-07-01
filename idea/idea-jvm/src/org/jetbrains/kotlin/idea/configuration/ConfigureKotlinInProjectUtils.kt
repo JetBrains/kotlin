@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -26,6 +26,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
+import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
-import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
 import org.jetbrains.kotlin.idea.versions.isSnapshot
 import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
@@ -131,7 +131,7 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
         .filter { module ->
             runReadAction {
                 !project.isDisposed && !module.isDisposed
-                        FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
+                        && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
             }
         }
 }
@@ -152,18 +152,6 @@ fun showConfigureKotlinNotificationIfNeeded(module: Module) {
     if (!isNotConfiguredNotificationRequired(moduleGroup)) return
 
     ConfigureKotlinNotificationManager.notify(module.project)
-}
-
-fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
-    val notificationState = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
-        ConfigureKotlinNotification.getNotificationState(project, excludeModules)
-    })
-
-    if (notificationState != null) {
-        ApplicationManager.getApplication().invokeLater {
-            ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationState))
-        }
-    }
 }
 
 fun isNotConfiguredNotificationRequired(moduleGroup: ModuleSourceRootGroup): Boolean {
@@ -240,8 +228,8 @@ fun getConfigurationPossibilitiesForConfigureNotification(
                     runnableConfigurators.add(configurator)
                 }
                 ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
+                }
             }
-        }
         if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(
                 moduleSourceRootGroup
             )
@@ -283,14 +271,6 @@ fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
 
 fun hasKotlinCommonRuntimeInScope(scope: GlobalSearchScope): Boolean {
     return IDEVirtualFileFinder(scope).hasMetadataPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-}
-
-fun hasKotlinFilesOnlyInTests(module: Module): Boolean {
-    return !hasKotlinFilesInSources(module) && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
-}
-
-fun hasKotlinFilesInSources(module: Module): Boolean {
-    return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
 }
 
 class LibraryKindSearchScope(

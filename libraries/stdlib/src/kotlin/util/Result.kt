@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("UNCHECKED_CAST", "RedundantVisibilityModifier")
@@ -304,7 +304,7 @@ public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Th
 // "peek" onto value/exception and pipe
 
 /**
- * Performs the given [action] on encapsulated value if this instance represents [success][Result.isSuccess].
+ * Performs the given [action] on encapsulated exception if this instance represents [failure][Result.isFailure].
  * Returns the original `Result` unchanged.
  */
 @InlineOnly
@@ -318,7 +318,7 @@ public inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit
 }
 
 /**
- * Performs the given [action] on encapsulated exception if this instance represents [failure][Result.isFailure].
+ * Performs the given [action] on encapsulated value if this instance represents [success][Result.isSuccess].
  * Returns the original `Result` unchanged.
  */
 @InlineOnly

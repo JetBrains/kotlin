@@ -1,7 +1,7 @@
-LineBreakpoint created at WindowedWithBigStep.kt:6
+LineBreakpoint created at WindowedWithBigStep.kt:10
 Run Java
 Connected to the target VM
-WindowedWithBigStep.kt:6
+WindowedWithBigStep.kt:10
 sequenceOf(1, 1, 1, 1, 1, 1, 1, 1)
 .windowed(3, 5)
 .count()

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.range.comparison.IntComparisonGenerator
-import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInDefinitelySafeSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -35,8 +34,7 @@ class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-        SimpleBoundedValue(
-            codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
+        BoundedValue(
             StackValue.constant(0, codegen.asmType(elementKotlinType), elementKotlinType),
             true,
             StackValue.operation(Type.INT_TYPE) { v ->

@@ -1,5 +1,5 @@
 fun foo(a: List<Int>) {
-    for (x in a) <caret>{
-        val y = x
+    for (x in a) {
+        val<caret> y = x
     }
 }

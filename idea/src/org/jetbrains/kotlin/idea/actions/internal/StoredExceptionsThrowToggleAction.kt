@@ -22,7 +22,8 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.utils.WrappedValues
 
 
-class StoredExceptionsThrowToggleAction : ToggleAction("Internal: toggle throwing cached PCE", "Rethrow stored PCE as a new runtime exception", null) {
+class StoredExceptionsThrowToggleAction :
+    ToggleAction("Internal: toggle throwing cached PCE", "Rethrow stored PCE as a new runtime exception", null) {
     override fun isSelected(e: AnActionEvent): Boolean {
         return WrappedValues.throwWrappedProcessCanceledException
     }

@@ -5,7 +5,7 @@ fun <T> materialize(): T = TODO()
 fun a(): Unit = run {
     run {
         // Ok, block is coerced, because it has (indirectly) Unit-expected type
-        "hello"
+        <!NI;UNUSED_EXPRESSION!>"hello"<!>
     }
 }
 
@@ -25,7 +25,7 @@ fun c(): Unit = run {
 
 fun d(): Unit = run outer@{
     run inner@{
-        <!NI;UNREACHABLE_CODE!>return@inner<!> <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        return@inner <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 

@@ -85,7 +85,6 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                         : klass.isAnnotation()
                           ? factory.createAnnotationType(name)
                           : factory.createInterface(name);
-
         }
         else {
             javaClass = factory.createClass(name);
@@ -172,7 +171,6 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                     false
             );
         }
-
     }
 
     @Override

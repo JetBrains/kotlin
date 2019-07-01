@@ -19,15 +19,30 @@ package org.jetbrains.kotlin.idea.core.extension
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.types.KotlinType
 
 interface KotlinIndicesHelperExtension {
     companion object : ProjectExtensionDescriptor<KotlinIndicesHelperExtension>(
-            "org.jetbrains.kotlin.kotlinIndicesHelperExtension", KotlinIndicesHelperExtension::class.java)
+        "org.jetbrains.kotlin.kotlinIndicesHelperExtension", KotlinIndicesHelperExtension::class.java
+    )
 
+    @JvmDefault
     fun appendExtensionCallables(
-            consumer: MutableList<in CallableDescriptor>,
-            moduleDescriptor: ModuleDescriptor,
-            receiverTypes: Collection<KotlinType>,
-            nameFilter: (String) -> Boolean)
+        consumer: MutableList<in CallableDescriptor>,
+        moduleDescriptor: ModuleDescriptor,
+        receiverTypes: Collection<KotlinType>,
+        nameFilter: (String) -> Boolean,
+        lookupLocation: LookupLocation
+    ) {
+        appendExtensionCallables(consumer, moduleDescriptor, receiverTypes, nameFilter)
+    }
+
+    @Deprecated("Use the appendExtensionCallables() with the 'file' parameter instead.")
+    fun appendExtensionCallables(
+        consumer: MutableList<in CallableDescriptor>,
+        moduleDescriptor: ModuleDescriptor,
+        receiverTypes: Collection<KotlinType>,
+        nameFilter: (String) -> Boolean
+    )
 }

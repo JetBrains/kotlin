@@ -24,111 +24,126 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-class MethodOrderTest: CodegenTestCase() {
+class MethodOrderTest : CodegenTestCase() {
     fun testDelegatedMethod() {
         doTest(
-                """
-                    interface Trait {
-                        fun f0()
-                        fun f4()
-                        fun f3()
-                        fun f2()
-                        fun f1()
-                        fun f5()
-                    }
+            """
+                interface Trait {
+                    fun f0()
+                    fun f4()
+                    fun f3()
+                    fun f2()
+                    fun f1()
+                    fun f5()
+                }
 
-                    val delegate: Trait = throw Error()
+                val delegate: Trait = throw Error()
 
-                    val obj = object : Trait by delegate {
-                        override fun f3() { }
-                    }
-                """,
-                "\$obj$1",
-                listOf("f3()V", "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V")
+                val obj = object : Trait by delegate {
+                    override fun f3() { }
+                }
+            """,
+            "\$obj$1",
+            listOf("f3()V", "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V")
         )
     }
 
     fun testLambdaClosureOrdering() {
         doTest(
-                """
-                    class Klass {
-                        fun Any.f(a: String, b: Int, c: Double, d: Any, e: Long) {
-                           { a + b + c + d + e + this@f + this@Klass }()
-                        }
+            """
+                class Klass {
+                    fun Any.f(a: String, b: Int, c: Double, d: Any, e: Long) {
+                       { a + b + c + d + e + this@f + this@Klass }()
                     }
-                """,
-                "\$f$1",
-                listOf("invoke()Ljava/lang/Object;", "invoke()Ljava/lang/String;", "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V")
+                }
+            """,
+            "\$f$1",
+            listOf(
+                "invoke()Ljava/lang/Object;",
+                "invoke()Ljava/lang/String;",
+                "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V"
+            )
         )
     }
 
     fun testAnonymousObjectClosureOrdering() {
         doTest(
-                """
-                    class Klass {
-                        fun Any.f(a: String, b: Int, c: Double, d: Any, e: Long) {
-                            object : Runnable {
-                                override fun run() {
-                                    a + b + c + d + e + this@f + this@Klass
-                                }
-                            }.run()
-                        }
+            """
+                class Klass {
+                    fun Any.f(a: String, b: Int, c: Double, d: Any, e: Long) {
+                        object : Runnable {
+                            override fun run() {
+                                a + b + c + d + e + this@f + this@Klass
+                            }
+                        }.run()
                     }
-                """,
-                "\$f$1",
-                listOf("run()V", "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V")
+                }
+            """,
+            "\$f$1",
+            listOf("run()V", "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V")
         )
     }
 
     fun testMemberAccessor() {
         doTest(
-                """
-                    class Outer(private val a: Int, private var b: String) {
-                        private fun c() {
-                        }
+            """
+                class Outer(private val a: Int, private var b: String) {
+                    private fun c() {
+                    }
 
-                        inner class Inner() {
-                            init {
-                                b = b + a
-                                c()
-                            }
+                    inner class Inner() {
+                        init {
+                            b = b + a
+                            c()
                         }
                     }
-                """,
-                "Outer",
-                listOf(
-                        "c()V",
-                        "<init>(ILjava/lang/String;)V",
-                        "access\$getB\$p(LOuter;)Ljava/lang/String;",
-                        "access\$setB\$p(LOuter;Ljava/lang/String;)V",
-                        "access\$getA\$p(LOuter;)I",
-                        "access\$c(LOuter;)V"
-                )
+                }
+            """,
+            "Outer",
+            listOf(
+                "c()V",
+                "<init>(ILjava/lang/String;)V",
+                "access\$getB\$p(LOuter;)Ljava/lang/String;",
+                "access\$setB\$p(LOuter;Ljava/lang/String;)V",
+                "access\$getA\$p(LOuter;)I",
+                "access\$c(LOuter;)V"
+            )
         )
     }
 
     fun testDeterministicDefaultMethodImplOrder() {
         doTest(
-                """
-                    interface Base<K, V> {
-                        fun getSize(): Int = 5
-                        fun size(): Int = getSize()
-                        fun getKeys(): Int = 4
-                        fun keySet() = getKeys()
-                        fun getEntries(): Int = 3
-                        fun entrySet() = getEntries()
-                        fun getValues(): Int = 2
-                        fun values() = getValues()
+            """
+                interface Base<K, V> {
+                    fun getSize(): Int = 5
+                    fun size(): Int = getSize()
+                    fun getKeys(): Int = 4
+                    fun keySet() = getKeys()
+                    fun getEntries(): Int = 3
+                    fun entrySet() = getEntries()
+                    fun getValues(): Int = 2
+                    fun values() = getValues()
 
-                        fun removeEldestEntry(eldest: Any?): Boolean
-                    }
+                    fun removeEldestEntry(eldest: Any?): Boolean
+                }
 
-                    class MinMap<K, V> : Base<K, V> {
-                        override fun removeEldestEntry(eldest: Any?) = true
-                    }
-                """,
-                "MinMap",
-                listOf("removeEldestEntry(Ljava/lang/Object;)Z", "<init>()V", "getSize()I", "size()I", "getKeys()I", "keySet()I", "getEntries()I", "entrySet()I", "getValues()I", "values()I")
+                class MinMap<K, V> : Base<K, V> {
+                    override fun removeEldestEntry(eldest: Any?) = true
+                }
+            """,
+            "MinMap",
+            listOf(
+                "removeEldestEntry(Ljava/lang/Object;)Z",
+                "<init>()V",
+                "getSize()I",
+                "size()I",
+                "getKeys()I",
+                "keySet()I",
+                "getEntries()I",
+                "entrySet()I",
+                "getValues()I",
+                "values()I"
+            )
         )
     }
 
@@ -169,7 +184,13 @@ class MethodOrderTest: CodegenTestCase() {
         val methodNames = ArrayList<String>()
 
         classReader.accept(object : ClassVisitor(Opcodes.API_VERSION) {
-            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                desc: String,
+                signature: String?,
+                exceptions: Array<out String>?
+            ): MethodVisitor? {
                 methodNames.add(name + desc)
                 return null
             }

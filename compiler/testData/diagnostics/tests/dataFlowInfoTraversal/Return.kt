@@ -14,5 +14,5 @@ fun foo(): Int {
     val z: Int? = null
     if (z != null) return if (<!SENSELESS_COMPARISON!>z == null<!>) z else z
     
-    return <!DEBUG_INFO_CONSTANT, NI;TYPE_MISMATCH, TYPE_MISMATCH!>z<!>
+    return <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>z<!>
 }

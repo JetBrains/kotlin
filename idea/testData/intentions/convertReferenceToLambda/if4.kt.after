@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 class Test {
     fun bar(a: String) = 1
 

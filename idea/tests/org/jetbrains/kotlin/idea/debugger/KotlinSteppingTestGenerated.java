@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger;
@@ -922,6 +922,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         public void testStopInlineCallInLocalFunInSecondaryConstructor() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInlineCallInLocalFunInSecondaryConstructor.kt");
         }
+
+        @TestMetadata("whenWithoutExpression.kt")
+        public void testWhenWithoutExpression() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/stepOver/whenWithoutExpression.kt");
+        }
     }
 
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOverForce")
@@ -1070,6 +1075,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("fwPropertyInInterface.kt")
         public void testFwPropertyInInterface() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/fwPropertyInInterface.kt");
+        }
+
+        @TestMetadata("initBlocks.kt")
+        public void testInitBlocks() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/custom/initBlocks.kt");
         }
 
         @TestMetadata("inlineInObject.kt")

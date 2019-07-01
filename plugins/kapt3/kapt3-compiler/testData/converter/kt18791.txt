@@ -88,6 +88,33 @@ package app;
 import java.lang.System;
 
 @kotlin.Metadata()
+public final class JJ {
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String b = null;
+    public static final app.JJ INSTANCE = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String c() {
+        return null;
+    }
+
+    private JJ() {
+        super();
+    }
+}
+
+////////////////////
+
+package app;
+
+import java.lang.System;
+
+@kotlin.Metadata()
 public final class MyActivity {
     @BindField(id = lib.R.id.textView)
     private final int a = 0;
@@ -101,6 +128,12 @@ public final class MyActivity {
     private final int e = 0;
     @BindField(id = app.B.id.textView)
     private final int f = 0;
+    public final int propA = app.B.id.textView;
+    private final int propB = app.B.id.textView;
+    private int propC;
+    public final int propD = app.B.id.textView;
+    public int propE;
+    private final int propF = 0;
 
     @Bind(id = lib.R.id.textView)
     public static void a$annotations() {
@@ -174,6 +207,21 @@ public final class MyActivity {
 
     @Bind(id = app.B.id.textView)
     public final void plainIntConstant() {
+    }
+
+    public final int getPropB() {
+        return 0;
+    }
+
+    public final int getPropC() {
+        return 0;
+    }
+
+    public final void setPropC(int p0) {
+    }
+
+    public final int getPropF() {
+        return 0;
     }
 
     public MyActivity() {

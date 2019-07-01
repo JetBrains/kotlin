@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.range
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -63,7 +67,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             comparisonGenerator == null -> CallBasedInExpressionGenerator(codegen, operatorReference)
 
             comparedType == Type.DOUBLE_TYPE || comparedType == Type.FLOAT_TYPE -> {
-                val rangeLiteral = getBoundedValue(codegen) as? SimpleBoundedValue
+                val rangeLiteral = getBoundedValue(codegen) as? BoundedValue
                     ?: throw AssertionError("Floating point intrinsic range value should be a range literal")
                 InFloatingPointRangeLiteralExpressionGenerator(operatorReference, rangeLiteral, comparisonGenerator, codegen.frameMap)
             }
@@ -76,6 +80,84 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     }
 
     protected abstract fun getBoundedValue(codegen: ExpressionCodegen): BoundedValue
+
+    protected fun StackValue.coerceToRangeElementTypeIfRequired(): StackValue {
+        val rangeKotlinType = rangeCall.resultingDescriptor.returnType!!
+        val rangeElementKotlinType = getRangeOrProgressionElementType(rangeKotlinType)!!
+        return when {
+            KotlinBuiltIns.isUInt(rangeElementKotlinType) ->
+                coerceUnsignedToUInt(this, rangeElementKotlinType)
+            KotlinBuiltIns.isULong(rangeElementKotlinType) ->
+                coerceUnsignedToULong(this, rangeElementKotlinType)
+            else ->
+                this
+        }
+    }
+
+    private val StackValue.unsignedType: UnsignedType?
+        get() = kotlinType?.let { UnsignedTypes.toUnsignedType(it) }
+
+    private fun coerceUnsignedToUInt(stackValue: StackValue, uIntKotlinType: KotlinType): StackValue {
+        val valueKotlinType = stackValue.kotlinType
+        val valueUnsignedType = stackValue.unsignedType
+            ?: throw AssertionError("Unsigned type expected: $valueKotlinType")
+
+        if (valueUnsignedType == UnsignedType.UINT) return stackValue
+
+        return StackValue.operation(Type.INT_TYPE, uIntKotlinType) { v ->
+            stackValue.put(stackValue.type, valueKotlinType, v)
+            when (valueUnsignedType) {
+                UnsignedType.UBYTE -> {
+                    v.iconst(0xFF)
+                    v.and(Type.INT_TYPE)
+                }
+
+                UnsignedType.USHORT -> {
+                    v.iconst(0xFFFF)
+                    v.and(Type.INT_TYPE)
+                }
+
+                UnsignedType.ULONG -> {
+                    v.cast(Type.LONG_TYPE, Type.INT_TYPE)
+                }
+
+                else -> throw AssertionError("Unexpected value type: $valueKotlinType")
+            }
+        }
+    }
+
+    private fun coerceUnsignedToULong(stackValue: StackValue, uLongKotlinType: KotlinType): StackValue {
+        val valueKotlinType = stackValue.kotlinType
+        val valueUnsignedType = stackValue.unsignedType
+            ?: throw AssertionError("Unsigned type expected: $valueKotlinType")
+
+        if (valueUnsignedType == UnsignedType.ULONG) return stackValue
+
+        return StackValue.operation(Type.LONG_TYPE, uLongKotlinType) { v ->
+            stackValue.put(stackValue.type, valueKotlinType, v)
+            when (valueUnsignedType) {
+                UnsignedType.UBYTE -> {
+                    v.cast(Type.INT_TYPE, Type.LONG_TYPE)
+                    v.lconst(0xFF)
+                    v.and(Type.LONG_TYPE)
+                }
+
+                UnsignedType.USHORT -> {
+                    v.cast(Type.INT_TYPE, Type.LONG_TYPE)
+                    v.lconst(0xFFFF)
+                    v.and(Type.LONG_TYPE)
+                }
+
+                UnsignedType.UINT -> {
+                    v.cast(Type.INT_TYPE, Type.LONG_TYPE)
+                    v.lconst(0xFFFF_FFFFL)
+                    v.and(Type.LONG_TYPE)
+                }
+
+                else -> throw AssertionError("Unexpected value type: $valueKotlinType")
+            }
+        }
+    }
 
     protected fun createConstBoundedForLoopGeneratorOrNull(
         codegen: ExpressionCodegen,

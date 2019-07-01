@@ -1,0 +1,20 @@
+buildscript {
+    apply from: "include.gradle"
+    ext.kotlin_version = gradleKotlinPluginVersion('1.3.10')
+    repositories {
+        google()
+        jcenter()
+
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'

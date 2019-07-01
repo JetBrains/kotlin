@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 
 class DefaultKotlinDependencyHandler(
     val parent: HasKotlinDependencies,
@@ -77,4 +78,10 @@ class DefaultKotlinDependencyHandler(
             configure(it)
             project.dependencies.add(configurationName, it)
         }
+
+    override fun npm(packageName: String, version: String) =
+        NpmDependency(project, null, packageName, version)
+
+    override fun npm(org: String, packageName: String, version: String) =
+        NpmDependency(project, org, packageName, version)
 }

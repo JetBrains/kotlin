@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -186,7 +185,7 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
         val declarationNotNull = declaration ?: return null
 
         if (isExtension || containerFqName != null || isImported) return {
-            createMoveUsageInfoIfPossible(it.mainReference, declarationNotNull, false, true)
+            createMoveUsageInfoIfPossible(it.mainReference, declarationNotNull, addImportToOriginalFile = false, isInternal = true)
         }
 
         return null
@@ -474,7 +473,7 @@ fun postProcessMoveUsages(
     val nonCodeUsages = ArrayList<NonCodeUsageInfo>()
 
     val progressStep = 1.0/sortedUsages.size
-    val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
+    val progressIndicator = ProgressManager.getInstance().progressIndicator
     progressIndicator?.text = "Updating usages..."
     usageLoop@ for ((i, usage) in sortedUsages.withIndex()) {
         progressIndicator?.fraction = (i + 1) * progressStep

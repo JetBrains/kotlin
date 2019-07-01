@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.contracts.model.structure
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.model.ESEffect
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
 import org.jetbrains.kotlin.contracts.model.ESValue
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 
@@ -36,7 +34,7 @@ interface ESReceiver : ESValue {
 }
 
 
-abstract class AbstractESValue(override val type: KotlinType?) : ESValue {
+abstract class AbstractESValue(override val type: ESType?) : ESValue {
     override val effects: List<ESEffect> = listOf()
 }
 
@@ -57,7 +55,7 @@ open class ESReceiverValue(override val receiverValue: ReceiverValue) : Abstract
  *
  * [ESVariable] at points 2 and 3 must has consistent equality according to using them as keys
  */
-open class ESVariable(val descriptor: ValueDescriptor) : AbstractESValue(descriptor.type) {
+open class ESVariable(val descriptor: ValueDescriptor) : AbstractESValue(descriptor.type.toESType()) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T = visitor.visitVariable(this)
 
     override fun equals(other: Any?): Boolean {
@@ -82,7 +80,7 @@ open class ESVariable(val descriptor: ValueDescriptor) : AbstractESValue(descrip
  *
  * There is only few constants are supported (@see [ESConstant.Companion])
  */
-class ESConstant internal constructor(val constantReference: ConstantReference, override val type: KotlinType) : AbstractESValue(type) {
+class ESConstant internal constructor(val constantReference: ConstantReference, override val type: ESType) : AbstractESValue(type) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T = visitor.visitConstant(this)
 
     override fun equals(other: Any?): Boolean = other is ESConstant && constantReference == other.constantReference
@@ -95,12 +93,12 @@ class ESConstant internal constructor(val constantReference: ConstantReference, 
         constantReference == ConstantReference.NULL || constantReference == ConstantReference.NOT_NULL
 }
 
-class ESConstants internal constructor(builtIns: KotlinBuiltIns) {
-    val trueValue = ESConstant(BooleanConstantReference.TRUE, builtIns.booleanType)
-    val falseValue = ESConstant(BooleanConstantReference.FALSE, builtIns.booleanType)
-    val nullValue = ESConstant(ConstantReference.NULL, builtIns.nullableNothingType)
-    val notNullValue = ESConstant(ConstantReference.NOT_NULL, builtIns.anyType)
-    val wildcard = ESConstant(ConstantReference.WILDCARD, builtIns.nullableAnyType)
+object ESConstants {
+    val trueValue = ESConstant(BooleanConstantReference.TRUE, ESBooleanType)
+    val falseValue = ESConstant(BooleanConstantReference.FALSE, ESBooleanType)
+    val nullValue = ESConstant(ConstantReference.NULL, ESNullableNothingType)
+    val notNullValue = ESConstant(ConstantReference.NOT_NULL, ESAnyType)
+    val wildcard = ESConstant(ConstantReference.WILDCARD, ESNullableAnyType)
 
     fun booleanValue(value: Boolean) =
         if (value) trueValue else falseValue

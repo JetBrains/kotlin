@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers.utils
@@ -20,17 +20,18 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.oldFashionedDescription
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import java.util.*
@@ -43,12 +44,12 @@ object CheckerTestUtil {
     private const val IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE"
     private const val INDIVIDUAL_DIAGNOSTIC = """(\w+;)?(\w+:)?(\w+)(?:\(((?:".*?")(?:,\s*".*?")*)\))?"""
 
-    private val rangeStartOrEndPattern = Pattern.compile("(<!$INDIVIDUAL_DIAGNOSTIC(,\\s*$INDIVIDUAL_DIAGNOSTIC)*!>)|(<!>)")
+    internal val rangeStartOrEndPattern = Pattern.compile("(<!$INDIVIDUAL_DIAGNOSTIC(,\\s*$INDIVIDUAL_DIAGNOSTIC)*!>)|(<!>)")
     val individualDiagnosticPattern: Pattern = Pattern.compile(INDIVIDUAL_DIAGNOSTIC)
 
     fun getDiagnosticsIncludingSyntaxErrors(
         bindingContext: BindingContext,
-        implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
+        implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
         root: PsiElement,
         markDynamicCalls: Boolean,
         dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
@@ -70,10 +71,11 @@ object CheckerTestUtil {
             moduleDescriptor,
             diagnosedRanges
         )
-        val sortedBindings = implementingModulesBindings.sortedBy { it.first }
+
+        val sortedBindings = implementingModulesBindings.sortedBy { it.first.oldFashionedDescription }
 
         for ((platform, second) in sortedBindings) {
-            assert(platform is MultiTargetPlatform.Specific) { "Implementing module must have a specific platform: $platform" }
+            assert(!platform.isCommon()) { "Implementing module must have a specific platform: $platform" }
 
             result.addAll(
                 getDiagnosticsIncludingSyntaxErrors(
@@ -81,7 +83,7 @@ object CheckerTestUtil {
                     root,
                     markDynamicCalls,
                     dynamicCallDescriptors,
-                    (platform as MultiTargetPlatform.Specific).platform,
+                    platform.single().platformName,
                     withNewInference,
                     languageVersionSettings,
                     dataFlowValueFactory,
@@ -326,6 +328,7 @@ object CheckerTestUtil {
             return false
         if (expected.parameters == null)
             return true
+
         if (actual.parameters == null || expected.parameters.size != actual.parameters.size)
             return false
 
@@ -428,12 +431,12 @@ object CheckerTestUtil {
         psiFile: PsiFile,
         diagnostics: Collection<ActualDiagnostic>,
         diagnosticToExpectedDiagnostic: Map<AbstractTestDiagnostic, TextDiagnostic>,
-        getFileText: com.intellij.util.Function<PsiFile, String>,
+        getFileText: (PsiFile) -> String,
         uncheckedDiagnostics: Collection<PositionalTextDiagnostic>,
         withNewInferenceDirective: Boolean,
         renderDiagnosticMessages: Boolean
     ): StringBuffer {
-        val text = getFileText.`fun`(psiFile)
+        val text = getFileText(psiFile)
         val result = StringBuffer()
         val diagnosticsFiltered = diagnostics.filter { actualDiagnostic -> psiFile == actualDiagnostic.file }
         if (diagnosticsFiltered.isEmpty() && uncheckedDiagnostics.isEmpty()) {
@@ -512,33 +515,15 @@ object CheckerTestUtil {
 
                 for (diagnostic in diagnostics) {
                     val expectedDiagnostic = diagnosticToExpectedDiagnostic[diagnostic]
-                    if (expectedDiagnostic != null) {
-                        val actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
+                    val actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
+
+                    if (expectedDiagnostic != null || !hasExplicitDefinitionOnlyOption(diagnostic)) {
+                        val shouldRenderParameters =
+                            renderDiagnosticMessages || expectedDiagnostic?.parameters != null
+
                         diagnosticsAsText.add(
-                            if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic))
-                                expectedDiagnostic.asString() else actualTextDiagnostic.asString()
+                            actualTextDiagnostic.asString(withNewInferenceDirective, shouldRenderParameters)
                         )
-                    } else if (!hasExplicitDefinitionOnlyOption(diagnostic)) {
-                        val diagnosticText = StringBuilder()
-                        if (withNewInferenceDirective && diagnostic.inferenceCompatibility.abbreviation != null) {
-                            diagnosticText.append(diagnostic.inferenceCompatibility.abbreviation)
-                            diagnosticText.append(";")
-                        }
-                        if (diagnostic.platform != null) {
-                            diagnosticText.append(diagnostic.platform)
-                            diagnosticText.append(":")
-                        }
-                        diagnosticText.append(diagnostic.name)
-                        if (renderDiagnosticMessages) {
-                            val textDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic)
-                            if (textDiagnostic.parameters != null) {
-                                diagnosticText
-                                    .append("(")
-                                    .append(textDiagnostic.parameters.joinToString(", "))
-                                    .append(")")
-                            }
-                        }
-                        diagnosticsAsText.add(diagnosticText.toString())
                     }
                 }
             }
@@ -565,9 +550,9 @@ object CheckerTestUtil {
     ): List<AbstractDiagnosticDescriptor> {
         val validDiagnostics = diagnostics.filter { actualDiagnostic -> actualDiagnostic.diagnostic.isValid }
         val diagnosticDescriptors = groupDiagnosticsByTextRange(validDiagnostics, uncheckedDiagnostics)
-        diagnosticDescriptors.sortWith { d1: AbstractDiagnosticDescriptor, d2: AbstractDiagnosticDescriptor ->
+        diagnosticDescriptors.sortWith(Comparator { d1: AbstractDiagnosticDescriptor, d2: AbstractDiagnosticDescriptor ->
             if (d1.start != d2.start) d1.start - d2.start else d2.end - d1.end
-        }
+        })
         return diagnosticDescriptors
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
@@ -18,7 +18,6 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.project.BinaryModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getBinaryLibrariesModuleInfos
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object SourceNavigationHelper {
@@ -76,17 +75,17 @@ object SourceNavigationHelper {
 
     private fun BinaryModuleInfo.associatedCommonLibraries(): List<BinaryModuleInfo> {
         val platform = platform
-        if (platform == null || platform is CommonPlatform) return emptyList()
+        if (platform == null || platform.isCommon()) return emptyList()
 
         return dependencies().filterIsInstance<BinaryModuleInfo>().filter {
-            it.platform is CommonPlatform
+            it.platform.isCommon()
         }
     }
 
     private fun Collection<GlobalSearchScope>.union(): List<GlobalSearchScope> =
         if (this.isNotEmpty()) listOf(GlobalSearchScope.union(this.toTypedArray())) else emptyList()
 
-    private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { it.importDirectives.any { it.aliasName != null } }
+    private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { file -> file.importDirectives.any { it.aliasName != null } }
 
     private fun findSpecialProperty(memberName: Name, containingClass: KtClass): KtNamedDeclaration? {
         // property constructor parameters
@@ -191,8 +190,8 @@ object SourceNavigationHelper {
         index: StringStubIndexExtension<T>
     ): T? {
         val classFqName = entity.fqName ?: return null
-        return targetScopes(entity, navigationKind).firstNotNullResult {
-            index.get(classFqName.asString(), entity.project, it).firstOrNull()
+        return targetScopes(entity, navigationKind).firstNotNullResult { scope ->
+            index.get(classFqName.asString(), entity.project, scope).minBy { it.isExpectDeclaration() }
         }
     }
 
@@ -274,7 +273,15 @@ object SourceNavigationHelper {
             SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
                 val file = from.containingFile
                 if (file is KtFile && file.isCompiled) return from
-                if (!ProjectRootsUtil.isInContent(from, false, true, false, true, false)) return from
+                if (!ProjectRootsUtil.isInContent(
+                        from,
+                        includeProjectSource = false,
+                        includeLibrarySource = true,
+                        includeLibraryClasses = false,
+                        includeScriptDependencies = true,
+                        includeScriptsOutsideSourceRoots = false
+                    )
+                ) return from
                 if (KtPsiUtil.isLocal(from)) return from
             }
         }

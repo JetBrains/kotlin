@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
-import org.jetbrains.kotlin.contracts.model.ESComponents
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESExpression
 import org.jetbrains.kotlin.contracts.model.Functor
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.contracts.model.structure.ESVariable
 /**
  * This class manages conversion of [ContractDescription] to [Functor]
  */
-class ContractInterpretationDispatcher(val components: ESComponents) {
+class ContractInterpretationDispatcher {
     private val constantsInterpreter = ConstantValuesInterpreter()
     private val conditionInterpreter = ConditionInterpreter(this)
     private val conditionalEffectInterpreter = ConditionalEffectInterpreter(this)
@@ -51,7 +50,7 @@ class ContractInterpretationDispatcher(val components: ESComponents) {
             }
         }
 
-        return SubstitutingFunctor(components, resultingClauses, contractDescription.ownerFunction)
+        return SubstitutingFunctor(resultingClauses, contractDescription.ownerFunction)
     }
 
     internal fun interpretEffect(effectDeclaration: EffectDeclaration): ESEffect? {
@@ -60,7 +59,7 @@ class ContractInterpretationDispatcher(val components: ESComponents) {
     }
 
     internal fun interpretConstant(constantReference: ConstantReference): ESConstant? =
-        constantsInterpreter.interpretConstant(constantReference, components.constants)
+        constantsInterpreter.interpretConstant(constantReference)
 
     internal fun interpretCondition(booleanExpression: BooleanExpression): ESExpression? =
         booleanExpression.accept(conditionInterpreter, Unit)

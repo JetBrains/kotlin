@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions;
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -71,9 +72,10 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace
     ) {
-        KotlinType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
+        KotlinType type = getType(scope, expression, expectedType, dataFlowInfo, inferenceSession, trace);
 
         return type != null ? type : ErrorUtils.createErrorType("Type for " + expression.getText());
     }
@@ -84,10 +86,14 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace,
             boolean isStatement
     ) {
-        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, isStatement, expression, ContextDependency.INDEPENDENT);
+        return getTypeInfo(
+                scope, expression, expectedType, dataFlowInfo, inferenceSession,
+                trace, isStatement, expression, ContextDependency.INDEPENDENT
+        );
     }
 
     @NotNull
@@ -96,6 +102,7 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace,
             boolean isStatement,
             @NotNull KtExpression contextExpression,
@@ -103,7 +110,7 @@ public class ExpressionTypingServices {
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
+                expressionTypingComponents.dataFlowValueFactory, inferenceSession
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
@@ -122,9 +129,10 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace
     ) {
-        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, false).getType();
+        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, inferenceSession, trace, false).getType();
     }
 
     /////////////////////////////////////////////////////////
@@ -295,9 +303,8 @@ public class ExpressionTypingServices {
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
 
-            expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope, isFirstStatement);
-
             if (isFirstStatement) {
+                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope);
                 isFirstStatement = false;
             }
         }

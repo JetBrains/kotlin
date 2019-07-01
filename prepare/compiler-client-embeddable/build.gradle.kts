@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 description = "Kotlin compiler client embeddable"
 
 plugins {
@@ -7,18 +5,19 @@ plugins {
     kotlin("jvm")
 }
 
-val jarContents by configurations.creating
 val testRuntimeCompilerJar by configurations.creating
 val testStdlibJar by configurations.creating
 val testScriptRuntimeJar by configurations.creating
-val archives by configurations
 
 dependencies {
-    jarContents(project(":compiler:cli-common")) { isTransitive = false }
-    jarContents(project(":compiler:daemon-common")) { isTransitive = false }
-    jarContents(projectRuntimeJar(":kotlin-daemon-client"))
+    embedded(project(":compiler:cli-common")) { isTransitive = false }
+    embedded(project(":daemon-common")) { isTransitive = false }
+    embedded(project(":daemon-common-new")) { isTransitive = false }
+    embedded(projectRuntimeJar(":kotlin-daemon-client"))
+    
     testCompile(project(":compiler:cli-common"))
-    testCompile(project(":compiler:daemon-common"))
+    testCompile(project(":daemon-common"))
+    testCompile(project(":daemon-common-new"))
     testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
@@ -37,9 +36,7 @@ sourceSets {
 }
 
 projectTest {
-    dependsOn(":kotlin-compiler:dist",
-              ":kotlin-stdlib:dist",
-              ":kotlin-script-runtime:dist")
+    dependsOn(":dist")
     workingDir = File(rootDir, "libraries/tools/kotlin-compiler-client-embeddable-test/src")
     doFirst {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
@@ -49,13 +46,10 @@ projectTest {
     }
 }
 
-noDefaultJar()
+publish()
 
-runtimeJar(task<ShadowJar>("shadowJar")) {
-    from(jarContents)
-}
+runtimeJar()
 
 sourcesJar()
-javadocJar()
 
-publish()
+javadocJar()

@@ -4,8 +4,6 @@ import pack1.foo
 import pack1.u1
 import pack1.u2
 import pack1.u3
-import pack1.u4
-import pack1.u5
 import pack2.*
 
 fun f() {

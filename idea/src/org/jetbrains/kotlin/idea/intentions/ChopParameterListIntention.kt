@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
@@ -32,7 +31,7 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
     private val listClass: Class<TList>,
     private val elementClass: Class<TElement>,
     text: String
-) : SelfTargetingOffsetIndependentIntention<TList>(listClass, text), LowPriorityAction {
+) : SelfTargetingOffsetIndependentIntention<TList>(listClass, text) {
 
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
@@ -48,8 +47,7 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 
         val elements = element.elements()
         if (!hasLineBreakAfter(elements.last())) {
-            val rpar = element.allChildren.lastOrNull { it.node.elementType == KtTokens.RPAR }
-            rpar?.startOffset?.let { document.insertString(it, "\n") }
+            element.allChildren.lastOrNull { it.node.elementType == KtTokens.RPAR }?.startOffset?.let { document.insertString(it, "\n") }
         }
 
         for (e in elements.asReversed()) {
@@ -60,8 +58,8 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 
         val documentManager = PsiDocumentManager.getInstance(project)
         documentManager.commitDocument(document)
-        val psiFile = documentManager.getPsiFile(document)!!
-        val newList = PsiTreeUtil.getParentOfType(psiFile.findElementAt(startOffset)!!, listClass)!!
+        val psiFile = documentManager.getPsiFile(document) ?: return
+        val newList = PsiTreeUtil.getParentOfType(psiFile.findElementAt(startOffset) ?: return, listClass) ?: return
         CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, newList.textRange)
     }
 

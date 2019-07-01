@@ -20,8 +20,14 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
 class ChangeToStarProjectionFix(element: KtTypeElement) : KotlinQuickFixAction<KtTypeElement>(element) {
     override fun getFamilyName() = "Change to star projection"
@@ -36,14 +42,38 @@ class ChangeToStarProjectionFix(element: KtTypeElement) : KotlinQuickFixAction<K
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val typeReference = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpressionWithTypeRHS>()?.right
-                                ?: diagnostic.psiElement.getNonStrictParentOfType<KtTypeReference>()
+            val binaryExpr = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpressionWithTypeRHS>()
+            val typeReference = binaryExpr?.right ?: diagnostic.psiElement.getNonStrictParentOfType<KtTypeReference>()
             val typeElement = typeReference?.typeElement ?: return null
             if (typeElement is KtFunctionType) return null
+
+            if (binaryExpr?.operationReference?.isAsKeyword() == true) {
+                val parent = binaryExpr.getParentOfTypes(true, KtValueArgument::class.java, KtQualifiedExpression::class.java)
+                val type = when (parent) {
+                    is KtValueArgument -> {
+                        val callExpr = parent.getStrictParentOfType<KtCallExpression>()
+                        (callExpr?.resolveToCall()?.getArgumentMapping(parent) as? ArgumentMatch)?.valueParameter?.original?.type
+                    }
+                    is KtQualifiedExpression ->
+                        if (KtPsiUtil.safeDeparenthesize(parent.receiverExpression) == binaryExpr)
+                            parent.resolveToCall()?.resultingDescriptor?.extensionReceiverParameter?.value?.original?.type
+                        else
+                            null
+                    else ->
+                        null
+                }
+                if (type?.arguments?.any { !it.isStarProjection && !it.type.isTypeParameter() } == true) return null
+            }
+
             if (typeElement.typeArgumentsAsTypes.isNotEmpty()) {
                 return ChangeToStarProjectionFix(typeElement)
             }
             return null
+        }
+
+        private fun KtSimpleNameExpression.isAsKeyword(): Boolean {
+            val elementType = getReferencedNameElementType()
+            return elementType == KtTokens.AS_KEYWORD || elementType == KtTokens.AS_SAFE
         }
     }
 }

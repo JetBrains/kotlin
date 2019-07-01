@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jvm.compiler.javac;
@@ -4618,6 +4618,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
             }
 
+            @TestMetadata("JvmFieldInInterfaceCompanion.kt")
+            public void testJvmFieldInInterfaceCompanion() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/JvmFieldInInterfaceCompanion.kt");
+            }
+
             @TestMetadata("WithUnsignedTypeParameters.kt")
             public void testWithUnsignedTypeParameters() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/WithUnsignedTypeParameters.kt");
@@ -5045,6 +5050,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
         @TestMetadata("InheritParameterName.kt")
         public void testInheritParameterName() throws Exception {
             runTest("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/InheritParameterName.kt");
+        }
+
+        @TestMetadata("javaGetterImplementsKotlinProperty.kt")
+        public void testJavaGetterImplementsKotlinProperty() throws Exception {
+            runTest("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/javaGetterImplementsKotlinProperty.kt");
         }
 
         @TestMetadata("javaRefersToKotlin.kt")

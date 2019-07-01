@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -63,8 +62,10 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
 
     val dummyVar = psiFactory.createProperty("val a: Int").apply {
         typeReference!!.replace(
-                originalTypeElement.parent as? KtTypeReference ?:
-                if (originalTypeElement is KtTypeElement) psiFactory.createType(originalTypeElement) else psiFactory.createType(originalTypeElement.text))
+            originalTypeElement.parent as? KtTypeReference ?: if (originalTypeElement is KtTypeElement) psiFactory.createType(
+                originalTypeElement
+            ) else psiFactory.createType(originalTypeElement.text)
+        )
     }
     val newTypeReference = dummyVar.typeReference!!
     val newReferences = newTypeReference.collectDescendantsOfType<KtTypeReference> { it.resolveInfo != null }
@@ -86,12 +87,11 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
         }
 
         val equivalenceRepresentative = groupedReferencesToExtract
-                .keySet()
-                .firstOrNull { unifier.unify(it.reference, resolveInfo.reference).matched }
+            .keySet()
+            .firstOrNull { unifier.unify(it.reference, resolveInfo.reference).matched }
         if (equivalenceRepresentative != null) {
             groupedReferencesToExtract.putValue(equivalenceRepresentative, resolveInfo)
-        }
-        else {
+        } else {
             groupedReferencesToExtract.putValue(resolveInfo, resolveInfo)
         }
 
@@ -109,7 +109,7 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
     val typeParameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(brokenReferences.size, typeParameterNameValidator)
     val typeParameters = (typeParameterNames zip brokenReferences).map { TypeParameter(it.first, groupedReferencesToExtract[it.second]) }
 
-    if (typeParameters.any { it.typeReferenceInfos.any { it.reference.typeElement == originalTypeElement } }) {
+    if (typeParameters.any { it.typeReferenceInfos.any { info -> info.reference.typeElement == originalTypeElement } }) {
         return IntroduceTypeAliasAnalysisResult.Error("Type alias cannot refer to types which aren't accessible in the scope where it's defined")
     }
 
@@ -122,13 +122,10 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
     return IntroduceTypeAliasAnalysisResult.Success(descriptor.copy(name = initialName))
 }
 
-fun IntroduceTypeAliasData.getApplicableVisibilities(): List<KtModifierKeywordToken>{
-    val parent = targetSibling.parent
-    return when (parent) {
-        is KtClassBody -> listOf(PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD)
-        is KtFile -> listOf(PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
-        else -> emptyList()
-    }
+fun IntroduceTypeAliasData.getApplicableVisibilities(): List<KtModifierKeywordToken> = when (targetSibling.parent) {
+    is KtClassBody -> listOf(PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD)
+    is KtFile -> listOf(PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
+    else -> emptyList()
 }
 
 fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithConflicts {
@@ -188,9 +185,11 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
                 val typeArgumentList = callExpression.typeArgumentList
                 if (arguments.isNotEmpty()) {
                     val newTypeArgumentList = psiFactory.createTypeArguments(typeArgumentsText)
-                    typeArgumentList?.replace(newTypeArgumentList) ?: callExpression.addAfter(newTypeArgumentList, callExpression.calleeExpression)
-                }
-                else {
+                    typeArgumentList?.replace(newTypeArgumentList) ?: callExpression.addAfter(
+                        newTypeArgumentList,
+                        callExpression.calleeExpression
+                    )
+                } else {
                     typeArgumentList?.delete()
                 }
                 callExpression.calleeExpression?.replace(psiFactory.createExpression(aliasName))
@@ -217,39 +216,38 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
             if (callElement != null) {
                 occurrence = callElement
                 arguments = callElement.typeArguments.mapNotNull { it.typeReference?.typeElement }
-            }
-            else {
+            } else {
                 val userType = element.getParentOfTypeAndBranch<KtUserType> { referenceExpression }
                 if (userType != null) {
                     occurrence = userType
                     arguments = userType.typeArgumentsAsTypes.mapNotNull { it.typeElement }
-                }
-                else continue
+                } else continue
             }
             if (arguments.size != typeAliasDescriptor.declaredTypeParameters.size) continue
             if (TypeUtils.isNullableType(typeAliasDescriptor.underlyingType)
                 && occurrence is KtUserType
-                && occurrence.parent !is KtNullableType) continue
+                && occurrence.parent !is KtNullableType
+            ) continue
             rangesWithReplacers += occurrence.toRange() to { replaceOccurrence(occurrence, arguments) }
         }
     }
     typeAlias
-            .getTypeReference()
-            ?.typeElement
-            .toRange()
-            .match(typeAlias.parent, unifier)
-            .asSequence()
-            .filter { !(it.range.getTextRange().intersects(aliasRange)) }
-            .mapNotNullTo(rangesWithReplacers) { match ->
-                val occurrence = match.range.elements.singleOrNull() as? KtTypeElement ?: return@mapNotNullTo null
-                val arguments = unifierParameters.mapNotNull { (match.substitution[it] as? KtTypeReference)?.typeElement }
-                if (arguments.size != unifierParameters.size) return@mapNotNullTo null
-                match.range to { replaceOccurrence(occurrence, arguments) }
-            }
+        .getTypeReference()
+        ?.typeElement
+        .toRange()
+        .match(typeAlias.parent, unifier)
+        .asSequence()
+        .filter { !(it.range.getTextRange().intersects(aliasRange)) }
+        .mapNotNullTo(rangesWithReplacers) { match ->
+            val occurrence = match.range.elements.singleOrNull() as? KtTypeElement ?: return@mapNotNullTo null
+            val arguments = unifierParameters.mapNotNull { (match.substitution[it] as? KtTypeReference)?.typeElement }
+            if (arguments.size != unifierParameters.size) return@mapNotNullTo null
+            match.range to { replaceOccurrence(occurrence, arguments) }
+        }
     return rangesWithReplacers.toMap()
 }
 
-private var KtTypeReference.typeParameterInfo : TypeParameter? by CopyablePsiUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
+private var KtTypeReference.typeParameterInfo: TypeParameter? by CopyablePsiUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
 
 fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false): KtTypeAlias {
     val originalElement = originalData.originalTypeElement
@@ -263,11 +261,10 @@ fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false)
     val typeParameterNames = typeParameters.map { it.name }
     val typeAlias = if (originalElement is KtTypeElement) {
         psiFactory.createTypeAlias(name, typeParameterNames, originalElement)
-    }
-    else {
+    } else {
         psiFactory.createTypeAlias(name, typeParameterNames, originalElement.text)
     }
-    if (visibility != null && visibility != KtTokens.DEFAULT_VISIBILITY_KEYWORD) {
+    if (visibility != null && visibility != DEFAULT_VISIBILITY_KEYWORD) {
         typeAlias.addModifier(visibility)
     }
 
@@ -279,8 +276,7 @@ fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false)
     fun replaceUsage() {
         val aliasInstanceText = if (typeParameters.isNotEmpty()) {
             "$name<${typeParameters.joinToString { it.typeReferenceInfos.first().reference.text }}>"
-        }
-        else {
+        } else {
             name
         }
         when (originalElement) {
@@ -300,8 +296,7 @@ fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false)
     return if (previewOnly) {
         introduceTypeParameters()
         typeAlias
-    }
-    else {
+    } else {
         replaceUsage()
         introduceTypeParameters()
         insertDeclaration(typeAlias, originalData.targetSibling)

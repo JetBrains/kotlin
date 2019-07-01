@@ -1,0 +1,4 @@
+// "Add 'return' to last expression" "true"
+fun test(): Boolean {
+    return true
+}

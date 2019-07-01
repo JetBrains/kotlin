@@ -44,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KtLightClassMarker;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.load.java.JavaClassFinder;
-import org.jetbrains.kotlin.load.java.JavaClassFinderImpl;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
 import org.jetbrains.kotlin.name.ClassId;
@@ -126,30 +125,7 @@ public class KotlinJavaPsiFacade {
             }
             else {
                 PsiClass aClass = finder.findClass(qualifiedName, scope);
-                if (aClass != null) {
-                    if (scope instanceof JavaClassFinderImpl.FilterOutKotlinSourceFilesScope) {
-                        GlobalSearchScope baseScope = ((JavaClassFinderImpl.FilterOutKotlinSourceFilesScope) scope).getBase();
-                        boolean isSourcesScope = baseScope instanceof GlobalSearchScopeWithModuleSources;
-
-                        if (!isSourcesScope) {
-                            Object originalFinder = (finder instanceof KotlinPsiElementFinderWrapperImpl)
-                                                    ? ((KotlinPsiElementFinderWrapperImpl) finder).getOriginal()
-                                                    : finder;
-
-                            // Temporary fix for #KT-12402
-                            boolean isAndroidDataBindingClassWriter = originalFinder.getClass().getName()
-                                    .equals("com.android.tools.idea.databinding.DataBindingClassFinder");
-                            boolean isAndroidDataBindingComponentClassWriter = originalFinder.getClass().getName()
-                                    .equals("com.android.tools.idea.databinding.DataBindingComponentClassFinder");
-
-                            if (isAndroidDataBindingClassWriter || isAndroidDataBindingComponentClassWriter) {
-                                continue;
-                            }
-                        }
-                    }
-
-                    return createJavaClass(classId, aClass);
-                }
+                if (aClass != null) return createJavaClass(classId, aClass);
             }
         }
 
@@ -339,10 +315,6 @@ public class KotlinJavaPsiFacade {
 
         private KotlinPsiElementFinderWrapperImpl(@NotNull PsiElementFinder finder) {
             this.finder = finder;
-        }
-
-        public PsiElementFinder getOriginal() {
-            return finder;
         }
 
         @Override

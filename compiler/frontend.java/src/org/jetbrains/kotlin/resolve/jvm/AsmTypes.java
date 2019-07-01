@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.jvm;
@@ -38,6 +38,8 @@ public class AsmTypes {
 
     public static final Type RESULT_FAILURE = Type.getObjectType("kotlin/Result$Failure");
 
+    public static final Type FUNCTION1 = Type.getObjectType("kotlin/jvm/functions/Function1");
+
     public static final Type[] PROPERTY_REFERENCE_IMPL = {
             Type.getObjectType("kotlin/jvm/internal/PropertyReference0Impl"),
             Type.getObjectType("kotlin/jvm/internal/PropertyReference1Impl"),
@@ -62,6 +64,10 @@ public class AsmTypes {
     public static final Type K_MUTABLE_PROPERTY0_TYPE = reflect("KMutableProperty0");
     public static final Type K_MUTABLE_PROPERTY1_TYPE = reflect("KMutableProperty1");
     public static final Type K_MUTABLE_PROPERTY2_TYPE = reflect("KMutableProperty2");
+
+    public static final Type K_TYPE = reflect("KType");
+    public static final Type K_TYPE_PROJECTION = reflect("KTypeProjection");
+    public static final Type K_TYPE_PROJECTION_COMPANION = reflect("KTypeProjection$Companion");
 
     public static final Type SUSPEND_FUNCTION_TYPE = Type.getObjectType("kotlin/coroutines/jvm/internal/SuspendFunction");
 

@@ -33,7 +33,7 @@ class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
             element is XmlFile && reference.isReferenceToXmlFile(element)
 
     private fun isLayoutPackageIdentifier(reference: KtSimpleNameReference): Boolean {
-        val probablyVariant = reference.element?.parent as? KtDotQualifiedExpression ?: return false
+        val probablyVariant = reference.element.parent as? KtDotQualifiedExpression ?: return false
         val probablyKAS = probablyVariant.receiverExpression as? KtDotQualifiedExpression ?: return false
         return probablyKAS.receiverExpression.text == AndroidConst.SYNTHETIC_PACKAGE
     }
@@ -51,6 +51,7 @@ class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
         return null
     }
 
+    @Suppress("UNNECESSARY_SAFE_CALL", "USELESS_ELVIS") // BUNCH: 182
     private fun isIdDeclaration(declaration: XmlAttributeValue) = declaration.value?.startsWith("@+id/") ?: false
 
     private fun KtSimpleNameReference.isReferenceToXmlFile(xmlFile: XmlFile): Boolean {

@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.requireOrDescribe
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import java.util.*
 
 open class OverloadingConflictResolver<C : Any>(
@@ -38,7 +40,8 @@ open class OverloadingConflictResolver<C : Any>(
     private val createEmptyConstraintSystem: () -> SimpleConstraintSystem,
     private val createFlatSignature: (C) -> FlatSignature<C>,
     private val getVariableCandidates: (C) -> C?, // for variable WithInvoke
-    private val isFromSources: (CallableDescriptor) -> Boolean
+    private val isFromSources: (CallableDescriptor) -> Boolean,
+    private val hasSAMConversion: ((C) -> Boolean)?
 ) {
 
     private val resolvedCallHashingStrategy = object : TObjectHashingStrategy<C> {
@@ -153,10 +156,17 @@ open class OverloadingConflictResolver<C : Any>(
 
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
                 findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)
-                        ?: findMaximallySpecificCall(
-                            candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
+                    ?: hasSAMConversion?.let { hasConversion ->
+                        findMaximallySpecificCall(
+                            candidates.filterNotTo(mutableSetOf()) { hasConversion(it) },
                             discriminateGenerics, isDebuggerContext
                         )
+                    }
+
+                    ?: findMaximallySpecificCall(
+                        candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
+                        discriminateGenerics, isDebuggerContext
+                    )
         }
 
     // null means ambiguity between variables
@@ -208,7 +218,7 @@ open class OverloadingConflictResolver<C : Any>(
             }
         }
         if (result == null) return null
-        if (any { it != result && isNotWorse(it, result!!) }) {
+        if (any { it != result && isNotWorse(it, result) }) {
             return null
         }
         return result
@@ -276,7 +286,10 @@ open class OverloadingConflictResolver<C : Any>(
     }
 
     private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
-        override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
+            requireOrDescribe(specific is KotlinType, specific)
+            requireOrDescribe(general is KotlinType, general)
+
             val _double = builtIns.doubleType
             val _float = builtIns.floatType
 
@@ -395,7 +408,8 @@ open class OverloadingConflictResolver<C : Any>(
                 gSignature,
                 SpecificityComparisonWithNumerics,
                 specificityComparator
-            )) {
+            )
+        ) {
             return false
         }
 

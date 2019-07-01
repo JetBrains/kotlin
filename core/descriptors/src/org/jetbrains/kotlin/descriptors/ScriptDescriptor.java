@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -32,4 +33,7 @@ public interface ScriptDescriptor extends ClassDescriptor {
 
     @NotNull
     List<PropertyDescriptor> getScriptProvidedProperties();
+
+    @Nullable
+    PropertyDescriptor getResultValue();
 }

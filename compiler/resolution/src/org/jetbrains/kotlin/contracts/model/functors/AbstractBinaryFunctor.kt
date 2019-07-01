@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.Computation
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.ESExpression
+import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
+import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
-abstract class AbstractBinaryFunctor(constants: ESConstants) : AbstractReducingFunctor(constants) {
-    override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
+abstract class AbstractBinaryFunctor : AbstractFunctor() {
+    override fun doInvocation(arguments: List<Computation>, reducer: Reducer): List<ESEffect> {
         assert(arguments.size == 2) { "Wrong size of arguments list for Binary functor: expected 2, got ${arguments.size}" }
         return invokeWithArguments(arguments[0], arguments[1])
     }
@@ -49,7 +47,7 @@ abstract class AbstractBinaryFunctor(constants: ESConstants) : AbstractReducingF
         if (list.isEmpty())
             null
         else
-            list.map { it.condition }.reduce { acc, condition -> ESOr(constants, acc, condition) }
+            list.map { it.condition }.reduce { acc, condition -> ESOr(acc, condition) }
 
     protected abstract fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect>
 

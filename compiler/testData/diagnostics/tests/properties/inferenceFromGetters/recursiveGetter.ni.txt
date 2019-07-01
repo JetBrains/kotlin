@@ -10,8 +10,8 @@ public final class A {
     public final val b: [ERROR : Error function type]
     public final val u: [ERROR : Error function type]
     public final val y: [ERROR : Error function type]
-    public final val z1: kotlin.Nothing
-    public final val z2: kotlin.collections.List<kotlin.Nothing>
+    public final val z1: [ERROR : Error function type]
+    public final val z2: [ERROR : Error function type]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

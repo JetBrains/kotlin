@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.utils.kapt
 
+import org.jetbrains.kotlin.utils.getSafe
 import java.lang.ref.WeakReference
-import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
 import javax.annotation.processing.*
@@ -138,20 +138,5 @@ private fun ClassLoader.loadedClasses(): Vector<Class<*>> {
         return classesField.getSafe(this) as? Vector<Class<*>> ?: Vector()
     } catch (e: Throwable) {
         return Vector()
-    }
-}
-
-private fun Field.getSafe(obj: Any?): Any? {
-    return try {
-        val oldIsAccessible = isAccessible
-
-        try {
-            isAccessible = true
-            get(obj)
-        } finally {
-            isAccessible = oldIsAccessible
-        }
-    } catch (e: Throwable) {
-        null
     }
 }

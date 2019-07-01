@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
@@ -19,7 +19,10 @@ abstract class AbstractUltraLightClassLoadingTest : KotlinLightCodeInsightFixtur
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun doTest(testDataPath: String) {
-        val file = myFixture.addFileToProject(testDataPath, File(testDataPath).readText()) as KtFile
+        val sourceText = File(testDataPath).readText()
+        val file = myFixture.addFileToProject(testDataPath, sourceText) as KtFile
+
+        UltraLightChecker.checkForReleaseCoroutine(sourceText, module)
 
         val expectedTextFile = File(testDataPath.replaceFirst("\\.kt\$".toRegex(), ".java"))
         if (expectedTextFile.exists()) {

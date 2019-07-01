@@ -25,10 +25,8 @@ import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.Functor
 import org.jetbrains.kotlin.contracts.model.functors.*
-import org.jetbrains.kotlin.contracts.model.structure.CallComputation
-import org.jetbrains.kotlin.contracts.model.structure.ESConstants
-import org.jetbrains.kotlin.contracts.model.structure.UNKNOWN_COMPUTATION
-import org.jetbrains.kotlin.contracts.model.structure.isReturns
+import org.jetbrains.kotlin.contracts.model.structure.*
+import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -58,10 +56,10 @@ class EffectsExtractingVisitor(
     private val trace: BindingTrace,
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
-    private val constants: ESConstants,
     private val languageVersionSettings: LanguageVersionSettings
 ) : KtVisitor<Computation, Unit>() {
     private val builtIns: KotlinBuiltIns get() = moduleDescriptor.builtIns
+    private val reducer: Reducer = Reducer(builtIns)
 
     fun extractOrGetCached(element: KtElement): Computation {
         trace[BindingContext.EXPRESSION_EFFECTS, element]?.let { return it }
@@ -77,17 +75,20 @@ class EffectsExtractingVisitor(
         val descriptor = resolvedCall.resultingDescriptor
         return when {
             descriptor.isEqualsDescriptor() -> CallComputation(
-                builtIns.booleanType,
-                EqualsFunctor(constants, false).invokeWithArguments(arguments)
+                ESBooleanType,
+                EqualsFunctor(false).invokeWithArguments(arguments, reducer)
             )
             descriptor is ValueDescriptor -> ESVariableWithDataFlowValue(
                 descriptor,
                 (element as KtExpression).createDataFlowValue() ?: return UNKNOWN_COMPUTATION
             )
-            descriptor is FunctionDescriptor -> CallComputation(
-                descriptor.returnType,
-                descriptor.getFunctor()?.invokeWithArguments(arguments) ?: emptyList()
-            )
+            descriptor is FunctionDescriptor -> {
+                val esType = descriptor.returnType?.toESType()
+                CallComputation(
+                    esType,
+                    descriptor.getFunctor()?.invokeWithArguments(arguments, reducer) ?: emptyList()
+                )
+            }
             else -> UNKNOWN_COMPUTATION
         }
     }
@@ -111,18 +112,18 @@ class EffectsExtractingVisitor(
         val value: Any? = compileTimeConstant.getValue(type)
 
         return when (value) {
-            is Boolean -> constants.booleanValue(value)
-            null -> constants.nullValue
+            is Boolean -> ESConstants.booleanValue(value)
+            null -> ESConstants.nullValue
             else -> UNKNOWN_COMPUTATION
         }
     }
 
     override fun visitIsExpression(expression: KtIsExpression, data: Unit): Computation {
-        val rightType: KotlinType = trace[BindingContext.TYPE, expression.typeReference] ?: return UNKNOWN_COMPUTATION
+        val rightType = trace[BindingContext.TYPE, expression.typeReference]?.toESType() ?: return UNKNOWN_COMPUTATION
         val arg = extractOrGetCached(expression.leftHandSide)
         return CallComputation(
-            builtIns.booleanType,
-            IsFunctor(constants, rightType, expression.isNegated).invokeWithArguments(listOf(arg))
+            ESBooleanType,
+            IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg), reducer)
         )
     }
 
@@ -134,7 +135,7 @@ class EffectsExtractingVisitor(
         // null bypassing function's contract, so we have to filter them out
 
         fun ESEffect.containsReturnsNull(): Boolean =
-            isReturns { value == constants.nullValue } || this is ConditionalEffect && this.simpleEffect.containsReturnsNull()
+            isReturns { value == ESConstants.nullValue } || this is ConditionalEffect && this.simpleEffect.containsReturnsNull()
 
         val effectsWithoutReturnsNull = computation.effects.filter { !it.containsReturnsNull() }
         return CallComputation(computation.type, effectsWithoutReturnsNull)
@@ -147,10 +148,10 @@ class EffectsExtractingVisitor(
         val args = listOf(left, right)
 
         return when (expression.operationToken) {
-            KtTokens.EXCLEQ -> CallComputation(builtIns.booleanType, EqualsFunctor(constants, true).invokeWithArguments(args))
-            KtTokens.EQEQ -> CallComputation(builtIns.booleanType, EqualsFunctor(constants, false).invokeWithArguments(args))
-            KtTokens.ANDAND -> CallComputation(builtIns.booleanType, AndFunctor(constants).invokeWithArguments(args))
-            KtTokens.OROR -> CallComputation(builtIns.booleanType, OrFunctor(constants).invokeWithArguments(args))
+            KtTokens.EXCLEQ -> CallComputation(ESBooleanType, EqualsFunctor(true).invokeWithArguments(args, reducer))
+            KtTokens.EQEQ -> CallComputation(ESBooleanType, EqualsFunctor(false).invokeWithArguments(args, reducer))
+            KtTokens.ANDAND -> CallComputation(ESBooleanType, AndFunctor().invokeWithArguments(args, reducer))
+            KtTokens.OROR -> CallComputation(ESBooleanType, OrFunctor().invokeWithArguments(args, reducer))
             else -> UNKNOWN_COMPUTATION
         }
     }
@@ -158,7 +159,7 @@ class EffectsExtractingVisitor(
     override fun visitUnaryExpression(expression: KtUnaryExpression, data: Unit): Computation {
         val arg = extractOrGetCached(expression.baseExpression ?: return UNKNOWN_COMPUTATION)
         return when (expression.operationToken) {
-            KtTokens.EXCL -> CallComputation(builtIns.booleanType, NotFunctor(constants).invokeWithArguments(arg))
+            KtTokens.EXCL -> CallComputation(ESBooleanType, NotFunctor().invokeWithArguments(arg))
             else -> UNKNOWN_COMPUTATION
         }
     }

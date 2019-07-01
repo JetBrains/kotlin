@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions.impl
@@ -15,7 +15,7 @@ class FirConstExpressionImpl<T>(
     psi: PsiElement?,
     override val kind: IrConstKind<T>,
     override val value: T
-) : FirAbstractExpression(session, psi), FirConstExpression<T>
+) : FirConstExpression<T>(session, psi)
 
 fun <T> FirConstExpressionImpl(session: FirSession, psi: PsiElement?, kind: IrConstKind<T>, value: T?, errorReason: String) =
     value?.let { FirConstExpressionImpl(session, psi, kind, it) } ?: FirErrorExpressionImpl(session, psi, errorReason)

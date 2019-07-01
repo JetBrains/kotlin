@@ -1,14 +1,20 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrMemberAccessExpression : IrExpression {
@@ -60,6 +66,9 @@ val CallableDescriptor.typeParametersCount: Int
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
     getTypeArgument(typeParameterDescriptor)?.toKotlinType() ?: typeParameterDescriptor.defaultType
 
+fun IrMemberAccessExpression.getTypeArgumentOrDefault(irTypeParameter: IrTypeParameter) =
+    getTypeArgument(irTypeParameter.index) ?: irTypeParameter.defaultType
+
 interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
@@ -97,3 +106,12 @@ inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform:
         }
     }
 
+fun IrMemberAccessExpression.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
+    when (parameter) {
+        callee.dispatchReceiverParameter -> dispatchReceiver = argument
+        callee.extensionReceiverParameter -> extensionReceiver = argument
+        else -> putValueArgument(parameter.index, argument)
+    }
+
+fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression) =
+    putArgument(symbol.owner, parameter, argument)

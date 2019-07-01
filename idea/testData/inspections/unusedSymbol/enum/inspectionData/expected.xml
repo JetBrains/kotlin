@@ -16,4 +16,52 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
         <description>Class 'E4' is never used</description>
     </problem>
+    <problem>
+        <file>usedViaMemberImport.kt</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/usedViaMemberImport.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
+        <description>Class 'BBB1' is never used</description>
+    </problem>
+    <problem>
+        <file>usedViaMemberImport.kt</file>
+        <line>13</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/usedViaMemberImport.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
+        <description>Class 'BBB2' is never used</description>
+    </problem>
+    <problem>
+        <file>usedViaMemberImport.kt</file>
+        <line>17</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/usedViaMemberImport.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
+        <description>Class 'BBB3' is never used</description>
+    </problem>
+    <problem>
+        <file>usedViaMemberImport.kt</file>
+        <line>17</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/usedViaMemberImport.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
+        <description>Class 'AAA3' is never used</description>
+    </problem>
+    <problem>
+        <file>usedViaMemberImport.kt</file>
+        <line>21</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/usedViaMemberImport.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
+        <description>Class 'BBB4' is never used</description>
+    </problem>
+    <problem>
+        <file>usedViaMemberImport.kt</file>
+        <line>21</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/usedViaMemberImport.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
+        <description>Class 'AAA4' is never used</description>
+    </problem>
 </problems>

@@ -1,0 +1,4 @@
+public abstract class AbstractMap : R|kotlin/Any|, R|kotlin/collections/MutableMap<kotlin/String, kotlin/String>| {
+    public constructor(): R|AbstractMap|
+
+}

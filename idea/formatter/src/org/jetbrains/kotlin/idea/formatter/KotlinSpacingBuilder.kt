@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
+import kotlin.math.max
 
 fun CommonCodeStyleSettings.createSpaceBeforeRBrace(numSpacesOtherwise: Int, textRange: TextRange): Spacing? {
     return Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, textRange,
@@ -107,7 +108,7 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
                 val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
                 spacingBuilderUtil.createLineFeedDependentSpacing(numSpacesOtherwise,
                                                                   numSpacesOtherwise,
-                                                                  if (leftEndsWithComment) Math.max(1, numberOfLineFeedsOtherwise) else numberOfLineFeedsOtherwise,
+                                                                  if (leftEndsWithComment) max(1, numberOfLineFeedsOtherwise) else numberOfLineFeedsOtherwise,
                                                                   commonCodeStyleSettings.KEEP_LINE_BREAKS,
                                                                   commonCodeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
                                                                   left.textRange,

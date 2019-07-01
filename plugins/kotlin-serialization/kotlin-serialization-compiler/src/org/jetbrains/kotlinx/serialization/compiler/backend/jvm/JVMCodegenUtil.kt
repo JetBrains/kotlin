@@ -102,15 +102,15 @@ fun InstructionAdapter.genKOutputMethodCall(
     val sti = generator.getSerialTypeInfo(property, propertyType)
     val useSerializer = if (fromClassStartVar == null) stackValueSerializerInstanceFromSerializer(classCodegen, sti, generator)
     else stackValueSerializerInstanceFromClass(classCodegen, sti, fromClassStartVar, generator)
-    if (!sti.unit) ImplementationBodyCodegen.genPropertyOnStack(
+    val actualType = if (!sti.unit) ImplementationBodyCodegen.genPropertyOnStack(
         this,
         expressionCodegen.context,
         property.descriptor,
         propertyOwnerType,
         ownerVar,
         classCodegen.state
-    )
-    StackValue.coerce(propertyType, sti.type, this)
+    ) else null
+    actualType?.type?.let { type -> StackValue.coerce(type, sti.type, this) }
     invokeinterface(
         kOutputType.internalName,
         CallingConventions.encode + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
@@ -191,7 +191,6 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithou
             ?: if (!property.type.isTypeParameter()) serializerCodegen.findTypeSerializerOrContext(
                 property.module,
                 property.type,
-                property.descriptor.annotations,
                 property.descriptor.findPsi()
             ) else null
     return serializerCodegen.stackValueSerializerInstance(
@@ -263,23 +262,9 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
         dup()
         // instantiate all arg serializers on stack
         val signature = StringBuilder("(")
-        when (serializer.classId) {
-            enumSerializerId, contextSerializerId -> {
-                // a special way to instantiate enum -- need a enum KClass reference
-                // GENERIC_ARGUMENT forces boxing in order to obtain KClass
-                aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
-                AsmUtil.wrapJavaClassIntoKClass(this)
-                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
-            }
-            referenceArraySerializerId -> {
-                // a special way to instantiate reference array serializer -- need an element KClass reference
-                aconst(codegen.typeMapper.mapType(kType.arguments[0].type, null, TypeMappingMode.GENERIC_ARGUMENT))
-                AsmUtil.wrapJavaClassIntoKClass(this)
-                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
-            }
-        }
-        // all serializers get arguments with serializers of their generic types
-        argSerializers.forEach { (argType, argSerializer) ->
+
+        fun instantiate(typeArgument: Pair<KotlinType, ClassDescriptor?>) {
+            val (argType, argSerializer) = typeArgument
             assert(
                 stackValueSerializerInstance(
                     codegen,
@@ -294,6 +279,26 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
             signature.append(kSerializerType.descriptor)
+        }
+
+        when (serializer.classId) {
+            enumSerializerId, contextSerializerId, polymorphicSerializerId -> {
+                // a special way to instantiate enum -- need a enum KClass reference
+                // GENERIC_ARGUMENT forces boxing in order to obtain KClass
+                aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
+                AsmUtil.wrapJavaClassIntoKClass(this)
+                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
+            }
+            referenceArraySerializerId -> {
+                // a special way to instantiate reference array serializer -- need an element KClass reference
+                aconst(codegen.typeMapper.mapType(kType.arguments[0].type, null, TypeMappingMode.GENERIC_ARGUMENT))
+                AsmUtil.wrapJavaClassIntoKClass(this)
+                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
+                // Reference array serializer still needs serializer for its argument type
+                instantiate(argSerializers[0])
+            }
+            // all serializers get arguments with serializers of their generic types
+            else -> argSerializers.forEach(::instantiate)
         }
         signature.append(")V")
         // invoke constructor
@@ -376,7 +381,6 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                 ?: findTypeSerializerOrContext(
                     property.module,
                     property.type,
-                    property.descriptor.annotations,
                     property.descriptor.findPsi()
                 )
             return JVMSerialTypeInfo(

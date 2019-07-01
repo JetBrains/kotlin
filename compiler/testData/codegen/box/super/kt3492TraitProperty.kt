@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface A {
     open val foo: String
       get() = "OK"

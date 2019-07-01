@@ -18,11 +18,18 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -42,6 +49,13 @@ abstract class LightClassGenerationSupport {
     abstract fun analyzeWithContent(element: KtClassOrObject): BindingContext
 
     abstract fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass?
+
+    abstract fun createUltraLightClassForFacade(
+        manager: PsiManager,
+        facadeClassFqName: FqName,
+        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
+        files: Collection<KtFile>
+    ): KtUltraLightClassForFacade?
 
     companion object {
         @JvmStatic

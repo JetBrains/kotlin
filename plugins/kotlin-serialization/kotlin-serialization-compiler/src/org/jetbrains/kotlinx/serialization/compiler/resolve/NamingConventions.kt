@@ -22,6 +22,7 @@ object SerializationAnnotations {
     internal val serialInfoFqName = FqName("kotlinx.serialization.SerialInfo")
 
     internal val contextualFqName = FqName("kotlinx.serialization.ContextualSerialization")
+    internal val polymorphicFqName = FqName("kotlinx.serialization.Polymorphic")
     internal val additionalSerializersFqName = FqName("kotlinx.serialization.UseSerializers")
 }
 

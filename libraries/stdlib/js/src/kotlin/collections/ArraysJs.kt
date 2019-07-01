@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
@@ -14,7 +14,7 @@ internal fun <T> Array<out T>.contentDeepHashCodeImpl(): Int {
     for (element in this) {
         val elementHash = when {
             element == null -> 0
-            js("Kotlin").isArrayish(element) -> (element.unsafeCast<Array<*>>()).contentDeepHashCodeImpl()
+            isArrayish(element) -> (element.unsafeCast<Array<*>>()).contentDeepHashCodeImpl()
 
             element is UByteArray   -> element.contentHashCode()
             element is UShortArray  -> element.contentHashCode()

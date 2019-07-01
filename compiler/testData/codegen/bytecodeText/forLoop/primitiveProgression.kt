@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun f() {
     for (i in 0..5 step 2) {
     }

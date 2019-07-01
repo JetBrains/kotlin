@@ -1,12 +1,10 @@
 $TESTDATA_DIR$/sourceMapRelativeRoot/lib/src/lib.kt
--no-stdlib
 -source-map
 -meta-info
 -output
 $TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/lib.js
 ---
 $TESTDATA_DIR$/sourceMapRelativeRoot/main/src/main.kt
--no-stdlib
 -libraries
 $TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/
 -source-map

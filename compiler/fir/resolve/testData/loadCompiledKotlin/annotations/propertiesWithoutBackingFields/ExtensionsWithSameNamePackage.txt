@@ -1,0 +1,14 @@
+public final annotation class DoubleAnno : R|kotlin/Annotation| {
+    public constructor(): R|test/DoubleAnno|
+
+}
+
+public final annotation class IntAnno : R|kotlin/Annotation| {
+    public constructor(): R|test/IntAnno|
+
+}
+
+public final annotation class StringAnno : R|kotlin/Annotation| {
+    public constructor(): R|test/StringAnno|
+
+}

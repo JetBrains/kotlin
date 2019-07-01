@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: test.kt
 
 fun test1(): String {

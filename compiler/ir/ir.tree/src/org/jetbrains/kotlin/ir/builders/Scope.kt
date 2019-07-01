@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -26,11 +27,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -68,6 +65,28 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
     }
 
+    fun createTemporaryVariableDeclaration(
+        irType: IrType,
+        nameHint: String? = null,
+        isMutable: Boolean = false,
+        type: KotlinType? = null,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
+    ): IrVariable {
+        val originalKotlinType = type ?: irType.toKotlinType()
+        return IrVariableImpl(
+            startOffset, endOffset, origin,
+            createDescriptorForTemporaryVariable(
+                originalKotlinType,
+                nameHint, isMutable
+            ),
+            irType
+        ).apply {
+            parent = getLocalDeclarationParent()
+        }
+    }
+
     fun createTemporaryVariable(
         irExpression: IrExpression,
         nameHint: String? = null,
@@ -77,16 +96,12 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         irType: IrType? = null
     ): IrVariable {
         val originalKotlinType = type ?: (irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType())
-        return IrVariableImpl(
-            irExpression.startOffset, irExpression.endOffset, origin,
-            createDescriptorForTemporaryVariable(
-                originalKotlinType,
-                nameHint, isMutable
-            ),
+        return createTemporaryVariableDeclaration(
             irType ?: irExpression.type,
-            irExpression
+            nameHint, isMutable, originalKotlinType,
+            origin, irExpression.startOffset, irExpression.endOffset
         ).apply {
-            parent = getLocalDeclarationParent()
+            initializer = irExpression
         }
     }
 
@@ -111,12 +126,11 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     }
 }
 
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Creates unbound symbol")
-fun createSymbolForScopeOwner(descriptor: DeclarationDescriptor) =
+private fun createSymbolForScopeOwner(descriptor: DeclarationDescriptor) =
     when (descriptor) {
         is ClassDescriptor -> IrClassSymbolImpl(descriptor)
-        is FunctionDescriptor -> createFunctionSymbol(descriptor)
+        is ClassConstructorDescriptor -> IrConstructorSymbolImpl(descriptor.original)
+        is FunctionDescriptor -> IrSimpleFunctionSymbolImpl(descriptor.original)
         is PropertyDescriptor -> IrFieldSymbolImpl(descriptor)
         else -> throw AssertionError("Unexpected scopeOwner descriptor: $descriptor")
     }

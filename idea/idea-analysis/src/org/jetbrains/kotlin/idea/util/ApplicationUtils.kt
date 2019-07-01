@@ -40,15 +40,8 @@ fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command:
 }
 
 fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -> T): T {
-    var result: T = null as T
+    @Suppress("UNCHECKED_CAST") var result: T = null as T
     CommandProcessor.getInstance().executeCommand(this, { result = command() }, name, groupId)
     @Suppress("USELESS_CAST")
     return result as T
 }
-
-/**
- * ProgressManager.getProgressIndicator() is nullable in 181 and dynamic again in 182
- * BUNCH: 181
- */
-@Suppress("IncompatibleAPI")
-val ProgressManager.progressIndicatorNullable: ProgressIndicator? get() = progressIndicator

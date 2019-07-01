@@ -3,7 +3,7 @@
 // ERROR: Primary constructor is required for inline class
 // ACTION: Create test
 // ACTION: Implement members
-// ACTION: Move 'A' to separate file
+// ACTION: Extract 'A' from current file
 // ACTION: Rename file to A.kt
 interface I {
     fun foo(): String

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.sources
@@ -17,8 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 import java.lang.reflect.Constructor
 import java.util.*
 
@@ -112,9 +116,74 @@ class DefaultKotlinSourceSet(
     override fun addCustomSourceFilesExtensions(extensions: List<String>) {
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
+
+    internal val dependencyTransformations: MutableMap<KotlinDependencyScope, GranularMetadataTransformation> = mutableMapOf()
+
+    //region IDE import for Granular source sets metadata
+
+    data class MetadataDependencyTransformation(
+        val groupId: String?,
+        val moduleName: String,
+        val projectPath: String?,
+        val projectStructureMetadata: KotlinProjectStructureMetadata?,
+        val allVisibleSourceSets: Set<String>,
+        /** If empty, then this source set does not see any 'new' source sets of the dependency, compared to its dependsOn parents, but it
+         * still does see all what the dependsOn parents see. */
+        val useFilesForSourceSets: Map<String, Iterable<File>>
+    )
+
+    @Suppress("unused") // Used in IDE import
+    fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
+        val scope = KotlinDependencyScope.values().find {
+            project.sourceSetMetadataConfigurationByScope(this, it).name == configurationName
+        } ?: return emptyList()
+
+        return getDependenciesTransformation(scope)
+    }
+
+    internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
+        val metadataDependencyResolutionByModule =
+            dependencyTransformations[scope]?.metadataDependencyResolutions
+                ?.associateBy { it.dependency.moduleGroup to it.dependency.moduleName }
+                ?: emptyMap()
+
+        val baseDir = project.buildDir.resolve("tmp/kotlinMetadata/$name/${scope.scopeName}")
+        if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
+            if (baseDir.isDirectory) {
+                baseDir.deleteRecursively()
+            }
+            baseDir.mkdirs()
+        }
+
+        return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
+            val (group, name) = groupAndName
+            val projectPath = resolution.projectDependency?.dependencyProject?.path
+            when (resolution) {
+                is MetadataDependencyResolution.KeepOriginalDependency -> null
+
+                is MetadataDependencyResolution.ExcludeAsUnrequested ->
+                    MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
+
+                is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
+                    val filesBySourceSet = resolution.getMetadataFilesBySourceSet(
+                        baseDir,
+                        doProcessFiles = true
+                    )
+                    MetadataDependencyTransformation(
+                        group, name, projectPath,
+                        resolution.projectStructureMetadata,
+                        resolution.allVisibleSourceSetNames,
+                        filesBySourceSet
+                    )
+                }
+            }
+        }
+    }
+
+    //endregion
 }
 
-private fun KotlinSourceSet.checkForCircularDependencies(): Unit {
+private fun KotlinSourceSet.checkForCircularDependencies() {
     // If adding an edge creates a cycle, than the source node of the edge belongs to the cycle, so run DFS from that node
     // to check whether it became reachable from itself
     val visited = hashSetOf<KotlinSourceSet>()
@@ -148,6 +217,7 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 
 private fun createDefaultSourceDirectorySet(project: Project, name: String?, resolver: FileResolver?): SourceDirectorySet {
     if (isGradleVersionAtLeast(5, 0)) {
+        @Suppress("UnstableApiUsage")
         val objects = project.objects
         val sourceDirectorySetMethod = objects.javaClass.methods.single { it.name == "sourceDirectorySet" && it.parameterCount == 2 }
         return sourceDirectorySetMethod(objects, name, name) as SourceDirectorySet

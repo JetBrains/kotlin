@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -19,7 +19,10 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
@@ -31,7 +34,6 @@ import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.versions.findAllUsedLibraries
 import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import java.io.File
-import java.util.*
 
 abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinProjectConfigurator {
     protected abstract val libraryName: String
@@ -67,7 +69,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         var nonConfiguredModules = if (!ApplicationManager.getApplication().isUnitTestMode)
             getCanBeConfiguredModules(project, this)
         else
-            Arrays.asList(*ModuleManager.getInstance(project).modules)
+            listOf(*ModuleManager.getInstance(project).modules)
         nonConfiguredModules -= excludeModules
 
         var modulesToConfigure = nonConfiguredModules
@@ -176,12 +178,12 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             libraryJarDescriptor: LibraryJarDescriptor,
             collector: NotificationMessageCollector
     ) {
-        val jarFile = if (jarState == KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY)
+        val jarFile = if (jarState == FileState.DO_NOT_COPY)
             libraryJarDescriptor.getPathInPlugin()
         else
             File(dirToCopyJarTo, libraryJarDescriptor.jarName)
 
-        if (jarState == KotlinWithLibraryConfigurator.FileState.COPY) {
+        if (jarState == FileState.COPY) {
             copyFileToDir(libraryJarDescriptor.getPathInPlugin(), dirToCopyJarTo, collector)
         }
 
@@ -259,7 +261,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         }
 
         collector.addMessage(library.name!! + " library was created")
-        return library!!
+        return library
     }
 
     private fun isProjectLibraryPresent(project: Project): Boolean {
@@ -397,14 +399,14 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         val project = module.project
         val collector = createConfigureKotlinNotificationCollector(project)
 
-        for (library in findAllUsedLibraries(project).keySet()) {
-            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(library) ?: continue
+        for (lib in findAllUsedLibraries(project).keySet()) {
+            val runtimeJar = LibraryJarDescriptor.RUNTIME_JAR.findExistingJar(lib) ?: continue
 
-            val model = library.modifiableModel
+            val model = lib.modifiableModel
             val libFilesDir = VfsUtilCore.virtualToIoFile(runtimeJar).parent
 
             for (libraryJarDescriptor in libraryJarDescriptors) {
-                if (libraryJarDescriptor.findExistingJar(library) != null) continue
+                if (libraryJarDescriptor.findExistingJar(lib) != null) continue
 
                 val libFile = libraryJarDescriptor.getPathInPlugin()
                 if (!libFile.exists()) continue

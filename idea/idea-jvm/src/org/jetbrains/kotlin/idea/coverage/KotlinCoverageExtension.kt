@@ -82,7 +82,8 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
         if (srcFile is KtFile) {
             val fileIndex = ProjectRootManager.getInstance(srcFile.getProject()).fileIndex
             if (fileIndex.isInLibraryClasses(srcFile.getVirtualFile()) ||
-                fileIndex.isInLibrarySource(srcFile.getVirtualFile())) {
+                fileIndex.isInLibrarySource(srcFile.getVirtualFile())
+            ) {
                 return false
             }
 
@@ -136,22 +137,20 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
 
         private fun getClassesGeneratedFromFile(outputRoot: VirtualFile?, file: KtFile): List<VirtualFile> {
             val relativePath = file.packageFqName.asString().replace('.', '/')
-            val packageOutputDir = outputRoot?.findFileByRelativePath(relativePath)
-            if (packageOutputDir == null) return listOf()
+            val packageOutputDir = outputRoot?.findFileByRelativePath(relativePath) ?: return listOf()
 
             val prefixes = collectClassFilePrefixes(file)
             LOG.debug("ClassFile prefixes: [${prefixes.joinToString(", ")}]")
             return packageOutputDir.children.filter { packageFile ->
                 prefixes.any {
-                    (packageFile.name.startsWith(it + "$") && FileUtilRt.getExtension(packageFile.name) == "class") ||
-                            packageFile.name == it + ".class"
+                    (packageFile.name.startsWith("$it$") && FileUtilRt.getExtension(packageFile.name) == "class") ||
+                            packageFile.name == "$it.class"
                 }
             }
         }
 
         private fun findOutputRoot(file: KtFile): VirtualFile? {
-            val module = ModuleUtilCore.findModuleForPsiElement(file)
-            if (module == null) return null
+            val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return null
             val fileIndex = ProjectRootManager.getInstance(file.project).fileIndex
             val inTests = fileIndex.isInTestSourceContentKotlinAware(file.virtualFile)
             val compilerOutputExtension = CompilerModuleExtension.getInstance(module)
@@ -162,7 +161,7 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
         }
 
         private fun collectClassFilePrefixes(file: KtFile): Collection<String> {
-            val result = file.children.filter { it is KtClassOrObject }.mapNotNull { (it as KtClassOrObject).name }
+            val result = file.children.filterIsInstance<KtClassOrObject>().mapNotNull { it.name }
             val packagePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).fileClassFqName
             return result.union(arrayListOf(packagePartFqName.shortName().asString()))
         }

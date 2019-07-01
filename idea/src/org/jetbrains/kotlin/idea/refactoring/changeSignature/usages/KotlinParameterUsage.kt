@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
-import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression

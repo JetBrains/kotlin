@@ -1,5 +1,5 @@
-open class Base<T>(val x: T)
+open class Base<T1>(val x: T1)
 
-class Derived<T : Any>(x: T) : Base<T>(x)
+class Derived<T2 : Any>(x: T2) : Base<T2>(x)
 
-fun <T : Any> create(x: T): Derived<T> = Derived(x)
+fun <T3 : Any> create(x: T3) /* Derived<T3> */ = Derived(x)

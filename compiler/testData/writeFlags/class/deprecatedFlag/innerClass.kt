@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class MyClass() {
     @Deprecated("") public class MyInnerClass() {}
 }

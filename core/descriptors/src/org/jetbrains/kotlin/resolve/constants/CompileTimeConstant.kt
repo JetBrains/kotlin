@@ -91,9 +91,10 @@ class TypedCompileTimeConstant<out T>(
 fun createIntegerValueTypeConstant(
     value: Number,
     module: ModuleDescriptor,
-    parameters: CompileTimeConstant.Parameters
+    parameters: CompileTimeConstant.Parameters,
+    newInferenceEnabled: Boolean
 ): CompileTimeConstant<*> {
-    return IntegerValueTypeConstant(value, module, parameters)
+    return IntegerValueTypeConstant(value, module, parameters, newInferenceEnabled)
 }
 
 fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
@@ -121,6 +122,7 @@ class IntegerValueTypeConstant(
     private val value: Number,
     module: ModuleDescriptor,
     override val parameters: CompileTimeConstant.Parameters,
+    private val newInferenceEnabled: Boolean,
     val convertedFromSigned: Boolean = false
 ) : CompileTimeConstant<Number> {
     companion object {
@@ -136,7 +138,7 @@ class IntegerValueTypeConstant(
                 isConvertableConstVal = parameters.isConvertableConstVal
             )
 
-            return IntegerValueTypeConstant(value, module, newParameters, convertedFromSigned = true)
+            return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)
         }
 
         fun IntegerValueTypeConstant.convertToSignedConstant(module: ModuleDescriptor): IntegerValueTypeConstant {
@@ -150,11 +152,16 @@ class IntegerValueTypeConstant(
                 isConvertableConstVal = parameters.isConvertableConstVal
             )
 
-            return IntegerValueTypeConstant(value, module, newParameters, convertedFromSigned = true)
+            return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)
         }
     }
 
-    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), module, parameters)
+    private val typeConstructor =
+        if (newInferenceEnabled) {
+            IntegerLiteralTypeConstructor(value.toLong(), module, parameters)
+        } else {
+            IntegerValueTypeConstructor(value.toLong(), module, parameters)
+        }
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
         val type = getType(expectedType)
@@ -178,7 +185,12 @@ class IntegerValueTypeConstant(
         ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true)
     )
 
-    fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
+    fun getType(expectedType: KotlinType): KotlinType =
+        if (newInferenceEnabled) {
+            TypeUtils.getPrimitiveNumberType(typeConstructor as IntegerLiteralTypeConstructor, expectedType)
+        } else {
+            TypeUtils.getPrimitiveNumberType(typeConstructor as IntegerValueTypeConstructor, expectedType)
+        }
 
     override fun toString() = typeConstructor.toString()
 

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
+@Suppress("DEPRECATION")
 class JoinDeclarationAndAssignmentInspection : IntentionBasedInspection<KtProperty>(
     JoinDeclarationAndAssignmentIntention::class,
     "Can be joined with assignment"

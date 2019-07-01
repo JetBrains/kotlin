@@ -4,14 +4,18 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// CHECK_STATE_MACHINE
 
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
     val l: suspend () -> Unit = {
         val l1 : suspend () -> Unit = {
             c()
+            c()
         }
         l1()
+        l1()
     }
+    l()
     l()
 }
 
@@ -23,26 +27,16 @@ import COROUTINES_PACKAGE.intrinsics.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(EmptyContinuation)
-}
-
-var i = 0;
-
-suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> {
-    i++
-    COROUTINE_SUSPENDED
+    c.startCoroutine(CheckStateMachineContinuation)
 }
 
 fun box(): String {
     builder {
         crossinlineMe {
-            suspendHere()
-            suspendHere()
-            suspendHere()
-            suspendHere()
-            suspendHere()
+            StateMachineChecker.suspendHere()
+            StateMachineChecker.suspendHere()
         }
     }
-    if (i != 1) return "FAIL $i"
+    StateMachineChecker.check(numberOfSuspensions = 16)
     return "OK"
 }

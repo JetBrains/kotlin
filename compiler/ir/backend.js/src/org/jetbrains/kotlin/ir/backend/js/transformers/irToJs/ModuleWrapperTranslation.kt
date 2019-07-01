@@ -1,16 +1,19 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.utils.RESERVED_IDENTIFIERS
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.naming.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object ModuleWrapperTranslation {
     object Namer {
-        fun requiresEscaping(name: String) = false
+        fun requiresEscaping(name: String) =
+            !name.isValidES5Identifier() || name in RESERVED_IDENTIFIERS
     }
 
     fun wrap(

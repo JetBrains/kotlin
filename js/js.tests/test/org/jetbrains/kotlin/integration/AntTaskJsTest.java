@@ -21,6 +21,7 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.test.NashornJsTestChecker;
+import org.jetbrains.kotlin.js.test.V8JsTestChecker;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import java.util.List;
 
 public class AntTaskJsTest extends AbstractAntTaskTest {
     private static final String JS_OUT_FILE = "out.js";
+    private static final Boolean useHashorn = Boolean.getBoolean("kotlin.js.useNashorn");
 
     @NotNull
     private String getTestDataDir() {
@@ -58,7 +60,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
 
         List<String> filePaths = CollectionsKt.map(fileNames, s -> getOutputFileByName(s).getAbsolutePath());
 
-        NashornJsTestChecker.INSTANCE.check(filePaths, "out", "foo", "box", "OK", withModuleSystem);
+        (useHashorn ? NashornJsTestChecker.INSTANCE : V8JsTestChecker.INSTANCE).check(filePaths, "out", "foo", "box", "OK", withModuleSystem);
     }
 
     private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {
@@ -93,7 +95,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
         doJsAntTest();
     }
 
-    public void testSimpleWithStdlib() throws Exception {
+    public void testSimpleWithoutStdlib() throws Exception {
         doJsAntTest();
     }
 
@@ -105,19 +107,19 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
         doJsAntTest("jslib-example.js");
     }
 
-    public void testSimpleWithStdlibAndJsFileAsAnotherLib() throws Exception {
+    public void testSimpleWithJsFileAsAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 
-    public void testSimpleWithStdlibAndJsFileAsAnotherLibModuleKind() throws Exception {
+    public void testSimpleWithJsFileAsAnotherLibModuleKind() throws Exception {
         doJsAntTest(true, "amd.js", "jslib-example.js");
     }
 
-    public void testSimpleWithStdlibAndTwoJsFilesAsLibraries() throws Exception {
+    public void testSimpleWithTwoJsFilesAsLibraries() throws Exception {
         doJsAntTest("jslib-example1.js", "jslib-example2.js");
     }
 
-    public void testSimpleWithStdlibAndJsFilesWithTwoModulesAsLibrary() throws Exception {
+    public void testSimpleWithJsFilesWithTwoModulesAsLibrary() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 

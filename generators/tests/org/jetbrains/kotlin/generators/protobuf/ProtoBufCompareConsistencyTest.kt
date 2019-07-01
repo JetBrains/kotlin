@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.generators.protobuf
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-class ProtoBufCompareConsistencyTest : UsefulTestCase() {
+class ProtoBufCompareConsistencyTest : TestCase() {
     fun testAlreadyGenerated() {
         val testDir = KotlinTestUtils.tmpDir("testDirectory")
         val newFile = File(testDir, "ProtoCompareGenerated.kt")

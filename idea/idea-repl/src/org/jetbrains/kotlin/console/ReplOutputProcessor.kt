@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.console.gutter.ConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.diagnostics.Severity
+import kotlin.math.max
 
 class ReplOutputProcessor(
         private val runner: KotlinConsoleRunner
@@ -123,7 +124,7 @@ class ReplOutputProcessor(
         }.values.map { messages ->
             val highlighters = messages.map { message ->
                 val cmdStart = lastCommandStartOffset + message.range.startOffset
-                val cmdEnd = lastCommandStartOffset + Math.max(message.range.endOffset, message.range.startOffset + 1)
+                val cmdEnd = lastCommandStartOffset + max(message.range.endOffset, message.range.startOffset + 1)
 
                 val textAttributes = getAttributesForSeverity(cmdStart, cmdEnd, message.severity)
                 historyMarkup.addRangeHighlighter(

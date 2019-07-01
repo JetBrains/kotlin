@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.addTypeParameter
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction

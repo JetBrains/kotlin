@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android
 
 abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
+    @Suppress("UNREACHABLE_CODE")
     fun doTest(path: String) {
         return // TODO: investigate and fix this test
         copyResourceDirectoryForTest(path)

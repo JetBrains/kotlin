@@ -53,7 +53,7 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
 
     override fun getQualifiedName() = kotlinOrigin.fqName?.asString()
     override fun getContainingClass() = _containingClass
-    override fun getNavigationElement() = kotlinOrigin
+    override fun getNavigationElement() = kotlinOrigin.navigationElement
     override fun getIcon(flags: Int) = kotlinOrigin.getIcon(flags)
     override fun getContainingFile() = kotlinOrigin.containingFile
     override fun getUseScope() = kotlinOrigin.useScope

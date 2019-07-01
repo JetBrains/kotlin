@@ -1,8 +1,8 @@
 package
 
-public fun manyArguments(): Outer.Nested<kotlin.Any?>
+public fun manyArguments(): [ERROR : Error function type]
 public fun nested(): Outer.Nested<kotlin.Int>
-public fun noArguments(): Outer.Nested<kotlin.Any?>
+public fun noArguments(): [ERROR : Error function type]
 public fun noArgumentsExpectedType(): Outer.Nested<kotlin.String>
 
 public final class Outer {

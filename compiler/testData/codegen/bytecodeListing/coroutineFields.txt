@@ -41,6 +41,7 @@ final class CoroutineFieldsKt$box$1 {
     field J$0: long
     field L$0: java.lang.Object
     field L$1: java.lang.Object
+    field L$2: java.lang.Object
     private field p$: Controller
     inner class CoroutineFieldsKt$box$1
     method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: COROUTINES_PACKAGE.Continuation): void

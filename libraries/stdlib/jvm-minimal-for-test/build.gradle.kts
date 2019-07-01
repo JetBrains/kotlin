@@ -12,6 +12,11 @@ javaHome = rootProject.extra["JDK_16"] as String
 
 val builtins by configurations.creating
 
+val runtime by configurations
+val runtimeJar by configurations.creating {
+    runtime.extendsFrom(this)
+}
+
 dependencies {
     compileOnly(project(":kotlin-stdlib"))
     builtins(project(":core:builtins"))
@@ -61,13 +66,10 @@ tasks.withType<KotlinCompile> {
 }
 
 val jar = runtimeJar {
+    archiveFileName.set("kotlin-stdlib-minimal-for-test.jar")
     dependsOn(builtins)
     from(provider { zipTree(builtins.singleFile) }) { include("kotlin/**") }
 }
-
-val distDir: String by rootProject.extra
-
-dist(targetName = "kotlin-stdlib-minimal-for-test.jar", targetDir = File(distDir), fromTask = jar)
 
 publishing {
     publications {

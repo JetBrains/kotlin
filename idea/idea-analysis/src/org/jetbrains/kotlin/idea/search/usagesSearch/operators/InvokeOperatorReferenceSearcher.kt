@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -36,7 +36,7 @@ import org.jetbrains.uast.convertOpt
 class InvokeOperatorReferenceSearcher(
     targetFunction: PsiElement,
     searchScope: SearchScope,
-    consumer: ExecutorProcessor<PsiReference>,
+    consumer: Processor<in PsiReference>,
     optimizer: SearchRequestCollector,
     options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = emptyList()) {

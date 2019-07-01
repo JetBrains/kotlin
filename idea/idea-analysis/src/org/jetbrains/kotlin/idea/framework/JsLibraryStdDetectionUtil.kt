@@ -38,7 +38,7 @@ object JsLibraryStdDetectionUtil {
         if (library !is LibraryEx || library.isDisposed) return false
         if (!ignoreKind && library.effectiveKind(project) !is JSLibraryKind) return false
 
-        val classes = Arrays.asList(*library.getFiles(OrderRootType.CLASSES))
+        val classes = listOf(*library.getFiles(OrderRootType.CLASSES))
         return getJsStdLibJar(classes) != null
     }
 

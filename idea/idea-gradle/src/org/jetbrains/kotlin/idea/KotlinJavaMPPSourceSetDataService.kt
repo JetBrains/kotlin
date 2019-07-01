@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea
@@ -28,6 +28,8 @@ class KotlinJavaMPPSourceSetDataService : AbstractProjectDataService<GradleSourc
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
     ) {
+        val testKotlinModules =
+            toImport.filter { it.kotlinSourceSet?.isTestModule ?: false }.map { modelsProvider.findIdeModule(it.data) }.toSet()
         val projectNode = toImport.firstOrNull()?.let { ExternalSystemApiUtil.findParent(it, ProjectKeys.PROJECT) } ?: return
         val targetsByUrl = ExternalSystemApiUtil
             .findAllRecursively(projectNode, KotlinTargetData.KEY)
@@ -53,9 +55,19 @@ class KotlinJavaMPPSourceSetDataService : AbstractProjectDataService<GradleSourc
                     val compilationInfo = compilationNode.kotlinSourceSet ?: continue
                     if (!isTestSourceSet && compilationInfo.isTestModule) continue
                     val compilationRootModel = modelsProvider.getModifiableRootModel(compilationModule)
-                    addModuleDependencyIfNeeded(rootModel, compilationModule, isTestSourceSet)
+                    addModuleDependencyIfNeeded(
+                        rootModel,
+                        compilationModule,
+                        isTestSourceSet,
+                        compilationNode.kotlinSourceSet?.isTestModule ?: false
+                    )
                     compilationRootModel.getModuleDependencies(isTestSourceSet).forEach { transitiveDependee ->
-                        addModuleDependencyIfNeeded(rootModel, transitiveDependee, isTestSourceSet)
+                        addModuleDependencyIfNeeded(
+                            rootModel,
+                            transitiveDependee,
+                            isTestSourceSet,
+                            testKotlinModules.contains(transitiveDependee)
+                        )
                     }
                 }
                 rootModel.removeOrderEntry(libraryEntry)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
@@ -36,17 +37,21 @@ class PrimitiveNumberRangeLiteralRangeValue(
 ) : PrimitiveNumberRangeIntrinsicRangeValue(rangeCall),
     ReversableRangeValue {
 
-    override fun getBoundedValue(codegen: ExpressionCodegen): SimpleBoundedValue {
-        val instanceType = codegen.asmType(rangeCall.resultingDescriptor.returnType!!)
+    override fun getBoundedValue(codegen: ExpressionCodegen): BoundedValue {
         val lowBound = codegen.generateCallReceiver(rangeCall)
+
         if (codegen.canBeSpecializedByExcludingHighBound(rangeCall)) {
-            val highBound = (rangeCall.getFirstArgumentExpression() as KtBinaryExpression).left
-            return SimpleBoundedValue(instanceType, lowBound, true, codegen.gen(highBound), false)
+            return BoundedValue(
+                lowBound = lowBound,
+                isLowInclusive = true,
+                highBound = codegen.gen((rangeCall.getFirstArgumentExpression() as KtBinaryExpression).left),
+                isHighInclusive = false
+            )
         }
-        return SimpleBoundedValue(
-            instanceType = instanceType,
-            lowBound = lowBound,
-            highBound = codegen.generateCallSingleArgument(rangeCall)
+
+        return BoundedValue(
+            lowBound = lowBound.coerceToRangeElementTypeIfRequired(),
+            highBound = codegen.generateCallSingleArgument(rangeCall).coerceToRangeElementTypeIfRequired()
         )
     }
 

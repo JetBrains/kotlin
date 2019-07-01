@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.inlineStatement
 import org.jetbrains.kotlin.ir.expressions.isAssignmentOperatorWithResult
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
+import org.jetbrains.kotlin.psi2ir.generators.generateSamConversionForValueArgumentsIfRequired
 import org.jetbrains.kotlin.psi2ir.generators.pregenerateValueArgumentsUsing
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -98,8 +99,8 @@ class ArrayAccessAssignmentReceiver(
         return LValueWithGetterAndSetterCalls(
             callGenerator,
             descriptor,
-            { indexedGetCall()?.fillArrayAndIndexArguments(irArrayValue, indexedGetResolvedCall!!, ktExpressionToIrIndexValue) },
-            { indexedSetCall()?.fillArrayAndIndexArguments(irArrayValue, indexedSetResolvedCall!!, ktExpressionToIrIndexValue) },
+            { indexedGetCall()?.fillArguments(irArrayValue, indexedGetResolvedCall!!, ktExpressionToIrIndexValue, null) },
+            { indexedSetCall()?.fillArguments(irArrayValue, indexedSetResolvedCall!!, ktExpressionToIrIndexValue, it) },
             callGenerator.translateType(kotlinType),
             startOffset, endOffset, origin
         )
@@ -107,24 +108,22 @@ class ArrayAccessAssignmentReceiver(
 
     override fun assign(value: IrExpression): IrExpression {
         val call = indexedSetCall() ?: throw AssertionError("Array access without indexed-get call")
-        val ktExpressionToIrIndexExpression = ktIndexExpressions.zip(irIndexExpressions).toMap()
-        call.setExplicitReceiverValue(OnceExpressionValue(irArray))
-        callGenerator.statementGenerator.pregenerateValueArgumentsUsing(call, indexedSetResolvedCall!!) {
-            ktExpressionToIrIndexExpression[it]
-        }
-        call.lastArgument = value
+        val ktExpressionToIrIndexExpression = ktIndexExpressions.zip(irIndexExpressions.map { OnceExpressionValue(it) }).toMap()
+        call.fillArguments(OnceExpressionValue(irArray), indexedSetResolvedCall!!, ktExpressionToIrIndexExpression, value)
         return callGenerator.generateCall(startOffset, endOffset, call, IrStatementOrigin.EQ)
     }
 
-    private fun CallBuilder.fillArrayAndIndexArguments(
+    private fun CallBuilder.fillArguments(
         arrayValue: IntermediateValue,
         resolvedCall: ResolvedCall<FunctionDescriptor>,
-        ktExpressionToIrIndexValue: Map<KtExpression, IntermediateValue>
+        ktExpressionToIrIndexValue: Map<KtExpression, IntermediateValue>,
+        value: IrExpression?
     ) = apply {
         setExplicitReceiverValue(arrayValue)
-
         callGenerator.statementGenerator.pregenerateValueArgumentsUsing(this, resolvedCall) { ktExpression ->
             ktExpressionToIrIndexValue[ktExpression]?.load()
         }
+        value?.let { lastArgument = it }
+        callGenerator.statementGenerator.generateSamConversionForValueArgumentsIfRequired(this, resolvedCall.resultingDescriptor)
     }
 }

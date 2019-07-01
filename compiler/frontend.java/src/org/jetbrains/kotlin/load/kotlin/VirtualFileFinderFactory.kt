@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 interface VirtualFileFinderFactory : MetadataFinderFactory {
     override fun create(scope: GlobalSearchScope): VirtualFileFinder
+    override fun create(project: Project, module: ModuleDescriptor): VirtualFileFinder
 
     companion object SERVICE {
         fun getInstance(project: Project): VirtualFileFinderFactory =

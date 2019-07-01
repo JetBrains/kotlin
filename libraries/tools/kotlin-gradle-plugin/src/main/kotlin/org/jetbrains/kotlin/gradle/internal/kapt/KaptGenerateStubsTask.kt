@@ -59,6 +59,13 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     internal val kotlinTaskPluginClasspath
         get() = kotlinCompileTask.pluginClasspath
 
+    @get:Input
+    override var useModuleDetection: Boolean
+        get() = kotlinCompileTask.useModuleDetection
+        set(_) {
+            error("KaptGenerateStubsTask.useModuleDetection setter should not be called!")
+        }
+
     override fun source(vararg sources: Any?): SourceTask? {
         return super.source(sourceRootsContainer.add(sources))
     }
@@ -72,8 +79,8 @@ open class KaptGenerateStubsTask : KotlinCompile() {
                 !stubsDir.isParentOf(source) &&
                 !generatedSourcesDir.isParentOf(source)
 
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
-        kotlinCompileTask.setupCompilerArgs(args)
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        kotlinCompileTask.setupCompilerArgs(args, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         val pluginOptionsWithKapt = pluginOptions.withWrappedKaptOptions(withApClasspath = kaptClasspath)
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()

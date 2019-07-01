@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization
@@ -36,31 +36,35 @@ abstract class SerializerExtension {
 
 
     open fun serializeClass(
-            descriptor: ClassDescriptor,
-            proto: ProtoBuf.Class.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
-            childSerializer: DescriptorSerializer
+        descriptor: ClassDescriptor,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: DescriptorSerializer
     ) {
     }
 
     open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
     }
 
-    open fun serializeConstructor(descriptor: ConstructorDescriptor,
-                                  proto: ProtoBuf.Constructor.Builder,
-                                  childSerializer: DescriptorSerializer) {
+    open fun serializeConstructor(
+        descriptor: ConstructorDescriptor,
+        proto: ProtoBuf.Constructor.Builder,
+        childSerializer: DescriptorSerializer
+    ) {
     }
 
-    open fun serializeFunction(descriptor: FunctionDescriptor,
-                               proto: ProtoBuf.Function.Builder,
-                               childSerializer: DescriptorSerializer) {
+    open fun serializeFunction(
+        descriptor: FunctionDescriptor,
+        proto: ProtoBuf.Function.Builder,
+        childSerializer: DescriptorSerializer
+    ) {
     }
 
     open fun serializeProperty(
-            descriptor: PropertyDescriptor,
-            proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
-            childSerializer: DescriptorSerializer
+        descriptor: PropertyDescriptor,
+        proto: ProtoBuf.Property.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
     ) {
     }
 

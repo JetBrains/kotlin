@@ -30,6 +30,8 @@ import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
+import kotlin.math.max
+import kotlin.math.min
 
 abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTablePanel.AbstractParameterInfo<Param>> : JPanel(BorderLayout()) {
     companion object {
@@ -165,7 +167,7 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
             parameterInfos[oldIndex] = parameterInfos[newIndex]
             parameterInfos[newIndex] = old
 
-            fireTableRowsUpdated(Math.min(oldIndex, newIndex), Math.max(oldIndex, newIndex))
+            fireTableRowsUpdated(min(oldIndex, newIndex), max(oldIndex, newIndex))
             updateSignature()
         }
 

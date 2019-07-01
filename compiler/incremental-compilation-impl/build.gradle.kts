@@ -12,8 +12,9 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:cli"))
+    compile(project(":compiler:cli-js"))
     compile(project(":kotlin-build-common"))
-    compile(project(":compiler:daemon-common"))
+    compile(project(":daemon-common"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(commonDep("junit:junit"))
@@ -21,7 +22,7 @@ dependencies {
     testCompile(kotlinStdlib())
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
 }
 
@@ -30,7 +31,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
 

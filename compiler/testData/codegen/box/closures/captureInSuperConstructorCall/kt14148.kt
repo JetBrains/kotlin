@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface Test {
     fun test(): String
 }

@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.collectOuterInstanceReferences
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.traverseOuterInstanceReferences
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers

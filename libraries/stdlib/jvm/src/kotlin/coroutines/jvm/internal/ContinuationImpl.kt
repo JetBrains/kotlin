@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.coroutines.jvm.internal
@@ -19,12 +19,13 @@ internal abstract class BaseContinuationImpl(
 ) : Continuation<Any?>, CoroutineStackFrame, Serializable {
     // This implementation is final. This fact is used to unroll resumeWith recursion.
     public final override fun resumeWith(result: Result<Any?>) {
-        // Invoke "resume" debug probe only once, even if previous frames are "resumed" in the loop below, too
-        probeCoroutineResumed(this)
         // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
         var current = this
         var param = result
         while (true) {
+            // Invoke "resume" debug probe on every resumed continuation, so that a debugging library infrastructure
+            // can precisely track what part of suspended callstack was already resumed
+            probeCoroutineResumed(current)
             with(current) {
                 val completion = completion!! // fail fast when trying to resume continuation without completion
                 val outcome: Result<Any?> =

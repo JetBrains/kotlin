@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.java;
@@ -26,7 +26,6 @@ public final class JvmAbi {
      * This is false for KAPT3 mode.
      */
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;
-    public static final String DEFAULT_IMPLS_DELEGATE_SUFFIX = "$defaultImpl";
 
     public static final String DEFAULT_PARAMS_IMPL_SUFFIX = "$default";
 
@@ -44,7 +43,6 @@ public final class JvmAbi {
     public static final String INSTANCE_FIELD = "INSTANCE";
     public static final String HIDDEN_INSTANCE_FIELD = "$$" + INSTANCE_FIELD;
 
-    public static final String DEFAULT_MODULE_NAME = "main";
     public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
 
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
@@ -75,7 +73,6 @@ public final class JvmAbi {
         return startsWithIsPrefix(propertyName)
                ? propertyName
                : GET_PREFIX + CapitalizeDecapitalizeKt.capitalizeAsciiOnly(propertyName);
-
     }
 
     @NotNull

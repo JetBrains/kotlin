@@ -190,8 +190,9 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 if (descriptor?.fqName == USE_EXPERIMENTAL_FQ_NAME) {
                     val annotationClasses = descriptor.allValueArguments[USE_EXPERIMENTAL_ANNOTATION_CLASS]
                     annotationClasses is ArrayValue && annotationClasses.value.any { annotationClass ->
-                        annotationClass is KClassValue && annotationClass.value.let { (classId, arrayDimensions) ->
-                            classId.asSingleFqName() == annotationFqName && arrayDimensions == 0
+                        annotationClass is KClassValue && annotationClass.value.let { value ->
+                            value is KClassValue.Value.NormalClass &&
+                                    value.classId.asSingleFqName() == annotationFqName && value.arrayDimensions == 0
                         }
                     }
                 } else false

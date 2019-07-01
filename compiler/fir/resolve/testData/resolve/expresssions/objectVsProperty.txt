@@ -1,0 +1,16 @@
+FILE: objectVsProperty.kt
+    public final object A : R|kotlin/Any| {
+        private constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val A: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/Int|
+    public final fun foo(): R|kotlin/Int| {
+        ^foo R|/A|
+    }
+    public final fun bar(): R|kotlin/Unit| {
+        lval A: R|kotlin/String| = String()
+        lval b: R|kotlin/String| = R|<local>/A|
+    }

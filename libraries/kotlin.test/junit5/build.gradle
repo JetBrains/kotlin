@@ -3,7 +3,6 @@ description = 'Kotlin Test JUnit 5'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
@@ -24,13 +23,10 @@ jar {
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
 }
 
 javadocJar()
-
-dist {
-    from (jar, sourcesJar)
-}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_18

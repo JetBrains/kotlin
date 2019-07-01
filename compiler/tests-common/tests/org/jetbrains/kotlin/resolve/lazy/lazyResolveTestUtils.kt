@@ -27,24 +27,26 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 fun createResolveSessionForFiles(
         project: Project,
         syntheticFiles: Collection<KtFile>,
         addBuiltIns: Boolean
 ): ResolveSession {
-    val projectContext = ProjectContext(project)
+    val projectContext = ProjectContext(project, "lazy resolve test utils")
     val testModule = TestModule(addBuiltIns)
     val resolverForProject = ResolverForProjectImpl(
         "test",
         projectContext, listOf(testModule),
         { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
-        modulePlatforms = { JvmPlatform.multiTargetPlatform },
         moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-        resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+        resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
         platformParameters = { _ ->
             JvmPlatformParameters(
                 packagePartProviderFactory = { PackagePartProvider.Empty },
@@ -63,4 +65,10 @@ private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
                 ModuleInfo.DependencyOnBuiltIns.LAST
             else
                 ModuleInfo.DependencyOnBuiltIns.NONE
+
+    override val platform: TargetPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
+
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
 }

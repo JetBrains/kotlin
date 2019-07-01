@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ide.konan
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
-import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
+import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
@@ -29,11 +29,10 @@ import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.util.KonanFactories
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
@@ -69,7 +68,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = NativeIdePlatformKind
 
-    override val resolverForModuleFactory get() = NativeAnalyzerFacade
+    override val resolverForModuleFactory get() = NativeResolverForModuleFactory
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext) =
         createKotlinNativeBuiltIns(settings, projectContext)
@@ -122,7 +121,7 @@ private fun createKotlinNativeBuiltIns(settings: PlatformAnalysisSettings, proje
 }
 
 // TODO: It depends on a random module's stdlib, propagate the actual module here.
-private fun findNativeStdlib(project: Project): NativeLibraryInfo? = getModuleInfosFromIdeaModel(project, KonanPlatform)
+private fun findNativeStdlib(project: Project): NativeLibraryInfo? = getModuleInfosFromIdeaModel(project, KonanPlatforms.defaultKonanPlatform)
     .firstNotNullResult { it.asNativeStdlib() }
 
 private fun IdeaModuleInfo.asNativeStdlib(): NativeLibraryInfo? = if ((this as? NativeLibraryInfo)?.isStdlib == true) this else null
@@ -149,7 +148,7 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
                 )
 
     override val platform: TargetPlatform
-        get() = KonanPlatform
+        get() = KonanPlatforms.defaultKonanPlatform
 
     override fun toString() = "Native" + super.toString()
 

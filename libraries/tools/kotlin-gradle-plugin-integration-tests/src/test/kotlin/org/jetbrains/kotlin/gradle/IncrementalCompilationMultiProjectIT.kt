@@ -31,7 +31,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
 
 class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val additionalLibDependencies: String =
-        "implementation \"org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version\""
+        "implementation \"org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version\""
 
     override val compileKotlinTaskName: String
         get() = "compileKotlin"
@@ -71,6 +71,7 @@ class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiP
             apply plugin: 'kotlin'
 
             dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
                 compile 'org.codehaus.groovy:groovy-all:2.4.7'
             }
             """.trimIndent()

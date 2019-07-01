@@ -20,6 +20,6 @@ class Foo {
 
 // FILE: 1.kt
 fun test() {
-    Foo().<!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!NI;UNRESOLVED_REFERENCE!>_<!><Int>() }
+    Foo().foo {} checkType { _<Int>() }
     Foo().bar {} checkType { _<String>() }
 }

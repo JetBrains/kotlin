@@ -1,0 +1,10 @@
+var `as`: Int
+var type: Int
+var `val`: Int
+var `var`: Int
+var `fun`: Int
+var `is`: Int
+var `in`: Int
+var `object`: Int
+var `when`: Int
+var `typeof`: Int

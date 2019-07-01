@@ -2,22 +2,7 @@ LineBreakpoint created at evDelegatedProperty.kt:13
 Run Java
 Connected to the target VM
 evDelegatedProperty.kt:13
-package evDelegatedProperty
-
-import kotlin.properties.Delegates
-
-class A {
-    var prop: Int by Delegates.notNull()
-}
-
-fun main(args: Array<String>) {
-    val a = A()
-    a.prop = 1
-    //Breakpoint!
-    val b = a.prop
-}
-
-// PRINT_FRAME
+Compile bytecode for a.prop
  frame    = main:13, EvDelegatedPropertyKt {evDelegatedProperty}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evDelegatedProperty.kt, 9)
    local    = a: evDelegatedProperty.A = {evDelegatedProperty.A@uniqueID} (sp = evDelegatedProperty.kt, 10)

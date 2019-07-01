@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true) {
+class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, false) {
 
     override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
 
@@ -50,8 +50,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
 
     private fun resolveInvoke(paramCount: Int): IrSimpleFunction {
         assert(paramCount > 0)
-        val fqn = FqName.fromSegments(listOf("kotlin", "Function$paramCount"))
-        val functionKlass = context.run { symbolTable.lazyWrapper.referenceClass(getClass(fqn)) }.owner
+        val functionKlass = context.ir.symbols.functionN(paramCount).owner
         return functionKlass.declarations.filterIsInstance<IrSimpleFunction>().first { it.name == Name.identifier("invoke") }
     }
 }

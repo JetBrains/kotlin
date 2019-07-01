@@ -21,11 +21,7 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
-import com.intellij.util.EmptyQuery
-import com.intellij.util.Query
-import com.intellij.util.QueryExecutor
-import com.intellij.util.QueryFactory
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import com.intellij.util.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
 
@@ -43,7 +39,7 @@ abstract class DeclarationsSearch<T : PsiElement, R : DeclarationSearchRequest<T
     init {
         registerExecutor(
             object : QueryExecutorBase<T, R>(true) {
-                override fun processQuery(queryParameters: R, consumer: ExecutorProcessor<T>) {
+                override fun processQuery(queryParameters: R, consumer: Processor<in T>) {
                     doSearch(queryParameters, consumer)
                 }
             }
@@ -54,7 +50,7 @@ abstract class DeclarationsSearch<T : PsiElement, R : DeclarationSearchRequest<T
         super.registerExecutor(executor)
     }
 
-    protected abstract fun doSearch(request: R, consumer: ExecutorProcessor<T>)
+    protected abstract fun doSearch(request: R, consumer: Processor<in T>)
     protected open fun isApplicable(request: R): Boolean = true
 
     fun search(request: R): Query<T> = if (isApplicable(request)) createUniqueResultsQuery(request) else EmptyQuery.getEmptyQuery<T>()
@@ -97,7 +93,7 @@ interface HierarchyTraverser<T> {
     }
 }
 
-fun <T : PsiElement> ExecutorProcessor<T>.consumeHierarchy(request: SearchRequestWithElement<T>, traverser: HierarchyTraverser<T>) {
+fun <T : PsiElement> Processor<in T>.consumeHierarchy(request: SearchRequestWithElement<T>, traverser: HierarchyTraverser<T>) {
     traverser.forEach(request.originalElement) { element ->
         if (element in request.searchScope) {
             process(element)
@@ -108,13 +104,13 @@ fun <T : PsiElement> ExecutorProcessor<T>.consumeHierarchy(request: SearchReques
 abstract class HierarchySearch<T : PsiElement>(
     private val traverser: HierarchyTraverser<T>
 ) : DeclarationsSearch<T, HierarchySearchRequest<T>>() {
-    protected open fun doSearchAll(request: HierarchySearchRequest<T>, consumer: ExecutorProcessor<T>) {
+    protected open fun doSearchAll(request: HierarchySearchRequest<T>, consumer: Processor<in T>) {
         consumer.consumeHierarchy(request, traverser)
     }
 
-    protected abstract fun doSearchDirect(request: HierarchySearchRequest<T>, consumer: ExecutorProcessor<T>)
+    protected abstract fun doSearchDirect(request: HierarchySearchRequest<T>, consumer: Processor<in T>)
 
-    override fun doSearch(request: HierarchySearchRequest<T>, consumer: ExecutorProcessor<T>) {
+    override fun doSearch(request: HierarchySearchRequest<T>, consumer: Processor<in T>) {
         if (request.searchDeeply) {
             doSearchAll(request, consumer)
         } else {

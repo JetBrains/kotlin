@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -62,26 +61,6 @@ class IrConstructorImpl(
         symbol.descriptor.isEffectivelyExternal(),
         symbol.descriptor.isPrimary
     ) {
-        this.body = body
-    }
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor,
-        returnType: IrType
-    ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor), returnType)
-
-    @Deprecated("Use constructor which takes symbol instead of descriptor")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor,
-        returnType: IrType,
-        body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor, returnType) {
         this.body = body
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test.confidence;
@@ -23,11 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinConfidenceTest extends LightCompletionTestCase {
     private static final String TYPE_DIRECTIVE_PREFIX = "// TYPE:";
     private final ThreadLocal<Boolean> skipComplete = ThreadLocal.withInitial(() -> false);

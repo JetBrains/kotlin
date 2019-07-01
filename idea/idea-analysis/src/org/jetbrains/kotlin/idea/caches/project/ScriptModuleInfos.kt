@@ -1,38 +1,29 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.project
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.NonClasspathDirectoriesScope
-import com.intellij.util.containers.SLRUCache
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache.Companion.MAX_SCRIPTS_CACHED
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
-import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
+import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import java.io.File
-import kotlin.script.experimental.dependencies.ScriptDependencies
-
-class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
-    override fun equals(other: Any?) = other is ScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
-
-    override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
-}
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 data class ScriptModuleInfo(
     val project: Project,
     val scriptFile: VirtualFile,
-    val scriptDefinition: KotlinScriptDefinition
+    val scriptDefinition: ScriptDefinition
 ) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
@@ -43,12 +34,14 @@ data class ScriptModuleInfo(
 
     override fun dependencies(): List<IdeaModuleInfo> {
         return arrayListOf<IdeaModuleInfo>(this).apply {
-            val scriptDependentModules = ScriptRelatedModulesProvider.getRelatedModules(scriptFile, project)
-            if (scriptDependentModules.isNotEmpty()) {
-                scriptDependentModules.mapNotNull { it.productionSourceInfo() ?: it.testSourceInfo() }.forEach {
-                    this@apply.add(it)
-                    this@apply.addAll(it.dependencies())
-                }
+            val scriptDependentModules = ScriptAdditionalIdeaDependenciesProvider.getRelatedModules(scriptFile, project)
+            scriptDependentModules.forEach {
+                addAll(it.correspondingModuleInfos())
+            }
+
+            val scriptDependentLibraries = ScriptAdditionalIdeaDependenciesProvider.getRelatedLibraries(scriptFile, project)
+            scriptDependentLibraries.forEach {
+                addAll(createLibraryInfo(project, it))
             }
 
             val dependenciesInfo = ScriptDependenciesInfo.ForFile(project, scriptFile, scriptDefinition)
@@ -57,20 +50,12 @@ data class ScriptModuleInfo(
             dependenciesInfo.sdk?.let { add(SdkInfo(project, it)) }
         }
     }
-}
 
-fun findJdk(dependencies: ScriptDependencies?, project: Project): Sdk? {
-    val allJdks = getAllProjectSdks()
-    // workaround for mismatched gradle wrapper and plugin version
-    val javaHome = try {
-        dependencies?.javaHome?.canonicalPath
-    } catch (e: Throwable) {
-        null
-    }
+    override val platform: TargetPlatform
+        get() = TargetPlatformDetector.getPlatform(project, scriptDefinition)
 
-    return allJdks.find { javaHome != null && File(it.homePath).canonicalPath == javaHome }
-            ?: ProjectRootManager.getInstance(project).projectSdk
-            ?: allJdks.firstOrNull()
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
 }
 
 sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, BinaryModuleInfo {
@@ -92,30 +77,41 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     override val sourcesModuleInfo: SourceForBinaryModuleInfo?
         get() = ScriptDependenciesSourceInfo.ForProject(project)
 
+    override val platform: TargetPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
+
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
+
     class ForFile(
         project: Project,
         val scriptFile: VirtualFile,
-        val scriptDefinition: KotlinScriptDefinition
+        val scriptDefinition: ScriptDefinition
     ) : ScriptDependenciesInfo(project) {
-        private val externalDependencies: ScriptDependencies
-            get() = ScriptDependenciesManager.getInstance(project).getScriptDependencies(scriptFile)
-
         override val sdk: Sdk?
-            get() = findJdk(externalDependencies, project)
+            get() {
+                return ScriptDependenciesManager.getInstance(project).getScriptSdk(scriptFile, project)
+            }
 
         override fun contentScope(): GlobalSearchScope {
-            return ServiceManager.getService(project, ScriptBinariesScopeCache::class.java).get(externalDependencies)
+            // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
+            return KotlinSourceFilterScope.libraryClassFiles(
+                ScriptDependenciesManager.getInstance(project).getScriptDependenciesClassFilesScope(scriptFile), project
+            )
         }
     }
 
+    // we do not know which scripts these dependencies are
     class ForProject(project: Project) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
-            get() = findJdk(null, project)
+            get() {
+                return ScriptDependenciesManager.getInstance(project).getAllScriptsSdks().firstOrNull()
+                    ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+            }
 
         override fun contentScope(): GlobalSearchScope {
-            // we do not know which scripts these dependencies are
             return KotlinSourceFilterScope.libraryClassFiles(
-                ScriptDependenciesManager.getInstance(project).getAllScriptsClasspathScope(), project
+                ScriptDependenciesManager.getInstance(project).getAllScriptsDependenciesClassFilesScope(), project
             )
         }
     }
@@ -128,21 +124,18 @@ sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo
         get() = ScriptDependenciesInfo.ForProject(project)
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
-        ScriptDependenciesManager.getInstance(project).getAllLibrarySourcesScope(), project
+        ScriptDependenciesManager.getInstance(project).getAllScriptDependenciesSourcesScope(), project
     )
 
     override fun hashCode() = project.hashCode()
 
     override fun equals(other: Any?): Boolean = other is ScriptDependenciesSourceInfo && this.project == other.project
 
-    class ForProject(project: Project) : ScriptDependenciesSourceInfo(project)
-}
+    override val platform: TargetPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): choose proper TargetVersion
 
-private class ScriptBinariesScopeCache(private val project: Project) : SLRUCache<ScriptDependencies, GlobalSearchScope>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED) {
-    override fun createValue(key: ScriptDependencies?): GlobalSearchScope {
-        val roots = key?.classpath ?: emptyList()
-        val classpath = ScriptDependenciesManager.toVfsRoots(roots)
-        // TODO: this is not very efficient because KotlinSourceFilterScope already checks if the files are in scripts classpath
-        return KotlinSourceFilterScope.libraryClassFiles(NonClasspathDirectoriesScope(classpath), project)
-    }
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = JvmPlatformAnalyzerServices
+
+    class ForProject(project: Project) : ScriptDependenciesSourceInfo(project)
 }

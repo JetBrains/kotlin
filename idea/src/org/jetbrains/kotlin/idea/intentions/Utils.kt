@@ -79,10 +79,10 @@ fun getLambdaByImplicitItReference(expression: KtNameReferenceExpression) =
     resolveToAutoCreatedItDescriptor(expression)?.containingDeclaration?.source?.getPsi() as? KtFunctionLiteral
 
 // returns assignment which replaces initializer
-fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
+fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression? {
     val parent = property.parent
 
-    val initializer = property.initializer!!
+    val initializer = property.initializer ?: return null
 
     val explicitTypeToSet = if (property.typeReference != null) null else initializer.analyze().getType(initializer)
 

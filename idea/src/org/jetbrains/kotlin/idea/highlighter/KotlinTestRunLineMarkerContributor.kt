@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -40,8 +41,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         fun getTestStateIcon(url: String, project: Project): Icon? {
             val defaultIcon = AllIcons.RunConfigurations.TestState.Run
             val state = TestStateStorage.getInstance(project).getState(url) ?: return defaultIcon
-            val magnitude = TestIconMapper.getMagnitude(state.magnitude)
-            return when (magnitude) {
+            return when (TestIconMapper.getMagnitude(state.magnitude)) {
                 TestStateInfo.Magnitude.ERROR_INDEX,
                 TestStateInfo.Magnitude.FAILED_INDEX -> AllIcons.RunConfigurations.TestState.Red2
                 TestStateInfo.Magnitude.PASSED_INDEX,
@@ -51,7 +51,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         }
     }
 
-    override fun getInfo(element: PsiElement): RunLineMarkerContributor.Info? {
+    override fun getInfo(element: PsiElement): Info? {
         val declaration = element.getStrictParentOfType<KtNamedDeclaration>() ?: return null
         if (declaration.nameIdentifier != element) return null
 
@@ -63,7 +63,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         val descriptor = declaration.resolveToDescriptorIfAny() ?: return null
 
         val targetPlatform = declaration.module?.platform ?: return null
-        val icon = targetPlatform.kind.tooling.getTestIcon(declaration, descriptor) ?: return null
-        return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions())
+        val icon = targetPlatform.idePlatformKind.tooling.getTestIcon(declaration, descriptor) ?: return null
+        return Info(icon, { "Run Test" }, ExecutorAction.getActions())
     }
 }

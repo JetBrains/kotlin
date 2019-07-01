@@ -260,7 +260,10 @@ class NewResolutionOldInference(
 
     private fun <D : CallableDescriptor> allCandidatesResult(allCandidates: Collection<MyCandidate>) =
         OverloadResolutionResultsImpl.nameNotFound<D>().apply {
-            this.allCandidates = allCandidates.map { it.resolvedCall as MutableResolvedCall<D> }
+            this.allCandidates = allCandidates.map {
+                @Suppress("UNCHECKED_CAST")
+                it.resolvedCall as MutableResolvedCall<D>
+            }
         }
 
     private fun <D : CallableDescriptor> convertToOverloadResults(
@@ -315,6 +318,7 @@ class NewResolutionOldInference(
                 }
             }
 
+            @Suppress("UNCHECKED_CAST")
             resolvedCall as MutableResolvedCall<D>
         }
 
@@ -475,7 +479,7 @@ class NewResolutionOldInference(
             variable: MyCandidate,
             invoke: MyCandidate
         ): MyCandidate {
-            val resolvedCallImpl = VariableAsFunctionResolvedCallImpl(
+            @Suppress("UNCHECKED_CAST") val resolvedCallImpl = VariableAsFunctionResolvedCallImpl(
                 invoke.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
                 variable.resolvedCall as MutableResolvedCall<VariableDescriptor>
             )

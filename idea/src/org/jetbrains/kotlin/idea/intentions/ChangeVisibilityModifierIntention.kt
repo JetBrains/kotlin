@@ -39,11 +39,11 @@ open class ChangeVisibilityModifierIntention protected constructor(
         val modifierList = element.modifierList
         if (modifierList?.hasModifier(modifier) == true) return null
 
+        if (KtPsiUtil.isLocal((element as? KtPropertyAccessor)?.property ?: element)) return null
+
         val descriptor = element.toDescriptor() as? DeclarationDescriptorWithVisibility ?: return null
         val targetVisibility = modifier.toVisibility()
         if (descriptor.visibility == targetVisibility) return null
-
-        if (KtPsiUtil.isLocal((element as? KtPropertyAccessor)?.property ?: element)) return null
 
         if (modifierList?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
             val callableDescriptor = descriptor  as? CallableDescriptor ?: return null

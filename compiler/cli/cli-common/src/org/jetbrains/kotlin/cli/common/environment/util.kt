@@ -24,7 +24,7 @@ fun setIdeaIoUseFallback() {
 
         properties.setProperty("idea.io.use.nio2", java.lang.Boolean.TRUE.toString())
 
-        if (!(SystemInfo.isJavaVersionAtLeast("1.7") && "1.7.0-ea" != SystemInfo.JAVA_VERSION)) {
+        if (!(SystemInfo.isJavaVersionAtLeast(1, 7, 0) && "1.7.0-ea" != SystemInfo.JAVA_VERSION)) {
             properties.setProperty("idea.io.use.fallback", java.lang.Boolean.TRUE.toString())
         }
     }

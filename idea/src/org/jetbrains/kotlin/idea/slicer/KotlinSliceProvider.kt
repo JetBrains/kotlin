@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
-import com.intellij.codeInspection.dataFlow.Nullness
+import com.intellij.codeInsight.Nullability
 import com.intellij.ide.util.treeView.AbstractTreeStructure
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.psi.PsiElement
@@ -24,11 +24,10 @@ import com.intellij.slicer.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.slicer.compat.PsiElement_N183_NN191
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -51,7 +50,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
     val leafAnalyzer by lazy { SliceLeafAnalyzer(LEAF_ELEMENT_EQUALITY, this) }
     val nullnessAnalyzer: SliceNullnessAnalyzerBase by lazy {
         object : SliceNullnessAnalyzerBase(LEAF_ELEMENT_EQUALITY, this) {
-            override fun checkNullness(element: PsiElement?): Nullness {
+            override fun checkNullability(element: PsiElement?): Nullability {
                 val types = when (element) {
                     is KtCallableDeclaration -> listOfNotNull((element.resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType)
                     is KtDeclaration -> emptyList()
@@ -59,10 +58,10 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
                     else -> emptyList()
                 }
                 return when {
-                    types.isEmpty() -> return Nullness.UNKNOWN
-                    types.all { KotlinBuiltIns.isNullableNothing(it) } -> Nullness.NULLABLE
-                    types.any { it.isError || TypeUtils.isNullableType(it) || it.isNullabilityFlexible() } -> Nullness.UNKNOWN
-                    else -> Nullness.NOT_NULL
+                    types.isEmpty() -> return Nullability.UNKNOWN
+                    types.all { KotlinBuiltIns.isNullableNothing(it) } -> Nullability.NULLABLE
+                    types.any { it.isError || TypeUtils.isNullableType(it) || it.isNullabilityFlexible() } -> Nullability.UNKNOWN
+                    else -> Nullability.NOT_NULL
                 }
             }
         }
@@ -75,17 +74,21 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
         return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
     }
 
-    override fun getExpressionAtCaret(atCaret: PsiElement?, dataFlowToThis: Boolean): KtExpression? {
+    override fun getExpressionAtCaret(atCaret: PsiElement_N183_NN191, dataFlowToThis: Boolean): KtExpression? {
+        // BUNCH: 183
+        @Suppress("SENSELESS_COMPARISON")
+        if (atCaret == null) return null
+
         val element =
-                atCaret?.parentsWithSelf
-                        ?.firstOrNull {
-                            it is KtProperty ||
+            atCaret.parentsWithSelf
+                .firstOrNull {
+                    it is KtProperty ||
                             it is KtParameter ||
                             it is KtDeclarationWithBody ||
                             (it is KtClass && !it.hasExplicitPrimaryConstructor()) ||
                             (it is KtExpression && it !is KtDeclaration)
-                        }
-                        ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null
+                }
+                ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null
         if (dataFlowToThis) {
             if (element is KtConstantExpression) return null
             if (element is KtStringTemplateExpression && element.isPlainWithEscapes()) return null

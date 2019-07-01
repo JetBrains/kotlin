@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core.script.settings
@@ -14,7 +14,7 @@ import com.intellij.util.addOptionTag
 import com.intellij.util.attribute
 import com.intellij.util.getAttributeBooleanValue
 import org.jdom.Element
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 @State(
     name = "KotlinScriptingSettings",
@@ -72,22 +72,22 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
         }
     }
 
-    fun setOrder(scriptDefinition: KotlinScriptDefinition, order: Int) {
+    fun setOrder(scriptDefinition: ScriptDefinition, order: Int) {
         scriptDefinitions[scriptDefinition.toKey()] = scriptDefinitions[scriptDefinition.toKey()]?.copy(order = order) ?:
                 KotlinScriptDefinitionValue(order)
     }
 
 
-    fun setEnabled(scriptDefinition: KotlinScriptDefinition, isEnabled: Boolean) {
+    fun setEnabled(scriptDefinition: ScriptDefinition, isEnabled: Boolean) {
         scriptDefinitions[scriptDefinition.toKey()] = scriptDefinitions[scriptDefinition.toKey()]?.copy(isEnabled = isEnabled) ?:
                 KotlinScriptDefinitionValue(scriptDefinitions.size, isEnabled)
     }
 
-    fun getScriptDefinitionOrder(scriptDefinition: KotlinScriptDefinition): Int {
+    fun getScriptDefinitionOrder(scriptDefinition: ScriptDefinition): Int {
         return scriptDefinitions[scriptDefinition.toKey()]?.order ?: Integer.MAX_VALUE
     }
 
-    fun isScriptDefinitionEnabled(scriptDefinition: KotlinScriptDefinition): Boolean {
+    fun isScriptDefinitionEnabled(scriptDefinition: ScriptDefinition): Boolean {
         return scriptDefinitions[scriptDefinition.toKey()]?.isEnabled ?: true
     }
 
@@ -99,24 +99,30 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
         getAttributeValue(KotlinScriptDefinitionKey::className.name)
     )
 
-    private fun KotlinScriptDefinition.toKey() =
-        KotlinScriptDefinitionKey(this.name, this::class.qualifiedName ?: "unknown")
+    private fun ScriptDefinition.toKey() =
+        KotlinScriptDefinitionKey(this.name, this.definitionId)
 
     private fun Element.addScriptDefinitionContentElement(definition: KotlinScriptDefinitionKey, settings: KotlinScriptDefinitionValue) {
-        Element(SCRIPT_DEFINITION_TAG).apply {
+        addElement(SCRIPT_DEFINITION_TAG).apply {
             attribute(KotlinScriptDefinitionKey::className.name, definition.className)
             attribute(KotlinScriptDefinitionKey::definitionName.name, definition.definitionName)
 
-            Element(KotlinScriptDefinitionValue::order.name).apply {
+            addElement(KotlinScriptDefinitionValue::order.name).apply {
                 text = settings.order.toString()
             }
 
             if (!settings.isEnabled) {
-                Element(KotlinScriptDefinitionValue::isEnabled.name).apply {
+                addElement(KotlinScriptDefinitionValue::isEnabled.name).apply {
                     text = settings.isEnabled.toString()
                 }
             }
         }
+    }
+
+    private fun Element.addElement(name: String): Element {
+        val element = Element(name)
+        addContent(element)
+        return element
     }
 
     private fun Element.toValue(): KotlinScriptDefinitionValue {

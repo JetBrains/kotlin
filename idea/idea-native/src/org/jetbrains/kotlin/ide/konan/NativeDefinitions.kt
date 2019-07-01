@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ide.konan
@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.konan.library.KDEFINITIONS_FILE_EXTENSION
 
 
-const val NATIVE_DEFINITIONS_NAME = "KND"
+const val NATIVE_DEFINITIONS_ID = "KND"
+const val NATIVE_DEFINITIONS_NAME = "Kotlin/Native Def"
 const val NATIVE_DEFINITIONS_DESCRIPTION = "Definitions file for Kotlin/Native C interop"
 
 object NativeDefinitionsFileType : LanguageFileType(NativeDefinitionsLanguage.INSTANCE) {
@@ -38,10 +39,12 @@ object NativeDefinitionsFileType : LanguageFileType(NativeDefinitionsLanguage.IN
     override fun getIcon(): Icon = KotlinIcons.NATIVE
 }
 
-class NativeDefinitionsLanguage private constructor() : Language(NATIVE_DEFINITIONS_NAME) {
+class NativeDefinitionsLanguage private constructor() : Language(NATIVE_DEFINITIONS_ID) {
     companion object {
         val INSTANCE = NativeDefinitionsLanguage()
     }
+
+    override fun getDisplayName(): String = NATIVE_DEFINITIONS_NAME
 }
 
 class NativeDefinitionsFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, NativeDefinitionsLanguage.INSTANCE) {
@@ -115,6 +118,7 @@ object NativeDefinitionsSyntaxHighlighter : SyntaxHighlighterBase() {
             NativeDefinitionsTypes.LIBRARY_PATHS -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.LINKER -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.LINKER_OPTS -> KNOWN_PROPERTIES_KEYS
+            NativeDefinitionsTypes.MODULES -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.NON_STRICT_ENUMS -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.NO_STRING_CONVERSION -> KNOWN_PROPERTIES_KEYS
             NativeDefinitionsTypes.PACKAGE -> KNOWN_PROPERTIES_KEYS

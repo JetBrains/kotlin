@@ -1,0 +1,83 @@
+package javadoc;
+
+import java.lang.System;
+
+/**
+ * Simple
+ */
+@kotlin.Metadata()
+public final class A {
+
+    public A() {
+        super();
+    }
+}
+
+////////////////////
+
+package javadoc;
+
+import java.lang.System;
+
+/**
+ * Multi
+ * line
+ * comment.
+ */
+@kotlin.Metadata()
+public final class B {
+
+    /**
+     * Nested
+     * member
+     * comment.
+     */
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = "";
+
+    /**
+     * Mixed
+     * tabs/spaces
+     */
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String b = "";
+
+    /**
+     * List:
+     * * first item
+     * * second item
+     */
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String c = "";
+
+    /**
+     * Without
+     * stars
+     */
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String d = "";
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getC() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getD() {
+        return null;
+    }
+
+    public B() {
+        super();
+    }
+}

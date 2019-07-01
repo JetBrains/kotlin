@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
+import org.jetbrains.kotlin.idea.debugger.getContextElement
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -32,7 +34,7 @@ import kotlin.test.assertTrue
 abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
-        myFixture.checkHighlighting(true, false, false)
+        checkHighlighting(filePath)
     }
 
     fun doTestWithImport(filePath: String) {
@@ -46,6 +48,22 @@ abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
                                  ?: error("Could not resolve descriptor to import: $it")
                 ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
             }
+        }
+
+        checkHighlighting(filePath)
+    }
+
+    private fun checkHighlighting(filePath: String) {
+        val inspectionName = InTextDirectivesUtils.findStringWithPrefixes(File(filePath).readText(), "// INSPECTION_CLASS: ")
+        if (inspectionName != null) {
+            val inspection = Class.forName(inspectionName).newInstance() as InspectionProfileEntry
+            myFixture.enableInspections(inspection)
+            try {
+                myFixture.checkHighlighting(true, false, false)
+            } finally {
+                myFixture.disableInspections(inspection)
+            }
+            return
         }
 
         myFixture.checkHighlighting(true, false, false)
@@ -130,13 +148,7 @@ private fun createCodeFragment(filePath: String, contextElement: PsiElement): Kt
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
     val psiFactory = KtPsiFactory(contextElement.project)
     if (fileForFragment.readLines().size == 1) {
-        return psiFactory.createExpressionCodeFragment(
-                codeFragmentText,
-                KotlinCodeFragmentFactory.getContextElement(contextElement)
-        )
+        return psiFactory.createExpressionCodeFragment(codeFragmentText, getContextElement(contextElement))
     }
-    return psiFactory.createBlockCodeFragment(
-            codeFragmentText,
-            KotlinCodeFragmentFactory.getContextElement(contextElement)
-    )
+    return psiFactory.createBlockCodeFragment(codeFragmentText, getContextElement(contextElement))
 }

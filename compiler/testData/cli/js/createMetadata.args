@@ -1,5 +1,4 @@
 compiler/testData/integration/ant/js/simpleWithoutStdlibAndFolderAsAnotherLib/jslib-example/LibraryExample.kt
--no-stdlib
 -meta-info
 -output
 $TEMP_DIR$/jslib-example.js

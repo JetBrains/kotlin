@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
@@ -41,6 +41,7 @@ internal fun VariableDescriptor.variableKind(
         return propertyKind(usageModule)
     }
 
+    @Suppress("DEPRECATION")
     if (this is LocalVariableDescriptor && this.isDelegated) {
         // Local delegated property: normally unstable, but can be treated as stable in legacy mode
         return if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnLocalDelegatedProperty))

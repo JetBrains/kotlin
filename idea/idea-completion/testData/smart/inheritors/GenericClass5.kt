@@ -8,6 +8,6 @@ fun bar() {
     foo(<caret>)
 }
 
-// EXIST: { itemText: "object: I<String>{...}" }
-// EXIST: { itemText: "object: C<...>(){...}" }
+// EXIST: { itemText: "object : I<String>{...}" }
+// EXIST: { itemText: "object : C<...>(){...}" }
 // NOTHING_ELSE

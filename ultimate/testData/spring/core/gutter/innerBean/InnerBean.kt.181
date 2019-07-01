@@ -1,1 +1,0 @@
-class Inner<caret>Bean

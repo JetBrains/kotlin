@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
@@ -162,7 +163,14 @@ fun KtExpression.guessTypes(
 
     if (this !is KtWhenExpression) {
         // if we know the actual type of the expression
-        val theType1 = context.getType(this)
+        val theType1 = context.getType(this)?.let {
+            val constructor = it.constructor
+            if (constructor is IntegerLiteralTypeConstructor) {
+                constructor.getApproximatedType()
+            } else {
+                it
+            }
+        }
         if (theType1 != null && isAcceptable(theType1)) {
             return getDataFlowAwareTypes(this, context, theType1).toTypedArray()
         }

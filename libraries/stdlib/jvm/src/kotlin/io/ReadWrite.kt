@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:JvmName("TextStreamsKt")
@@ -19,7 +19,7 @@ import kotlin.internal.*
 public inline fun Reader.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader =
     if (this is BufferedReader) this else BufferedReader(this, bufferSize)
 
-/** Returns a buffered reader wrapping this Writer, or this Writer itself if it is already buffered. */
+/** Returns a buffered writer wrapping this Writer, or this Writer itself if it is already buffered. */
 @kotlin.internal.InlineOnly
 public inline fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter =
     if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)

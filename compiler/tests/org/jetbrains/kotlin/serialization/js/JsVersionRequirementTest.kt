@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.js
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.serialization.AbstractVersionRequirementTest
@@ -76,7 +76,10 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
 
     private fun createModule(environment: KotlinCoreEnvironment): MutableModuleContext {
         val config = JsConfig(environment.project, environment.configuration)
-        return ContextForNewModule(ProjectContext(environment.project), Name.special("<test>"), JsPlatform.builtIns, null).apply {
+        return ContextForNewModule(
+            ProjectContext(environment.project, "ProjectContext"),
+            Name.special("<test>"), JsPlatformAnalyzerServices.builtIns, null
+        ).apply {
             setDependencies(listOf(module) + config.moduleDescriptors + module.builtIns.builtInsModule)
         }
     }

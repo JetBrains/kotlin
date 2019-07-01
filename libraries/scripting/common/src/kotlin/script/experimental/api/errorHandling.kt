@@ -1,11 +1,13 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("unused")
 
 package kotlin.script.experimental.api
+
+import java.io.File
 
 /**
  * The single script diagnostic report
@@ -25,6 +27,27 @@ data class ScriptDiagnostic(
      * The diagnostic severity
      */
     enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
+
+    override fun toString(): String = buildString {
+        append(severity.name)
+        append(' ')
+        append(message)
+        if (sourcePath != null || location != null) {
+            append(" (")
+            sourcePath?.let { append(it.substringAfterLast(File.separatorChar)) }
+            location?.let {
+                append(':')
+                append(it.start.line)
+                append(':')
+                append(it.start.col)
+            }
+            append(')')
+        }
+        if (exception != null) {
+            append(": ")
+            append(exception)
+        }
+    }
 }
 
 /**
@@ -53,6 +76,10 @@ sealed class ResultWithDiagnostics<out R> {
     ) : ResultWithDiagnostics<Nothing>() {
         constructor(vararg reports: ScriptDiagnostic) : this(reports.asList())
     }
+
+    override fun equals(other: Any?): Boolean = this === other || (other is ResultWithDiagnostics<*> && this.reports == other.reports)
+
+    override fun hashCode(): Int = reports.hashCode()
 }
 
 /**
@@ -116,14 +143,33 @@ fun <R> R.asSuccess(reports: List<ScriptDiagnostic> = listOf()): ResultWithDiagn
     ResultWithDiagnostics.Success(this, reports)
 
 /**
+ * Makes Failure result with optional diagnostic [reports]
+ */
+fun makeFailureResult(reports: List<ScriptDiagnostic>): ResultWithDiagnostics.Failure =
+    ResultWithDiagnostics.Failure(reports)
+
+/**
+ * Makes Failure result with optional diagnostic [reports]
+ */
+fun makeFailureResult(vararg reports: ScriptDiagnostic): ResultWithDiagnostics.Failure =
+    ResultWithDiagnostics.Failure(reports.asList())
+
+/**
+ * Makes Failure result with diagnostic [message] with optional [path] and [location]
+ */
+fun makeFailureResult(message: String, path: String? = null, location: SourceCode.Location? = null): ResultWithDiagnostics.Failure =
+    ResultWithDiagnostics.Failure(message.asErrorDiagnostics(path, location))
+
+/**
  * Converts the receiver Throwable to the Failure results wrapper with optional [customMessage], [path] and [location]
  */
 fun Throwable.asDiagnostics(
     customMessage: String? = null,
     path: String? = null,
-    location: SourceCode.Location? = null
+    location: SourceCode.Location? = null,
+    severity: ScriptDiagnostic.Severity = ScriptDiagnostic.Severity.ERROR
 ): ScriptDiagnostic =
-    ScriptDiagnostic(customMessage ?: message ?: "$this", ScriptDiagnostic.Severity.ERROR, path, location, this)
+    ScriptDiagnostic(customMessage ?: message ?: "$this", severity, path, location, this)
 
 /**
  * Converts the receiver String to error diagnostic report with optional [path] and [location]
@@ -134,7 +180,15 @@ fun String.asErrorDiagnostics(path: String? = null, location: SourceCode.Locatio
 /**
  * Extracts the result value from the receiver wrapper or null if receiver represents a Failure
  */
-fun <R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {
+fun <R> ResultWithDiagnostics<R>.valueOrNull(): R? = when (this) {
     is ResultWithDiagnostics.Success<R> -> value
     else -> null
+}
+
+/**
+ * Extracts the result value from the receiver wrapper or run non-returning lambda if receiver represents a Failure
+ */
+inline fun <R> ResultWithDiagnostics<R>.valueOr(body: (ResultWithDiagnostics.Failure) -> Nothing): R = when (this) {
+    is ResultWithDiagnostics.Success<R> -> value
+    is ResultWithDiagnostics.Failure -> body(this)
 }

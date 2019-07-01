@@ -7,17 +7,13 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -38,7 +34,7 @@ class SerializableIrGenerator(
         get() = _table
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
-        irClass.contributeConstructor(constructorDescriptor) { ctor ->
+        irClass.contributeConstructor(constructorDescriptor, fromStubs = true, overwriteValueParameters = true) { ctor ->
             val transformFieldInitializer = buildInitializersRemapping(irClass)
 
             // Missing field exception parts
@@ -103,9 +99,21 @@ class SerializableIrGenerator(
             irClass.declarations.asSequence()
                 .filterIsInstance<IrAnonymousInitializer>()
                 .forEach { initializer ->
-                    initializer.body.statements.forEach { +it }
+                    initializer.body.statements.forEach { +it.deepCopyWithSymbols(initialParent = ctor) }
                 }
         }
+
+    // todo: this is copypaste from DeepCopyIrWithSymbols.kt,
+    //   remove after KT-18563 is fixed and bootstrap updated.
+    private inline fun <reified T : IrElement> T.deepCopyWithSymbols(
+        initialParent: IrDeclarationParent? = null,
+        descriptorRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
+    ): T {
+        val symbolRemapper = DeepCopySymbolRemapper(descriptorRemapper)
+        acceptVoid(symbolRemapper)
+        val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
+        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
+    }
 
     private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor) {
         val suitableCtor = superClass.constructors.singleOrNull { it.valueParameters.size == 0 }
@@ -127,8 +135,8 @@ class SerializableIrGenerator(
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = compilerContext.externalSymbols.referenceClass(superClass).owner.serializableSyntheticConstructor()
-        val superProperties = SerializableProperties(superClass, bindingContext).serializableProperties
+        val superCtorRef = compilerContext.externalSymbols.serializableSyntheticConstructor(superClass)
+        val superProperties = bindingContext.serializablePropertiesFor(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
                     allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +

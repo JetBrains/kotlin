@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
-import org.jetbrains.kotlin.contracts.model.Computation
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.structure.ESConstants
+import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.isReturns
 import org.jetbrains.kotlin.contracts.model.structure.isWildcard
+import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
 /**
  * Unary functor that has sequential semantics, i.e. it won't apply to
@@ -30,8 +28,8 @@ import org.jetbrains.kotlin.contracts.model.structure.isWildcard
  * It provides [applyToFinishingClauses] method for successors, which is guaranteed to
  * be called only on clauses that haven't failed before reaching functor transformation.
  */
-abstract class AbstractUnaryFunctor(constants: ESConstants) : AbstractReducingFunctor(constants) {
-    override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
+abstract class AbstractUnaryFunctor : AbstractFunctor() {
+    override fun doInvocation(arguments: List<Computation>, reducer: Reducer): List<ESEffect> {
         assert(arguments.size == 1) { "Wrong size of arguments list for Unary operator: expected 1, got ${arguments.size}" }
         return invokeWithArguments(arguments[0])
     }

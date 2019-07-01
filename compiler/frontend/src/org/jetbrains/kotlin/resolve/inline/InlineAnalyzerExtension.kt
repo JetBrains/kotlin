@@ -181,7 +181,9 @@ class InlineAnalyzerExtension(
         }
         if (hasInlineArgs) return
 
-        if (functionDescriptor.isInlineOnlyOrReifiable() || functionDescriptor.isExpect || functionDescriptor.isSuspend) return
+        if (functionDescriptor.isInlineWithReified() || functionDescriptor.isInlineOnly() || functionDescriptor.isExpect ||
+            functionDescriptor.isSuspend
+        ) return
 
         if (reasonableInlineRules.any { it.isInlineReasonable(functionDescriptor, function, trace.bindingContext) }) return
 

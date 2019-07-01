@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
@@ -25,6 +26,7 @@ import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
 
+@TestDataPath("\$CONTENT_ROOT/resources")
 class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
@@ -273,6 +275,10 @@ class MultiplatformGradleIT : BaseGradleIT() {
         listOf("lib", "libJvm", "libJs").forEach { module ->
             gradleBuildScript(module).appendText(sourceSetDeclaration)
         }
+
+        gradleBuildScript("libJvm").appendText(
+            "\ndependencies { ${sourceSetName}Compile \"org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version\" }"
+        )
 
         listOf(
             "expect fun foo(): String" to "lib/src/$sourceSetName/kotlin",

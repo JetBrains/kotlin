@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.idea.script.configuration;
 
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager;
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
-import org.jetbrains.kotlin.script.KotlinScriptDefinition;
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +64,7 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
 
         if (isScriptDefinitionsChanged()) {
             for (KotlinScriptDefinitionsModelDescriptor item : model.getItems()) {
-                KotlinScriptDefinition definition = item.getDefinition();
+                ScriptDefinition definition = item.getDefinition();
                 settings.setOrder(definition, model.getItems().indexOf(item));
                 settings.setEnabled(definition, item.isEnabled());
             }

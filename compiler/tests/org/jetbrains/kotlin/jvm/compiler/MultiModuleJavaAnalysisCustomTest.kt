@@ -34,12 +34,15 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -57,21 +60,26 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     ) : ModuleInfo {
         override fun dependencies() = _dependencies()
         override val name = Name.special("<$_name>")
+
+        override val platform: TargetPlatform
+            get() = JvmPlatforms.unspecifiedJvmPlatform
+
+        override val analyzerServices: PlatformDependentAnalyzerServices
+            get() = JvmPlatformAnalyzerServices
     }
 
     fun testJavaEntitiesBelongToCorrectModule() {
         val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it -> it.isDirectory }!!
         val environment = createEnvironment(moduleDirs)
         val modules = setupModules(environment, moduleDirs)
-        val projectContext = ProjectContext(environment.project)
-        val builtIns = JvmBuiltIns(projectContext.storageManager)
+        val projectContext = ProjectContext(environment.project, "MultiModuleJavaAnalysisTest")
+        val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         val resolverForProject = ResolverForProjectImpl(
             "test",
             projectContext, modules,
             modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
-            modulePlatforms = { JvmPlatform.multiTargetPlatform },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-            resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+            resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
             platformParameters = { _ ->
                 JvmPlatformParameters(
                     packagePartProviderFactory = { PackagePartProvider.Empty },

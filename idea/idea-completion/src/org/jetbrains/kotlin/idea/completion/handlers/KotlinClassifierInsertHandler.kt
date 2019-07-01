@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.completion.isAfterDot
 import org.jetbrains.kotlin.idea.completion.isArtificialImportAliasedDescriptor
@@ -60,7 +61,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 val token = file.findElementAt(startOffset)!!
                 val nameRef = token.parent as? KtNameReferenceExpression
                 if (nameRef != null) {
-                    val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
+                    val bindingContext = allowResolveInWriteAction { nameRef.analyze(BodyResolveMode.PARTIAL) }
                     val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]
                         ?: bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
                     if (target != null && IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(target) == qualifiedName) return

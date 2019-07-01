@@ -1,0 +1,42 @@
+CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J1 modality:OPEN visibility:public superTypes:[<unbound IrClassSymbolImpl>]
+  $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.J1<T1 of <root>.J1>
+  TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T1 index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?]
+  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:<root>.J1<T1 of <root>.J1>
+  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <X1> (x1:X1 of <root>.J1.<init>?) returnType:<root>.J1<T1 of <root>.J1>
+    TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:X1 index:1 variance: superTypes:[<unbound IrClassSymbolImpl>?]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:x1 index:0 type:X1 of <root>.J1.<init>?
+  CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J2 modality:OPEN visibility:public [inner] superTypes:[<unbound IrClassSymbolImpl>]
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.J1.J2<T2 of <root>.J1.J2, T1 of <root>.J1>
+    TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T2 index:0 variance: superTypes:[<unbound IrClassSymbolImpl>?]
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> ($this:<root>.J1<T1 of <root>.J1>) returnType:<root>.J1.J2<T2 of <root>.J1.J2, T1 of <root>.J1>
+      $outer: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.J1<T1 of <root>.J1>
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <X2> ($this:<root>.J1<T1 of <root>.J1>, x2:X2 of <root>.J1.J2.<init>?) returnType:<root>.J1.J2<T2 of <root>.J1.J2, T1 of <root>.J1>
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:X2 index:1 variance: superTypes:[<unbound IrClassSymbolImpl>?]
+      $outer: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.J1<T1 of <root>.J1>
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:x2 index:0 type:X2 of <root>.J1.J2.<init>?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+      overridden:
+        public open fun hashCode (): <unbound IrClassSymbolImpl> declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassSymbolImpl>
+      overridden:
+        public open fun equals (other: kotlin.Any?): <unbound IrClassSymbolImpl> declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl>
+      overridden:
+        public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Any
+      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl>
+    overridden:
+      public open fun hashCode (): <unbound IrClassSymbolImpl> declared in kotlin.Any
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassSymbolImpl>
+    overridden:
+      public open fun equals (other: kotlin.Any?): <unbound IrClassSymbolImpl> declared in kotlin.Any
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl>
+    overridden:
+      public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Any
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any

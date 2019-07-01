@@ -18,17 +18,21 @@ package org.jetbrains.kotlin.idea.project;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider;
+import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProviderKt;
+import org.jetbrains.kotlin.platform.*;
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.scripting.definitions.DefinitionsKt;
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
@@ -52,7 +56,15 @@ public class TargetPlatformDetector {
         PsiElement context = KtPsiFactoryKt.getAnalysisContext(file);
         if (context != null) {
             PsiFile contextFile = context.getContainingFile();
-            return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : JvmPlatform.INSTANCE;
+            // TODO(dsavvinov): Get default platform with proper target
+            return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : JvmPlatforms.INSTANCE.getUnspecifiedJvmPlatform();
+        }
+
+        if (file.isScript()) {
+            ScriptDefinition scriptDefinition = DefinitionsKt.findScriptDefinition(file);
+            if (scriptDefinition != null) {
+                return getPlatform(file.getProject(), scriptDefinition);
+            }
         }
 
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
@@ -63,12 +75,37 @@ public class TargetPlatformDetector {
             }
         }
 
-        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultCompilerPlatform();
+        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultPlatform();
     }
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
         return ProjectStructureUtil.getCachedPlatformForModule(module);
+    }
+
+    @NotNull
+    public static TargetPlatform getPlatform(@NotNull Project project, @NotNull ScriptDefinition scriptDefinition) {
+        String platformNameFromScriptDefinition = scriptDefinition.getPlatform();
+        TargetPlatformVersion targetPlatformVersion =
+                IDELanguageSettingsProviderKt.getTargetPlatformVersionForScripts(project, scriptDefinition);
+        if (!targetPlatformVersion.equals(TargetPlatformVersion.NoVersion.INSTANCE)) {
+            for (TargetPlatform compilerPlatform : CommonPlatforms.INSTANCE.getAllSimplePlatforms()) {
+                SimplePlatform simplePlatform = CollectionsKt.single(compilerPlatform);
+                if (simplePlatform.getTargetPlatformVersion() == targetPlatformVersion) {
+                    return compilerPlatform;
+                }
+            }
+        }
+
+        for (TargetPlatform compilerPlatform : CommonPlatforms.INSTANCE.getAllSimplePlatforms()) {
+            // FIXME(dsavvinov): get rid of matching by name
+            SimplePlatform simplePlatform = CollectionsKt.single(compilerPlatform);
+            if (simplePlatform.getPlatformName().equals(platformNameFromScriptDefinition)) {
+                return compilerPlatform;
+            }
+        }
+
+        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultPlatform();
     }
 
 }

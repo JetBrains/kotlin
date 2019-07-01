@@ -4,13 +4,19 @@ import org.jetbrains.kotlin.pill.PillExtension
 plugins {
     kotlin("jvm")
     maven
+    id("jps-compatible")
 }
 
-standardPublicJars()
 publish()
+
+standardPublicJars()
 
 dependencies {
     compile(kotlinStdlib())
+}
+
+pill {
+    variant = PillExtension.Variant.FULL
 }
 
 tasks {

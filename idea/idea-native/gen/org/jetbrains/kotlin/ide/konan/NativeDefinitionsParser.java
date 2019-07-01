@@ -355,7 +355,7 @@ public class NativeDefinitionsParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // COMPILER_OPTS | DEPENDS  | ENTRY_POINT | EXCLUDED_FUNCTIONS
   //                             | EXCLUDED_MACROS  | EXPORT_FORWARD_DECLARATIONS | HEADER_FILTER
-  //                             | HEADERS | LIBRARY_PATHS | LINKER_OPTS | NON_STRICT_ENUMS
+  //                             | HEADERS | LIBRARY_PATHS | LINKER_OPTS | MODULES | NON_STRICT_ENUMS
   //                             | NO_STRING_CONVERSION | PACKAGE | STATIC_LIBRARIES | STRICT_ENUMS
   public static boolean stringsKey(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stringsKey")) return false;
@@ -371,6 +371,7 @@ public class NativeDefinitionsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, HEADERS);
     if (!r) r = consumeToken(b, LIBRARY_PATHS);
     if (!r) r = consumeToken(b, LINKER_OPTS);
+    if (!r) r = consumeToken(b, MODULES);
     if (!r) r = consumeToken(b, NON_STRICT_ENUMS);
     if (!r) r = consumeToken(b, NO_STRING_CONVERSION);
     if (!r) r = consumeToken(b, PACKAGE);

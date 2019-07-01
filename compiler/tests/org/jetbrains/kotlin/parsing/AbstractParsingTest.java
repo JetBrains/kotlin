@@ -31,8 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
-import org.jetbrains.kotlin.scripting.legacy.CliScriptDefinitionProvider;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase;
 
@@ -137,12 +135,6 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         else {
             return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileContent);
         }
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        getProject().registerService(ScriptDefinitionProvider.class, CliScriptDefinitionProvider.class);
     }
 
     @Override

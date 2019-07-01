@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 description = "Kotlin Daemon Client"
 
 plugins {
@@ -23,16 +21,20 @@ val nativePlatformVariants = listOf(
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
-    embeddedComponents(project(":compiler:daemon-common")) { isTransitive = false }
-    embeddedComponents(commonDep("net.rubygrapefruit", "native-platform"))
+    embedded(project(":daemon-common")) { isTransitive = false }
+    embedded(commonDep("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
-        embeddedComponents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+        embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+    }
+    runtime(project(":kotlin-reflect"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+        isTransitive = false
     }
 }
 
@@ -41,19 +43,10 @@ sourceSets {
     "test" {}
 }
 
-noDefaultJar()
+publish()
 
-runtimeJar(task<ShadowJar>("shadowJar")) {
-    from(mainSourceSet.output)
-    fromEmbeddedComponents()
-}
+runtimeJar()
 
 sourcesJar()
 
 javadocJar()
-
-dist()
-
-ideaPlugin()
-
-publish()

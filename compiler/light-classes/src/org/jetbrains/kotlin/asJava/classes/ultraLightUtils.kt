@@ -1,18 +1,22 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.google.common.collect.Lists
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.impl.light.*
+import com.intellij.psi.impl.light.LightMethodBuilder
+import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.util.BitUtil.isSet
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -24,13 +28,16 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtTypeParameter
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -41,7 +48,7 @@ import java.text.StringCharacterIterator
 internal fun buildTypeParameterList(
     declaration: CallableMemberDescriptor,
     owner: PsiTypeParameterListOwner,
-    support: UltraLightSupport
+    support: KtUltraLightSupport
 ): PsiTypeParameterList = buildTypeParameterList(
     declaration, owner, support,
     object : TypeParametersSupport<CallableMemberDescriptor, TypeParameterDescriptor> {
@@ -61,7 +68,7 @@ internal fun buildTypeParameterList(
 internal fun buildTypeParameterList(
     declaration: KtTypeParameterListOwner,
     owner: PsiTypeParameterListOwner,
-    support: UltraLightSupport
+    support: KtUltraLightSupport
 ): PsiTypeParameterList = buildTypeParameterList(
     declaration, owner, support,
     object : TypeParametersSupport<KtTypeParameterListOwner, KtTypeParameter> {
@@ -87,41 +94,44 @@ interface TypeParametersSupport<D, T> {
 internal fun <D, T> buildTypeParameterList(
     declaration: D,
     owner: PsiTypeParameterListOwner,
-    support: UltraLightSupport,
+    support: KtUltraLightSupport,
     typeParametersSupport: TypeParametersSupport<D, T>
 ): PsiTypeParameterList {
+
     val tpList = KotlinLightTypeParameterListBuilder(owner)
+
     for ((i, param) in typeParametersSupport.parameters(declaration).withIndex()) {
-        tpList.addParameter(object : LightTypeParameterBuilder(typeParametersSupport.name(param).orEmpty(), owner, i) {
-            private val superList: LightReferenceListBuilder by lazyPub {
-                val boundList =
-                    KotlinLightReferenceListBuilder(manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
 
-                if (typeParametersSupport.hasNonTrivialBounds(declaration, param)) {
-                    val boundTypes = typeParametersSupport.asDescriptor(param)?.upperBounds.orEmpty()
-                        .mapNotNull { it.asPsiType(support, TypeMappingMode.DEFAULT, this) as? PsiClassType }
-                    val hasDefaultBound = boundTypes.size == 1 && boundTypes[0].equalsToText(CommonClassNames.JAVA_LANG_OBJECT)
-                    if (!hasDefaultBound) {
-                        boundTypes.forEach(boundList::addReference)
-                    }
-                }
-                boundList
+        val referenceListBuilder = { element: PsiElement ->
+            val boundList = KotlinLightReferenceListBuilder(element.manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
+
+            if (typeParametersSupport.hasNonTrivialBounds(declaration, param)) {
+                val boundTypes = typeParametersSupport.asDescriptor(param)
+                    ?.upperBounds
+                    .orEmpty()
+                    .mapNotNull { it.asPsiType(support, TypeMappingMode.DEFAULT, element) as? PsiClassType }
+
+                val hasDefaultBound = boundTypes.size == 1 && boundTypes[0].equalsToText(CommonClassNames.JAVA_LANG_OBJECT)
+                if (!hasDefaultBound) boundTypes.forEach(boundList::addReference)
             }
+            boundList
+        }
 
-            override fun getExtendsList(): LightReferenceListBuilder = superList
+        val parameterName = typeParametersSupport.name(param).orEmpty()
 
-            override fun getParent(): PsiElement = tpList
-            override fun getContainingFile(): PsiFile = owner.containingFile
-        })
+        tpList.addParameter(KtUltraLightTypeParameter(parameterName, owner, tpList, i, referenceListBuilder))
     }
+
     return tpList
 }
+
 
 internal fun KtDeclaration.getKotlinType(): KotlinType? {
     val descriptor = resolve()
     return when (descriptor) {
         is ValueDescriptor -> descriptor.type
-        is CallableDescriptor -> descriptor.returnType
+        is CallableDescriptor -> if (descriptor is FunctionDescriptor && descriptor.isSuspend)
+            descriptor.module.builtIns.nullableAnyType else descriptor.returnType
         else -> null
     }
 }
@@ -131,14 +141,14 @@ internal fun KtElement.analyze() = LightClassGenerationSupport.getInstance(proje
 
 // copy-pasted from kotlinInternalUastUtils.kt and post-processed
 internal fun KotlinType.asPsiType(
-    support: UltraLightSupport,
+    support: KtUltraLightSupport,
     mode: TypeMappingMode,
     psiContext: PsiElement
 ): PsiType = support.mapType(psiContext) { typeMapper, signatureWriter ->
     typeMapper.mapType(this, signatureWriter, mode)
 }
 
-internal fun UltraLightSupport.mapType(
+internal fun KtUltraLightSupport.mapType(
     psiContext: PsiElement,
     mapTypeToSignatureWriter: (KotlinTypeMapper, JvmSignatureWriter) -> Unit
 ): PsiType {
@@ -286,4 +296,56 @@ private fun packMethodFlags(access: Int, isInterface: Boolean): Int {
     }
 
     return flags
+}
+
+internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupport): Boolean {
+    val jetModifierList = this.modifierList ?: return false
+    if (jetModifierList.annotationEntries.isEmpty()) return false
+
+    val deprecated = support.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated)?.second
+    return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
+}
+
+internal fun KtAnnotated.isJvmStatic(support: KtUltraLightSupport): Boolean = support.findAnnotation(this, JVM_STATIC_ANNOTATION_FQ_NAME) !== null
+
+internal fun KtDeclaration.simpleVisibility(): String = when {
+    hasModifier(KtTokens.PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
+    hasModifier(KtTokens.PROTECTED_KEYWORD) -> PsiModifier.PROTECTED
+    else -> PsiModifier.PUBLIC
+}
+
+internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = null): Boolean {
+    val jetModifierList = this.modifierList ?: return false
+    if (jetModifierList.annotationEntries.isEmpty()) return false
+
+    val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
+    val deprecatedName = deprecatedFqName.shortName().asString()
+
+    for (annotationEntry in jetModifierList.annotationEntries) {
+        val typeReference = annotationEntry.typeReference ?: continue
+
+        val typeElement = typeReference.typeElement as? KtUserType ?: continue
+        // If it's not a user type, it's definitely not a ref to deprecated
+
+        val fqName = toQualifiedName(typeElement) ?: continue
+
+        if (deprecatedFqName == fqName) return true
+        if (deprecatedName == fqName.asString()) return true
+    }
+
+    return support?.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated) !== null
+}
+
+private fun toQualifiedName(userType: KtUserType): FqName? {
+    val reversedNames = Lists.newArrayList<String>()
+
+    var current: KtUserType? = userType
+    while (current != null) {
+        val name = current.referencedName ?: return null
+
+        reversedNames.add(name)
+        current = current.qualifier
+    }
+
+    return FqName.fromSegments(ContainerUtil.reverse(reversedNames))
 }

@@ -1,7 +1,7 @@
 UFile (package = )
     UClass (name = ReceiverFunKt)
         UAnnotationMethod (name = foo)
-            UParameter (name = $receiver)
+            UParameter (name = $this$foo)
                 UAnnotation (fqName = MyReceiverAnnotation)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression

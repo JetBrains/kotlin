@@ -1,79 +1,75 @@
 FILE fqName:<root> fileName:/implicitCastToNonNull.kt
-  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int flags:
-    VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int 
+    VALUE_PARAMETER name:x index:0 type:kotlin.String? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(String?): Int'
-        WHEN type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.String?): kotlin.Int declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'x: kotlin.String? declared in <root>.test1' type=kotlin.String? origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
-  FUN name:test2 visibility:public modality:FINAL <T> (x:T) returnType:kotlin.Int flags:
+            then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR 'x: kotlin.String? declared in <root>.test1' type=kotlin.String? origin=null
+  FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:kotlin.Int 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?]
-    VALUE_PARAMETER name:x index:0 type:T flags:
+    VALUE_PARAMETER name:x index:0 type:T of <root>.test2 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(T): Int'
-        WHEN type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun test2 <T> (x: T of <root>.test2): kotlin.Int declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'value-parameter x: T' type=T origin=null
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'x: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR 'value-parameter x: T' type=T origin=null
-  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int flags:inline
+            then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR 'x: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline] 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test3(Any): Int'
-        WHEN type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): kotlin.Int [inline] declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
-            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T
-              typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?]
-              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test3
+              GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+            then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
               $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int flags:inline
+                GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline] 
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test4(Any?): Int'
-        WHEN type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): kotlin.Int [inline] declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
-            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T
-              typeOperand: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
-              GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test4
+              GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+            then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
               $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
-                GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T, fn:kotlin.Function1<S, kotlin.Unit>) returnType:kotlin.Unit flags:
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[S?]
+                GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
+  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1<S of <root>.test5, kotlin.Unit>) returnType:kotlin.Unit 
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[S of <root>.test5?]
     TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:x index:0 type:T flags:
-    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S, kotlin.Unit> flags:
+    VALUE_PARAMETER name:x index:0 type:T of <root>.test5 
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S of <root>.test5, kotlin.Unit> 
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
-          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
-            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: GET_VAR 'value-parameter x: T' type=T origin=null
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
-          then: CALL 'invoke(P1): R' type=kotlin.Unit origin=INVOKE
-            $this: GET_VAR 'value-parameter fn: (S) -> Unit' type=kotlin.Function1<S, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-            p1: GET_VAR 'value-parameter x: T' type=T origin=null
+          then: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+            $this: GET_VAR 'fn: kotlin.Function1<S of <root>.test5, kotlin.Unit> declared in <root>.test5' type=kotlin.Function1<S of <root>.test5, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+            p1: GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null

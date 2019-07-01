@@ -28,8 +28,8 @@ import com.intellij.psi.PsiMember
 import com.intellij.ui.LayeredIcon
 import com.intellij.ui.RowIcon
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.awt.Font
 import javax.swing.Icon
 
-class KotlinOverrideHierarchyNodeDescriptor (
-        parentNode: HierarchyNodeDescriptor?,
-        klass: PsiElement,
-        baseElement: PsiElement
+class KotlinOverrideHierarchyNodeDescriptor(
+    parentNode: HierarchyNodeDescriptor?,
+    klass: PsiElement,
+    baseElement: PsiElement
 ) : HierarchyNodeDescriptor(klass.project, parentNode, klass, parentNode == null) {
     private val baseElement = baseElement.createSmartPointer()
 
@@ -79,7 +79,8 @@ class KotlinOverrideHierarchyNodeDescriptor (
         }
 
         val isAbstractClass = classDescriptor.modality == Modality.ABSTRACT
-        val hasBaseImplementation = DescriptorUtils.getAllOverriddenDeclarations(callableDescriptor).any { it.modality != Modality.ABSTRACT }
+        val hasBaseImplementation =
+            DescriptorUtils.getAllOverriddenDeclarations(callableDescriptor).any { it.modality != Modality.ABSTRACT }
         return if (isAbstractClass || hasBaseImplementation) AllIcons.Hierarchy.MethodNotDefined else AllIcons.Hierarchy.ShouldDefineMethod
     }
 
@@ -115,7 +116,7 @@ class KotlinOverrideHierarchyNodeDescriptor (
             if (myIsBase) {
                 val icon = LayeredIcon(2)
                 icon.setIcon(newIcon, 0)
-                icon.setIcon(AllIcons.Hierarchy.Base, 1, -AllIcons.Hierarchy.Base.iconWidth / 2, 0)
+                icon.setIcon(AllIcons.Actions.Forward, 1, -AllIcons.Actions.Forward.iconWidth / 2, 0)
                 newIcon = icon
             }
 
@@ -134,7 +135,7 @@ class KotlinOverrideHierarchyNodeDescriptor (
             classNameAttributes = TextAttributes(myColor, null, null, null, Font.PLAIN)
         }
 
-        with (myHighlightedText.ending) {
+        with(myHighlightedText.ending) {
             addText(classDescriptor.name.asString(), classNameAttributes)
             classDescriptor.parents.forEach { parentDescriptor ->
                 when (parentDescriptor) {
@@ -145,7 +146,7 @@ class KotlinOverrideHierarchyNodeDescriptor (
                         }
                     }
                     is PackageFragmentDescriptor -> {
-                        addText("  (${parentDescriptor.fqName.asString()})", HierarchyNodeDescriptor.getPackageNameAttributes())
+                        addText("  (${parentDescriptor.fqName.asString()})", getPackageNameAttributes())
                         return@forEach
                     }
                 }

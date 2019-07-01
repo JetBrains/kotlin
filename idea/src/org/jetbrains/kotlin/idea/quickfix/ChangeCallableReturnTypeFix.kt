@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
 abstract class ChangeCallableReturnTypeFix(
-        element: KtCallableDeclaration,
-        type: KotlinType
+    element: KtCallableDeclaration,
+    type: KotlinType
 ) : KotlinQuickFixAction<KtCallableDeclaration>(element) {
 
     private val changeFunctionLiteralReturnTypeFix: ChangeFunctionLiteralReturnTypeFix?
@@ -61,10 +61,10 @@ abstract class ChangeCallableReturnTypeFix(
 
     init {
         changeFunctionLiteralReturnTypeFix = if (element is KtFunctionLiteral) {
-            val functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtLambdaExpression::class.java) ?: error("FunctionLiteral outside any FunctionLiteralExpression: " + element.getElementTextWithContext())
+            val functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtLambdaExpression::class.java)
+                ?: error("FunctionLiteral outside any FunctionLiteralExpression: " + element.getElementTextWithContext())
             ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type)
-        }
-        else {
+        } else {
             null
         }
     }
@@ -80,8 +80,7 @@ abstract class ChangeCallableReturnTypeFix(
                 return "property $fullName"
             }
             return "function $fullName"
-        }
-        else {
+        } else {
             return null
         }
     }
@@ -139,7 +138,7 @@ abstract class ChangeCallableReturnTypeFix(
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         return !typeContainsError &&
-               element !is KtConstructor<*>
+                element !is KtConstructor<*>
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -147,14 +146,12 @@ abstract class ChangeCallableReturnTypeFix(
 
         if (changeFunctionLiteralReturnTypeFix != null) {
             changeFunctionLiteralReturnTypeFix.invoke(project, editor!!, file)
-        }
-        else {
+        } else {
             if (!(isUnitType && element is KtFunction && element.hasBlockBody())) {
                 var newTypeRef = KtPsiFactory(project).createType(typeSourceCode)
                 newTypeRef = element.setTypeReference(newTypeRef)!!
                 ShortenReferences.DEFAULT.process(newTypeRef)
-            }
-            else {
+            } else {
                 element.typeReference = null
             }
         }
@@ -166,32 +163,33 @@ abstract class ChangeCallableReturnTypeFix(
             val context = entry.analyze(BodyResolveMode.PARTIAL)
             val resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry) ?: return null
             val componentFunction =
-                    DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) as? KtCallableDeclaration
+                DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.candidateDescriptor) as? KtCallableDeclaration
                     ?: return null
             val expectedType = context[BindingContext.TYPE, entry.typeReference!!] ?: return null
-            return ChangeCallableReturnTypeFix.ForCalled(componentFunction, expectedType)
+            return ForCalled(componentFunction, expectedType)
         }
     }
 
     object HasNextFunctionTypeMismatchFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val expression = QuickFixUtil.getParentElementOfType(diagnostic, KtExpression::class.java)
-                             ?: error("HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression")
+                ?: error("HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression")
             val context = expression.analyze(BodyResolveMode.PARTIAL)
             val resolvedCall = context[BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression] ?: return null
             val hasNextDescriptor = resolvedCall.candidateDescriptor
             val hasNextFunction = DescriptorToSourceUtils.descriptorToDeclaration(hasNextDescriptor) as KtFunction? ?: return null
-            return ChangeCallableReturnTypeFix.ForCalled(hasNextFunction, hasNextDescriptor.builtIns.booleanType)
+            return ForCalled(hasNextFunction, hasNextDescriptor.builtIns.booleanType)
         }
     }
 
     object CompareToTypeMismatchFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpression::class.java) ?: error("COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression")
+            val expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpression::class.java)
+                ?: error("COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression")
             val resolvedCall = expression.resolveToCall() ?: return null
             val compareToDescriptor = resolvedCall.candidateDescriptor
             val compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor) as? KtFunction ?: return null
-            return ChangeCallableReturnTypeFix.ForCalled(compareTo, compareToDescriptor.builtIns.intType)
+            return ForCalled(compareTo, compareToDescriptor.builtIns.intType)
         }
     }
 
@@ -205,7 +203,7 @@ abstract class ChangeCallableReturnTypeFix(
 
             val matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor)
             if (matchingReturnType != null) {
-                actions.add(ChangeCallableReturnTypeFix.OnType(function, matchingReturnType))
+                actions.add(OnType(function, matchingReturnType))
             }
 
             val functionType = descriptor.returnType ?: return actions
@@ -221,7 +219,7 @@ abstract class ChangeCallableReturnTypeFix(
             if (overriddenMismatchingFunctions.size == 1) {
                 val overriddenFunction = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMismatchingFunctions[0])
                 if (overriddenFunction is KtFunction) {
-                    actions.add(ChangeCallableReturnTypeFix.ForOverridden(overriddenFunction, functionType))
+                    actions.add(ForOverridden(overriddenFunction, functionType))
                 }
             }
 
@@ -232,14 +230,14 @@ abstract class ChangeCallableReturnTypeFix(
     object ChangingReturnTypeToUnitFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeCallableReturnTypeFix.ForEnclosing(function, function.builtIns.unitType)
+            return ForEnclosing(function, function.builtIns.unitType)
         }
     }
 
     object ChangingReturnTypeToNothingFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction::class.java) ?: return null
-            return ChangeCallableReturnTypeFix.ForEnclosing(function, function.builtIns.nothingType)
+            return ForEnclosing(function, function.builtIns.nothingType)
         }
     }
 
@@ -247,7 +245,8 @@ abstract class ChangeCallableReturnTypeFix(
         fun getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic: Diagnostic): KtDestructuringDeclarationEntry {
             val componentName = COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.cast(diagnostic).a
             val componentIndex = DataClassDescriptorResolver.getComponentIndex(componentName.asString())
-            val multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration::class.java) ?: error("COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration")
+            val multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration::class.java)
+                ?: error("COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration")
             return multiDeclaration.entries[componentIndex - 1]
         }
     }

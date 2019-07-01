@@ -1,8 +1,0 @@
-{
-    springConfig: ["config.xml"],
-    file: "Bean.kt",
-    icon: "SpringBeanMethod",
-    tooltip: "Navigate to the spring bean method declarations",
-    naming: "generic",
-    targets: ["destroy-method", "init-method"]
-}

@@ -116,8 +116,6 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("A$bar$1", bar);
     }
 
-
-
     private void checkAccess(@NotNull String outerName, @NotNull String innerName, int accessFlags) {
         String name = outerName + "$" + innerName;
         InnerClassAttribute attribute = CollectionsKt.single(extractInnerClasses(name), value -> innerName.equals(value.innerName));

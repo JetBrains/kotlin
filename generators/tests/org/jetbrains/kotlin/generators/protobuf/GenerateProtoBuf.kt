@@ -21,6 +21,7 @@ import com.intellij.execution.util.ExecUtil
 import com.intellij.util.LineSeparator
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.system.exitProcess
 
 // This file generates protobuf classes from formal description.
 // To run it, you'll need protoc (protobuf compiler) 2.6.1 installed.
@@ -34,7 +35,7 @@ import java.util.regex.Pattern
 // You may need to provide custom path to protoc executable, just modify this constant:
 private const val PROTOC_EXE = "protoc"
 
-class ProtoPath(val file: String) {
+class ProtoPath(val file: String, val generateDebug: Boolean = true) {
     val outPath: String = File(file).parent
     val packageName: String = findFirst(Pattern.compile("package (.+);"))
     val className: String = findFirst(Pattern.compile("option java_outer_classname = \"(.+)\";"))
@@ -53,11 +54,13 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/metadata/src/metadata.proto"),
         ProtoPath("core/metadata/src/builtins.proto"),
         ProtoPath("js/js.serializer/src/js.proto"),
-        ProtoPath("js/js.serializer/src/js-ast.proto"),
+        ProtoPath("js/js.serializer/src/js-ast.proto", false),
         ProtoPath("konan/library-reader/src/konan.proto"),
         ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
         ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
-        ProtoPath("build-common/src/java_descriptors.proto")
+        ProtoPath("build-common/src/java_descriptors.proto"),
+        ProtoPath("compiler/ir/backend.js/src/js.proto", false),
+        ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false)
 )
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.proto")
@@ -84,7 +87,7 @@ fun main(args: Array<String>) {
     }
     finally {
         // Workaround for JVM hanging: IDEA's process handler creates thread pool
-        System.exit(0)
+        exitProcess(0)
     }
 }
 
@@ -140,13 +143,15 @@ private fun renamePackages(protoPath: String, outPath: String) {
 }
 
 private fun modifyAndExecProtoc(protoPath: ProtoPath) {
-    val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
-    debugProtoFile.writeText(modifyForDebug(protoPath))
-    debugProtoFile.deleteOnExit()
+    if (protoPath.generateDebug) {
+        val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
+        debugProtoFile.writeText(modifyForDebug(protoPath))
+        debugProtoFile.deleteOnExit()
 
-    val outPath = "build-common/test"
-    execProtoc(debugProtoFile.path, outPath)
-    renamePackages(debugProtoFile.path, outPath)
+        val outPath = "build-common/test"
+        execProtoc(debugProtoFile.path, outPath)
+        renamePackages(debugProtoFile.path, outPath)
+    }
 }
 
 private fun modifyForDebug(protoPath: ProtoPath): String {

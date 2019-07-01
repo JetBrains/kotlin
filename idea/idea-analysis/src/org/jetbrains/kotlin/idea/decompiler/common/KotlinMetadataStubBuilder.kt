@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 open class KotlinMetadataStubBuilder(
         private val version: Int,
         private val fileType: FileType,
-        private val serializerProtocol: SerializerExtensionProtocol,
+        private val serializerProtocol: () -> SerializerExtensionProtocol,
         private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?
 ) : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
@@ -52,7 +52,7 @@ open class KotlinMetadataStubBuilder(
                 val nameResolver = file.nameResolver
                 val components = ClsStubBuilderComponents(
                         ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
-                        AnnotationLoaderForStubBuilderImpl(serializerProtocol),
+                        AnnotationLoaderForStubBuilderImpl(serializerProtocol()),
                         virtualFile
                 )
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))

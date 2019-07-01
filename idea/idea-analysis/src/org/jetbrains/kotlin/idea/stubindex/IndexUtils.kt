@@ -121,4 +121,4 @@ fun indexInternals(stub: KotlinCallableStubBase<*>, sink: IndexSink) {
 }
 
 private val KotlinStubWithFqName<*>.modifierList: KotlinModifierListStub?
-    get() = findChildStubByType(KtStubElementTypes.MODIFIER_LIST) as? KotlinModifierListStub
+    get() = findChildStubByType(KtStubElementTypes.MODIFIER_LIST)

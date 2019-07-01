@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.internal
@@ -9,16 +9,18 @@ import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
-import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.Serializable
+import java.net.URL
 import java.net.URLClassLoader
 import javax.inject.Inject
 
@@ -45,10 +47,15 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     lateinit var javacOptions: Map<String, String>
 
     @TaskAction
-    fun compile() {
+    fun compile(inputs: IncrementalTaskInputs) {
         logger.info("Running kapt annotation processing using the Gradle Worker API")
         checkAnnotationProcessorClasspath()
-        clearLocalState()
+
+        val incrementalChanges = getIncrementalChanges(inputs)
+        val (changedFiles, classpathChanges) = when (incrementalChanges) {
+            is KaptIncrementalChanges.Unknown -> Pair(emptyList<File>(), emptyList<String>())
+            is KaptIncrementalChanges.Known -> Pair(incrementalChanges.changedSources.toList(), incrementalChanges.changedClasspathJvmNames)
+        }
 
         val compileClasspath = classpath.files.toMutableList()
         if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
@@ -59,12 +66,18 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             if (isVerbose) add("VERBOSE")
             if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
             if (includeCompileClasspath) add("INCLUDE_COMPILE_CLASSPATH")
+            if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT")
         }
 
         val optionsForWorker = KaptOptionsForWorker(
             project.projectDir,
             compileClasspath,
             javaSourceRoots.toList(),
+
+            changedFiles,
+            getCompiledSources(),
+            incAptCache,
+            classpathChanges.toList(),
 
             destinationDir,
             classesDir,
@@ -87,12 +100,12 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
 
         workerExecutor.submit(KaptExecution::class.java) { config ->
             val isolationModeStr = project.findProperty("kapt.workers.isolation") as String? ?: "none"
-            config.isolationMode = when(isolationModeStr.toLowerCase()) {
+            config.isolationMode = when (isolationModeStr.toLowerCase()) {
                 "process" -> IsolationMode.PROCESS
                 "none" -> IsolationMode.NONE
                 else -> IsolationMode.NONE
             }
-            config.params(optionsForWorker, findToolsJar(), kaptClasspath)
+            config.params(optionsForWorker, findToolsJar()?.toURI()?.toURL()?.toString().orEmpty(), kaptClasspath)
             if (project.findProperty("kapt.workers.log.classloading") == "true") {
                 // for tests
                 config.forkOptions.jvmArgs("-verbose:class")
@@ -104,7 +117,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
 
 private class KaptExecution @Inject constructor(
     val optionsForWorker: KaptOptionsForWorker,
-    val toolsJar: File?,
+    val toolsJarURLSpec: String,
     val kaptClasspath: List<File>
 ) : Runnable {
     private companion object {
@@ -119,8 +132,8 @@ private class KaptExecution @Inject constructor(
         val kaptClasspathUrls = kaptClasspath.map { it.toURI().toURL() }.toTypedArray()
         val rootClassLoader = findRootClassLoader()
 
-        val classLoaderWithToolsJar = cachedClassLoaderWithToolsJar ?: if (toolsJar != null && !javacIsAlreadyHere()) {
-            URLClassLoader(arrayOf(toolsJar.toURI().toURL()), rootClassLoader)
+        val classLoaderWithToolsJar = cachedClassLoaderWithToolsJar ?: if (!toolsJarURLSpec.isEmpty() && !javacIsAlreadyHere()) {
+            URLClassLoader(arrayOf(URL(toolsJarURLSpec)), rootClassLoader)
         } else {
             rootClassLoader
         }
@@ -141,7 +154,7 @@ private class KaptExecution @Inject constructor(
         }
     }
 
-    private fun createKaptOptions(classLoader: ClassLoader) = with (optionsForWorker) {
+    private fun createKaptOptions(classLoader: ClassLoader) = with(optionsForWorker) {
         val flags = kaptClass(classLoader).declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
 
         val mode = Class.forName("org.jetbrains.kotlin.base.kapt3.AptMode", true, classLoader)
@@ -154,6 +167,11 @@ private class KaptExecution @Inject constructor(
             projectBaseDir,
             compileClasspath,
             javaSourceRoots,
+
+            changedFiles,
+            compiledSources,
+            incAptCache,
+            classpathChanges,
 
             sourcesOutputDir,
             classesOutputDir,
@@ -185,6 +203,11 @@ private data class KaptOptionsForWorker(
     val projectBaseDir: File,
     val compileClasspath: List<File>,
     val javaSourceRoots: List<File>,
+
+    val changedFiles: List<File>,
+    val compiledSources: List<File>,
+    val incAptCache: File?,
+    val classpathChanges: List<String>,
 
     val sourcesOutputDir: File,
     val classesOutputDir: File,

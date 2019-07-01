@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashSet
+import kotlin.math.max
 
 abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
     val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo(this)
@@ -42,7 +43,7 @@ abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
         if (curInstr is VarInsnNode || curInstr is IincInsnNode) {
             val argSize = getLoadStoreArgSize(curInstr.opcode)
             val varIndex = if (curInstr is VarInsnNode) curInstr.`var` else (curInstr as IincInsnNode).`var`
-            nextFreeLocalIndex = Math.max(nextFreeLocalIndex, varIndex + argSize)
+            nextFreeLocalIndex = max(nextFreeLocalIndex, varIndex + argSize)
         }
 
         if (curInstr is LabelNode) {

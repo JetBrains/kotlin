@@ -4,7 +4,6 @@ apply plugin: 'kotlin'
 apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
@@ -28,7 +27,7 @@ sourceSets {
     test {
         kotlin {
             srcDir 'test'
-            if(!System.properties.'idea.active') {
+            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
                 srcDir '../jvm/test'
                 srcDir '../common/test'
                 srcDir '../test'
@@ -61,14 +60,12 @@ task modularJar(type: Jar) {
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
+
     archives modularJar
 }
 
 javadocJar()
-
-dist {
-    from (jar, sourcesJar)
-}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_18
@@ -85,7 +82,13 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xmulti-platform",
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+            "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+    ]
 }
 
 compileJava9Sources(project, 'kotlin.stdlib.jdk8')
@@ -105,7 +108,7 @@ task testJdk6Tests(type: Test) { thisTask ->
         testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
         classpath = files(
                 testClassesDirs,
-                configurations.testCompile
+                sourceSets.test.compileClasspath
         )
     }
 }

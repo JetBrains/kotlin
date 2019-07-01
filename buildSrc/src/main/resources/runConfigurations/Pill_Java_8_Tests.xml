@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="[Pill] Java 8 Tests" type="JUnit" factoryName="JUnit">
-    <module name="tests-java8.test" />
+    <module name="compiler.tests-java8.test" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.jetbrains.kotlin.*" />

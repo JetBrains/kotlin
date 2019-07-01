@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.utils.getPrimitiveArrayElementType
-import org.jetbrains.kotlin.backend.common.utils.isPrimitiveArray
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -44,11 +45,12 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
     private val isArraySymbol get() = context.intrinsics.isArraySymbol
+    private val isSuspenfFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
     //    private val isCharSymbol get() = context.intrinsics.isCharSymbol
     private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
-    private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf.symbol
-    private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf.symbol
+    private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf
+    private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf
     private val jsClassIntrinsicSymbol = context.intrinsics.jsClass
 
     private val stringMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "string")
@@ -70,6 +72,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
                 return when (expression.operator) {
                     IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
+                    IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> lowerImplicitDynamicCast(expression)
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> lowerCoercionToUnit(expression)
                     IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression, data)
                     IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitNotNull(expression, data)
@@ -111,15 +114,21 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val check = generateTypeCheck(argument, toType)
 
-                newStatements += JsIrBuilder.buildIfElse(toType, check, argument(), failResult)
+                newStatements += JsIrBuilder.buildIfElse(expression.type, check, argument(), failResult)
 
                 return expression.run {
-                    IrCompositeImpl(startOffset, endOffset, toType, null, newStatements)
+                    IrCompositeImpl(startOffset, endOffset, expression.type, null, newStatements)
                 }
             }
 
             private fun lowerImplicitCast(expression: IrTypeOperatorCall) = expression.run {
                 assert(operator == IrTypeOperator.IMPLICIT_CAST)
+                argument
+            }
+
+            private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall) = expression.run {
+                // TODO check argument
+                assert(operator == IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
                 argument
             }
 
@@ -211,14 +220,22 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 return when {
                     toType.isAny() -> generateIsObjectCheck(argument)
                     toType.isNothing() -> JsIrBuilder.buildComposite(context.irBuiltIns.booleanType, listOf(argument, litFalse))
+                    toType.isSuspendFunctionTypeOrSubtype() -> generateSuspendFunctionCheck(argument, toType)
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
 //                    toType.isChar() -> generateCheckForChar(argument)
                     toType.isNumber() -> generateNumberCheck(argument)
                     toType.isComparable() -> generateComparableCheck(argument)
+                    toType.isCharSequence() -> generateCharSequenceCheck(argument)
                     toType.isArray() -> generateGenericArrayCheck(argument)
                     toType.isPrimitiveArray() -> generatePrimitiveArrayTypeCheck(argument, toType)
                     toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
-                    toType.isInterface() -> generateInterfaceCheck(argument, toType)
+                    toType.isInterface() -> {
+                        if ((toType.classifierOrFail.owner as IrClass).isEffectivelyExternal()) {
+                            generateIsObjectCheck(argument)
+                        } else {
+                            generateInterfaceCheck(argument, toType)
+                        }
+                    }
                     else -> generateNativeInstanceOf(argument, toType)
                 }
             }
@@ -238,7 +255,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 }
                 val typeParameter = typeParameterSymbol.owner
 
-                assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
+                // TODO either remove functions with reified type parameters or support this case
+                // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
                 return typeParameter.superTypes.fold(litTrue) { r, t ->
                     val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
                     calculator.and(r, check)
@@ -247,6 +265,16 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
 //            private fun generateCheckForChar(argument: IrExpression) =
 //                JsIrBuilder.buildCall(isCharSymbol).apply { dispatchReceiver = argument }
+
+            private fun generateSuspendFunctionCheck(argument: IrExpression, toType: IrType): IrExpression {
+                val arity = (toType.classifierOrFail.owner as IrClass).typeParameters.size - 1 // drop return type
+
+                val irBuiltIns = context.irBuiltIns
+                return JsIrBuilder.buildCall(isSuspenfFunctionSymbol, irBuiltIns.booleanType).apply {
+                    putValueArgument(0, argument)
+                    putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, arity))
+                }
+            }
 
             private fun generateTypeOfCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val marker = when {
@@ -274,6 +302,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             private fun generateComparableCheck(argument: IrExpression) =
                 JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { putValueArgument(0, argument) }
+
+            private fun generateCharSequenceCheck(argument: IrExpression) =
+                JsIrBuilder.buildCall(context.intrinsics.isCharSequenceSymbol).apply { putValueArgument(0, argument) }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val f = context.intrinsics.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!

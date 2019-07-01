@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import kotlin.math.max
 
 
 class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
@@ -32,7 +33,7 @@ class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
             val identifier = psiElement.nameIdentifier ?: return
 
             // Insert () after name or after type parameters list when it placed after name
-            val offset = Math.max(identifier.range.end, psiElement.typeParameterList?.range?.end ?: psiElement.range.start)
+            val offset = max(identifier.range.end, psiElement.typeParameterList?.range?.end ?: psiElement.range.start)
             editor.document.insertString(offset, "()")
             processor.registerUnresolvedError(offset + 1)
         } else {

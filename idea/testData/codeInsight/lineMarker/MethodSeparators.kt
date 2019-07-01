@@ -33,5 +33,10 @@ class Foo {
     }
 
     <lineMarker descr="null">fun</lineMarker> quux() {}
-    fun xyzzy() {}
+
+    <lineMarker descr="null">fun</lineMarker> xyzzy() {}
+
+    <lineMarker descr="null">fun</lineMarker> f1() = 1
+
+    <lineMarker descr="null">fun</lineMarker> f2() = 2
 }

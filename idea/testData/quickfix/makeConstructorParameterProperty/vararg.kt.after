@@ -1,0 +1,7 @@
+// "Make constructor parameter a property" "true"
+
+class SomeClass(private vararg val dismissibleViewTypes: Int) {
+    fun someFun() {
+        dismissibleViewTypes
+    }
+}

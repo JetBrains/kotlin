@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.compilerRunner;
 
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class OutputItemsCollectorImpl implements OutputItemsCollector {
-    private final List<SimpleOutputItem> outputs = ContainerUtil.newArrayList();
+    private final List<SimpleOutputItem> outputs = new ArrayList<>();
 
     @Override
     public void add(Collection<File> sourceFiles, File outputFile) {

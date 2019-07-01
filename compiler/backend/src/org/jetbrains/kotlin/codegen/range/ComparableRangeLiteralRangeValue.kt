@@ -30,8 +30,7 @@ class ComparableRangeLiteralRangeValue(
     codegen: ExpressionCodegen,
     rangeCall: ResolvedCall<out CallableDescriptor>
 ) : CallIntrinsicRangeValue(rangeCall) {
-    private val boundedValue = SimpleBoundedValue(
-        instanceType = codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
+    private val boundedValue = BoundedValue(
         lowBound = codegen.generateCallReceiver(rangeCall),
         highBound = codegen.generateCallSingleArgument(rangeCall)
     )

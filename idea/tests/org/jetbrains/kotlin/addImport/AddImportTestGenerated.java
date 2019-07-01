@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.addImport;
@@ -57,6 +57,11 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("CommentsNoPackageDirective.kt")
     public void testCommentsNoPackageDirective() throws Exception {
         runTest("idea/testData/addImport/CommentsNoPackageDirective.kt");
+    }
+
+    @TestMetadata("ConflictingLocalRef.kt")
+    public void testConflictingLocalRef() throws Exception {
+        runTest("idea/testData/addImport/ConflictingLocalRef.kt");
     }
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage1.kt")

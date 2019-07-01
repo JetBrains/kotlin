@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model.visitors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
  * Reduces given list of effects by evaluating constant expressions,
  * throwing away senseless checks and infeasible clauses, etc.
  */
-class Reducer(private val constants: ESConstants) : ESExpressionVisitor<ESExpression?> {
+class Reducer(private val builtIns: KotlinBuiltIns) : ESExpressionVisitor<ESExpression?> {
     fun reduceEffects(schema: List<ESEffect>): List<ESEffect> =
         schema.mapNotNull { reduceEffect(it) }
 
@@ -50,25 +51,28 @@ class Reducer(private val constants: ESConstants) : ESExpressionVisitor<ESExpres
     override fun visitIs(isOperator: ESIs): ESExpression {
         val reducedArg = isOperator.left.accept(this) as ESValue
 
+        val argType = reducedArg.type?.toKotlinType(builtIns)
+        val isType = isOperator.functor.type.toKotlinType(builtIns)
+
         val result = when (reducedArg) {
-            is ESConstant -> reducedArg.type.isSubtypeOf(isOperator.functor.type)
-            is ESVariable -> if (reducedArg.type?.isSubtypeOf(isOperator.functor.type) == true) true else null
+            is ESConstant -> argType!!.isSubtypeOf(isType)
+            is ESVariable -> if (argType?.isSubtypeOf(isType) == true) true else null
             else -> throw IllegalStateException("Unknown ESValue: $reducedArg")
         }
 
         // Result is unknown, do not evaluate
         result ?: return ESIs(reducedArg, isOperator.functor)
 
-        return constants.booleanValue(result.xor(isOperator.functor.isNegated))
+        return ESConstants.booleanValue(result.xor(isOperator.functor.isNegated))
     }
 
     override fun visitEqual(equal: ESEqual): ESExpression {
         val reducedLeft = equal.left.accept(this) as ESValue
         val reducedRight = equal.right
 
-        if (reducedLeft is ESConstant) return constants.booleanValue((reducedLeft == reducedRight).xor(equal.functor.isNegated))
+        if (reducedLeft is ESConstant) return ESConstants.booleanValue((reducedLeft == reducedRight).xor(equal.functor.isNegated))
 
-        return ESEqual(constants, reducedLeft, reducedRight, equal.functor.isNegated)
+        return ESEqual(reducedLeft, reducedRight, equal.functor.isNegated)
     }
 
     override fun visitAnd(and: ESAnd): ESExpression? {
@@ -79,7 +83,7 @@ class Reducer(private val constants: ESConstants) : ESExpressionVisitor<ESExpres
             reducedLeft.isFalse || reducedRight.isFalse -> reducedLeft
             reducedLeft.isTrue -> reducedRight
             reducedRight.isTrue -> reducedLeft
-            else -> ESAnd(constants, reducedLeft, reducedRight)
+            else -> ESAnd(reducedLeft, reducedRight)
         }
     }
 
@@ -91,7 +95,7 @@ class Reducer(private val constants: ESConstants) : ESExpressionVisitor<ESExpres
             reducedLeft.isTrue || reducedRight.isTrue -> reducedLeft
             reducedLeft.isFalse -> reducedRight
             reducedRight.isFalse -> reducedLeft
-            else -> ESOr(constants, reducedLeft, reducedRight)
+            else -> ESOr(reducedLeft, reducedRight)
         }
     }
 
@@ -99,8 +103,8 @@ class Reducer(private val constants: ESConstants) : ESExpressionVisitor<ESExpres
         val reducedArg = not.arg.accept(this) ?: return null
 
         return when {
-            reducedArg.isTrue -> constants.falseValue
-            reducedArg.isFalse -> constants.trueValue
+            reducedArg.isTrue -> ESConstants.falseValue
+            reducedArg.isFalse -> ESConstants.trueValue
             else -> reducedArg
         }
     }

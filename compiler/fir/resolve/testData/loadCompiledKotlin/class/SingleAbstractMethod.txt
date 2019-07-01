@@ -1,0 +1,4 @@
+public abstract interface SingleAbstractMethod : R|kotlin/Any| {
+    public abstract fun foo(): R|kotlin/Unit|
+
+}

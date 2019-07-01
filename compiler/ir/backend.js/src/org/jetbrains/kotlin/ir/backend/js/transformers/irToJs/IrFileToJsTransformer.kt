@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
-    override fun visitFile(declaration: IrFile, context: JsGenerationContext): JsStatement {
-        val fileContext = context.newDeclaration(JsDeclarationScope(context.currentScope, "scope for file ${declaration.path}"))
+    override fun visitFile(declaration: IrFile, data: JsGenerationContext): JsStatement {
+        val fileContext = data.newDeclaration(JsDeclarationScope(data.currentScope, "scope for file ${declaration.path}"))
         val block = fileContext.currentBlock
 
         declaration.declarations.forEach {

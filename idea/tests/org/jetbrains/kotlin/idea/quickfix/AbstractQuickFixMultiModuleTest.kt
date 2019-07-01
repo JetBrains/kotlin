@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -51,16 +51,16 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
 
                 val actionShouldBeAvailable = actionHint.shouldPresent()
 
-                if (actionFile is KtFile) {
-                    DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
-                }
-
                 expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ") ?: ""
 
                 AbstractQuickFixMultiFileTest.doAction(
                     text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
                     InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
                 )
+
+                if (actionFile is KtFile) {
+                    DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
+                }
 
                 if (actionShouldBeAvailable) {
                     compareToExpected()

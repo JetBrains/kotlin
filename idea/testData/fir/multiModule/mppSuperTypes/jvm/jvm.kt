@@ -13,7 +13,6 @@ actual open class A : X(), Y {
 class C : B() {
     fun test() {
         foo()
-        // This and next cannot be resolved yet due to lack of search symbols / projections
         bar()
         baz()
     }

@@ -1,16 +1,22 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.BaseTransformedType
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirCall : FirExpression {
-    val arguments: List<FirExpression>
+abstract class FirCall(
+    session: FirSession,
+    psi: PsiElement?
+) : FirExpression(session, psi) {
+    abstract val arguments: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitCall(this, data)
@@ -21,4 +27,6 @@ interface FirCall : FirExpression {
         }
         super.acceptChildren(visitor, data)
     }
+
+    abstract fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirCall
 }

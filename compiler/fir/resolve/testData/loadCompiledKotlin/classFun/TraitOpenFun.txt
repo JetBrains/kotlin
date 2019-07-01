@@ -1,0 +1,4 @@
+public abstract interface A : R|kotlin/Any| {
+    public open fun f(): R|kotlin/String|
+
+}

@@ -40,7 +40,7 @@ val CompileContext.testingContext: TestingContext?
 
 class TestingContext(
     val lookupTracker: LookupTracker,
-    val buildLogger: TestingBuildLogger
+    val buildLogger: TestingBuildLogger?
 ) {
     var kotlinCompileContext: KotlinCompileContext? = null
 }

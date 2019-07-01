@@ -50,3 +50,7 @@ var prop3: Int // Int
     get() = 1
     // this comment is for setter
     set(value) {}
+
+val prop4: Int
+    get() = 42
+    set(value) {}

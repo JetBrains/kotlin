@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor;
@@ -11,11 +11,13 @@ import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
+import org.junit.runner.RunWith;
 
 import java.io.File;
-
+@RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class KotlinCommenterTest extends LightCodeInsightTestCase {
     private static final String BASE_PATH =
             new File(PluginTestCaseBase.getTestDataPathBase(), "/editor/commenter/").getAbsolutePath();

@@ -2,19 +2,6 @@ LineBreakpoint created at evDuplicateItems.kt:10
 Run Java
 Connected to the target VM
 evDuplicateItems.kt:10
-package evDuplicateItems
-
-class A {
-    var prop = 1
-}
-
-fun main(args: Array<String>) {
-    val a = A()
-    //Breakpoint!
-    val b = a.prop + a.prop
-}
-
-// PRINT_FRAME
 Compile bytecode for a.prop
  frame    = main:10, EvDuplicateItemsKt {evDuplicateItems}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evDuplicateItems.kt, 7)

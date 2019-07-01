@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
@@ -96,6 +96,7 @@ private fun <T> mergeSort(array: Array<T>, buffer: Array<T>, start: Int, end: In
             else /* rightIndex <= end */ -> {
                 target[i] = right[rightIndex]
                 rightIndex++
+                Unit  // TODO: Fix KT-31506
             }
         }
     }

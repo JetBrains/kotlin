@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.parameterInfo
@@ -118,7 +118,7 @@ enum class HintType(val desc: String, defaultEnabled: Boolean) {
 
     companion object {
         fun resolve(elem: PsiElement): HintType? {
-            val applicableTypes = HintType.values().filter { it.isApplicable(elem) }
+            val applicableTypes = values().filter { it.isApplicable(elem) }
             return applicableTypes.firstOrNull()
         }
 
@@ -153,8 +153,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         )
 
     override fun getHintInfo(element: PsiElement): HintInfo? {
-        val hintType = HintType.resolve(element) ?: return null
-        return when (hintType) {
+        return when (val hintType = HintType.resolve(element) ?: return null) {
             HintType.PARAMETER_HINT -> {
                 val parent = (element as? KtValueArgumentList)?.parent
                 (parent as? KtCallElement)?.let { getMethodInfo(it) }

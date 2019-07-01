@@ -1,0 +1,7 @@
+package
+
+public suspend fun bar(/*0*/ x: kotlin.Int): kotlin.Unit
+public suspend fun foo(): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun test0(/*0*/ serialize: kotlin.reflect.KSuspendFunction0<kotlin.Unit>): kotlin.Unit
+public fun test1(/*0*/ serialize: kotlin.reflect.KSuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit

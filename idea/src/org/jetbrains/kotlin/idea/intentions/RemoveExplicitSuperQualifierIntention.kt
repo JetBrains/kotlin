@@ -34,11 +34,12 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 
+@Suppress("DEPRECATION")
 class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperExpression>(
-        RemoveExplicitSuperQualifierIntention::class
+    RemoveExplicitSuperQualifierIntention::class
 ), CleanupLocalInspectionTool {
     override fun problemHighlightType(element: KtSuperExpression): ProblemHighlightType =
-            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+        ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSuperExpression>(KtSuperExpression::class.java, "Remove explicit supertype qualification") {

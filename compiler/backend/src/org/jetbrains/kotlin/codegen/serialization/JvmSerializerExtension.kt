@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.serialization
@@ -70,7 +70,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             versionRequirementTable: MutableVersionRequirementTable,
             childSerializer: DescriptorSerializer
     ) {
-        if (moduleName != JvmAbi.DEFAULT_MODULE_NAME) {
+        if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
 
@@ -100,7 +100,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     }
 
     override fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
-        if (moduleName != JvmAbi.DEFAULT_MODULE_NAME) {
+        if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName))
         }
     }
@@ -178,7 +178,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     override fun serializeProperty(
             descriptor: PropertyDescriptor,
             proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
+            versionRequirementTable: MutableVersionRequirementTable?,
             childSerializer: DescriptorSerializer
     ) {
         val signatureSerializer = SignatureSerializer()
@@ -204,7 +204,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             proto.setExtension(JvmProtoBuf.propertySignature, signature)
         }
 
-        if (descriptor.isJvmFieldPropertyInInterfaceCompanion()) {
+        if (descriptor.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
 
             proto.addVersionRequirement(

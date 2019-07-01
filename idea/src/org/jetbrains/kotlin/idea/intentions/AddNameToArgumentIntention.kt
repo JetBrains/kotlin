@@ -18,16 +18,18 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.conversion.copy.end
-import org.jetbrains.kotlin.idea.conversion.copy.start
+import org.jetbrains.kotlin.idea.core.util.end
+import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus.SUCCESS
@@ -40,7 +42,7 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
 
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
-        val name = detectNameToAdd(element) ?: return false
+        val name = detectNameToAdd(element, shouldBeLastUnnamed = true) ?: return false
 
         text = "Add '$name =' to argument"
 
@@ -60,24 +62,30 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
     }
 
     companion object {
-        fun apply(element: KtValueArgument): Boolean {
-            val name = detectNameToAdd(element) ?: return false
+        fun apply(element: KtValueArgument, givenResolvedCall: ResolvedCall<*>? = null): Boolean {
+            val name = detectNameToAdd(element, shouldBeLastUnnamed = false, givenResolvedCall = givenResolvedCall) ?: return false
             val argumentExpression = element.getArgumentExpression() ?: return false
+
+            val prevSibling = element.getPrevSiblingIgnoringWhitespace()
+            if (prevSibling is PsiComment && """/\*\s*$name\s*=\s*\*/""".toRegex().matches(prevSibling.text)) {
+                prevSibling.delete()
+            }
+
             val newArgument = KtPsiFactory(element).createArgument(argumentExpression, name, element.getSpreadElement() != null)
             element.replace(newArgument)
             return true
         }
 
-        fun detectNameToAdd(argument: KtValueArgument): Name? {
+        fun detectNameToAdd(argument: KtValueArgument, shouldBeLastUnnamed: Boolean, givenResolvedCall: ResolvedCall<*>? = null): Name? {
             if (argument.isNamed()) return null
             if (argument is KtLambdaArgument) return null
 
             val argumentList = argument.parent as? KtValueArgumentList ?: return null
-            if (argument != argumentList.arguments.last { !it.isNamed() }) return null
+            if (shouldBeLastUnnamed && argument != argumentList.arguments.last { !it.isNamed() }) return null
 
             val callExpr = argumentList.parent as? KtCallElement ?: return null
-            val resolvedCall = callExpr.resolveToCall() ?: return null
-            if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
+            val resolvedCall = givenResolvedCall ?: callExpr.resolveToCall() ?: return null
+            if (!resolvedCall.candidateDescriptor.hasStableParameterNames()) return null
 
             if (!argumentMatchedAndCouldBeNamedInCall(argument, resolvedCall, callExpr.languageVersionSettings)) return null
 

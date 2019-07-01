@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.components
@@ -24,7 +24,8 @@ interface InferenceSession {
                 initialStorage: ConstraintStorage
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
-            override fun writeOnlyStubs(): Boolean = false
+            override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
+            override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
         }
     }
 
@@ -34,7 +35,8 @@ interface InferenceSession {
     fun addErrorCallInfo(callInfo: ErrorCallInfo)
     fun currentConstraintSystem(): ConstraintStorage
     fun inferPostponedVariables(lambda: ResolvedLambdaAtom, initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType>
-    fun writeOnlyStubs(): Boolean
+    fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
+    fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
 }
 
 interface PartialCallInfo {

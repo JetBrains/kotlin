@@ -1,3 +1,4 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 // WITH_RUNTIME
 import java.util.ArrayList
 

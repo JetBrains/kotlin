@@ -244,7 +244,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 receiverType: TypeInfo,
                 possibleContainers: List<KtElement>
             ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, possibleContainers)?.let {
-                ByImplicitExtensionReceiver.getCallableWithReceiverInsideExtension(
+                getCallableWithReceiverInsideExtension(
                     it,
                     expression,
                     analysisResult.bindingContext,

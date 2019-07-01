@@ -1,0 +1,2 @@
+//class
+final class A {}

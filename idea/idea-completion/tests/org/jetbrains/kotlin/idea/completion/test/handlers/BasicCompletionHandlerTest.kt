@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.completion.handlers
@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.completion.handlers
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import java.io.File
 
-@Deprecated("All tests from here to be moved to the generated test") class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
+@Deprecated("All tests from here to be moved to the generated test")
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     private fun checkResult(){
         fixture.checkResultByFile(getTestName(false) + ".kt.after")
     }

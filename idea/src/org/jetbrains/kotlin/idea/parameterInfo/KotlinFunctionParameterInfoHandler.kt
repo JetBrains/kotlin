@@ -268,7 +268,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
 
         val color = if (isResolvedToDescriptor(call, itemToShow, bindingContext))
-            KotlinParameterInfoWithCallHandlerBase.GREEN_BACKGROUND
+            GREEN_BACKGROUND
         else
             context.defaultParameterColor
 

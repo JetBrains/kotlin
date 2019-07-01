@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.ui
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.refactoring.ui.MethodSignatureComponent
+import org.jetbrains.kotlin.idea.KotlinFileType
 
 class KotlinSignatureComponent(
         signature: String, project: Project

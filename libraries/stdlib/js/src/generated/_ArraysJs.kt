@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
@@ -13,6 +13,89 @@ package kotlin.collections
 import kotlin.js.*
 import primitiveArrayConcat
 import withType
+import kotlin.ranges.contains
+import kotlin.ranges.reversed
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun <T> Array<out T>.elementAt(index: Int): T {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun ByteArray.elementAt(index: Int): Byte {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun ShortArray.elementAt(index: Int): Short {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun IntArray.elementAt(index: Int): Int {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun LongArray.elementAt(index: Int): Long {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun FloatArray.elementAt(index: Int): Float {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun DoubleArray.elementAt(index: Int): Double {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun BooleanArray.elementAt(index: Int): Boolean {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
+ */
+public actual fun CharArray.elementAt(index: Int): Char {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
+}
 
 /**
  * Returns a [List] that wraps the original array.
@@ -85,9 +168,18 @@ public actual fun CharArray.asList(): List<Char> {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(element: Char): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Char = this@asList[index]
-        override fun indexOf(element: Char): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
+        override fun get(index: Int): Char {
+            AbstractList.checkElementIndex(index, size)
+            return this@asList[index]
+        }
+        override fun indexOf(element: Char): Int {
+            if ((element as Any?) !is Char) return -1
+            return this@asList.indexOf(element)
+        }
+        override fun lastIndexOf(element: Char): Int {
+            if ((element as Any?) !is Char) return -1
+            return this@asList.lastIndexOf(element)
+        }
     }
 }
 

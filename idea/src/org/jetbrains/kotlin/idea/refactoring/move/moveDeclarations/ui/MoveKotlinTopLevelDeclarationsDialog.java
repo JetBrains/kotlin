@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
 import com.intellij.ide.util.DirectoryChooser;
+import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -55,6 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
+import org.jetbrains.kotlin.idea.core.util.PhysicalFileSystemUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
@@ -75,6 +77,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 
@@ -100,6 +103,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JCheckBox cbUpdatePackageDirective;
     private JCheckBox cbSearchReferences;
     private KotlinMemberSelectionTable memberTable;
+
     public MoveKotlinTopLevelDeclarationsDialog(
             @NotNull Project project,
             @NotNull Set<KtNamedDeclaration> elementsToMove,
@@ -373,12 +377,12 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         KotlinFileChooserDialog dialog = new KotlinFileChooserDialog("Choose Containing File", myProject);
 
                         File targetFile = new File(getTargetFilePath());
-                        PsiFile targetPsiFile = KotlinRefactoringUtilKt.toPsiFile(targetFile, myProject);
+                        PsiFile targetPsiFile = PhysicalFileSystemUtilsKt.toPsiFile(targetFile, myProject);
                         if (targetPsiFile instanceof KtFile) {
                             dialog.select((KtFile) targetPsiFile);
                         }
                         else {
-                            PsiDirectory targetDir = KotlinRefactoringUtilKt.toPsiDirectory(targetFile.getParentFile(), myProject);
+                            PsiDirectory targetDir = PhysicalFileSystemUtilsKt.toPsiDirectory(targetFile.getParentFile(), myProject);
                             if (targetDir == null) {
                                 targetDir = sourceDir;
                             }
@@ -556,9 +560,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                             "File '%s' already exists. Do you want to move selected declarations to this file?",
                             targetFile.getVirtualFile().getPath()
                     );
-                    int ret =
-                            Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"), Messages.getQuestionIcon());
+                    int ret=
+                            Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"),
+                                                     Messages.getQuestionIcon());
                     if (ret != Messages.YES) return null;
+                }
+
+                if (targetFile instanceof KtFile) {
+                    return new KotlinMoveTargetForExistingElement((KtFile) targetFile);
                 }
             }
 
@@ -581,7 +590,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         final File targetFile = new File(getTargetFilePath());
         if (!checkTargetFileName(targetFile.getName())) return null;
-        KtFile jetFile = (KtFile) KotlinRefactoringUtilKt.toPsiFile(targetFile, myProject);
+        KtFile jetFile = (KtFile) PhysicalFileSystemUtilsKt.toPsiFile(targetFile, myProject);
         if (jetFile != null) {
             if (sourceFiles.size() == 1 && sourceFiles.contains(jetFile)) {
                 setErrorText("Can't move to the original file");
@@ -591,8 +600,32 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             return new KotlinMoveTargetForExistingElement(jetFile);
         }
 
-        File targetDir = targetFile.getParentFile();
-        final PsiDirectory psiDirectory = targetDir != null ? KotlinRefactoringUtilKt.toPsiDirectory(targetDir, myProject) : null;
+        Path targetFilePath = targetFile.toPath();
+        Path targetDirPath = targetFilePath.getParent();
+        if (targetDirPath == null || !targetDirPath.startsWith(getProject().getBasePath())) {
+            setErrorText("Incorrect target path. Directory " + targetDirPath + " does not belong to current project.");
+            return null;
+        }
+        if (PhysicalFileSystemUtilsKt.toPsiDirectory(targetDirPath.toFile(), myProject) == null) {
+            int ret = Messages.showYesNoDialog(
+                    myProject,
+                    "You are about to move all declarations to the directory that does not exist. Do you want to create it?",
+                    RefactoringBundle.message("move.title"),
+                    Messages.getQuestionIcon()
+            );
+            if (ret == Messages.YES) {
+                try {
+                    DirectoryUtil.mkdirs(PsiManager.getInstance(getProject()), targetDirPath.toString());
+                }
+                catch (IncorrectOperationException e) {
+                    setErrorText("Failed to create parent directory: " + targetDirPath);
+                    return null;
+                }
+            }
+        }
+
+        File targetDir = targetDirPath.toFile();
+        final PsiDirectory psiDirectory = targetDir != null ? PhysicalFileSystemUtilsKt.toPsiDirectory(targetDir, myProject) : null;
         if (psiDirectory == null) {
             setErrorText("No directory found for file: " + targetFile.getPath());
             return null;
@@ -643,7 +676,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             }
         }
         else {
-            PsiFile targetFile = KotlinRefactoringUtilKt.toPsiFile(new File(getTargetFilePath()), myProject);
+            PsiFile targetFile = PhysicalFileSystemUtilsKt.toPsiFile(new File(getTargetFilePath()), myProject);
             if (!(targetFile == null || targetFile instanceof KtFile)) {
                 return KotlinRefactoringBundle.message("refactoring.move.non.kotlin.file");
             }
@@ -718,7 +751,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
             if (isFullFileMove()) {
                 if (isMoveToPackage()) {
-                    Pair<VirtualFile, ? extends MoveDestination> sourceRootWithMoveDestination = selectPackageBasedTargetDirAndDestination(false);
+                    Pair<VirtualFile, ? extends MoveDestination> sourceRootWithMoveDestination =
+                            selectPackageBasedTargetDirAndDestination(false);
                     //noinspection ConstantConditions
                     final MoveDestination moveDestination = sourceRootWithMoveDestination.getSecond();
 

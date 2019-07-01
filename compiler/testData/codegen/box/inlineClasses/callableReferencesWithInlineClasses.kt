@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 // WITH_REFLECT
 
 inline class Foo(val x: String) {

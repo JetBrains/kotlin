@@ -25,10 +25,13 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.task
+import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
+import java.nio.file.Files
+import java.nio.file.Path
 
-fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
+fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
         val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet()
         val patterns = filter.includePatterns + commandLineIncludePatterns
@@ -98,6 +101,36 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
     environment("PROJECT_BUILD_DIR", buildDir)
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"]!!)
     systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
+
+    var subProjectTempRoot: Path? = null
+    doFirst {
+        val teamcity = rootProject.findProperty("teamcity") as? Map<Any?, *>
+        val systemTempRoot =
+            // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
+            // Should be fixed soon on Teamcity side
+            (teamcity?.get("teamcity.build.tempDir") as? String)
+                ?: System.getProperty("java.io.tmpdir")
+        systemTempRoot.let {
+            subProjectTempRoot = Files.createTempDirectory(File(systemTempRoot).toPath(), project.name + "Project_" + taskName + "_")
+            systemProperty("java.io.tmpdir", subProjectTempRoot.toString())
+        }
+    }
+
+    doLast {
+        subProjectTempRoot?.let {
+            try {
+                delete(it)
+            } catch (e: Exception) {
+                project.logger.warn("Can't delete test temp root folder $it", e.printStackTrace())
+            }
+        }
+    }
+
+    if (parallel) {
+        maxParallelForks =
+            project.findProperty("kotlin.test.maxParallelForks")?.toString()?.toInt()
+                ?: Math.max(Runtime.getRuntime().availableProcessors() / 2, 1)
+    }
     body()
 }
 
@@ -122,7 +155,7 @@ private fun Task.useAndroidConfiguration(systemPropertyName: String, configName:
             .also {
                 dependencies.add(
                     configName,
-                    dependencies.project(":custom-dependencies:android-sdk", configuration = configName)
+                    dependencies.project(":dependencies:android-sdk", configuration = configName)
                 )
             }
     }

@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 val v: Boolean = run {
     return<caret> true
 }

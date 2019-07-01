@@ -17,7 +17,6 @@ dependencies {
 
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:frontend.script"))
 
     compile(project(":js:js.frontend"))
 
@@ -32,6 +31,10 @@ dependencies {
     testCompile(intellijPluginDep("gradle"))
     testCompileOnly(intellijPluginDep("Groovy"))
     testCompileOnly(intellijDep())
+
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java"))
+    }
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -65,7 +68,7 @@ sourceSets {
 
 testsJar()
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
     useAndroidSdk()
 }

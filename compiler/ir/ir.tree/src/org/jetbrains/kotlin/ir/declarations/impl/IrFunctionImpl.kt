@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.declarations.impl
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -60,8 +61,16 @@ class IrFunctionImpl(
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
 
-    override var correspondingProperty: IrProperty? = null
+    @Suppress("OverridingDeprecatedMember")
+    override var correspondingProperty: IrProperty?
+        get() = correspondingPropertySymbol?.owner
+        set(value) {
+            correspondingPropertySymbol = value?.symbol
+        }
 
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
+
+    // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -72,17 +81,6 @@ class IrFunctionImpl(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(descriptor), returnType
     )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor,
-        returnType: IrType,
-        body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor, returnType) {
-        this.body = body
-    }
 
     init {
         symbol.bind(this)

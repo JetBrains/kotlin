@@ -20,10 +20,10 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.util.ProgressWrapper
 import com.intellij.psi.*
 import com.intellij.psi.search.*
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -56,7 +56,7 @@ import java.util.*
 abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     protected val targetDeclaration: PsiElement,
     private val searchScope: SearchScope,
-    private val consumer: ExecutorProcessor<PsiReference>,
+    private val consumer: Processor<in PsiReference>,
     private val optimizer: SearchRequestCollector,
     private val options: KotlinReferencesSearchOptions,
     private val wordsToSearch: List<String>
@@ -92,7 +92,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         fun create(
             declaration: PsiElement,
             searchScope: SearchScope,
-            consumer: ExecutorProcessor<PsiReference>,
+            consumer: Processor<in PsiReference>,
             optimizer: SearchRequestCollector,
             options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
@@ -107,7 +107,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private fun createInReadAction(
             declaration: PsiElement,
             searchScope: SearchScope,
-            consumer: ExecutorProcessor<PsiReference>,
+            consumer: Processor<in PsiReference>,
             optimizer: SearchRequestCollector,
             options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
@@ -132,7 +132,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private fun createInReadAction(
             declaration: PsiElement,
             name: Name,
-            consumer: ExecutorProcessor<PsiReference>,
+            consumer: Processor<in PsiReference>,
             optimizer: SearchRequestCollector,
             options: KotlinReferencesSearchOptions,
             searchScope: SearchScope

@@ -28,6 +28,6 @@ class KotlinLibraryValidatorCreator : KotlinFacetValidatorCreator() {
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
-        ) { editor.chosenPlatform!! }
+        ) { editor.getChosenPlatform() }
     }
 }

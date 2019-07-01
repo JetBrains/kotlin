@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun foo1(x : String?) : String {
     when (x) {
         "abc", "cde" -> return "abc_cde"

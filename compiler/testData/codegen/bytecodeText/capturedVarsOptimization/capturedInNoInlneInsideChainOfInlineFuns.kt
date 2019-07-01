@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun runNoInline(f: () -> Unit) = f()
 
 fun test() {

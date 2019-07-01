@@ -1,9 +1,9 @@
 FILE: variables.kt
-    public? final? function foo(): kotlin/Unit {
-        val x: <implicit> = Int(1)
-        var y: <implicit> = plus#(x#, Int(1))
-        val z: <implicit> = times#(y#, Int(2))
-        y# = plus#(y#, z#)
-        val w: <implicit> = minus#(y#, x#)
-        return@@@foo w#
+    public? final? fun foo(): kotlin/Unit {
+        lval x: <implicit> = Int(1)
+        lvar y: <implicit> = x#.plus#(Int(1))
+        lval z: <implicit> = y#.times#(Int(2))
+        y# = y#.plus#(z#)
+        lval w: <implicit> = y#.minus#(x#)
+        ^foo w#
     }

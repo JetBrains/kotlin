@@ -1,0 +1,18 @@
+FILE: nestedReturnType.kt
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|Some.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final fun foo(): R|Some.Nested| {
+            ^foo R|/Some.Nested.Nested|()
+        }
+
+    }

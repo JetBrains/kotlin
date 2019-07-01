@@ -27,5 +27,3 @@ sourceSets {
 }
 
 runtimeJar()
-
-ideaPlugin()

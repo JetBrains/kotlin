@@ -20,10 +20,11 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-class TaskProviderHolder<T : Task>(project: Project, private val name: String, type: Class<T>, configureAction: (T) -> (Unit)) :
-    TaskHolder<T> {
-    private val provider: TaskProvider<T> = project.tasks.register(name, type, configureAction)
-
+class TaskProviderHolder<out T : Task>(
+    override val name: String,
+    override val project: Project,
+    private val provider: TaskProvider<T>
+) : TaskHolder<T> {
     override fun getTaskOrProvider(): Any = provider
 
     override fun doGetTask(): T = provider.get()

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.script.experimental.jvm.impl
@@ -40,16 +40,6 @@ class BridgeDependenciesResolver(
                     ScriptCollectedData.foundAnnotations to scriptContents.annotations
                 )
             )
-
-            val defaultImports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
-
-            fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies =
-                ScriptDependencies(
-                    classpath = classpath,
-                    sources = this[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
-                    imports = defaultImports,
-                    scripts = this[ScriptCompilationConfiguration.importScripts].toFilesOrEmpty()
-                )
 
             val script = getScriptSource(scriptContents) ?: scriptContents.toScriptSource()
 
@@ -92,6 +82,17 @@ class BridgeDependenciesResolver(
     }
 }
 
+fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies {
+    val defaultImports = this[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
+
+    return ScriptDependencies(
+        classpath = classpath,
+        sources = this[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
+        imports = defaultImports,
+        scripts = this[ScriptCompilationConfiguration.importScripts].toFilesOrEmpty()
+    )
+}
+
 internal fun List<ScriptDiagnostic>.mapScriptReportsToDiagnostics() =
     map { ScriptReport(it.message, mapToLegacyScriptReportSeverity(it.severity), mapToLegacyScriptReportPosition(it.location)) }
 
@@ -101,11 +102,11 @@ internal fun ScriptContents.toScriptSource(): SourceCode = when {
     else -> throw IllegalArgumentException("Unable to convert script contents $this into script source")
 }
 
-internal fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
+fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
 
 internal fun List<SourceCode>?.toFilesOrEmpty() = this?.map {
     val externalSource = it as? ExternalSourceCode
-    externalSource?.externalLocation?.toFile()
+    externalSource?.externalLocation?.toFileOrNull()
         ?: throw RuntimeException("Unsupported source in requireSources parameter - only local files are supported now (${externalSource?.externalLocation})")
 } ?: emptyList()
 

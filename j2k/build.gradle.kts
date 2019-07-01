@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -8,6 +9,7 @@ dependencies {
     testRuntime(intellijDep())
 
     compile(kotlinStdlib())
+    compile(project(":idea:idea-core"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
@@ -20,10 +22,13 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
 
-    when {
-        Ide.IJ181.orHigher() || Ide.AS33.orHigher() -> testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
-        Ide.AS32() -> testCompileOnly(intellijDep()) { includeJars("idea") }
+    testCompileOnly(intellijDep())
+
+    Platform[192].orHigher {
+        testCompileOnly(intellijPluginDep("java"))
+        testRuntimeOnly(intellijPluginDep("java"))
     }
+
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 
@@ -55,14 +60,18 @@ dependencies {
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("java-decompiler"))
+    testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        java.srcDir("newSrc")
+    }
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
 }
@@ -78,7 +87,20 @@ val testForWebDemo by task<Test> {
 val test: Test by tasks
 test.apply {
     exclude("**/*JavaToKotlinConverterForWebDemoTestGenerated*")
-    dependsOn(testForWebDemo)
+    //dependsOn(testForWebDemo)
 }
 
-ideaPlugin()
+configureFreeCompilerArg(true, "-Xeffect-system")
+configureFreeCompilerArg(true, "-Xnew-inference")
+
+fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
+    if (isEnabled) {
+        allprojects {
+            tasks.withType<KotlinCompile<*>> {
+                kotlinOptions {
+                    freeCompilerArgs += listOf(compilerArgument)
+                }
+            }
+        }
+    }
+}

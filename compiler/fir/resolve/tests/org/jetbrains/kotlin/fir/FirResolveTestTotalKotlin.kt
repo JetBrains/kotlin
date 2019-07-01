@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir
@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.junit.Ignore
 import java.io.File
 
+@Ignore
 @TestDataPath("/")
 class FirResolveTestTotalKotlin : AbstractFirResolveWithSessionTestCase() {
 
@@ -64,11 +66,11 @@ class FirResolveTestTotalKotlin : AbstractFirResolveWithSessionTestCase() {
         }
 
         val scope = ProjectScope.getContentScope(project)
-        val session = createSession(scope)
-        val builder = RawFirBuilder(session, stubMode = true)
+        val session = createSession(environment, scope)
+        val builder = RawFirBuilder(session, stubMode = false)
 
         val totalTransformer = FirTotalResolveTransformer()
-        val firFiles = ktFiles.map {
+        val firFiles = ktFiles.toList().progress("Loading FIR").map {
             val firFile = builder.buildFirFile(it)
             (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
             firFile
@@ -77,6 +79,6 @@ class FirResolveTestTotalKotlin : AbstractFirResolveWithSessionTestCase() {
 
         println("Raw FIR up, files: ${firFiles.size}")
 
-        doFirResolveTestBench(firFiles, totalTransformer.transformers)
+        doFirResolveTestBench(firFiles, totalTransformer.transformers, withProgress = true)
     }
 }

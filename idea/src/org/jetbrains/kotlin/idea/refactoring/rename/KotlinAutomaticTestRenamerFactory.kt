@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticTestRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
@@ -42,6 +42,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
 import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
+import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractKotlinEvaluateExpressionTest.PrinterConfig.DescriptorViewOptions
 import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -57,6 +58,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private var appender: AppenderSkeleton? = null
 
     private var oldLogLevel: Level? = null
+    private var oldShowKotlinVariables: Boolean = false
     private var oldShowFqTypeNames = false
 
     override fun setUp() {
@@ -65,6 +67,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         val classRenderer = NodeRendererSettings.getInstance()!!.classRenderer!!
         oldShowFqTypeNames = classRenderer.SHOW_FQ_TYPE_NAMES
         classRenderer.SHOW_FQ_TYPE_NAMES = true
+
+        oldShowKotlinVariables = ToggleKotlinVariablesState.getService().kotlinVariableView
 
         oldLogLevel = logger.level
         logger.level = Level.DEBUG
@@ -82,6 +86,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     }
 
     override fun tearDown() {
+        ToggleKotlinVariablesState.getService().kotlinVariableView = oldShowKotlinVariables
+
         logger.level = oldLogLevel
         logger.removeAppender(appender)
 
@@ -100,10 +106,6 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         configureSettings(fileText)
         createAdditionalBreakpoints(fileText)
 
-        val shouldPrintFrame = isDirectiveDefined(fileText, "// PRINT_FRAME")
-        val skipInPrintFrame = if (shouldPrintFrame) findListWithPrefixes(fileText, "// SKIP: ") else emptyList()
-        val descriptorViewOptions = DescriptorViewOptions.valueOf(findStringWithPrefixes(fileText, "// DESCRIPTOR_VIEW_OPTIONS: ") ?: "FULL")
-
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
@@ -111,15 +113,9 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
         createDebugProcess(path)
 
+        val printFrameHandler = PrintFrameHandler(fileText)
+
         doStepping(path)
-
-        var variablesView: XVariablesView? = null
-        var watchesView: XWatchesViewImpl? = null
-
-        ApplicationManager.getApplication().invokeAndWait({
-            variablesView = createVariablesView()
-            watchesView = createWatchesView()
-        }, ModalityState.any())
 
         doOnBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
@@ -137,15 +133,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                         evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
                     }
                 }
-            }
-            finally {
-                if (shouldPrintFrame) {
-                    printFrame(variablesView!!, watchesView!!, PrinterConfig(skipInPrintFrame, descriptorViewOptions))
-                    println(fileText, ProcessOutputTypes.SYSTEM)
-                }
-                else {
-                    resume(this)
-                }
+            } finally {
+                printFrameHandler.trigger(this@doOnBreakpoint)
             }
 
             checkExceptions(exceptions)
@@ -162,6 +151,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
         createDebugProcess(path)
 
+        val printFrameHandler = PrintFrameHandler(fileText)
+
         val expressions = loadTestDirectivesPairs(fileText, "// EXPRESSION: ", "// RESULT: ")
 
         val exceptions = linkedMapOf<String, Throwable>()
@@ -170,17 +161,50 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 doOnBreakpoint {
                     try {
                         evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
-                    }
-                    finally {
-                        resume(this)
+                    } finally {
+                        printFrameHandler.trigger(this@doOnBreakpoint)
                     }
                 }
             }
         }
 
         checkExceptions(exceptions)
-
         finish()
+    }
+
+    private inner class PrintFrameHandler(fileText: String) {
+        private val shouldPrintFrame = isDirectiveDefined(fileText, "// PRINT_FRAME")
+        private val skipInPrintFrame = if (shouldPrintFrame) findListWithPrefixes(fileText, "// SKIP: ") else emptyList()
+        private val descriptorViewOptions =
+            DescriptorViewOptions.valueOf(findStringWithPrefixes(fileText, "// DESCRIPTOR_VIEW_OPTIONS: ") ?: "FULL")
+
+        private val kotlinVariablesState: ToggleKotlinVariablesState
+        private val oldKotlinVariablesState: Boolean
+
+        private lateinit var variablesView: XVariablesView
+        private lateinit var watchesView: XWatchesViewImpl
+
+        init {
+            ApplicationManager.getApplication().invokeAndWait(
+                {
+                    variablesView = createVariablesView()
+                    watchesView = createWatchesView()
+                }, ModalityState.any()
+            )
+
+            kotlinVariablesState = ToggleKotlinVariablesState.getService()
+            oldKotlinVariablesState = kotlinVariablesState.kotlinVariableView
+
+            kotlinVariablesState.kotlinVariableView = isDirectiveDefined(fileText, "// SHOW_KOTLIN_VARIABLES")
+        }
+
+        fun trigger(suspendContext: SuspendContextImpl) {
+            if (shouldPrintFrame) {
+                suspendContext.printFrame(variablesView, watchesView, PrinterConfig(skipInPrintFrame, descriptorViewOptions))
+            } else {
+                resume(suspendContext)
+            }
+        }
     }
 
     private fun createWatchesView(): XWatchesViewImpl {
@@ -251,10 +275,10 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             }
         }
 
-        fun renderLabel(descriptor: NodeDescriptorImpl): String {
+        fun renderLabel(node: TreeNode, descriptor: NodeDescriptorImpl): String {
             return when {
                 descriptor is WatchItemDescriptor -> descriptor.calcValueName()
-                viewOptions.toString().contains("NAME") -> descriptor.name ?: descriptor.label
+                viewOptions.toString().contains("NAME") -> (node as? XValueNodeImpl)?.name ?: descriptor.name ?: descriptor.label
                 else -> descriptor.label
             }
         }
@@ -291,7 +315,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             if (descriptor is DefaultNodeDescriptor) return true
             if (config.variablesToSkipInPrintFrame.contains(descriptor.name)) return true
 
-            var label = config.renderLabel(descriptor)
+            var label = config.renderLabel(node, descriptor)
 
             // TODO: update presentation before calc label
             if (label == NodeDescriptorImpl.UNKNOWN_VALUE_MESSAGE && descriptor is StaticDescriptor) {

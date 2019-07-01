@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.builder
@@ -67,7 +67,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     protected fun KtFile.toFirFile(stubMode: Boolean): FirFile =
-        RawFirBuilder(object : FirSessionBase() {}, stubMode).buildFirFile(this)
+        RawFirBuilder(object : FirSessionBase(null) {}, stubMode).buildFirFile(this)
 
     private fun FirElement.traverseChildren(result: MutableSet<FirElement> = hashSetOf()): MutableSet<FirElement> {
         if (!result.add(this)) {
@@ -148,7 +148,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             } else {
                 element.transformChildren(this, Unit)
             }
-            return CompositeTransformResult(element)
+            return CompositeTransformResult.single(element)
         }
     }
 

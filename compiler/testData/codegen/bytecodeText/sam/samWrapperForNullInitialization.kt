@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: JFoo.java
 
 import org.jetbrains.annotations.Nullable;
@@ -17,10 +16,9 @@ fun test() {
 }
 
 // @TestKt.class:
-// 1 NEW TestKt\$test\$1
+// 1 NEW TestKt\$
 // 1 NEW kotlin/jvm/internal/Ref\$IntRef
 // 2 NEW
-// 1 INVOKESPECIAL TestKt\$test\$1.<init>
 // 0 IFNONNULL
 // 0 IFNULL
 // 1 ACONST_NULL

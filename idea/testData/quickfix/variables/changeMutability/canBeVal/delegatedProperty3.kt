@@ -1,6 +1,7 @@
 // "Change to val" "false"
 // ACTION: Create extension function 'Delegate.getValue', function 'Delegate.setValue'
 // ACTION: Create member function 'Delegate.getValue', function 'Delegate.setValue'
+// ACTION: Introduce import alias
 // ERROR: Missing 'getValue(Nothing?, KProperty<*>)' method on delegate of type 'Delegate'
 // ERROR: Missing 'setValue(Nothing?, KProperty<*>, String)' method on delegate of type 'Delegate'
 import kotlin.reflect.KProperty

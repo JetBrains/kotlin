@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -95,6 +96,7 @@ interface SyntheticScope {
     }
 }
 
+@DefaultImplementation(impl = SyntheticScopes.Empty::class)
 interface SyntheticScopes {
     val scopes: Collection<SyntheticScope>
 

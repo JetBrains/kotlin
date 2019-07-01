@@ -2,7 +2,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-draft
- * PLACES: constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 1
+ * PLACE: constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Sequences with binary digit symbols.
  */

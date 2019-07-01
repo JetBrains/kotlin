@@ -1,12 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kapt.cli
 
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.kapt.cli.CliToolOption.Format.*
+import java.io.File
 
 class CliToolOption(val name: String, val format: Format) {
     enum class Format {
@@ -68,6 +69,38 @@ enum class KaptCliOption(
     ),
 
     INCREMENTAL_DATA_OUTPUT_DIR_OPTION("incrementalData", "<path>", "Output path for incremental data"),
+
+    CHANGED_FILES(
+        "changedFile",
+        "<path>",
+        "Use only in apt mode. Changed java source file that should be processed when using incremental annotation processing.",
+        true
+    ),
+
+    COMPILED_SOURCES_DIR(
+        "compiledSourcesDir",
+        "<path>",
+        "Use only in apt mode. Compiled sources (.class files) from previous compilation. This is typically a kotlinc or javac output.",
+        true
+    ),
+
+    INCREMENTAL_CACHE(
+        "incrementalCache",
+        "<path>",
+        "Use only in apt mode. Output directory for cache necessary to support incremental annotation processing."
+    ),
+
+    CLASSPATH_CHANGES(
+        "classpathChange",
+        "<jvmInternalName,[jvmInternalName,...]>",
+        "Use only in apt mode. Classpath jvm internal names that changed."
+    ),
+
+    PROCESS_INCREMENTALLY(
+        "processIncrementally",
+        "boolean",
+        "Use only in apt mode. Enables incremental apt processing"
+    ),
 
     ANNOTATION_PROCESSOR_CLASSPATH_OPTION(
         "apclasspath",

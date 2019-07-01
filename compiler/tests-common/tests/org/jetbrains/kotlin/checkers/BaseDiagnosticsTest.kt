@@ -42,15 +42,20 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
+import java.lang.IllegalStateException
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.reflect.jvm.javaField
@@ -223,7 +228,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         fun getActualText(
             bindingContext: BindingContext,
-            implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
+            implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
             actualText: StringBuilder,
             skipJvmSignatureDiagnostics: Boolean,
             languageVersionSettings: LanguageVersionSettings,
@@ -473,4 +478,17 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     }
 
     private fun parseJvmTarget(directiveMap: Map<String, String>) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
+
+    protected fun parseModulePlatformByName(moduleName: String): TargetPlatform? {
+        val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
+        return when {
+            nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
+            nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
+            nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
+            nameSuffix == "NATIVE" -> KonanPlatforms.defaultKonanPlatform
+            nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
+            else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
+        }
+    }
+
 }

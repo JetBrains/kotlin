@@ -4,7 +4,7 @@ Connected to the target VM
 doNotSkipConstructors.kt:5
 doNotSkipConstructors.kt:9
 doNotSkipConstructors.kt:11
-doNotSkipConstructors.kt:5
+doNotSkipConstructors.kt:12
 Disconnected from the target VM
 
 Process finished with exit code 0

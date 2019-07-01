@@ -4,7 +4,7 @@ package typeInferenceExpectedTypeMismatch
 import java.util.*
 
 fun test() {
-    val s : Set<Int> = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>newList()<!>
+    val s : Set<Int> = <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>newList()<!>
     use(s)
 }
 

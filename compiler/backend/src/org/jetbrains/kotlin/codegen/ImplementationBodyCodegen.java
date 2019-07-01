@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -68,7 +68,7 @@ import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.getDelegatedLocalVariableMetadata;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtils2Kt.initDefaultSourceMappingIfNeeded;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.initDefaultSourceMappingIfNeeded;
 import static org.jetbrains.kotlin.load.java.JvmAbi.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.kotlin.resolve.BindingContext.INDEXED_LVALUE_SET;
@@ -913,7 +913,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (state.getClassBuilderMode().generateBodies && info.defaultValue == null) {
                 ExpressionCodegen codegen = createOrGetClInitCodegen();
                 int companionObjectIndex = putCompanionObjectInLocalVar(codegen);
-                StackValue.local(companionObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
+                StackValue.local(companionObjectIndex, OBJECT_TYPE).put(codegen.v);
                 copyFieldFromCompanionObject(property);
             }
         }

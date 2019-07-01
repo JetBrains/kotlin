@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.builtins;
@@ -120,11 +120,11 @@ public abstract class KotlinBuiltIns {
         });
     }
 
-    protected void createBuiltInsModule() {
+    protected void createBuiltInsModule(boolean isFallback) {
         builtInsModule = new ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this, null);
         builtInsModule.initialize(BuiltInsLoader.Companion.getInstance().createPackageFragmentProvider(
                 storageManager, builtInsModule,
-                getClassDescriptorFactories(), getPlatformDependentDeclarationFilter(), getAdditionalClassPartsProvider()
+                getClassDescriptorFactories(), getPlatformDependentDeclarationFilter(), getAdditionalClassPartsProvider(), isFallback
         ));
         builtInsModule.setDependencies(builtInsModule);
     }
@@ -253,6 +253,7 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kPropertyFqName = reflect("KProperty");
         public final FqNameUnsafe kMutablePropertyFqName = reflect("KMutableProperty");
         public final ClassId kProperty = ClassId.topLevel(kPropertyFqName.toSafe());
+        public final FqNameUnsafe kDeclarationContainer = reflect("KDeclarationContainer");
 
         public final FqName uByteFqName = fqName("UByte");
         public final FqName uShortFqName = fqName("UShort");
@@ -493,6 +494,51 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getKDeclarationContainer() {
+        return getBuiltInClassByFqName(FQ_NAMES.kDeclarationContainer.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKCallable() {
+        return getBuiltInClassByFqName(FQ_NAMES.kCallable.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty() {
+        return getBuiltInClassByFqName(FQ_NAMES.kPropertyFqName.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty0() {
+        return getBuiltInClassByFqName(FQ_NAMES.kProperty0.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty1() {
+        return getBuiltInClassByFqName(FQ_NAMES.kProperty1.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKProperty2() {
+        return getBuiltInClassByFqName(FQ_NAMES.kProperty2.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKMutableProperty0() {
+        return getBuiltInClassByFqName(FQ_NAMES.kMutableProperty0.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKMutableProperty1() {
+        return getBuiltInClassByFqName(FQ_NAMES.kMutableProperty1.toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKMutableProperty2() {
+        return getBuiltInClassByFqName(FQ_NAMES.kMutableProperty2.toSafe());
+    }
+
+    @NotNull
     public ClassDescriptor getIterator() {
         return getBuiltInClassByFqName(FQ_NAMES.iterator);
     }
@@ -609,6 +655,11 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public SimpleType getPrimitiveKotlinType(@NotNull PrimitiveType type) {
         return getPrimitiveClassDescriptor(type).getDefaultType();
+    }
+
+    @NotNull
+    public SimpleType getNumberType() {
+        return getNumber().getDefaultType();
     }
 
     @NotNull
@@ -820,12 +871,16 @@ public abstract class KotlinBuiltIns {
     }
 
     private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
+        return isTypeConstructorForGivenClass(type.getConstructor(), fqName);
     }
 
     public static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqName fqName) {
         return isConstructedFromGivenClass(type, fqName.toUnsafe());
+    }
+
+    public static boolean isTypeConstructorForGivenClass(@NotNull TypeConstructor typeConstructor, @NotNull FqNameUnsafe fqName) {
+        ClassifierDescriptor descriptor = typeConstructor.getDeclarationDescriptor();
+        return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
     }
 
     private static boolean classFqNameEquals(@NotNull ClassifierDescriptor descriptor, @NotNull FqNameUnsafe fqName) {

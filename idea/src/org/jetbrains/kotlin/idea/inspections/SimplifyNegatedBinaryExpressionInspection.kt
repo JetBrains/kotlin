@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInspection<KtPrefixExpression>(
-        KtPrefixExpression::class.java
-) {
+class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInspection<KtPrefixExpression>(KtPrefixExpression::class.java) {
 
     private fun IElementType.negate(): KtSingleValueToken? = when (this) {
         KtTokens.IN_KEYWORD -> KtTokens.NOT_IN
@@ -47,7 +45,7 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
         else -> null
     }
 
-    override fun inspectionTarget(element: KtPrefixExpression) = element.operationReference
+    override fun inspectionHighlightRangeInElement(element: KtPrefixExpression) = element.operationReference.textRangeIn(element)
 
     override fun inspectionText(element: KtPrefixExpression) = "Negated operation should be simplified"
 
@@ -73,9 +71,8 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
         return (expression.operationReference.getReferencedNameElementType() as? KtSingleValueToken)?.negate() != null
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val prefixExpression = element.parent as? KtPrefixExpression ?: return
-        val expression = KtPsiUtil.deparenthesize(prefixExpression.baseExpression) ?: return
+    override fun applyTo(element: KtPrefixExpression, project: Project, editor: Editor?) {
+        val expression = KtPsiUtil.deparenthesize(element.baseExpression) ?: return
         val operation = (expression as KtOperationExpression).operationReference.getReferencedNameElementType().negate()?.value ?: return
 
         val psiFactory = KtPsiFactory(expression)
@@ -87,6 +84,6 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
             else ->
                 throw IllegalArgumentException()
         }
-        prefixExpression.replace(newExpression)
+        element.replace(newExpression)
     }
 }

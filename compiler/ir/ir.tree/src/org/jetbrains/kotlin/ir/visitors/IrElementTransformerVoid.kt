@@ -49,9 +49,6 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitClass(declaration: IrClass) = visitDeclaration(declaration)
     final override fun visitClass(declaration: IrClass, data: Nothing?) = visitClass(declaration)
 
-    open fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
-    final override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
-
     open fun visitFunction(declaration: IrFunction) = visitDeclaration(declaration)
     final override fun visitFunction(declaration: IrFunction, data: Nothing?) = visitFunction(declaration)
 
@@ -169,11 +166,14 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     final override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
+    open fun visitConstructorCall(expression: IrConstructorCall) = visitFunctionAccess(expression)
+    final override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?) = visitConstructorCall(expression)
+
     open fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
     final override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) =
         visitDelegatingConstructorCall(expression)
 
-    open fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitMemberAccess(expression)
+    open fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = visitFunctionAccess(expression)
     final override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?) = visitEnumConstructorCall(expression)
 
     open fun visitGetClass(expression: IrGetClass) = visitExpression(expression)

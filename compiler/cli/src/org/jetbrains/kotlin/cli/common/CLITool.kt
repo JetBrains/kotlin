@@ -33,6 +33,7 @@ import java.io.PrintStream
 import java.net.URL
 import java.net.URLConnection
 import java.util.function.Predicate
+import kotlin.system.exitProcess
 
 abstract class CLITool<A : CommonToolArguments> {
     fun exec(errStream: PrintStream, vararg args: String): ExitCode {
@@ -205,7 +206,7 @@ abstract class CLITool<A : CommonToolArguments> {
             }
             val exitCode = doMainNoExit(compiler, args)
             if (exitCode != ExitCode.OK) {
-                System.exit(exitCode.code)
+                exitProcess(exitCode.code)
             }
         }
 

@@ -80,4 +80,11 @@ public class KotlinParser implements PsiParser {
         ktParsing.parseLambdaExpression();
         return psiBuilder.getTreeBuilt();
     }
+
+    @NotNull
+    public static ASTNode parseBlockExpression(PsiBuilder psiBuilder) {
+        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        ktParsing.parseBlockExpression();
+        return psiBuilder.getTreeBuilt();
+    }
 }

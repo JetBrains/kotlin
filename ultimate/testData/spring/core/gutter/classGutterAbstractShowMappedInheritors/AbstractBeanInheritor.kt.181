@@ -1,1 +1,0 @@
-class AbstractBeanInheritor : AbstractBean()

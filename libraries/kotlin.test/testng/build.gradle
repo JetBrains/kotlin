@@ -3,10 +3,8 @@ description = 'Kotlin Test TestNG'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_17
-
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
@@ -14,20 +12,16 @@ dependencies {
     compile('org.testng:testng:6.13.1')
 }
 
-
 jar {
     manifestAttributes(manifest, project, 'Test')
 }
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
 }
 
 javadocJar()
-
-dist {
-    from (jar, sourcesJar)
-}
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]

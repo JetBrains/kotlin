@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -472,21 +472,38 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         return clInit;
     }
 
+    private boolean nopSeparatorNeeded = false;
+
+    private void generateNopSeparatorIfNeeded(NotNullLazyValue<ExpressionCodegen> codegen) {
+        if (nopSeparatorNeeded) {
+            nopSeparatorNeeded = false;
+            codegen.invoke().v.nop();
+        }
+    }
+
     protected void generateInitializers(@NotNull Function0<ExpressionCodegen> createCodegen) {
         NotNullLazyValue<ExpressionCodegen> codegen = LockBasedStorageManager.NO_LOCKS.createLazyValue(createCodegen);
+
         for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
             if (declaration instanceof KtProperty) {
                 if (shouldInitializeProperty((KtProperty) declaration)) {
+                    generateNopSeparatorIfNeeded(codegen);
                     initializeProperty(codegen.invoke(), (KtProperty) declaration);
                 }
             }
             else if (declaration instanceof KtDestructuringDeclaration) {
+                generateNopSeparatorIfNeeded(codegen);
                 codegen.invoke().initializeDestructuringDeclaration((KtDestructuringDeclaration) declaration, true);
             }
             else if (declaration instanceof KtAnonymousInitializer) {
                 KtExpression body = ((KtAnonymousInitializer) declaration).getBody();
                 if (body != null) {
-                    codegen.invoke().gen(body, Type.VOID_TYPE);
+                    generateNopSeparatorIfNeeded(codegen);
+
+                    ExpressionCodegen expressionCodegen = codegen.invoke();
+                    expressionCodegen.gen(body, Type.VOID_TYPE);
+                    expressionCodegen.markLineNumber(declaration, true);
+                    nopSeparatorNeeded = true;
                 }
             }
         }

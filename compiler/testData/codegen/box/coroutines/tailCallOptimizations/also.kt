@@ -1,13 +1,14 @@
 // IGNORE_BACKEND: JVM_IR
-// COMMON_COROUTINES_TEST
+// TARGET_BACKEND: JVM
+// FULL_JDK
 // WITH_RUNTIME
 // WITH_COROUTINES
-// CHECK_BYTECODE_LISTING
-
+// CHECK_TAIL_CALL_OPTIMIZATION
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-suspend fun dummy(): Unit = Unit
+suspend fun dummy() = TailCallOptimizationChecker.saveStackTrace()
 suspend fun test(): Int = 1.also {
     dummy()
 }
@@ -21,5 +22,6 @@ fun box(): String {
     builder {
         res = test()
     }
+    TailCallOptimizationChecker.checkStateMachineIn("test")
     return if (res == 1) "OK" else "FAIL"
 }

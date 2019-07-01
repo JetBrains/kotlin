@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 class WrapWithSafeLetCallFix(
     expression: KtExpression,
     nullableExpression: KtExpression
-) : KotlinQuickFixAction<KtExpression>(expression) {
+) : KotlinQuickFixAction<KtExpression>(expression), HighPriorityAction {
     private val nullableExpressionPointer = nullableExpression.createSmartPointer()
 
     override fun getFamilyName() = text

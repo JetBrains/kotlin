@@ -37,6 +37,8 @@ import java.io.IOException;
 public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
     private static final String NAME = "kotlin.FILE";
 
+    public static KtFileElementType INSTANCE = new KtFileElementType();
+
     public KtFileElementType() {
         super(NAME, KotlinLanguage.INSTANCE);
     }

@@ -43,7 +43,7 @@ import java.io.File
 
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
-    override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         dceOptionsImpl.updateArguments(args)
         args.declarationsToKeep = keep.toTypedArray()
     }

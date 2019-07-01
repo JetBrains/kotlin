@@ -199,8 +199,8 @@ class KotlinPsiUnifier(
                     s and when {
                         arg1 == arg2 -> MATCHED
                         arg1 == null || arg2 == null -> UNMATCHED
-                        else -> (arg1.arguments.asSequence().zip(arg2.arguments.asSequence())).fold(MATCHED) { s, p ->
-                            s and matchArguments(p.first, p.second)
+                        else -> (arg1.arguments.asSequence().zip(arg2.arguments.asSequence())).fold(MATCHED) { status, pair ->
+                            status and matchArguments(pair.first, pair.second)
                         }
                     }
                 }
@@ -711,7 +711,7 @@ class KotlinPsiUnifier(
                     null
             }
             if (status == UNMATCHED) {
-                declarationPatternsToTargets.removeValue(desc1, desc2)
+                declarationPatternsToTargets.remove(desc1, desc2)
             }
 
             return status

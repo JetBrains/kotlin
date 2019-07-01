@@ -40,7 +40,8 @@ interface IrDeclarationOrigin {
     object IR_EXTERNAL_DECLARATION_STUB : IrDeclarationOriginImpl("IR_EXTERNAL_DECLARATION_STUB")
     object IR_EXTERNAL_JAVA_DECLARATION_STUB : IrDeclarationOriginImpl("IR_EXTERNAL_JAVA_DECLARATION_STUB")
     object IR_BUILTINS_STUB : IrDeclarationOriginImpl("IR_BUILTINS_STUB")
-    object BRIDGE : IrDeclarationOriginImpl("BRIDGE")
+    object BRIDGE : IrDeclarationOriginImpl("BRIDGE", isSynthetic = true)
+    object BRIDGE_SPECIAL: IrDeclarationOriginImpl("BRIDGE_SPECIAL")
 
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
     object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES")
@@ -54,4 +55,18 @@ abstract class IrDeclarationOriginImpl(
     override val isSynthetic: Boolean = false
 ) : IrDeclarationOrigin {
     override fun toString(): String = name
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is IrDeclarationOriginImpl) return false
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
 }

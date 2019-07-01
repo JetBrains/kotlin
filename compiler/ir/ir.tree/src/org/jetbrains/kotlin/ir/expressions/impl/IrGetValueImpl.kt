@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.expressions.impl
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -35,15 +34,6 @@ class IrGetValueImpl(
         symbol: IrValueSymbol,
         origin: IrStatementOrigin? = null
     ) : this(startOffset, endOffset, symbol.owner.type, symbol, origin)
-
-    @Deprecated("Creates unbound reference")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        descriptor: ValueDescriptor,
-        origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, createValueSymbol(descriptor), origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetValue(this, data)

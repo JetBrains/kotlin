@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.script;
@@ -59,6 +59,11 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         @TestMetadata("customExtension")
         public void testCustomExtension() throws Exception {
             runTest("idea/testData/script/definition/highlighting/customExtension/");
+        }
+
+        @TestMetadata("customJavaHome")
+        public void testCustomJavaHome() throws Exception {
+            runTest("idea/testData/script/definition/highlighting/customJavaHome/");
         }
 
         @TestMetadata("customLibrary")

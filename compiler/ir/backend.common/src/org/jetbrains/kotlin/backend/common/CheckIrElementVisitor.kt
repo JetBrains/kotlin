@@ -16,24 +16,24 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.types.KotlinType
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
 class CheckIrElementVisitor(
-    val builtIns: KotlinBuiltIns,
+    val irBuiltIns: IrBuiltIns,
     val reportError: ReportError,
     val config: IrValidatorConfig
 ) : IrElementVisitorVoid {
@@ -50,14 +50,17 @@ class CheckIrElementVisitor(
         // Nothing to do.
     }
 
-    private fun IrExpression.ensureTypeIs(expectedType: KotlinType) {
+    private fun IrExpression.ensureTypesEqual(actualType: IrType, expectedType: IrType) {
         if (!config.checkTypes)
             return
 
-        // TODO: compare IR types instead.
-        if (expectedType != type.toKotlinType()) {
-            reportError(this, "unexpected expression.type: expected $expectedType, got ${type.toKotlinType()}")
+        if (actualType != expectedType) {
+            reportError(this, "unexpected type: expected ${expectedType.render()}, got ${actualType.render()}")
         }
+    }
+
+    private fun IrExpression.ensureTypeIs(expectedType: IrType) {
+        ensureTypesEqual(type, expectedType)
     }
 
     private fun IrSymbol.ensureBound(expression: IrExpression) {
@@ -70,31 +73,36 @@ class CheckIrElementVisitor(
         super.visitConst(expression)
 
         val naturalType = when (expression.kind) {
-            IrConstKind.Null -> builtIns.nullableNothingType
-            IrConstKind.Boolean -> builtIns.booleanType
-            IrConstKind.Char -> builtIns.charType
-            IrConstKind.Byte -> builtIns.byteType
-            IrConstKind.Short -> builtIns.shortType
-            IrConstKind.Int -> builtIns.intType
-            IrConstKind.Long -> builtIns.longType
-            IrConstKind.String -> builtIns.stringType
-            IrConstKind.Float -> builtIns.floatType
-            IrConstKind.Double -> builtIns.doubleType
+            IrConstKind.Null -> irBuiltIns.nothingNType
+            IrConstKind.Boolean -> irBuiltIns.booleanType
+            IrConstKind.Char -> irBuiltIns.charType
+            IrConstKind.Byte -> irBuiltIns.byteType
+            IrConstKind.Short -> irBuiltIns.shortType
+            IrConstKind.Int -> irBuiltIns.intType
+            IrConstKind.Long -> irBuiltIns.longType
+            IrConstKind.String -> irBuiltIns.stringType
+            IrConstKind.Float -> irBuiltIns.floatType
+            IrConstKind.Double -> irBuiltIns.doubleType
         }
 
-        expression.ensureTypeIs(naturalType)
+        var type = expression.type
+        while (true) {
+            val inlinedClass = type.getInlinedClass() ?: break
+            type = getInlineClassUnderlyingType(inlinedClass)
+        }
+        expression.ensureTypesEqual(type, naturalType)
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
         super.visitStringConcatenation(expression)
 
-        expression.ensureTypeIs(builtIns.stringType)
+        expression.ensureTypeIs(irBuiltIns.stringType)
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue) {
         super.visitGetObjectValue(expression)
 
-        expression.ensureTypeIs(expression.descriptor.defaultType)
+        expression.ensureTypeIs(expression.symbol.createType(false, emptyList()))
     }
 
     // TODO: visitGetEnumValue
@@ -102,34 +110,51 @@ class CheckIrElementVisitor(
     override fun visitGetValue(expression: IrGetValue) {
         super.visitGetValue(expression)
 
-        expression.ensureTypeIs(expression.descriptor.type)
+        expression.ensureTypeIs(expression.symbol.owner.type)
     }
 
     override fun visitSetVariable(expression: IrSetVariable) {
         super.visitSetVariable(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitGetField(expression: IrGetField) {
         super.visitGetField(expression)
 
-        expression.ensureTypeIs(expression.descriptor.type)
+        val fieldType = expression.symbol.owner.type
+        // TODO: We don't have the proper type substitution yet, so skip generics for now.
+        if (fieldType is IrSimpleType &&
+                fieldType.classifier is IrClassSymbol &&
+                fieldType.arguments.isEmpty()
+        ) {
+            expression.ensureTypeIs(fieldType)
+        }
     }
 
     override fun visitSetField(expression: IrSetField) {
         super.visitSetField(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
 
-        val returnType = expression.descriptor.returnType
-        if (returnType == null) {
-            reportError(expression, "${expression.descriptor} return type is null")
-        } else {
+        val function = expression.symbol.owner
+
+        if (function.dispatchReceiverParameter?.type is IrDynamicType) {
+            reportError(expression, "Dispatch receivers with 'dynamic' type are not allowed")
+        }
+        // TODO: Why don't we check parameters as well?
+
+        val returnType = expression.symbol.owner.returnType
+        // TODO: We don't have the proper type substitution yet, so skip generics for now.
+        if (returnType is IrSimpleType &&
+            returnType.classifier is IrClassSymbol &&
+            returnType.arguments.isEmpty()
+        ) {
+
             expression.ensureTypeIs(returnType)
         }
 
@@ -139,19 +164,19 @@ class CheckIrElementVisitor(
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
         super.visitDelegatingConstructorCall(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
         super.visitEnumConstructorCall(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
         super.visitInstanceInitializerCall(expression)
 
-        expression.ensureTypeIs(builtIns.unitType)
+        expression.ensureTypeIs(irBuiltIns.unitType)
         expression.classSymbol.ensureBound(expression)
     }
 
@@ -167,11 +192,15 @@ class CheckIrElementVisitor(
             IrTypeOperator.IMPLICIT_NOTNULL,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             IrTypeOperator.IMPLICIT_INTEGER_COERCION,
-            IrTypeOperator.SAM_CONVERSION -> typeOperand.toKotlinType()
+            IrTypeOperator.SAM_CONVERSION,
+            IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
+                typeOperand
 
-            IrTypeOperator.SAFE_CAST -> typeOperand.makeNullable().toKotlinType()
+            IrTypeOperator.SAFE_CAST ->
+                typeOperand.makeNullable()
 
-            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> builtIns.booleanType
+            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF ->
+                irBuiltIns.booleanType
         }
 
         if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && !typeOperand.isUnit()) {
@@ -186,26 +215,26 @@ class CheckIrElementVisitor(
     override fun visitLoop(loop: IrLoop) {
         super.visitLoop(loop)
 
-        loop.ensureTypeIs(builtIns.unitType)
+        loop.ensureTypeIs(irBuiltIns.unitType)
     }
 
     override fun visitBreakContinue(jump: IrBreakContinue) {
         super.visitBreakContinue(jump)
 
-        jump.ensureTypeIs(builtIns.nothingType)
+        jump.ensureTypeIs(irBuiltIns.nothingType)
     }
 
     override fun visitReturn(expression: IrReturn) {
         super.visitReturn(expression)
 
-        expression.ensureTypeIs(builtIns.nothingType)
+        expression.ensureTypeIs(irBuiltIns.nothingType)
         expression.returnTargetSymbol.ensureBound(expression)
     }
 
     override fun visitThrow(expression: IrThrow) {
         super.visitThrow(expression)
 
-        expression.ensureTypeIs(builtIns.nothingType)
+        expression.ensureTypeIs(irBuiltIns.nothingType)
     }
 
     override fun visitClass(declaration: IrClass) {
@@ -216,21 +245,27 @@ class CheckIrElementVisitor(
             // (including FAKE_OVERRIDE ones).
 
             val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
-                    .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
+                .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
 
             val presentDescriptors = declaration.declarations.map { it.descriptor }
 
             val missingDescriptors = allDescriptors - presentDescriptors
 
             if (missingDescriptors.isNotEmpty()) {
-                reportError(declaration, "Missing declarations for descriptors:\n" +
-                        missingDescriptors.joinToString("\n"))
+                reportError(
+                    declaration, "Missing declarations for descriptors:\n" +
+                            missingDescriptors.joinToString("\n: ")
+                )
             }
         }
     }
 
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
+
+        if (declaration.dispatchReceiverParameter?.type is IrDynamicType) {
+            reportError(declaration, "Dispatch receivers with 'dynamic' type are not allowed")
+        }
 
         for ((i, p) in declaration.valueParameters.withIndex()) {
             if (p.index != i) {
@@ -260,6 +295,19 @@ class CheckIrElementVisitor(
         }
 
         expression.symbol.ensureBound(expression)
+    }
+
+    override fun visitDeclaration(declaration: IrDeclaration) {
+        super.visitDeclaration(declaration)
+
+        if (declaration is IrOverridableDeclaration<*>) {
+            for (overriddenSymbol in declaration.overriddenSymbols) {
+                val overriddenDeclaration = overriddenSymbol.owner as? IrDeclarationWithVisibility ?: continue
+                if (overriddenDeclaration.visibility == Visibilities.PRIVATE) {
+                    reportError(declaration, "Overrides private declaration $overriddenDeclaration")
+                }
+            }
+        }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {

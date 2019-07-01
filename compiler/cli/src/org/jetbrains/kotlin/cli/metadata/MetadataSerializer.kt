@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
-import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -68,7 +68,7 @@ open class MetadataSerializer(
 
         val analyzer = AnalyzerWithCompilerReport(messageCollector, configuration.languageVersionSettings)
         analyzer.analyzeAndReport(files) {
-            CommonAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns, configuration.languageVersionSettings) { content ->
+            CommonResolverForModuleFactory.analyzeFiles(files, moduleName, dependOnOldBuiltIns, configuration.languageVersionSettings) { content ->
                 environment.createPackagePartProvider(content.moduleContentScope)
             }
         }

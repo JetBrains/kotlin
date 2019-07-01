@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.inline
@@ -18,6 +18,8 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -39,34 +41,42 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(path.replace(mainFileName, it.name)) }
         val file = myFixture.configureByFile(path)
 
-        val afterFileExists = afterFile.exists()
+        val configured = configureCompilerOptions(file.text, project, module)
 
-        val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)!!
-        val handler = Extensions.getExtensions(InlineActionHandler.EP_NAME).firstOrNull { it.canInlineElement(targetElement) }
-        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// ERROR: ")
-        if (handler != null) {
-            try {
-                runWriteAction { handler.inlineElement(myFixture.project, myFixture.editor, targetElement) }
+        try {
+            val afterFileExists = afterFile.exists()
 
-                UsefulTestCase.assertEmpty(expectedErrors)
-                KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
-                for ((extraPsiFile, extraFile) in extraFilesToPsi) {
-                    KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
+            val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)!!
+            val handler = Extensions.getExtensions(InlineActionHandler.EP_NAME).firstOrNull { it.canInlineElement(targetElement) }
+            val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// ERROR: ")
+            if (handler != null) {
+                try {
+                    runWriteAction { handler.inlineElement(myFixture.project, myFixture.editor, targetElement) }
+
+                    UsefulTestCase.assertEmpty(expectedErrors)
+                    KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
+                    for ((extraPsiFile, extraFile) in extraFilesToPsi) {
+                        KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
+                    }
+                }
+                catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+                    TestCase.assertFalse("Refactoring not available: ${e.message}", afterFileExists)
+                    TestCase.assertEquals("Expected errors", 1, expectedErrors.size)
+                    TestCase.assertEquals("Error message", expectedErrors[0].replace("\\n", "\n"), e.message)
+                }
+                catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+                    TestCase.assertFalse("Conflicts: ${e.message}", afterFileExists)
+                    TestCase.assertEquals("Expected errors", 1, expectedErrors.size)
+                    TestCase.assertEquals("Error message", expectedErrors[0].replace("\\n", "\n"), e.message)
                 }
             }
-            catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
-                TestCase.assertFalse("Refactoring not available: ${e.message}", afterFileExists)
-                TestCase.assertEquals("Expected errors", 1, expectedErrors.size)
-                TestCase.assertEquals("Error message", expectedErrors[0].replace("\\n", "\n"), e.message)
+            else {
+                TestCase.assertFalse("No refactoring handler available", afterFileExists)
             }
-            catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
-                TestCase.assertFalse("Conflicts: ${e.message}", afterFileExists)
-                TestCase.assertEquals("Expected errors", 1, expectedErrors.size)
-                TestCase.assertEquals("Error message", expectedErrors[0].replace("\\n", "\n"), e.message)
+        } finally {
+            if (configured) {
+                rollbackCompilerOptions(project, module)
             }
-        }
-        else {
-            TestCase.assertFalse("No refactoring handler available", afterFileExists)
         }
     }
 

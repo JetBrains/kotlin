@@ -1,0 +1,4 @@
+class Foo {
+    var foo: String = ""
+        @Deprecated("") set
+}

@@ -1,32 +1,32 @@
 FILE: unary.kt
-    public? final? function test(): kotlin/Unit {
-        var x: <implicit> = Int(0)
-        val x1: <implicit> =  {
-            val <unary>: <implicit> = x#
-            x# = inc#(<unary>#)
-            <unary>#
+    public? final? fun test(): kotlin/Unit {
+        lvar x: <implicit> = Int(0)
+        lval x1: <implicit> =  {
+            lval <unary>: <implicit> = x#
+            x# = R|<local>/<unary>|.inc#()
+            R|<local>/<unary>|
         }
 
-        val x2: <implicit> =  {
-            val <unary>: <implicit> = x#
-            x# = inc#(<unary>#)
+        lval x2: <implicit> =  {
+            lval <unary>: <implicit> = x#
+            x# = R|<local>/<unary>|.inc#()
             x#
         }
 
-        val x3: <implicit> =  {
-            val <unary>: <implicit> = x#
-            x# = dec#(<unary>#)
+        lval x3: <implicit> =  {
+            lval <unary>: <implicit> = x#
+            x# = R|<local>/<unary>|.dec#()
             x#
         }
 
-        val x4: <implicit> =  {
-            val <unary>: <implicit> = x#
-            x# = dec#(<unary>#)
-            <unary>#
+        lval x4: <implicit> =  {
+            lval <unary>: <implicit> = x#
+            x# = R|<local>/<unary>|.dec#()
+            R|<local>/<unary>|
         }
 
         when () {
-            not#(==(x#, Int(0))) ->  {
+            ==(x#, Int(0)).not#() ->  {
                 println#(String(000))
             }
             else ->  {
@@ -34,64 +34,66 @@ FILE: unary.kt
         }
 
     }
-    public? final? class X {
-        public? constructor(i: Int): super<kotlin/Any>()
+    public? final? class X : kotlin/Any {
+        public? constructor(i: Int): R|X| {
+            super<kotlin/Any>()
+        }
 
-        public? final? property i(val): Int
+        public? final? val i: Int = R|<local>/i|
             public? get(): Int
 
     }
-    public? final? function test2(x: X): kotlin/Unit {
-        val x1: <implicit> =  {
-            val <unary>: <implicit> = x#.i#
-            x#.i# = inc#(<unary>#)
-            <unary>#
+    public? final? fun test2(x: X): kotlin/Unit {
+        lval x1: <implicit> =  {
+            lval <unary>: <implicit> = x#.i#
+            x#.i# = R|<local>/<unary>|.inc#()
+            R|<local>/<unary>|
         }
 
-        val x2: <implicit> =  {
-            val <unary>: <implicit> = x#.i#
-            val <unary-result>: <implicit> = inc#(<unary>#)
-            x#.i# = <unary-result>#
-            <unary-result>#
-        }
-
-    }
-    public? final? function test3(arr: Array<Int>): kotlin/Unit {
-        val x1: <implicit> =  {
-            val <unary>: <implicit> = arr#[Int(0)]
-            arr#[Int(0)] = inc#(<unary>#)
-            <unary>#
-        }
-
-        val x2: <implicit> =  {
-            val <unary>: <implicit> = arr#[Int(1)]
-            val <unary-result>: <implicit> = inc#(<unary>#)
-            arr#[Int(1)] = <unary-result>#
-            <unary-result>#
+        lval x2: <implicit> =  {
+            lval <unary>: <implicit> = x#.i#
+            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
+            x#.i# = R|<local>/<unary-result>|
+            R|<local>/<unary-result>|
         }
 
     }
-    public? final? class Y {
-        public? constructor(arr: Array<Int>): super<kotlin/Any>()
+    public? final? fun test3(arr: Array<Int>): kotlin/Unit {
+        lval x1: <implicit> =  {
+            lval <unary>: <implicit> = arr#.get#(Int(0))
+            arr#.set#(Int(0), R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
+        }
 
-        public? final? property arr(val): Array<Int>
+        lval x2: <implicit> =  {
+            lval <unary>: <implicit> = arr#.get#(Int(1))
+            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
+            arr#.set#(Int(1), R|<local>/<unary-result>|)
+            R|<local>/<unary-result>|
+        }
+
+    }
+    public? final? class Y : kotlin/Any {
+        public? constructor(arr: Array<Int>): R|Y| {
+            super<kotlin/Any>()
+        }
+
+        public? final? val arr: Array<Int> = R|<local>/arr|
             public? get(): Array<Int>
 
     }
-    public? final? function test4(y: Y): kotlin/Unit {
-        val x1: <implicit> =  {
-            val <unary>: <implicit> = y#.arr#[Int(0)]
-            val <array-set>: <implicit> = y#.arr#
-            <array-set>#[Int(0)] = inc#(<unary>#)
-            <unary>#
+    public? final? fun test4(y: Y): kotlin/Unit {
+        lval x1: <implicit> =  {
+            lval <unary>: <implicit> = y#.arr#.get#(Int(0))
+            y#.arr#.set#(Int(0), R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
         }
 
-        val x2: <implicit> =  {
-            val <unary>: <implicit> = y#.arr#[Int(1)]
-            val <unary-result>: <implicit> = inc#(<unary>#)
-            val <array-set>: <implicit> = y#.arr#
-            <array-set>#[Int(1)] = <unary-result>#
-            <unary-result>#
+        lval x2: <implicit> =  {
+            lval <unary>: <implicit> = y#.arr#.get#(Int(1))
+            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
+            y#.arr#.set#(Int(1), R|<local>/<unary-result>|)
+            R|<local>/<unary-result>|
         }
 
     }

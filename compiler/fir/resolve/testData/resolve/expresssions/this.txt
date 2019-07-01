@@ -1,0 +1,29 @@
+FILE: this.kt
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|Foo| {
+            ^bar this#
+        }
+
+        public final fun R|Bar|.buz(): R|Bar| {
+            ^buz this#
+        }
+
+        public final fun R|Bar|.foo(): R|Foo| {
+            ^foo this@Foo
+        }
+
+        public final fun R|Bar|.foobar(): R|Bar| {
+            ^foobar this@foobar
+        }
+
+    }

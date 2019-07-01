@@ -2211,7 +2211,9 @@ public final class ProtoBuf {
          * - Array&lt;String&gt;::class, if array_dimension_count = 1
          * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
          * - etc.
-         * Other forms of array class literals are not supported by this format, see KT-26568
+         * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+         * in class literals on JVM, we don't bother to do represent this in our format as well.
+         * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
          * </pre>
          */
         boolean hasArrayDimensionCount();
@@ -2225,7 +2227,9 @@ public final class ProtoBuf {
          * - Array&lt;String&gt;::class, if array_dimension_count = 1
          * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
          * - etc.
-         * Other forms of array class literals are not supported by this format, see KT-26568
+         * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+         * in class literals on JVM, we don't bother to do represent this in our format as well.
+         * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
          * </pre>
          */
         int getArrayDimensionCount();
@@ -2749,7 +2753,9 @@ public final class ProtoBuf {
          * - Array&lt;String&gt;::class, if array_dimension_count = 1
          * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
          * - etc.
-         * Other forms of array class literals are not supported by this format, see KT-26568
+         * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+         * in class literals on JVM, we don't bother to do represent this in our format as well.
+         * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
          * </pre>
          */
         public boolean hasArrayDimensionCount() {
@@ -2765,7 +2771,9 @@ public final class ProtoBuf {
          * - Array&lt;String&gt;::class, if array_dimension_count = 1
          * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
          * - etc.
-         * Other forms of array class literals are not supported by this format, see KT-26568
+         * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+         * in class literals on JVM, we don't bother to do represent this in our format as well.
+         * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
          * </pre>
          */
         public int getArrayDimensionCount() {
@@ -3652,7 +3660,9 @@ public final class ProtoBuf {
            * - Array&lt;String&gt;::class, if array_dimension_count = 1
            * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
            * - etc.
-           * Other forms of array class literals are not supported by this format, see KT-26568
+           * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+           * in class literals on JVM, we don't bother to do represent this in our format as well.
+           * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
            * </pre>
            */
           public boolean hasArrayDimensionCount() {
@@ -3668,7 +3678,9 @@ public final class ProtoBuf {
            * - Array&lt;String&gt;::class, if array_dimension_count = 1
            * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
            * - etc.
-           * Other forms of array class literals are not supported by this format, see KT-26568
+           * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+           * in class literals on JVM, we don't bother to do represent this in our format as well.
+           * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
            * </pre>
            */
           public int getArrayDimensionCount() {
@@ -3684,7 +3696,9 @@ public final class ProtoBuf {
            * - Array&lt;String&gt;::class, if array_dimension_count = 1
            * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
            * - etc.
-           * Other forms of array class literals are not supported by this format, see KT-26568
+           * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+           * in class literals on JVM, we don't bother to do represent this in our format as well.
+           * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
            * </pre>
            */
           public Builder setArrayDimensionCount(int value) {
@@ -3703,7 +3717,9 @@ public final class ProtoBuf {
            * - Array&lt;String&gt;::class, if array_dimension_count = 1
            * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
            * - etc.
-           * Other forms of array class literals are not supported by this format, see KT-26568
+           * Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+           * in class literals on JVM, we don't bother to do represent this in our format as well.
+           * So, for example, values `Array&lt;Array&lt;in B?&gt;&gt;::class` and `Array&lt;out Array&lt;B&gt;&gt;?&gt;::class` will be represented exactly the same here.
            * </pre>
            */
           public Builder clearArrayDimensionCount() {

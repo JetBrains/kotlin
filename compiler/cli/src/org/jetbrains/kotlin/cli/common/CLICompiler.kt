@@ -53,7 +53,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_FULL_PATHS, args)
     }
 
-    public override fun execImpl(baseMessageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
+    public override fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
         val performanceManager = performanceManager
         if (arguments.reportPerf || arguments.dumpPerf != null) {
             performanceManager.enableCollectingPerformanceStatistics()
@@ -61,7 +61,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
         val configuration = CompilerConfiguration()
 
-        val messageCollector = GroupingMessageCollector(baseMessageCollector, arguments.allWarningsAsErrors).also {
+        val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors).also {
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, it)
         }
 
@@ -69,8 +69,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         try {
             setupCommonArguments(configuration, arguments)
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-            val paths = computeKotlinPaths(messageCollector, arguments)
-            if (messageCollector.hasErrors()) {
+            val paths = computeKotlinPaths(collector, arguments)
+            if (collector.hasErrors()) {
                 return ExitCode.COMPILATION_ERROR
             }
 
@@ -93,14 +93,14 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
                     performanceManager.dumpPerformanceReport(File(arguments.dumpPerf!!))
                 }
 
-                return if (messageCollector.hasErrors()) COMPILATION_ERROR else code
+                return if (collector.hasErrors()) COMPILATION_ERROR else code
             } catch (e: CompilationCanceledException) {
-                messageCollector.report(INFO, "Compilation was canceled", null)
+                collector.report(INFO, "Compilation was canceled", null)
                 return ExitCode.OK
             } catch (e: RuntimeException) {
                 val cause = e.cause
                 if (cause is CompilationCanceledException) {
-                    messageCollector.report(INFO, "Compilation was canceled", null)
+                    collector.report(INFO, "Compilation was canceled", null)
                     return ExitCode.OK
                 } else {
                     throw e
@@ -111,10 +111,10 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         } catch (e: AnalysisResult.CompilationErrorException) {
             return COMPILATION_ERROR
         } catch (t: Throwable) {
-            MessageCollectorUtil.reportException(messageCollector, t)
+            MessageCollectorUtil.reportException(collector, t)
             return INTERNAL_ERROR
         } finally {
-            messageCollector.flush()
+            collector.flush()
         }
     }
 

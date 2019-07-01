@@ -1,3 +1,5 @@
+// EXPECTED_DUPLICATED_HIGHLIGHTING
+
 <info descr="null">data</info> class <info descr="null">Box</info>(val <info descr="null">v</info>: <info descr="null">Int</info>)
 fun <info descr="null">consume</info>(<warning descr="[UNUSED_PARAMETER] Parameter 'x' is never used"><info descr="null">x</info></warning>: <info descr="null">Int</info>) {}
 

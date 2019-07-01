@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.flags;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.org.objectweb.asm.*;
@@ -51,10 +50,8 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
 public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
     @Override
-    protected void doMultiFileTest(
-            @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
-    ) throws Exception {
-        compile(files, null);
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) throws Exception {
+        compile(files);
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 

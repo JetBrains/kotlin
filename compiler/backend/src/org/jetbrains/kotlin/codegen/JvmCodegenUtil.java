@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -32,11 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunction;
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry;
-import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -44,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -242,8 +239,20 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isDebuggerContext(@NotNull CodegenContext context) {
-        KtFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
-        return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
+        PsiFile file = null;
+
+        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
+        if (contextDescriptor instanceof DeclarationDescriptorWithSource) {
+            SourceElement sourceElement = ((DeclarationDescriptorWithSource) contextDescriptor).getSource();
+            if (sourceElement instanceof PsiSourceElement) {
+                PsiElement psi = ((PsiSourceElement) sourceElement).getPsi();
+                if (psi != null) {
+                    file = psi.getContainingFile();
+                }
+            }
+        }
+
+        return file instanceof KtCodeFragment;
     }
 
     @Nullable

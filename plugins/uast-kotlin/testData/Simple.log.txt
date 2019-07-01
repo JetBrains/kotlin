@@ -7,7 +7,7 @@ UFile (package = )
             UBlockExpression
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                     UIdentifier (Identifier (println))
-                    USimpleNameReferenceExpression (identifier = println)
+                    USimpleNameReferenceExpression (identifier = println, resolvesTo = null)
                     ULiteralExpression (value = "Hello, world!")
         UAnnotationMethod (name = getProperty)
         UAnnotationMethod (name = Simple)

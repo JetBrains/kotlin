@@ -40,7 +40,7 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
 
         val analyzeResult = JvmResolveUtil.analyze(testKtFile, environment)
 
-        val testDeclaration = testKtFile.declarations.last()!! as KtCallableDeclaration
+        val testDeclaration = testKtFile.declarations.last() as KtCallableDeclaration
 
         val typeBinding = testDeclaration.createTypeBindingForReturnType(analyzeResult.bindingContext)
 

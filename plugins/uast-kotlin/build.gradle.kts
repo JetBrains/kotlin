@@ -12,10 +12,20 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
 
-    Platform[181].orHigher {
-        // BEWARE: Uast should not depend on IDEA.
-        compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-        compileOnly(intellijDep()) { includeJars("java-api", "java-impl", "asm-all", rootProject = rootProject) }
+    // BEWARE: Uast should not depend on IDEA.
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
+
+    if (Platform.P191.orLower()) {
+        compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
+        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
+    }
+
+    if (Platform.P192.orHigher()) {
+        compileOnly(intellijDep()) { includeJars("platform-impl") }
+        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+        testCompileOnly(intellijDep()) { includeJars("platform-impl") }
+        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+        testRuntime(intellijPluginDep("java"))
     }
 
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
@@ -25,9 +35,7 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":idea:idea-test-framework"))
 
-    Platform[181].orHigher {
-        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
@@ -59,6 +67,6 @@ sourceSets {
 
 testsJar {}
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }

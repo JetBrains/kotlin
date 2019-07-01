@@ -33,14 +33,14 @@ import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import java.awt.BorderLayout
 
-abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
-        localVariable: D?,
-        expression: KtExpression?,
-        occurrences: Array<KtExpression>,
-        title: String,
-        project: Project,
-        editor: Editor
-): AbstractInplaceIntroducer<D, KtExpression>(project, editor, expression, localVariable, occurrences, title, KotlinFileType.INSTANCE) {
+abstract class AbstractKotlinInplaceIntroducer<D : KtNamedDeclaration>(
+    localVariable: D?,
+    expression: KtExpression?,
+    occurrences: Array<KtExpression>,
+    title: String,
+    project: Project,
+    editor: Editor
+) : AbstractInplaceIntroducer<D, KtExpression>(project, editor, expression, localVariable, occurrences, title, KotlinFileType.INSTANCE) {
     protected fun initFormComponents(init: FormBuilder.() -> Unit) {
         myWholePanel.layout = BorderLayout()
 
@@ -58,8 +58,7 @@ abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
             // myExprMarker was invalidated by stopIntroduce()
             myExprMarker = myExpr?.let { createMarker(it) }
             startInplaceIntroduceTemplate()
-        }
-        finally {
+        } finally {
             myEditor.putUserData(InplaceRefactoring.INTRODUCE_RESTART, false)
         }
     }
@@ -74,10 +73,10 @@ abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
     override fun getActionName(): String? = null
 
     override fun restoreExpression(
-            containingFile: PsiFile,
-            declaration: D,
-            marker: RangeMarker,
-            exprText: String?
+        containingFile: PsiFile,
+        declaration: D,
+        marker: RangeMarker,
+        exprText: String?
     ): KtExpression? {
         if (exprText == null || !declaration.isValid) return null
 
@@ -89,8 +88,8 @@ abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
 
         val occurrenceExprText = (myExpr as? KtProperty)?.name ?: exprText
         return leaf
-                .getNonStrictParentOfType<KtSimpleNameExpression>()
-                ?.replaced(KtPsiFactory(myProject).createExpression(occurrenceExprText))
+            .getNonStrictParentOfType<KtSimpleNameExpression>()
+            ?.replaced(KtPsiFactory(myProject).createExpression(occurrenceExprText))
     }
 
     override fun updateTitle(declaration: D?) = updateTitle(declaration, null)

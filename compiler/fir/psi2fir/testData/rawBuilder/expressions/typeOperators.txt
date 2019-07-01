@@ -1,15 +1,15 @@
 FILE: typeOperators.kt
-    public? final? interface IThing {
+    public? final? interface IThing : kotlin/Any {
     }
-    public? final? function test1(x: Any): <implicit> {
-        return@@@test1 is/IThing(x#)
+    public? final? fun test1(x: Any): <implicit> {
+        ^test1 (x# is IThing)
     }
-    public? final? function test2(x: Any): <implicit> {
-        return@@@test2 !is/IThing(x#)
+    public? final? fun test2(x: Any): <implicit> {
+        ^test2 (x# !is IThing)
     }
-    public? final? function test3(x: Any): <implicit> {
-        return@@@test3 as/IThing(x#)
+    public? final? fun test3(x: Any): <implicit> {
+        ^test3 (x# as IThing)
     }
-    public? final? function test4(x: Any): <implicit> {
-        return@@@test4 as?/IThing(x#)
+    public? final? fun test4(x: Any): <implicit> {
+        ^test4 (x# as? IThing)
     }

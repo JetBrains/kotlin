@@ -43,8 +43,12 @@ val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
 open class IncrementalJvmCache(
     private val targetDataRoot: File,
-    targetOutputDir: File?
-) : AbstractIncrementalCache<JvmClassName>(File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME)), IncrementalCache {
+    targetOutputDir: File?,
+    pathConverter: FileToPathConverter
+) : AbstractIncrementalCache<JvmClassName>(
+    workingDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME),
+    pathConverter = pathConverter
+), IncrementalCache {
     companion object {
         private val PROTO_MAP = "proto"
         private val CONSTANTS_MAP = "constants"
@@ -58,7 +62,7 @@ open class IncrementalJvmCache(
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
-    override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile))
+    override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
     override val dirtyOutputClassesMap = registerMap(DirtyClassesJvmNameMap(DIRTY_OUTPUT_CLASSES.storageFile))
 
     private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
@@ -68,7 +72,8 @@ open class IncrementalJvmCache(
     private val partToMultifileFacade = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
     private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
     // todo: try to use internal names only?
-    private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile))
+    private val internalNameToSource = registerMap(InternalNameToSourcesMap(INTERNAL_NAME_TO_SOURCE.storageFile, pathConverter))
+    // gradle only
     private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile))
 
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
@@ -440,14 +445,16 @@ open class IncrementalJvmCache(
         override fun dumpValue(value: String): String = value
     }
 
-    inner class InternalNameToSourcesMap(storageFile: File) :
-        BasicStringMap<Collection<String>>(storageFile, EnumeratorStringDescriptor(), PathCollectionExternalizer) {
-        operator fun set(internalName: String, sourceFiles: Iterable<File>) {
-            storage[internalName] = sourceFiles.map { it.canonicalPath }
+    inner class InternalNameToSourcesMap(
+        storageFile: File,
+        private val pathConverter: FileToPathConverter
+    ) : BasicStringMap<Collection<String>>(storageFile, EnumeratorStringDescriptor(), PathCollectionExternalizer) {
+        operator fun set(internalName: String, sourceFiles: Collection<File>) {
+            storage[internalName] = pathConverter.toPaths(sourceFiles)
         }
 
         operator fun get(internalName: String): Collection<File> =
-            (storage[internalName] ?: emptyList()).map(::File)
+            pathConverter.toFiles(storage[internalName] ?: emptyList())
 
         fun remove(internalName: String) {
             storage.remove(internalName)

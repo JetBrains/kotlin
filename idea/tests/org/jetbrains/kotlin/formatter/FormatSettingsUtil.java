@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.formatter;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.LightPlatformTestCase;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
@@ -17,7 +17,7 @@ public class FormatSettingsUtil {
     }
 
     public static CodeStyleSettings getSettings() {
-        return CodeStyleSettingsManager.getSettings(LightPlatformTestCase.getProject());
+        return CodeStyle.getSettings(LightPlatformTestCase.getProject());
     }
 
     public static SettingsConfigurator createConfigurator(String fileText, CodeStyleSettings settings) {

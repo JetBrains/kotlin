@@ -1,6 +1,6 @@
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
-// IGNORE_BACKEND: JVM_IR
+
 
 package test
 inline fun inlineFun(capturedParam: String, crossinline lambda: () -> String = { capturedParam }): String {

@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+
+fun foo() {
+    (42 + 24).toString(16)
+}

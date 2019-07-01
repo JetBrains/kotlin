@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.script
@@ -10,7 +10,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -31,10 +33,12 @@ import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
@@ -136,7 +140,7 @@ abstract class AbstractScriptDefinitionsOrderTest : AbstractScriptConfigurationT
     }
 }
 
-private val validKeys = setOf("sources", "classpath", "imports", "template-classes-names")
+private val validKeys = setOf("javaHome", "sources", "classpath", "imports", "template-classes-names")
 private const val useDefaultTemplate = "// DEPENDENCIES:"
 private const val templatesSettings = "// TEMPLATES: "
 // some bugs can only be reproduced when some module and script have intersecting library dependencies
@@ -165,6 +169,15 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             ?: error("Couldn't find $SCRIPT_NAME file in $testDir")
     }
 
+    private val sdk by lazy {
+        val jdk = PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK)
+        runWriteAction {
+            ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+            ProjectRootManager.getInstance(project).projectSdk = jdk
+        }
+        jdk
+    }
+
     protected fun configureScriptFile(path: String) {
         val mainScriptFile = findMainScript(path)
         val environment = createScriptEnvironment(mainScriptFile)
@@ -181,7 +194,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
 
         if (configureConflictingModule in environment) {
-            val sharedLib = LocalFileSystem.getInstance().findFileByIoFile(environment["lib-classes"] as File)!!
+            val sharedLib = VfsUtil.findFileByIoFile(environment["lib-classes"] as File, true)!!
             if (module == null) {
                 myModule = createTestModuleByName("mainModule")
             }
@@ -189,6 +202,10 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
 
         if (module != null) {
+            ModuleRootModificationUtil.updateModel(module) { model ->
+                model.sdk = sdk
+            }
+
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
@@ -222,6 +239,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     private fun createTestModuleByName(name: String): Module {
         val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(project.baseDir, name) }
         val newModule = createModuleAt(name, project, JavaModuleType.getModuleType(), newModuleDir.path)
+
+        // Return type was changed, but it's not used. BUNCH: 183
+        @Suppress("MissingRecentApi")
         PsiTestUtil.addSourceContentToRoots(newModule, newModuleDir)
         return newModule
     }
@@ -262,6 +282,18 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
         if (env[useDefaultTemplate] != true && env["template-classes-names"] == null) {
             env["template-classes-names"] = listOf("custom.scriptDefinition.Template")
+        }
+
+        if (env["javaHome"] != null) {
+            val jdkKind = when ((env["javaHome"] as? List<String>)?.singleOrNull()) {
+                "9" -> TestJdkKind.FULL_JDK_9
+                else -> TestJdkKind.MOCK_JDK
+            }
+            runWriteAction {
+                val jdk = PluginTestCaseBase.jdk(jdkKind)
+                ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+                env["javaHome"] = File(jdk.homePath)
+            }
         }
 
         env.putAll(defaultEnvironment)
@@ -326,7 +358,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
-        val outDir = KotlinTestUtils.tmpDir("${getTestName(false)}${srcDir.name}Out")
+        //TODO: tmpDir would be enough, but there is tricky fail under AS otherwise
+        val outDir = KotlinTestUtils.tmpDirForReusableFolder("${getTestName(false)}${srcDir.name}Out")
 
         val kotlinSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), srcDir)
         if (kotlinSourceFiles.isNotEmpty()) {

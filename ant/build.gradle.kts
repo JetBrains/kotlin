@@ -17,8 +17,5 @@ sourceSets {
 }
 
 runtimeJar {
-    manifest.attributes.put("Class-Path", "$compilerManifestClassPath kotlin-preloader.jar")
+    manifest.attributes["Class-Path"] = "$compilerManifestClassPath kotlin-preloader.jar"
 }
-
-dist()
-

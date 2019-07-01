@@ -1,11 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.parameterInfo.custom
 
-import com.intellij.openapi.editor.*
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.EditorLinePainter
+import com.intellij.openapi.editor.LineExtensionInfo
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -14,7 +17,13 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class ReturnHintLinePainter : EditorLinePainter() {
+    companion object {
+        val SPACE_LINE_EXTENSION_INFO = LineExtensionInfo(" ", TextAttributes())
+    }
+
     override fun getLineExtensions(project: Project, file: VirtualFile, lineNumber: Int): List<LineExtensionInfo>? {
+        if (!file.isValid) return null
+
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
         if (psiFile.language != KotlinLanguage.INSTANCE) {
             return null
@@ -23,8 +32,11 @@ class ReturnHintLinePainter : EditorLinePainter() {
         val hint = getLineHint(project, file, lineNumber)
             ?: return null
 
-        val hintLineInfo = LineExtensionInfo(" $hint", TextAttributes())
-        return listOf(hintLineInfo)
+        val textAttributes =
+            EditorColorsManager.getInstance().globalScheme.getAttributes(DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT)
+        val hintLineInfo = LineExtensionInfo(hint, textAttributes)
+
+        return listOf(SPACE_LINE_EXTENSION_INFO, hintLineInfo)
     }
 
     private fun getLineHint(project: Project, file: VirtualFile, lineNumber: Int): String? {

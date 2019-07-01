@@ -3,7 +3,7 @@ package
 public val test1: CStar /* = C<*> */
 public val test2: CIn /* = C<in kotlin.Int> */
 public val test3: COut /* = C<out kotlin.Int> */
-public val test4: CT<kotlin.Any?> /* = C<kotlin.Any?> */
+public val test4: [ERROR : Type for CT<*>()]
 public val test5: CT<CT<*> /* = C<*> */> /* = C<CT<*> /* = C<*> */> */
 
 public final class C</*0*/ T> {

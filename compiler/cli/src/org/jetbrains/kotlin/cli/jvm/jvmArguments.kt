@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.jvm
@@ -195,8 +195,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
-    put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, arguments.addCompilerBuiltIns)
-    put(JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES, arguments.loadBuiltInsFromDependencies)
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
 }

@@ -74,13 +74,11 @@ sourceSets {
 
 testsJar {}
 
-projectTest {
-    dependsOn(":kotlin-android-extensions-runtime:dist")
+projectTest(parallel = true) {
+    dependsOn(":dist")
     workingDir = rootDir
     useAndroidSdk()
     useAndroidJar()
 }
 
 runtimeJar()
-
-ideaPlugin()

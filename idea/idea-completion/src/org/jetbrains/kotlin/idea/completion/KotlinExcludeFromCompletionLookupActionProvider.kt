@@ -15,19 +15,14 @@
  */
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.ExcludeFromCompletionLookupActionProvider
 import com.intellij.codeInsight.daemon.impl.actions.AddImportAction
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupActionProvider
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementAction
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
-import com.intellij.psi.util.PsiUtil
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
-import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.name.FqName
 
 class KotlinExcludeFromCompletionLookupActionProvider : LookupActionProvider {
     override fun fillActions(element: LookupElement, lookup: Lookup, consumer: Consumer<LookupElementAction>) {
@@ -51,9 +46,9 @@ class KotlinExcludeFromCompletionLookupActionProvider : LookupActionProvider {
             private val project: Project,
             private val exclude: String
     ) : LookupElementAction(null, "Exclude '$exclude' from completion") {
-        override fun performLookupAction(): LookupElementAction.Result {
+        override fun performLookupAction(): Result {
             AddImportAction.excludeFromImport(project, exclude)
-            return LookupElementAction.Result.HIDE_LOOKUP
+            return Result.HIDE_LOOKUP
         }
     }
 }

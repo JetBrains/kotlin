@@ -21,10 +21,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.psi.KtFile
-import java.awt.*
+import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 
 class CopyAsDiagnosticTestAction : AnAction() {

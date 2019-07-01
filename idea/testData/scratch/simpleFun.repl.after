@@ -1,3 +1,5 @@
+// REPL_MODE: true
+
 fun foo(): Int {
     return 1
 }

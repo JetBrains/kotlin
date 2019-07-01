@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -24,10 +24,10 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.web"
 
-    override fun getPresentableName() = "Kotlin (JS Client/JVM Server)"
+    override fun getPresentableName() = "JS Client and JVM Server | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow reusing the same Kotlin code between JS Client and JVM Server."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between JS Client and JVM Server"
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptRepositoriesDefinition("jcenter()")
@@ -48,10 +48,6 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
         val jvmRoot = src.findChild(jvmSourceName)!!
         val jvmResources = jvmRoot.createChildDirectory(this, "resources")
         val logBack = jvmResources.createChildData(this, "logback.xml").bufferedWriter()
-
-        val jsRoot = src.findChild(jsSourceName)!!
-        val jsResources = jsRoot.createChildDirectory(this, "resources")
-        val requireMinJs = jsResources.createChildData(this, "require.min.js").bufferedWriter()
 
         try {
             commonMain.write(
@@ -93,19 +89,6 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
                 fun main() {
                     embeddedServer(Netty, port = 8080, host = "127.0.0.1") {
-                        val currentDir = File(".").absoluteFile
-                        environment.log.info("Current directory: ${"$"}currentDir")
-
-                        val webDir = listOf(
-                            "web",
-                            "../src/jsMain/web",
-                            "src/jsMain/web"
-                        ).map {
-                            File(currentDir, it)
-                        }.firstOrNull { it.isDirectory }?.absoluteFile ?: error("Can't find 'web' folder for this sample")
-
-                        environment.log.info("Web directory: ${"$"}webDir")
-
                         routing {
                             get("/") {
                                 call.respondHtml {
@@ -113,22 +96,17 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                                         title("Hello from Ktor!")
                                     }
                                     body {
-                                        +"${"$"}{hello()} from Ktor. Check me value: ${"$"}{Sample().checkMe()}"
+                                        +"${'$'}{hello()} from Ktor. Check me value: ${'$'}{Sample().checkMe()}"
                                         div {
                                             id = "js-response"
                                             +"Loading..."
                                         }
-                                        script(src = "/static/require.min.js") {
-                                        }
-                                        script {
-                                            +"require.config({baseUrl: '/static'});\n"
-                                            +"require(['/static/$name.js'], function(js) { js.sample.helloWorld('Hi'); });\n"
-                                        }
+                                        script(src = "/static/$name.js") {}
                                     }
                                 }
                             }
                             static("/static") {
-                                files(webDir)
+                                resource("$name.js")
                             }
                         }
                     }.start(wait = true)
@@ -173,10 +151,14 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                     val message = "${"$"}salutation from Kotlin.JS ${"$"}{hello()}, check me value: ${"$"}{Sample().checkMe()}"
                     document.getElementById("js-response")?.textContent = message
                 }
+                
+                fun main() {
+                    document.addEventListener("DOMContentLoaded", {
+                        helloWorld("Hi!")
+                    })
+                }                
             """.trimIndent()
             )
-
-            requireMinJs.write(requireMinJsContent)
 
             commonTest.write(
                 """
@@ -226,25 +208,19 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
             """.trimIndent()
             )
         } finally {
-            listOf(commonMain, commonTest, jvmMain, jvmTest, jsMain, jsTest, logBack, requireMinJs).forEach(BufferedWriter::close)
+            listOf(commonMain, commonTest, jvmMain, jvmTest, jsMain, jsTest, logBack).forEach(BufferedWriter::close)
         }
     }
 
     override fun buildMultiPlatformPart(): String {
         return """
-            def ktor_version = '1.0.1'
+            def ktor_version = '1.1.3'
             def logback_version = '1.2.3'
 
             kotlin {
                 jvm()
-                js() {
-                    compilations.all {
-                        kotlinOptions {
-                            languageVersion = "1.3"
-                            moduleKind = "umd"
-                            sourceMap = true
-                            metaInfo = true
-                        }
+                js {
+                    browser {
                     }
                 }
                 sourceSets {
@@ -286,32 +262,15 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                 }
             }
 
-            def webFolder = new File(project.buildDir, "../src/jsMain/web")
-            def jsCompilations = kotlin.targets.js.compilations
-
-            task populateWebFolder(dependsOn: [jsMainClasses]) {
-                doLast {
-                    copy {
-                        from jsCompilations.main.output
-                        from kotlin.sourceSets.jsMain.resources.srcDirs
-                        jsCompilations.test.runtimeDependencyFiles.each {
-                            if (it.exists() && !it.isDirectory()) {
-                                from zipTree(it.absolutePath).matching { include '*.js' }
-                            }
-                        }
-                        into webFolder
-                    }
-                }
+            jvmJar {
+                dependsOn(jsBrowserWebpack)
+                from(new File(jsBrowserWebpack.entry.name, jsBrowserWebpack.outputPath))
             }
-
-            jsJar.dependsOn(populateWebFolder)
-
-            task run(type: JavaExec, dependsOn: [jvmMainClasses, jsJar]) {
-                main = "sample.Sample${jvmTargetName.capitalize()}Kt"
-                classpath { [
-                        kotlin.targets.jvm.compilations.main.output.allOutputs.files,
-                        configurations.jvmRuntimeClasspath,
-                ] }
+            
+            task run(type: JavaExec, dependsOn: [jvmJar]) {
+                group = "application"
+                main = "sample.SampleJvmKt"
+                classpath(configurations.jvmRuntimeClasspath, jvmJar)
                 args = []
             }
         """.trimIndent()

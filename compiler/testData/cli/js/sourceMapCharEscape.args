@@ -1,5 +1,4 @@
 $TESTDATA_DIR$/sourceMapCharEscape.kt
--no-stdlib
 -source-map
 -source-map-embed-sources
 always

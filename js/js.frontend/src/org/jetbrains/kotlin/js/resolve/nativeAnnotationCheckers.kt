@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -68,12 +68,12 @@ internal abstract class AbstractNativeIndexerChecker(
     override fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         val parameters = descriptor.valueParameters
         val builtIns = descriptor.builtIns
-        if (parameters.size > 0) {
-            val firstParamClassDescriptor = DescriptorUtils.getClassDescriptorForType(parameters.get(0).type)
-            if (firstParamClassDescriptor != builtIns.string &&
-                !DescriptorUtils.isSubclass(firstParamClassDescriptor, builtIns.number)
-            ) {
-                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.valueParameters.first(), indexerKind))
+        if (parameters.isNotEmpty()) {
+            val firstParamType = parameters.first().type
+            if (!KotlinBuiltIns.isString(firstParamType) && !firstParamType.isSubtypeOf(builtIns.number.defaultType)) {
+                diagnosticHolder.report(
+                    ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.valueParameters.first(), indexerKind)
+                )
             }
         }
 

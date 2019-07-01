@@ -1,0 +1,6 @@
+// DISABLE-ERRORS
+// WITH_RUNTIME
+
+val someNullableString: String? = ""
+fun String.bar(): Result<String> = Result.success("")
+val result = someNullableString?.bar()

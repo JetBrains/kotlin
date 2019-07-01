@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve
@@ -29,13 +29,16 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.Assert
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class IdeaModuleInfoTest : ModuleTestCase() {
 
     fun testSimpleModuleDependency() {
@@ -429,7 +432,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         get() = LibraryInfo(project!!, this)
 
     private fun module(name: String, hasProductionRoot: Boolean = true, hasTestRoot: Boolean = true): Module {
-        return createModuleFromTestData(createTempDirectory()!!.absolutePath, name, StdModuleTypes.JAVA, false)!!.apply {
+        return createModuleFromTestData(createTempDirectory().absolutePath, name, StdModuleTypes.JAVA, false).apply {
             if (hasProductionRoot)
                 PsiTestUtil.addSourceContentToRoots(this, dir(), false)
             if (hasTestRoot)

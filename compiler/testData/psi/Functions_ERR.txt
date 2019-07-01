@@ -370,7 +370,6 @@ KtFile: Functions_ERR.kt
     PsiErrorElement:Only one type parameter list is allowed for a function
       PsiElement(LT)('<')
       PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
-    PsiErrorElement:Expecting '('
-      <empty list>

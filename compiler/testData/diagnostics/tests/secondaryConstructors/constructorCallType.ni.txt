@@ -4,7 +4,7 @@ public val x1: A
 public val x2: A
 public val x3: A
 public val y1: B<kotlin.Int>
-public val y10: B<kotlin.Any?>
+public val y10: [ERROR : Type for B("")]
 public val y2: B<kotlin.Int>
 public val y3: B<kotlin.Int>
 public val y4: B<kotlin.Int>

@@ -87,15 +87,15 @@ class ExpectedInfo(
         val expectedName: String?,
         val tail: Tail?,
         val itemOptions: ItemOptions = ItemOptions.DEFAULT,
-        val additionalData: ExpectedInfo.AdditionalData? = null
+        val additionalData: AdditionalData? = null
 ) {
     // just a marker interface
     interface AdditionalData {}
 
-    constructor(fuzzyType: FuzzyType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
+    constructor(fuzzyType: FuzzyType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: AdditionalData? = null)
         : this(ByExpectedTypeFilter(fuzzyType), expectedName, tail, itemOptions, additionalData)
 
-    constructor(type: KotlinType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
+    constructor(type: KotlinType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: AdditionalData? = null)
         : this(type.toFuzzyType(emptyList()), expectedName, tail, itemOptions, additionalData)
 
     fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? = filter.matchingSubstitutor(descriptorType)

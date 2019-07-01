@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 inline fun <reified T> Any?.check(): Boolean {
     return this is T
 }

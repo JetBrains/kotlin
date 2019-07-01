@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.android.parcel
 
 import kotlinx.android.parcel.Parceler
 import kotlinx.android.parcel.Parcelize
-import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
+import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
+import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -82,33 +83,35 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor) = null
 
     override fun generateSyntheticMethods(
-        clazz: ClassDescriptor,
+        thisDescriptor: ClassDescriptor,
         name: Name,
         bindingContext: BindingContext,
         fromSupertypes: List<SimpleFunctionDescriptor>,
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
         fun isExperimental(): Boolean {
-            val sourceElement = (clazz.source as? PsiSourceElement)?.psi as? KtElement ?: return false
+            val sourceElement = (thisDescriptor.source as? PsiSourceElement)?.psi as? KtElement ?: return false
             return isExperimental(sourceElement)
         }
 
         if (name.asString() == DESCRIBE_CONTENTS.methodName
-                && clazz.isParcelize
-                && isExperimental()
-                && result.none { it.isDescribeContents() }
-                && fromSupertypes.none { it.isDescribeContents() }
+            && thisDescriptor.isParcelize
+            && isExperimental()
+            && result.none { it.isDescribeContents() }
+            && fromSupertypes.none { it.isDescribeContents() }
         ) {
-            result += createMethod(clazz, DESCRIBE_CONTENTS, Modality.OPEN, clazz.builtIns.intType)
+            result += createMethod(thisDescriptor, DESCRIBE_CONTENTS, Modality.OPEN, thisDescriptor.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
-                && clazz.isParcelize
-                && isExperimental()
-                && result.none { it.isWriteToParcel() }
+            && thisDescriptor.isParcelize
+            && isExperimental()
+            && result.none { it.isWriteToParcel() }
         ) {
-            val builtIns = clazz.builtIns
-            val parcelClassType = resolveParcelClassType(clazz.module) ?: ErrorUtils.createErrorType("Unresolved 'Parcel' type")
-            result += createMethod(clazz, WRITE_TO_PARCEL, Modality.OPEN,
-                                   builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
+            val builtIns = thisDescriptor.builtIns
+            val parcelClassType = resolveParcelClassType(thisDescriptor.module) ?: ErrorUtils.createErrorType("Unresolved 'Parcel' type")
+            result += createMethod(
+                thisDescriptor, WRITE_TO_PARCEL, Modality.OPEN,
+                builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType
+            )
         }
     }
 

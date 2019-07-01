@@ -1,16 +1,19 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 object JsAnnotations {
     val jsModuleFqn = FqName("kotlin.js.JsModule")
@@ -19,7 +22,8 @@ object JsAnnotations {
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
 }
 
-private fun IrCall.getSingleConstStringArgument() =
+@Suppress("UNCHECKED_CAST")
+private fun IrConstructorCall.getSingleConstStringArgument() =
     (getValueArgument(0) as IrConst<String>).value
 
 fun IrAnnotationContainer.getJsModule(): String? =
@@ -33,3 +37,10 @@ fun IrAnnotationContainer.getJsQualifier(): String? =
 
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
+
+
+fun IrDeclarationWithName.getJsNameOrKotlinName(): Name =
+    when (val jsName = getJsName()) {
+        null -> name
+        else -> Name.identifier(jsName)
+    }

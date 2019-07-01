@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -28,7 +27,6 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
-import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -38,8 +36,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.CompositeRefactoringRunner
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -48,7 +47,6 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.refactoring.showWithTransaction
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -187,13 +185,13 @@ fun selectNewParameterContext(
         continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
     selectElementsWithTargetParent(
-            operationName = INTRODUCE_PARAMETER,
-            editor = editor,
-            file = file,
-            title = "Introduce parameter to declaration",
-            elementKinds = listOf(CodeInsightUtils.ElementKind.EXPRESSION),
-            elementValidator = ::validateExpressionElements,
-            getContainers = { _, parent ->
+        operationName = INTRODUCE_PARAMETER,
+        editor = editor,
+        file = file,
+        title = "Introduce parameter to declaration",
+        elementKinds = listOf(CodeInsightUtils.ElementKind.EXPRESSION),
+        elementValidator = ::validateExpressionElements,
+        getContainers = { _, parent ->
                 val parents = parent.parents
                 val stopAt = (parent.parents.zip(parent.parents.drop(1)))
                         .firstOrNull { isObjectOrNonInnerClass(it.first) }
@@ -206,7 +204,7 @@ fun selectNewParameterContext(
                         }
                         .toList()
             },
-            continuation = continuation
+        continuation = continuation
     )
 }
 
@@ -278,7 +276,7 @@ open class KotlinIntroduceParameterHandler(
             ?: Collections.emptyList()
 
         val occurrencesToReplace = if (expression is KtProperty) {
-            ReferencesSearch.search(expression).mapNotNullTo(SmartList(expression.toRange())) { it.element?.toRange() }
+            ReferencesSearch.search(expression).mapNotNullTo(SmartList(expression.toRange())) { it.element.toRange() }
         }
         else {
             expression.toRange()

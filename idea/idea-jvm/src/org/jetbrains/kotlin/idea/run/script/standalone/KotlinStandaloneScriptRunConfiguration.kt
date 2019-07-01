@@ -219,7 +219,7 @@ private class ScriptCommandLineState(
 
         val module = scriptVFile.module(environment.project)
         if (module != null) {
-            val orderEnumerator = OrderEnumerator.orderEntries(module).recursively().let {
+            val orderEnumerator = OrderEnumerator.orderEntries(module).withoutSdk().recursively().let {
                 if (!ProjectRootsUtil.isInTestSource(scriptVFile, environment.project)) it.productionOnly() else it
             }
 

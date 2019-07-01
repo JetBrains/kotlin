@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.daemon.report
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.PrintStream
 
-internal interface DaemonMessageReporter {
+interface DaemonMessageReporter {
     fun report(severity: ReportSeverity, message: String)
 }
 
-internal fun DaemonMessageReporter(
+fun DaemonMessageReporter(
         servicesFacade: CompilerServicesFacadeBase,
         compilationOptions: CompilationOptions
 ): DaemonMessageReporter =

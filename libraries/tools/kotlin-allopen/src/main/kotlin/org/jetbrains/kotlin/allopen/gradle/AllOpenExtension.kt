@@ -31,4 +31,8 @@ open class AllOpenExtension {
     open fun annotations(vararg fqNames: String) {
         myAnnotations.addAll(fqNames)
     }
+
+    open fun preset(name: String) {
+        myPresets.add(name)
+    }
 }

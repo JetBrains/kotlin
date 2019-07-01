@@ -58,7 +58,7 @@ data class IrValidatorConfig(
 
 class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
 
-    val builtIns = context.builtIns
+    val irBuiltIns = context.irBuiltIns
     var currentFile: IrFile? = null
 
     override fun visitFile(declaration: IrFile) {
@@ -79,7 +79,7 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
         }
     }
 
-    private val elementChecker = CheckIrElementVisitor(builtIns, this::error, config)
+    private val elementChecker = CheckIrElementVisitor(irBuiltIns, this::error, config)
 
     override fun visitElement(element: IrElement) {
         element.acceptVoid(elementChecker)

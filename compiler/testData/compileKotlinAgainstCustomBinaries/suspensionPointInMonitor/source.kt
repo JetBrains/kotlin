@@ -44,3 +44,13 @@ fun test() {
 interface SuspendRunnable {
     suspend fun run()
 }
+
+
+inline fun withCrossinline(crossinline a: suspend () -> Unit): suspend () -> Unit {
+    val c : suspend () -> Unit = {
+        inlineMe {
+            a()
+        }
+    }
+    return c
+}

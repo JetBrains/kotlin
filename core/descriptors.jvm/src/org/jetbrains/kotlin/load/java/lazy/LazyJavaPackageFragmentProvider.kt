@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 
 class LazyJavaPackageFragmentProvider(
-        components: JavaResolverComponents
+    components: JavaResolverComponents
 ) : PackageFragmentProvider {
 
     private val c = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY, lazyOf(null))
@@ -42,5 +42,5 @@ class LazyJavaPackageFragmentProvider(
     override fun getPackageFragments(fqName: FqName) = listOfNotNull(getPackageFragment(fqName))
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =
-            getPackageFragment(fqName)?.getSubPackageFqNames().orEmpty()
+        getPackageFragment(fqName)?.getSubPackageFqNames().orEmpty()
 }

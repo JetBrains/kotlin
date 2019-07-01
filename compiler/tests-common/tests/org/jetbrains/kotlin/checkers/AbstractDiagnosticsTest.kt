@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers
@@ -12,7 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
+import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -39,6 +39,11 @@ import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
@@ -166,13 +171,13 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val actualText = StringBuilder()
         for (testFile in files) {
             val module = testFile.module
-            val isCommonModule = modules[module]!!.getMultiTargetPlatform() == MultiTargetPlatform.Common
+            val isCommonModule = modules[module]!!.platform.isCommon()
             val implementingModules =
                 if (!isCommonModule) emptyList()
                 else modules.entries.filter { (testModule) -> module in testModule?.getDependencies().orEmpty() }
             val implementingModulesBindings = implementingModules.mapNotNull { (testModule, moduleDescriptor) ->
-                val platform = moduleDescriptor.getCapability(MultiTargetPlatform.CAPABILITY)
-                if (platform is MultiTargetPlatform.Specific) platform to moduleBindings[testModule]!!
+                val platform = moduleDescriptor.platform
+                if (platform != null && !platform.isCommon()) platform to moduleBindings[testModule]!!
                 else null
             }
             val moduleDescriptor = modules[module]!!
@@ -195,7 +200,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             exceptionFromDynamicCallDescriptorsValidation = e
         }
 
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.toString()) { s ->
+        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.cleanupInferenceDiagnostics()) { s ->
             s.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
@@ -210,6 +215,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
         )
     }
+
+    private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
 
     protected open fun getExpectedDiagnosticsFile(testDataFile: File): File {
         return testDataFile
@@ -286,7 +293,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         }
 
-        return result ?: JvmTarget.JVM_1_6
+        return result ?: JvmTarget.DEFAULT
     }
 
     private fun checkDynamicCallDescriptors(expectedFile: File, testFiles: List<TestFile>) {
@@ -354,12 +361,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val moduleDescriptor = moduleContext.module as ModuleDescriptorImpl
 
-        val platform = moduleDescriptor.getMultiTargetPlatform()
-        if (platform == MultiTargetPlatform.Common) {
-            return CommonAnalyzerFacade.analyzeFiles(
+        val platform = moduleDescriptor.platform
+        if (platform.isCommon()) {
+            return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
                 mapOf(
-                    MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,
                     MODULE_FILES to files
                 )
             ) { _ ->
@@ -374,17 +380,18 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val moduleContentScope = GlobalSearchScope.allScope(moduleContext.project)
         val moduleClassResolver = SingleModuleClassResolver()
 
-        val container = createContainerForTopDownAnalyzerForJvm(
+        val container = createContainerForLazyResolveWithJava(
+            JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget), // TODO(dsavvinov): do not pass JvmTarget around
             moduleContext,
             moduleTrace,
             FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
             moduleContentScope,
-            LookupTracker.DO_NOTHING,
+            moduleClassResolver,
+            CompilerEnvironment, LookupTracker.DO_NOTHING,
             ExpectActualTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
-            moduleClassResolver,
-            jvmTarget,
-            languageVersionSettings
+            languageVersionSettings,
+            useBuiltInsProvider = true
         )
 
         container.initJvmBuiltInsForTopDownAnalysis()
@@ -414,7 +421,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         // E.g. "<!JVM:ACTUAL_WITHOUT_EXPECT!>...<!>
         val result = ArrayList<KtFile>(0)
         for (dependency in dependencies) {
-            if (dependency.getCapability(MultiTargetPlatform.CAPABILITY) == MultiTargetPlatform.Common) {
+            if (dependency.platform.isCommon()) {
                 val files = dependency.getCapability(MODULE_FILES)
                         ?: error("MODULE_FILES should have been set for the common module: $dependency")
                 result.addAll(files)
@@ -582,15 +589,13 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         emptyList()
 
     protected open fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl {
-        val nameSuffix = moduleName.substringAfterLast("-", "")
-        val platform =
-            if (nameSuffix.isEmpty()) null
-            else if (nameSuffix == "common") MultiTargetPlatform.Common else MultiTargetPlatform.Specific(nameSuffix.toUpperCase())
-        return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JvmBuiltIns(storageManager), platform)
+        val platform = parseModulePlatformByName(moduleName)
+        val builtIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
+        return ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, builtIns, platform)
     }
 
     protected open fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl =
-        createModule("test-module", storageManager).apply {
+        createModule("test-module-jvm", storageManager).apply {
             setDependencies(this, builtIns.builtInsModule)
         }
 

@@ -14,7 +14,7 @@ fun <T> Wrapper<T>.baz(transform: (T) -> Unit): T = TODO()
 
 fun test() {
     takeFun<String>(::foo)
-    takeFun<String>(<!NI;TYPE_MISMATCH!>::<!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>fooInt<!><!>)
+    takeFun<String>(<!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>::<!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>fooInt<!><!>)
 
     callFun<String, Wrapper<String>>(::createWrapper)
     callFun<Int, Wrapper<Number>>(::createWrapper)

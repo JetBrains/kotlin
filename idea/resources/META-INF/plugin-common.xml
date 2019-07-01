@@ -79,6 +79,10 @@
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
+    <action id="CopyKotlinProjectInformation" class="org.jetbrains.kotlin.idea.actions.internal.CopyKotlinProjectOverviewAction"
+            text="Copy Kotlin Project Overview To Clipboard">
+    </action>
+
     <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
             text="Run Code Migrations">
       <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
@@ -101,6 +105,10 @@
 
     <group id="InternalKotlin" text="Kotlin Internal Actions" internal="true">
       <separator/>
+
+      <action id="DumbModeTremble" class="org.jetbrains.kotlin.idea.actions.internal.DumbModeTrembleAction"
+              text="Tremble Dumb Mode"/>
+
       <group id="KotlinInternalGroup" text="Kotlin" popup="true">
         <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
           <action id="TopLevelCompletionBenchmarkAction"
@@ -138,13 +146,16 @@
         <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"
                 text="Formatter settings info"/>
 
-<!--        <action id="ShowFirAction" class="org.jetbrains.kotlin.idea.actions.internal.ShowFirAction"
+        <!--        <action id="ShowFirAction" class="org.jetbrains.kotlin.idea.actions.internal.ShowFirAction"
                 text="Show RAW FIR Explorer"/> -->
       </group>
       <separator/>
 
       <add-to-group group-id="Internal" anchor="last"/>
     </group>
+
+    <action id="KotlinThrowException" class="org.jetbrains.kotlin.idea.actions.internal.KotlinThrowExceptionAction"
+            text="Drop an error from Kotlin plugin"/>
 
     <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
             text="Function to _Scope...">
@@ -210,8 +221,14 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinIconProviderService"
+                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinIdeFileIconProviderService"/>
+
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.stubs.elements.StubIndexService"
                         serviceImplementation="org.jetbrains.kotlin.idea.stubindex.IdeStubIndexService"/>
+
+    <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
+                        serviceImplementation="org.jetbrains.kotlin.idea.references.KtIdeReferenceProviderService"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
@@ -226,7 +243,7 @@
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
-                    serviceImplementation="org.jetbrains.kotlin.util.ImportInsertHelperImpl"/>
+                    serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
@@ -261,22 +278,22 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer"
                     serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptDefinitionProvider"
+    <projectService serviceInterface="org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptDependenciesProvider"
+    <projectService serviceInterface="org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptDependenciesProvider"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationCache"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdater"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdater"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdater"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.script.ScriptReportSink"
+    <projectService serviceInterface="org.jetbrains.kotlin.scripting.resolve.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
@@ -293,8 +310,8 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade$FacadeStubCache"
-                    serviceImplementation="org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade$FacadeStubCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.FacadeCache"
+                    serviceImplementation="org.jetbrains.kotlin.asJava.classes.FacadeCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService"
                     serviceImplementation="org.jetbrains.kotlin.idea.stubindex.resolve.PluginDeclarationProviderFactoryService"/>
@@ -337,9 +354,6 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
 
@@ -354,6 +368,12 @@
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
+    <registryKey
+        key="kotlin.write.resolve.check"
+        description="Whether to enable the check for resolve activated from the write action"
+        defaultValue="false"
+        restartRequired="false"/>
+
     <internalFileTemplate name="Kotlin File"/>
     <internalFileTemplate name="Kotlin Class"/>
     <internalFileTemplate name="Kotlin Enum"/>
@@ -366,7 +386,7 @@
     <lang.importOptimizer language="kotlin" implementationClass="org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer"/>
     <lang.namesValidator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinNamesValidator"/>
 
-    <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinFileTypeFactory"/>
+    <fileTypeFactory implementation="org.jetbrains.kotlin.idea.core.KotlinFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinJavaScriptMetaFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinBuiltInFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinModuleFileFactory"/>
@@ -506,15 +526,10 @@
 
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
-    <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.references.KotlinReferenceContributor"/>
     <psi.referenceContributor
         id="kotlinFilePathReferenceContributor"
         language="kotlin"
         implementation="org.jetbrains.kotlin.idea.references.KotlinFilePathReferenceContributor"/>
-    <psi.referenceContributor
-        id="kotlinDefaultAnnotationMethodImplicitReferenceContributor"
-        language="kotlin"
-        implementation="org.jetbrains.kotlin.idea.references.KotlinDefaultAnnotationMethodImplicitReferenceContributor"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageStatementPsiTreeChangePreprocessor"/>
 
@@ -582,7 +597,6 @@
 
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DebugInfoAnnotator"/>
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureAnnotator"/>
-    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.PlatformExpectedAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.kotlin.idea.highlighter.KotlinProblemHighlightFilter"/>
 
     <highlightVisitor implementation="org.jetbrains.kotlin.idea.highlighter.KotlinRainbowVisitor"/>
@@ -602,6 +616,7 @@
     <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinBracketsSelectioner"/>
     <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinLabeledReturnSelectioner"/>
     <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinClassMemberSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinEscapedIdentifierSelectioner"/>
     <basicWordSelectionFilter implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinWordSelectionFilter"/>
 
     <typedHandler implementation="org.jetbrains.kotlin.idea.editor.KotlinTypedHandler"/>
@@ -851,10 +866,7 @@
 
     <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.roots.KotlinNonJvmOrderEnumerationHandler$Factory"/>
 
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
+    <lang.substitutor language="kotlin" order="last" implementationClass="org.jetbrains.kotlin.idea.KotlinLanguageSubstitutor"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ImportMemberIntention</className>
@@ -942,11 +954,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToDoubleBangIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.ElvisToIfThenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -977,11 +984,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.MergeWhenIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveUnnecessaryParenthesesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -993,11 +995,6 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1052,37 +1049,12 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceSubstringWithDropLastIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceSubstringWithSubstringAfterIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceSubstringWithSubstringBeforeIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceSubstringWithTakeIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveBracesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddBracesIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertNegatedBooleanSequenceIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1128,16 +1100,6 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithOrdinaryAssignmentIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertAssertToIfWithThrowIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertIfWithThrowToAssertIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1217,7 +1179,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveDeclarationToSeparateFileIntention</className>
+      <className>org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ExtractDeclarationFromCurrentFileIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1243,6 +1205,11 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddNameToArgumentIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddNamesToFollowingArgumentsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1293,11 +1260,6 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.testIntegration.KotlinCreateTestIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.AddOperatorModifierIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1362,6 +1324,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.IntroduceImportAliasIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.RemoveSingleExpressionStringTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1387,22 +1354,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.copyConcatenatedStringToClipboard.CopyConcatenatedStringToClipboardIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceMathMaxWithCoerceAtLeastIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceMathMinWithCoerceAtMostIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1572,11 +1524,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertClassToSealedClassIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddPropertyAccessorsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1593,11 +1540,6 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.MoveMemberToTopLevelIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceSubstringWithIndexingOperationIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1672,16 +1614,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertTrimMarginToTrimIndentIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ConvertTrimIndentToTrimMarginIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyGetterToInitializerIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1720,6 +1652,26 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RenameClassToContainingFileNameIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertCollectionConstructorToFunction</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertOrdinaryPropertyToLazyIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertLazyPropertyToOrdinaryIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <lang.inspectionSuppressor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInspectionSuppressor"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
@@ -1736,12 +1688,21 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="INFO"
+                     level="INFORMATION"
                      language="kotlin"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReformatInspection"
                      displayName="File is not formatted according to project settings"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceCollectionCountWithSizeInspection"
+                     displayName="Collection count can be converted to size"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
@@ -1776,7 +1737,16 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceManualRangeWithIndicesCallsInspection"
+                     displayName="Convert manual ranges to indices or iteration over collection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToElvisInspection"
                      displayName="If-Then foldable to '?:'"
                      groupPath="Kotlin"
                      groupName="Style issues"
@@ -1794,7 +1764,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.FoldInitializerAndIfToElvisInspection"
                      displayName="If-Null return/break/... foldable to '?:'"
                      groupPath="Kotlin"
                      groupName="Style issues"
@@ -1849,7 +1819,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveCurlyBracesFromTemplateInspection"
                      displayName="Redundant curly braces in string template"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
@@ -1958,7 +1928,7 @@
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
-                     level="WARNING"
+                     level="INFO"
                      language="kotlin"
     />
 
@@ -2065,6 +2035,51 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddVarianceModifierInspection"
                      displayName="Type parameter can have 'in' or 'out' variance"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithDropLastInspection"
+                     displayName="Replace 'substring' call with 'dropLast' call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithTakeInspection"
+                     displayName="Replace 'substring' call with 'take' call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithIndexingOperationInspection"
+                     displayName="Replace 'substring' call with indexing operation call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithSubstringAfterInspection"
+                     displayName="Replace 'substring' call with 'substringAfter' call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithSubstringBeforeInspection"
+                     displayName="Replace 'substring' call with 'substringBefore' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
@@ -2222,12 +2237,21 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetInspection"
-                     displayName="Replace single line .let"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimpleRedundantLetInspection"
+                     displayName="Redundant receiver-based `let` call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ComplexRedundantLetInspection"
+                     displayName="Redundant argument-based `let` call"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="INFO"
                      language="kotlin"
     />
 
@@ -2324,10 +2348,28 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertNaNEqualityInspection"
+                     displayName="Convert equality check with 'NaN' to 'isNaN' call"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedEqualsInspection"
                      displayName="Unused equals expression"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceWithEnumMapInspection"
+                     displayName="Replace with EnumMap"
+                     groupPath="Kotlin"
+                     groupName="Other problems"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
@@ -2564,7 +2606,7 @@
                      displayName="'when' has only 'else' branch and can be simplified"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
     />
@@ -2688,6 +2730,14 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantBackticksInspection"
                      displayName="Remove redundant backticks"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantQualifierNameInspection"
+                     displayName="Remove redundant qualifier name"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
@@ -3086,8 +3136,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertFlatMapToFlattenInspection"
-                     displayName="flatMap call should be simplified to flatten()"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.SimplifiableCallInspection"
+                     displayName="Library function call could be simplified"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
@@ -3128,15 +3178,6 @@
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceArraysCopyOfWithCopyOfInspection"
-                     displayName="Replace 'Arrays.copyOf' with 'copyOf'"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
                      language="kotlin"
     />
 
@@ -3257,12 +3298,130 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceRangeStartEndInclusiveWithFirstLastInspection"
+                     displayName="Replace Range 'start' or 'endInclusive' with 'first' or 'last'"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantRequireNotNullCallInspection"
                      displayName="Redundant 'requireNotNull' or 'checkNotNull' call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinThrowableNotThrownInspection"
+                     displayName="Throwable not thrown"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaMapForEachInspection"
+                     displayName="Java Map.forEach method call should be replaced with Kotlin's forEach"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceAssociateFunctionInspection"
+                     displayName="Replace 'associate' with 'associateBy' or 'associateWith'"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCovariantEqualsInspection"
+                     displayName="Covariant 'equals()'"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNotNullAssertionWithElvisReturnInspection"
+                     displayName="Replace '!!' with '?: return'"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SelfReferenceConstructorParameterInspection"
+                     displayName="Constructor has non-null self reference parameter"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceJavaStaticMethodWithKotlinAnalogInspection"
+                     displayName="Replace Java static method with Kotlin analog"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ControlFlowWithEmptyBodyInspection"
+                     displayName="Control flow with empty body"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection"
+                     displayName="Function should have 'operator' modifier"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEmptyInitializerBlockInspection"
+                     displayName="Redundant empty initializer block"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinEqualsBetweenInconvertibleTypesInspection"
+                     displayName="'equals()' between objects of inconvertible types"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.LateinitVarOverridesLateinitVarInspection"
+                     displayName="lateinit var property overrides lateinit var property"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
                      language="kotlin"
     />
 
@@ -3291,5 +3450,8 @@
 
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.TargetRetrieveActivity"/>
 
+    <stripTrailingSpacesFilterFactory implementation="org.jetbrains.kotlin.idea.editor.KotlinStripTrailingSpacesFilterFactory"/>
+
+    <navbar implementation="org.jetbrains.kotlin.idea.navigationToolbar.KotlinNavBarModelExtension" order="first"/>
   </extensions>
 </idea-plugin>

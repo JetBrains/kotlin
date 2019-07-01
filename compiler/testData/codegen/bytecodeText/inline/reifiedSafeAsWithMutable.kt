@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // For mutable collections and related types (e.g., MutableList, MutableListIterator)
 // 'as?' should be generated as a single 'safeAs...' intrinsic call
 // without instanceof or 'is...'.

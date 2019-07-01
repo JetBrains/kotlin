@@ -7,9 +7,13 @@ import org.gradle.kotlin.dsl.*
 var Project.bootstrapKotlinVersion: String
     get() = this.property("bootstrapKotlinVersion") as String
     private set(value) { this.extra["bootstrapKotlinVersion"] = value }
+
 var Project.bootstrapKotlinRepo: String?
     get() = this.property("bootstrapKotlinRepo") as String?
     private set(value) { this.extra["bootstrapKotlinRepo"] = value }
+
+val Project.internalKotlinRepo: String?
+    get() = bootstrapKotlinRepo?.replace("artifacts/content/maven/", "artifacts/content/internal/repo")
 
 fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
     val customVersion = project.findProperty("bootstrap.kotlin.version") as String?

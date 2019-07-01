@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -34,7 +34,7 @@ class KotlinTargetDataService : AbstractProjectDataService<KotlinTargetData, Voi
                 it.outputPath = archiveFile.parent
                 for (moduleId in targetData.moduleIds) {
                     val compilationModuleDataNode = nodeToImport.parent?.findChildModuleById(moduleId) ?: continue
-                    val compilationData = compilationModuleDataNode.data ?: continue
+                    val compilationData = compilationModuleDataNode.data
                     val kotlinSourceSet = compilationModuleDataNode.kotlinSourceSet ?: continue
                     if (kotlinSourceSet.isTestModule) continue
                     val moduleToPackage = modelsProvider.findIdeModule(compilationData) ?: continue

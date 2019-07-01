@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration;
@@ -22,7 +22,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdaterKt;
+import org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdaterKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.plugins.groovy.GroovyFileType;
@@ -42,12 +42,12 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         ApplicationManager.getApplication().runWriteAction(
                 () -> FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         );
-        ScriptDependenciesUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), true);
+        ScriptsCompilationConfigurationUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), true);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ScriptDependenciesUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), false);
+        ScriptsCompilationConfigurationUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), false);
         moduleInfoFile = null;
         super.tearDown();
     }

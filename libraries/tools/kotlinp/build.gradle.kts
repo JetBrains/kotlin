@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm")
 }
 
-val kotlinpAsmVersion = "7.0"
+val kotlinpAsmVersion = "7.0.1"
 
 val shadows by configurations.creating
 
@@ -26,6 +26,8 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
 
     testRuntime(project(":kotlinx-metadata-jvm", configuration = "runtime"))
+
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     shadows(project(":kotlinx-metadata-jvm", configuration = "runtime"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
@@ -58,8 +60,7 @@ tasks {
     }
     "test" {
         // These dependencies are needed because ForTestCompileRuntime loads jars from dist
-        dependsOn(":kotlin-reflect:dist")
-        dependsOn(":kotlin-script-runtime:dist")
+        dependsOn(":dist")
     }
 }
 

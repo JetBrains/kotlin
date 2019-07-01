@@ -25,17 +25,17 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.withMargin
 
 class KotlinULambdaExpression(
-        override val psi: KtLambdaExpression,
+        override val sourcePsi: KtLambdaExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), ULambdaExpression, KotlinUElementWithType {
     override val functionalInterfaceType: PsiType?
         get() = getFunctionalInterfaceType()
 
-    override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
+    override val body by lz { KotlinConverter.convertOrEmpty(sourcePsi.bodyExpression, this) }
     
     override val valueParameters by lz {
-        psi.valueParameters.mapIndexed { i, p ->
-            KotlinUParameter(UastKotlinPsiParameter.create(p, psi, this, i), psi, this)
+        sourcePsi.valueParameters.mapIndexed { i, p ->
+            KotlinUParameter(UastKotlinPsiParameter.create(p, sourcePsi, this, i), sourcePsi, this)
         }
     }
     

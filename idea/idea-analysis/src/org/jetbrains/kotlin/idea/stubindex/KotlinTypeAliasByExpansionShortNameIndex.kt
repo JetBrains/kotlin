@@ -27,7 +27,7 @@ class KotlinTypeAliasByExpansionShortNameIndex : StringStubIndexExtension<KtType
     override fun getKey(): StubIndexKey<String, KtTypeAlias> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
-            StubIndex.getElements(KEY, key, project, scope, KtTypeAlias::class.java)!!
+        StubIndex.getElements(KEY, key, project, scope, KtTypeAlias::class.java)
 
     companion object {
         val KEY = KotlinIndexUtil.createIndexKey(KotlinTypeAliasByExpansionShortNameIndex::class.java)

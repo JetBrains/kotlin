@@ -32,12 +32,14 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
+import org.jetbrains.kotlin.platform.jvm.JdkPlatform
+import org.jetbrains.kotlin.platform.subplatformOfType
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.utils.Jsr305State
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
@@ -72,9 +74,11 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
         return result
     }
 
+    // TODO(dsavvinov): get rid of this method; instead store proper instance of TargetPlatformVersion in platform-instance
     override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion =
         when (moduleInfo) {
-            is ModuleSourceInfo -> moduleInfo.module.platform?.version ?: TargetPlatformVersion.NoVersion
+            is ModuleSourceInfo -> (moduleInfo.module.platform?.subplatformOfType<JdkPlatform>())?.targetVersion
+                ?: TargetPlatformVersion.NoVersion
             is ScriptModuleInfo -> getLanguageSettingsForScripts(project, moduleInfo.scriptDefinition).targetPlatformVersion
             is ScriptDependenciesInfo.ForFile -> getLanguageSettingsForScripts(project, moduleInfo.scriptDefinition).targetPlatformVersion
             else -> TargetPlatformVersion.NoVersion
@@ -88,8 +92,12 @@ private data class ScriptLanguageSettings(
 
 private val SCRIPT_LANGUAGE_SETTINGS = Key.create<CachedValue<ScriptLanguageSettings>>("SCRIPT_LANGUAGE_SETTINGS")
 
-private fun getLanguageSettingsForScripts(project: Project, scriptDefinition: KotlinScriptDefinition): ScriptLanguageSettings {
-    val args = scriptDefinition.additionalCompilerArguments
+fun getTargetPlatformVersionForScripts(project: Project, scriptDefinition: ScriptDefinition): TargetPlatformVersion {
+    return getLanguageSettingsForScripts(project, scriptDefinition).targetPlatformVersion
+}
+
+private fun getLanguageSettingsForScripts(project: Project, scriptDefinition: ScriptDefinition): ScriptLanguageSettings {
+    val args = scriptDefinition.compilerOptions
     return if (args == null || args.none()) {
         ScriptLanguageSettings(project.getLanguageVersionSettings(), TargetPlatformVersion.NoVersion)
     } else {

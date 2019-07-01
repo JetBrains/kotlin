@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 <info descr="null">open</info> class A() {
   fun foo() {
       if (this is B) {

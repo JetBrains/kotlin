@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.imports
 
 import com.intellij.lang.ImportOptimizer
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -42,40 +42,49 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
-import java.util.*
 
 class KotlinImportOptimizer : ImportOptimizer {
     override fun supports(file: PsiFile?) = file is KtFile
 
-    override fun processFile(file: PsiFile?) = Runnable {
-        OptimizeProcess(file as KtFile).execute()
+    override fun processFile(file: PsiFile?): Runnable {
+        val ktFile = (file as? KtFile) ?: return Runnable { /* empty runnable */ }
+        val preparedImports = prepareImports(ktFile) ?: return Runnable { /* empty runnable */ }
+
+        return Runnable {
+            replaceImports(ktFile, preparedImports)
+        }
     }
 
-    private class OptimizeProcess(private val file: KtFile) {
-        fun execute() {
-            val moduleInfo = file.getNullableModuleInfo()
-            if (moduleInfo !is ModuleSourceInfo && moduleInfo !is ScriptModuleInfo) return
+    private fun prepareImports(file: KtFile): List<ImportPath>? {
+        ApplicationManager.getApplication().assertReadAccessAllowed()
 
-            val oldImports = file.importDirectives
-            if (oldImports.isEmpty()) return
+        val moduleInfo = file.getNullableModuleInfo()
+        if (moduleInfo !is ModuleSourceInfo && moduleInfo !is ScriptModuleInfo) return null
 
-            //TODO: keep existing imports? at least aliases (comments)
+        val oldImports = file.importDirectives
+        if (oldImports.isEmpty()) return null
 
-            val descriptorsToImport = collectDescriptorsToImport(file)
+        //TODO: keep existing imports? at least aliases (comments)
 
-            val imports = prepareOptimizedImports(file, descriptorsToImport) ?: return
+        val descriptorsToImport = collectDescriptorsToImport(file)
 
-            runWriteAction { replaceImports(file, imports) }
-        }
+        return prepareOptimizedImports(file, descriptorsToImport)
     }
 
     private class CollectUsedDescriptorsVisitor(file: KtFile) : KtVisitorVoid() {
         private val currentPackageName = file.packageFqName
-        private val descriptorsToImport = HashSet<DeclarationDescriptor>()
+        private val aliases: Map<FqName, List<Name>> = file.importDirectives
+            .asSequence()
+            .filter { !it.isAllUnder && it.alias != null }
+            .mapNotNull { it.importPath }
+            .groupBy(keySelector = { it.fqName }, valueTransform = { it.importedName as Name })
+
+        private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
+        private val namesToImport = LinkedHashMap<FqName, HashSet<Name>>()
         private val abstractRefs = ArrayList<OptimizedImportsBuilder.AbstractReference>()
 
         val data: OptimizedImportsBuilder.InputData
-            get() = OptimizedImportsBuilder.InputData(descriptorsToImport, abstractRefs)
+            get() = OptimizedImportsBuilder.InputData(descriptorsToImport, namesToImport, abstractRefs)
 
         override fun visitElement(element: PsiElement) {
             ProgressIndicatorProvider.checkCanceled()
@@ -99,18 +108,20 @@ class KotlinImportOptimizer : ImportOptimizer {
                 val targets = reference.targets(bindingContext)
                 for (target in targets) {
                     val importableDescriptor = target.getImportableDescriptor()
-                    if (importableDescriptor.name !in names) continue // resolved via alias
 
                     val importableFqName = target.importableFqName ?: continue
                     val parentFqName = importableFqName.parent()
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
-                    if (target !is PackageViewDescriptor && parentFqName == currentPackageName) continue
+
+                    if (target !is PackageViewDescriptor && parentFqName == currentPackageName && (importableFqName !in aliases)) continue
 
                     if (!reference.canBeResolvedViaImport(target, bindingContext)) continue
 
                     if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 
-                    descriptorsToImport.add(importableDescriptor)
+                    val descriptorNames = (aliases[importableFqName].orEmpty() + importableFqName.shortName()).intersect(names)
+                    namesToImport.getOrPut(importableFqName) { LinkedHashSet() } += descriptorNames
+                    descriptorsToImport += importableDescriptor
                 }
             }
 
@@ -124,15 +135,15 @@ class KotlinImportOptimizer : ImportOptimizer {
                 return when (target) {
                     is FunctionDescriptor ->
                         scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
-                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
+                                && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is PropertyDescriptor ->
                         scope.findVariable(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
-                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
+                                && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is ClassDescriptor ->
                         scope.findClassifier(target.name, NoLookupLocation.FROM_IDE) == target
-                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
+                                && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     else -> false
                 }
@@ -156,7 +167,8 @@ class KotlinImportOptimizer : ImportOptimizer {
                 get() {
                     val resolvesByNames = reference.resolvesByNames
                     if (reference is KtInvokeFunctionReference) {
-                        val additionalNames = (reference.element.calleeExpression as? KtNameReferenceExpression)?.mainReference?.resolvesByNames
+                        val additionalNames = (reference.element.calleeExpression as? KtNameReferenceExpression)
+                            ?.mainReference?.resolvesByNames
                         if (additionalNames != null) {
                             return resolvesByNames + additionalNames
                         }
@@ -180,9 +192,9 @@ class KotlinImportOptimizer : ImportOptimizer {
         fun prepareOptimizedImports(file: KtFile, data: OptimizedImportsBuilder.InputData): List<ImportPath>? {
             val settings = KotlinCodeStyleSettings.getInstance(file.project)
             val options = OptimizedImportsBuilder.Options(
-                    settings.NAME_COUNT_TO_USE_STAR_IMPORT,
-                    settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,
-                    isInPackagesToUseStarImport = { fqName -> fqName.asString() in settings.PACKAGES_TO_USE_STAR_IMPORTS })
+                settings.NAME_COUNT_TO_USE_STAR_IMPORT,
+                settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,
+                isInPackagesToUseStarImport = { fqName -> fqName.asString() in settings.PACKAGES_TO_USE_STAR_IMPORTS })
             return OptimizedImportsBuilder(file, data, options).buildOptimizedImports()
         }
 
@@ -191,7 +203,10 @@ class KotlinImportOptimizer : ImportOptimizer {
             val oldImports = importList.imports
             val psiFactory = KtPsiFactory(file.project)
             for (importPath in imports) {
-                importList.addBefore(psiFactory.createImportDirective(importPath), oldImports.lastOrNull()) // insert into the middle to keep collapsed state
+                importList.addBefore(
+                    psiFactory.createImportDirective(importPath),
+                    oldImports.lastOrNull()
+                ) // insert into the middle to keep collapsed state
             }
 
             // remove old imports after adding new ones to keep imports folding state
@@ -203,7 +218,7 @@ class KotlinImportOptimizer : ImportOptimizer {
         private fun KtReference.targets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
             //class qualifiers that refer to companion objects should be considered (containing) class references
             return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? KtReferenceExpression]?.let { listOf(it) }
-                   ?: resolveToDescriptors(bindingContext)
+                ?: resolveToDescriptors(bindingContext)
         }
     }
 }

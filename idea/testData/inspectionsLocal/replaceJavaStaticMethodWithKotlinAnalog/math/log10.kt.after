@@ -1,0 +1,6 @@
+import kotlin.math.log10
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    log10(x)
+}

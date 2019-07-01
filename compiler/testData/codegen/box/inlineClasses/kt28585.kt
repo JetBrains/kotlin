@@ -1,7 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     var uint1 = 1u

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
@@ -32,6 +33,7 @@ class KotlinCallResolver(
     private val towerResolver: TowerResolver,
     private val kotlinCallCompleter: KotlinCallCompleter,
     private val overloadingConflictResolver: NewOverloadingConflictResolver,
+    private val callableReferenceResolver: CallableReferenceResolver,
     private val callComponents: KotlinCallComponents
 ) {
 
@@ -45,7 +47,9 @@ class KotlinCallResolver(
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
 
-        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks)
+        val candidateFactory = SimpleCandidateFactory(
+            callComponents, scopeTower, kotlinCall, resolutionCallbacks, callableReferenceResolver
+        )
         val processor = when (kotlinCall.callKind) {
             KotlinCallKind.VARIABLE -> {
                 createVariableAndObjectProcessor(scopeTower, kotlinCall.name, candidateFactory, kotlinCall.explicitReceiver?.receiver)
@@ -96,7 +100,9 @@ class KotlinCallResolver(
         collectAllCandidates: Boolean
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
-        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks)
+        val candidateFactory = SimpleCandidateFactory(
+            callComponents, scopeTower, kotlinCall, resolutionCallbacks, callableReferenceResolver
+        )
 
         val resolutionCandidates = givenCandidates.map { candidateFactory.createCandidate(it).forceResolution() }
 

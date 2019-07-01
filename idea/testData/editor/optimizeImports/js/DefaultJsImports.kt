@@ -10,4 +10,3 @@ fun main(args: Array<String>) {
 }
 
 // For KT-3620 Don't auto-import kotlin.js.* and remove in `optimize imports`
-// JS

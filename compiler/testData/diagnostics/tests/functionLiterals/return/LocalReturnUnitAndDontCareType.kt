@@ -17,5 +17,5 @@ val b = run {
 val c = run {
     if (flag) return@run
 
-    return@run <!OI;RETURN_TYPE_MISMATCH!>4<!>
+    return@run <!RETURN_TYPE_MISMATCH!>4<!>
 }

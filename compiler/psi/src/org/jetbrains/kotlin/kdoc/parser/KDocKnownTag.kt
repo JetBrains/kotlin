@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.kdoc.parser
 
-import com.intellij.openapi.util.text.StringUtil
-
-enum class KDocKnownTag private constructor(val isReferenceRequired: Boolean, val isSectionStart: Boolean) {
+enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Boolean) {
     AUTHOR(false, false),
     THROWS(true, false),
     EXCEPTION(true, false),
@@ -35,12 +33,11 @@ enum class KDocKnownTag private constructor(val isReferenceRequired: Boolean, va
 
     companion object {
         fun findByTagName(tagName: CharSequence): KDocKnownTag? {
-            var tagName = tagName
-            if (StringUtil.startsWith(tagName, "@")) {
-                tagName = tagName.subSequence(1, tagName.length)
-            }
+            val name = if (tagName.startsWith('@')) {
+                tagName.subSequence(1, tagName.length)
+            } else tagName
             try {
-                return valueOf(tagName.toString().toUpperCase())
+                return valueOf(name.toString().toUpperCase())
             } catch (ignored: IllegalArgumentException) {
             }
 

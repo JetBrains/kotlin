@@ -53,7 +53,7 @@ import java.util.*
 class CompletionBindingContextProvider(project: Project) {
     private val LOG = Logger.getInstance(CompletionBindingContextProvider::class.java)
 
-    @TestOnly
+    @get:TestOnly
     internal var TEST_LOG: StringBuilder? = null
 
     companion object {

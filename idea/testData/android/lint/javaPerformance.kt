@@ -11,7 +11,7 @@ import android.util.SparseArray
 import android.widget.Button
 
 @SuppressWarnings("unused")
-@Suppress("UsePropertyAccessSyntax", "UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER", "DEPRECATION")
+@Suppress("UsePropertyAccessSyntax", "UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER", "DEPRECATION", "UNNECESSARY_NOT_NULL_ASSERTION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) : Button(context, attrs, defStyle) {
 
     private var cachedRect: Rect? = null

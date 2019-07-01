@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ManyCandidatesResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSIPartialCallInfo
@@ -56,14 +53,14 @@ class DelegatedPropertyInferenceSession(
                 ?: builtIns.nullableNothingType
 
         val valueParameterForThis = descriptor.valueParameters.getOrNull(0) ?: return
-        val substitutedType = substitutor.substituteKeepAnnotations(valueParameterForThis.type.unwrap())
+        val substitutedType = substitutor.safeSubstitute(valueParameterForThis.type.unwrap())
         commonSystem.addSubtypeConstraint(typeOfThis.unwrap(), substitutedType, DelegatedPropertyConstraintPosition(atom))
     }
 
     private fun ResolvedCallAtom.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {
         if (expectedType != null) {
             val unsubstitutedReturnType = candidateDescriptor.returnType?.unwrap() ?: return
-            val substitutedReturnType = substitutor.substituteKeepAnnotations(unsubstitutedReturnType)
+            val substitutedReturnType = substitutor.safeSubstitute(unsubstitutedReturnType)
 
             commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType, DelegatedPropertyConstraintPosition(atom))
         }
@@ -74,7 +71,7 @@ class DelegatedPropertyInferenceSession(
     private fun ResolvedCallAtom.addConstraintsForSetValueMethod(commonSystem: ConstraintSystemBuilder) {
         if (expectedType != null) {
             val unsubstitutedParameterType = candidateDescriptor.valueParameters.getOrNull(2)?.type?.unwrap() ?: return
-            val substitutedParameterType = substitutor.substituteKeepAnnotations(unsubstitutedParameterType)
+            val substitutedParameterType = substitutor.safeSubstitute(unsubstitutedParameterType)
 
             commonSystem.addSubtypeConstraint(expectedType, substitutedParameterType, DelegatedPropertyConstraintPosition(atom))
         }
@@ -87,7 +84,7 @@ class DelegatedPropertyInferenceSession(
         initialStorage: ConstraintStorage
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
-    override fun writeOnlyStubs(): Boolean = false
+    override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
 }
 
 object InferenceSessionForExistingCandidates : InferenceSession {
@@ -105,5 +102,6 @@ object InferenceSessionForExistingCandidates : InferenceSession {
         initialStorage: ConstraintStorage
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
-    override fun writeOnlyStubs(): Boolean = false
+    override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
+    override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
 }

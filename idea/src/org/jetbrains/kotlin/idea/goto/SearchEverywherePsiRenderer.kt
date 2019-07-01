@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.goto
 
+import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.ide.util.PlatformModuleRendererFactory
-import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.ide.util.gotoByName.GotoFileCellRenderer
 import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.util.Iconable
@@ -30,7 +30,6 @@ import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.FilePathSplittingPolicy
-import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -58,8 +57,8 @@ internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) :
         layout = object : BorderLayout() {
             override fun layoutContainer(target: Container) {
                 super.layoutContainer(target)
-                val right = getLayoutComponent(BorderLayout.EAST)
-                val left = getLayoutComponent(BorderLayout.WEST)
+                val right = getLayoutComponent(EAST)
+                val left = getLayoutComponent(WEST)
 
                 //IDEA-140824
                 if (right != null && left != null && left.bounds.x + left.bounds.width > right.bounds.x) {
@@ -96,10 +95,10 @@ internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) :
             var width = myList.width
             if (width == 0) width += 800
             val path = FilePathSplittingPolicy.SPLIT_BY_SEPARATOR.getOptimalTextForComponent(
-                    name,
-                    File(relativePath),
-                    this,
-                    width - myRightComponentWidth - 16 - 10
+                name,
+                File(relativePath),
+                this,
+                width - myRightComponentWidth - 16 - 10
             )
             return "($path)"
         }

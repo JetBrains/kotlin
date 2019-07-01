@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.model.Computation
-import org.jetbrains.kotlin.contracts.model.ESComponents
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.MutableContextInfo
 import org.jetbrains.kotlin.contracts.model.functors.EqualsFunctor
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -45,13 +45,6 @@ class EffectSystem(
     val dataFlowValueFactory: DataFlowValueFactory,
     val builtIns: KotlinBuiltIns
 ) {
-    // Lazy because this code is executed when the container is set up (before any resolution starts),
-    // so builtins are not fully functional yet at that moment
-    val components: ESComponents by lazy(LazyThreadSafetyMode.NONE) { ESComponents(builtIns) }
-
-    val constants: ESConstants
-        get() = components.constants
-
     fun getDataFlowInfoForFinishedCall(
         resolvedCall: ResolvedCall<*>,
         bindingTrace: BindingTrace,
@@ -63,7 +56,7 @@ class EffectSystem(
         val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return DataFlowInfo.EMPTY
         if (callExpression is KtDeclaration) return DataFlowInfo.EMPTY
 
-        val resultContextInfo = getContextInfoWhen(ESReturns(constants.wildcard), callExpression, bindingTrace, moduleDescriptor)
+        val resultContextInfo = getContextInfoWhen(ESReturns(ESConstants.wildcard), callExpression, bindingTrace, moduleDescriptor)
 
         return resultContextInfo.toDataFlowInfo(languageVersionSettings, builtIns)
     }
@@ -82,10 +75,10 @@ class EffectSystem(
         val rightComputation =
             getNonTrivialComputation(rightExpression, bindingTrace, moduleDescriptor) ?: return ConditionalDataFlowInfo.EMPTY
 
-        val effects = EqualsFunctor(constants, false).invokeWithArguments(leftComputation, rightComputation)
+        val effects = EqualsFunctor(false).invokeWithArguments(leftComputation, rightComputation)
 
-        val equalsContextInfo = InfoCollector(ESReturns(constants.trueValue), constants).collectFromSchema(effects)
-        val notEqualsContextInfo = InfoCollector(ESReturns(constants.falseValue), constants).collectFromSchema(effects)
+        val equalsContextInfo = InfoCollector(ESReturns(ESConstants.trueValue), builtIns).collectFromSchema(effects)
+        val notEqualsContextInfo = InfoCollector(ESReturns(ESConstants.falseValue), builtIns).collectFromSchema(effects)
 
         return ConditionalDataFlowInfo(
             equalsContextInfo.toDataFlowInfo(languageVersionSettings, builtIns),
@@ -100,7 +93,7 @@ class EffectSystem(
         val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return
         if (callExpression is KtDeclaration) return
 
-        val resultingContextInfo = getContextInfoWhen(ESReturns(constants.wildcard), callExpression, bindingTrace, moduleDescriptor)
+        val resultingContextInfo = getContextInfoWhen(ESReturns(ESConstants.wildcard), callExpression, bindingTrace, moduleDescriptor)
         for (effect in resultingContextInfo.firedEffects) {
             val callsEffect = effect as? ESCalls ?: continue
             val lambdaExpression = (callsEffect.callable as? ESLambda)?.lambda ?: continue
@@ -117,7 +110,7 @@ class EffectSystem(
         if (!languageVersionSettings.supportsFeature(LanguageFeature.UseReturnsEffect)) return DataFlowInfo.EMPTY
         if (condition == null) return DataFlowInfo.EMPTY
 
-        return getContextInfoWhen(ESReturns(constants.booleanValue(value)), condition, bindingTrace, moduleDescriptor)
+        return getContextInfoWhen(ESReturns(ESConstants.booleanValue(value)), condition, bindingTrace, moduleDescriptor)
             .toDataFlowInfo(languageVersionSettings, moduleDescriptor.builtIns)
     }
 
@@ -127,12 +120,16 @@ class EffectSystem(
         bindingTrace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ): MutableContextInfo {
+        val isInContractBlock = expression.parentsWithSelf.filterIsInstance<KtExpression>().any {
+            bindingTrace.bindingContext[BindingContext.IS_CONTRACT_DECLARATION_BLOCK, it] == true
+        }
+        if (isInContractBlock) return MutableContextInfo.EMPTY
         val computation = getNonTrivialComputation(expression, bindingTrace, moduleDescriptor) ?: return MutableContextInfo.EMPTY
-        return InfoCollector(observedEffect, constants).collectFromSchema(computation.effects)
+        return InfoCollector(observedEffect, builtIns).collectFromSchema(computation.effects)
     }
 
     private fun getNonTrivialComputation(expression: KtExpression, trace: BindingTrace, moduleDescriptor: ModuleDescriptor): Computation? {
-        val visitor = EffectsExtractingVisitor(trace, moduleDescriptor, dataFlowValueFactory, constants, languageVersionSettings)
+        val visitor = EffectsExtractingVisitor(trace, moduleDescriptor, dataFlowValueFactory, languageVersionSettings)
         return visitor.extractOrGetCached(expression).takeUnless { it == UNKNOWN_COMPUTATION }
     }
 }

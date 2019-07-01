@@ -1,6 +1,8 @@
 package
 
-public val test1: kotlin.Any?
+public val test1: [ERROR : Type for generate {
+    yield(A)
+}]
 public val test2: kotlin.Int
 public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
 

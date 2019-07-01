@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.project
@@ -15,8 +15,9 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.types.typeUtil.closure
 import java.util.concurrent.ConcurrentHashMap
 
 fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
@@ -70,7 +71,7 @@ private fun mergePlatformModules(
     allModules: List<ModuleSourceInfo>,
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
-    if (platform is CommonPlatform) return allModules
+    if (platform.isCommon()) return allModules
 
     val platformModules =
         allModules.flatMap { module ->
@@ -78,7 +79,7 @@ private fun mergePlatformModules(
                 listOf(module to module.expectedBy)
             else emptyList()
         }.map { (module, expectedBys) ->
-            PlatformModuleInfo(module, expectedBys)
+            PlatformModuleInfo(module, expectedBys.closure { it.expectedBy }.toList())
         }
 
     val rest = allModules - platformModules.flatMap { it.containedModules }

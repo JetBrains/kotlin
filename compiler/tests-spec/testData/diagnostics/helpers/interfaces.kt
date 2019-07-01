@@ -3,11 +3,21 @@ interface EmptyInterface
 interface Interface1 {
     fun itest() {}
     fun itest1() {}
+    fun itest0(): String
+    fun itest00(): Interface1
+    fun itest000(): Int?
+    fun itest0000(): Int
+    fun itest00000(): Int
 }
 
 interface Interface2 {
     fun itest() {}
     fun itest2() {}
+    fun itest0(): CharSequence
+    fun itest00(): Interface2
+    fun itest000(): Nothing?
+    fun itest0000(): Nothing
+    fun itest00000(): String
 }
 
 interface Interface3 {

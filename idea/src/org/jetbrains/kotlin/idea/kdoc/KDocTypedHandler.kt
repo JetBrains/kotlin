@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.psi.KtFile
 
 class KDocTypedHandler : TypedHandlerDelegate() {
-    override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result {
+    override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): Result {
         if (overwriteClosingBracket(c, editor, file)) {
             EditorModificationUtil.moveCaretRelatively(editor, 1)
-            return TypedHandlerDelegate.Result.STOP
+            return Result.STOP
         }
-        return TypedHandlerDelegate.Result.CONTINUE
+        return Result.CONTINUE
     }
 
-    override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): TypedHandlerDelegate.Result =
-        if (handleBracketTyped(c, project, editor, file)) TypedHandlerDelegate.Result.STOP else TypedHandlerDelegate.Result.CONTINUE
+    override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Result =
+        if (handleBracketTyped(c, project, editor, file)) Result.STOP else Result.CONTINUE
 
     private fun overwriteClosingBracket(c: Char, editor: Editor, file: PsiFile): Boolean {
         if (c != ']' && c != ')') return false

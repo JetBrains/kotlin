@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -52,18 +51,7 @@ class IrFunctionReferenceImpl(
         descriptor: FunctionDescriptor,
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null
-    ): this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size, origin)
-
-    @Deprecated("Creates unbound symbol")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        descriptor: FunctionDescriptor,
-        typeArgumentsCount: Int,
-        origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor,
-             typeArgumentsCount, descriptor.valueParameters.size, origin)
+    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size, origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)

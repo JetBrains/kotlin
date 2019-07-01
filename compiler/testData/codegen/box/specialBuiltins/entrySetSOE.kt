@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: NATIVE
 
 open class Map1 : HashMap<String, Any?>()

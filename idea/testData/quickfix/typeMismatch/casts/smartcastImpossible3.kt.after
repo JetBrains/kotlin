@@ -1,4 +1,5 @@
 // "Cast expression 'x' to 'Foo<*>'" "true"
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 interface Foo<T: Number> {
     fun bar()

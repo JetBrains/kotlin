@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.conversion.copy.range
-import org.jetbrains.kotlin.idea.conversion.copy.start
+import org.jetbrains.kotlin.idea.core.util.range
+import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*

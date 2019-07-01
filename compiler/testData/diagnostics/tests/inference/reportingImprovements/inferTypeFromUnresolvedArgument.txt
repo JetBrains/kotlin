@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ K> id2(/*0*/ x: K, /*1*/ s: kotlin.String): K
+public fun </*0*/ K> ret(/*0*/ s: kotlin.String): K
+public fun test(): kotlin.Unit

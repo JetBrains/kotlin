@@ -16,9 +16,11 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = projectDir
 }
+
+publish()
 
 val jar: Jar by tasks
 jar.apply {
@@ -33,5 +35,3 @@ runtimeJar(rewriteDepsToShadedCompiler(
 
 sourcesJar()
 javadocJar()
-
-publish()

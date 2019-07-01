@@ -14,5 +14,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" {  }
 }
-
-ideaPlugin()

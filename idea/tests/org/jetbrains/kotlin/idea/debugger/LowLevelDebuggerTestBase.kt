@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger
@@ -19,7 +19,6 @@ import java.io.IOException
 import java.net.Socket
 import java.nio.file.Files
 import kotlin.properties.Delegates
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
     private companion object {
@@ -27,9 +26,8 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
         private const val DEBUG_PORT = 5115
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
 
         val options = wholeFile.readLines()
             .asSequence()
@@ -184,7 +182,7 @@ private object DebuggerMain {
         synchronized(lock) {
             // Wait until debugger is attached
             @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-            (lock as java.lang.Object).wait()
+            (lock as Object).wait()
         }
     }
 }

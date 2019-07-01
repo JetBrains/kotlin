@@ -12,9 +12,9 @@ fun bar() {
     foo(<caret>)
 }
 
-// EXIST: { itemText: "object: I<Int>{...}" }
-// EXIST: { itemText: "object: C1<Int>(){...}" }
-// EXIST: { itemText: "object: C3(){...}" }
+// EXIST: { itemText: "object : I<Int>{...}" }
+// EXIST: { itemText: "object : C1<Int>(){...}" }
+// EXIST: { itemText: "object : C3(){...}" }
 // EXIST: { itemText: "C4", tailText: "(t: Int) (<root>)" }
 // EXIST: { itemText: "C5", tailText: "(t1: T1, t2: Int) (<root>)" }
 // NOTHING_ELSE

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.navigation
@@ -13,12 +13,10 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
-import org.jetbrains.kotlin.idea.perf.forceUsingUltraLightClassesForTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.idea.test.findFileWithCaret
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 abstract class AbstractKotlinNavigationMultiModuleTest : AbstractMultiModuleTest() {
@@ -27,9 +25,6 @@ abstract class AbstractKotlinNavigationMultiModuleTest : AbstractMultiModuleTest
     protected fun doTest(testDataDir: String) {
         setupMppProjectFromDirStructure(File(testDataDir))
         val file = project.findFileWithCaret()
-        if (InTextDirectivesUtils.isDirectiveDefined(file.text, "ULTRA_LIGHT_CLASSES")) {
-            forceUsingUltraLightClassesForTest()
-        }
 
         val doc = PsiDocumentManager.getInstance(myProject).getDocument(file)!!
         val offset = doc.extractMarkerOffset(project, "<caret>")

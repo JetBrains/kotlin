@@ -1,12 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.incremental.js.FunctionWithSourceInfo
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
@@ -14,8 +15,10 @@ import java.io.File
 
 class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val rpcProfiler: Profiler) :
     IncrementalResultsConsumer {
+
     init {
-        eventManager.onCompilationFinished(this::flush)
+        eventManager.
+            onCompilationFinished(this::flush)
     }
 
     override fun processHeader(headerMetadata: ByteArray) {
@@ -39,6 +42,12 @@ class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacad
     }
 
     override fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>) = error("Should not be called in Daemon Server")
+
+    override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
+        rpcProfiler.withMeasure(this) {
+            facade.incrementalResultsConsumer_processPackageMetadata(packageName, metadata)
+        }
+    }
 
     fun flush() {
         rpcProfiler.withMeasure(this) {

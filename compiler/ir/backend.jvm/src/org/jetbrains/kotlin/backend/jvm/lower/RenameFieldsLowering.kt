@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -47,9 +48,18 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
 
             var count = 0
             // We never rename JvmField properties, since they are public ABI. Therefore we consider the JvmField-annotated property first,
-            // in order to make sure it'll claim its original name
-            // TODO: also do not rename const properties
-            for (field in fields.sortedByDescending { it.isJvmField }) {
+            // in order to make sure it'll claim its original name.
+            // If there are non-static and static (moved from companion) fields with the same name, we try to make static properties retain
+            // their original names first, since this is what the old JVM backend did. However this can easily be changed without any
+            // major binary compatibility consequences (modulo access to private members via Java reflection).
+            for (field in fields.sortedBy {
+                when {
+                    // TODO: also do not rename const properties
+                    it.isJvmField -> 0
+                    it.isStatic -> 1
+                    else -> 2
+                }
+            }) {
                 val oldName = field.name
                 val newName = if (count == 0) oldName else Name.identifier(oldName.asString() + "$$count")
                 count++
@@ -97,7 +107,9 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
         ).also {
             descriptor.bind(it)
             it.parent = declaration.parent
-            it.initializer = declaration.initializer?.transform(this, null)
+            it.initializer = declaration.initializer
+                ?.transform(this, null)
+                ?.patchDeclarationParents(it)
             it.metadata = declaration.metadata
 
             newSymbols[declaration] = symbol

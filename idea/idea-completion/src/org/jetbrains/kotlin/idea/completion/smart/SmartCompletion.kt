@@ -169,8 +169,8 @@ class SmartCompletion(
         val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver, resolutionFacade, bindingContext)
         val infoMatcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
 
-        result.addLookupElements(descriptor, expectedInfos, infoMatcher, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
-            lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
+        result.addLookupElements(descriptor, expectedInfos, infoMatcher, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { declarationDescriptor ->
+            lookupElementFactory.createStandardLookupElementsForDescriptor(declarationDescriptor, useReceiverTypes = true)
         }
 
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {

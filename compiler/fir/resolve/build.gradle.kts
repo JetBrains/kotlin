@@ -1,8 +1,3 @@
-/*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
- */
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -10,14 +5,22 @@ plugins {
 
 dependencies {
     compile(project(":core:descriptors"))
+    compile(project(":core:descriptors.jvm"))
     compile(project(":core:deserialization"))
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:fir:tree"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", "extensions", rootProject = rootProject) }
 
+    Platform[191].orLower {
+        testCompileOnly(intellijDep()) { includeJars("java-api") }
+    }
+
+    Platform[192].orHigher {
+        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
+    }
 
     testRuntime(intellijDep())
 
@@ -28,7 +31,6 @@ dependencies {
     
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
-
 }
 
 sourceSets {
@@ -36,7 +38,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
     jvmArgs!!.removeIf { it.contains("-Xmx") }
     maxHeapSize = "3g"

@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
  */
 class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(
-            superDescriptor: CallableDescriptor,
-            subDescriptor: CallableDescriptor,
-            subClassDescriptor: ClassDescriptor?
+        superDescriptor: CallableDescriptor,
+        subDescriptor: CallableDescriptor,
+        subClassDescriptor: ClassDescriptor?
     ): Result {
         if (isIncompatibleInAccordanceWithBuiltInOverridabilityRules(superDescriptor, subDescriptor, subClassDescriptor)) {
             return Result.INCOMPATIBLE
@@ -57,12 +57,13 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
     // it should not override non-special method in further inheritance
     // See java.nio.Buffer
     private fun isIncompatibleInAccordanceWithBuiltInOverridabilityRules(
-            superDescriptor: CallableDescriptor,
-            subDescriptor: CallableDescriptor,
-            subClassDescriptor: ClassDescriptor?
+        superDescriptor: CallableDescriptor,
+        subDescriptor: CallableDescriptor,
+        subClassDescriptor: ClassDescriptor?
     ): Boolean {
         if (superDescriptor !is CallableMemberDescriptor || subDescriptor !is FunctionDescriptor ||
-            KotlinBuiltIns.isBuiltIn(subDescriptor)) {
+            KotlinBuiltIns.isBuiltIn(subDescriptor)
+        ) {
             return false
         }
 
@@ -74,9 +75,10 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
 
         // Checking second condition: special hidden override is not supposed to be an override to non-special irrelevant Java declaration
         val isOneOfDescriptorsHidden =
-                subDescriptor.isHiddenToOvercomeSignatureClash != (superDescriptor as? FunctionDescriptor)?.isHiddenToOvercomeSignatureClash
+            subDescriptor.isHiddenToOvercomeSignatureClash != (superDescriptor as? FunctionDescriptor)?.isHiddenToOvercomeSignatureClash
         if (isOneOfDescriptorsHidden &&
-                (overriddenBuiltin == null || !subDescriptor.isHiddenToOvercomeSignatureClash)) {
+            (overriddenBuiltin == null || !subDescriptor.isHiddenToOvercomeSignatureClash)
+        ) {
             return true
         }
 
@@ -93,15 +95,16 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
         //    void get(Object x) {}
         // }
         //
-        // The problem is that when checking overridabilty of `A.get` and `HashMap.get` we fall through to here, because
+        // The problem is that when checking overridability of `A.get` and `HashMap.get` we fall through to here, because
         // we do not recreate a magic copy of it, because it has the same signature.
         // But it obviously that if subDescriptor and superDescriptor has the same JVM descriptor, they're one-way overridable.
         // Note that it doesn't work if special builtIn was renamed, because we do not consider renamed built-ins
         // in `computeJvmDescriptor`.
         // TODO: things get more and more complicated here, consider moving signature mapping from backend and using it here instead of all of this magic
         if (overriddenBuiltin is FunctionDescriptor && superDescriptor is FunctionDescriptor &&
-                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(overriddenBuiltin) != null &&
-                subDescriptor.computeJvmDescriptor(withReturnType = false) == superDescriptor.original.computeJvmDescriptor(withReturnType = false)) {
+            BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(overriddenBuiltin) != null &&
+            subDescriptor.computeJvmDescriptor(withReturnType = false) == superDescriptor.original.computeJvmDescriptor(withReturnType = false)
+        ) {
             return false
         }
 
@@ -120,8 +123,8 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
          * As it comes from it's name it only checks overrides in Java classes
          */
         fun doesJavaOverrideHaveIncompatibleValueParameterKinds(
-                superDescriptor: CallableDescriptor,
-                subDescriptor: CallableDescriptor
+            superDescriptor: CallableDescriptor,
+            subDescriptor: CallableDescriptor
         ): Boolean {
             if (subDescriptor !is JavaMethodDescriptor || superDescriptor !is FunctionDescriptor) return false
             assert(subDescriptor.valueParameters.size == superDescriptor.valueParameters.size) {
@@ -141,10 +144,10 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
         }
 
         private fun mapValueParameterType(f: FunctionDescriptor, valueParameterDescriptor: ValueParameterDescriptor) =
-                if (forceSingleValueParameterBoxing(f) || isPrimitiveCompareTo(f))
-                    valueParameterDescriptor.type.makeNullable().mapToJvmType()
-                else
-                    valueParameterDescriptor.type.mapToJvmType()
+            if (forceSingleValueParameterBoxing(f) || isPrimitiveCompareTo(f))
+                valueParameterDescriptor.type.makeNullable().mapToJvmType()
+            else
+                valueParameterDescriptor.type.mapToJvmType()
 
         // It's useful here to suppose that 'Int.compareTo(Int)' requires boxing of it's value parameter
         // As it happens in java.lang.Integer analogue
@@ -152,9 +155,9 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
         private fun isPrimitiveCompareTo(f: FunctionDescriptor): Boolean {
             if (f.valueParameters.size != 1) return false
             val classDescriptor =
-                    f.containingDeclaration as? ClassDescriptor ?: return false
+                f.containingDeclaration as? ClassDescriptor ?: return false
             val parameterClass =
-                    f.valueParameters.single().type.constructor.declarationDescriptor as? ClassDescriptor
+                f.valueParameters.single().type.constructor.declarationDescriptor as? ClassDescriptor
                     ?: return false
             return KotlinBuiltIns.isPrimitiveClass(classDescriptor) && classDescriptor.fqNameSafe == parameterClass.fqNameSafe
         }

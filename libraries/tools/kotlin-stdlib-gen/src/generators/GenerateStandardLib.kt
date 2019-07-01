@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package generators
@@ -42,10 +42,10 @@ fun main(args: Array<String>) {
     when (args.size) {
         1 -> {
             val baseDir = File(args.first())
-            targetBaseDirs[KotlinTarget.Common] =  baseDir.resolveExistingDir("libraries/stdlib/common/src/generated")
+            targetBaseDirs[KotlinTarget.Common] = baseDir.resolveExistingDir("libraries/stdlib/common/src/generated")
             targetBaseDirs[KotlinTarget.JVM] = baseDir.resolveExistingDir("libraries/stdlib/jvm/src/generated")
             targetBaseDirs[KotlinTarget.JS] = baseDir.resolveExistingDir("libraries/stdlib/js/src/generated")
-            targetBaseDirs[KotlinTarget.JS_IR] = baseDir.resolveExistingDir("libraries/stdlib/js/irRuntime/generated")
+            targetBaseDirs[KotlinTarget.JS_IR] = baseDir.resolveExistingDir("libraries/stdlib/js-ir/src/generated")
         }
         2 -> {
             val (targetName, targetDir) = args

@@ -1,88 +1,81 @@
 FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
-  CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:primary
-      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
-    PROPERTY name:x visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
+  CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAnn 
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.TestAnn [primary] 
+      VALUE_PARAMETER name:x index:0 type:kotlin.String 
+    PROPERTY name:x visibility:public modality:FINAL [val] 
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final] 
         EXPRESSION_BODY
-          GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:kotlin.String flags:
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
-        $this: VALUE_PARAMETER name:<this> type:TestAnn flags:
+          GET_VAR 'x: kotlin.String declared in <root>.TestAnn.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnn) returnType:kotlin.String 
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val] 
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestAnn 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='<get-x>(): String'
-            GET_FIELD 'x: String' type=kotlin.String origin=null
-              receiver: GET_VAR 'this@TestAnn: TestAnn' type=TestAnn origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.TestAnn'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final] ' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.TestAnn declared in <root>.TestAnn.<get-x>' type=<root>.TestAnn origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  PROPERTY name:test1 visibility:public modality:FINAL flags:val
-    FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  PROPERTY name:test1 visibility:public modality:FINAL [val] 
+    FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value="test1.get"
-      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
+        TestAnn(x = 'test1.get')
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): String'
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""
-  PROPERTY name:test2 visibility:public modality:FINAL flags:var
-    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+  PROPERTY name:test2 visibility:public modality:FINAL [var] 
+    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value="test2.get"
-      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:var
+        TestAnn(x = 'test2.get')
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): String'
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""
-    FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.String) returnType:kotlin.Unit flags:
+    FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.String) returnType:kotlin.Unit 
       annotations:
-        CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value="test2.set"
-      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:var
-      VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
+        TestAnn(x = 'test2.set')
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var] 
+      VALUE_PARAMETER name:value index:0 type:kotlin.String 
       BLOCK_BODY
-  PROPERTY name:test3 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public flags:final,static
+  PROPERTY name:test3 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public [final,static] 
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value="test3.get"
-      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:val
+        TestAnn(x = 'test3.get')
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test3>(): String'
-          GET_FIELD 'test3: String' type=kotlin.String origin=null
-  PROPERTY name:test4 visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public flags:static
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
+  PROPERTY name:test4 visibility:public modality:FINAL [var] 
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public [static] 
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.String 
       annotations:
-        CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value="test4.get"
-      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL flags:var
+        TestAnn(x = 'test4.get')
+      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test4>(): String'
-          GET_FIELD 'test4: String' type=kotlin.String origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit flags:
+        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public [static] ' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit 
       annotations:
-        CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value="test4.set"
-      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL flags:var
-      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String flags:
+        TestAnn(x = 'test4.set')
+      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String 
       BLOCK_BODY
-        SET_FIELD 'test4: String' type=kotlin.Unit origin=null
-          value: GET_VAR 'value-parameter <set-?>: String' type=kotlin.String origin=null
-
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public [static] ' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.String declared in <root>.<set-test4>' type=kotlin.String origin=null

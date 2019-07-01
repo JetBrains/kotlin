@@ -1,0 +1,30 @@
+package
+
+public fun test_1(/*0*/ list: kotlin.collections.List<In<kotlin.Number>>, /*1*/ x: In<kotlin.Number>, /*2*/ y: In<kotlin.Int>, /*3*/ z: In<kotlin.Any>): kotlin.Unit
+public fun test_2(/*0*/ list: kotlin.collections.List<In<kotlin.Int>>, /*1*/ x: In<kotlin.Int>, /*2*/ y: In<kotlin.Number>, /*3*/ z: In<kotlin.Any>): kotlin.Unit
+public fun test_3(/*0*/ list: kotlin.collections.List<Out<kotlin.Number>>, /*1*/ x: Out<kotlin.Number>, /*2*/ y: Out<kotlin.Int>, /*3*/ z: Out<kotlin.Any>): kotlin.Unit
+public fun test_4(/*0*/ list: kotlin.collections.List<Out<kotlin.Int>>, /*1*/ x: Out<kotlin.Int>, /*2*/ y: Out<kotlin.Number>, /*3*/ z: Out<kotlin.Any>): kotlin.Unit
+public fun test_5(/*0*/ list: kotlin.collections.List<Inv<kotlin.Number>>, /*1*/ x: Inv<kotlin.Number>, /*2*/ y: Inv<kotlin.Int>, /*3*/ z: Inv<kotlin.Any>): kotlin.Unit
+public fun test_6(/*0*/ list: kotlin.collections.List<Inv<kotlin.Int>>, /*1*/ x: Inv<kotlin.Int>, /*2*/ y: Inv<kotlin.Number>, /*3*/ z: Inv<kotlin.Any>): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes T> kotlin.collections.Iterable<T>.contains1(/*0*/ element: T): kotlin.Boolean
+
+public final class In</*0*/ in T> {
+    public constructor In</*0*/ in T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out T> {
+    public constructor Out</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

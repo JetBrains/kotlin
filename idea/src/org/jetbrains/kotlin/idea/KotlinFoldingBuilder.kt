@@ -173,7 +173,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
 
     private fun String.addSpaceIfNeeded(): String {
         if (isEmpty() || endsWith(" ")) return this
-        return this + " "
+        return "$this "
     }
 
     private fun getFirstLineOfComment(node: ASTNode): String {

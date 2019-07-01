@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun test() {
+    val t = 5.0.isNaN()
+}

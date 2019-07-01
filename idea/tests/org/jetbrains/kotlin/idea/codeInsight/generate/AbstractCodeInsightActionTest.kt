@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight.generate
@@ -14,15 +14,14 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -59,7 +58,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         var mainPsiFile: KtFile? = null
 
         try {
-            ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
             val mainFile = File(path)
             val mainFileName = mainFile.name
@@ -79,9 +78,9 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
             val targetPlatformName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PLATFORM: ")
             if (targetPlatformName != null) {
                 val targetPlatform = when (targetPlatformName) {
-                    "JVM" -> JvmPlatform
-                    "JavaScript" -> JsPlatform
-                    "Common" -> CommonPlatform
+                    "JVM" -> JvmPlatforms.unspecifiedJvmPlatform
+                    "JavaScript" -> JsPlatforms.defaultJsPlatform
+                    "Common" -> CommonPlatforms.defaultCommonPlatform
                     else -> error("Unexpected platform name: $targetPlatformName")
                 }
                 mainPsiFile.forcedTargetPlatform = targetPlatform
@@ -113,7 +112,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         }
         finally {
             mainPsiFile?.forcedTargetPlatform = null
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
         }
     }
 

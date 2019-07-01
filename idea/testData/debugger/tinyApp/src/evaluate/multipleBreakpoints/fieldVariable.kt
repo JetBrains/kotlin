@@ -24,4 +24,4 @@ fun main() {
 // RESULT: "field": Ljava/lang/String;
 
 // EXPRESSION: field
-// RESULT: Can't find a backing field for property field
+// RESULT: Cannot find the backing field 'b'

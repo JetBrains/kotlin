@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
 @DefaultImplementation(PlatformDiagnosticSuppressor.Default::class)
-interface PlatformDiagnosticSuppressor {
+interface PlatformDiagnosticSuppressor : PlatformSpecificExtension<PlatformDiagnosticSuppressor>{
     fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean
 
     fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean
@@ -31,4 +33,19 @@ interface PlatformDiagnosticSuppressor {
 
         override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = true
     }
+}
+
+class CompositePlatformDiagnosticSuppressor(private val suppressors: List<PlatformDiagnosticSuppressor>) : PlatformDiagnosticSuppressor {
+    override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean =
+        suppressors.all { it.shouldReportUnusedParameter(parameter) }
+
+    override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean =
+        suppressors.all { it.shouldReportNoBody(descriptor) }
+}
+
+class PlatformDiagnosticSuppressorClashesResolver : PlatformExtensionsClashResolver<PlatformDiagnosticSuppressor>(
+    PlatformDiagnosticSuppressor::class.java
+) {
+    override fun resolveExtensionsClash(extensions: List<PlatformDiagnosticSuppressor>): PlatformDiagnosticSuppressor =
+        CompositePlatformDiagnosticSuppressor(extensions)
 }

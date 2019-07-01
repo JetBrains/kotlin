@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A(val o: String)
 
 interface I {

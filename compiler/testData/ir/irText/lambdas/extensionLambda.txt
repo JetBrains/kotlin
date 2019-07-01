@@ -1,16 +1,16 @@
 FILE fqName:<root> fileName:/extensionLambda.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(): Int'
-        CALL 'run(T.() -> R) on T: R' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Int declared in <root>'
+        CALL 'public final fun run <T, R> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.run, R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Int origin=null
           <T>: kotlin.String
           <R>: kotlin.Int
           $receiver: CONST String type=kotlin.String value="42"
-          block: BLOCK type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:
-              $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
+          block: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int 
+              $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='<anonymous>() on String: Int'
-                  CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                    $this: GET_VAR 'this@<anonymous>: String' type=kotlin.String origin=null
-            FUNCTION_REFERENCE '<anonymous>() on String: Int' type=@[CALL 'constructor ExtensionFunctionType()' type=kotlin.ExtensionFunctionType origin=null] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test1'
+                  CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null
+            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Int declared in <root>.test1' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA

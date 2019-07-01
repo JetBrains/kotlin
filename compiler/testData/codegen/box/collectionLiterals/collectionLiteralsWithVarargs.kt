@@ -1,6 +1,5 @@
 // WITH_REFLECT
 
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 import java.util.Arrays

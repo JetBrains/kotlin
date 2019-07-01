@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.common.arguments
@@ -62,7 +62,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6"
+        description = "Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11 or 12), default is 1.6"
     )
     var jvmTarget: String? by NullableStringFreezableVar(JvmTarget.DEFAULT.description)
 
@@ -165,16 +165,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var singleModule: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xadd-compiler-builtins",
-        description = "Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)"
+        value = "-Xsuppress-missing-builtins-error",
+        description = "Suppress the \"cannot access built-in declaration\" error (useful with -no-stdlib)"
     )
-    var addCompilerBuiltIns: Boolean by FreezableVar(false)
-
-    @Argument(
-        value = "-Xload-builtins-from-dependencies",
-        description = "Load definitions of built-in declarations from module dependencies, instead of from the compiler"
-    )
-    var loadBuiltInsFromDependencies: Boolean by FreezableVar(false)
+    var suppressMissingBuiltinsError: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xscript-resolver-environment",
@@ -196,6 +190,20 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = "Java compiler arguments"
     )
     var javacArguments: Array<String>? by FreezableVar(null)
+
+
+    @Argument(
+        value = "-Xjava-source-roots",
+        valueDescription = "<path>",
+        description = "Paths to directories with Java source files"
+    )
+    var javaSourceRoots: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xjava-package-prefix",
+        description = "Package prefix for Java files"
+    )
+    var javaPackagePrefix: String? by FreezableVar(null)
 
     @Argument(
         value = "-Xjsr305",
@@ -255,8 +263,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xsanitize-parentheses",
         description = "Transform '(' and ')' in method names to some other character sequence.\n" +
-                "This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used as a workaround\n" +
-                "of an issue in the ASM bytecode framework. See KT-29475 for more details"
+                "This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround\n" +
+                "problems with parentheses in identifiers on certain platforms"
     )
     var sanitizeParentheses: Boolean by FreezableVar(false)
 
@@ -266,6 +274,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = "Paths to output directories for friend modules (whose internals should be visible)"
     )
     var friendPaths: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xallow-no-source-files",
+        description = "Allow no source files"
+    )
+    var allowNoSourceFiles: Boolean by FreezableVar(false)
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
@@ -283,6 +297,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             )
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
+        result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         return result
     }
 

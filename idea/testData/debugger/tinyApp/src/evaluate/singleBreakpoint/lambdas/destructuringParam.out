@@ -4,32 +4,10 @@ Connected to the target VM
 destructuringParam.kt:12
 Compile bytecode for x
 Compile bytecode for y
-package destructuringParam
-data class A(val x: String, val y: String)
-
-fun foo(a: A, block: (A) -> String): String = block(a)
-
-fun box() {
-
-}
-
-fun main(args: Array<String>) {
-    //Breakpoint! (lambdaOrdinal = 1)
-    foo(A("O", "K")) { (x, y) -> x + y }
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: x
-// RESULT: "O": Ljava/lang/String;
-
-// EXPRESSION: y
-// RESULT: "K": Ljava/lang/String;
-
  frame    = invoke:12, DestructuringParamKt$main$1 {destructuringParam}
    this     = this = {destructuringParam.DestructuringParamKt$main$1@uniqueID}Function1<destructuringParam.A, java.lang.String>
      field    = arity: int = 1 (sp = Lambda.!EXT!)
-   local    = $x_y: destructuringParam.A = {destructuringParam.A@uniqueID}A(x=O, y=K) (sp = null)
+   local    = $dstr$x$y: destructuringParam.A = {destructuringParam.A@uniqueID}A(x=O, y=K) (sp = null)
      field    = x: java.lang.String = O (sp = destructuringParam.kt, 2)
        field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
          element  = 0 = 'O' 79

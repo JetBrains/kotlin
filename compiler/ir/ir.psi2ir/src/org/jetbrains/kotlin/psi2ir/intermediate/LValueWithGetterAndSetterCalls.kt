@@ -26,7 +26,7 @@ class LValueWithGetterAndSetterCalls(
     val callGenerator: CallGenerator,
     val descriptor: CallableDescriptor,
     val getterCall: () -> CallBuilder?,
-    val setterCall: () -> CallBuilder?,
+    val setterCall: (IrExpression) -> CallBuilder?,
     override val type: IrType,
     val startOffset: Int,
     val endOffset: Int,
@@ -39,8 +39,7 @@ class LValueWithGetterAndSetterCalls(
     }
 
     override fun store(irExpression: IrExpression): IrExpression {
-        val call = setterCall() ?: throw AssertionError("No setter call for $descriptor")
-        call.irValueArgumentsByIndex[call.argumentsCount - 1] = irExpression
+        val call = setterCall(irExpression) ?: throw AssertionError("No setter call for $descriptor")
         return callGenerator.generateCall(startOffset, endOffset, call, origin)
     }
 

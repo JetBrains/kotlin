@@ -1,0 +1,2 @@
+//method
+protected void test() {}

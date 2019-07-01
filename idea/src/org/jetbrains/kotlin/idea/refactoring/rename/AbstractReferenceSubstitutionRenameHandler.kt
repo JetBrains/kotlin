@@ -27,7 +27,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
     compile(project(":compiler:plugin-api"))
     compile(project(":compiler:frontend"))
@@ -16,17 +16,28 @@ dependencies {
     compile(project(":js:js.translator"))
 
     runtime(kotlinStdlib())
+
+    testCompile(projectTests(":compiler:tests-common"))
+    testCompile(commonDep("junit:junit"))
+    testCompile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0")
+
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
+    }
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
 
-val jar = runtimeJar {}
+runtimeJar()
+sourcesJar()
+javadocJar()
+testsJar()
 
-dist(targetName = the<BasePluginConvention>().archivesBaseName + ".jar")
-
-ideaPlugin {
-    from(jar)
+projectTest(parallel = true) {
+    workingDir = rootDir
 }

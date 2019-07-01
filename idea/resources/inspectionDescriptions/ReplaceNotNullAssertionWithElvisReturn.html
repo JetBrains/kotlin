@@ -1,0 +1,13 @@
+<html>
+<body>
+This inspection reports not-null assertion (<b>!!</b>) calls that can be replaced with elvis and return (<b>?: return</b>). For example:
+<br /><br />
+<pre>
+val number: Int? = 42
+fun foo() {
+    val a = number!! // Replace '!!' with '?: return'
+    println(1 + a)
+}
+</pre>
+</body>
+</html>

@@ -1,17 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.resolve
 
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import java.io.File
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.junit.Assert
 import junit.framework.AssertionFailedError
+import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.junit.Assert
+import java.io.File
 
 abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {

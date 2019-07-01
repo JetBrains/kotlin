@@ -8,9 +8,13 @@ dependencies {
     compile(project(":idea"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:backend.jvm")) // TODO: fix import (workaround for jps build)
+    compile(project(":compiler:backend.jvm"))
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
+
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java"))
+    }
 
     compileOnly(intellijPluginDep("junit"))
     compileOnly(intellijPluginDep("testng"))
@@ -20,7 +24,6 @@ dependencies {
     compileOnly(intellijPluginDep("copyright"))
     compileOnly(intellijPluginDep("properties"))
     compileOnly(intellijPluginDep("java-i18n"))
-    compileOnly(intellijPluginDep("stream-debugger"))
 }
 
 
@@ -31,8 +34,4 @@ sourceSets {
 
 configureFormInstrumentation()
 
-runtimeJar {
-    archiveName = "jvm-ide.jar"
-}
-
-ideaPlugin()
+runtimeJar()

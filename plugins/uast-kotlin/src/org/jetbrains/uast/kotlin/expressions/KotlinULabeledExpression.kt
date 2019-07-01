@@ -23,14 +23,14 @@ import org.jetbrains.uast.ULabeledExpression
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinULabeledExpression(
-        override val psi: KtLabeledExpression,
+        override val sourcePsi: KtLabeledExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), ULabeledExpression {
     override val label: String
-        get() = psi.getLabelName().orAnonymous("label")
+        get() = sourcePsi.getLabelName().orAnonymous("label")
 
     override val labelIdentifier: UIdentifier?
-        get() = psi.getTargetLabel()?.let { KotlinUIdentifier(it, this) }
+        get() = sourcePsi.getTargetLabel()?.let { KotlinUIdentifier(it, this) }
 
-    override val expression by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
+    override val expression by lz { KotlinConverter.convertOrEmpty(sourcePsi.baseExpression, this) }
 }

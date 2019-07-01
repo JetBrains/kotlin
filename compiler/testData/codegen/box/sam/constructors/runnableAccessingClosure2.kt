@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 class Box(val s: String) {

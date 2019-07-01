@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -95,7 +95,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         val fileText = FileUtil.loadFile(mainFile, true)
         val configured = configureCompilerOptions(fileText, project, module)
 
-        ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
+        ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
         try {
             TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
@@ -113,7 +113,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
                 DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
             }
         } finally {
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
             if (configured) {
                 rollbackCompilerOptions(project, module)
             }

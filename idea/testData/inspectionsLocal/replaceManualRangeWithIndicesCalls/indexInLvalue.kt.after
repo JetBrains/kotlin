@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun test(args: Array<String>) {
+    for (index in args.indices) {
+        args[index] = "Hello"
+    }
+}

@@ -25,17 +25,17 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
 
 class KotlinULiteralExpression(
-        override val psi: KtConstantExpression,
+        override val sourcePsi: KtConstantExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), ULiteralExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val isNull: Boolean
-        get() = psi.unwrapBlockOrParenthesis().node?.elementType == KtNodeTypes.NULL
+        get() = sourcePsi.unwrapBlockOrParenthesis().node?.elementType == KtNodeTypes.NULL
 
     override val value by lz { evaluate() }
 }
 
 class KotlinStringULiteralExpression(
-        override val psi: PsiElement,
+        override val sourcePsi: PsiElement,
         givenParent: UElement?,
         val text: String
 ) : KotlinAbstractUExpression(givenParent), ULiteralExpression, KotlinUElementWithType{
@@ -47,5 +47,5 @@ class KotlinStringULiteralExpression(
 
     override fun evaluate() = value
 
-    override fun getExpressionType(): PsiType? = PsiType.getJavaLangString(psi.manager, psi.resolveScope)
+    override fun getExpressionType(): PsiType? = PsiType.getJavaLangString(sourcePsi.manager, sourcePsi.resolveScope)
 }

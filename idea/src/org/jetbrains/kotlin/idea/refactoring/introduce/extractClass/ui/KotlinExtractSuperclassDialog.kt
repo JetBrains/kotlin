@@ -31,13 +31,20 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 
 class KotlinExtractSuperclassDialog(
-        originalClass: KtClassOrObject,
-        targetParent: PsiElement,
-        conflictChecker: (KotlinExtractSuperDialogBase) -> Boolean,
-        refactoring: (ExtractSuperInfo) -> Unit
-) : KotlinExtractSuperDialogBase(originalClass, targetParent, conflictChecker, false, KotlinExtractSuperclassHandler.REFACTORING_NAME, refactoring) {
+    originalClass: KtClassOrObject,
+    targetParent: PsiElement,
+    conflictChecker: (KotlinExtractSuperDialogBase) -> Boolean,
+    refactoring: (ExtractSuperInfo) -> Unit
+) : KotlinExtractSuperDialogBase(
+    originalClass,
+    targetParent,
+    conflictChecker,
+    false,
+    KotlinExtractSuperclassHandler.REFACTORING_NAME,
+    refactoring
+) {
     companion object {
-        private val DESTINATION_PACKAGE_RECENT_KEY = "KotlinExtractSuperclassDialog.RECENT_KEYS"
+        private const val DESTINATION_PACKAGE_RECENT_KEY = "KotlinExtractSuperclassDialog.RECENT_KEYS"
     }
 
     init {
@@ -46,9 +53,9 @@ class KotlinExtractSuperclassDialog(
 
     override fun createMemberInfoModel(): MemberInfoModelBase {
         return object : MemberInfoModelBase(
-                originalClass,
-                extractClassMembers(originalClass),
-                getInterfaceContainmentVerifier { selectedMembers }
+            originalClass,
+            extractClassMembers(originalClass),
+            getInterfaceContainmentVerifier { selectedMembers }
         ) {
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
                 if (!super.isAbstractEnabled(memberInfo)) return false

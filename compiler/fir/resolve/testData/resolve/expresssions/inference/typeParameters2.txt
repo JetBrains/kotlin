@@ -1,0 +1,22 @@
+FILE: typeParameters2.kt
+    public abstract interface Foo : R|kotlin/Any| {
+    }
+    public final class FooImpl : R|Foo| {
+        public constructor(): R|FooImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class FooBarImpl : R|Foo| {
+        public constructor(): R|FooBarImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <T : R|Foo|> foo(t: R|T|): R|T| {
+        ^foo R|<local>/t|
+    }
+    public final fun main(fooImpl: R|FooImpl|, fooBarImpl: R|FooBarImpl|): R|kotlin/Unit| {
+        lval a: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/foo]> = <Inapplicable(INAPPLICABLE): [/foo]>#<R|FooImpl|>(R|<local>/fooBarImpl|)
+        lval b: R|Foo| = R|/foo|<R|Foo|>(R|<local>/fooImpl|)
+    }

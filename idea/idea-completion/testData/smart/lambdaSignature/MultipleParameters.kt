@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 fun foo(p: Int) {
     "abc".fold(1) { <caret> }
 }

@@ -50,7 +50,7 @@ class KotlinNameSuggestionProvider : NameSuggestionProvider {
             val names = SmartList<String>().apply {
                 val name = element.name
                 if (!name.isNullOrBlank()) {
-                    this += KotlinNameSuggester.getCamelNames(name!!, validator, name.first().isLowerCase())
+                    this += KotlinNameSuggester.getCamelNames(name, validator, name.first().isLowerCase())
                 }
 
                 val callableDescriptor = element.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) as CallableDescriptor

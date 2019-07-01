@@ -1,0 +1,7 @@
+// "Add 'abstract fun f()' to 'A'" "true"
+sealed class A {
+    abstract fun f()
+}
+class B : A() {
+    <caret>override fun f() {}
+}

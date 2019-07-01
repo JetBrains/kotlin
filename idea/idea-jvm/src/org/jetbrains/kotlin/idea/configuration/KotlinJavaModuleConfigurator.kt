@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibraryConfigurator() {
     override fun isApplicable(module: Module): Boolean {
@@ -71,7 +71,10 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
         get() = NAME
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
+
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform() = JvmPlatforms.CompatJvmPlatform
 
     override fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor> {
         var result = listOf(
@@ -113,7 +116,7 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
                     try {
                         val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
                         val facetSettings = facet.configuration.settings
-                        facetSettings.initializeIfNeeded(module, null, JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8))
+                        facetSettings.initializeIfNeeded(module, null, JvmPlatforms.jvm18)
                         (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = "1.8"
                     } finally {
                         modelsProvider.dispose()

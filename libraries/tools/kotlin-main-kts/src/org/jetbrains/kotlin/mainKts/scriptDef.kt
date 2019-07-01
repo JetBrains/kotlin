@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.mainKts
@@ -14,6 +14,7 @@ import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
@@ -29,7 +30,7 @@ object MainKtsScriptDefinition : ScriptCompilationConfiguration(
     {
         defaultImports(DependsOn::class, Repository::class, Import::class)
         jvm {
-            dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts")
+            dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts", "kotlin-stdlib", "kotlin-reflect")
         }
         refineConfiguration {
             onAnnotations(DependsOn::class, Repository::class, Import::class, handler = MainKtsConfigurator())
@@ -59,7 +60,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
         val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
             ?: return context.compilationConfiguration.asSuccess()
 
-        val scriptBaseDir = (context.script as? FileScriptSource)?.file?.parentFile
+        val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
         val importedSources = annotations.flatMap {
             (it as? Import)?.paths?.map { sourceName ->
                 FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))

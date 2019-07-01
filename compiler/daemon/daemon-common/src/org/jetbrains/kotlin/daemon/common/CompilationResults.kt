@@ -30,3 +30,8 @@ enum class CompilationResultCategory(val code: Int) {
     BUILD_REPORT_LINES(1),
     VERBOSE_BUILD_REPORT_LINES(2),
 }
+
+interface CompilationResultsAsync {
+    suspend fun add(compilationResultCategory: Int, value: Serializable)
+    val clientSide: CompilationResultsAsync
+}

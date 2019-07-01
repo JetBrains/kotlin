@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface Z {
 
     fun testFun(): String {

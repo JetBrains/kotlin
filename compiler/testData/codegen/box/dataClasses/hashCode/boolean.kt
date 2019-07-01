@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 data class A(val a: Boolean)
 
 fun box() : String {

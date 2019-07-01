@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 import kotlin.test.assertEquals
 
 enum class Season {

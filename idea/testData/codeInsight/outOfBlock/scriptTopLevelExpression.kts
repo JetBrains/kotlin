@@ -1,0 +1,4 @@
+// TRUE
+1<caret>
+
+// SKIP_ANALYZE_CHECK

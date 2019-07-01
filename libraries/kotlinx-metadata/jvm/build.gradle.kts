@@ -47,6 +47,11 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
 }
 
+
+if (deployVersion != null) {
+    publish()
+}
+
 noDefaultJar()
 
 task<ShadowJar>("shadowJar") {
@@ -75,8 +80,3 @@ sourcesJar {
 }
 
 javadocJar()
-
-if (deployVersion != null) {
-    publish()
-}
-

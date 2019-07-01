@@ -1,5 +1,6 @@
 // !DIAGNOSTICS_NUMBER: 2
 // !DIAGNOSTICS: TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS
+// !LANGUAGE: -NewInference
 // see DiagnosticMessageTest
 
 import java.io.Closeable

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.versions
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -33,7 +33,7 @@ private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
  * Component forces update for built-in libraries in plugin directory. They are ignored because of
  * com.intellij.util.indexing.FileBasedIndex.isUnderConfigOrSystem()
  */
-class KotlinUpdatePluginComponent : ApplicationComponent {
+class KotlinUpdatePluginComponent : BaseComponent {
     override fun initComponent() {
         if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
             return

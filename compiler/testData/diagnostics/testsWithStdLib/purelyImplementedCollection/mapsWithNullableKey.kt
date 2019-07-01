@@ -17,15 +17,15 @@ fun hashMapTest() {
     <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
-    val b1: MutableMap<String?, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String?, Int?> = <!TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String?, Int> = x
     val b3: Map<String?, Int> = x
     val b4: Map<String?, Int?> = x
-    val b5: Map<String, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b5: Map<String, Int?> = <!TYPE_MISMATCH!>x<!>
 
-    val b6: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[null]<!>
-    val b8: Int = <!TYPE_MISMATCH!>x.<!NI;TYPE_MISMATCH!>get("")<!><!>
+    val b6: Int = <!TYPE_MISMATCH!>x[""]<!>
+    val b7: Int = <!TYPE_MISMATCH!>x[null]<!>
+    val b8: Int = <!TYPE_MISMATCH!>x.get("")<!>
 
     val b9: Int? = x.get("")
 }
@@ -42,14 +42,14 @@ fun treeMapTest() {
     <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
-    val b1: MutableMap<String?, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String?, Int?> = <!TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String?, Int> = x
     val b3: Map<String?, Int> = x
     val b4: Map<String?, Int?> = x
-    val b5: Map<String, Int?> = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val b5: Map<String, Int?> = <!TYPE_MISMATCH!>x<!>
 
-    val b6: Int = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!TYPE_MISMATCH!>x.<!NI;TYPE_MISMATCH!>get("")<!><!>
+    val b6: Int = <!TYPE_MISMATCH!>x[""]<!>
+    val b7: Int = <!TYPE_MISMATCH!>x.get("")<!>
 
     val b8: Int? = x.get("")
 }

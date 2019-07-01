@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.context;
@@ -55,7 +55,7 @@ public interface LocalLookup {
                 Type type = sharedVarType != null ? sharedVarType : localType;
                 KotlinType kotlinType = sharedVarType != null ? null : localKotlinType;
 
-                String fieldName = "$" + vd.getName();
+                String fieldName = AsmUtil.getCapturedFieldName(vd.getName().asString());
                 StackValue.Local thiz = StackValue.LOCAL_0;
 
                 StackValue.StackValueWithSimpleReceiver innerValue;
@@ -113,7 +113,7 @@ public interface LocalLookup {
                 int localClassIndexStart = simpleName.lastIndexOf('$');
                 String localFunSuffix = localClassIndexStart >= 0 ? simpleName.substring(localClassIndexStart) : "";
 
-                String fieldName = "$" + vd.getName() + localFunSuffix;
+                String fieldName = AsmUtil.getCapturedFieldName(vd.getName().asString()) + localFunSuffix;
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(
                         localType, null, classType, fieldName, false, StackValue.LOCAL_0, vd
                 );

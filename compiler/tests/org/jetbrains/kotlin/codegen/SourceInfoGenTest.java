@@ -25,6 +25,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 public class SourceInfoGenTest extends CodegenTestCase {
 
     private static final String TEST_FOLDER = "sourceInfo/";
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -50,7 +51,6 @@ public class SourceInfoGenTest extends CodegenTestCase {
             public void visitSource(String source, String debug) {
                 producer[0] = source;
             }
-
         }, 0);
         return producer[0];
     }

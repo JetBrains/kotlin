@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("unused")
@@ -9,6 +9,7 @@ package kotlin.script.experimental.api
 
 import java.io.Serializable
 import kotlin.reflect.KClass
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptCompilationConfigurationKeys
@@ -33,6 +34,16 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
     companion object : ScriptCompilationConfigurationKeys
 
     object Default : ScriptCompilationConfiguration()
+
+    /**
+     * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+     * to the original one, otherwise returns original
+     */
+    fun withUpdates(body: Builder.() -> Unit = {}): ScriptCompilationConfiguration {
+        val newConfiguration = ScriptCompilationConfiguration(this, body = body)
+        return if (newConfiguration == this) this
+        else newConfiguration
+    }
 }
 
 /**
@@ -48,7 +59,7 @@ val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key
 /**
  * The superclass for target script class
  */
-val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>() // script base class
+val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>(KotlinType(Any::class)) // script base class
 
 /**
  * The list of classes that will be used as implicit receivers in the script body, as if the whole body is wrapped with "with" calls:
@@ -112,6 +123,11 @@ val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by Pro
  * (for use primary with the refinement callbacks)
  */
 val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+
+/**
+ * Scripting host configuration
+ */
+val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>()
 
 /**
  * The sub-builder DSL for configuring refinement callbacks
@@ -190,14 +206,18 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 typealias RefineScriptCompilationConfigurationHandler =
             (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
 
-class RefineConfigurationUnconditionallyData(
+data class RefineConfigurationUnconditionallyData(
     val handler: RefineScriptCompilationConfigurationHandler
-) : Serializable
+) : Serializable {
+    companion object { private const val serialVersionUID: Long = 1L }
+}
 
-class RefineConfigurationOnAnnotationsData(
+data class RefineConfigurationOnAnnotationsData(
     val annotations: List<KotlinType>,
     val handler: RefineScriptCompilationConfigurationHandler
-) : Serializable
+) : Serializable {
+    companion object { private const val serialVersionUID: Long = 1L }
+}
 
 
 /**
@@ -245,4 +265,10 @@ interface CompiledScript<out ScriptBase : Any> {
      */
     val otherScripts: List<CompiledScript<*>>
         get() = emptyList()
+
+    /**
+     * The name and the type of the script's result field, if any
+     */
+    val resultField: Pair<String, KotlinType>?
+        get() = null
 }

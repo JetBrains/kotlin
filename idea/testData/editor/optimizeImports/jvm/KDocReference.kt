@@ -1,4 +1,3 @@
-// RUNTIME
 import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.read
 import java.util.ArrayList

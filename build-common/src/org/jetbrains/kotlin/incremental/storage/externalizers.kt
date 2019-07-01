@@ -177,20 +177,6 @@ object PathStringDescriptor : EnumeratorStringDescriptor() {
     override fun isEqual(val1: String, val2: String?) = FileUtil.pathsEqual(val1, val2)
 }
 
-object FileKeyDescriptor : KeyDescriptor<File> {
-    override fun read(input: DataInput): File = File(input.readUTF())
-
-    override fun save(output: DataOutput, value: File) {
-        output.writeUTF(value.canonicalPath)
-    }
-
-    override fun getHashCode(value: File?): Int =
-            FileUtil.FILE_HASHING_STRATEGY.computeHashCode(value)
-
-    override fun isEqual(val1: File?, val2: File?): Boolean =
-            FileUtil.FILE_HASHING_STRATEGY.equals(val1, val2)
-}
-
 open class CollectionExternalizer<T>(
         private val elementExternalizer: DataExternalizer<T>,
         private val newCollection: () -> MutableCollection<T>

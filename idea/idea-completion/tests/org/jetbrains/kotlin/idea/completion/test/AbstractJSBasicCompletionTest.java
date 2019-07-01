@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test;
@@ -9,8 +9,8 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
-import org.jetbrains.kotlin.js.resolve.JsPlatform;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.platform.TargetPlatform;
+import org.jetbrains.kotlin.platform.js.JsPlatforms;
 
 public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureCompletionBaseTestCase {
     @NotNull
@@ -22,7 +22,7 @@ public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureComplet
     @NotNull
     @Override
     public TargetPlatform getPlatform() {
-        return JsPlatform.INSTANCE;
+        return JsPlatforms.INSTANCE.getDefaultJsPlatform();
     }
 
     @NotNull

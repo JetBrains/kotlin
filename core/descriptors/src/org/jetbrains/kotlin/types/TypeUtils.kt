@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 enum class TypeNullability {
@@ -54,6 +56,7 @@ fun KotlinType.supertypes(): Collection<KotlinType> = TypeUtils.getAllSupertypes
 
 fun KotlinType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
 fun KotlinType.isNullableNothing(): Boolean = KotlinBuiltIns.isNullableNothing(this)
+fun KotlinType.isNothingOrNullableNothing(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this)
 fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 fun KotlinType.isNullableAny(): Boolean = KotlinBuiltIns.isNullableAny(this)
@@ -78,6 +81,9 @@ fun KotlinType.isPrimitiveNumberOrNullableType(): Boolean =
             !KotlinBuiltIns.isCharOrNullableChar(this)
 
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
+
+fun KotlinType.upperBoundedByPrimitiveNumberOrNullableType(): Boolean =
+    TypeUtils.getTypeParameterDescriptorOrNull(this)?.upperBounds?.any { it.isPrimitiveNumberOrNullableType() } == true
 
 fun KotlinType.isInterface(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.INTERFACE
 fun KotlinType.isEnum(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
@@ -124,7 +130,7 @@ fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupe
 fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
     TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
 
-fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): Collection<KotlinType> {
+fun <T> Collection<T>.closure(f: (T) -> Collection<T>): Collection<T> {
     if (size == 0) return this
 
     val result = HashSet(this)
@@ -132,7 +138,7 @@ fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): C
     var oldSize = 0
     while (result.size > oldSize) {
         oldSize = result.size
-        val toAdd = hashSetOf<KotlinType>()
+        val toAdd = hashSetOf<T>()
         elementsToCheck.forEach { toAdd.addAll(f(it)) }
         result.addAll(toAdd)
         elementsToCheck = toAdd
@@ -228,3 +234,45 @@ fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
     constructor is NewTypeVariableConstructor ||
             constructor.declarationDescriptor is TypeParameterDescriptor ||
             this is NewCapturedType
+
+val TypeParameterDescriptor.representativeUpperBound: KotlinType
+    get() {
+        assert(upperBounds.isNotEmpty()) { "Upper bounds should not be empty: $this" }
+
+        return upperBounds.firstOrNull {
+            val classDescriptor = it.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull false
+            classDescriptor.kind != ClassKind.INTERFACE && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
+        } ?: upperBounds.first()
+    }
+
+fun KotlinType.expandIntersectionTypeIfNecessary(): Collection<KotlinType> {
+    if (constructor !is IntersectionTypeConstructor) return listOf(this)
+    val types = constructor.supertypes
+    return if (isMarkedNullable) {
+        types.map { it.makeNullable() }
+    } else {
+        types
+    }
+}
+
+fun KotlinType.unCapture(): KotlinType = unwrap().unCapture()
+
+fun UnwrappedType.unCapture(): UnwrappedType = when (this) {
+    is AbbreviatedType -> unCapture()
+    is SimpleType -> unCapture()
+    is FlexibleType -> FlexibleTypeImpl(lowerBound.unCapture(), upperBound.unCapture())
+}
+
+fun SimpleType.unCapture(): SimpleType {
+    val newArguments = arguments.map { projection ->
+        projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.let {
+            it.projection
+        } ?: projection
+    }
+    return replace(newArguments)
+}
+
+fun AbbreviatedType.unCapture(): SimpleType {
+    val newType = expandedType.unCapture()
+    return AbbreviatedType(newType, abbreviation)
+}

@@ -1,0 +1,1 @@
+public final fun listOfStar(): R|kotlin/collections/List<*>|

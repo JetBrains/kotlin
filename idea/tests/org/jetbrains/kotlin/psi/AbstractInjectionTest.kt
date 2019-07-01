@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
@@ -17,7 +17,6 @@ import org.intellij.plugins.intelliLang.inject.InjectLanguageAction
 import org.intellij.plugins.intelliLang.inject.UnInjectLanguageAction
 import org.intellij.plugins.intelliLang.references.FileReferenceInjector
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.utils.SmartList
@@ -28,7 +27,7 @@ abstract class AbstractInjectionTest : KotlinLightCodeInsightFixtureTestCase() {
         return when {
             testName.endsWith("WithAnnotation") -> KotlinLightProjectDescriptor.INSTANCE
             testName.endsWith("WithRuntime") -> KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-            else -> KotlinLightCodeInsightFixtureTestCaseBase.JAVA_LATEST
+            else -> JAVA_LATEST
         }
     }
 

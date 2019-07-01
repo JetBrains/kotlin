@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir2cfg.generators.FunctionGenerator
 import org.jetbrains.kotlin.ir2cfg.util.dump
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractIrCfgTestCase : AbstractIrGeneratorTestCase() {
-
-    private val IrFunction.name: String get() = this.descriptor.name.asString()
 
     private fun IrFile.cfgDump(): String {
         val builder = StringBuilder()

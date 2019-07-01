@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -23,9 +23,9 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         val LOCAL_VARIABLE_TABLE_DIRECTIVE = "// LOCAL_VARIABLE_TABLE"
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
-        compile(files, javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        val txtFile = File(wholeFile.parentFile, getExpectedTextFileName(wholeFile))
+        compile(files)
 
         val classes = classFileFactory
                 .getClassFiles()
@@ -45,6 +45,8 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables)
         })
     }
+
+    protected open fun getExpectedTextFileName(wholeFile: File): String = wholeFile.nameWithoutExtension + ".txt"
 
     private fun renderClassNode(clazz: ClassNode, showBytecodeForTheseMethods: List<String>, showLocalVariables: Boolean): String {
         val fields = (clazz.fields ?: emptyList()).sortedBy { it.name }

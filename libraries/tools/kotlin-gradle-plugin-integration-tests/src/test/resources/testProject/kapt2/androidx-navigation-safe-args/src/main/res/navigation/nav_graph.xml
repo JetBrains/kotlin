@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph"
+            app:startDestination="@id/startFragment">
+
+    <fragment android:id="@+id/startFragment" android:name="test.androidx.navigation.StartFragment"
+              android:label="fragment_start" tools:layout="@layout/fragment_start">
+        <action android:id="@+id/action_startFragment_to_destinationFragment1"
+                app:destination="@id/destinationFragment1" app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim" app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action android:id="@+id/action_startFragment_to_destinationFragment2"
+                app:destination="@id/destinationFragment2" app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim" app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+    </fragment>
+    <fragment android:id="@+id/destinationFragment1" android:name="test.androidx.navigation.DestinationFragment1"
+              android:label="fragment_destination_fragment1" tools:layout="@layout/fragment_destination_fragment1"/>
+    <fragment android:id="@+id/destinationFragment2" android:name="test.androidx.navigation.DestinationFragment2"
+              android:label="fragment_destination_fragment2" tools:layout="@layout/fragment_destination_fragment2"/>
+</navigation>

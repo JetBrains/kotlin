@@ -143,8 +143,7 @@ fun <T : IrBuilder> T.at(startOffset: Int, endOffset: Int) = apply {
 }
 
 inline fun IrGeneratorWithScope.irBlock(
-    startOffset: Int = UNDEFINED_OFFSET,
-    endOffset: Int = UNDEFINED_OFFSET,
+    startOffset: Int, endOffset: Int,
     origin: IrStatementOrigin? = null,
     resultType: IrType? = null,
     body: IrBlockBuilder.() -> Unit
@@ -157,8 +156,7 @@ inline fun IrGeneratorWithScope.irBlock(
     ).block(body)
 
 inline fun IrGeneratorWithScope.irComposite(
-    startOffset: Int = UNDEFINED_OFFSET,
-    endOffset: Int = UNDEFINED_OFFSET,
+    startOffset: Int, endOffset: Int,
     origin: IrStatementOrigin? = null,
     resultType: IrType? = null,
     body: IrBlockBuilder.() -> Unit
@@ -171,7 +169,7 @@ inline fun IrGeneratorWithScope.irComposite(
     ).block(body)
 
 inline fun IrGeneratorWithScope.irBlockBody(
-    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
+    startOffset: Int, endOffset: Int,
     body: IrBlockBodyBuilder.() -> Unit
 ): IrBlockBody =
     IrBlockBodyBuilder(

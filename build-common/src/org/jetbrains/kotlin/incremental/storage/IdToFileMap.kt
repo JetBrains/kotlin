@@ -16,20 +16,24 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.ExternalIntegerKeyDescriptor
 import java.io.File
 
-internal class IdToFileMap(file: File) : BasicMap<Int, File>(file, ExternalIntegerKeyDescriptor(), FileKeyDescriptor) {
+internal class IdToFileMap(
+    file: File,
+    private val pathConverter: FileToPathConverter
+) : BasicMap<Int, String>(file, ExternalIntegerKeyDescriptor(), EnumeratorStringDescriptor.INSTANCE) {
     override fun dumpKey(key: Int): String = key.toString()
 
-    override fun dumpValue(value: File): String = value.toString()
+    override fun dumpValue(value: String): String = value
 
-    operator fun get(id: Int): File? = storage[id]
+    operator fun get(id: Int): File? = storage[id]?.let { pathConverter.toFile(it) }
 
     operator fun contains(id: Int): Boolean = id in storage
 
     operator fun set(id: Int, file: File) {
-        storage[id] = file
+        storage[id] = pathConverter.toPath(file)
     }
 
     fun remove(id: Int) {

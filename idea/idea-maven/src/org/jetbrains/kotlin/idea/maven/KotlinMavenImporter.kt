@@ -45,12 +45,13 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.platform.tooling
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -179,7 +180,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
     private fun getCompilerArgumentsByConfigurationElement(
         mavenProject: MavenProject,
         configuration: Element?,
-        platform: IdePlatform<*, *>
+        platform: TargetPlatform
     ): List<String> {
         val arguments = platform.createArguments()
 
@@ -256,7 +257,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
         kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, platform, modifiableModelsProvider)
         val facetSettings = kotlinFacet.configuration.settings
-        val configuredPlatform = kotlinFacet.configuration.settings.platform!!
+        val configuredPlatform = kotlinFacet.configuration.settings.targetPlatform!!
         val configuration = mavenPlugin.configurationElement
         val sharedArguments = getCompilerArgumentsByConfigurationElement(mavenProject, configuration, configuredPlatform)
         val executionArguments = mavenPlugin.executions
@@ -331,8 +332,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             .flatMap { it.goals.asSequence() }
             .any { it in PomFile.KotlinGoals.CompileGoals && it !in PomFile.KotlinGoals.JvmGoals }
 
-        val prodSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) KotlinSourceRootType.Source else JavaSourceRootType.SOURCE
-        val testSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) KotlinSourceRootType.TestSource else JavaSourceRootType.TEST_SOURCE
+        val prodSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) SourceKotlinRootType else JavaSourceRootType.SOURCE
+        val testSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) TestSourceKotlinRootType else JavaSourceRootType.TEST_SOURCE
 
         for ((type, dir) in directories) {
             if (rootModel.getSourceFolder(File(dir)) == null) {
@@ -346,10 +347,10 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         }
 
         if (isNonJvmModule) {
-            mavenProject.sources.forEach { rootModel.addSourceFolder(it, KotlinSourceRootType.Source) }
-            mavenProject.testSources.forEach { rootModel.addSourceFolder(it, KotlinSourceRootType.TestSource) }
-            mavenProject.resources.forEach { rootModel.addSourceFolder(it.directory, KotlinResourceRootType.Resource) }
-            mavenProject.testResources.forEach { rootModel.addSourceFolder(it.directory, KotlinResourceRootType.TestResource) }
+            mavenProject.sources.forEach { rootModel.addSourceFolder(it, SourceKotlinRootType) }
+            mavenProject.testSources.forEach { rootModel.addSourceFolder(it, TestSourceKotlinRootType) }
+            mavenProject.resources.forEach { rootModel.addSourceFolder(it.directory, ResourceKotlinRootType) }
+            mavenProject.testResources.forEach { rootModel.addSourceFolder(it.directory, TestResourceKotlinRootType) }
             KotlinSdkType.setUpIfNeeded()
         }
 
@@ -369,7 +370,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         }.distinct()
 
     private fun setImplementedModuleName(kotlinFacet: KotlinFacet, mavenProject: MavenProject, module: Module) {
-        if (kotlinFacet.configuration.settings.platform.isCommon) {
+        if (kotlinFacet.configuration.settings.targetPlatform.isCommon()) {
             kotlinFacet.configuration.settings.implementedModuleNames = emptyList()
         } else {
             val manager = MavenProjectsManager.getInstance(module.project)

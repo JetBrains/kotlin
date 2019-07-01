@@ -1,0 +1,7 @@
+import kotlin.math.max
+
+// FIX: Replace with `max` function
+// WITH_RUNTIME
+fun test(x: Double, y: Double) {
+    max(x, y)
+}

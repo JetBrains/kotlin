@@ -5,33 +5,6 @@ frameInnerLambda.kt:9
 Compile bytecode for val1
 Compile bytecode for val2
 Compile bytecode for val1 + val2
-package frameInnerLambda
-
-fun main(args: Array<String>) {
-    val val1 = 1
-    foo {
-        val val2 = 1
-        foo {
-            //Breakpoint!
-            val1 + val2
-        }
-    }
-}
-
-fun foo(f: () -> Unit) {
-    f()
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: val1
-// RESULT: 1: I
-
-// EXPRESSION: val2
-// RESULT: 1: I
-
-// EXPRESSION: val1 + val2
-// RESULT: 2: I
  frame    = invoke:9, FrameInnerLambdaKt$main$1$1 {frameInnerLambda}
    this     = this = {frameInnerLambda.FrameInnerLambdaKt$main$1$1@uniqueID}Function0<kotlin.Unit>
      field    = this$0: frameInnerLambda.FrameInnerLambdaKt$main$1 = {frameInnerLambda.FrameInnerLambdaKt$main$1@uniqueID}Function0<kotlin.Unit> (sp = null)

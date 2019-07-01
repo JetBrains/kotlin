@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.context
 
 import org.jetbrains.kotlin.codegen.FieldInfo
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,16 +31,15 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptProvidedPropertiesDescriptor
 import org.jetbrains.org.objectweb.asm.Type
 
 class ScriptContext(
-    val typeMapper: KotlinTypeMapper,
+    typeMapper: KotlinTypeMapper,
     val scriptDescriptor: ScriptDescriptor,
     val earlierScripts: List<ScriptDescriptor>,
     contextDescriptor: ClassDescriptor,
     parentContext: CodegenContext<*>?
-) : ClassContext(typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, null) {
+) : ScriptLikeContext(typeMapper, contextDescriptor, parentContext) {
     val lastStatement: KtExpression?
 
     val resultFieldInfo: FieldInfo
@@ -90,8 +88,8 @@ class ScriptContext(
 
     fun getProvidedPropertyType(index: Int): Type = typeMapper.mapType(scriptDescriptor.scriptProvidedProperties[index].type)
 
-    fun getOuterReceiverExpression(prefix: StackValue?, thisOrOuterClass: ClassDescriptor): StackValue {
-        if (thisOrOuterClass is ScriptProvidedPropertiesDescriptor) {
+    override fun getOuterReceiverExpression(prefix: StackValue?, thisOrOuterClass: ClassDescriptor): StackValue {
+        if (thisOrOuterClass.containingDeclaration == scriptDescriptor) {
             return prefix ?: StackValue.LOCAL_0
         }
         receiverDescriptors.forEachIndexed { index, outerReceiver ->

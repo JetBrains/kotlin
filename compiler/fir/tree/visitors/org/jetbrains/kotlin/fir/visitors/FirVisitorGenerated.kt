@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.fir.visitors
 
@@ -24,8 +24,12 @@ abstract class FirVisitor<out R, in D> {
         return visitElement(declaration, data)
     }
 
-    open fun visitCallableMember(callableMember: FirCallableMember, data: D): R {
-        return visitDeclaration(callableMember, data)
+    open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R {
+        return visitDeclaration(callableDeclaration, data)
+    }
+
+    open fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration, data: D): R {
+        return visitDeclaration(callableMemberDeclaration, data)
     }
 
     open fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: D): R {
@@ -60,8 +64,16 @@ abstract class FirVisitor<out R, in D> {
         return visitFunction(propertyAccessor, data)
     }
 
+    open fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: D): R {
+        return visitPropertyAccessor(defaultPropertyAccessor, data)
+    }
+
     open fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration, data: D): R {
         return visitDeclaration(errorDeclaration, data)
+    }
+
+    open fun visitField(field: FirField, data: D): R {
+        return visitDeclaration(field, data)
     }
 
     open fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration, data: D): R {
@@ -72,8 +84,12 @@ abstract class FirVisitor<out R, in D> {
         return visitNamedDeclaration(memberDeclaration, data)
     }
 
+    open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): R {
+        return visitMemberDeclaration(classLikeDeclaration, data)
+    }
+
     open fun visitRegularClass(regularClass: FirRegularClass, data: D): R {
-        return visitMemberDeclaration(regularClass, data)
+        return visitClassLikeDeclaration(regularClass, data)
     }
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R {
@@ -81,7 +97,7 @@ abstract class FirVisitor<out R, in D> {
     }
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): R {
-        return visitMemberDeclaration(typeAlias, data)
+        return visitClassLikeDeclaration(typeAlias, data)
     }
 
     open fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): R {
@@ -144,6 +160,10 @@ abstract class FirVisitor<out R, in D> {
         return visitNamedReference(resolvedCallableReference, data)
     }
 
+    open fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference, data: D): R {
+        return visitResolvedCallableReference(backingFieldReference, data)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference, data: D): R {
         return visitReference(superReference, data)
     }
@@ -154,6 +174,158 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitStatement(statement: FirStatement, data: D): R {
         return visitElement(statement, data)
+    }
+
+    open fun visitAnnotatedStatement(annotatedStatement: FirAnnotatedStatement, data: D): R {
+        return visitStatement(annotatedStatement, data)
+    }
+
+    open fun visitExpression(expression: FirExpression, data: D): R {
+        return visitAnnotatedStatement(expression, data)
+    }
+
+    open fun visitCall(call: FirCall, data: D): R {
+        return visitExpression(call, data)
+    }
+
+    open fun visitArraySetCall(arraySetCall: FirArraySetCall, data: D): R {
+        return visitCall(arraySetCall, data)
+    }
+
+    open fun visitCallWithArgumentList(callWithArgumentList: FirCallWithArgumentList, data: D): R {
+        return visitCall(callWithArgumentList, data)
+    }
+
+    open fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: D): R {
+        return visitCallWithArgumentList(annotationCall, data)
+    }
+
+    open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): R {
+        return visitCallWithArgumentList(delegatedConstructorCall, data)
+    }
+
+    open fun visitOperatorCall(operatorCall: FirOperatorCall, data: D): R {
+        return visitCallWithArgumentList(operatorCall, data)
+    }
+
+    open fun visitOperationBasedCall(operationBasedCall: FirOperationBasedCall, data: D): R {
+        return visitOperatorCall(operationBasedCall, data)
+    }
+
+    open fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: D): R {
+        return visitOperationBasedCall(typeOperatorCall, data)
+    }
+
+    open fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: D): R {
+        return visitCallWithArgumentList(stringConcatenationCall, data)
+    }
+
+    open fun visitUnknownTypeCallWithArgumentList(unknownTypeCallWithArgumentList: FirUnknownTypeCallWithArgumentList, data: D): R {
+        return visitCallWithArgumentList(unknownTypeCallWithArgumentList, data)
+    }
+
+    open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): R {
+        return visitUnknownTypeCallWithArgumentList(arrayOfCall, data)
+    }
+
+    open fun visitFunctionCall(functionCall: FirFunctionCall, data: D): R {
+        return visitUnknownTypeCallWithArgumentList(functionCall, data)
+    }
+
+    open fun visitComponentCall(componentCall: FirComponentCall, data: D): R {
+        return visitFunctionCall(componentCall, data)
+    }
+
+    open fun visitGetClassCall(getClassCall: FirGetClassCall, data: D): R {
+        return visitUnknownTypeCallWithArgumentList(getClassCall, data)
+    }
+
+    open fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast, data: D): R {
+        return visitUnknownTypeCallWithArgumentList(uncheckedNotNullCast, data)
+    }
+
+    open fun <E : FirTargetElement> visitJump(jump: FirJump<E>, data: D): R {
+        return visitExpression(jump, data)
+    }
+
+    open fun visitLoopJump(loopJump: FirLoopJump, data: D): R {
+        return visitJump(loopJump, data)
+    }
+
+    open fun visitBreakExpression(breakExpression: FirBreakExpression, data: D): R {
+        return visitLoopJump(breakExpression, data)
+    }
+
+    open fun visitContinueExpression(continueExpression: FirContinueExpression, data: D): R {
+        return visitLoopJump(continueExpression, data)
+    }
+
+    open fun visitReturnExpression(returnExpression: FirReturnExpression, data: D): R {
+        return visitJump(returnExpression, data)
+    }
+
+    open fun visitThrowExpression(throwExpression: FirThrowExpression, data: D): R {
+        return visitExpression(throwExpression, data)
+    }
+
+    open fun visitUnknownTypeExpression(unknownTypeExpression: FirUnknownTypeExpression, data: D): R {
+        return visitExpression(unknownTypeExpression, data)
+    }
+
+    open fun visitBlock(block: FirBlock, data: D): R {
+        return visitUnknownTypeExpression(block, data)
+    }
+
+    open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R {
+        return visitUnknownTypeExpression(classReferenceExpression, data)
+    }
+
+    open fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): R {
+        return visitUnknownTypeExpression(constExpression, data)
+    }
+
+    open fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): R {
+        return visitUnknownTypeExpression(errorExpression, data)
+    }
+
+    open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): R {
+        return visitUnknownTypeExpression(qualifiedAccessExpression, data)
+    }
+
+    open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): R {
+        return visitQualifiedAccessExpression(callableReferenceAccess, data)
+    }
+
+    open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R {
+        return visitUnknownTypeExpression(resolvedQualifier, data)
+    }
+
+    open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R {
+        return visitUnknownTypeExpression(tryExpression, data)
+    }
+
+    open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R {
+        return visitUnknownTypeExpression(whenExpression, data)
+    }
+
+    open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): R {
+        return visitUnknownTypeExpression(whenSubjectExpression, data)
+    }
+
+    open fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): R {
+        return visitExpression(wrappedArgumentExpression, data)
+    }
+
+    open fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): R {
+        return visitWrappedArgumentExpression(lambdaArgumentExpression, data)
+    }
+
+    open fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): R {
+        return visitWrappedArgumentExpression(namedArgumentExpression, data)
+    }
+
+    open fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): R {
+        return visitWrappedArgumentExpression(spreadArgumentExpression, data)
     }
 
     open fun visitClass(klass: FirClass, data: D): R {
@@ -168,96 +340,8 @@ abstract class FirVisitor<out R, in D> {
         return visitClass(modifiableClass, data)
     }
 
-    open fun visitExpression(expression: FirExpression, data: D): R {
-        return visitStatement(expression, data)
-    }
-
-    open fun visitBlock(block: FirBlock, data: D): R {
-        return visitExpression(block, data)
-    }
-
-    open fun visitCall(call: FirCall, data: D): R {
-        return visitExpression(call, data)
-    }
-
-    open fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: D): R {
-        return visitCall(annotationCall, data)
-    }
-
-    open fun visitArrayGetCall(arrayGetCall: FirArrayGetCall, data: D): R {
-        return visitCall(arrayGetCall, data)
-    }
-
-    open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): R {
-        return visitCall(arrayOfCall, data)
-    }
-
-    open fun visitArraySetCall(arraySetCall: FirArraySetCall, data: D): R {
-        return visitCall(arraySetCall, data)
-    }
-
-    open fun visitComponentCall(componentCall: FirComponentCall, data: D): R {
-        return visitCall(componentCall, data)
-    }
-
-    open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): R {
-        return visitCall(delegatedConstructorCall, data)
-    }
-
-    open fun visitFunctionCall(functionCall: FirFunctionCall, data: D): R {
-        return visitCall(functionCall, data)
-    }
-
-    open fun visitGetClassCall(getClassCall: FirGetClassCall, data: D): R {
-        return visitCall(getClassCall, data)
-    }
-
-    open fun visitOperatorCall(operatorCall: FirOperatorCall, data: D): R {
-        return visitCall(operatorCall, data)
-    }
-
-    open fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: D): R {
-        return visitOperatorCall(typeOperatorCall, data)
-    }
-
-    open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R {
-        return visitExpression(classReferenceExpression, data)
-    }
-
-    open fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): R {
-        return visitExpression(constExpression, data)
-    }
-
-    open fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): R {
-        return visitExpression(errorExpression, data)
-    }
-
-    open fun <E : FirTargetElement> visitJump(jump: FirJump<E>, data: D): R {
-        return visitExpression(jump, data)
-    }
-
-    open fun visitBreakExpression(breakExpression: FirBreakExpression, data: D): R {
-        return visitJump(breakExpression, data)
-    }
-
-    open fun visitContinueExpression(continueExpression: FirContinueExpression, data: D): R {
-        return visitJump(continueExpression, data)
-    }
-
-    open fun visitReturnExpression(returnExpression: FirReturnExpression, data: D): R {
-        return visitJump(returnExpression, data)
-    }
-
-    open fun visitThrowExpression(throwExpression: FirThrowExpression, data: D): R {
-        return visitExpression(throwExpression, data)
-    }
-
-    open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R {
-        return visitExpression(tryExpression, data)
-    }
-
-    open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R {
-        return visitExpression(whenExpression, data)
+    open fun visitErrorStatement(errorStatement: FirErrorStatement, data: D): R {
+        return visitStatement(errorStatement, data)
     }
 
     open fun visitLoop(loop: FirLoop, data: D): R {
@@ -284,16 +368,8 @@ abstract class FirVisitor<out R, in D> {
         return visitAssignment(variableAssignment, data)
     }
 
-    open fun visitModifiableQualifiedAccess(modifiableQualifiedAccess: FirModifiableQualifiedAccess, data: D): R {
+    open fun <C : FirReference> visitModifiableQualifiedAccess(modifiableQualifiedAccess: FirModifiableQualifiedAccess<C>, data: D): R {
         return visitQualifiedAccess(modifiableQualifiedAccess, data)
-    }
-
-    open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): R {
-        return visitQualifiedAccess(qualifiedAccessExpression, data)
-    }
-
-    open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): R {
-        return visitQualifiedAccessExpression(callableReferenceAccess, data)
     }
 
     open fun visitTargetElement(targetElement: FirTargetElement, data: D): R {
@@ -324,12 +400,20 @@ abstract class FirVisitor<out R, in D> {
         return visitTypeRef(delegatedTypeRef, data)
     }
 
-    open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): R {
-        return visitTypeRef(errorTypeRef, data)
-    }
-
     open fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): R {
         return visitTypeRef(implicitTypeRef, data)
+    }
+
+    open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): R {
+        return visitTypeRef(resolvedTypeRef, data)
+    }
+
+    open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): R {
+        return visitResolvedTypeRef(errorTypeRef, data)
+    }
+
+    open fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): R {
+        return visitResolvedTypeRef(resolvedFunctionTypeRef, data)
     }
 
     open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R {
@@ -342,14 +426,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): R {
         return visitTypeRefWithNullability(functionTypeRef, data)
-    }
-
-    open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): R {
-        return visitTypeRefWithNullability(resolvedTypeRef, data)
-    }
-
-    open fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): R {
-        return visitResolvedTypeRef(resolvedFunctionTypeRef, data)
     }
 
     open fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R {

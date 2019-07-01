@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.asJava.classes
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 // light class for top level or (inner/nested of top level) source declarations
-open class KtLightClassImpl(classOrObject: KtClassOrObject) : KtLightClassForSourceDeclaration(classOrObject) {
+open class KtLightClassImpl(
+    classOrObject: KtClassOrObject,
+    forceUsingOldLightClasses: Boolean = false
+) : KtLightClassForSourceDeclaration(classOrObject, forceUsingOldLightClasses) {
     override fun getQualifiedName() = classOrObject.fqName?.asString()
 
     override fun getParent() = if (classOrObject.isTopLevel())

@@ -18,14 +18,8 @@ sourceSets {
     "test" {}
 }
 
-val jar = runtimeJar()
-val sourcesJar = sourcesJar()
-val javadocJar = javadocJar()
-
-dist()
-
-ideaPlugin {
-    from(jar, sourcesJar)
-}
-
 publish()
+
+runtimeJar()
+sourcesJar()
+javadocJar()

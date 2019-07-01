@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 abstract class IrDeclarationBase(
     startOffset: Int,
@@ -30,9 +31,15 @@ abstract class IrDeclarationBase(
 ) : IrElementBase(startOffset, endOffset),
     IrDeclaration {
 
-    override lateinit var parent: IrDeclarationParent
+    private var _parent: IrDeclarationParent? = null
+    override var parent: IrDeclarationParent
+        get() = _parent
+            ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
+        set(v) {
+            _parent = v
+        }
 
-    override val annotations: MutableList<IrCall> = ArrayList()
+    override val annotations: MutableList<IrConstructorCall> = ArrayList()
 
     override val metadata: MetadataSource?
         get() = null

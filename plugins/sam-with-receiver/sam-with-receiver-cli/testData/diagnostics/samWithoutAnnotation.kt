@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Sam.java
@@ -12,9 +13,9 @@ fun test() {
         ""
     }
 
-    Sam { <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>b<!> ->
+    Sam <!NI;TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>b<!> ->
         val a = <!NO_THIS!>this@Sam<!>
-        System.out.println(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
+        System.out.<!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
         ""
-    }
+    }<!>
 }

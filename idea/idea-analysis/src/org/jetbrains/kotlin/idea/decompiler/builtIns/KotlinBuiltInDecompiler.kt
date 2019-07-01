@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.decompiler.builtIns
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.idea.decompiler.common.FileWithMetadata
 import org.jetbrains.kotlin.idea.decompiler.common.KotlinMetadataDecompiler
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -33,8 +32,8 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.ByteArrayInputStream
 
 class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
-    KotlinBuiltInFileType, CommonPlatform, BuiltInSerializerProtocol,
-    FlexibleTypeDeserializer.ThrowException, BuiltInsBinaryVersion.INSTANCE, BuiltInsBinaryVersion.INVALID_VERSION,
+    KotlinBuiltInFileType, { BuiltInSerializerProtocol },
+    FlexibleTypeDeserializer.ThrowException, { BuiltInsBinaryVersion.INSTANCE }, { BuiltInsBinaryVersion.INVALID_VERSION },
     KotlinStubVersions.BUILTIN_STUB_VERSION
 ) {
     override fun readFile(bytes: ByteArray, file: VirtualFile): FileWithMetadata? {
@@ -43,10 +42,10 @@ class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
 }
 
 class BuiltInDefinitionFile(
-        proto: ProtoBuf.PackageFragment,
-        version: BuiltInsBinaryVersion,
-        val packageDirectory: VirtualFile,
-        val isMetadata: Boolean
+    proto: ProtoBuf.PackageFragment,
+    version: BuiltInsBinaryVersion,
+    val packageDirectory: VirtualFile,
+    val isMetadata: Boolean
 ) : FileWithMetadata.Compatible(proto, version, BuiltInSerializerProtocol) {
     override val classesToDecompile: List<ProtoBuf.Class>
         get() = super.classesToDecompile.let { classes ->
@@ -70,7 +69,7 @@ class BuiltInDefinitionFile(
 
             val version = BuiltInsBinaryVersion.readFrom(stream)
             if (!version.isCompatible()) {
-                return FileWithMetadata.Incompatible(version)
+                return Incompatible(version)
             }
 
             val proto = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
@@ -78,7 +77,8 @@ class BuiltInDefinitionFile(
                 BuiltInDefinitionFile(proto, version, file.parent, file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION)
             val packageProto = result.proto.`package`
             if (result.classesToDecompile.isEmpty() &&
-                packageProto.typeAliasCount == 0 && packageProto.functionCount == 0 && packageProto.propertyCount == 0) {
+                packageProto.typeAliasCount == 0 && packageProto.functionCount == 0 && packageProto.propertyCount == 0
+            ) {
                 // No declarations to decompile: should skip this file
                 return null
             }

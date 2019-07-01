@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 object KotlinExtractSuperclassHandler : KotlinExtractSuperHandlerBase(false) {
-    val REFACTORING_NAME = "Extract Superclass"
+    const val REFACTORING_NAME = "Extract Superclass"
 
     override fun getErrorMessage(klass: KtClassOrObject): String? {
         val superMessage = super.getErrorMessage(klass)
@@ -38,9 +38,9 @@ object KotlinExtractSuperclassHandler : KotlinExtractSuperHandlerBase(false) {
 
     override fun createDialog(klass: KtClassOrObject, targetParent: PsiElement) =
         KotlinExtractSuperclassDialog(
-                originalClass = klass,
-                targetParent = targetParent,
-                conflictChecker = { checkConflicts(klass, it) },
-                refactoring = { ExtractSuperRefactoring(it).performRefactoring() }
+            originalClass = klass,
+            targetParent = targetParent,
+            conflictChecker = { checkConflicts(klass, it) },
+            refactoring = { ExtractSuperRefactoring(it).performRefactoring() }
         )
 }

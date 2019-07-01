@@ -7,8 +7,9 @@ plugins {
     id("jps-compatible")
 }
 
-standardPublicJars()
 publish()
+
+standardPublicJars()
 
 dependencies {
     compile(kotlinStdlib())

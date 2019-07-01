@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
@@ -64,7 +64,7 @@ open class KotlinVariant(
     final override val target: KotlinTarget
         get() = producingCompilation.target
 
-    override fun getUsages(): Set<UsageContext> = usages
+    override fun getUsages(): Set<KotlinUsageContext> = usages
 
     override fun getName(): String = componentName ?: producingCompilation.target.targetName
 
@@ -91,7 +91,7 @@ open class KotlinVariantWithCoordinates(
 class KotlinVariantWithMetadataVariant(
     producingCompilation: KotlinCompilation<*>,
     usages: Set<DefaultKotlinUsageContext>,
-    private val metadataTarget: KotlinTarget
+    internal val metadataTarget: AbstractKotlinTarget
 ) : KotlinVariantWithCoordinates(producingCompilation, usages), ComponentWithVariants {
     override fun getVariants() = metadataTarget.components
 }
@@ -99,17 +99,22 @@ class KotlinVariantWithMetadataVariant(
 class KotlinVariantWithMetadataDependency(
     producingCompilation: KotlinCompilation<*>,
     val originalUsages: Set<DefaultKotlinUsageContext>,
-    private val metadataTarget: KotlinTarget
+    private val metadataTarget: AbstractKotlinTarget
 ) : KotlinVariantWithCoordinates(producingCompilation, originalUsages) {
-    override fun getUsages(): Set<UsageContext> = originalUsages.mapTo(mutableSetOf()) { usageContext ->
+    override fun getUsages(): Set<KotlinUsageContext> = originalUsages.mapTo(mutableSetOf()) { usageContext ->
         KotlinUsageContextWithAdditionalDependencies(usageContext, setOf(metadataDependency()))
     }
 
     private fun metadataDependency(): ModuleDependency {
-        val metadataPublication = (metadataTarget.components.single() as KotlinTargetComponentWithPublication).publicationDelegate!!
-        val metadataGroupId = metadataPublication.groupId
-        val metadataArtifactId = metadataPublication.artifactId
-        val metadataVersion = metadataPublication.version
+        val metadataComponent = metadataTarget.kotlinComponents.single() as KotlinTargetComponentWithPublication
+        val project = metadataTarget.project
+
+        // The metadata component may not be published, e.g. if the whole project is not published:
+        val metadataPublication: MavenPublication? = metadataComponent.publicationDelegate
+
+        val metadataGroupId = metadataPublication?.groupId ?: project.group
+        val metadataArtifactId = metadataPublication?.artifactId ?: metadataComponent.defaultArtifactId
+        val metadataVersion = metadataPublication?.version ?: project.version
         return target.project.dependencies.module("$metadataGroupId:$metadataArtifactId:$metadataVersion") as ModuleDependency
     }
 
@@ -130,7 +135,7 @@ class JointAndroidKotlinTargetComponent(
     override val sourcesArtifacts: Set<PublishArtifact>
     ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
-    override fun getUsages(): Set<UsageContext> = nestedVariants.flatMap { it.usages }.toSet()
+    override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.flatMap { it.usages }.toSet()
 
     override fun getName(): String = lowerCamelCaseName(target.targetName, *flavorNames.toTypedArray())
 

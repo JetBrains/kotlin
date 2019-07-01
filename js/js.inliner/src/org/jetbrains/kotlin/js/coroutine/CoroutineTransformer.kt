@@ -44,17 +44,14 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
         return super.visit(x, ctx)
     }
 
-    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+    override fun endVisit(x: JsFunction, ctx: JsContext<*>) {
         if (x.isInlineableCoroutineBody) {
             x.body = transformCoroutineMetadataToSpecialFunctions(x.body)
-            return false
         }
         if (x.coroutineMetadata != null) {
             lastStatementLevelContext.addPrevious(CoroutineFunctionTransformer(x, functionName[x]).transform())
             x.coroutineMetadata = null
-            return false
         }
-        return super.visit(x, ctx)
     }
 
     override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {

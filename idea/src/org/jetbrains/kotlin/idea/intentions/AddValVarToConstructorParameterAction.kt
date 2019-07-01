@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
+import org.jetbrains.kotlin.idea.util.allowedValOrVar
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -34,13 +36,14 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
     companion object {
-        val actionFamily = "Add val/var to primary constructor parameter"
+        const val actionFamily = "Add val/var to primary constructor parameter"
     }
 
     fun getActionText(element: KtParameter) = "Add val/var to parameter '${element.name ?: ""}'"
 
     fun canInvoke(element: KtParameter): Boolean {
-        return element.valOrVarKeyword == null && (element.parent as? KtParameterList)?.parent is KtPrimaryConstructor
+        return element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)
+            ?.takeIf { it.allowedValOrVar() || !it.isExpectDeclaration() } != null
     }
 
     fun invoke(element: KtParameter, editor: Editor?) {
@@ -65,11 +68,11 @@ interface AddValVarToConstructorParameterAction {
     }
 
     class Intention :
-            SelfTargetingRangeIntention<KtParameter>(KtParameter::class.java, actionFamily),
-            AddValVarToConstructorParameterAction {
+        SelfTargetingRangeIntention<KtParameter>(KtParameter::class.java, actionFamily),
+        AddValVarToConstructorParameterAction {
         override fun applicabilityRange(element: KtParameter): TextRange? {
             if (!canInvoke(element)) return null
-            if (element.getStrictParentOfType<KtClass>()?.isData() ?: false) return null
+            if (element.getStrictParentOfType<KtClass>()?.isData() == true) return null
             text = getActionText(element)
             return element.nameIdentifier?.textRange
         }
@@ -78,8 +81,8 @@ interface AddValVarToConstructorParameterAction {
     }
 
     class QuickFix(parameter: KtParameter) :
-            KotlinQuickFixAction<KtParameter>(parameter),
-            AddValVarToConstructorParameterAction {
+        KotlinQuickFixAction<KtParameter>(parameter),
+        AddValVarToConstructorParameterAction {
         override fun getText() = element?.let { getActionText(it) } ?: ""
 
         override fun getFamilyName() = actionFamily

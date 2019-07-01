@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
@@ -21,9 +21,8 @@ internal interface InternalMap<K, V> : MutableIterable<MutableMap.MutableEntry<K
     fun createJsMap(): dynamic {
         val result = js("Object.create(null)")
         // force to switch object representation to dictionary mode
-        // Using js-function due to JS_IR limitations
-        js("result[\"foo\"] = 1")
-        js("delete result[\"foo\"]")
+        result["foo"] = 1
+        jsDeleteProperty(result, "foo")
         return result
     }
 }

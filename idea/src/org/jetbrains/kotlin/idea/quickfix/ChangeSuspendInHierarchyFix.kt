@@ -30,10 +30,9 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -49,9 +48,7 @@ import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.ifEmpty
-import java.util.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashSet
+import java.util.*
 import kotlin.collections.filter
 
 class ChangeSuspendInHierarchyFix(
@@ -73,7 +70,7 @@ class ChangeSuspendInHierarchyFix(
     private fun findAllFunctionToProcess(project: Project): Set<KtNamedFunction> {
         val result = LinkedHashSet<KtNamedFunction>()
 
-        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable!!
+        val progressIndicator = ProgressManager.getInstance().progressIndicator!!
 
         val function = element ?: return emptySet()
         val functionDescriptor = function.unsafeResolveToDescriptor() as FunctionDescriptor

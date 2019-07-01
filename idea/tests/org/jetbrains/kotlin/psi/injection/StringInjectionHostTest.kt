@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.injection
@@ -9,10 +9,13 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.utils.keysToMap
+import org.junit.runner.RunWith
 import java.util.*
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class StringInjectionHostTest : KotlinTestWithEnvironment() {
     fun testRegular() {
         with (quoted("")) {
