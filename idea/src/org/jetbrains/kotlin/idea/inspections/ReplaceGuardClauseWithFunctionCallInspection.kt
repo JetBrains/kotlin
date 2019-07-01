@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -44,6 +46,8 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
         element.getKotlinFunction()?.let { "Replace with '${it.functionName}()' call" } ?: defaultFixText
 
     override fun isApplicable(element: KtIfExpression): Boolean {
+        val languageVersionSettings = element.languageVersionSettings
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.UseReturnsEffect)) return false
         if (element.condition == null) return false
         val call = element.getCallExpression() ?: return false
         val calleeText = call.calleeExpression?.text ?: return false

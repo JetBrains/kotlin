@@ -8924,6 +8924,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/notTargetException.kt");
         }
 
+        @TestMetadata("version12.kt")
+        public void testVersion12() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/version12.kt");
+        }
+
         @TestMetadata("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/check")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
