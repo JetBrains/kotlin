@@ -169,7 +169,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
       });
     }
     else {
-      result.add(new SearchEverywhereUI.CheckBoxAction(everywhereText) {
+      result.add(new CheckBoxSearchEverywhereToggleAction(everywhereText) {
         @Override
         public boolean isEverywhere() {
           return myEverywhere;
@@ -390,7 +390,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
   }
 
   abstract static class ScopeChooserAction extends ActionGroup
-    implements CustomComponentAction, DumbAware, SearchEverywhereUI.EverywhereToggleAction {
+    implements CustomComponentAction, DumbAware, SearchEverywhereToggleAction {
 
     static final char CHOOSE = 'O';
     static final char TOGGLE = 'P';
