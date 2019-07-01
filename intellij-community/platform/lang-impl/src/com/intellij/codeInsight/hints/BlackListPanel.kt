@@ -20,9 +20,6 @@ import com.intellij.ui.components.labels.SwingActionLink
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.ActionEvent
-import java.util.LinkedHashSet
-import java.util.function.Supplier
-import java.util.stream.Collectors
 import javax.swing.*
 
 
@@ -175,5 +172,5 @@ private fun getBlacklistExplanationHTML(language: Language): String {
 private fun createBlacklistDependencyInfoLabel(language: Language): JBLabel? {
   val provider = InlayParameterHintsExtension.forLanguage(language)
   val dependencyLanguage = provider.blackListDependencyLanguage ?: return null
-  return JBLabel("<html>Additionally <b>" + dependencyLanguage.displayName + "</b> language blacklist will be applied.</html>")
+  return JBLabel(CodeInsightBundle.message("inlay.hints.base.blacklist.description", dependencyLanguage.id), SwingConstants.RIGHT)
 }
