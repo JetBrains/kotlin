@@ -17,6 +17,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.SwingActionLink
+import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.ActionEvent
@@ -53,7 +54,9 @@ class BlackListDialog(val language: Language) : DialogWrapper(null) {
 
     myEditor = editorTextField
 
+    val mainPanel = JPanel(BorderLayout())
     val blacklistPanel = JPanel()
+    mainPanel.add(blacklistPanel, BorderLayout.CENTER)
 
     val resetPanel = createResetPanel(language)
     resetPanel.alignmentX = Component.LEFT_ALIGNMENT
@@ -75,9 +78,9 @@ class BlackListDialog(val language: Language) : DialogWrapper(null) {
       label.alignmentX = Component.LEFT_ALIGNMENT
       blacklistPanel.add(Box.createRigidArea(Dimension(0, 10)))
       blacklistPanel.add(label)
+      mainPanel.add(label, BorderLayout.SOUTH)
     }
-
-    return blacklistPanel
+    return mainPanel
   }
 
   private fun createResetPanel(language: Language): JComponent {
