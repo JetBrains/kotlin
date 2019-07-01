@@ -32,7 +32,8 @@ class PresentationMouseHandler : StartupActivity {
         val event = e.mouseEvent
         val point = event.point
         val inlay = editor.inlayModel.getElementAt(point) ?: return
-        val inlayPoint = editor.visualPositionToXY(inlay.visualPosition)
+        val bounds = inlay.bounds ?: return
+        val inlayPoint = Point(bounds.x, bounds.y)
         val renderer = inlay.renderer
         if (renderer !is PresentationRenderer) return
 
@@ -55,7 +56,8 @@ class PresentationMouseHandler : StartupActivity {
           activePresentation = presentation
         }
         if (presentation != null) {
-          val inlayPoint = editor.visualPositionToXY(inlay.visualPosition)
+          val bounds = inlay.bounds ?: return
+          val inlayPoint = Point(bounds.x, bounds.y)
           val translated = Point(event.x - inlayPoint.x, event.y - inlayPoint.y)
           presentation.mouseMoved(event, translated)
         }
