@@ -5,6 +5,7 @@ import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.task.ProjectTaskContext;
 import com.intellij.task.ProjectTaskManager;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,9 @@ import java.util.Set;
  */
 @ApiStatus.Internal
 public interface JpsBuildData {
+  @NotNull
   Set<String> getArtifactsWrittenPaths();
 
+  @NotNull
   List<CompileContext> getFinishedBuildsContexts();
 }

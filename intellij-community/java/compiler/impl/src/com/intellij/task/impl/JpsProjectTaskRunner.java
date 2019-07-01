@@ -374,6 +374,7 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
   private static class MyJpsBuildData implements JpsBuildData {
     private final List<CompileContext> myContexts = new ArrayList<>();
 
+    @NotNull
     @Override
     public Set<String> getArtifactsWrittenPaths() {
       return myContexts.stream()
@@ -383,6 +384,7 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
         .collect(Collectors.toSet());
     }
 
+    @NotNull
     @Override
     public List<CompileContext> getFinishedBuildsContexts() {
       return Collections.unmodifiableList(myContexts);
