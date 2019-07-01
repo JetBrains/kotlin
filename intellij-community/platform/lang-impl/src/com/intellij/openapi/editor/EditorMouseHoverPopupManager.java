@@ -58,7 +58,6 @@ import java.util.function.Consumer;
 
 public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
-  private static final int BORDER_TOLERANCE_PX = 5;
 
   private final Alarm myAlarm;
   private Point myPrevMouseLocation;
@@ -77,7 +76,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
 
     Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
-    Rectangle currentHintBounds = getCurrentHintBounds();
+    Rectangle currentHintBounds = getCurrentHintBounds(e.getEditor());
     boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, currentHintBounds);
     myPrevMouseLocation = currentMouseLocation;
     if (movesTowardsPopup || currentHintBounds != null && myKeepPopupOnMouseMove) return;
@@ -136,13 +135,14 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     }, progress), context.getShowingDelay());
   }
 
-  private Rectangle getCurrentHintBounds() {
+  private Rectangle getCurrentHintBounds(Editor editor) {
     JBPopup popup = SoftReference.dereference(myPopupReference);
     if (popup == null || !popup.isVisible()) return null;
     Dimension size = popup.getSize();
     if (size == null) return null;
     Rectangle result = new Rectangle(popup.getLocationOnScreen(), size);
-    result.grow(BORDER_TOLERANCE_PX, BORDER_TOLERANCE_PX);
+    int borderTolerance = editor.getLineHeight() / 3;
+    result.grow(borderTolerance, borderTolerance);
     return result;
   }
 
