@@ -87,7 +87,8 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val selected = selectedProvider
     if (selected != null) {
       updateWithInlayPanel(providerSettingsPane, selected)
-    } else {
+    }
+    else {
       updateWithParameterHintsPanel(providerSettingsPane)
     }
     providerTypesList.selectedIndex = 0
