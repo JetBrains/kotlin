@@ -701,7 +701,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
       JPanel panel = new JPanel(new BorderLayout());
       panel.setBorder(JBUI.Borders.empty(2));
       panel.setOpaque(true);
-      Color bg = UIUtil.getListBackground(isSelected);
+      Color bg = UIUtil.getListBackground(isSelected, cellHasFocus);
       panel.setBackground(bg);
 
       SimpleColoredComponent nameComponent = new SimpleColoredComponent();
@@ -720,7 +720,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         return panel;
       }
 
-      Color groupFg = isSelected ? UIUtil.getListSelectionForeground() : UIUtil.getInactiveTextColor();
+      Color groupFg = isSelected ? UIUtil.getListSelectionForeground(true) : UIUtil.getInactiveTextColor();
 
       Object value = ((MatchedValue) matchedValue).value;
       String pattern = ((MatchedValue)matchedValue).pattern;
@@ -784,7 +784,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         hit = StringUtil.unescapeXmlEntities(hit);
         hit = hit.replace("  ", " "); // avoid extra spaces from mnemonics and xml conversion
         String fullHit = hit;
-        Color fg = UIUtil.getListForeground(isSelected);
+        Color fg = UIUtil.getListForeground(isSelected, cellHasFocus);
 
         if (showIcon) {
           panel.add(new JLabel(EMPTY_ICON), BorderLayout.WEST);
