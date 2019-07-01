@@ -8,8 +8,10 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.RecursionManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.util.containers.ContainerUtil;
@@ -127,8 +129,9 @@ abstract class ServiceView extends JPanel implements Disposable {
       if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
         return new ServiceViewCopyProvider(serviceView);
       }
-      List<ServiceViewItem> selectedItems = serviceView.getSelectedItems();
-      ServiceViewItem selectedItem = ContainerUtil.getOnlyItem(selectedItems);
+      Ref<List<ServiceViewItem>> selectedItems = new Ref<>();
+      ApplicationManager.getApplication().invokeAndWait(() -> selectedItems.set(serviceView.getSelectedItems()));
+      ServiceViewItem selectedItem = ContainerUtil.getOnlyItem(selectedItems.get());
       ServiceViewDescriptor descriptor = selectedItem == null ? null : selectedItem.getViewDescriptor();
       DataProvider dataProvider = descriptor == null ? null : descriptor.getDataProvider();
       if (dataProvider != null) {
