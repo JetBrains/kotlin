@@ -59,7 +59,7 @@ private fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boo
     }
 }
 
-private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Unit): TaskProvider<out Jar> {
+private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Unit): TaskProvider<out ShadowJar> {
 
     val compilerJar = configurations.getOrCreate("compilerJar")
     dependencies.add(compilerJar.name, dependencies.project(":kotlin-compiler", configuration = "runtimeJar"))
@@ -72,7 +72,7 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
     }
 }
 
-fun Project.embeddableCompiler(taskName: String = "embeddable", body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> =
+fun Project.embeddableCompiler(taskName: String = "embeddable", body: ShadowJar.() -> Unit = {}): TaskProvider<out ShadowJar> =
     compilerShadowJar(taskName) {
         configureEmbeddableCompilerRelocation()
         body()

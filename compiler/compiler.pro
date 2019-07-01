@@ -265,6 +265,8 @@ messages/**)
 -keep class org.jline.reader.History { *; }
 -keep class org.jline.reader.EndOfFileException { *; }
 -keep class org.jline.reader.UserInterruptException { *; }
+-keep class org.jline.terminal.impl.jna.JnaSupportImpl  { *; }
+-keep class org.jline.terminal.impl.jansi.JansiSupportImpl  { *; }
 
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
