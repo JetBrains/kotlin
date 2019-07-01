@@ -12,11 +12,9 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -31,7 +29,6 @@ import java.awt.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
-import javax.swing.border.AbstractBorder
 import javax.swing.border.LineBorder
 
 // Note: old parameter hints panel is special cased as it rely on global settings, so it doesn't fit to this model,
@@ -78,10 +75,10 @@ internal class SingleLanguageInlayHintsSettingsPanel(
 
     val typesListPane = JBScrollPane(providerTypesList)
 
-    horizontalSplitter.firstComponent = withMargin(typesListPane)
+    horizontalSplitter.firstComponent = typesListPane
     val providerSettingsPane = JBScrollPane()
     providerSettingsPane.border = null
-    horizontalSplitter.secondComponent = withMargin(providerSettingsPane)
+    horizontalSplitter.secondComponent = withInset(providerSettingsPane)
 
     initProviderList(providerSettingsPane)
 
@@ -197,7 +194,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     }
   }
 
-  private fun withMargin(component: JComponent): JComponent {
+  private fun withInset(component: JComponent): JComponent {
     val panel = JPanel(BorderLayout())
     panel.add(component)
     panel.border = JBUI.Borders.empty(2)
