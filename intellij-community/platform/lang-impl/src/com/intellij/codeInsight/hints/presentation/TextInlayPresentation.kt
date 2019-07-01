@@ -3,7 +3,9 @@ package com.intellij.codeInsight.hints.presentation
 
 import com.intellij.ide.ui.AntialiasingType
 import com.intellij.openapi.editor.colors.EditorFontType
+import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.ui.paint.EffectPainter
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.RenderingHints
@@ -33,8 +35,13 @@ class TextInlayPresentation(
         g.font = fontProvider(fontType)
         g.color = foreground
         g.drawString(text, 0, yBaseline)
+
+        if (attributes.effectType == EffectType.LINE_UNDERSCORE) {
+          EffectPainter.LINE_UNDERSCORE.paint(g, 0, yBaseline, width, height, g.font)
+        }
       }
-    } finally {
+    }
+    finally {
       g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, savedHint)
     }
   }
