@@ -17,6 +17,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.SwingActionLink
+import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -56,7 +57,10 @@ class BlackListDialog(val language: Language) : DialogWrapper(null) {
 
     val mainPanel = JPanel(BorderLayout())
     val blacklistPanel = JPanel()
-    mainPanel.add(blacklistPanel, BorderLayout.CENTER)
+    val layout = BoxLayout(blacklistPanel, BoxLayout.Y_AXIS)
+    blacklistPanel.layout = layout
+
+    mainPanel.add(blacklistPanel, BorderLayout.NORTH)
 
     val resetPanel = createResetPanel(language)
     resetPanel.alignmentX = Component.LEFT_ALIGNMENT
@@ -66,21 +70,26 @@ class BlackListDialog(val language: Language) : DialogWrapper(null) {
     editorTextField.alignmentX = Component.LEFT_ALIGNMENT
     blacklistPanel.add(editorTextField)
 
-    val layout = BoxLayout(blacklistPanel, BoxLayout.Y_AXIS)
-    blacklistPanel.layout = layout
-
-    val explanation = JBLabel(getBlacklistExplanationHTML(language))
-    explanation.alignmentX = Component.LEFT_ALIGNMENT
-    blacklistPanel.add(explanation)
-
     val label = createBlacklistDependencyInfoLabel(language)
     if (label != null) {
       label.alignmentX = Component.LEFT_ALIGNMENT
-      blacklistPanel.add(Box.createRigidArea(Dimension(0, 10)))
       blacklistPanel.add(label)
-      mainPanel.add(label, BorderLayout.SOUTH)
+      mainPanel.add(label, BorderLayout.CENTER)
     }
+
+    val explanationPanel = explanationPanel()
+    explanationPanel.alignmentX = Component.LEFT_ALIGNMENT
+    mainPanel.add(explanationPanel, BorderLayout.SOUTH)
     return mainPanel
+  }
+
+  private fun explanationPanel() : JPanel {
+    val panel = JPanel()
+    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+    panel.add(Box.createRigidArea(JBUI.size(0, 10)))
+    panel.add(JBLabel(getBlacklistExplanationHTML(language)))
+    panel.add(Box.createRigidArea(JBUI.size(0, 10)))
+    return panel
   }
 
   private fun createResetPanel(language: Language): JComponent {
@@ -175,5 +184,5 @@ private fun getBlacklistExplanationHTML(language: Language): String {
 private fun createBlacklistDependencyInfoLabel(language: Language): JBLabel? {
   val provider = InlayParameterHintsExtension.forLanguage(language)
   val dependencyLanguage = provider.blackListDependencyLanguage ?: return null
-  return JBLabel(CodeInsightBundle.message("inlay.hints.base.blacklist.description", dependencyLanguage.id), SwingConstants.RIGHT)
+  return JBLabel(CodeInsightBundle.message("inlay.hints.base.blacklist.description", dependencyLanguage.displayName), SwingConstants.RIGHT)
 }

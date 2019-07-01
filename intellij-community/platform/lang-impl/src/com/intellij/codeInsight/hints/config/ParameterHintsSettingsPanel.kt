@@ -6,6 +6,7 @@ import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.Language
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
+import java.awt.Dimension
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
@@ -30,7 +31,7 @@ class ParameterHintsSettingsPanel(val language: Language,
       }
     }
     if (blackListSupported) {
-      panel.add(Box.Filler(JBUI.size(0, 10), JBUI.size(0, 10), JBUI.size(0, 10)))
+      panel.add(Box.createRigidArea(JBUI.size(0, 10)))
       panel.add(LinkLabel.create("Black list...") {
         BlackListDialog(language).show()
       })
