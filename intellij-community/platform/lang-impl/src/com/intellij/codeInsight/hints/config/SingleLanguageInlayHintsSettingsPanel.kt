@@ -70,7 +70,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val top = JPanel()
     top.layout = GridLayout(1, 2)
 
-    val horizontalSplitter = JBSplitter(false, 0.25f)
+    val horizontalSplitter = JBSplitter(false, 0.35f)
     top.add(horizontalSplitter)
 
     val typesListPane = JBScrollPane(providerTypesList)

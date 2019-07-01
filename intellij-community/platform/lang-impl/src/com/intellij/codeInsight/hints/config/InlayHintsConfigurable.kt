@@ -39,9 +39,7 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
     val panel = JPanel()
     panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
     panel.border = JBUI.Borders.empty(0, 10, 0, 0)
-    panel.add(Box.Filler(JBUI.size(0, 10),
-                         JBUI.size(0, 10),
-                         JBUI.size(0, 10)))
+    panel.add(Box.createRigidArea(JBUI.size(0, 10)))
     for (configurable in configurables) {
       val label = LinkLabel.create(configurable.language.displayName) {
         val settings = Settings.KEY.getData(DataManager.getInstance().getDataContext(panel))
