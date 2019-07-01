@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -17,11 +17,14 @@ import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.impl.EditorFactoryImpl;
+import com.intellij.openapi.editor.markup.HighlighterTargetArea;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -311,10 +314,10 @@ public class LanguageConsoleImpl extends ConsoleViewImpl implements LanguageCons
     LanguageConsoleImpl consoleImpl = (LanguageConsoleImpl)console;
     consoleImpl.doAddPromptToHistory();
     if (syntax != null) {
-      String identPrompt = consoleImpl.myConsoleExecutionEditor.getConsolePromptDecorator().getIndentPrompt();
       ConsoleViewUtil.printWithHighlighting(console, text, syntax, () -> {
+        String identPrompt = consoleImpl.myConsoleExecutionEditor.getConsolePromptDecorator().getIndentPrompt();
         if (StringUtil.isNotEmpty(identPrompt)) {
-          consoleImpl.print(identPrompt, consoleImpl.myConsoleExecutionEditor.getPromptAttributes());
+          consoleImpl.addPromptToHistoryImpl(identPrompt);
         }
       });
     }
@@ -338,11 +341,11 @@ public class LanguageConsoleImpl extends ConsoleViewImpl implements LanguageCons
   }
 
   protected void doAddPromptToHistory() {
-    if (myConsoleExecutionEditor.getPrompt() != null) {
-      print(myConsoleExecutionEditor.getPrompt(), myConsoleExecutionEditor.getPromptAttributes());
+    String prompt = myConsoleExecutionEditor.getPrompt();
+    if (prompt != null) {
+      addPromptToHistoryImpl(prompt);
     }
   }
-
 
   //private static void duplicateHighlighters(@NotNull MarkupModel to, @NotNull MarkupModel from, int offset, @NotNull TextRange textRange) {
   //  for (RangeHighlighter rangeHighlighter : from.getAllHighlighters()) {
@@ -431,6 +434,15 @@ public class LanguageConsoleImpl extends ConsoleViewImpl implements LanguageCons
 
   int getMinHistoryLineCount() {
     return 2;
+  }
+
+  private void addPromptToHistoryImpl(@NotNull String prompt) {
+    DocumentEx document = getHistoryViewer().getDocument();
+    RangeHighlighter highlighter =
+      this.getHistoryViewer().getMarkupModel().addRangeHighlighter(document.getTextLength(), document.getTextLength(), 0,
+                                                                   null, HighlighterTargetArea.EXACT_RANGE);
+    print(prompt, myConsoleExecutionEditor.getPromptAttributes());
+    highlighter.putUserData(ConsoleHistoryCopyHandler.PROMPT_LENGTH_MARKER, prompt.length());
   }
 
   public static class Helper {
