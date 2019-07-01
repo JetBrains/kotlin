@@ -619,6 +619,9 @@ public abstract class BaseRefactoringProcessor implements Runnable {
     }
   }
 
+  /**
+   * @deprecated use {@link #showConflicts(MultiMap, UsageInfo[])}
+   */
   @Deprecated
   protected boolean showConflicts(@NotNull MultiMap<PsiElement, String> conflicts) {
     return showConflicts(conflicts, null);

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
@@ -29,8 +29,10 @@ public class RunAnythingHelpGroup<P extends RunAnythingProvider> extends RunAnyt
     myProviders = providers;
   }
 
+  /**
+   * @deprecated API compatibility
+   */
   @Deprecated
-  //leave it for compatibility reasons
   public RunAnythingHelpGroup() { }
 
   @NotNull
@@ -42,8 +44,7 @@ public class RunAnythingHelpGroup<P extends RunAnythingProvider> extends RunAnyt
   /**
    * Returns collections of providers each of them is expecting to provide not null {@link RunAnythingProvider#getHelpItem(DataContext)}
    * See also {@code RunAnythingProviderBase.getHelp*()} methods.
-   * <p>
-   * Deprecated - please use {@link RunAnythingProvider#getHelpGroupTitle()} instead
+   * @deprecated please use {@link RunAnythingProvider#getHelpGroupTitle()} instead
    */
   @Deprecated
   @NotNull

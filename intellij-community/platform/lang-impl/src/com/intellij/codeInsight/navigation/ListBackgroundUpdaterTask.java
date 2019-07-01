@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +43,14 @@ public abstract class ListBackgroundUpdaterTask extends BackgroundUpdaterTask {
   public ListBackgroundUpdaterTask(@Nullable final Project project, @NotNull final String title) {
     this(project, title, null);
   }
-  
+
   public ListBackgroundUpdaterTask(@Nullable final Project project, @NotNull final String title, @Nullable Comparator<PsiElement> comparator) {
     super(project, title, comparator);
   }
 
+  /**
+   * @deprecated please use {@link BackgroundUpdaterTask}
+   */
   @Deprecated
   public void init(@NotNull AbstractPopup popup, @NotNull Object component, @NotNull Ref<UsageView> usageView) {
     myPopup = popup;

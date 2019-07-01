@@ -70,6 +70,9 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   public void dispose() {
   }
 
+  /**
+   * @deprecated use {@link #setTemplateTesting(Disposable)}
+   */
   @TestOnly
   @Deprecated
   public static void setTemplateTesting(Project project, Disposable parentDisposable) {

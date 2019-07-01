@@ -70,6 +70,9 @@ public class ConsoleHistoryController implements Disposable {
   private ModelHelper myHelper;
   private long myLastSaveStamp;
 
+  /**
+   * @deprecated use {@link #ConsoleHistoryController(ConsoleRootType, String, LanguageConsoleView)} or {@link #ConsoleHistoryController(ConsoleRootType, String, LanguageConsoleView, ConsoleHistoryModel)}
+   */
   @Deprecated
   public ConsoleHistoryController(@NotNull String type, @Nullable String persistenceId, @NotNull LanguageConsoleView console) {
     this(new ConsoleRootType(type, null) { }, persistenceId, console);

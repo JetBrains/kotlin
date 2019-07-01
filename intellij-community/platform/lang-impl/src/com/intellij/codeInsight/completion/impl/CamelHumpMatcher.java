@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.completion.impl;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -155,7 +155,7 @@ public class CamelHumpMatcher extends PrefixMatcher {
   }
 
   /**
-   * In an ideal world, all tests would use the same settings as production, i.e. middle matching.
+   * @deprecated In an ideal world, all tests would use the same settings as production, i.e. middle matching.
    * If you see a usage of this method which can be easily removed (i.e. it's easy to make a test pass without it
    * by modifying test expectations slightly), please do it
    */

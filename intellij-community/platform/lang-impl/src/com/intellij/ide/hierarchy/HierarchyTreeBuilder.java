@@ -17,7 +17,12 @@
 package com.intellij.ide.hierarchy;
 
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
+import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * @deprecated (to be removed in IDEA 2018)
+ */
+@ApiStatus.ScheduledForRemoval(inVersion = "2018")
 @Deprecated
 public class HierarchyTreeBuilder extends AbstractTreeBuilder {
   HierarchyTreeBuilder() {

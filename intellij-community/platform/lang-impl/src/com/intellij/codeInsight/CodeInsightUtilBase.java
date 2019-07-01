@@ -82,7 +82,9 @@ public class CodeInsightUtilBase extends CodeInsightUtilCore {
     return !status.hasReadonlyFiles();
   }
 
-  // returns true on success
+  /**
+   * @deprecated use {@link EditorModificationUtil#checkModificationAllowed(Editor)}
+   */
   @Deprecated
   public static boolean prepareEditorForWrite(@NotNull Editor editor) {
     return EditorModificationUtil.checkModificationAllowed(editor);

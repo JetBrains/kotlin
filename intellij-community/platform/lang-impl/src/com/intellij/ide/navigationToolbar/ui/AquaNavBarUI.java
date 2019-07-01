@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2011 JetBrains s.r.o.
+ * Copyright 2000-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,15 @@ package com.intellij.ide.navigationToolbar.ui;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.Gray;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.awt.*;
 
 /**
  * @author Konstantin Bulenkov
  */
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+@Deprecated
 public class AquaNavBarUI extends AbstractNavBarUI {
   @Override
   public void doPaintWrapperPanel(Graphics2D g, Rectangle bounds, boolean mainToolbarVisible) {

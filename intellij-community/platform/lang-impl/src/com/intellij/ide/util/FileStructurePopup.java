@@ -124,7 +124,10 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
   private boolean myCanClose = true;
   private boolean myDisposed;
 
-  /** @noinspection unused*/
+  /**
+   * @noinspection unused
+   * @deprecated use {@link #FileStructurePopup(Project, FileEditor, StructureViewModel)}
+   */
   @Deprecated
   public FileStructurePopup(@NotNull Project project,
                             @NotNull FileEditor fileEditor,

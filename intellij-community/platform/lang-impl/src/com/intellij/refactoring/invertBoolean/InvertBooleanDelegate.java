@@ -79,7 +79,7 @@ public abstract class InvertBooleanDelegate {
 
   /**
    * Use {@link #collectForeignElementsToInvert(PsiElement, PsiElement, Language, Collection)} instead
-   * To be removed in 2018.3
+   * @deprecated To be removed in 2018.3
    */
   @Deprecated
   protected static PsiElement getForeignElementToInvert(PsiElement namedElement,
