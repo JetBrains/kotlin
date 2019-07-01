@@ -62,6 +62,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
 
   private final Alarm myAlarm;
   private Point myPrevMouseLocation;
+  private boolean myKeepPopupOnMouseMove;
   private WeakReference<AbstractPopup> myPopupReference;
   private Context myContext;
   private ProgressIndicator myCurrentProgress;
@@ -76,9 +77,10 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
 
     Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
-    boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, getCurrentHintBounds());
+    Rectangle currentHintBounds = getCurrentHintBounds();
+    boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, currentHintBounds);
     myPrevMouseLocation = currentMouseLocation;
-    if (movesTowardsPopup) return;
+    if (movesTowardsPopup || currentHintBounds != null && myKeepPopupOnMouseMove) return;
 
     myAlarm.cancelAllRequests();
     if (myCurrentProgress != null) {
@@ -146,6 +148,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
 
   private void showHintInEditor(AbstractPopup hint, Editor editor, Context context) {
     closeHint();
+    myKeepPopupOnMouseMove = false;
     editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, context.getPopupPosition(editor));
     try {
       PopupPositionManager.positionPopupInBestPosition(hint, editor, null);
@@ -154,7 +157,15 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, null);
     }
     Window window = hint.getPopupWindow();
-    if (window != null) window.setFocusableWindowState(true);
+    if (window != null) {
+      window.setFocusableWindowState(true);
+      IdeEventQueue.getInstance().addDispatcher(e -> {
+        if (e.getID() == MouseEvent.MOUSE_PRESSED && e.getSource() == window) {
+          myKeepPopupOnMouseMove = true;
+        }
+        return false;
+      }, hint);
+    }
   }
 
   private static AbstractPopup createHint(JComponent component, PopupBridge popupBridge) {
