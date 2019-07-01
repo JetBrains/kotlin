@@ -289,7 +289,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public static JsExpression getObjectKClass(@NotNull TranslationContext context, @Nullable ClassifierDescriptor descriptor) {
         JsExpression primitiveExpression = getPrimitiveClass(context, descriptor);
         if (primitiveExpression != null) return primitiveExpression;
-        return new JsInvocation(context.getNameForSpecialFunction(SpecialFunction.GET_KCLASS).makeRef(), UtilsKt.getReferenceToJsClass(descriptor, context));
+
+        // getKClass should be imported as intrinsic when used outside of inline context, otherwise bootstrap fails.
+        // Inside an inline function it should however be marked as SpecialFunction to support T::class when T -> Int (KT-32215)
+        JsName kClassName = context.getNameForIntrinsic(SpecialFunction.GET_KCLASS.getSuggestedName());
+        MetadataProperties.setSpecialFunction(kClassName, SpecialFunction.GET_KCLASS);
+
+        return new JsInvocation(kClassName.makeRef(), UtilsKt.getReferenceToJsClass(descriptor, context));
     }
 
     @Nullable

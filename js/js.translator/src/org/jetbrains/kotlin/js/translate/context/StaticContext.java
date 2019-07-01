@@ -876,6 +876,11 @@ public final class StaticContext {
 
     @NotNull
     public JsExpression getReferenceToIntrinsic(@NotNull String name) {
+        return pureFqn(getNameForIntrinsic(name), null);
+    }
+
+    @NotNull
+    public JsName getNameForIntrinsic(@NotNull String name) {
         JsName resultName = intrinsicNames.computeIfAbsent(name, k -> {
             if (isStdlib) {
                 DeclarationDescriptor descriptor = findDescriptorForIntrinsic(name);
@@ -886,7 +891,7 @@ public final class StaticContext {
             return importDeclaration(NameSuggestion.sanitizeName(name), "intrinsic:" + name, TranslationUtils.getIntrinsicFqn(name));
         });
 
-        return pureFqn(resultName, null);
+        return resultName;
     }
 
     @Nullable
