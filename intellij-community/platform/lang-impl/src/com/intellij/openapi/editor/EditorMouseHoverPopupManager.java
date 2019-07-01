@@ -136,8 +136,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   }
 
   private Rectangle getCurrentHintBounds(Editor editor) {
-    JBPopup popup = SoftReference.dereference(myPopupReference);
-    if (popup == null || !popup.isVisible()) return null;
+    JBPopup popup = getCurrentHint();
+    if (popup == null) return null;
     Dimension size = popup.getSize();
     if (size == null) return null;
     Rectangle result = new Rectangle(popup.getLocationOnScreen(), size);
@@ -179,7 +179,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   }
 
   private void updateHint(JComponent component, PopupBridge popupBridge) {
-    AbstractPopup popup = SoftReference.dereference(myPopupReference);
+    AbstractPopup popup = getCurrentHint();
     if (popup != null) {
       WrapperPanel wrapper = (WrapperPanel)popup.getComponent();
       wrapper.setContent(component);
@@ -250,17 +250,32 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   }
 
   private void closeHint() {
-    JBPopup popup = SoftReference.dereference(myPopupReference);
-    if (popup != null) {
-      popup.cancel();
+    AbstractPopup hint = getCurrentHint();
+    if (hint != null) {
+      hint.cancel();
     }
     myPopupReference = null;
     myContext = null;
   }
 
   private boolean isHintShown() {
-    JBPopup popup = SoftReference.dereference(myPopupReference);
-    return popup != null && popup.isVisible();
+    return getCurrentHint() != null;
+  }
+
+  private AbstractPopup getCurrentHint() {
+    if (myPopupReference == null) return null;
+    AbstractPopup hint = myPopupReference.get();
+    if (hint == null || !hint.isVisible()) {
+      if (hint != null) {
+        // hint's window might've been hidden by AWT without notifying us
+        // dispose to remove the popup from IDE hierarchy and avoid leaking components
+        hint.cancel();
+      }
+      myPopupReference = null;
+      return null;
+    }
+    return hint;
+
   }
 
   private static class Context {
