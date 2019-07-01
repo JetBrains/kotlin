@@ -9,11 +9,11 @@ public abstract class AbstractSettingsControl {
 
   private @Nullable Project myProject;
 
-  AbstractSettingsControl(@Nullable Project project) {
+  protected AbstractSettingsControl(@Nullable Project project) {
     myProject = project;
   }
 
-  AbstractSettingsControl() {
+  protected AbstractSettingsControl() {
     this(null);
   }
 
@@ -26,7 +26,7 @@ public abstract class AbstractSettingsControl {
     myProject = project;
   }
 
-  void reset(@Nullable WizardContext wizardContext, @Nullable Project project) {
+  protected void reset(@Nullable WizardContext wizardContext, @Nullable Project project) {
     myProject = wizardContext == null ? project : wizardContext.getProject();
   }
 }
