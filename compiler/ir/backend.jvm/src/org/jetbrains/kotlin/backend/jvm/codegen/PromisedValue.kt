@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.isKClass
-import org.jetbrains.kotlin.ir.util.isKClassArray
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
@@ -123,7 +119,7 @@ fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
                     AsmUtil.wrapJavaClassIntoKClass(mv)
                 }
             }
-        type == AsmTypes.JAVA_CLASS_ARRAY_TYPE && target == AsmTypes.K_CLASS_ARRAY_TYPE && irType.isKClassArray() ->
+        type == AsmTypes.JAVA_CLASS_ARRAY_TYPE && target == AsmTypes.K_CLASS_ARRAY_TYPE && irType.isArrayOfKClass() ->
             object : PromisedValue(codegen, target, irTarget) {
                 override fun materialize() {
                     this@coerce.materialize()
@@ -172,4 +168,9 @@ fun ExpressionCodegen.defaultValue(irType: IrType): PromisedValue =
         override fun materialize() {
             StackValue.coerce(Type.VOID_TYPE, type, codegen.mv)
         }
+    }
+
+private fun IrType.isArrayOfKClass(): Boolean =
+    isArray() && this is IrSimpleType && arguments.singleOrNull().let { argument ->
+        argument is IrTypeProjection && argument.type.isKClass()
     }

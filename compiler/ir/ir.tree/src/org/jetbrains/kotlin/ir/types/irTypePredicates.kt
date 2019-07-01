@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 
 private fun IrType.isNotNullClassType(fqName: FqNameUnsafe) = isClassType(fqName, hasQuestionMark = false)
@@ -45,6 +46,7 @@ fun IrType.isArray(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.array
 fun IrType.isNullableArray(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.array)
 fun IrType.isCollection(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.collection.toUnsafe())
 fun IrType.isNothing(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.nothing)
+fun IrType.isKClass(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.kClass)
 
 fun IrType.isPrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNotNullClassType(it) }
 fun IrType.isNullablePrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNullableClassType(it) }
@@ -84,3 +86,7 @@ fun IrType.isDoubleArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.Do
 fun IrType.isNullableBoolean(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._boolean)
 fun IrType.isNullableLong(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._long)
 fun IrType.isNullableChar(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._char)
+
+fun IrType.isKotlinResult(): Boolean = isNotNullClassType(DescriptorUtils.RESULT_FQ_NAME.toUnsafe())
+fun IrType.isContinuation(): Boolean = isNotNullClassType(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe())
+fun IrType.isNullableContinuation(): Boolean = isNullableClassType(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe())
