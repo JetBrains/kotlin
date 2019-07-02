@@ -23,15 +23,17 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.util.ThrowableConsumer;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.function.Consumer;
 
 public class HTMLExportUtil {
-  public static void writeFile(final String folder, @NonNls final String fileName, CharSequence buf, final Project project) {
+  public static void writeFile(@NotNull String folder,
+                               @NotNull String fileName,
+                               @NotNull Project project,
+                               @NotNull ThrowableConsumer<? super Writer, ? extends IOException> writerConsumer) {
     ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final File fullPath = new File(folder + File.separator + fileName);
 
@@ -49,8 +51,8 @@ public class HTMLExportUtil {
       showErrorMessage("Permission denied", fullPath, project);
       return;
     }
-    try (FileWriter writer = new FileWriter(fullPath, false)) {
-      writer.write(buf.toString().toCharArray());
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath, false))) {
+      writerConsumer.consume(writer);
     }
     catch (IOException e) {
       showErrorMessage(String.valueOf(e.getCause()), fullPath, project);
