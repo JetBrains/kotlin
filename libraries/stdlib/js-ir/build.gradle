@@ -28,7 +28,6 @@ task prepareNativeBuiltinsSources(type: Sync) {
         include "Nothing.kt"
         include "Number.kt"
         include "String.kt"
-        include "Throwable.kt"
     }
 
     into nativeBuiltinsSrcDir

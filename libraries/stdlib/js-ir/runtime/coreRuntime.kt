@@ -77,7 +77,6 @@ fun getStringHashCode(str: String): Int {
 
 fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
-@JsName("captureStack")
 internal fun captureStack(instance: Throwable) {
     if (js("Error").captureStackTrace != null) {
         js("Error").captureStackTrace(instance, instance::class.js)
@@ -86,17 +85,19 @@ internal fun captureStack(instance: Throwable) {
     }
 }
 
-@JsName("newThrowable")
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
-    throwable.message = if (message == null) {
-        if (cause != null) (cause.asDynamic().toString)() else null
-    } else {
-        message
-    }
+    throwable.message = message ?: cause?.toString()
     throwable.cause = cause
     throwable.name = "Throwable"
-    return throwable
+    return throwable.unsafeCast<Throwable>()
+}
+
+internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
+    js("Error").call(this_)
+    this_.message = message ?: cause?.toString()
+    this_.cause = cause
+    captureStack(this_)
 }
 
 internal fun <T, R> boxIntrinsic(x: T): R = error("Should be lowered")

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.backend.common.onlyIf
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
@@ -66,67 +64,41 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
         classBlock.statements += generateClassMetadata()
-        if (irClass.superTypes.any { it.isThrowable() }) {
-            classBlock.statements += generateThrowableProperties()
-        } else if (!irClass.defaultType.isThrowable()) {
-            // TODO: Test export properties of throwable subtype
-            if (!irClass.isInterface && !irClass.isEnumClass && !irClass.isEnumEntry) {
-                for (property in properties) {
-                    if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
-                        continue
 
-                    if (property.visibility != Visibilities.PUBLIC)
-                        continue
+        if (!irClass.isInterface && !irClass.isEnumClass && !irClass.isEnumEntry) {
+            for (property in properties) {
+                if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
+                    continue
 
-                    if (property.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
-                        continue
+                if (property.visibility != Visibilities.PUBLIC)
+                    continue
 
-                    fun IrSimpleFunction.accessorRef(): JsNameRef? =
-                        when (visibility) {
-                            Visibilities.PRIVATE -> null
-                            else -> JsNameRef(
-                                context.getNameForMemberFunction(this),
-                                classPrototypeRef
-                            )
-                        }
+                if (property.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+                    continue
 
-                    val getterRef = property.getter?.accessorRef()
-                    val setterRef = property.setter?.accessorRef()
-                    classBlock.statements += JsExpressionStatement(
-                        defineProperty(
-                            classPrototypeRef,
-                            context.getNameForProperty(property).ident,
-                            getter = getterRef,
-                            setter = setterRef
+                fun IrSimpleFunction.accessorRef(): JsNameRef? =
+                    when (visibility) {
+                        Visibilities.PRIVATE -> null
+                        else -> JsNameRef(
+                            context.getNameForMemberFunction(this),
+                            classPrototypeRef
                         )
+                    }
+
+                val getterRef = property.getter?.accessorRef()
+                val setterRef = property.setter?.accessorRef()
+                classBlock.statements += JsExpressionStatement(
+                    defineProperty(
+                        classPrototypeRef,
+                        context.getNameForProperty(property).ident,
+                        getter = getterRef,
+                        setter = setterRef
                     )
-                }
+                )
             }
         }
         context.staticContext.classModels[irClass.symbol] = classModel
         return classBlock
-    }
-
-    private fun generateThrowableProperties(): List<JsStatement> {
-        val functions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
-
-
-        // TODO: Fix `Name.special` deserialization
-        val messageGetter = functions.single { it.name.asString() == "<get-message>" }
-        val causeGetter = functions.single { it.name.asString() == "<get-cause>" }
-
-        val msgProperty = defineProperty(classPrototypeRef, "message", getter = buildGetterFunction(messageGetter))
-
-        val causeProperty = defineProperty(classPrototypeRef, "cause", getter = buildGetterFunction(causeGetter))
-
-        return listOf(msgProperty.makeStmt(), causeProperty.makeStmt())
-    }
-
-    private fun buildGetterFunction(delegate: IrSimpleFunction): JsFunction {
-        val getterName = context.getNameForMemberFunction(delegate)
-        val returnStatement = JsReturn(JsInvocation(JsNameRef(getterName, JsThisRef())))
-
-        return JsFunction(emptyScope, JsBlock(returnStatement), "")
     }
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): JsStatement? {
@@ -145,12 +117,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
             declaration.realOverrideTarget.let { it ->
-                var implClassDeclaration = it.parent as IrClass
-
-                // special case
-                if (implClassDeclaration.defaultType.isThrowable()) {
-                    implClassDeclaration = throwableAccessor()
-                }
+                val implClassDeclaration = it.parent as IrClass
 
                 if (!implClassDeclaration.defaultType.isAny() && !it.isEffectivelyExternal()) {
                     val implMethodName = context.getNameForMemberFunction(it)
@@ -165,18 +132,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
         return null
-    }
-
-    private fun throwableAccessor(): IrClass {
-
-        fun throwableAccessorImpl(type: IrType): IrType {
-            val klass = (type.classifierOrFail as IrClassSymbol)
-            val superType = klass.owner.superTypes.first { (it.classifierOrFail as? IrClassSymbol)?.owner?.kind == ClassKind.CLASS }
-            return if (superType.isThrowable()) type else throwableAccessorImpl(superType)
-        }
-
-
-        return (throwableAccessorImpl(irClass.defaultType).classifierOrFail as IrClassSymbol).owner
     }
 
     private fun maybeGeneratePrimaryConstructor() {

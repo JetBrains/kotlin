@@ -122,8 +122,8 @@ private val removeInlineFunctionsWithReifiedTypeParametersLoweringPhase = makeJs
 )
 
 private val throwableSuccessorsLoweringPhase = makeJsModulePhase(
-    ::ThrowableSuccessorsLowering,
-    name = "ThrowableSuccessorsLowering",
+    ::ThrowableLowering,
+    name = "ThrowableLowering",
     description = "Link kotlin.Throwable and JavaScript Error together to provide proper interop between language and platform exceptions"
 )
 
