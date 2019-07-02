@@ -292,7 +292,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
     panel.add(
       optionsPanel,
       new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                             new Insets(0, 0, 0, 5), 0, 0)
+                             JBUI.insetsRight(5), 0, 0)
     );
 
     if (!myAllowEmptySelection && (myElements == null || myElements.length == 0)) {
@@ -883,7 +883,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
   protected static class OrderComparator implements Comparator<ElementNode> {
     public OrderComparator() {
-    } // To make this class instanceable from the subclasses
+    } // To make this class instantiable from the subclasses
 
     @Override
     public int compare(ElementNode n1, ElementNode n2) {
