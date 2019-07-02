@@ -24,6 +24,7 @@ val clionPluginVersionFull: String by rootProject.extra
 val clionPluginZipPath: File by rootProject.extra
 val clionCustomPluginRepoUrl: URL by rootProject.extra
 val clionUseJavaPlugin: Boolean by rootProject.extra
+val clionJavaPluginDownloadUrl: URL? by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
 
@@ -66,5 +67,5 @@ val clionUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         clionFriendlyVersion,
         clionPluginZipPath,
         clionCustomPluginRepoUrl,
-        if (clionUseJavaPlugin) URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$clionRepo/$clionVersion/CL-plugins/java.zip") else null
+        clionJavaPluginDownloadUrl
 )

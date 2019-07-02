@@ -18,7 +18,6 @@ val packageCidrPlugin: (Project, String, File, List<Task>) -> Copy by cidrPlugin
 val zipCidrPlugin: (Project, Task, File) -> Zip by cidrPluginTools
 val cidrUpdatePluginsXml: (Project, Task, String, File, URL, URL?) -> Task by cidrPluginTools
 
-val appcodeRepo: String by rootProject.extra
 val appcodeVersion: String by rootProject.extra
 val appcodeFriendlyVersion: String by rootProject.extra
 val appcodeVersionStrict: Boolean by rootProject.extra
@@ -28,6 +27,7 @@ val appcodePluginVersionFull: String by rootProject.extra
 val appcodePluginZipPath: File by rootProject.extra
 val appcodeCustomPluginRepoUrl: URL by rootProject.extra
 val appcodeUseJavaPlugin: Boolean by rootProject.extra
+val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
 
@@ -70,7 +70,7 @@ val appcodeUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         appcodeFriendlyVersion,
         appcodePluginZipPath,
         appcodeCustomPluginRepoUrl,
-        if (appcodeUseJavaPlugin) URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$appcodeRepo/$appcodeVersion/OC-plugins/java.zip") else null
+        appcodeJavaPluginDownloadUrl
 )
 
 enableTasksIfAtLeast(project, appcodeVersion, 191)

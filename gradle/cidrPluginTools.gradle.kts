@@ -275,7 +275,7 @@ fun cidrUpdatePluginsXml(
         cidrProductFriendlyVersion: String,
         cidrPluginZipPath: File,
         cidrCustomPluginRepoUrl: URL,
-        javaPluginRepoUrl: URL?
+        javaPluginDownloadUrl: URL?
 ): Task = with(project) {
     task<Task>(guessCidrProductNameFromProject(true) + "UpdatePluginsXml") {
         dependsOn(pluginXmlTask)
@@ -331,14 +331,14 @@ fun cidrUpdatePluginsXml(
                     untilBuild = untilBuild,
                     name = name.first,
                     description = description.first,
-                    dependency = if (javaPluginRepoUrl != null) javaPluginId else null
+                    dependency = if (javaPluginDownloadUrl != null) javaPluginId else null
             )
 
-            val javaPluginDescription = if (javaPluginRepoUrl != null) {
+            val javaPluginDescription = if (javaPluginDownloadUrl != null) {
                 val nameAndDescription = "Kotlin/Native Platform Dependencies for " + guessCidrProductNameFromProject(false)
                 generatePluginDescription(
                         id = javaPluginId,
-                        url = javaPluginRepoUrl,
+                        url = javaPluginDownloadUrl,
                         version = sinceBuild,
                         sinceBuild = sinceBuild,
                         untilBuild = untilBuild,
@@ -647,7 +647,7 @@ fun preparePluginXml(
                 .output
                 .resourcesDir as File
 
-        from(predecessorProjectResources, Action { include(pluginXmlPath) })
+        from(predecessorProjectResources) { include(pluginXmlPath) }
         into(outputs.files.singleFile)
 
         applyCidrVersionRestrictions(productVersion, strictProductVersionLimitation, cidrPluginVersionFull, useJavaPlugin)
