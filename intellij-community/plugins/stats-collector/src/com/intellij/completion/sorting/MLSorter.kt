@@ -9,7 +9,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.settings.CompletionStatsCollectorSettings
+import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Pair
@@ -78,7 +78,7 @@ class MLSorter : CompletionFinalSorter() {
     val itemsToSort = items.filterNotNull()
     SessionFactorsUtils.updateSessionFactors(lookup, itemsToSort)
     val languageRanker = RankingSupport.getRanker(parameters.language())
-    if (languageRanker == null || !shouldSortByMlRank()) return items
+    if (languageRanker == null || !shouldSortByMlRank(languageRanker.displayName)) return items
 
     val sorted = sortByMLRanking(languageRanker, parameters, itemsToSort, lookup) ?: return items
     val timeSpent = System.currentTimeMillis() - startTime
@@ -91,15 +91,15 @@ class MLSorter : CompletionFinalSorter() {
     return sorted
   }
 
-  private fun shouldSortByMlRank(): Boolean {
+  private fun shouldSortByMlRank(languageName: String): Boolean {
     val application = ApplicationManager.getApplication()
     if (application.isUnitTestMode) return false
-    val settings = CompletionStatsCollectorSettings.getInstance()
+    val settings = CompletionMLRankingSettings.getInstance()
     if (application.isEAP && webServiceStatus.isExperimentOnCurrentIDE() && settings.isCompletionLogsSendAllowed) {
       return EmulatedExperiment.shouldRank(webServiceStatus.experimentVersion())
     }
 
-    return settings.isRankingEnabled
+    return settings.isRankingEnabled && settings.isLanguageEnabled(languageName)
   }
 
   /**

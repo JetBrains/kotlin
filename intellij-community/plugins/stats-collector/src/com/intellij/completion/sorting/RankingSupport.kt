@@ -13,20 +13,20 @@ import com.jetbrains.completion.ranker.PythonCompletionRanker
 
 
 object RankingSupport {
-  private val rankers: Map<String, LanguageRanker> = mapOf(
-    "java" to LanguageRanker(JavaCompletionRanker()),
-    "kotlin" to LanguageRanker(KotlinCompletionRanker()),
-    "python" to LanguageRanker(PythonCompletionRanker())
-  )
+  private val language2ranker: Map<String, LanguageRanker> = buildRankerMap()
 
   fun getRanker(language: Language?): LanguageRanker? {
     if (language == null) return null
-    return rankers[language.key()]
+    return language2ranker[language.key()]
+  }
+
+  fun availableLanguages(): List<String> {
+    return language2ranker.values.map { it.displayName }
   }
 
   private fun Language.key(): String = displayName.toLowerCase()
 
-  class LanguageRanker(private val ranker: LanguageCompletionRanker) {
+  class LanguageRanker(val displayName: String, private val ranker: LanguageCompletionRanker) {
     private val transformer: FeatureTransformer = ranker.modelMetadata.createTransformer()
     private val useSessionFactors: Boolean = ranker.modelMetadata.hasSessionFactors()
 
@@ -46,5 +46,13 @@ object RankingSupport {
       fun isSessionFeature(feature: Feature) = feature.name.startsWith(SessionFactorsUtils.SESSION_FACTOR_PREFIX)
       return float.any { isSessionFeature(it) } || binary.any { isSessionFeature(it) } || categorical.any { isSessionFeature(it) }
     }
+  }
+
+  private fun buildRankerMap(): Map<String, LanguageRanker> {
+    return mapOf(
+      "java" to LanguageRanker("Java", JavaCompletionRanker()),
+      "kotlin" to LanguageRanker("Kotlin", KotlinCompletionRanker()),
+      "python" to LanguageRanker("Python", PythonCompletionRanker())
+    )
   }
 }

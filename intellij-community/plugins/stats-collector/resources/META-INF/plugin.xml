@@ -14,6 +14,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
 
+    <applicationService serviceImplementation="com.intellij.completion.settings.CompletionMLRankingSettings"/>
+
     <applicationService serviceInterface="com.intellij.stats.completion.CompletionLoggerProvider"
                         serviceImplementation="com.intellij.stats.completion.CompletionFileLoggerProvider">
     </applicationService>
@@ -46,6 +48,8 @@
                         serviceImplementation="com.intellij.stats.completion.PermanentInstallationIdProvider">
     </applicationService>
 
+    <codeCompletionConfigurable provider="com.intellij.completion.settings.MLRankingConfigurableProvider"/>
+
     <applicationService serviceInterface="com.intellij.completion.tracker.LookupElementPositionTracker"
                         serviceImplementation="com.intellij.completion.tracker.UserDataLookupElementPositionTracker"/>
 
@@ -62,11 +66,8 @@
     <registryKey key="completion.stats.show.ml.ranking.diff" defaultValue="false"
                  description="Show how element position changed after ml ranking performed, if ml completion ranking is enabled"/>
 
-    <registryKey key="completion.stats.enable.ml.ranking" defaultValue="false"
-                 description="Re-rank lookup elements using ML model"/>
-
     <registryKey key="completion.stats.send.logs" defaultValue="true"
-                 description="Send anonymous logs about completion usage"/>
+                 description="Send anonymous logs about completion usage in EAP builds"/>
 
     <registryKey key="completion.stats.enable.session.factors" defaultValue="true"
                  description="Use inside single session factors"/>
