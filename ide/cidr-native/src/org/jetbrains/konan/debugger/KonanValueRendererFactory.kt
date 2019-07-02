@@ -11,6 +11,7 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer
+import org.jetbrains.konan.debugger.PrettyPrintersFromPlugin.*
 import org.jetbrains.konan.util.getKotlinNativeHome
 import org.jetbrains.konan.util.getKotlinNativeVersion
 import org.jetbrains.kotlin.konan.MetaVersion
@@ -51,25 +52,31 @@ private fun initLLDBDriver(project: Project, driver: LLDBDriver) {
 
 private fun getPrettyPrintersLocation(kotlinNativeHome: String): Path {
     // For versions of Kotlin/Native older than "1.2-release" use improved pretty printers bundled with the plugin
-    val usePrettyPrintersFromPlugin = getKotlinNativeVersion(kotlinNativeHome)?.run {
+    val prettyPrintersFromPlugin = getKotlinNativeVersion(kotlinNativeHome)?.run {
         when (major) {
-            0 -> true
+            0 -> PP_PRE_1_2_RELEASE
             1 -> when (minor) {
-                0, 1 -> true
-                2 -> meta != MetaVersion.RELEASE
-                else -> false
+                0, 1 -> PP_PRE_1_2_RELEASE
+                2 -> if (meta != MetaVersion.RELEASE) PP_PRE_1_2_RELEASE else null
+                3 -> when (maintenance) {
+                    0, 1 -> PP_1_3_AND_1_3_1
+                    else -> null
+                }
+                else -> null
             }
-            else -> false
+            else -> null
         }
-    } ?: false
-
-    if (!usePrettyPrintersFromPlugin)
-        return Paths.get(kotlinNativeHome, "tools", "konan_lldb.py")
+    } ?: return Paths.get(kotlinNativeHome, "tools", "konan_lldb.py")
 
     val outOfPluginPrettyPrinters = createTempDir().resolve("konan_lldb.py")
     outOfPluginPrettyPrinters.outputStream().use { outputStream ->
-        KonanValueRendererFactory::class.java.getResourceAsStream("/lldb/konan_lldb.py").copyTo(outputStream)
+        KonanValueRendererFactory::class.java.getResourceAsStream("/lldb/${prettyPrintersFromPlugin.filename}").copyTo(outputStream)
     }
 
     return outOfPluginPrettyPrinters.toPath()
+}
+
+private enum class PrettyPrintersFromPlugin(val filename: String) {
+    PP_PRE_1_2_RELEASE("konan_lldb.py-pre-1.2-release"),
+    PP_1_3_AND_1_3_1("konan_lldb.py-1.3-1.3.1");
 }
