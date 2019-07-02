@@ -15,6 +15,7 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.event.EditorMouseEventArea;
 import com.intellij.openapi.editor.event.EditorMouseMotionListener;
@@ -24,6 +25,7 @@ import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -56,6 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
+  private static final Logger LOG = Logger.getInstance(EditorMouseHoverPopupManager.class);
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
 
   private final Alarm myAlarm;
@@ -357,16 +360,20 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       Ref<PsiElement> targetElementRef = new Ref<>();
       if (elementForQuickDoc != null) {
         PsiElement element = getElementForQuickDoc();
-        QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
-          if (element.isValid()) {
-            targetElementRef.set(DocumentationManager.getInstance(editor.getProject()).findTargetElement(editor, targetOffset,
-                                                                                                         element.getContainingFile(),
-                                                                                                         element));
+        try {
+          DocumentationManager documentationManager = DocumentationManager.getInstance(editor.getProject());
+          QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
+            if (element.isValid()) {
+              targetElementRef.set(documentationManager.findTargetElement(editor, targetOffset, element.getContainingFile(), element));
+            }
+          }, 5000, 100);
+          if (!targetElementRef.isNull()) {
+            quickDocMessage = documentationManager.generateDocumentation(targetElementRef.get(), element);
           }
-        }, 5000, 100);
-
-        if (!targetElementRef.isNull()) {
-          quickDocMessage = DocumentationManager.getInstance(editor.getProject()).generateDocumentation(targetElementRef.get(), element);
+        }
+        catch (IndexNotReadyException ignored) {}
+        catch (Exception e) {
+          LOG.warn(e);
         }
       }
       return info == null && quickDocMessage == null ? null : new Info(info, quickDocMessage, targetElementRef.get());
