@@ -75,13 +75,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   public void mouseMoved(@NotNull EditorMouseEvent e) {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
 
-    if (isAnotherAppInFocus()) return;
-
-    Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
-    Rectangle currentHintBounds = getCurrentHintBounds(e.getEditor());
-    boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, currentHintBounds);
-    myPrevMouseLocation = currentMouseLocation;
-    if (movesTowardsPopup || currentHintBounds != null && myKeepPopupOnMouseMove) return;
+    if (ignoreEvent(e)) return;
 
     myAlarm.cancelAllRequests();
     if (myCurrentProgress != null) {
@@ -138,6 +132,18 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         }
       });
     }, progress), context.getShowingDelay());
+  }
+
+  private boolean ignoreEvent(EditorMouseEvent e) {
+    if (isAnotherAppInFocus()) return true;
+
+    Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
+    Rectangle currentHintBounds = getCurrentHintBounds(e.getEditor());
+    boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, currentHintBounds);
+    myPrevMouseLocation = currentMouseLocation;
+    if (movesTowardsPopup || currentHintBounds != null && myKeepPopupOnMouseMove) return true;
+
+    return false;
   }
 
   private static boolean isAnotherAppInFocus() {
