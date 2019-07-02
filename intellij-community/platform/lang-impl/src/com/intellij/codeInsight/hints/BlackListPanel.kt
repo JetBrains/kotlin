@@ -25,7 +25,7 @@ import java.awt.event.ActionEvent
 import javax.swing.*
 
 
-class BlackListDialog(val language: Language) : DialogWrapper(null) {
+class BlackListDialog(val language: Language, private val patternToAdd: String? = null) : DialogWrapper(null) {
   lateinit var myEditor: EditorTextField
   private var myPatternsAreValid = true
 
@@ -44,8 +44,12 @@ class BlackListDialog(val language: Language) : DialogWrapper(null) {
     if (!provider.isBlackListSupported) return null
 
     val blackList = getLanguageBlackList(language)
-
-    val editorTextField = createBlacklistEditorField(blackList)
+    val finalText = if (patternToAdd != null) {
+      blackList + "\n" + patternToAdd
+    } else {
+      blackList
+    }
+    val editorTextField = createBlacklistEditorField(finalText)
     editorTextField.addDocumentListener(object : DocumentListener {
       override fun documentChanged(e: DocumentEvent) {
         updateOkEnabled(editorTextField)
@@ -138,6 +142,7 @@ class BlackListDialog(val language: Language) : DialogWrapper(null) {
     val defaultBlackList = provider.defaultBlackList
     val diff = Diff.build(defaultBlackList, updatedBlackList)
     ParameterNameHintsSettings.getInstance().setBlackListDiff(getLanguageForSettingKey(language), diff)
+    ParameterHintsPassFactory.forceHintsUpdateOnNextPass()
   }
 }
 
