@@ -112,6 +112,11 @@ internal object Devirtualization {
 
             var priority = -1
 
+            var multiNodeStart = -1
+            var multiNodeEnd = -1
+
+            val multiNodeSize get() = multiNodeEnd - multiNodeStart
+
             fun addEdge(node: Node) {
                 if (directEdges == null) directEdges = ArrayList(1)
                 directEdges!!.add(node)
@@ -456,6 +461,93 @@ internal object Devirtualization {
             } while (cur != node)
         }
 
+        private inner class Condensation(val multiNodes: IntArray, val topologicalOrder: IntArray) {
+            inline fun forEachNode(node: Node, block: (Node) -> Unit) {
+                for (i in node.multiNodeStart until node.multiNodeEnd)
+                    block(constraintGraph.nodes[multiNodes[i]])
+            }
+        }
+
+        private inner class CondensationBuilder {
+            val nodes = constraintGraph.nodes
+            val nodesCount = nodes.size
+            val visited = BitSet(nodesCount)
+            var index = 0
+            val multiNodes = IntArray(nodesCount)
+
+            fun build(): Condensation {
+                // First phase.
+                val order = IntArray(nodesCount)
+                for (node in nodes) {
+                    if (!visited[node.id])
+                        findOrder(node, order)
+                }
+
+                // Second phase.
+                visited.clear()
+                index = 0
+                var multiNodesCount = 0
+                val multiNodesRepresentatives = IntArray(nodesCount)
+                for (i in order.size - 1 downTo 0) {
+                    val nodeIndex = order[i]
+                    if (visited[nodeIndex]) continue
+                    multiNodesRepresentatives[multiNodesCount++] = nodeIndex
+                    val start = index
+                    paint(nodes[nodeIndex])
+                    val end = index
+                    for (multiNodeIndex in start until end) {
+                        val node = nodes[multiNodes[multiNodeIndex]]
+                        node.multiNodeStart = start
+                        node.multiNodeEnd = end
+                    }
+                }
+
+                // Topsort the built condensation.
+                visited.clear()
+                index = 0
+                val multiNodesOrder = IntArray(multiNodesCount)
+                for (v in multiNodesRepresentatives) {
+                    if (!visited[v])
+                        findMultiNodesOrder(nodes[v], multiNodesOrder)
+                }
+                multiNodesOrder.reverse()
+
+                return Condensation(multiNodes, multiNodesOrder)
+            }
+
+            private fun findOrder(node: Node, order: IntArray) {
+                visited.set(node.id)
+                node.directEdges?.forEach {
+                    if (!visited[it.id])
+                        findOrder(it, order)
+                }
+                order[index++] = node.id
+            }
+
+            private fun paint(node: Node) {
+                visited.set(node.id)
+                multiNodes[index++] = node.id
+                node.reversedEdges?.forEach {
+                    if (!visited[it.id])
+                        paint(it)
+                }
+            }
+
+            private fun findMultiNodesOrder(multiNode: Node, order: IntArray) {
+                visited.set(multiNode.id)
+                for (v in multiNode.multiNodeStart until multiNode.multiNodeEnd) {
+                    val node = nodes[multiNodes[v]]
+                    node.directEdges?.forEach {
+                        val nextMultiNode = multiNodes[it.multiNodeStart]
+                        if (!visited[nextMultiNode])
+                            findMultiNodesOrder(nodes[nextMultiNode], order)
+                    }
+
+                }
+                order[index++] = multiNode.id
+            }
+        }
+
         fun analyze(): AnalysisResult {
             val functions = moduleDFG.functions + externalModulesDFG.functionDFGs
             val typeHierarchy = TypeHierarchy(symbolTable.classMap.values.filterIsInstance<DataFlowIR.Type.Declared>() +
@@ -503,39 +595,23 @@ internal object Devirtualization {
                     "${constraintGraph.nodes.sumBy { (it.directEdges?.size ?: 0) + (it.directCastEdges?.size ?: 0) } } edges")
             }
 
-            val topologicalOrder = DirectedGraphCondensationBuilder(constraintGraph).build().topologicalOrder
+            val condensation = CondensationBuilder().build()
+            val topologicalOrder = condensation.topologicalOrder.map { constraintGraph.nodes[it] }
 
             DEBUG_OUTPUT(0) {
                 println("CONDENSATION")
                 topologicalOrder.forEachIndexed { index, multiNode ->
                     println("    MULTI-NODE #$index")
-                    multiNode.nodes.forEach {
+                    condensation.forEachNode(multiNode) {
                         println("        #${it.id}: ${it.toString(allTypes)}")
                     }
                 }
             }
 
-            topologicalOrder.forEachIndexed { index, multiNode -> multiNode.nodes.forEach { it.priority = index } }
-
-            // Handle all 'right-directed' edges.
-            // TODO: this is pessimistic handling of [DataFlowIR.Type.Virtual], think how to do it better.
-            for (multiNode in topologicalOrder) {
-                if (multiNode.nodes.size == 1 && multiNode.nodes.first() is Node.Source)
-                    continue // A source has no incoming edges.
-                val types = BitSet()
-                for (node in multiNode.nodes) {
-                    node.reversedEdges?.forEach { types.or(it.types) }
-                    node.reversedCastEdges
-                            ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
-                            ?.forEach {
-                                val sourceTypes = it.node.types.copy()
-                                sourceTypes.and(it.suitableTypes)
-                                types.or(sourceTypes)
-                            }
-                }
-                for (node in multiNode.nodes)
-                    node.types.or(types)
+            topologicalOrder.forEachIndexed { index, multiNode ->
+                condensation.forEachNode(multiNode) { node -> node.priority = index }
             }
+
             val badEdges = mutableListOf<Pair<Node, Node.CastEdge>>()
             for (node in constraintGraph.nodes) {
                 node.directCastEdges
@@ -544,21 +620,30 @@ internal object Devirtualization {
             }
             badEdges.sortBy { it.second.node.priority } // Heuristic.
 
+            // First phase - greedy phase.
+            var iterations = 0
+            val maxNumberOfIterations = 2
             do {
-                fun propagateTypes(node: Node, types: BitSet) {
-                    node.types.or(types)
-                    node.directEdges?.forEach { edge ->
-                        val missingTypes = types.copy().apply { andNot(edge.types) }
-                        if (!missingTypes.isEmpty)
-                            propagateTypes(edge, missingTypes)
+                ++iterations
+                // Handle all 'right-directed' edges.
+                // TODO: this is pessimistic handling of [DataFlowIR.Type.Virtual], think how to do it better.
+                for (multiNode in topologicalOrder) {
+                    if (multiNode.multiNodeSize == 1 && multiNode is Node.Source)
+                        continue // A source has no incoming edges.
+                    val types = BitSet()
+                    condensation.forEachNode(multiNode) { node ->
+                        node.reversedEdges?.forEach { types.or(it.types) }
+                        node.reversedCastEdges
+                                ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
+                                ?.forEach {
+                                    val sourceTypes = it.node.types.copy()
+                                    sourceTypes.and(it.suitableTypes)
+                                    types.or(sourceTypes)
+                                }
                     }
-                    node.directCastEdges?.forEach { castEdge ->
-                        val missingTypes = types.copy().apply { andNot(castEdge.node.types) }
-                        missingTypes.and(castEdge.suitableTypes)
-                        if (!missingTypes.isEmpty)
-                            propagateTypes(castEdge.node, missingTypes)
-                    }
+                    condensation.forEachNode(multiNode) { node -> node.types.or(types) }
                 }
+                if (iterations >= maxNumberOfIterations) break
 
                 var end = true
                 for ((sourceNode, edge) in badEdges) {
@@ -567,15 +652,73 @@ internal object Devirtualization {
                     missingTypes.and(edge.suitableTypes)
                     if (!missingTypes.isEmpty) {
                         end = false
-                        propagateTypes(distNode, missingTypes)
+                        distNode.types.or(missingTypes)
                     }
                 }
             } while (!end)
 
+            // Second phase - do BFS.
+            val nodesCount = constraintGraph.nodes.size
+            val marked = BitSet(nodesCount)
+            var front = IntArray(nodesCount)
+            var prevFront = IntArray(nodesCount)
+            var frontSize = 0
+            val tempBitSet = BitSet()
+            for ((sourceNode, edge) in badEdges) {
+                val distNode = edge.node
+                tempBitSet.clear()
+                tempBitSet.or(sourceNode.types)
+                tempBitSet.andNot(distNode.types)
+                tempBitSet.and(edge.suitableTypes)
+                distNode.types.or(tempBitSet)
+                if (!marked[distNode.id] && !tempBitSet.isEmpty) {
+                    marked.set(distNode.id)
+                    front[frontSize++] = distNode.id
+                }
+            }
+
+            while (frontSize > 0) {
+                val prevFrontSize = frontSize
+                frontSize = 0
+                val temp = front
+                front = prevFront
+                prevFront = temp
+                for (i in 0 until prevFrontSize) {
+                    marked[prevFront[i]] = false
+                    val node = constraintGraph.nodes[prevFront[i]]
+                    node.directEdges?.forEach { distNode ->
+                        if (marked[distNode.id])
+                            distNode.types.or(node.types)
+                        else {
+                            tempBitSet.clear()
+                            tempBitSet.or(node.types)
+                            tempBitSet.andNot(distNode.types)
+                            distNode.types.or(node.types)
+                            if (!marked[distNode.id] && !tempBitSet.isEmpty) {
+                                marked.set(distNode.id)
+                                front[frontSize++] = distNode.id
+                            }
+                        }
+                    }
+                    node.directCastEdges?.forEach { edge ->
+                        val distNode = edge.node
+                        tempBitSet.clear()
+                        tempBitSet.or(node.types)
+                        tempBitSet.andNot(distNode.types)
+                        tempBitSet.and(edge.suitableTypes)
+                        distNode.types.or(tempBitSet)
+                        if (!marked[distNode.id] && !tempBitSet.isEmpty) {
+                            marked.set(distNode.id)
+                            front[frontSize++] = distNode.id
+                        }
+                    }
+                }
+            }
+
             DEBUG_OUTPUT(0) {
                 topologicalOrder.forEachIndexed { index, multiNode ->
                     println("Types of multi-node #$index")
-                    for (node in multiNode.nodes) {
+                    condensation.forEachNode(multiNode) { node ->
                         println("    Node #${node.id}")
                         allTypes.asSequence()
                                 .withIndex()
