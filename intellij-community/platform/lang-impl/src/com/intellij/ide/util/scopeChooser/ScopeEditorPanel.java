@@ -13,6 +13,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,14 +36,13 @@ import com.intellij.util.ui.update.Activatable;
 import com.intellij.util.ui.update.UiNotifyConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.ExpandVetoException;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
@@ -79,6 +79,11 @@ public class ScopeEditorPanel {
   private JLabel myPartiallyIncluded;
   private PanelProgressIndicator myCurrentProgress;
   private NamedScopesHolder myHolder;
+
+  private final MyAction myInclude = new MyAction("button.include", this::includeSelected);
+  private final MyAction myIncludeRec = new MyAction("button.include.recursively", this::includeSelected);
+  private final MyAction myExclude = new MyAction("button.exclude", this::excludeSelected);
+  private final MyAction myExcludeRec = new MyAction("button.exclude.recursively", this::excludeSelected);
 
   public ScopeEditorPanel(@NotNull final Project project, @NotNull NamedScopesHolder holder) {
     myProject = project;
@@ -226,77 +231,28 @@ public class ScopeEditorPanel {
   }
 
   private JComponent createActionsPanel() {
-    final JButton include = new JButton(IdeBundle.message("button.include"));
-    final JButton includeRec = new JButton(IdeBundle.message("button.include.recursively"));
-    final JButton exclude = new JButton(IdeBundle.message("button.exclude"));
-    final JButton excludeRec = new JButton(IdeBundle.message("button.exclude.recursively"));
-    include.setEnabled(false);
-    includeRec.setEnabled(false);
-    exclude.setEnabled(false);
-    excludeRec.setEnabled(false);
     myPackageTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
-        final boolean recursiveEnabled = isButtonEnabled(true);
-        includeRec.setEnabled(recursiveEnabled);
-        excludeRec.setEnabled(recursiveEnabled);
+        List<PackageSet> selection = getSelectedSets(false);
+        myInclude.setSelection(selection);
+        myExclude.setSelection(selection);
 
-        final boolean nonRecursiveEnabled = isButtonEnabled(false);
-        include.setEnabled(nonRecursiveEnabled);
-        exclude.setEnabled(nonRecursiveEnabled);
+        List<PackageSet> recursive = getSelectedSets(true);
+        myIncludeRec.setSelection(recursive);
+        myExcludeRec.setSelection(recursive);
       }
     });
 
     JPanel buttonsPanel = new JPanel(new VerticalLayout(5));
-    buttonsPanel.add(include);
-    buttonsPanel.add(includeRec);
-    buttonsPanel.add(exclude);
-    buttonsPanel.add(excludeRec);
-
-    include.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        includeSelected(false);
-      }
-    });
-    includeRec.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        includeSelected(true);
-      }
-    });
-    exclude.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        excludeSelected(false);
-      }
-    });
-    excludeRec.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        excludeSelected(true);
-      }
-    });
-
+    buttonsPanel.add(new JButton(myInclude));
+    buttonsPanel.add(new JButton(myIncludeRec));
+    buttonsPanel.add(new JButton(myExclude));
+    buttonsPanel.add(new JButton(myExcludeRec));
     return buttonsPanel;
   }
 
-  boolean isButtonEnabled(boolean rec) {
-    final TreePath[] paths = myPackageTree.getSelectionPaths();
-    if (paths != null) {
-      for (TreePath path : paths) {
-        final PackageDependenciesNode node = (PackageDependenciesNode)path.getLastPathComponent();
-        if (PatternDialectProvider.getInstance(DependencyUISettings.getInstance().SCOPE_TYPE).createPackageSet(node, rec) != null) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  private void excludeSelected(boolean recurse) {
-    final ArrayList<PackageSet> selected = getSelectedSets(recurse);
-    if (selected == null || selected.isEmpty()) return;
+  private void excludeSelected(@NotNull List<PackageSet> selected) {
     for (PackageSet set : selected) {
       if (myCurrentScope == null) {
         myCurrentScope = new ComplementPackageSet(set);
@@ -325,9 +281,7 @@ public class ScopeEditorPanel {
     rebuild(true);
   }
 
-  private void includeSelected(boolean recurse) {
-    final ArrayList<PackageSet> selected = getSelectedSets(recurse);
-    if (selected == null || selected.isEmpty()) return;
+  private void includeSelected(@NotNull List<PackageSet> selected) {
     for (PackageSet set : selected) {
       if (myCurrentScope == null) {
         myCurrentScope = set;
@@ -506,52 +460,10 @@ public class ScopeEditorPanel {
 
   private ActionGroup createTreePopupActions() {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.add(new AnAction(IdeBundle.message("button.include")) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        includeSelected(false);
-      }
-
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(isButtonEnabled(false));
-      }
-    });
-    actionGroup.add(new AnAction(IdeBundle.message("button.include.recursively")) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        includeSelected(true);
-      }
-
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(isButtonEnabled(true));
-      }
-    });
-
-    actionGroup.add(new AnAction(IdeBundle.message("button.exclude")) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        excludeSelected(false);
-      }
-
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(isButtonEnabled(false));
-      }
-    });
-    actionGroup.add(new AnAction(IdeBundle.message("button.exclude.recursively")) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        excludeSelected(true);
-      }
-
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(isButtonEnabled(true));
-      }
-    });
-
+    addAction(actionGroup, myInclude);
+    addAction(actionGroup, myIncludeRec);
+    addAction(actionGroup, myExclude);
+    addAction(actionGroup, myExcludeRec);
     return actionGroup;
   }
 
@@ -757,6 +669,41 @@ public class ScopeEditorPanel {
     @Override
     public String getText2() {
       return null;
+    }
+  }
+
+  private static void addAction(@NotNull DefaultActionGroup group, @NotNull MyAction action) {
+    group.add(new DumbAwareAction(String.valueOf(action.getValue(Action.NAME))) {
+      @Override
+      public void update(@NotNull AnActionEvent event) {
+        event.getPresentation().setEnabled(action.isEnabled());
+      }
+
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent event) {
+        action.actionPerformed(null);
+      }
+    });
+  }
+
+  private static final class MyAction extends AbstractAction {
+    private final Consumer<List<PackageSet>> consumer;
+    private List<PackageSet> selection;
+
+    private MyAction(@NotNull @PropertyKey(resourceBundle = IdeBundle.BUNDLE) String key, @NotNull Consumer<List<PackageSet>> consumer) {
+      super(IdeBundle.message(key));
+      setEnabled(false);
+      this.consumer = consumer;
+    }
+
+    void setSelection(@Nullable List<PackageSet> selection) {
+      this.selection = selection;
+      setEnabled(selection != null && !selection.isEmpty());
+    }
+
+    @Override
+    public void actionPerformed(@Nullable ActionEvent event) {
+      if (selection != null && !selection.isEmpty()) consumer.consume(selection);
     }
   }
 }
