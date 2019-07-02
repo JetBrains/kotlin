@@ -41,7 +41,6 @@ import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.PopupPositionManager;
 import com.intellij.util.Alarm;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -396,16 +395,12 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
 
     private JComponent createComponent(Editor editor, PopupBridge popupBridge) {
       JComponent c1 = createHighlightInfoComponent(editor, quickDocMessage == null, popupBridge);
-      JComponent c2 = createQuickDocComponent(editor, c1 != null, popupBridge);
+      DocumentationComponent c2 = createQuickDocComponent(editor, c1 != null, popupBridge);
       if (c1 == null && c2 == null) return null;
-      JPanel p = new JPanel(new GridBagLayout());
-      GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                                                    JBUI.emptyInsets(), 0, 0);
-      if (c1 != null) p.add(c1, c);
-      c.gridy = 1;
-      c.weighty = 1;
-      c.fill = GridBagConstraints.BOTH;
-      if (c2 != null) p.add(c2, c);
+      JPanel p = new JPanel(new CombinedPopupLayout(c1, c2));
+      p.setBorder(null);
+      if (c1 != null) p.add(c1);
+      if (c2 != null) p.add(c2);
       return p;
     }
 
@@ -474,7 +469,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     }
 
     @Nullable
-    private JComponent createQuickDocComponent(Editor editor,
+    private DocumentationComponent createQuickDocComponent(Editor editor,
                                                boolean deEmphasize,
                                                PopupBridge popupBridge) {
       if (quickDocMessage == null) return null;
@@ -483,7 +478,6 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       DocumentationComponent component = new DocumentationComponent(documentationManager, false) {
         @Override
         protected void showHint() {
-          setPreferredSize(getOptimalSize());
           AbstractPopup popup = popupBridge.getPopup();
           if (popup != null) {
             validatePopupSize(popup);
@@ -566,6 +560,51 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
     private void setContent(JComponent content) {
       removeAll();
       add(content, BorderLayout.CENTER);
+    }
+  }
+
+  private static class CombinedPopupLayout implements LayoutManager {
+    private final JComponent highlightInfoComponent;
+    private final DocumentationComponent quickDocComponent;
+
+    private CombinedPopupLayout(JComponent highlightInfoComponent, DocumentationComponent quickDocComponent) {
+      this.highlightInfoComponent = highlightInfoComponent;
+      this.quickDocComponent = quickDocComponent;
+    }
+
+    @Override
+    public void addLayoutComponent(String name, Component comp) {}
+
+    @Override
+    public void removeLayoutComponent(Component comp) {}
+
+    @Override
+    public Dimension preferredLayoutSize(Container parent) {
+      Dimension d1 = highlightInfoComponent == null ? new Dimension() : highlightInfoComponent.getPreferredSize();
+      int w2 = quickDocComponent == null ? 0 : quickDocComponent.getPreferredWidth();
+      int preferredWidth = Math.max(d1.width, w2);
+      int h2 = quickDocComponent == null ? 0 : quickDocComponent.getPreferredHeight(preferredWidth);
+      return new Dimension(preferredWidth, d1.height + h2);
+    }
+
+    @Override
+    public Dimension minimumLayoutSize(Container parent) {
+      Dimension d1 = highlightInfoComponent == null ? new Dimension() : highlightInfoComponent.getMinimumSize();
+      Dimension d2 = quickDocComponent == null ? new Dimension() : quickDocComponent.getMinimumSize();
+      return new Dimension(Math.max(d1.width, d2.width), d1.height + d2.height);
+    }
+
+    @Override
+    public void layoutContainer(Container parent) {
+      int width = parent.getWidth();
+      int height = parent.getHeight();
+      int h1 = highlightInfoComponent == null ? 0 : Math.min(height, highlightInfoComponent.getPreferredSize().height);
+      if (highlightInfoComponent != null) {
+        highlightInfoComponent.setBounds(0, 0, width, h1);
+      }
+      if (quickDocComponent != null) {
+        quickDocComponent.setBounds(0, h1, width, height - h1);
+      }
     }
   }
 }

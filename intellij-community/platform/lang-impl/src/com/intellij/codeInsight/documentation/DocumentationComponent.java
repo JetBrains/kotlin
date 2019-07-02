@@ -922,6 +922,12 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   }
 
   public Dimension getOptimalSize() {
+    int width = getPreferredWidth();
+    int height = getPreferredHeight(width);
+    return new Dimension(width, height);
+  }
+
+  public int getPreferredWidth() {
     int minWidth = JBUIScale.scale(300);
     int maxWidth = getPopupAnchor() != null ? JBUIScale.scale(435) : MAX_DEFAULT.width;
 
@@ -932,16 +938,16 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     else {
       width = Math.max(width, myEditorPane.getMinimumSize().width);
     }
-    width = Math.min(maxWidth, Math.max(minWidth, width));
+    return Math.min(maxWidth, Math.max(minWidth, width));
+  }
 
+  public int getPreferredHeight(int width) {
     myEditorPane.setBounds(0, 0, width, MAX_DEFAULT.height);
     myEditorPane.setText(myDecoratedText);
     Dimension preferredSize = myEditorPane.getPreferredSize();
 
     int height = preferredSize.height + (needsToolbar() ? myControlPanel.getPreferredSize().height : 0);
-    height = Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height));
-
-    return new Dimension(width, height);
+    return Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height));
   }
 
   private Component getPopupAnchor() {
