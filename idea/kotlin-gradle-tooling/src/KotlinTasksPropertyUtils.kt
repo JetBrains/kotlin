@@ -9,6 +9,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.FactoryNamedDomainObjectContainer
 import org.gradle.api.plugins.JavaPluginConvention
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder.Companion.getSourceSetName
+import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder.Companion.kotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder.Companion.kotlinProjectExtensionClass
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder.Companion.kotlinSourceSetClass
 import java.io.File
@@ -19,14 +20,22 @@ interface KotlinTaskProperties : Serializable {
     val incremental: Boolean?
     val packagePrefix: String?
     val pureKotlinSourceFolders: List<File>?
+    val pluginVersion: String?
 }
 
 data class KotlinTaskPropertiesImpl(
     override val incremental: Boolean?,
     override val packagePrefix: String?,
-    override val pureKotlinSourceFolders: List<File>?
-
-) : KotlinTaskProperties
+    override val pureKotlinSourceFolders: List<File>?,
+    override val pluginVersion: String?
+) : KotlinTaskProperties {
+    constructor(kotlinTaskProperties: KotlinTaskProperties) : this(
+        kotlinTaskProperties.incremental,
+        kotlinTaskProperties.packagePrefix,
+        kotlinTaskProperties.pureKotlinSourceFolders?.map { it }?.toList(),
+        kotlinTaskProperties.pluginVersion
+    )
+}
 
 typealias KotlinTaskPropertiesBySourceSet = MutableMap<String, KotlinTaskProperties>
 
@@ -69,11 +78,27 @@ private fun Task.getPureKotlinSourceRoots(sourceSet: String): List<File>? {
     return null
 }
 
+private fun Task.getKotlinPluginVersion(): String? {
+    try {
+        val pluginWrapperClass = javaClass.classLoader.loadClass(kotlinPluginWrapper)
+        val getVersionMethod =
+            pluginWrapperClass.getMethod("getKotlinPluginVersion", javaClass.classLoader.loadClass("org.gradle.api.Project"))
+        return getVersionMethod.invoke(null, this.project) as String
+    } catch (e: Exception) {
+    }
+    return null
+}
+
 fun KotlinTaskPropertiesBySourceSet.acknowledgeTask(compileTask: Task) {
     this[compileTask.getSourceSetName()] =
-        KotlinTaskPropertiesImpl(
-            compileTask.getIsIncremental(),
-            compileTask.getPackagePrefix(),
-            compileTask.getPureKotlinSourceRoots(compileTask.getSourceSetName())
-        )
+        getKotlinTaskProperties(compileTask)
+}
+
+fun getKotlinTaskProperties(compileTask: Task): KotlinTaskPropertiesImpl {
+    return KotlinTaskPropertiesImpl(
+        compileTask.getIsIncremental(),
+        compileTask.getPackagePrefix(),
+        compileTask.getPureKotlinSourceRoots(compileTask.getSourceSetName()),
+        compileTask.getKotlinPluginVersion()
+    )
 }

@@ -369,11 +369,26 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             resolverCtx: ProjectResolverContext
         ) {
             val mppModel = resolverCtx.getMppModel(gradleModule) ?: return
+            val sourceSetToPackagePrefix = mppModel.targets.flatMap { it.compilations }
+                .flatMap { compilation ->
+                    compilation.sourceSets.map { sourceSet -> sourceSet.name to compilation.kotlinTaskProperties.packagePrefix }
+                }
+                .toMap()
             if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
                 if (dataNode == null || sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) return@processSourceSets
-                createContentRootData(sourceSet.sourceDirs, sourceSet.sourceType, dataNode)
-                createContentRootData(sourceSet.resourceDirs, sourceSet.resourceType, dataNode)
+                createContentRootData(
+                    sourceSet.sourceDirs,
+                    sourceSet.sourceType,
+                    sourceSetToPackagePrefix[sourceSet.name],
+                    dataNode
+                )
+                createContentRootData(
+                    sourceSet.resourceDirs,
+                    sourceSet.resourceType,
+                    null,
+                    dataNode
+                )
             }
 
             for (gradleContentRoot in gradleModule.contentRoots ?: emptySet<IdeaContentRoot?>()) {
@@ -529,10 +544,10 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             return ideModule.findChildModuleById(usedModuleId)
         }
 
-        private fun createContentRootData(sourceDirs: Set<File>, sourceType: ExternalSystemSourceType, parentNode: DataNode<*>) {
+        private fun createContentRootData(sourceDirs: Set<File>, sourceType: ExternalSystemSourceType, packagePrefix: String?, parentNode: DataNode<*>) {
             for (sourceDir in sourceDirs) {
                 val contentRootData = ContentRootData(GradleConstants.SYSTEM_ID, sourceDir.absolutePath)
-                contentRootData.storePath(sourceType, sourceDir.absolutePath)
+                contentRootData.storePath(sourceType, sourceDir.absolutePath, packagePrefix)
                 parentNode.createChild(ProjectKeys.CONTENT_ROOT, contentRootData)
             }
         }

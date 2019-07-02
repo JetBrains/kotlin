@@ -78,6 +78,7 @@ interface KotlinCompilation : KotlinModule {
     val dependencyClasspath: List<String>
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
+    val kotlinTaskProperties: KotlinTaskProperties
 
 
     companion object {

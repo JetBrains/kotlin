@@ -268,7 +268,17 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val arguments = buildCompilationArguments(compileKotlinTask) ?: return null
         val dependencyClasspath = buildDependencyClasspath(compileKotlinTask)
         val dependencies = buildCompilationDependencies(gradleCompilation, classifier, sourceSetMap, dependencyResolver, project)
-        return KotlinCompilationImpl(gradleCompilation.name, kotlinSourceSets, dependencies, output, arguments, dependencyClasspath)
+        val kotlinTaskProperties = getKotlinTaskProperties(compileKotlinTask)
+
+        return KotlinCompilationImpl(
+            gradleCompilation.name,
+            kotlinSourceSets,
+            dependencies,
+            output,
+            arguments,
+            dependencyClasspath,
+            kotlinTaskProperties
+        )
     }
 
     private fun buildCompilationDependencies(

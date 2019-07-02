@@ -85,7 +85,8 @@ data class KotlinCompilationImpl(
     override val dependencies: Set<KotlinDependency>,
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
-    override val dependencyClasspath: List<String>
+    override val dependencyClasspath: List<String>,
+    override val kotlinTaskProperties: KotlinTaskProperties
 ) : KotlinCompilation {
 
     // create deep copy
@@ -99,7 +100,8 @@ data class KotlinCompilationImpl(
         kotlinCompilation.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
-        ArrayList(kotlinCompilation.dependencyClasspath)
+        ArrayList(kotlinCompilation.dependencyClasspath),
+        KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties)
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier
         platform = kotlinCompilation.platform
