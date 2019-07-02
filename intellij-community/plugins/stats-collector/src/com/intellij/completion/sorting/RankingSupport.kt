@@ -10,20 +10,20 @@ import com.jetbrains.completion.ranker.PythonCompletionRanker
 
 
 object RankingSupport {
-  private val rankers: Map<String, LanguageRanker> = mapOf(
-    "java" to LanguageRanker(JavaCompletionRanker()),
-    "kotlin" to LanguageRanker(KotlinCompletionRanker()),
-    "python" to LanguageRanker(PythonCompletionRanker())
-  )
+  private val language2ranker: Map<String, LanguageRanker> = buildRankerMap()
 
   fun getRanker(language: Language?): LanguageRanker? {
     if (language == null) return null
-    return rankers[language.key()]
+    return language2ranker[language.key()]
+  }
+
+  fun availableLanguages(): List<String> {
+    return language2ranker.values.map { it.displayName }
   }
 
   private fun Language.key(): String = displayName.toLowerCase()
 
-  class LanguageRanker(private val ranker: LanguageCompletionRanker) {
+  class LanguageRanker(val displayName: String, private val ranker: LanguageCompletionRanker) {
     private val transformer: FeatureTransformer = ranker.modelMetadata.createTransformer()
 
     fun rank(relevance: Map<String, Any>, userFactors: Map<String, Any?>): Double {
@@ -35,5 +35,13 @@ object RankingSupport {
     fun version(): String? {
       return ranker.modelMetadata.version
     }
+  }
+
+  private fun buildRankerMap(): Map<String, LanguageRanker> {
+    return mapOf(
+      "java" to LanguageRanker("Java", JavaCompletionRanker()),
+      "kotlin" to LanguageRanker("Kotlin", KotlinCompletionRanker()),
+      "python" to LanguageRanker("Python", PythonCompletionRanker())
+    )
   }
 }
