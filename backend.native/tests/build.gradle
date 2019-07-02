@@ -2357,7 +2357,14 @@ standaloneTest("args0") {
 
 standaloneTest("devirtualization_lateinitInterface") {
     goldValue = "42\n"
+    flags = ["-opt"]
     source = "codegen/devirtualization/lateinitInterface.kt"
+}
+
+standaloneTest("devirtualization_getter_looking_as_box_function") {
+    goldValue = "box\n"
+    flags = ["-opt"]
+    source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
 standaloneTest("multiargs") {

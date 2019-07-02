@@ -95,12 +95,6 @@ val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
 
 fun IrClass.companionObject() = this.declarations.filterIsInstance<IrClass>().atMostOne { it.isCompanion }
 
-val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.getter
-
-val IrDeclaration.isSetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.setter
-
-val IrDeclaration.isAccessor get() = this.isGetter || this.isSetter
-
 fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
                           annotationClass: IrClass, vararg args: String): IrConstructorCall {
     val constructor = annotationClass.constructors.single()

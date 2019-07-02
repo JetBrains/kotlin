@@ -1047,10 +1047,8 @@ internal object Devirtualization {
         }
     }
 
-    private val specialNames = listOf("-box>", "-unbox>")
-
-    // TODO: do it more reliably.
-    private fun IrExpression.isBoxOrUnboxCall() = (this is IrCall && symbol.owner.name.asString().let { name -> specialNames.any { name.endsWith(it) } })
+    private fun IrExpression.isBoxOrUnboxCall() =
+            (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
 
     private fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {

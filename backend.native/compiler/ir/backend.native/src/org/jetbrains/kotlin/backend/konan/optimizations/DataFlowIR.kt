@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.symbolName
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -646,7 +647,8 @@ internal object DataFlowIR {
         }
 
         private val IrFunction.isSpecial get() =
-            name.asString().let { it.startsWith("<bridge-") || it.endsWith("-box>") || it.endsWith("-unbox>") }
+            origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+                    || origin is DECLARATION_ORIGIN_BRIDGE_METHOD
 
         private fun mapPropertyInitializer(irField: IrField): FunctionSymbol {
             functionMap[irField]?.let { return it }
