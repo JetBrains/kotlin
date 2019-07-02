@@ -52,7 +52,7 @@ val clionUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-na
 
 val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
 val appcodeFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("AppCode", appcodeVersion))
-val appcodeUseJavaPlugin: Boolean by rootProject.extra(false) // not supported yet
+val appcodeUseJavaPlugin: Boolean by rootProject.extra(cidrProductBranch(appcodeVersion) >= 192)
 val appcodeRepo: String by rootProject.extra(rootProject.extra["versions.appcode.repo"] as String)
 val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
 val appcodePlatformDepsOrJavaPluginDir: File by rootProject.extra(
