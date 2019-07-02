@@ -82,7 +82,7 @@ internal class GranularMetadataTransformation(
     /** A list of scopes that the dependencies from [kotlinSourceSet] are treated as requested dependencies. */
     val sourceSetRequestedScopes: List<KotlinDependencyScope>,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
-    val allSourceSetsConfigurations: Iterable<Configuration>
+    val allSourceSetsConfiguration: Configuration,
     val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
 ) {
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
@@ -134,8 +134,24 @@ internal class GranularMetadataTransformation(
         ownDependencies + parentDependencies
     }
 
-    private val resolvedConfigurations: Iterable<LenientConfiguration> by lazy {
-        allSourceSetsConfigurations.map { it.resolvedConfiguration.lenientConfiguration }
+    private val resolvedConfiguration: LenientConfiguration by lazy {
+        /** If [kotlinSourceSet] is not a published source set, its dependencies are not included in [allSourceSetsConfiguration].
+         * In that case, to resolve the dependencies of the source set in a way that is consistent with the published source sets,
+         * we need to create a new configuration with the dependencies from both [allSourceSetsConfiguration] and the
+         * input configuration(s) of the source set. */
+        var modifiedConfiguration: Configuration? = null
+
+        val originalDependencies = allSourceSetsConfiguration.allDependencies
+
+        requestedDependencies.forEach { dependency ->
+            if (dependency !in originalDependencies) {
+                modifiedConfiguration = (modifiedConfiguration ?: allSourceSetsConfiguration.copyRecursive()).apply {
+                    dependencies.add(dependency)
+                }
+            }
+        }
+
+        (modifiedConfiguration ?: allSourceSetsConfiguration).resolvedConfiguration.lenientConfiguration
     }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
@@ -146,7 +162,7 @@ internal class GranularMetadataTransformation(
 
         val allRequestedDependencies = requestedDependencies
 
-        val allModuleDependencies = resolvedConfigurations.flatMap { it.allModuleDependencies }
+        val allModuleDependencies = resolvedConfiguration.allModuleDependencies
 
         val knownProjectDependencies = collectProjectDependencies(
             allRequestedDependencies.filterIsInstance<ProjectDependency>(),
@@ -157,7 +173,7 @@ internal class GranularMetadataTransformation(
             val requestedModules: Set<ModuleId> = allRequestedDependencies.mapTo(mutableSetOf()) { it.moduleId }
 
             addAll(
-                resolvedConfigurations.flatMap { it.firstLevelModuleDependencies }
+                resolvedConfiguration.firstLevelModuleDependencies
                     .filter { it.moduleId in requestedModules }
                     .map { ResolvedDependencyWithParent(it, null) }
             )

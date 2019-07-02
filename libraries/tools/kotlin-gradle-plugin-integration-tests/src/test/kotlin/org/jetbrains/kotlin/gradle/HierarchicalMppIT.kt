@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromXml
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import java.io.File
 import java.util.zip.ZipFile
@@ -48,6 +49,77 @@ class HierarchicalMppIT : BaseGradleIT() {
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
             build("assemble") {
                 checkMyApp(this, subprojectPrefix = null)
+            }
+        }
+    }
+
+    @Test
+    fun testDependenciesInTests() {
+        publishThirdPartyLib(withGranularMetadata = true)
+
+        Project("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            testDependencyTransformations { reports ->
+                val testApiTransformationReports =
+                    reports.filter { report ->
+                        report.groupAndModule.startsWith("com.example.thirdparty") &&
+                                report.sourceSetName.let { it == "commonTest" || it == "jvmAndJsTest" }
+                    }
+
+                testApiTransformationReports.forEach {
+                    assertTrue("$it") { it.isExcluded } // should not be visible in test source sets
+                }
+            }
+
+            // --- Move the dependency from jvmAndJsMain to commonMain, expect that it is now propagated to commonTest:
+            gradleBuildScript().modify {
+                it.checkedReplace("api(\"com.example.thirdparty:third-party-lib:1.0\")", "//") + "\n" + """
+                dependencies {
+                    "commonMainApi"("com.example.thirdparty:third-party-lib:1.0")
+                }
+                """.trimIndent()
+            }
+
+            testDependencyTransformations { reports ->
+                val testApiTransformationReports =
+                    reports.filter { report ->
+                        report.groupAndModule.startsWith("com.example.thirdparty") &&
+                                report.sourceSetName.let { it == "commonTest" || it == "jvmAndJsTest" } &&
+                                report.scope == "api"
+                    }
+
+                testApiTransformationReports.forEach {
+                    assertEquals(setOf("commonMain"), it.allVisibleSourceSets, "$it")
+                    assertEquals(emptySet(), it.newVisibleSourceSets, "$it")
+                }
+            }
+
+            // --- Remove the dependency from commonMain, add it to commonTest to check that it is correctly picked from a non-published
+            // source set:
+            gradleBuildScript().modify {
+                it.checkedReplace("\"commonMainApi\"(\"com.example.thirdparty:third-party-lib:1.0\")", "//") + "\n" + """
+                dependencies {
+                    "commonTestApi"("com.example.thirdparty:third-party-lib:1.0")
+                }
+                """.trimIndent()
+            }
+
+            testDependencyTransformations { reports ->
+                reports.single {
+                    it.sourceSetName == "commonTest" && it.scope == "api" && it.groupAndModule.startsWith("com.example.thirdparty")
+                }.let {
+                    assertEquals(setOf("commonMain"), it.allVisibleSourceSets)
+                    assertEquals(setOf("commonMain"), it.newVisibleSourceSets)
+                }
+
+                reports.single {
+                    it.sourceSetName == "jvmAndJsTest" && it.scope == "api" && it.groupAndModule.startsWith("com.example.thirdparty")
+                }.let {
+                    assertEquals(setOf("commonMain"), it.allVisibleSourceSets)
+                    assertEquals(emptySet(), it.newVisibleSourceSets)
+                }
             }
         }
     }

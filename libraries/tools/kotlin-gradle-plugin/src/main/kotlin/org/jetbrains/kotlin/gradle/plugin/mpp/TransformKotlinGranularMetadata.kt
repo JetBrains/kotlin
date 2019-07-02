@@ -71,7 +71,7 @@ open class TransformKotlinGranularMetadata
             project,
             kotlinSourceSet,
             listOf(API_SCOPE, IMPLEMENTATION_SCOPE),
-            listOf(project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)),
+            project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
             lazy {
                 KotlinMetadataTargetConfigurator.dependsOnWithInterCompilationDependencies(project, kotlinSourceSet).map {
                     project.tasks.withType(TransformKotlinGranularMetadata::class.java)
