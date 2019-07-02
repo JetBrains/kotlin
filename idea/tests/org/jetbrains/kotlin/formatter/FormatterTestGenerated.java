@@ -616,6 +616,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/RightBracketOnNewLine.after.kt");
         }
 
+        @TestMetadata("SafeCast.after.kt")
+        public void testSafeCast() throws Exception {
+            runTest("idea/testData/formatter/SafeCast.after.kt");
+        }
+
         @TestMetadata("SaveSpacesInDocComments.after.kt")
         public void testSaveSpacesInDocComments() throws Exception {
             runTest("idea/testData/formatter/SaveSpacesInDocComments.after.kt");
