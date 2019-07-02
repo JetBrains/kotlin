@@ -153,8 +153,8 @@ open class DirectoryBasedStorage(private val dir: Path,
     override fun save() {
       val stateMap = StateMap.fromMap(copiedStorageData!!)
 
-      var dir = storage.virtualFile
       if (copiedStorageData!!.isEmpty()) {
+        val dir = storage.virtualFile
         if (dir != null && dir.exists()) {
           dir.delete(this)
         }
@@ -162,29 +162,37 @@ open class DirectoryBasedStorage(private val dir: Path,
         return
       }
 
-      if (dir == null || !dir.isValid) {
-        dir = createDir(storage.dir, this)
-        storage.cachedVirtualFile = dir
-      }
-
       if (!dirtyFileNames.isEmpty) {
-        saveStates(dir, stateMap)
+        saveStates(stateMap)
       }
-      if (isSomeFileRemoved && dir.exists()) {
-        deleteFiles(dir)
+      if (isSomeFileRemoved) {
+        val dir = storage.virtualFile
+        if (dir != null && dir.exists()) {
+          deleteFiles(dir)
+        }
       }
 
       storage.setStorageData(stateMap)
     }
 
-    private fun saveStates(dir: VirtualFile, states: StateMap) {
+    private fun saveStates(states: StateMap) {
+      var dir = storage.cachedVirtualFile
       for (fileName in states.keys()) {
         if (!dirtyFileNames.contains(fileName)) {
           continue
         }
 
+        val element = states.getElement(fileName) ?: continue
+
+        if (dir == null || !dir.exists()) {
+          dir = storage.virtualFile
+          if (dir == null || !dir.exists()) {
+            dir = createDir(storage.dir, this)
+            storage.cachedVirtualFile = dir
+          }
+        }
+
         try {
-          val element = states.getElement(fileName) ?: continue
           val file = dir.getOrCreateChild(fileName, this)
           // we don't write xml prolog due to historical reasons (and should not in any case)
           val macroManager = if (storage.pathMacroSubstitutor == null) null else (storage.pathMacroSubstitutor as TrackingPathMacroSubstitutorImpl).macroManager
