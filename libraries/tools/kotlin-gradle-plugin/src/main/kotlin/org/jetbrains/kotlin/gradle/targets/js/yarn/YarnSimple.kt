@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 
 object YarnSimple : YarnBasics() {
-    override fun resolveProject(resolvedNpmProject: NpmProjectPackage) {
+    override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) {
         setup(resolvedNpmProject.project.rootProject)
 
         val project = resolvedNpmProject.project
 
         YarnUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
             yarnExec(project, resolvedNpmProject.npmProject.dir, NpmApi.resolveOperationDescription("yarn for ${project.path}"))
-            yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.npmDependencies)
+            yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.externalNpmDependencies)
         }
     }
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<NpmProjectPackage>) = Unit
+    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) = Unit
 }

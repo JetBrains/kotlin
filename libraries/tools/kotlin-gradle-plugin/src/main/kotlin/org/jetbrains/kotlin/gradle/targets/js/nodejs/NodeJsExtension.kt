@@ -9,9 +9,9 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 
-open class NodeJsExtension(val project: Project) {
-    val root: NodeJsRootExtension
-        get() = this as? NodeJsRootExtension ?: NodeJsRootExtension[project]
+open class NodeJsExtension(val project: Project, root: NodeJsRootExtension?) {
+    @Suppress("LeakingThis")
+    val root: NodeJsRootExtension = root ?: this as NodeJsRootExtension
 
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 
@@ -21,11 +21,11 @@ open class NodeJsExtension(val project: Project) {
     fun packageJson(handler: PackageJson.() -> Unit) {
         packageJsonHandlers.add(handler)
     }
-
-    companion object {
-        operator fun get(project: Project) = NodeJsPlugin.apply(project)
-    }
 }
 
 val Project.nodeJs: NodeJsExtension
-    get() = NodeJsExtension[this]
+    get() {
+        val project = this
+        project.plugins.apply(NodeJsPlugin::class.java)
+        return project.extensions.getByName(NodeJsRootExtension.EXTENSION_NAME) as NodeJsExtension
+    }

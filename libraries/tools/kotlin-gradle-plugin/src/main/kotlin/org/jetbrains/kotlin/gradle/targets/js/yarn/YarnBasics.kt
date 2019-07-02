@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
@@ -24,7 +23,7 @@ abstract class YarnBasics : NpmApi {
         description: String,
         vararg args: String
     ) {
-        val nodeJsEnv = NodeJsPlugin.apply(project).root.environment
+        val nodeJsEnv = NodeJsRootPlugin.apply(project).root.environment
         val yarnEnv = YarnPlugin.apply(project).environment
 
         project.execWithProgress(description) { exec ->

@@ -9,7 +9,7 @@ import de.undercouch.gradle.tasks.download.DownloadAction
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 import javax.xml.ws.Action
 
@@ -26,7 +26,7 @@ open class YarnSetupTask : DefaultTask() {
         @OutputDirectory get() = env.home
 
     init {
-        group = NodeJsPlugin.TASKS_GROUP_NAME
+        group = NodeJsRootPlugin.TASKS_GROUP_NAME
         description = "Download and install a local yarn version"
 
         onlyIf {

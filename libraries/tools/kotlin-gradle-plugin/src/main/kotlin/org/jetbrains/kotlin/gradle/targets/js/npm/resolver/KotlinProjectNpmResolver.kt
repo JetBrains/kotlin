@@ -18,56 +18,96 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResol
 
 internal class KotlinProjectNpmResolver(
     val project: Project,
-    val resolver: KotlinNpmResolver
+    val resolver: KotlinRootNpmResolver
 ) {
-    val byCompilation = mutableMapOf<KotlinJsCompilation, KotlinCompilationNpmResolver>()
+    override fun toString(): String = "ProjectNpmResolver($project)"
 
-    private val taskRequirements = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
-    val requiredFromTasksByCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
-    var hasNodeModulesDependentTasks = false
-        private set
+    private val byCompilation = mutableMapOf<KotlinJsCompilation, KotlinCompilationNpmResolver>()
 
-    init {
-        visit()
+    operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolver {
+        check(compilation.target.project == project)
+        requireContainerListeners()
+        return byCompilation[compilation] ?: error("$compilation was not registered in $this")
     }
 
-    fun visit() {
-        project.tasks.toList().forEach { task ->
+    private var closed = false
+
+    val compilationResolvers: Collection<KotlinCompilationNpmResolver>
+        get() {
+            requireContainerListeners()
+            return byCompilation.values
+        }
+
+    private val taskRequirements = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
+    private val requiredFromTasksByCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
+
+    fun getTaskRequirements(compilation: KotlinJsCompilation): Collection<RequiresNpmDependencies> {
+        requireContainerListeners()
+        return requiredFromTasksByCompilation[compilation] ?: listOf()
+    }
+
+    val hasNodeModulesDependentTasks: Boolean
+        get() {
+            requireContainerListeners()
+            return _hasNodeModulesDependentTasks
+        }
+
+    @Volatile
+    var _hasNodeModulesDependentTasks = false
+        private set
+
+    var listenersInstalled = false
+
+    @Synchronized
+    private fun requireContainerListeners() {
+        if (!listenersInstalled) {
+            listenersInstalled = true
+            addContainerListeners()
+        }
+    }
+
+    private fun addContainerListeners() {
+        project.tasks.forEach { task ->
             if (task.enabled && task is RequiresNpmDependencies) {
                 addTaskRequirements(task)
             }
         }
 
         val kotlin = project.kotlinExtensionOrNull
-
-        if (kotlin != null) {
-            when (kotlin) {
-                is KotlinSingleTargetExtension -> visitTarget(kotlin.target)
-                is KotlinMultiplatformExtension -> kotlin.targets.forEach {
-                    visitTarget(it)
-                }
+        when (kotlin) {
+            is KotlinSingleTargetExtension -> addTargetListeners(kotlin.target)
+            is KotlinMultiplatformExtension -> kotlin.targets.forEach {
+                addTargetListeners(it)
             }
         }
     }
 
-    private fun visitTarget(target: KotlinTarget) {
+    private fun addTargetListeners(target: KotlinTarget) {
+        check(!closed) { resolver.alreadyResolvedMessage("add target $target") }
+
         if (target.platformType == KotlinPlatformType.js) {
-            target.compilations.toList().forEach { compilation ->
+            target.compilations.forEach { compilation ->
                 if (compilation is KotlinJsCompilation) {
                     // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
-                    visitCompilation(compilation)
+                    addCompilation(compilation)
                 }
             }
         }
     }
 
-    private fun visitCompilation(compilation: KotlinJsCompilation) {
+    @Synchronized
+    private fun addCompilation(compilation: KotlinJsCompilation) {
+        check(!closed) { resolver.alreadyResolvedMessage("add compilation $compilation") }
+
         byCompilation[compilation] = KotlinCompilationNpmResolver(this, compilation)
     }
 
+    @Synchronized
     private fun addTaskRequirements(task: RequiresNpmDependencies) {
-        if (!hasNodeModulesDependentTasks && task.nodeModulesRequired) {
-            hasNodeModulesDependentTasks = true
+        check(!closed) { resolver.alreadyResolvedMessage("create task $task that requires npm dependencies") }
+
+        if (!_hasNodeModulesDependentTasks && task.nodeModulesRequired) {
+            _hasNodeModulesDependentTasks = true
         }
 
         val requirements = task.requiredNpmDependencies.toList()
@@ -79,9 +119,14 @@ internal class KotlinProjectNpmResolver(
             .add(task)
     }
 
-    fun toResolved() = KotlinProjectNpmResolution(
-        project,
-        byCompilation.values.map { it.projectPackage },
-        taskRequirements
-    )
+    fun close(): KotlinProjectNpmResolution {
+        check(!closed)
+        closed = true
+
+        return KotlinProjectNpmResolution(
+            project,
+            byCompilation.values.mapNotNull { it.close() },
+            taskRequirements
+        )
+    }
 }

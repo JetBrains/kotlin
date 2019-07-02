@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 open class YarnRootExtension(val project: Project) {
     private val gradleHome = project.gradle.gradleUserHomeDir.also {
@@ -29,7 +28,7 @@ open class YarnRootExtension(val project: Project) {
         get() = !disableWorkspaces
 
     internal fun executeSetup() {
-        NodeJsPlugin.apply(project).root.executeSetup()
+        NodeJsRootPlugin.apply(project).root.executeSetup()
 
         val env = environment
         if (!env.home.isDirectory) {

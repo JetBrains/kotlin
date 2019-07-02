@@ -12,9 +12,9 @@ import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
@@ -92,14 +92,14 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     }
 
     override fun executeTests() {
-        KotlinNpmResolver.checkRequiredDependencies(project, this)
+        project.nodeJs.root.checkRequiredDependencies(project, this)
         super.executeTests()
     }
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
         forkOptions.workingDir = compilation.npmProject.dir
-        forkOptions.executable = NodeJsPlugin.apply(project).root.environment.nodeExecutable
+        forkOptions.executable = NodeJsRootPlugin.apply(project).root.environment.nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()
 

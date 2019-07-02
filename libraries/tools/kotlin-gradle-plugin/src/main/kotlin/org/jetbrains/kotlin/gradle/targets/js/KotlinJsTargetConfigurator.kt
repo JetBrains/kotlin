@@ -10,11 +10,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
@@ -24,19 +21,8 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
         super.configureTarget(target)
 
-        target.compilations.forEach {
-            val npmResolveTask = target.project.nodeJs.root.npmInstallTask
-            val npmProject = it.npmProject
-
-            val packageJsonTaskName = npmProject.packageJsonTaskName
-            npmResolveTask.dependsOn(packageJsonTaskName)
-
-            target.project.createOrRegisterTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
-                task.compilation = it
-                task.description = "Create package.json file for $it"
-            }
-
-            it.compileKotlinTask.dependsOn(npmResolveTask)
+        target.compilations.forEach { compilation ->
+            KotlinPackageJsonTask.create(compilation)
         }
     }
 

@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 object YarnWorkspaces : YarnBasics() {
-    override fun resolveProject(resolvedNpmProject: NpmProjectPackage) = Unit
+    override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) = Unit
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<NpmProjectPackage>) {
+    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) {
         check(rootProject == rootProject.rootProject)
         setup(rootProject)
         resolveWorkspaces(rootProject, subProjects)
@@ -22,7 +22,7 @@ object YarnWorkspaces : YarnBasics() {
 
     private fun resolveWorkspaces(
         rootProject: Project,
-        npmProjects: Collection<NpmProjectPackage>
+        npmProjects: Collection<KotlinCompilationNpmResolution>
     ) {
         val upToDateChecks = npmProjects.map {
             YarnUpToDateCheck(it.npmProject)
@@ -35,7 +35,7 @@ object YarnWorkspaces : YarnBasics() {
         saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
 
         yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
-        yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.npmDependencies })
+        yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.externalNpmDependencies })
 
         upToDateChecks.forEach {
             it.commit()
@@ -44,7 +44,7 @@ object YarnWorkspaces : YarnBasics() {
 
     private fun saveRootProjectWorkspacesPackageJson(
         rootProject: Project,
-        npmProjects: Collection<NpmProjectPackage>,
+        npmProjects: Collection<KotlinCompilationNpmResolution>,
         nodeJsWorldDir: File
     ) {
         val rootPackageJson = PackageJson(rootProject.name, rootProject.version.toString())

@@ -17,7 +17,6 @@ import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
@@ -127,7 +126,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @TaskAction
     fun doExecute() {
-        KotlinNpmResolver.checkRequiredDependencies(project, this)
+        project.nodeJs.root.checkRequiredDependencies(project, this)
 
         val runner = createRunner()
 

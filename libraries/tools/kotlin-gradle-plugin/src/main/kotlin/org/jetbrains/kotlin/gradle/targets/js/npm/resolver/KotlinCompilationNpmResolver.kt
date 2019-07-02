@@ -10,27 +10,56 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Usage
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.NpmProjectPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import java.io.File
+import java.io.Serializable
 
 internal class KotlinCompilationNpmResolver(
     val projectResolver: KotlinProjectNpmResolver,
     val compilation: KotlinJsCompilation
 ) {
     val resolver = projectResolver.resolver
+    val npmProject = compilation.npmProject
+    val nodeJs get() = resolver.nodeJs
     val target get() = compilation.target
     val project get() = target.project
+
+    override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
     val aggregatedConfiguration: Configuration by lazy {
         createAggregatedConfiguration()
     }
 
-    val projectPackage by lazy {
-        createPackageJson(aggregatedConfiguration)
+    val packageJsonProducer: PackageJsonProducer by lazy {
+        val visitor = ConfigurationVisitor()
+        visitor.visit(aggregatedConfiguration)
+        visitor.toPackageJsonProducer()
+    }
+
+    private var closed = false
+    private var resolution: KotlinCompilationNpmResolution? = null
+
+    fun resolve() {
+        check(!closed) { "$this already closed" }
+        check(resolution == null) { "$this already resolved" }
+
+        resolution = packageJsonProducer.createPackageJson()
+    }
+
+    fun close(): KotlinCompilationNpmResolution? {
+        check(!closed) { "$this already closed" }
+        closed = true
+        return resolution
     }
 
     private fun createAggregatedConfiguration(): Configuration {
@@ -58,8 +87,8 @@ internal class KotlinCompilationNpmResolver(
     }
 
     private fun createNpmToolsConfiguration(): Configuration? {
-        val taskRequirements = projectResolver.requiredFromTasksByCompilation[compilation]
-            ?.takeIf { it.isNotEmpty() } ?: return null
+        val taskRequirements = projectResolver.getTaskRequirements(compilation)
+        if (taskRequirements.isEmpty()) return null
 
         val toolsConfiguration = project.configurations.create("${compilation.name}NpmTools")
 
@@ -77,93 +106,130 @@ internal class KotlinCompilationNpmResolver(
         return toolsConfiguration
     }
 
-    private fun createPackageJson(configuration: Configuration): NpmProjectPackage {
-        val npmProject = compilation.npmProject
-        val name = npmProject.name
-        val packageJson = PackageJson(
-            name,
-            fixSemver(project.version.toString())
-        )
-        val npmDependencies = mutableSetOf<NpmDependency>()
-        val gradleDependencies = NpmGradleDependencies()
+    data class ExternalGradleDependency(
+        val dependency: ResolvedDependency,
+        val artifact: ResolvedArtifact
+    )
 
-        packageJson.main = npmProject.main
+    inner class ConfigurationVisitor {
+        private val internalDependencies = mutableSetOf<KotlinCompilationNpmResolver>()
+        private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
+        private val externalNpmDependencies = mutableSetOf<NpmDependency>()
 
-        collectDependenciesFromConfiguration(configuration, gradleDependencies)
-
-        configuration.allDependencies.forEach { dependency ->
-            when (dependency) {
-                is NpmDependency -> npmDependencies.add(dependency)
-            }
-        }
-
-        npmDependencies.forEach {
-            packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
-        }
-
-        gradleDependencies.externalModules.forEach {
-            packageJson.dependencies[it.name] = it.version
-        }
-
-        gradleDependencies.internalModules.forEach { target ->
-            val targetResolver = resolver.findDependentResolver(project, target)
-            if (targetResolver != null) {
-                val targetPackageJson = targetResolver.projectPackage.packageJson
-                packageJson.dependencies[targetPackageJson.name] = targetPackageJson.version
-            }
-        }
-
-        project.nodeJs.packageJsonHandlers.forEach {
-            it(packageJson)
-        }
-
-        val npmPackage = NpmProjectPackage(
-            project,
-            npmProject,
-            npmDependencies,
-            gradleDependencies,
-            packageJson
-        )
-        npmPackage.packageJson.saveTo(npmProject.packageJsonFile)
-
-        return npmPackage
-    }
-
-    fun chooseVersion(oldVersion: String?, newVersion: String): String =
-        oldVersion ?: newVersion // todo: real versions conflict resolution
-
-
-    private fun collectDependenciesFromConfiguration(configuration: Configuration, result: NpmGradleDependencies) {
-        if (configuration.isCanBeResolved) {
+        fun visit(configuration: Configuration) {
             configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
-                visitDependency(it, result)
+                visitDependency(it)
+            }
+
+            configuration.allDependencies.forEach { dependency ->
+                when (dependency) {
+                    is NpmDependency -> externalNpmDependencies.add(dependency)
+                }
+            }
+
+            if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
+                val main = compilation.target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJsCompilation
+                internalDependencies.add(projectResolver[main])
             }
         }
-    }
 
-    private fun visitDependency(dependency: ResolvedDependency, result: NpmGradleDependencies) {
-        visitArtifacts(dependency, dependency.moduleArtifacts, result)
+        private fun visitDependency(dependency: ResolvedDependency) {
+            visitArtifacts(dependency, dependency.moduleArtifacts)
 
-        dependency.children.forEach {
-            visitDependency(it, result)
+            dependency.children.forEach {
+                visitDependency(it)
+            }
         }
+
+        private fun visitArtifacts(
+            dependency: ResolvedDependency,
+            artifacts: MutableSet<ResolvedArtifact>
+        ) {
+            artifacts.forEach { artifact ->
+                val componentIdentifier = artifact.id.componentIdentifier
+                if (componentIdentifier is ProjectComponentIdentifier) {
+                    val dependentProject = project.findProject(componentIdentifier.projectPath)
+                        ?: error("Cannot find project ${componentIdentifier.projectPath}")
+
+                    val dependentResolver = resolver.findDependentResolver(project, dependentProject)
+                    if (dependentResolver != null) {
+                        internalDependencies.add(dependentResolver)
+                    }
+                } else {
+                    externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
+                }
+            }
+        }
+
+        fun toPackageJsonProducer() = PackageJsonProducer(internalDependencies, externalGradleDependencies, externalNpmDependencies)
     }
 
-    private fun visitArtifacts(
-        dependency: ResolvedDependency,
-        artifacts: MutableSet<ResolvedArtifact>,
-        result: NpmGradleDependencies
+    class PackageJsonProducerInputs(
+        @get:Input
+        val internalDependencies: Collection<String>,
+
+        @get:InputFiles
+        val externalGradleDependencies: Collection<File>,
+
+        @get:Input
+        val externalDependencies: Collection<String>
+    ) : Serializable
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    inner class PackageJsonProducer(
+        val internalDependencies: Collection<KotlinCompilationNpmResolver>,
+        val externalGradleDependencies: Collection<ExternalGradleDependency>,
+        val externalNpmDependencies: Collection<NpmDependency>
     ) {
-        artifacts.forEach { artifact ->
-            val componentIdentifier = artifact.id.componentIdentifier
-            if (componentIdentifier is ProjectComponentIdentifier) {
-                val dependentProject = project.findProject(componentIdentifier.projectPath)
-                    ?: error("Cannot find project ${componentIdentifier.projectPath}")
+        val inputs: PackageJsonProducerInputs
+            get() = PackageJsonProducerInputs(
+                internalDependencies.map { it.npmProject.name },
+                externalGradleDependencies.map { it.artifact.file },
+                externalNpmDependencies.map { "${it.key}:${it.version}" }
+            )
 
-                result.internalModules.add(dependentProject)
-            } else {
-                resolver.gradleNodeModules.ensureImported(artifact, dependency, artifacts, result)
+        fun createPackageJson(): KotlinCompilationNpmResolution {
+            val resolvedInternalDependencies = internalDependencies.map {
+                it.resolution ?: error("Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it")
             }
+            val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
+                resolver.gradleNodeModules.get(it.dependency, it.artifact)
+            }
+
+            val packageJson = PackageJson(
+                npmProject.name,
+                fixSemver(project.version.toString())
+            )
+
+            resolvedInternalDependencies.forEach {
+                packageJson.dependencies[it.packageJson.name] = it.packageJson.version
+            }
+
+            importedExternalGradleDependencies.forEach {
+                packageJson.dependencies[it.name] = it.version
+            }
+
+            externalNpmDependencies.forEach {
+                packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
+            }
+
+            nodeJs.packageJsonHandlers.forEach {
+                it(packageJson)
+            }
+
+            packageJson.saveTo(npmProject.packageJsonFile)
+
+            return KotlinCompilationNpmResolution(
+                project,
+                npmProject,
+                resolvedInternalDependencies,
+                importedExternalGradleDependencies,
+                externalNpmDependencies,
+                packageJson
+            )
         }
+
+        private fun chooseVersion(oldVersion: String?, newVersion: String): String =
+            oldVersion ?: newVersion // todo: real versions conflict resolution
     }
 }

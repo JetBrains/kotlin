@@ -143,6 +143,7 @@ internal open class ProcessedFilesCache(
             deleteTarget(it)
         }
 
+        stateFile.parentFile.mkdirs()
         stateFile.writer().use {
             gson.toJson(new, it)
         }

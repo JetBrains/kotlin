@@ -31,39 +31,7 @@ class KotlinNodeJs(target: KotlinJsTarget) :
     }
 
     override fun configureRun(compilation: KotlinJsCompilation) {
-        val project = target.project
-
-        "true".toBoolean()
-
-        val runTaskHolder = project.createOrRegisterTask<NodeJsExec>(disambiguateCamelCased("run")) { runTask ->
-            runTask.description = "run compiled js in nodejs"
-
-            val compileKotlinTask = compilation.compileKotlinTask
-            runTask.dependsOn(target.project.nodeJs.root.npmInstallTask, compileKotlinTask)
-
-            runTask.args(compileKotlinTask.outputFile)
-        }
-
-        addSourceMapSupport(compilation, runTaskHolder)
-
+        val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased("run"))
         target.runTask.dependsOn(runTaskHolder.getTaskOrProvider())
-    }
-
-    private fun addSourceMapSupport(
-        compilation: KotlinJsCompilation,
-        runTaskHolder: TaskHolder<NodeJsExec>
-    ) {
-        compilation.dependencies {
-            runtimeOnly(kotlin("test-nodejs-runner"))
-        }
-
-        target.project.nodeJs.root.npmInstallTask.doLast {
-            runTaskHolder.configure { runTask ->
-                runTask.args(
-                    "--require",
-                    compilation.npmProject.require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support")
-                )
-            }
-        }
     }
 }

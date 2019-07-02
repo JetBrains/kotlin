@@ -18,7 +18,7 @@ import java.io.File
 internal class GradleNodeModuleBuilder(
     val project: Project,
     val dependency: ResolvedDependency,
-    val artifacts: Set<ResolvedArtifact>,
+    val artifacts: Collection<ResolvedArtifact>,
     val cache: GradleNodeModulesCache
 ) {
     var srcPackageJsonFile: File? = null

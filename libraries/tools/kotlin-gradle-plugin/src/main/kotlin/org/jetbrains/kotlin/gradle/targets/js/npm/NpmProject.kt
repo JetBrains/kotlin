@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
 
 val KotlinJsCompilation.npmProject: NpmProject
@@ -22,14 +22,17 @@ val KotlinJsCompilation.npmProject: NpmProject
  * Basic info for [NpmProject] created from [compilation].
  * This class contains only basic info.
  *
- * More info can be obtained from [NpmProjectPackage], which is available after project resolution (after [NpmResolveTask] execution).
+ * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
 open class NpmProject(val compilation: KotlinJsCompilation) {
     val name: String
         get() = buildNpmProjectName()
 
+    val nodeJs
+        get() = project.nodeJs.root
+
     val dir: File
-        get() = project.nodeJs.root.projectPackagesDir.resolve(name)
+        get() = nodeJs.projectPackagesDir.resolve(name)
 
     val target: KotlinTarget
         get() = compilation.target
@@ -46,6 +49,9 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val packageJsonTaskName: String
         get() = compilation.disambiguateName("packageJson")
 
+    val packageJsonTask: KotlinPackageJsonTask
+        get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
+
     val main: String
         get() = "kotlin/$name.js"
 
@@ -54,11 +60,11 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     }
 
     private val rootNodeModules: NpmProjectModules?
-        get() = NpmProjectModules(project.nodeJs.root.rootPackageDir)
+        get() = NpmProjectModules(nodeJs.rootPackageDir)
 
     fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
         exec.workingDir = dir
-        exec.executable = project.nodeJs.root.environment.nodeExecutable
+        exec.executable = nodeJs.environment.nodeExecutable
         exec.args = listOf(require(tool)) + args
     }
 
@@ -66,7 +72,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        KotlinNpmResolver.requireResolved(project)
+        nodeJs.requireResolved(project)
         return modules.require(request)
     }
 

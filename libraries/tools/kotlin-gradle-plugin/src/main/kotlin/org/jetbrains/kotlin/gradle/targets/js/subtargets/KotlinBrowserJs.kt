@@ -59,7 +59,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             it.dependsOn(
                 target.project.nodeJs.root.npmInstallTask,
                 compileKotlinTask,
-                compilation.processResourcesTaskName
+                target.project.tasks.getByName(compilation.processResourcesTaskName)
             )
 
             it.bin = "webpack-dev-server/bin/webpack-dev-server.js"

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -16,14 +15,13 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
  */
 class KotlinProjectNpmResolution(
     val project: Project,
-    val npmProjects: List<NpmProjectPackage>,
+    val npmProjects: List<KotlinCompilationNpmResolution>,
     val taskRequirements: Map<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>
 ) {
-    val npmProjectsByCompilation: Map<KotlinJsCompilation, NpmProjectPackage> = npmProjects.associateBy { it.npmProject.compilation }
-    val npmProjectsByNpmDependency: Map<NpmDependency, NpmProjectPackage> =
-        mutableMapOf<NpmDependency, NpmProjectPackage>().also { result ->
+    val npmProjectsByNpmDependency: Map<NpmDependency, KotlinCompilationNpmResolution> =
+        mutableMapOf<NpmDependency, KotlinCompilationNpmResolution>().also { result ->
             npmProjects.forEach { npmPackage ->
-                npmPackage.npmDependencies.forEach { npmDependency ->
+                npmPackage.externalNpmDependencies.forEach { npmDependency ->
                     result[npmDependency] = npmPackage
                 }
             }

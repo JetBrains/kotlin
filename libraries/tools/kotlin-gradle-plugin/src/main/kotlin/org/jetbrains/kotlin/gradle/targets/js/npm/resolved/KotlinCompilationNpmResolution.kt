@@ -6,18 +6,19 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmGradleDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 
 /**
- * [NpmProject] full package info
+ * Resolved [NpmProject]
  */
-class NpmProjectPackage(
+class KotlinCompilationNpmResolution(
     val project: Project,
     val npmProject: NpmProject,
-    val npmDependencies: Collection<NpmDependency>,
-    val gradleDependencies: NpmGradleDependencies,
+    val internalDependencies: Collection<KotlinCompilationNpmResolution>,
+    val externalGradleDependencies: Collection<GradleNodeModule>,
+    val externalNpmDependencies: Collection<NpmDependency>,
     val packageJson: PackageJson
 )

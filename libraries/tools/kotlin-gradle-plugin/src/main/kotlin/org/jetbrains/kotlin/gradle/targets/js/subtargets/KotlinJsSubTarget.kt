@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -30,6 +30,8 @@ abstract class KotlinJsSubTarget(
     val testTaskName = disambiguateCamelCased("test")
 
     fun configure() {
+        project.nodeJs
+
         configureTests()
         configureRun()
 
@@ -66,7 +68,7 @@ abstract class KotlinJsSubTarget(
 
     private fun configureTests(compilation: KotlinJsCompilation) {
         // apply plugin (cannot be done at task instantiation time)
-        val nodeJs = NodeJsPlugin.apply(target.project).root
+        val nodeJs = NodeJsRootPlugin.apply(target.project).root
 
         val testJs = project.createOrRegisterTask<KotlinJsTest>(testTaskName) { testJs ->
             val compileTask = compilation.compileKotlinTask
