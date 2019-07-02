@@ -243,11 +243,11 @@ class PresentationFactory(private val editor: EditorImpl) {
    */
   @Contract(pure = true)
   fun changeOnHover(
-    default: InlayPresentation,
+    base: InlayPresentation,
     onHover: () -> InlayPresentation,
     onHoverPredicate: (MouseEvent) -> Boolean = { true },
     onMouseExited: () -> Unit = {}
-  ): InlayPresentation = ChangeOnHoverPresentation(default, onHover, onHoverPredicate, onMouseExited)
+  ): InlayPresentation = ChangeOnHoverPresentation(base, onHover, onHoverPredicate, onMouseExited)
 
   @Contract(pure = true)
   fun reference(base: InlayPresentation, onClickAction: () -> Unit): InlayPresentation {
@@ -293,8 +293,8 @@ class PresentationFactory(private val editor: EditorImpl) {
   }
 
   @Contract(pure = true)
-  fun rounding(arcWidth: Int, arcHeight: Int, presentation: InlayPresentation): InlayPresentation =
-    RoundPresentation(presentation, arcWidth, arcHeight)
+  fun rounding(arcWidth: Int, arcHeight: Int, base: InlayPresentation): InlayPresentation =
+    RoundPresentation(base, arcWidth, arcHeight)
 
   private fun attributes(base: InlayPresentation, transformer: (TextAttributes) -> TextAttributes): AttributesTransformerPresentation =
     AttributesTransformerPresentation(base, transformer)
