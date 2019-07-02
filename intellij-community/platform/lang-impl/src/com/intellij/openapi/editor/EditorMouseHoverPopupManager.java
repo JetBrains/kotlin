@@ -75,6 +75,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   public void mouseMoved(@NotNull EditorMouseEvent e) {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
 
+    if (isAnotherAppInFocus()) return;
+
     Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
     Rectangle currentHintBounds = getCurrentHintBounds(e.getEditor());
     boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, currentHintBounds);
@@ -113,7 +115,10 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       ApplicationManager.getApplication().invokeLater(() -> {
         if (progress != myCurrentProgress) return;
         myCurrentProgress = null;
-        if (info != null && !EditorMouseHoverPopupControl.arePopupsDisabled(editor) && editor.getContentComponent().isShowing()) {
+        if (info != null &&
+            !EditorMouseHoverPopupControl.arePopupsDisabled(editor) &&
+            editor.getContentComponent().isShowing() &&
+            !isAnotherAppInFocus()) {
           PopupBridge popupBridge = new PopupBridge();
           JComponent component = info.createComponent(editor, popupBridge);
           if (component == null) {
@@ -133,6 +138,10 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         }
       });
     }, progress), context.getShowingDelay());
+  }
+
+  private static boolean isAnotherAppInFocus() {
+    return KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow() == null;
   }
 
   private Rectangle getCurrentHintBounds(Editor editor) {
@@ -275,7 +284,6 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       return null;
     }
     return hint;
-
   }
 
   private static class Context {
