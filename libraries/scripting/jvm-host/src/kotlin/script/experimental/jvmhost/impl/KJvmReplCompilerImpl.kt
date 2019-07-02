@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.repl.ReplCodeAnalyzer
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -118,9 +119,10 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
 
             history.push(LineId(codeLine), scriptDescriptor)
 
+            val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
             val compiledScript =
                 makeCompiledScript(generationState, snippet, sourceFiles.first(), sourceDependencies) { ktFile ->
-                    context.scriptCompilationState.configurations.entries.find { ktFile.name == it.key.name }?.value
+                    dependenciesProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                 }
 

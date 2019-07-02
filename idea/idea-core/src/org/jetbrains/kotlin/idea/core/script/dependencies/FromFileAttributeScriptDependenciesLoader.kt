@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.scriptCompilationConfiguration
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import kotlin.script.experimental.api.asSuccess
@@ -26,7 +27,7 @@ class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDepend
                 debug(file) { "refined configuration from fileAttributes = $it" }
             }
         } ?: file.scriptDependencies?.let {
-            ScriptCompilationConfigurationWrapper.FromLegacy(VirtualFileScriptSource(file), it).apply {
+            ScriptCompilationConfigurationWrapper.FromLegacy(VirtualFileScriptSource(file), it, file.findScriptDefinition(project)).apply {
                 debug(file) { "dependencies from fileAttributes = $it" }
             }
         }?.let {

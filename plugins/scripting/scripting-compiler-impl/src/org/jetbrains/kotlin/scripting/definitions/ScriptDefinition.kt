@@ -21,10 +21,11 @@ import kotlin.script.experimental.jvm.jvm
 // TODO: name could be confused with KotlinScriptDefinition, discuss naming
 abstract class ScriptDefinition : UserDataHolderBase() {
 
+    @Deprecated("Use configurations instead")
     abstract val legacyDefinition: KotlinScriptDefinition
     abstract val hostConfiguration: ScriptingHostConfiguration
     abstract val compilationConfiguration: ScriptCompilationConfiguration
-    abstract val evaluationConfiguration: ScriptEvaluationConfiguration
+    abstract val evaluationConfiguration: ScriptEvaluationConfiguration?
 
     abstract fun isScript(fileName: String): Boolean
     abstract val fileExtension: String
@@ -43,9 +44,11 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     abstract val baseClassType: KotlinType
     abstract val compilerOptions: Iterable<String>
 
+    @Suppress("DEPRECATION")
     inline fun <reified T : KotlinScriptDefinition> asLegacyOrNull(): T? =
         if (this is FromLegacy) legacyDefinition as? T else null
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     open class FromLegacy(
         override val hostConfiguration: ScriptingHostConfiguration,
         override val legacyDefinition: KotlinScriptDefinition
@@ -105,6 +108,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     abstract class FromConfigurationsBase : ScriptDefinition() {
 
+        @Suppress("OverridingDeprecatedMember", "DEPRECATION")
         override val legacyDefinition by lazy {
             KotlinScriptDefinitionAdapterFromNewAPI(
                 compilationConfiguration,
@@ -136,13 +140,13 @@ abstract class ScriptDefinition : UserDataHolderBase() {
                     compilationConfiguration == it.compilationConfiguration && evaluationConfiguration == it.evaluationConfiguration
                 } == true
 
-        override fun hashCode(): Int = compilationConfiguration.hashCode() + 37 * evaluationConfiguration.hashCode()
+        override fun hashCode(): Int = compilationConfiguration.hashCode() + 37 * (evaluationConfiguration?.hashCode() ?: 0)
     }
 
     open class FromConfigurations(
         override val hostConfiguration: ScriptingHostConfiguration,
         override val compilationConfiguration: ScriptCompilationConfiguration,
-        override val evaluationConfiguration: ScriptEvaluationConfiguration
+        override val evaluationConfiguration: ScriptEvaluationConfiguration?
     ) : FromConfigurationsBase()
 
     open class FromTemplate(
