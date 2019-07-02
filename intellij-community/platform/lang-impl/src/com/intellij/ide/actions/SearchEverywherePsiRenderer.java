@@ -105,9 +105,8 @@ public class SearchEverywherePsiRenderer extends PsiElementListCellRenderer<PsiE
 
     boolean in = text.startsWith("in ");
     if (in) text = text.substring(3);
-    String left = in ? "(in " : "(";
-    String right = ")";
-    String adjustedText = left + text + right;
+    String left = in ? "in " : "";
+    String adjustedText = left + text;
     if (maxWidth < 0) return adjustedText;
 
     int fullWidth = fm.stringWidth(adjustedText);
@@ -123,10 +122,10 @@ public class SearchEverywherePsiRenderer extends PsiElementListCellRenderer<PsiE
       parts.remove(index);
       if (fm.stringWidth(StringUtil.join(parts, separator) + "...") < maxWidth) {
         parts.add(index, "...");
-        return left + StringUtil.join(parts, separator) + right;
+        return left + StringUtil.join(parts, separator);
       }
     }
-    int adjustedWidth = Math.max(adjustedText.length() * maxWidth / fullWidth - 1, left.length() + right.length() + 3);
+    int adjustedWidth = Math.max(adjustedText.length() * maxWidth / fullWidth - 1, left.length() + 3);
     return StringUtil.trimMiddle(adjustedText, adjustedWidth);
   }
 
