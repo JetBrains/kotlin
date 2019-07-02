@@ -6,6 +6,7 @@ import com.intellij.ide.dnd.DnDManager;
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.tree.RestoreSelectionListener;
@@ -73,16 +74,17 @@ class ServiceTreeView extends ServiceView {
     int[] rows = myTree.getSelectionRows();
     if (rows == null || rows.length == 0) return Collections.emptyList();
 
-    List<ServiceViewItem> result = new ArrayList<>();
-    Arrays.sort(rows);
-    for (int row : rows) {
-      TreePath path = myTree.getPathForRow(row);
-      ServiceViewItem item = path == null ? null : ObjectUtils.tryCast(path.getLastPathComponent(), ServiceViewItem.class);
-      if (item != null) {
-        result.add(item);
-      }
+    List<Object> objects = TreeUtil.collectSelectedUserObjects(myTree);
+    if (objects.size() != rows.length) {
+      return ContainerUtil.mapNotNull(objects, o -> ObjectUtils.tryCast(o, ServiceViewItem.class));
     }
-    return result;
+
+    List<Pair<Object, Integer>> objectRows = new ArrayList<>();
+    for (int i = 0; i < rows.length; i++) {
+      objectRows.add(Pair.create(objects.get(i), rows[i]));
+    }
+    Collections.sort(objectRows, Comparator.comparing(pair -> pair.second));
+    return ContainerUtil.mapNotNull(objectRows, pair -> ObjectUtils.tryCast(pair.first, ServiceViewItem.class));
   }
 
   @Override
