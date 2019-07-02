@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -612,9 +611,11 @@ internal object Devirtualization {
                             println("Devirtualized callsite " +
                                     (virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.callee.toString()))
                         }
+                        val inheritorsOfReceiverType = virtualCallSiteReceivers.devirtualizedCallees.map { it.receiverType }.toSet()
                         val possibleReceivers = allTypes.asSequence()
                                 .withIndex()
                                 .filter { virtualCallSiteReceivers.receiver.types[it.index] }
+                                .filter { inheritorsOfReceiverType.contains(it.value) }
                                 .filterNot { it.value == nothing }
                                 .map {
                                     DEBUG_OUTPUT(0) {
@@ -763,7 +764,7 @@ internal object Devirtualization {
                     symbol.parameters.forEachIndexed { index, type ->
                         val resolvedType = type.type.resolved()
                         val node = if (!resolvedType.isFinal)
-                                       constraintGraph.virtualNode // TODO: May be do this only for a library?
+                                       constraintGraph.virtualNode // TODO: OBJC-INTEROP-GENERATED-CLASSES
                                    else
                                        concreteClass(resolvedType)
                         node.addEdge(parameters[index])
@@ -836,8 +837,7 @@ internal object Devirtualization {
 
                 fun doCall(callee: DataFlowIR.FunctionSymbol,
                            arguments: List<Any>,
-                           returnType: DataFlowIR.Type.Declared,
-                           receiverType: DataFlowIR.Type.Declared?): Node {
+                           returnType: DataFlowIR.Type.Declared): Node {
                     val resolvedCallee = callee.resolved()
                     val calleeConstraintGraph = createFunctionConstraintGraph(resolvedCallee, false)
                     return if (calleeConstraintGraph == null) {
@@ -848,6 +848,7 @@ internal object Devirtualization {
                             else {
                                 constraintGraph.virtualNode.addEdge(fictitiousReturnNode)
                                 // TODO: Unconservative way - when we can use it?
+                                // TODO: OBJC-INTEROP-GENERATED-CLASSES
 //                                typeHierarchy.inheritorsOf(returnType)
 //                                        .filterNot { it.isAbstract }
 //                                        .filter { instantiatingClasses.containsKey(it) }
@@ -857,14 +858,7 @@ internal object Devirtualization {
                         }
                     } else {
                         calleeConstraintGraph.throws.addEdge(function.throws)
-                        if (!useTypes || receiverType == null || receiverType == callee.parameters[0].type.resolved())
-                            doCall(calleeConstraintGraph, arguments, returnType)
-                        else {
-                            val receiverNode = argumentToConstraintNode(arguments[0])
-                            doCall(calleeConstraintGraph,
-                                    listOf(doCast(function, receiverNode, receiverType)) + arguments.drop(1),
-                                    returnType)
-                        }
+                        doCall(calleeConstraintGraph, arguments, returnType)
                     }
                 }
 
@@ -912,13 +906,12 @@ internal object Devirtualization {
                             function.parameters[node.index]
 
                         is DataFlowIR.Node.StaticCall ->
-                            doCall(node.callee, node.arguments, node.returnType.resolved(),
-                                    node.receiverType?.resolved())
+                            doCall(node.callee, node.arguments, node.returnType.resolved())
 
                         is DataFlowIR.Node.NewObject -> {
                             val returnType = node.constructedType.resolved()
                             val instanceNode = concreteClass(returnType)
-                            doCall(node.callee, listOf(instanceNode) + node.arguments, returnType, null)
+                            doCall(node.callee, listOf(instanceNode) + node.arguments, returnType)
                             instanceNode
                         }
 
@@ -960,12 +953,13 @@ internal object Devirtualization {
                             val receiverNode = edgeToConstraintNode(node.arguments[0])
                             if (receiverType == DataFlowIR.Type.Virtual)
                                 constraintGraph.virtualNode.addEdge(receiverNode)
-                            val castedReceiver = doCast(function, receiverNode, receiverType)
+                            val castedReceiver = ordinaryNode { "CastedReceiver\$${function.symbol}" }
+                            receiverNode.addEdge(castedReceiver)
                             val arguments = listOf(castedReceiver) + node.arguments.drop(1)
 
                             val returnsNode = ordinaryNode { "VirtualCallReturns\$${function.symbol}" }
                             callees.forEachIndexed { index, actualCallee ->
-                                doCall(actualCallee, arguments, returnType, possibleReceiverTypes[index]).addEdge(returnsNode)
+                                doCall(actualCallee, arguments, returnType).addEdge(returnsNode)
                             }
                             // Add cast to [Virtual] edge from receiver to returns, if return type is not final.
                             // With this we're reflecting the fact that unknown function can return anything.
@@ -993,7 +987,7 @@ internal object Devirtualization {
                         is DataFlowIR.Node.Singleton -> {
                             val type = node.type.resolved()
                             val instanceNode = concreteClass(type)
-                            node.constructor?.let { doCall(it, listOf(instanceNode), type, null) }
+                            node.constructor?.let { doCall(it, listOf(instanceNode), type) }
                             instanceNode
                         }
 
