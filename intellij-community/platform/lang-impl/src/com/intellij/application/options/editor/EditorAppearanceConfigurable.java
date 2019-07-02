@@ -3,9 +3,6 @@
 package com.intellij.application.options.editor;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
-import com.intellij.codeInsight.hints.InlayParameterHintsExtension;
-import com.intellij.codeInsight.hints.ParameterHintsPassFactory;
-import com.intellij.codeInsight.hints.settings.ParameterNameHintsConfigurable;
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ApplicationBundle;
@@ -53,9 +50,6 @@ public class EditorAppearanceConfigurable extends CompositeConfigurable<UnnamedC
   private JCheckBox myShowCodeLensInEditorCheckBox;
   private JCheckBox myShowVerticalIndentGuidesCheckBox;
   private JBCheckBox myCbShowIntentionBulbCheckBox;
-  private JPanel myParameterHintsSettingsPanel;
-  private JBCheckBox myShowParameterNameHints;
-  private JButton myConfigureParameterHintsButton;
   private JBCheckBox myFocusModeCheckBox;
 
   //private JCheckBox myUseLCDRendering;
@@ -73,23 +67,6 @@ public class EditorAppearanceConfigurable extends CompositeConfigurable<UnnamedC
 
     myFocusModeCheckBox.setVisible(ApplicationManager.getApplication().isInternal());
 
-    initInlaysPanel();
-  }
-
-  private void initInlaysPanel() {
-    boolean isInlayProvidersAvailable = InlayParameterHintsExtension.INSTANCE.hasAnyExtensions();
-    myParameterHintsSettingsPanel.setVisible(isInlayProvidersAvailable);
-    if (!isInlayProvidersAvailable) return;
-
-    myConfigureParameterHintsButton.addActionListener(e -> {
-      ParameterNameHintsConfigurable configurable = new ParameterNameHintsConfigurable();
-      configurable.show();
-    });
-  }
-
-  private void setParameterNameHintsSettings(EditorSettingsExternalizable settings) {
-    settings.setShowParameterNameHints(myShowParameterNameHints.isSelected());
-    ParameterHintsPassFactory.forceHintsUpdateOnNextPass();
   }
 
   private void updateWhitespaceCheckboxesState() {
@@ -123,8 +100,6 @@ public class EditorAppearanceConfigurable extends CompositeConfigurable<UnnamedC
 
     updateWhitespaceCheckboxesState();
 
-    myShowParameterNameHints.setSelected(editorSettings.isShowParameterNameHints());
-
     super.reset();
   }
 
@@ -148,7 +123,6 @@ public class EditorAppearanceConfigurable extends CompositeConfigurable<UnnamedC
     editorSettings.setIndentGuidesShown(myShowVerticalIndentGuidesCheckBox.isSelected());
     editorSettings.setFocusMode(myFocusModeCheckBox.isSelected());
     editorSettings.setShowIntentionBulb(myCbShowIntentionBulbCheckBox.isSelected());
-    setParameterNameHintsSettings(editorSettings);
 
     EditorOptionsPanel.reinitAllEditors();
 
@@ -208,7 +182,6 @@ public class EditorAppearanceConfigurable extends CompositeConfigurable<UnnamedC
     //isModified |= myAntialiasingInEditorCheckBox.isSelected() != UISettings.getInstance().ANTIALIASING_IN_EDITOR;
     //isModified |= myUseLCDRendering.isSelected() != UISettings.getInstance().USE_LCD_RENDERING_IN_EDITOR;
     isModified |= myShowCodeLensInEditorCheckBox.isSelected() != UISettings.getInstance().getShowEditorToolTip();
-    isModified |= myShowParameterNameHints.isSelected() != editorSettings.isShowParameterNameHints();
 
     return isModified;
   }

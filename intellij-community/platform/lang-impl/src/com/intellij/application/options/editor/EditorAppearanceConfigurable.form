@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.application.options.editor.EditorAppearanceConfigurable">
-  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="16" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
+  <grid id="27dc6" binding="myRootPanel" layout-manager="GridLayoutManager" row-count="15" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="725" height="689"/>
@@ -10,7 +10,7 @@
     <children>
       <vspacer id="f3f11">
         <constraints>
-          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="2eb36" class="javax.swing.JCheckBox" binding="myCbBlockCursor">
@@ -86,7 +86,7 @@
       </component>
       <grid id="7b00c" binding="myAddonPanel" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -138,32 +138,6 @@
           <text resource-bundle="messages/IdeBundle" key="checkbox.show.editor.preview.popup"/>
         </properties>
       </component>
-      <grid id="9ac3d" binding="myParameterHintsSettingsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
-        <constraints>
-          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="7342b" class="com.intellij.ui.components.JBCheckBox" binding="myShowParameterNameHints">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="messages/ApplicationBundle" key="checkbox.show.parameter.name.hints"/>
-            </properties>
-          </component>
-          <component id="38e6a" class="javax.swing.JButton" binding="myConfigureParameterHintsButton">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="5" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Configure..."/>
-            </properties>
-          </component>
-        </children>
-      </grid>
       <component id="98e1f" class="com.intellij.ui.components.JBCheckBox" binding="myCbShowIntentionBulbCheckBox">
         <constraints>
           <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
