@@ -7,6 +7,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.impl.ParameterHintsPresentationManager
 import com.intellij.codeInsight.hints.HintInfo.MethodInfo
+import com.intellij.codeInsight.hints.config.InlayHintsConfigurable
 import com.intellij.codeInsight.hints.settings.Diff
 import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings
 import com.intellij.codeInsight.intention.HighPriorityAction
@@ -80,8 +81,10 @@ fun showParameterHintsDialog(e: AnActionEvent, getPattern: (HintInfo) -> String?
 
   val selectedLanguage = (info as? MethodInfo)?.language ?: fileLanguage
 
-  val pattern = getPattern(info)
-  BlackListDialog(selectedLanguage, pattern).show()
+  when (val pattern = getPattern(info)) {
+    null -> InlayHintsConfigurable.showSettingsDialogForLanguage(file.project, fileLanguage)
+    else -> BlackListDialog(selectedLanguage, pattern).show()
+  }
 }
 
 class BlacklistCurrentMethodIntention : IntentionAction, LowPriorityAction {
