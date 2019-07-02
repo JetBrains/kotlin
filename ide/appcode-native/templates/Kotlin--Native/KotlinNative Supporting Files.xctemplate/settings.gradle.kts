@@ -4,7 +4,7 @@ pluginManagement {@@MPP_PLUGIN_RESOLUTION_RULES@@
     }
 }
 
-enableFeaturePreview('GRADLE_METADATA')
+enableFeaturePreview("GRADLE_METADATA")
 
 include(":___PARENTPACKAGENAME___")
 project(":___PARENTPACKAGENAME___").projectDir = file("../___PARENTPACKAGENAME___")
