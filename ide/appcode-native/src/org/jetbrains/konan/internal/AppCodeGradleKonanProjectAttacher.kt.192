@@ -5,7 +5,9 @@
 
 package org.jetbrains.konan.internal
 
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
@@ -45,18 +47,17 @@ class AppCodeGradleKonanProjectAttacher(
             }
 
             findGradleProject()?.let {
-                val message = GradleBundle.message("gradle.notifications.unlinked.project.found.msg", "import")
+                val notification = GradleNotification.NOTIFICATION_GROUP.createNotification(
+                        GradleBundle.message("gradle.notifications.unlinked.project.found.title",
+                                ApplicationNamesInfo.getInstance().fullProductName),
+                        NotificationType.INFORMATION)
+                notification.addAction(NotificationAction.createSimple(
+                        GradleBundle.message("gradle.notifications.unlinked.project.found.import")) {
+                    notification.expire()
+                    importProject(it.parentFile.absolutePath, project)
+                })
 
-                GradleNotification.getInstance(project).showBalloon(
-                    GradleBundle.message("gradle.notifications.unlinked.project.found.title"),
-                    message,
-                    NotificationType.INFORMATION
-                ) { notification, event ->
-                    if (event.description == "import") {
-                        notification.expire()
-                        importProject(it.absolutePath, project)
-                    }
-                }
+                notification.notify(project)
             }
         }
     }
