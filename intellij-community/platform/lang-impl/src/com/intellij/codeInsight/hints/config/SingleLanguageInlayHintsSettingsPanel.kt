@@ -59,8 +59,9 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   }
 
   private val parameterHintsPanel = run {
-    val options = InlayParameterHintsExtension.forLanguage(language)?.supportedOptions ?: return@run null
-    ParameterHintsSettingsPanel(language, options, true)
+    val hintsProvider = InlayParameterHintsExtension.forLanguage(language)
+    val options = hintsProvider?.supportedOptions ?: return@run null
+    ParameterHintsSettingsPanel(language, options, hintsProvider.isBlackListSupported)
   }
 
 
