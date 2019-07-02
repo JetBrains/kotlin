@@ -297,7 +297,7 @@ __attribute__((swift_name("Bridge")))
 - (ValuesKotlinNothing * _Nullable)foo1AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo1()")));
 - (BOOL)foo2AndReturnResult:(int32_t * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2(result:)")));
 - (BOOL)foo3AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo3()")));
-- (BOOL)foo4AndReturnResult:(ValuesKotlinNothing ** _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4(result:)")));
+- (BOOL)foo4AndReturnResult:(ValuesKotlinNothing * _Nullable * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4(result:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -571,6 +571,294 @@ __attribute__((swift_name("TestSR10177Workaround")))
 @required
 @end;
 
+__attribute__((swift_name("TestClashes1")))
+@protocol ValuesTestClashes1
+@required
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@end;
+
+__attribute__((swift_name("TestClashes2")))
+@protocol ValuesTestClashes2
+@required
+@property (readonly) id clashingProperty __attribute__((swift_name("clashingProperty")));
+@property (readonly) id clashingProperty_ __attribute__((swift_name("clashingProperty_")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestClashesImpl")))
+@interface ValuesTestClashesImpl : KotlinBase <ValuesTestClashes1, ValuesTestClashes2>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@property (readonly) ValuesInt *clashingProperty_ __attribute__((swift_name("clashingProperty_")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers")))
+@interface ValuesTestInvalidIdentifiers : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)a_d_d_1:(int32_t)_1 _2:(int32_t)_2 _3:(int32_t)_3 __attribute__((swift_name("a_d_d(_1:_2:_3:)")));
+@property NSString *_status __attribute__((swift_name("_status")));
+@property (readonly) unichar __ __attribute__((swift_name("__")));
+@property (readonly) unichar __ __attribute__((swift_name("__")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers._Foo")))
+@interface ValuesTestInvalidIdentifiers_Foo : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers.Bar_")))
+@interface ValuesTestInvalidIdentifiersBar_ : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers.E")))
+@interface ValuesTestInvalidIdentifiersE : ValuesKotlinEnum
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *_4_ __attribute__((swift_name("_4_")));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *_5_ __attribute__((swift_name("_5_")));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
+@property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (int32_t)compareToOther:(ValuesTestInvalidIdentifiersE *)other __attribute__((swift_name("compareTo(other:)")));
+@property (readonly) int32_t value __attribute__((swift_name("value")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestInvalidIdentifiers.Companion_")))
+@interface ValuesTestInvalidIdentifiersCompanion_ : KotlinBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion_ __attribute__((swift_name("init()")));
+@property (readonly) int32_t _42 __attribute__((swift_name("_42")));
+@end;
+
+__attribute__((swift_name("TestDeprecation")))
+@interface ValuesTestDeprecation : KotlinBase
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)callEffectivelyHiddenObj:(id)obj __attribute__((swift_name("callEffectivelyHidden(obj:)")));
+- (id)getHidden __attribute__((swift_name("getHidden()")));
+- (ValuesTestDeprecationError *)getError __attribute__((swift_name("getError()")));
+- (void)error __attribute__((swift_name("error()"))) __attribute__((unavailable("error")));
+- (void)openError __attribute__((swift_name("openError()"))) __attribute__((unavailable("error")));
+- (ValuesTestDeprecationWarning *)getWarning __attribute__((swift_name("getWarning()")));
+- (void)warning __attribute__((swift_name("warning()"))) __attribute__((deprecated("warning")));
+- (void)openWarning __attribute__((swift_name("openWarning()"))) __attribute__((deprecated("warning")));
+- (void)normal __attribute__((swift_name("normal()")));
+- (int32_t)openNormal __attribute__((swift_name("openNormal()")));
+@property (readonly) id _Nullable errorVal __attribute__((swift_name("errorVal"))) __attribute__((unavailable("error")));
+@property id _Nullable errorVar __attribute__((swift_name("errorVar"))) __attribute__((unavailable("error")));
+@property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal"))) __attribute__((unavailable("error")));
+@property id _Nullable openErrorVar __attribute__((swift_name("openErrorVar"))) __attribute__((unavailable("error")));
+@property (readonly) id _Nullable warningVal __attribute__((swift_name("warningVal"))) __attribute__((deprecated("warning")));
+@property id _Nullable warningVar __attribute__((swift_name("warningVar"))) __attribute__((deprecated("warning")));
+@property (readonly) id _Nullable openWarningVal __attribute__((swift_name("openWarningVal"))) __attribute__((deprecated("warning")));
+@property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar"))) __attribute__((deprecated("warning")));
+@property (readonly) id _Nullable normalVal __attribute__((swift_name("normalVal")));
+@property id _Nullable normalVar __attribute__((swift_name("normalVar")));
+@property (readonly) id _Nullable openNormalVal __attribute__((swift_name("openNormalVal")));
+@property id _Nullable openNormalVar __attribute__((swift_name("openNormalVar")));
+@end;
+
+__attribute__((swift_name("TestDeprecation.OpenHidden")))
+@interface ValuesTestDeprecationOpenHidden : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ExtendingHidden")))
+@interface ValuesTestDeprecationExtendingHidden : NSObject
+@end;
+
+__attribute__((swift_name("TestDeprecationHiddenInterface")))
+@protocol ValuesTestDeprecationHiddenInterface
+@required
+@end;
+
+__attribute__((swift_name("TestDeprecation.ImplementingHidden")))
+@interface ValuesTestDeprecationImplementingHidden : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)effectivelyHidden __attribute__((swift_name("effectivelyHidden()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.Hidden")))
+@interface ValuesTestDeprecationHidden : NSObject
+@end;
+
+__attribute__((swift_name("TestDeprecation.OpenError")))
+@interface ValuesTestDeprecationOpenError : ValuesTestDeprecation
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ExtendingError")))
+@interface ValuesTestDeprecationExtendingError : ValuesTestDeprecationOpenError
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((swift_name("TestDeprecationErrorInterface")))
+@protocol ValuesTestDeprecationErrorInterface
+@required
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ImplementingError")))
+@interface ValuesTestDeprecationImplementingError : KotlinBase <ValuesTestDeprecationErrorInterface>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.Error")))
+@interface ValuesTestDeprecationError : ValuesTestDeprecation
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@end;
+
+__attribute__((swift_name("TestDeprecation.OpenWarning")))
+@interface ValuesTestDeprecationOpenWarning : ValuesTestDeprecation
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ExtendingWarning")))
+@interface ValuesTestDeprecationExtendingWarning : ValuesTestDeprecationOpenWarning
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((swift_name("TestDeprecationWarningInterface")))
+@protocol ValuesTestDeprecationWarningInterface
+@required
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ImplementingWarning")))
+@interface ValuesTestDeprecationImplementingWarning : KotlinBase <ValuesTestDeprecationWarningInterface>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.Warning")))
+@interface ValuesTestDeprecationWarning : ValuesTestDeprecation
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.HiddenOverride")))
+@interface ValuesTestDeprecationHiddenOverride : ValuesTestDeprecation
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (void)openError __attribute__((swift_name("openError()"))) __attribute__((unavailable("hidden")));
+- (void)openWarning __attribute__((swift_name("openWarning()"))) __attribute__((unavailable("hidden")));
+- (int32_t)openNormal __attribute__((swift_name("openNormal()"))) __attribute__((unavailable("hidden")));
+@property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal"))) __attribute__((unavailable("hidden")));
+@property id _Nullable openErrorVar __attribute__((swift_name("openErrorVar"))) __attribute__((unavailable("hidden")));
+@property (readonly) id _Nullable openWarningVal __attribute__((swift_name("openWarningVal"))) __attribute__((unavailable("hidden")));
+@property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar"))) __attribute__((unavailable("hidden")));
+@property (readonly) id _Nullable openNormalVal __attribute__((swift_name("openNormalVal"))) __attribute__((unavailable("hidden")));
+@property id _Nullable openNormalVar __attribute__((swift_name("openNormalVar"))) __attribute__((unavailable("hidden")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ErrorOverride")))
+@interface ValuesTestDeprecationErrorOverride : ValuesTestDeprecation
+- (instancetype)initWithHidden:(int8_t)hidden __attribute__((swift_name("init(hidden:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)openHidden __attribute__((swift_name("openHidden()"))) __attribute__((unavailable("error")));
+- (void)openError __attribute__((swift_name("openError()"))) __attribute__((unavailable("error")));
+- (void)openWarning __attribute__((swift_name("openWarning()"))) __attribute__((unavailable("error")));
+- (int32_t)openNormal __attribute__((swift_name("openNormal()"))) __attribute__((unavailable("error")));
+@property (readonly) id _Nullable openHiddenVal __attribute__((swift_name("openHiddenVal"))) __attribute__((unavailable("error")));
+@property id _Nullable openHiddenVar __attribute__((swift_name("openHiddenVar"))) __attribute__((unavailable("error")));
+@property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal"))) __attribute__((unavailable("error")));
+@property id _Nullable openErrorVar __attribute__((swift_name("openErrorVar"))) __attribute__((unavailable("error")));
+@property (readonly) id _Nullable openWarningVal __attribute__((swift_name("openWarningVal"))) __attribute__((unavailable("error")));
+@property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar"))) __attribute__((unavailable("error")));
+@property (readonly) id _Nullable openNormalVal __attribute__((swift_name("openNormalVal"))) __attribute__((unavailable("error")));
+@property id _Nullable openNormalVar __attribute__((swift_name("openNormalVar"))) __attribute__((unavailable("error")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.WarningOverride")))
+@interface ValuesTestDeprecationWarningOverride : ValuesTestDeprecation
+- (instancetype)initWithHidden:(int8_t)hidden __attribute__((swift_name("init(hidden:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)openHidden __attribute__((swift_name("openHidden()"))) __attribute__((deprecated("warning")));
+- (void)openError __attribute__((swift_name("openError()"))) __attribute__((deprecated("warning")));
+- (void)openWarning __attribute__((swift_name("openWarning()"))) __attribute__((deprecated("warning")));
+- (int32_t)openNormal __attribute__((swift_name("openNormal()"))) __attribute__((deprecated("warning")));
+@property (readonly) id _Nullable openHiddenVal __attribute__((swift_name("openHiddenVal"))) __attribute__((deprecated("warning")));
+@property id _Nullable openHiddenVar __attribute__((swift_name("openHiddenVar"))) __attribute__((deprecated("warning")));
+@property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal"))) __attribute__((deprecated("warning")));
+@property id _Nullable openErrorVar __attribute__((swift_name("openErrorVar"))) __attribute__((deprecated("warning")));
+@property (readonly) id _Nullable openWarningVal __attribute__((swift_name("openWarningVal"))) __attribute__((deprecated("warning")));
+@property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar"))) __attribute__((deprecated("warning")));
+@property (readonly) id _Nullable openNormalVal __attribute__((swift_name("openNormalVal"))) __attribute__((deprecated("warning")));
+@property id _Nullable openNormalVar __attribute__((swift_name("openNormalVar"))) __attribute__((deprecated("warning")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.NormalOverride")))
+@interface ValuesTestDeprecationNormalOverride : ValuesTestDeprecation
+- (instancetype)initWithHidden:(int8_t)hidden __attribute__((swift_name("init(hidden:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)openError __attribute__((swift_name("openError()"))) __attribute__((unavailable("Overrides deprecated member in 'conversions.TestDeprecation'. error")));
+- (void)openWarning __attribute__((swift_name("openWarning()"))) __attribute__((deprecated("Overrides deprecated member in 'conversions.TestDeprecation'. warning")));
+- (int32_t)openNormal __attribute__((swift_name("openNormal()")));
+@property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal"))) __attribute__((unavailable("Overrides deprecated member in 'conversions.TestDeprecation'. error")));
+@property id _Nullable openErrorVar __attribute__((swift_name("openErrorVar"))) __attribute__((unavailable("Overrides deprecated member in 'conversions.TestDeprecation'. error")));
+@property (readonly) id _Nullable openWarningVal __attribute__((swift_name("openWarningVal"))) __attribute__((deprecated("Overrides deprecated member in 'conversions.TestDeprecation'. warning")));
+@property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar"))) __attribute__((deprecated("Overrides deprecated member in 'conversions.TestDeprecation'. warning")));
+@property (readonly) id _Nullable openNormalVal __attribute__((swift_name("openNormalVal")));
+@property id _Nullable openNormalVar __attribute__((swift_name("openNormalVar")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
@@ -647,6 +935,8 @@ __attribute__((swift_name("ValuesKt")))
 + (BOOL)isBlockNullBlock:(void (^ _Nullable)(void))block __attribute__((swift_name("isBlockNull(block:)")));
 + (void)takeForwardDeclaredClassObj:(ForwardDeclaredClass *)obj __attribute__((swift_name("takeForwardDeclaredClass(obj:)")));
 + (void)takeForwardDeclaredProtocolObj:(id<ForwardDeclared>)obj __attribute__((swift_name("takeForwardDeclaredProtocol(obj:)")));
++ (void)error __attribute__((swift_name("error()"))) __attribute__((unavailable("error")));
++ (void)warning __attribute__((swift_name("warning()"))) __attribute__((deprecated("warning")));
 @property (class, readonly) double dbl __attribute__((swift_name("dbl")));
 @property (class, readonly) float flt __attribute__((swift_name("flt")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));
@@ -673,5 +963,9 @@ __attribute__((swift_name("ValuesKt")))
 @property (class) id anyValue __attribute__((swift_name("anyValue")));
 @property (class, readonly) ValuesInt *(^sumLambda)(ValuesInt *, ValuesInt *) __attribute__((swift_name("sumLambda")));
 @property (class, readonly) int32_t PROPERTY_NAME_MUST_NOT_BE_ALTERED_BY_SWIFT __attribute__((swift_name("PROPERTY_NAME_MUST_NOT_BE_ALTERED_BY_SWIFT")));
+@property (class, readonly) id _Nullable errorVal __attribute__((swift_name("errorVal"))) __attribute__((unavailable("error")));
+@property (class) id _Nullable errorVar __attribute__((swift_name("errorVar"))) __attribute__((unavailable("error")));
+@property (class, readonly) id _Nullable warningVal __attribute__((swift_name("warningVal"))) __attribute__((deprecated("warning")));
+@property (class) id _Nullable warningVar __attribute__((swift_name("warningVar"))) __attribute__((deprecated("warning")));
 @end;
 

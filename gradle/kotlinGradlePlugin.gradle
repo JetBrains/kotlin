@@ -1,13 +1,12 @@
-if (!hasProperty('buildKotlinVersion')) {
-    throw new GradleException('Please ensure the "buildKotlinVersion" property is defined before applying this script.')
-}
+def properties = ['buildKotlinVersion', 'buildKotlinCompilerRepo', 'kotlinVersion', 'kotlinCompilerRepo']
 
-if (!hasProperty('buildKotlinCompilerRepo')) {
-    throw new GradleException('Please ensure the "buildKotlinCompilerRepo" property is defined before applying this script.')
+for (prop in properties) {
+    if (!hasProperty(prop)) {
+        throw new GradleException("Please ensure the '$prop' property is defined before applying this script.")
+    }
 }
 
 project.buildscript.repositories {
-
     maven {
         url buildKotlinCompilerRepo
     }

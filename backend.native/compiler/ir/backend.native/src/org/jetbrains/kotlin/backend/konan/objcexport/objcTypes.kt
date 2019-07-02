@@ -130,3 +130,11 @@ internal enum class ObjCValueType(val encoding: String) {
     DOUBLE("d"),
     POINTER("^v")
 }
+
+internal fun ObjCType.makeNullableIfReferenceOrPointer(): ObjCType = when (this) {
+    is ObjCPointerType -> ObjCPointerType(this.pointee, nullable = true)
+
+    is ObjCNonNullReferenceType -> ObjCNullableReferenceType(this)
+
+    is ObjCNullableReferenceType, is ObjCRawType, is ObjCPrimitiveType, ObjCVoidType -> this
+}

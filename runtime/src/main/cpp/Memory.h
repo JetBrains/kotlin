@@ -426,11 +426,30 @@ void ResumeMemory(MemoryState* state);
 // Escape analysis algorithm is the provider of information for decision on exact aux slot
 // selection, and comes from upper bound esteemation of object lifetime.
 //
+OBJ_GETTER(AllocInstanceStrict, const TypeInfo* type_info) RUNTIME_NOTHROW;
+OBJ_GETTER(AllocInstanceRelaxed, const TypeInfo* type_info) RUNTIME_NOTHROW;
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) RUNTIME_NOTHROW;
+
+OBJ_GETTER(AllocArrayInstanceStrict, const TypeInfo* type_info, int32_t elements);
+OBJ_GETTER(AllocArrayInstanceRelaxed, const TypeInfo* type_info, int32_t elements);
 OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements);
+
+OBJ_GETTER(InitInstanceStrict,
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitInstanceRelaxed,
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitInstance,
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+
+OBJ_GETTER(InitSharedInstanceStrict,
+    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitSharedInstanceRelaxed,
+    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitSharedInstance,
+    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+
+// Cleanup references inside object.
 void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
-OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* type_info,
-           void (*ctor)(ObjHeader*));
 
 // Weak reference operations.
 // Atomically clears counter object reference.
@@ -485,8 +504,6 @@ OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock) RUNTIME_N
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
 void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
-// Collect garbage, which cannot be found by reference counting (cycles).
-void GarbageCollect() RUNTIME_NOTHROW;
 // Clears object subgraph references from memory subsystem, and optionally
 // checks if subgraph referenced by given root is disjoint from the rest of
 // object graph, i.e. no external references exists.

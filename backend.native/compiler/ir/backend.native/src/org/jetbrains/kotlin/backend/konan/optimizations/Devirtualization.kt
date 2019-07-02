@@ -1413,12 +1413,13 @@ internal object Devirtualization {
                                     val newSymbol = IrReturnableBlockSymbolImpl(expression.descriptor)
                                     val transformedReturnableBlock = with(expression) {
                                         IrReturnableBlockImpl(
-                                                startOffset      = startOffset,
-                                                endOffset        = endOffset,
-                                                type             = coercion.type,
-                                                symbol           = newSymbol,
-                                                origin           = origin,
-                                                statements       = statements)
+                                                startOffset          = startOffset,
+                                                endOffset            = endOffset,
+                                                type                 = coercion.type,
+                                                symbol               = newSymbol,
+                                                origin               = origin,
+                                                statements           = statements,
+                                                inlineFunctionSymbol = inlineFunctionSymbol)
                                     }
                                     transformedReturnableBlock.transformChildrenVoid(object: IrElementTransformerVoid() {
                                         override fun visitExpression(expression: IrExpression): IrExpression {

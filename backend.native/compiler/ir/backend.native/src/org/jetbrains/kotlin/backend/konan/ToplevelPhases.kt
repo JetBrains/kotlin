@@ -344,5 +344,8 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         switch(bitcodePhase, config.produce != CompilerOutputKind.LIBRARY)
         switch(linkPhase, config.produce.isNativeBinary)
         switch(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE)
+        switch(buildDFGPhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
+        switch(devirtualizationPhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
+        switch(dcePhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
     }
 }

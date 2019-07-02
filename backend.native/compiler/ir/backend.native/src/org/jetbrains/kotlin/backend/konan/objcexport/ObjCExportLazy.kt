@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -47,6 +48,7 @@ interface ObjCExportLazy {
     fun translate(file: KtFile): List<ObjCTopLevel<*>>
 }
 
+@JvmOverloads
 fun createObjCExportLazy(
         configuration: ObjCExportLazy.Configuration,
         warningCollector: ObjCExportWarningCollector,
@@ -54,7 +56,8 @@ fun createObjCExportLazy(
         typeResolver: TypeResolver,
         descriptorResolver: DescriptorResolver,
         fileScopeProvider: FileScopeProvider,
-        builtIns: KotlinBuiltIns
+        builtIns: KotlinBuiltIns,
+        deprecationResolver: DeprecationResolver? = null
 ): ObjCExportLazy = ObjCExportLazyImpl(
         configuration,
         warningCollector,
@@ -62,7 +65,8 @@ fun createObjCExportLazy(
         typeResolver,
         descriptorResolver,
         fileScopeProvider,
-        builtIns
+        builtIns,
+        deprecationResolver
 )
 
 internal class ObjCExportLazyImpl(
@@ -72,14 +76,15 @@ internal class ObjCExportLazyImpl(
         private val typeResolver: TypeResolver,
         private val descriptorResolver: DescriptorResolver,
         private val fileScopeProvider: FileScopeProvider,
-        builtIns: KotlinBuiltIns
+        builtIns: KotlinBuiltIns,
+        deprecationResolver: DeprecationResolver?
 ) : ObjCExportLazy {
 
     private val namerConfiguration = createNamerConfiguration(configuration)
 
     private val nameTranslator: ObjCExportNameTranslator = ObjCExportNameTranslatorImpl(namerConfiguration)
 
-    private val mapper = ObjCExportMapper(local = true)
+    private val mapper = ObjCExportMapper(deprecationResolver, local = true)
 
     private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local = true)
 
@@ -99,7 +104,7 @@ internal class ObjCExportLazyImpl(
     private fun translateClasses(container: KtDeclarationContainer): List<ObjCClass<*>> {
         val result = mutableListOf<ObjCClass<*>>()
         container.declarations.forEach { declaration ->
-            // Supposed to be equivalent to ObjCExportMapper.shouldBeVisible.
+            // Supposed to be true if ObjCExportMapper.shouldBeVisible is true.
             if (declaration is KtClassOrObject && declaration.isPublic && declaration !is KtEnumEntry
                     && !declaration.hasExpectModifier()) {
 

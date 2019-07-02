@@ -59,6 +59,7 @@ void RUNTIME_NORETURN ThrowIllegalStateException();
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);
 void RUNTIME_NORETURN ThrowIncorrectDereferenceException();
 void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address);
+void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker);
 // Prints out message of Throwable.
 void PrintThrowable(KRef);
 

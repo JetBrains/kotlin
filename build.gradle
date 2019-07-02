@@ -25,10 +25,14 @@ buildscript {
 
     repositories {
         maven { url kotlinCompilerRepo }
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://cache-redirector.jetbrains.com/maven-central" }
     }
 
     dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+        classpath "org.jetbrains.kotlin:kotlin-native-build-tools:$konanVersion"
     }
 }
 import org.jetbrains.kotlin.konan.*

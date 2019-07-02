@@ -96,6 +96,7 @@ internal open class ObjCExportNameTranslatorImpl(
     private fun getClassOrProtocolSwiftName(
             ktClassOrObject: KtClassOrObject
     ): String = buildString {
+        val ownName = ktClassOrObject.name!!.toIdentifier()
         val outerClass = ktClassOrObject.getStrictParentOfType<KtClassOrObject>()
         if (outerClass != null) {
             append(getClassOrProtocolSwiftName(outerClass))
@@ -119,12 +120,12 @@ internal open class ObjCExportNameTranslatorImpl(
             }
 
             if (importAsMember) {
-                append(".").append(ktClassOrObject.name!!)
+                append(".").append(ownName)
             } else {
-                append(ktClassOrObject.name!!.capitalize())
+                append(ownName.capitalize())
             }
         } else {
-            append(ktClassOrObject.name)
+            append(ownName)
         }
     }
 }
@@ -133,7 +134,8 @@ private class ObjCExportNamingHelper(
         private val topLevelNamePrefix: String
 ) {
 
-    fun translateFileName(fileName: String): String = PackagePartClassUtils.getFilePartShortName(fileName)
+    fun translateFileName(fileName: String): String =
+            PackagePartClassUtils.getFilePartShortName(fileName).toIdentifier()
 
     fun translateFileName(file: KtFile): String = translateFileName(file.name)
 
@@ -328,10 +330,11 @@ internal class ObjCExportNamerImpl(
 
                     else -> true
                 }
+                val ownName = descriptor.name.asString().toIdentifier()
                 if (importAsMember) {
-                    append(".").append(descriptor.name.asString())
+                    append(".").append(ownName)
                 } else {
-                    append(descriptor.name.asString().capitalize())
+                    append(ownName.capitalize())
                 }
             } else if (containingDeclaration is PackageFragmentDescriptor) {
                 appendTopLevelClassBaseName(descriptor)
@@ -364,7 +367,7 @@ internal class ObjCExportNamerImpl(
                 val containingDeclaration = descriptor.containingDeclaration
                 if (containingDeclaration is ClassDescriptor) {
                     append(getClassOrProtocolObjCName(containingDeclaration))
-                            .append(descriptor.name.asString().capitalize())
+                            .append(descriptor.name.asString().toIdentifier().capitalize())
 
                 } else if (containingDeclaration is PackageFragmentDescriptor) {
                     append(topLevelNamePrefix).appendTopLevelClassBaseName(descriptor)
@@ -379,7 +382,7 @@ internal class ObjCExportNamerImpl(
         configuration.getAdditionalPrefix(descriptor.module)?.let {
             append(it)
         }
-        append(descriptor.name.asString())
+        append(descriptor.name.asString().toIdentifier())
     }
 
     override fun getSelector(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
@@ -400,7 +403,7 @@ internal class ObjCExportNamerImpl(
                             1 -> ""
                             else -> "value"
                         }
-                        else -> it!!.name.asString()
+                        else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"
                     is MethodBridgeValueParameter.KotlinResultOutParameter -> "result"
@@ -451,7 +454,7 @@ internal class ObjCExportNamerImpl(
                             1 -> "_"
                             else -> "value"
                         }
-                        else -> it!!.name.asString()
+                        else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
                     is MethodBridgeValueParameter.KotlinResultOutParameter -> "result"
@@ -482,7 +485,7 @@ internal class ObjCExportNamerImpl(
         assert(mapper.isObjCProperty(property))
 
         StringBuilder().apply {
-            append(property.name.asString())
+            append(property.name.asString().toIdentifier())
         }.mangledSequence {
             append('_')
         }
@@ -492,7 +495,7 @@ internal class ObjCExportNamerImpl(
         assert(descriptor.kind == ClassKind.OBJECT)
 
         return objectInstanceSelectors.getOrPut(descriptor) {
-            val name = descriptor.name.asString().decapitalize().mangleIfSpecialFamily("get")
+            val name = descriptor.name.asString().decapitalize().toIdentifier().mangleIfSpecialFamily("get")
 
             StringBuilder(name).mangledBySuffixUnderscores()
         }
@@ -506,7 +509,7 @@ internal class ObjCExportNamerImpl(
             val name = descriptor.name.asString().split('_').mapIndexed { index, s ->
                 val lower = s.toLowerCase()
                 if (index == 0) lower else lower.capitalize()
-            }.joinToString("").mangleIfSpecialFamily("the")
+            }.joinToString("").toIdentifier().mangleIfSpecialFamily("the")
 
             StringBuilder(name).mangledBySuffixUnderscores()
         }
@@ -515,7 +518,7 @@ internal class ObjCExportNamerImpl(
     override fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String {
         return genericTypeParameterNameMapping.getOrPut(typeParameterDescriptor) {
             StringBuilder().apply {
-                append(typeParameterDescriptor.name.asString())
+                append(typeParameterDescriptor.name.asString().toIdentifier())
             }.mangledSequence {
                 append('_')
             }
@@ -580,7 +583,7 @@ internal class ObjCExportNamerImpl(
             is PropertyGetterDescriptor -> this.correspondingProperty.name.asString()
             is PropertySetterDescriptor -> "set${this.correspondingProperty.name.asString().capitalize()}"
             else -> this.name.asString()
-        }
+        }.toIdentifier()
 
         return candidate.mangleIfSpecialFamily("do")
     }
@@ -802,6 +805,10 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
         return false
     }
 
+    if (first.name != second.name) {
+        return false
+    }
+
     return bridgePropertyType(first) == bridgePropertyType(second)
 }
 
@@ -821,3 +828,17 @@ internal fun abbreviate(name: String): String {
 
     return normalizedName
 }
+
+// Note: most usages of this method rely on the fact that concatenation of valid identifiers is valid identifier.
+// This may sometimes be a bit conservative (since it requires mangling non-first character as if it was first);
+// ignore this for simplicity as having Kotlin identifiers starting from digits is supposed to be rare case.
+internal fun String.toValidObjCSwiftIdentifier(): String {
+    if (this.isEmpty()) return "__"
+
+    return this.replace('$', '_') // TODO: handle more special characters.
+            .let { if (it.first().isDigit()) "_$it" else it }
+            .let { if (it == "_") "__" else it }
+}
+
+// Private shortcut.
+private fun String.toIdentifier(): String = this.toValidObjCSwiftIdentifier()

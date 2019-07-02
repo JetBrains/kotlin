@@ -127,6 +127,12 @@ task installTestLibrary(type: KlibInstall) {
     dependsOn compileKonanTestLibraryHost
     klib = konanArtifacts.testLibrary.getArtifactByTarget('host')
     repo = rootProject.file(testLibraryDir)
+
+    doLast {
+        // Remove the version in build/, so that we don't link two copies.
+        def file = project.file("build/konan/libs/${project.target.name}/testLibrary.klib")
+        file.delete()
+    }
 }
 
 // Gets tests from the same Kotlin compiler build
@@ -368,6 +374,12 @@ task slackReportNightly(type:NightlyReporter) {
     externalMacosReport = "external_macos_results/reports.json"
     externalLinuxReport = "external_linux_results/reports.json"
     externalWindowsReport = "external_windows_results/reports.json"
+}
+
+linkTest("localDelegatedPropertyLink") {
+    goldValue = "OK\n"
+    source = "lower/local_delegated_property_link/main.kt"
+    lib = "lower/local_delegated_property_link/lib.kt"
 }
 
 task sum(type: KonanLocalTest) {

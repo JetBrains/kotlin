@@ -46,6 +46,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
 
+    val memoryModel: MemoryModel get() = configuration.get(KonanConfigKeys.MEMORY_MODEL)!!
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
@@ -126,6 +128,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val defaultNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")
+        add(if (memoryModel == MemoryModel.STRICT) "strict.bc" else "relaxed.bc")
         if (produce == CompilerOutputKind.PROGRAM) {
             addAll(distribution.launcherFiles)
         }

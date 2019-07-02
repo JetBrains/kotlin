@@ -216,19 +216,14 @@ fun CallableMemberDescriptor.findSourceFile(): SourceFile {
     }
 }
 
-internal val TypedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
-private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
-private val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
-private val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
-
 internal val DeclarationDescriptor.isFrozen: Boolean
-    get() = this.annotations.hasAnnotation(frozenAnnotation) ||
+    get() = this.annotations.hasAnnotation(RuntimeNames.frozenAnnotation) ||
             (this is org.jetbrains.kotlin.descriptors.ClassDescriptor
                     // RTTI is used for non-reference type box or Objective-C object wrapper:
                     && (!this.defaultType.binaryTypeIsReference() || this.isObjCClass()))
 
 internal val FunctionDescriptor.isTypedIntrinsic: Boolean
-    get() = this.annotations.hasAnnotation(TypedIntrinsic)
+    get() = this.annotations.hasAnnotation(RuntimeNames.typedIntrinsicAnnotation)
 
 // TODO: coalesce all our annotation value getters into fewer functions.
 fun getAnnotationValue(annotation: AnnotationDescriptor): String? {
@@ -239,12 +234,12 @@ fun getAnnotationValue(annotation: AnnotationDescriptor): String? {
 }
 
 fun CallableMemberDescriptor.externalSymbolOrThrow(): String? {
-    this.annotations.findAnnotation(symbolNameAnnotation)?.let {
+    this.annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let {
         return getAnnotationValue(it)!!
     }
-    if (this.annotations.hasAnnotation(objCMethodAnnotation)) return null
+    if (this.annotations.hasAnnotation(RuntimeNames.objCMethodAnnotation)) return null
 
-    if (this.annotations.hasAnnotation(TypedIntrinsic)) return null
+    if (this.annotations.hasAnnotation(RuntimeNames.typedIntrinsicAnnotation)) return null
 
     if (this.annotations.hasAnnotation(RuntimeNames.cCall)) return null
 

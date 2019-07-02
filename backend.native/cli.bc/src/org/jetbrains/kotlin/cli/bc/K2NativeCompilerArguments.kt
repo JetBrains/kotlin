@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.bc
 
-import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -48,7 +47,10 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
     var manifestFile: String? = null
 
-    @Argument(value="-module-name", deprecatedName = "-module_name", valueDescription = "<name>", description = "Spicify a name for the compilation module")
+    @Argument(value="-memory-model", valueDescription = "<model>", description = "Memory model to use, 'strict' and 'relaxed' are currently supported")
+    var memoryModel: String? = "strict"
+
+    @Argument(value="-module-name", deprecatedName = "-module_name", valueDescription = "<name>", description = "Specify a name for the compilation module")
     var moduleName: String? = null
 
     @Argument(value = "-native-library", deprecatedName = "-nativelibrary", shortName = "-nl", valueDescription = "<path>", description = "Include the native bitcode library")
@@ -195,6 +197,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             super.configureAnalysisFlags(collector).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>
                 it[AnalysisFlags.useExperimental] = useExperimental + listOf("kotlin.ExperimentalUnsignedTypes")
+                if (printIr)
+                    phasesToDumpAfter = arrayOf("ALL")
             }
 }
 

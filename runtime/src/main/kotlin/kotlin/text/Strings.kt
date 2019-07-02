@@ -55,7 +55,6 @@ internal external fun stringEqualsIgnoreCase(thiz: String, other: String): Boole
 public actual external fun String.replace(
         oldChar: Char, newChar: Char, ignoreCase: Boolean): String
 
-
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.

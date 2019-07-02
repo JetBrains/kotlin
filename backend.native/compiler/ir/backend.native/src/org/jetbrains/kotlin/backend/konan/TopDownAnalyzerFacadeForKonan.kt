@@ -77,7 +77,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         ) {
             initContainer(context.config)
         }.apply {
-            postprocessComponents(context.config.configuration, files)
+            postprocessComponents(context, files)
         }.get<LazyTopDownAnalyzer>()
 
         analyzerForKonan.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)

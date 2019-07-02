@@ -76,8 +76,7 @@ OBJ_GETTER(Kotlin_Byte_toString, KByte value) {
 }
 
 OBJ_GETTER(Kotlin_Char_toString, KChar value) {
-  ArrayHeader* result = AllocArrayInstance(
-      theStringTypeInfo, 1, OBJ_RESULT)->array();
+  ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, 1, OBJ_RESULT)->array();
   *CharArrayAddressOfElementAt(result, 0) = value;
   RETURN_OBJ(result->obj());
 }

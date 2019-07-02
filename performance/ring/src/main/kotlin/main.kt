@@ -46,6 +46,8 @@ class RingLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String
     val switchBenchmark = SwitchBenchmark()
     val withIndiciesBenchmark = WithIndiciesBenchmark()
     val callsBenchmark = CallsBenchmark()
+    val coordinatesSolverBenchmark = CoordinatesSolverBenchmark()
+    val graphSolverBenchmark = GraphSolverBenchmark()
 
     override val benchmarks = BenchmarksCollection(
             mutableMapOf(
@@ -225,7 +227,9 @@ class RingLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String
                     "Calls.interfaceMethodBimorphic" to callsBenchmark::interfaceMethodCall_BimorphicCallsite,
                     "Calls.interfaceMethodTrimorphic" to callsBenchmark::interfaceMethodCall_TrimorphicCallsite,
                     "Calls.returnBoxUnboxFolding" to callsBenchmark::returnBoxUnboxFolding,
-                    "Calls.parameterBoxUnboxFolding" to callsBenchmark::parameterBoxUnboxFolding
+                    "Calls.parameterBoxUnboxFolding" to callsBenchmark::parameterBoxUnboxFolding,
+                    "CoordinatesSolver.solve" to coordinatesSolverBenchmark::solve,
+                    "GraphSolver.solve" to graphSolverBenchmark::solve
             )
     )
 }

@@ -14,10 +14,11 @@
   * limitations under the License.
   */
 
+#include "KString.h"
 #include "Memory.h"
 #include "Natives.h"
+#include "Porting.h"
 #include "Runtime.h"
-#include "KString.h"
 #include "Types.h"
 
 #ifdef KONAN_ANDROID
@@ -212,7 +213,7 @@ extern "C" void RUNTIME_USED Konan_main(
     ANativeActivity* activity, void* savedState, size_t savedStateSize) {
   bool launchThread = activity->instance == nullptr;
   if (launchThread) {
-    launcherState = (LauncherState*)calloc(sizeof(LauncherState), 1);
+    launcherState = (LauncherState*)konan::calloc(sizeof(LauncherState), 1);
     launcherState->nativeActivityState = {activity, savedState, savedStateSize, nullptr};
     activity->instance = launcherState;
     activity->callbacks->onDestroy = onDestroy;

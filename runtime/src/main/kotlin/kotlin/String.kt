@@ -46,7 +46,7 @@ public final class String : Comparable<String>, CharSequence {
     external private fun getStringLength(): Int
 
     @SymbolName("Kotlin_String_plusImpl")
-    external private fun plusImpl(other: Any): String
+    external private fun plusImpl(other: String): String
 
     @SymbolName("Kotlin_String_equals")
     external public override fun equals(other: Any?): Boolean
