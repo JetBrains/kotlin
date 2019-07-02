@@ -18,6 +18,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationEx
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
@@ -43,7 +44,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
 
         IdeaTestApplication.getInstance()
         // to prevent leaked SDKs: 1.8 and Kotlin SDK
-        ApplicationManager.getApplication().runWriteAction {
+        runWriteAction {
             val jdkTableImpl = JavaAwareProjectJdkTableImpl.getInstanceEx()
             val homePath = if (jdkTableImpl.internalJdk.homeDirectory!!.name == "jre") {
                 jdkTableImpl.internalJdk.homeDirectory!!.parent.path

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.PackageEntry
 import com.intellij.testFramework.LightProjectDescriptor
@@ -81,7 +81,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
             val importInsertHelper = ImportInsertHelper.getInstance(project)
             val psiDocumentManager = PsiDocumentManager.getInstance(project)
 
-            stats().perfTest(
+            stats().perfTest<Unit, String>(
                 testName = testName,
                 setUp = {
                     fixture.configureByFile(testPath)
@@ -90,11 +90,12 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
                     fileText = file.text
                 },
                 test = {
-                    project.executeWriteCommand<String?>("") {
+                    it.value = project.executeWriteCommand<String?>("") {
                         perfTestCore(file, fqName, filter, descriptorName, importInsertHelper, psiDocumentManager)
                     }
                 },
-                tearDown = { log: String? ->
+                tearDown = {
+                    val log = it.value
                     KotlinTestUtils.assertEqualsToFile(File("$testPath.after"), fixture.file.text)
                     if (log != null) {
                         val logFile = File("$testPath.log")
@@ -104,8 +105,9 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
                             TestCase.assertFalse(logFile.exists())
                         }
                     }
-                    commitAllDocuments()
-                    FileDocumentManager.getInstance().reloadFromDisk(editor.document)
+                    runWriteAction {
+                        myFixture.file.delete()
+                    }
                 })
         } finally {
             CodeStyle.dropTemporarySettings(project)

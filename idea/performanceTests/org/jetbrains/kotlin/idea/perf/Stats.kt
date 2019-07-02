@@ -37,22 +37,22 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         append(arrayOf(file, id, nanoTime.nsToMs))
     }
 
-    fun <T, K> perfTest(
+    fun <K, T> perfTest(
         testName: String,
         warmUpIterations: Int = 3,
         iterations: Int = 10,
-        setUp: () -> T? = { null },
-        test: (t: T?) -> K,
-        tearDown: (t: K?) -> Unit = {}
+        setUp: (TestData<K, T>) -> Unit = { null },
+        test: (TestData<K, T>) -> Unit,
+        tearDown: (TestData<K, T>) -> Unit = { null }
     ) {
         val namePrefix = "$name: $testName"
         val timingsNs = LongArray(iterations)
         val errors = Array<Throwable?>(iterations, init = { null })
 
         tcSuite(namePrefix) {
-            warmUpPhase<K, T>(warmUpIterations, namePrefix, setUp, test, tearDown)
+            warmUpPhase(warmUpIterations, namePrefix, setUp, test, tearDown)
 
-            mainPhase<K, T>(iterations, setUp, test, timingsNs, namePrefix, errors, tearDown)
+            mainPhase(iterations, setUp, test, tearDown, timingsNs, namePrefix, errors)
 
             val meanNs = timingsNs.average()
             val meanMs = meanNs.toLong().nsToMs
@@ -81,27 +81,29 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
 
     private fun <K, T> mainPhase(
         iterations: Int,
-        setUp: () -> T?,
-        test: (t: T?) -> K,
+        setUp: (TestData<K, T>) -> Unit,
+        test: (TestData<K, T>) -> Unit,
+        tearDown: (TestData<K, T>) -> Unit,
         timingsNs: LongArray,
         namePrefix: String,
-        errors: Array<Throwable?>,
-        tearDown: (t: K?) -> Unit
+        errors: Array<Throwable?>
     ) {
+        val testData = TestData<K, T>(null, null)
         try {
             for (attempt in 0 until iterations) {
-                val setupValue: T? = setUp()
-                var value: K? = null
+                testData.reset()
+                setUp(testData)
                 try {
                     val spentNs = measureNanoTime {
-                        value = test(setupValue)
+                        test(testData)
                     }
                     timingsNs[attempt] = spentNs
                 } catch (t: Throwable) {
                     println("error at $namePrefix #$attempt:")
+                    t.printStackTrace()
                     errors[attempt] = t
                 } finally {
-                    tearDown(value)
+                    tearDown(testData)
                 }
             }
         } catch (t: Throwable) {
@@ -113,27 +115,34 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
     private fun <K, T> warmUpPhase(
         warmUpIterations: Int,
         namePrefix: String,
-        setUp: () -> T?,
-        test: (t: T?) -> K,
-        tearDown: (t: K?) -> Unit
+        setUp: (TestData<K, T>) -> Unit,
+        test: (TestData<K, T>) -> Unit,
+        tearDown: (TestData<K, T>) -> Unit
     ) {
+        val testData = TestData<K, T>(null, null)
         for (attempt in 0 until warmUpIterations) {
+            testData.reset()
             val n = "$namePrefix warm-up #$attempt"
             println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
 
             try {
-                val setupValue: T? = setUp()
-                var value: K? = null
+                setUp(testData)
                 var spentNs: Long = 0
                 try {
                     spentNs = measureNanoTime {
-                        value = test(setupValue)
+                        test(testData)
                     }
                 } catch (t: Throwable) {
-                    println("error at $n:")
+                    println("error at $n:\n")
+
+                    t.printStackTrace()
+
+                    println("\n")
+
                     tcPrintErrors(n, listOf(t))
+                    throw t
                 } finally {
-                    tearDown(value)
+                    tearDown(testData)
                 }
                 val spentMs = spentNs.nsToMs
                 println("##teamcity[buildStatisticValue key='$n' value='$spentMs']")
@@ -150,6 +159,13 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
     override fun close() {
         statsOutput.flush()
         statsOutput.close()
+    }
+}
+
+data class TestData<SV, V>(var setUpValue: SV?, var value: V?) {
+    fun reset() {
+        setUpValue = null
+        value = null
     }
 }
 

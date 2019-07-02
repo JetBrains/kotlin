@@ -67,4 +67,36 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         }
     }
 
+    fun testKotlinProjectHighlightBuildGradle() {
+        tcSuite("Kotlin project highlight build gradle") {
+            val stats = Stats("kotlin project highlight build gradle")
+            stats.use {
+                perfOpenProject("perfTestProject", stats = it, path = "..")
+
+                enableAnnotatorsAndLoadDefinitions()
+
+                perfFileAnalysisBuildGradleKts(it)
+                perfFileAnalysisIdeaBuildGradleKts(it)
+                perfFileAnalysisJpsGradleKts(it)
+                perfFileAnalysisVersionGradleKts(it)
+            }
+        }
+    }
+
+    private fun perfFileAnalysisBuildGradleKts(it: Stats) {
+        perfFileAnalysis("build.gradle.kts", stats = it)
+    }
+
+    private fun perfFileAnalysisIdeaBuildGradleKts(it: Stats) {
+        perfFileAnalysis("idea/build.gradle.kts", stats = it, note = "idea/")
+    }
+
+    private fun perfFileAnalysisJpsGradleKts(it: Stats) {
+        perfFileAnalysis("gradle/jps.gradle.kts", stats = it, note = "gradle/")
+    }
+
+    private fun perfFileAnalysisVersionGradleKts(it: Stats) {
+        perfFileAnalysis("gradle/versions.gradle.kts", stats = it, note = "gradle/")
+    }
+
 }

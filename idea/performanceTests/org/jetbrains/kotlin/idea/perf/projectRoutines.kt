@@ -11,6 +11,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.idea.parameterInfo.HintType
 
 fun commitAllDocuments() {
     ProjectManagerEx.getInstanceEx().openProjects.forEach { project ->
@@ -23,8 +25,23 @@ fun commitAllDocuments() {
     }
 }
 
+fun enableHints(enable: Boolean) =
+    HintType.values().forEach { it.option.set(enable) }
+
+fun runInEdtAndWait(block: () -> Unit) {
+    EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
+        block()
+    })
+}
+
+fun dispatchAllInvocationEvents() {
+    runInEdtAndWait {
+        UIUtil.dispatchAllInvocationEvents()
+    }
+}
+
 fun closeProject(project: Project) {
-    commitAllDocuments()
+    dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
     projectManagerEx.forceCloseProject(project, true)
 }

@@ -181,6 +181,7 @@ dependencies {
     performanceTestCompile(sourceSets["test"].output)
     performanceTestCompile(sourceSets["main"].output)
     performanceTestCompile(project(":nj2k"))
+    performanceTestCompile(intellijPluginDep("gradle"))
     performanceTestRuntime(sourceSets["performanceTest"].output)
 }
 

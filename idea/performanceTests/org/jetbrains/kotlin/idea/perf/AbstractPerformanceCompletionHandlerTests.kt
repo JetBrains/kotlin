@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.idea.perf
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
 import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -127,7 +126,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         val testName = getTestName(false)
 
         val stats = stats()
-        stats.perfTest(
+        stats.perfTest<Unit, Unit>(
             testName = testName,
             setUp = {
                 setUpFixture(testPath)
@@ -136,11 +135,9 @@ abstract class AbstractPerformanceCompletionHandlerTests(
                 perfTestCore(completionType, time, lookupString, itemText, tailText, completionChar)
             },
             tearDown = {
-                assertNotNull(it)
-
-                FileDocumentManager.getInstance().reloadFromDisk(editor.document)
-                fixture.configureByText(KotlinFileType.INSTANCE, "")
-                commitAllDocuments()
+                runWriteAction {
+                    myFixture.file.delete()
+                }
             })
     }
 
