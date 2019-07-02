@@ -4275,6 +4275,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertEnumToSealedClass/membersOnly.kt");
         }
 
+        @TestMetadata("noClassKeyword.kt")
+        public void testNoClassKeyword() throws Exception {
+            runTest("idea/testData/intentions/convertEnumToSealedClass/noClassKeyword.kt");
+        }
+
         @TestMetadata("notEnum.kt")
         public void testNotEnum() throws Exception {
             runTest("idea/testData/intentions/convertEnumToSealedClass/notEnum.kt");

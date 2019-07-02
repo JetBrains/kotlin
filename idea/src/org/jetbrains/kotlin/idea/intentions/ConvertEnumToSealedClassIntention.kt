@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Convert to sealed class") {
     override fun applicabilityRange(element: KtClass): TextRange? {
+        if (element.getClassKeyword() == null) return null
         val nameIdentifier = element.nameIdentifier ?: return null
         val enumKeyword = element.modifierList?.getModifier(KtTokens.ENUM_KEYWORD) ?: return null
         return TextRange(enumKeyword.startOffset, nameIdentifier.endOffset)
