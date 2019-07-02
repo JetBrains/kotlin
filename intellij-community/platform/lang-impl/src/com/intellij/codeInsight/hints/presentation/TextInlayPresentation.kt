@@ -35,10 +35,6 @@ class TextInlayPresentation(
         g.font = fontProvider(fontType)
         g.color = foreground
         g.drawString(text, 0, yBaseline)
-
-        if (attributes.effectType == EffectType.LINE_UNDERSCORE) {
-          EffectPainter.LINE_UNDERSCORE.paint(g, 0, yBaseline, width, height, g.font)
-        }
       }
     }
     finally {

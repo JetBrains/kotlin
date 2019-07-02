@@ -12,7 +12,7 @@ import java.awt.Graphics2D
  */
 class EffectInlayPresentation(
   presentation: InlayPresentation,
-  var font: Font,
+  var font: Font?, // null means current
   var lineHeight: Int,
   var ascent: Int,
   var descent: Int
