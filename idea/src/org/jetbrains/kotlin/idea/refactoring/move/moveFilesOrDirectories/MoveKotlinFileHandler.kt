@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
@@ -48,9 +37,9 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     // This is special 'PsiElement' whose purpose is to wrap MoveKotlinTopLevelDeclarationsProcessor
     // so that it can be kept in the usage info list
     private class MoveContext(
-            val file: PsiFile,
-            val declarationMoveProcessor: MoveKotlinDeclarationsProcessor
-    ): LightElement(file.manager, KotlinLanguage.INSTANCE) {
+        val file: PsiFile,
+        val declarationMoveProcessor: MoveKotlinDeclarationsProcessor
+    ) : LightElement(file.manager, KotlinLanguage.INSTANCE) {
         override fun toString() = ""
     }
 
@@ -61,12 +50,15 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         if (!shouldUpdatePackageDirective) return null
 
         val oldPackageName = packageFqName
-        val newPackage = newParent?.getPackage() ?: return ContainerChangeInfo(ContainerInfo.Package(oldPackageName),
-                                                                               ContainerInfo.UnknownPackage)
+        val newPackage = newParent?.getPackage() ?: return ContainerChangeInfo(
+            ContainerInfo.Package(oldPackageName),
+            ContainerInfo.UnknownPackage
+        )
 
         val newPackageName = FqNameUnsafe(newPackage.qualifiedName)
         if (oldPackageName.asString() == newPackageName.asString()
-            && ModuleUtilCore.findModuleForPsiElement(this) == ModuleUtilCore.findModuleForPsiElement(newParent)) return null
+            && ModuleUtilCore.findModuleForPsiElement(this) == ModuleUtilCore.findModuleForPsiElement(newParent)
+        ) return null
         if (!newPackageName.hasIdentifiersOnly()) return null
 
         return ContainerChangeInfo(ContainerInfo.Package(oldPackageName), ContainerInfo.Package(newPackageName.toSafe()))
@@ -78,8 +70,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
         val project = psiFile.project
 
-        val newPackage = packageNameInfo.newContainer
-        val moveTarget = when (newPackage) {
+        val moveTarget = when (val newPackage = packageNameInfo.newContainer) {
             ContainerInfo.UnknownPackage -> EmptyKotlinMoveTarget
 
             else -> KotlinMoveTargetForDeferredFile(newPackage.fqName!!, newParent) {
@@ -108,18 +99,18 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     override fun findUsages(
-            psiFile: PsiFile,
-            newParent: PsiDirectory?,
-            searchInComments: Boolean,
-            searchInNonJavaFiles: Boolean
+        psiFile: PsiFile,
+        newParent: PsiDirectory?,
+        searchInComments: Boolean,
+        searchInNonJavaFiles: Boolean
     ): List<UsageInfo> {
         return findUsages(psiFile, newParent, true)
     }
 
     fun findUsages(
-            psiFile: PsiFile,
-            newParent: PsiDirectory?,
-            withConflicts: Boolean
+        psiFile: PsiFile,
+        newParent: PsiDirectory?,
+        withConflicts: Boolean
     ): List<UsageInfo> {
         if (psiFile !is KtFile) return emptyList()
 
@@ -149,7 +140,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {
         val currentFile = (usageInfos?.firstOrNull() as? FileInfo)?.element
-        val moveContext = oldToNewMap.keys.firstOrNull { it is MoveContext && it.file == currentFile} as? MoveContext ?: return
+        val moveContext = oldToNewMap.keys.firstOrNull { it is MoveContext && it.file == currentFile } as? MoveContext ?: return
         retargetUsages(usageInfos, moveContext.declarationMoveProcessor)
     }
 

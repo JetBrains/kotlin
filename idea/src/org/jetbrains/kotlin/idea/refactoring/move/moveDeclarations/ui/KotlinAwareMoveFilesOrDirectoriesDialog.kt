@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,13 +41,13 @@ import java.io.File
 import javax.swing.JComponent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
-        private val project: Project,
-        private val initialDirectory: PsiDirectory?,
-        private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
+    private val project: Project,
+    private val initialDirectory: PsiDirectory?,
+    private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
 ) : DialogWrapper(project, true) {
     companion object {
-        private val RECENT_KEYS = "MoveFile.RECENT_KEYS"
-        private val MOVE_FILES_OPEN_IN_EDITOR = "MoveFile.OpenInEditor"
+        private const val RECENT_KEYS = "MoveFile.RECENT_KEYS"
+        private const val MOVE_FILES_OPEN_IN_EDITOR = "MoveFile.OpenInEditor"
     }
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
@@ -81,11 +81,13 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         RecentsManager.getInstance(project).getRecentEntries(RECENT_KEYS)?.let { targetDirectoryField.childComponent.history = it }
 
         val descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
-        targetDirectoryField.addBrowseFolderListener(RefactoringBundle.message("select.target.directory"),
-                                                     RefactoringBundle.message("the.file.will.be.moved.to.this.directory"),
-                                                     project,
-                                                     descriptor,
-                                                     TextComponentAccessor.TEXT_FIELD_WITH_HISTORY_WHOLE_TEXT)
+        targetDirectoryField.addBrowseFolderListener(
+            RefactoringBundle.message("select.target.directory"),
+            RefactoringBundle.message("the.file.will.be.moved.to.this.directory"),
+            project,
+            descriptor,
+            TextComponentAccessor.TEXT_FIELD_WITH_HISTORY_WHOLE_TEXT
+        )
         val textField = targetDirectoryField.childComponent.textEditor
         FileChooserFactory.getInstance().installFileCompletion(textField, descriptor, true, disposable)
         textField.onTextChange { validateOKButton() }
@@ -96,13 +98,13 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
         val shortcutText = KeymapUtil.getFirstKeyboardShortcutText(ActionManager.getInstance().getAction(IdeActions.ACTION_CODE_COMPLETION))
         return FormBuilder.createFormBuilder()
-                .addComponent(nameLabel)
-                .addLabeledComponent(RefactoringBundle.message("move.files.to.directory.label"), targetDirectoryField, UIUtil.LARGE_VGAP)
-                .addTooltip(RefactoringBundle.message("path.completion.shortcut", shortcutText))
-                .addComponentToRightColumn(searchReferencesCb, UIUtil.LARGE_VGAP)
-                .addComponentToRightColumn(openInEditorCb, UIUtil.LARGE_VGAP)
-                .addComponentToRightColumn(updatePackageDirectiveCb, UIUtil.LARGE_VGAP)
-                .panel
+            .addComponent(nameLabel)
+            .addLabeledComponent(RefactoringBundle.message("move.files.to.directory.label"), targetDirectoryField, UIUtil.LARGE_VGAP)
+            .addTooltip(RefactoringBundle.message("path.completion.shortcut", shortcutText))
+            .addComponentToRightColumn(searchReferencesCb, UIUtil.LARGE_VGAP)
+            .addComponentToRightColumn(openInEditorCb, UIUtil.LARGE_VGAP)
+            .addComponentToRightColumn(updatePackageDirectiveCb, UIUtil.LARGE_VGAP)
+            .panel
     }
 
     fun setData(psiElements: Array<out PsiElement>, initialTargetDirectory: PsiDirectory?, helpID: String) {
@@ -113,8 +115,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
                 is PsiFile -> RefactoringBundle.message("move.file.0", shortenedPath)
                 else -> RefactoringBundle.message("move.directory.0", shortenedPath)
             }
-        }
-        else {
+        } else {
             val isFile = psiElements.all { it is PsiFile }
             val isDirectory = psiElements.all { it is PsiDirectory }
             nameLabel.text = when {
@@ -129,7 +130,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         validateOKButton()
         this.helpID = helpID
 
-        with (updatePackageDirectiveCb) {
+        with(updatePackageDirectiveCb) {
             val jetFiles = psiElements.filterIsInstance<KtFile>().filter(KtFile::isInJavaSourceRoot)
             if (jetFiles.isEmpty()) {
                 parent.remove(updatePackageDirectiveCb)
@@ -150,7 +151,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     }
 
     private fun validateOKButton() {
-        isOKActionEnabled = targetDirectoryField.childComponent.text.length > 0
+        isOKActionEnabled = targetDirectoryField.childComponent.text.isNotEmpty()
     }
 
     override fun doOKAction() {
@@ -172,17 +173,18 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
                 }
                 try {
                     targetDirectory = DirectoryUtil.mkdirs(PsiManager.getInstance(project), directoryName)
-                }
-                catch (e: IncorrectOperationException) {
+                } catch (e: IncorrectOperationException) {
                     // ignore
                 }
             }
 
             if (targetDirectory == null) {
-                CommonRefactoringUtil.showErrorMessage(title,
-                                                       RefactoringBundle.message("cannot.create.directory"),
-                                                       helpID,
-                                                       project)
+                CommonRefactoringUtil.showErrorMessage(
+                    title,
+                    RefactoringBundle.message("cannot.create.directory"),
+                    helpID,
+                    project
+                )
                 return@executeCommand
             }
 

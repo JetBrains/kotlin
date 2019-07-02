@@ -49,10 +49,10 @@ abstract class MoveMemberOutOfObjectIntention(text: String) : SelfTargetingRange
 
         if (element is KtClassOrObject) {
             val moveDescriptor = MoveDeclarationsDescriptor(
-                    project,
-                    MoveSource(element),
-                    KotlinMoveTargetForExistingElement(destination),
-                    MoveDeclarationsDelegate.NestedClass()
+                project,
+                MoveSource(element),
+                KotlinMoveTargetForExistingElement(destination),
+                MoveDeclarationsDelegate.NestedClass()
             )
             object : CompositeRefactoringRunner(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID) {
                 override fun runRefactoring() = MoveKotlinDeclarationsProcessor(moveDescriptor).run()

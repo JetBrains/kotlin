@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
@@ -66,12 +55,8 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
 
 public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
     @NonNls private static final String RECENTS_KEY = MoveKotlinNestedClassesToUpperLevelDialog.class.getName() + ".RECENTS_KEY";
@@ -160,7 +145,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
     }
 
     private boolean isThisNeeded() {
-        return innerClass instanceof KtClass && MoveUtilsKt.traverseOuterInstanceReferences((KtClass) innerClass, true);
+        return innerClass instanceof KtClass && MoveUtilsKt.traverseOuterInstanceReferences(innerClass, true);
     }
 
     @Nullable
@@ -180,12 +165,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
         if (innerClass instanceof KtClass && ((KtClass) innerClass).isInner()) {
             passOuterClassCheckBox.setSelected(true);
-            passOuterClassCheckBox.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    parameterField.setEnabled(passOuterClassCheckBox.isSelected());
-                }
-            });
+            passOuterClassCheckBox.addItemListener(e -> parameterField.setEnabled(passOuterClassCheckBox.isSelected()));
         }
         else {
             passOuterClassCheckBox.setSelected(false);
@@ -199,12 +179,9 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             parameterField.setEnabled(thisNeeded);
         }
 
-        passOuterClassCheckBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                boolean selected = passOuterClassCheckBox.isSelected();
-                parameterField.getComponent().setEnabled(selected);
-            }
+        passOuterClassCheckBox.addItemListener(e -> {
+            boolean selected = passOuterClassCheckBox.isSelected();
+            parameterField.getComponent().setEnabled(selected);
         });
 
         if (!(targetContainer instanceof PsiDirectory)) {
@@ -218,7 +195,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
                     innerClassBody != null
                     ? new NewDeclarationNameValidator(innerClassBody, (PsiElement) null,
                                                       NewDeclarationNameValidator.Target.VARIABLES,
-                                                      Collections.<KtDeclaration>emptyList())
+                                                      Collections.emptyList())
                     : new CollectingNameValidator();
             List<String> suggestions = KotlinNameSuggester.INSTANCE.suggestNamesByType(getOuterInstanceType(), validator, "outer");
             parameterField.setSuggestions(ArrayUtil.toStringArray(suggestions));
@@ -268,8 +245,8 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             if (!Comparing.equal(oldPackageFqName != null ? oldPackageFqName.asString() : null, targetName)) {
                 ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
                 List<VirtualFile> contentSourceRoots = JavaProjectRootsUtil.getSuitableDestinationSourceRoots(project);
-                final PackageWrapper newPackage = new PackageWrapper(PsiManager.getInstance(project), targetName);
-                final VirtualFile targetSourceRoot;
+                PackageWrapper newPackage = new PackageWrapper(PsiManager.getInstance(project), targetName);
+                VirtualFile targetSourceRoot;
                 if (contentSourceRoots.size() > 1) {
                     PsiDirectory initialDir = null;
                     PsiPackage oldPackage = oldPackageFqName != null
@@ -293,15 +270,12 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
                 }
                 PsiDirectory dir = RefactoringUtil.findPackageDirectoryInSourceRoot(newPackage, targetSourceRoot);
                 if (dir == null) {
-                    dir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<PsiDirectory>() {
-                        @Override
-                        public PsiDirectory compute() {
-                            try {
-                                return RefactoringUtil.createPackageDirectoryInSourceRoot(newPackage, targetSourceRoot);
-                            }
-                            catch (IncorrectOperationException e) {
-                                return null;
-                            }
+                    dir = ApplicationManager.getApplication().runWriteAction((NullableComputable<PsiDirectory>) () -> {
+                        try {
+                            return RefactoringUtil.createPackageDirectoryInSourceRoot(newPackage, targetSourceRoot);
+                        }
+                        catch (IncorrectOperationException e) {
+                            return null;
                         }
                     });
                 }
@@ -321,12 +295,20 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         String className = getClassName();
         String parameterName = getParameterName();
 
-        if (className != null && className.isEmpty()) throw new ConfigurationException(RefactoringBundle.message("no.class.name.specified"));
-        if (!KtPsiUtilKt.isIdentifier(className)) throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(className));
+        if (className != null && className.isEmpty()) {
+            throw new ConfigurationException(RefactoringBundle.message("no.class.name.specified"));
+        }
+        if (!KtPsiUtilKt.isIdentifier(className)) {
+            throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(className));
+        }
 
         if (passOuterClassCheckBox.isSelected()) {
-            if (parameterName != null && parameterName.isEmpty()) throw new ConfigurationException(RefactoringBundle.message("no.parameter.name.specified"));
-            if (!KtPsiUtilKt.isIdentifier(parameterName)) throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(parameterName));
+            if (parameterName != null && parameterName.isEmpty()) {
+                throw new ConfigurationException(RefactoringBundle.message("no.parameter.name.specified"));
+            }
+            if (!KtPsiUtilKt.isIdentifier(parameterName)) {
+                throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(parameterName));
+            }
         }
 
         PsiElement targetContainer = getTargetContainer();
@@ -350,7 +332,9 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
                     .getPackage(targetPackageFqName)
                     .getMemberScope()
                     .getContributedClassifier(Name.identifier(className), NoLookupLocation.FROM_IDE);
-            if (existingClass != null) throw new ConfigurationException("Class " + className + " already exists in package " +  targetPackageFqName);
+            if (existingClass != null) {
+                throw new ConfigurationException("Class " + className + " already exists in package " + targetPackageFqName);
+            }
 
             PsiDirectory targetDir = targetContainer instanceof PsiDirectory
                                      ? (PsiDirectory) targetContainer
@@ -382,34 +366,23 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
         KotlinMoveTarget moveTarget;
         if (target instanceof PsiDirectory) {
-            final PsiDirectory targetDir = (PsiDirectory) target;
+            PsiDirectory targetDir = (PsiDirectory) target;
 
-            final FqName targetPackageFqName = getTargetPackageFqName(target);
+            FqName targetPackageFqName = getTargetPackageFqName(target);
             if (targetPackageFqName == null) return;
 
-            final String targetFileName = KotlinNameSuggester.INSTANCE.suggestNameByName(
+            String targetFileName = KotlinNameSuggester.INSTANCE.suggestNameByName(
                     newClassName,
-                    new Function1<String, Boolean>() {
-                        @Override
-                        public Boolean invoke(String s) {
-                            return targetDir.findFile(s + "." + KotlinFileType.EXTENSION) == null;
-                        }
-                    }
+                    s -> targetDir.findFile(s + "." + KotlinFileType.EXTENSION) == null
             ) + "." + KotlinFileType.EXTENSION;
             moveTarget = new KotlinMoveTargetForDeferredFile(
                     targetPackageFqName,
                     targetDir,
                     null,
-                    new Function1<KtFile, KtFile>() {
-                        @Override
-                        public KtFile invoke(@NotNull KtFile originalFile) {
-                            return KotlinRefactoringUtilKt.createKotlinFile(targetFileName, targetDir, targetPackageFqName.asString());
-                        }
-                    }
+                    originalFile -> KotlinRefactoringUtilKt.createKotlinFile(targetFileName, targetDir, targetPackageFqName.asString())
             );
         }
         else {
-            //noinspection ConstantConditions
             moveTarget = new KotlinMoveTargetForExistingElement((KtElement) target);
         }
 
@@ -417,7 +390,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         MoveDeclarationsDelegate delegate = new MoveDeclarationsDelegate.NestedClass(newClassName, outerInstanceParameterName);
         MoveDeclarationsDescriptor moveDescriptor = new MoveDeclarationsDescriptor(
                 project,
-                MoveSource(innerClass),
+                MoveKotlinDeclarationsProcessorKt.MoveSource(innerClass),
                 moveTarget,
                 delegate,
                 isSearchInComments(),
