@@ -1,76 +1,81 @@
 <idea-plugin>
-  <actions>
+    <actions>
 
-    <!-- Tools > JShell Console -->
-    <action id="JShell.Console" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Tools > JShell Console -->
+        <action id="JShell.Console" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- Debug Window > Export Threads -->
-    <action id="ExportThreads" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Debug Window > Export Threads -->
+        <action id="ExportThreads" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- Run > Get Thread Dump -->
-    <action id="DumpThreads" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Run > Get Thread Dump -->
+        <action id="DumpThreads" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- Tools > Generate JavaDoc -->
-    <action id="GenerateJavadoc" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Tools > Generate JavaDoc -->
+        <action id="GenerateJavadoc" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- Run > Throw Exception -->
-    <action id="Debugger.ThrowException" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Run > Throw Exception -->
+        <action id="Debugger.ThrowException" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- Debug Window > Customize Thread View -->
-    <action id="Debugger.CustomizeThreadsView" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Debug Window > Customize Thread View -->
+        <action id="Debugger.CustomizeThreadsView" class="com.intellij.openapi.actionSystem.EmptyAction"
+                overrides="true"/>
 
-    <!-- Run > Reload Changed Classes -->
-    <action id="Hotswap" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Run > Reload Changed Classes -->
+        <action id="Hotswap" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!--
-      Various items in Refactoring menu:
-      - ChangeTypeSignature
-      - ConvertToInstanceMethod
-      - TurnRefsToSuper
-      - RemoveMiddleman
-      - WrapReturnValue
-      - EncapsulateFields
-      - ReplaceTempWithQuery
-      - ReplaceConstructorWithFactory
-      - ReplaceConstructorWithBuilder
-      - Generify
-      - Migrate
-    -->
-    <group id="RefactoringMenu4" class="com.intellij.openapi.actionSystem.EmptyActionGroup" overrides="true" />
+        <!--
+          Various items in Refactoring menu:
+          - ChangeTypeSignature
+          - ConvertToInstanceMethod
+          - TurnRefsToSuper
+          - RemoveMiddleman
+          - WrapReturnValue
+          - EncapsulateFields
+          - ReplaceTempWithQuery
+          - ReplaceConstructorWithFactory
+          - ReplaceConstructorWithBuilder
+          - Generify
+          - Migrate
+        -->
+        <group id="RefactoringMenu4" class="com.intellij.openapi.actionSystem.EmptyActionGroup" overrides="true"/>
 
-    <!-- Analyze > Infer Nullity -->
-    <action id="InferNullity" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Analyze > Infer Nullity -->
+        <action id="InferNullity" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- Code > Generate module-info Descriptors -->
-    <action id="GenerateModuleDescriptors" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- Code > Generate module-info Descriptors -->
+        <action id="GenerateModuleDescriptors" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- View > Show Siblings -->
-    <action id="ShowSiblings" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- View > Show Siblings -->
+        <action id="ShowSiblings" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- project structure -->
-    <action id="ShowProjectStructureSettings" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
-    <action id="WelcomeScreen.Configure.ProjectStructure" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- project structure -->
+        <action id="ShowProjectStructureSettings" class="com.intellij.openapi.actionSystem.EmptyAction"
+                overrides="true"/>
+        <action id="WelcomeScreen.Configure.ProjectStructure" class="com.intellij.openapi.actionSystem.EmptyAction"
+                overrides="true"/>
 
-    <!-- template project structure -->
-    <action id="TemplateProjectStructure" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- template project structure -->
+        <action id="TemplateProjectStructure" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- module settings -->
-    <action id="ModuleSettings" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
-    <action id="OpenModuleSettings" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- module settings -->
+        <action id="ModuleSettings" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
+        <action id="OpenModuleSettings" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- loading/unloading modules -->
-    <action id="LoadUnloadModules" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- loading/unloading modules -->
+        <action id="LoadUnloadModules" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-    <!-- new Java project/module actions -->
-    <group id="JavaNewProjectOrModuleGroup" class="com.intellij.openapi.actionSystem.EmptyActionGroup" overrides="true" />
-    <action id="NewModuleInGroup" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true" />
+        <!-- new Java project/module actions -->
+        <group id="JavaNewProjectOrModuleGroup" class="com.intellij.openapi.actionSystem.EmptyActionGroup"
+               overrides="true"/>
+        <action id="NewModuleInGroup" class="com.intellij.openapi.actionSystem.EmptyAction" overrides="true"/>
 
-  </actions>
+    </actions>
 
-  <extensions defaultExtensionNs="com.intellij">
+    <extensions defaultExtensionNs="com.intellij">
 
-    <!-- Project Structure service -->
-    <projectService serviceImplementation="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService" overrides="true"/>
+        <!-- Project Structure service -->
+        <projectService serviceImplementation="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService"
+                        overrides="true"/>
 
-  </extensions>
+    </extensions>
 </idea-plugin>
