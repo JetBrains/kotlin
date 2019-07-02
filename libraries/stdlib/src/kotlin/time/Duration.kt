@@ -8,7 +8,7 @@ package kotlin.time
 import kotlin.math.abs
 
 @UseExperimental(ExperimentalTime::class)
-private val storageUnit = DurationUnit.NANOSECONDS
+private inline val storageUnit get() = DurationUnit.NANOSECONDS
 
 /**
  * Represents the amount of time one instant of time is away from another instant.
