@@ -650,7 +650,7 @@ public abstract class ChangeSignatureDialogBase<ParamInfo extends ParameterInfo,
     return "refactoring.changeSignature";
   }
 
-  class UpdateSignatureListener implements ChangeListener, DocumentListener, TableModelListener {
+  protected class UpdateSignatureListener implements ChangeListener, DocumentListener, TableModelListener {
     private void update() {
       updateSignature();
     }
