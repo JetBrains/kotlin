@@ -13,38 +13,38 @@ import kotlin.native.internal.IntrinsicType
  * Not-a-Number (NaN) value, `false` otherwise.
  */
 @SymbolName("Kotlin_Double_isNaN")
-external public actual fun Double.isNaN(): Boolean
+public actual external fun Double.isNaN(): Boolean
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
 @SymbolName("Kotlin_Float_isNaN")
-external public actual fun Float.isNaN(): Boolean
+public actual external fun Float.isNaN(): Boolean
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
 @SymbolName("Kotlin_Double_isInfinite")
-external public actual fun Double.isInfinite(): Boolean
+public actual external fun Double.isInfinite(): Boolean
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
 @SymbolName("Kotlin_Float_isInfinite")
-external public actual fun Float.isInfinite(): Boolean
+public actual external fun Float.isInfinite(): Boolean
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @SymbolName("Kotlin_Double_isFinite")
-external public actual fun Double.isFinite(): Boolean
+public actual external fun Double.isFinite(): Boolean
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @SymbolName("Kotlin_Float_isFinite")
-external public actual fun Float.isFinite(): Boolean
+public actual external fun Float.isFinite(): Boolean
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
@@ -72,7 +72,7 @@ public actual inline fun Double.Companion.fromBits(bits: Long): Double = kotlin.
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.REINTERPRET)
-external internal fun fromBits(bits: Long): Double
+internal external fun fromBits(bits: Long): Double
 
 /**
  * Returns a bit representation of the specified floating-point value as [Int]
@@ -100,4 +100,4 @@ public actual inline fun Float.Companion.fromBits(bits: Int): Float = kotlin.fro
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.REINTERPRET)
-external internal fun fromBits(bits: Int): Float
+internal external fun fromBits(bits: Int): Float
