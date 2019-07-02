@@ -79,14 +79,20 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val implicitThisClass = expression.symbol.classForImplicitThis
-                if (implicitThisClass == null || implicitThisClass == irClass) return expression
+                val implicitThisClass = expression.symbol.classForImplicitThis ?: return expression
 
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val origin = expression.origin
                 val function = currentFunction?.irElement as? IrFunction
-                val enclosingThisReceiver = function?.dispatchReceiverParameter ?: irClass.thisReceiver!!
+
+                if (expression.symbol == function?.extensionReceiverParameter?.symbol)
+                    return expression
+
+                val enclosingThisReceiver = if (function == null || function is IrConstructor)
+                    irClass.thisReceiver ?: return expression
+                else
+                    function.dispatchReceiverParameter ?: return expression
 
                 var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, enclosingThisReceiver.symbol, origin)
                 var innerClass = irClass

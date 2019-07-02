@@ -1,6 +1,5 @@
 //WITH_RUNTIME
 
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 
 class Environment(
