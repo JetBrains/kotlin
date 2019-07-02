@@ -52,6 +52,8 @@ open class KtClass : KtClassOrObject {
     override fun getCompanionObjects(): List<KtObjectDeclaration> = getBody()?.allCompanionObjects.orEmpty()
 
     fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD))
+
+    fun getClassKeyword(): PsiElement? = findChildByType(KtTokens.CLASS_KEYWORD)
 }
 
 fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
