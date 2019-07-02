@@ -301,6 +301,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             aroundInside(DOT, USER_TYPE).spaces(0)
 
             around(AS_KEYWORD).spaces(1)
+            around(AS_SAFE).spaces(1)
             around(IS_KEYWORD).spaces(1)
             around(NOT_IS).spaces(1)
             around(IN_KEYWORD).spaces(1)
