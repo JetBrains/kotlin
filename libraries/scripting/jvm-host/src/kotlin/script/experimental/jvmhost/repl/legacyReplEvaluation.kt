@@ -71,7 +71,11 @@ class JvmReplEvaluator(
                 }
                 else -> throw IllegalStateException("Expecting value with script instance, got $retVal")
             }
-            else -> ReplEvalResult.Error.Runtime(res.reports.joinToString("\n") { it.message + (it.exception?.let { e -> ": $e" } ?: "") })
+            else ->
+                ReplEvalResult.Error.Runtime(
+                    res.reports.joinToString("\n") { it.message + (it.exception?.let { e -> ": $e" } ?: "") },
+                    res.reports.find { it.exception != null }?.exception as? Exception
+                )
         }
     }
 }

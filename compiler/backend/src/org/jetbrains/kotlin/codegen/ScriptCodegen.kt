@@ -143,7 +143,7 @@ class ScriptCodegen private constructor(
                 iv.invokespecial("java/lang/Object", "<init>", "()V", false)
             } else {
                 val ctorDesc = superclass.unsubstitutedPrimaryConstructor
-                        ?: throw RuntimeException("Primary constructor not found for script template " + superclass.toString())
+                    ?: throw RuntimeException("Primary constructor not found for script template " + superclass.toString())
 
                 iv.load(0, classType)
 
@@ -151,8 +151,8 @@ class ScriptCodegen private constructor(
                 for (superclassParam in ctorDesc.valueParameters) {
                     val valueParam = valueParameters.first { it.name == superclassParam.name }
                     val paramType = typeMapper.mapType(valueParam.type)
-                    iv.load(valueParam!!.index + scriptContext.ctorValueParametersStart + 1, paramType)
-                    frameMap.enterTemp(paramType)
+                    val idx = frameMap.enter(valueParam, paramType)
+                    iv.load(idx, paramType)
                 }
 
                 val ctorMethod = typeMapper.mapToCallableMethod(ctorDesc, false)
@@ -166,14 +166,14 @@ class ScriptCodegen private constructor(
             iv.load(0, classType)
 
             scriptDescriptor.implicitReceivers.forEachIndexed { receiverIndex, receiver ->
-                val receiversParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE))
+                val receiversParamIndex = frameMap.enter(receiver, AsmUtil.getArrayType(OBJECT_TYPE))
                 val name = scriptContext.getImplicitReceiverName(receiverIndex)
                 genFieldFromParam(typeMapper.mapClass(receiver), receiversParamIndex, name)
             }
 
             scriptDescriptor.scriptProvidedProperties.forEachIndexed { envVarIndex, envVar ->
                 val fieldClassType = typeMapper.mapType(envVar)
-                val envVarParamIndex = frameMap.enterTemp(fieldClassType)
+                val envVarParamIndex = frameMap.enter(envVar, fieldClassType)
                 val name = scriptContext.getProvidedPropertyName(envVarIndex)
                 genFieldFromParam(fieldClassType, envVarParamIndex, name)
             }

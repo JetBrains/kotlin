@@ -180,6 +180,61 @@ obj
     }
 
     @Test
+    fun testEvalWithContextDirect() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        engine.put("z", 33)
+
+        engine.eval("val x = 10 + z")
+
+        val result = engine.eval("x + 20")
+        Assert.assertEquals(63, result)
+
+        // in the current implementation the history is shared between contexts, so "x" could also be used in this line,
+        // but this behaviour probably will not be preserved in the future, since contexts may become completely isolated
+        val result2 = engine.eval("11 + boundValue", engine.createBindings().apply {
+            put("boundValue", 100)
+        })
+        Assert.assertEquals(111, result2)
+    }
+
+    @Test
+    fun testEvalWithContextNamesWithSymbols() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        engine.put("\u263a", 2)
+        engine.put("a.b", 3)
+        engine.put("c:d", 5)
+        engine.put("e;f", 7)
+        engine.put("g\$h", 11)
+        engine.put("i<j", 13)
+        engine.put("k>l", 17)
+        engine.put("m[n", 19)
+        engine.put("o]p", 23)
+        engine.put("q/r", 29)
+        engine.put("s\\t", 31)
+        engine.put("u v", 37)
+        engine.put(" ", 41)
+        engine.put("    ", 43)
+
+        Assert.assertEquals(4, engine.eval("`\u263a` * 2"))
+        Assert.assertEquals(5, engine.eval("2 + `a\\,b`"))
+        Assert.assertEquals(2, engine.eval("`a\\,b` - 1"))
+        Assert.assertEquals(6, engine.eval("1 + `c\\!d`"))
+        Assert.assertEquals(7, engine.eval("`e\\?f`"))
+        Assert.assertEquals(11, engine.eval("`g\\%h`"))
+        Assert.assertEquals(13, engine.eval("`i\\^j`"))
+        Assert.assertEquals(17, engine.eval("`k\\_l`"))
+        Assert.assertEquals(19, engine.eval("`m\\{n`"))
+        Assert.assertEquals(23, engine.eval("`o\\}p`"))
+        Assert.assertEquals(29, engine.eval("`q\\|r`"))
+        Assert.assertEquals(31, engine.eval("`s\\-t`"))
+        Assert.assertEquals(37, engine.eval("`u v`"))
+        Assert.assertEquals(41, engine.eval("`_`"))
+        Assert.assertEquals(43, engine.eval("`____`"))
+    }
+
+    @Test
     fun testSimpleEvalInEval() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         val res1 = engine.eval("val x = 3")

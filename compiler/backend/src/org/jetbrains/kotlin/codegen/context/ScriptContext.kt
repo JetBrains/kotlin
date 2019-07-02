@@ -67,10 +67,8 @@ class ScriptContext(
         }
     }
 
-    val ctorValueParametersStart = if (earlierScripts.isNotEmpty()) 1 else 0
-
     private val ctorImplicitReceiversParametersStart =
-        ctorValueParametersStart + (scriptDescriptor.getSuperClassNotAny()?.unsubstitutedPrimaryConstructor?.valueParameters?.size ?: 0)
+        (scriptDescriptor.getSuperClassNotAny()?.unsubstitutedPrimaryConstructor?.valueParameters?.size ?: 0)
 
     private val ctorProvidedPropertiesParametersStart =
         ctorImplicitReceiversParametersStart + scriptDescriptor.implicitReceivers.size
