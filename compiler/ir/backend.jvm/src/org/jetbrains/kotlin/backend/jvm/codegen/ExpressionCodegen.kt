@@ -184,6 +184,9 @@ class ExpressionCodegen(
     }
 
     private fun generateNonNullAssertions() {
+        if (state.isParamAssertionsDisabled)
+            return
+
         val isSyntheticOrBridge = irFunction.origin.isSynthetic ||
                 // Although these are accessible from Java, the functions they bridge to already have the assertions.
                 irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
