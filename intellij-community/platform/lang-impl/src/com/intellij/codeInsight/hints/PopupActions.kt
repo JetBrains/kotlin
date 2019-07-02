@@ -233,7 +233,7 @@ class EnableCustomHintsOption: IntentionAction, HighPriorityAction {
     val element = file.findElementAt(offset) ?: return null
     val provider = InlayParameterHintsExtension.forLanguage(file.language) ?: return null
 
-    val target = PsiTreeUtil.findFirstParent(element, { provider.hasDisabledOptionHintInfo(it) }) ?: return null
+    val target = PsiTreeUtil.findFirstParent(element) { provider.hasDisabledOptionHintInfo(it) } ?: return null
     return provider.getHintInfo(target) as? HintInfo.OptionInfo
   }
 
@@ -291,19 +291,19 @@ private fun hasEditorParameterHintAtOffset(editor: Editor, file: PsiFile): Boole
   val startOffset = element?.textRange?.startOffset ?: offset
   val endOffset = element?.textRange?.endOffset ?: offset
   
-  return !ParameterHintsPresentationManager.getInstance().getParameterHintsInRange(editor, startOffset, endOffset).isEmpty()
+  return ParameterHintsPresentationManager.getInstance().getParameterHintsInRange(editor, startOffset, endOffset).isNotEmpty()
 }
 
 
 private fun refreshAllOpenEditors() {
-  ParameterHintsPassFactory.forceHintsUpdateOnNextPass();
-  ProjectManager.getInstance().openProjects.forEach {
-    val psiManager = PsiManager.getInstance(it)
-    val daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(it)
-    val fileEditorManager = FileEditorManager.getInstance(it)
+  ParameterHintsPassFactory.forceHintsUpdateOnNextPass()
+  ProjectManager.getInstance().openProjects.forEach { project ->
+    val psiManager = PsiManager.getInstance(project)
+    val daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project)
+    val fileEditorManager = FileEditorManager.getInstance(project)
 
-    fileEditorManager.selectedFiles.forEach {
-      psiManager.findFile(it)?.let { daemonCodeAnalyzer.restart(it) }
+    fileEditorManager.selectedFiles.forEach { file ->
+      psiManager.findFile(file)?.let { daemonCodeAnalyzer.restart(it) }
     }
   }
 }
