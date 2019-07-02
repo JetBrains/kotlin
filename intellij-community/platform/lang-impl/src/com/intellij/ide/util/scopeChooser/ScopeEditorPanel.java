@@ -230,6 +230,10 @@ public class ScopeEditorPanel {
     final JButton includeRec = new JButton(IdeBundle.message("button.include.recursively"));
     final JButton exclude = new JButton(IdeBundle.message("button.exclude"));
     final JButton excludeRec = new JButton(IdeBundle.message("button.exclude.recursively"));
+    include.setEnabled(false);
+    includeRec.setEnabled(false);
+    exclude.setEnabled(false);
+    excludeRec.setEnabled(false);
     myPackageTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
@@ -507,6 +511,11 @@ public class ScopeEditorPanel {
       public void actionPerformed(@NotNull AnActionEvent e) {
         includeSelected(false);
       }
+
+      @Override
+      public void update(@NotNull AnActionEvent e) {
+        e.getPresentation().setEnabled(isButtonEnabled(false));
+      }
     });
     actionGroup.add(new AnAction(IdeBundle.message("button.include.recursively")) {
       @Override
@@ -524,6 +533,11 @@ public class ScopeEditorPanel {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         excludeSelected(false);
+      }
+
+      @Override
+      public void update(@NotNull AnActionEvent e) {
+        e.getPresentation().setEnabled(isButtonEnabled(false));
       }
     });
     actionGroup.add(new AnAction(IdeBundle.message("button.exclude.recursively")) {
