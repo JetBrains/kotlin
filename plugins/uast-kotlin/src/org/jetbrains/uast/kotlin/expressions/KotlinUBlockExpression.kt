@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.uast.*
 
-class KotlinUBlockExpression(
+open class KotlinUBlockExpression(
     override val sourcePsi: KtBlockExpression,
     givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UBlockExpression, KotlinUElementWithType {

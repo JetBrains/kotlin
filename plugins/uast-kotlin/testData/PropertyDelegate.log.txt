@@ -7,7 +7,8 @@ UFile (package = )
                 USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
                 ULambdaExpression
                     UBlockExpression
-                        ULiteralExpression (value = "/sdcard")
+                        UReturnExpression
+                            ULiteralExpression (value = "/sdcard")
         UField (name = annotatedDelegate$delegate)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UAnnotation (fqName = kotlin.Suppress)
@@ -16,9 +17,10 @@ UFile (package = )
                 USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
                 ULambdaExpression
                     UBlockExpression
-                        UBinaryExpression (operator = +)
-                            ULiteralExpression (value = 1)
-                            ULiteralExpression (value = 1)
+                        UReturnExpression
+                            UBinaryExpression (operator = +)
+                                ULiteralExpression (value = 1)
+                                ULiteralExpression (value = 1)
         UAnnotationMethod (name = getSdCardPath)
         UAnnotationMethod (name = localPropertyTest)
             UBlockExpression
@@ -29,5 +31,6 @@ UFile (package = )
                             USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
                             ULambdaExpression
                                 UBlockExpression
-                                    ULiteralExpression (value = "/sdcard")
+                                    UReturnExpression
+                                        ULiteralExpression (value = "/sdcard")
         UAnnotationMethod (name = getAnnotatedDelegate)

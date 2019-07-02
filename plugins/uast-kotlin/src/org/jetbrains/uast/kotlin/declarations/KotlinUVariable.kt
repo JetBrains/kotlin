@@ -110,6 +110,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
                 is KtNameReferenceExpression -> sourcePsi.getReferencedNameElement()
                 is KtBinaryExpression, is KtCallExpression -> null // e.g. `foo("Lorem ipsum") ?: foo("dolor sit amet")`
                 is KtDestructuringDeclaration -> sourcePsi.valOrVarKeyword
+                is KtLambdaExpression -> sourcePsi.functionLiteral.lBrace
                 else -> sourcePsi
             } ?: return null
             return KotlinUIdentifier(nameIdentifier, identifierSourcePsi, this)

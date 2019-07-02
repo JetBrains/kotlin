@@ -1,0 +1,96 @@
+UFile (package = org.jetbrains.uast.kotlin)
+    UClass (name = LambdaReturnKt)
+        UAnnotationMethod (name = foo)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = lam1)
+                        ULambdaExpression
+                            UParameter (name = a)
+                                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                            UBlockExpression
+                                UDeclarationsExpression
+                                    ULocalVariable (name = b)
+                                        ULiteralExpression (value = 1)
+                                UReturnExpression
+                                    UBinaryExpression (operator = +)
+                                        USimpleNameReferenceExpression (identifier = a)
+                                        USimpleNameReferenceExpression (identifier = b)
+                UDeclarationsExpression
+                    ULocalVariable (name = lam2)
+                        ULambdaExpression
+                            UParameter (name = a)
+                                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                            UBlockExpression
+                                UDeclarationsExpression
+                                    ULocalVariable (name = c)
+                                        ULiteralExpression (value = 1)
+                                UReturnExpression
+                                    UIfExpression
+                                        UBinaryExpression (operator = >)
+                                            USimpleNameReferenceExpression (identifier = a)
+                                            ULiteralExpression (value = 0)
+                                        UBinaryExpression (operator = +)
+                                            USimpleNameReferenceExpression (identifier = a)
+                                            USimpleNameReferenceExpression (identifier = c)
+                                        UBinaryExpression (operator = -)
+                                            USimpleNameReferenceExpression (identifier = a)
+                                            USimpleNameReferenceExpression (identifier = c)
+                UDeclarationsExpression
+                    ULocalVariable (name = lam3)
+                        ULabeledExpression (label = lbd)
+                            ULambdaExpression
+                                UParameter (name = a)
+                                    UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                                UBlockExpression
+                                    UDeclarationsExpression
+                                        ULocalVariable (name = d)
+                                            ULiteralExpression (value = 1)
+                                    UReturnExpression
+                                        UBinaryExpression (operator = +)
+                                            USimpleNameReferenceExpression (identifier = a)
+                                            USimpleNameReferenceExpression (identifier = d)
+                UDeclarationsExpression
+                    ULocalVariable (name = lam4)
+                        ULambdaExpression
+                            UParameter (name = a)
+                                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                            UBlockExpression
+                                UIfExpression
+                                    UBinaryExpression (operator = <)
+                                        USimpleNameReferenceExpression (identifier = a)
+                                        ULiteralExpression (value = 5)
+                                    UReturnExpression
+                                        ULiteralExpression (value = "5")
+                                UIfExpression
+                                    UBinaryExpression (operator = >)
+                                        USimpleNameReferenceExpression (identifier = a)
+                                        ULiteralExpression (value = 0)
+                                    UReturnExpression
+                                        ULiteralExpression (value = "1")
+                                    UReturnExpression
+                                        ULiteralExpression (value = "2")
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (bar))
+                    USimpleNameReferenceExpression (identifier = bar, resolvesTo = null)
+                    ULambdaExpression
+                        UBlockExpression
+                            UIfExpression
+                                UBinaryExpression (operator = >)
+                                    USimpleNameReferenceExpression (identifier = it)
+                                    ULiteralExpression (value = 5)
+                                UReturnExpression
+                            UDeclarationsExpression
+                                ULocalVariable (name = b)
+                                    ULiteralExpression (value = 1)
+                            UReturnExpression
+                                UBinaryExpression (operator = +)
+                                    USimpleNameReferenceExpression (identifier = it)
+                                    USimpleNameReferenceExpression (identifier = b)
+        UAnnotationMethod (name = bar)
+            UParameter (name = lmbd)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (lmbd))
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                    ULiteralExpression (value = 1)

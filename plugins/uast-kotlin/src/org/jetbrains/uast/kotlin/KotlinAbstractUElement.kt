@@ -199,6 +199,10 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         }).expressions.single()
     }
 
+    if (result is KotlinULambdaExpression.Body && element is UExpression && result.implicitReturn?.returnExpression == element) {
+        return result.implicitReturn!!
+    }
+
     return result
 }
 

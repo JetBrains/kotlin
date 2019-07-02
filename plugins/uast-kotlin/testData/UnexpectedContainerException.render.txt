@@ -9,7 +9,7 @@ public final class Model {
     public fun Model() {
         {
             crashMe(Callback.java, {
-                anonymous object : Callback {
+                return anonymous object : Callback {
                                 override fun onError(throwable: Throwable) {
                                     throw UnsupportedOperationException("")
                                 }

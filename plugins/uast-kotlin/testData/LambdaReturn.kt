@@ -1,0 +1,43 @@
+package org.jetbrains.uast.kotlin
+
+fun foo() {
+
+    val lam1 = { a: Int ->
+        val b = 1
+        a + b
+    }
+
+    val lam2 = { a: Int ->
+        val c = 1
+        if (a > 0)
+            a + c
+        else
+            a - c
+    }
+
+    val lam3 = lbd@{ a: Int ->
+        val d = 1
+        return@lbd a + d
+    }
+
+    val lam4 = fun(a: Int): String {
+        if (a < 5) return "5"
+
+        if (a > 0)
+            return "1"
+        else
+            return "2"
+    }
+
+
+    bar {
+        if (it > 5) return
+        val b = 1
+        it + b
+    }
+
+}
+
+private inline fun bar(lmbd: (Int) -> Int) {
+    lmbd(1)
+}

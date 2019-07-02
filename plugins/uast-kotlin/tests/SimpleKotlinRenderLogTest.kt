@@ -99,6 +99,9 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
 
     @Test
     fun testConstructorDelegate() = doTest("ConstructorDelegate")
+
+    @Test
+    fun testLambdaReturn() = doTest("LambdaReturn")
 }
 
 fun withForceUInjectionHostValue(call: () -> Unit) {
