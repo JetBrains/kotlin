@@ -1,3 +1,50 @@
+// KOTLIN_CONFIGURATION_FLAGS: +JVM.DISABLE_PARAM_ASSERTIONS
+// IGNORE_BACKEND: JVM_IR
+// Missing IMPLICIT_NOTNULL casts
+// FILE: A.java
+
+import org.jetbrains.annotations.NotNull;
+
+public class A {
+    @NotNull
+    public final String NULL = null;
+
+    @NotNull
+    public static final String STATIC_NULL = null;
+
+    public String foo() {
+        return null;
+    }
+
+    public static String staticFoo() {
+        return null;
+    }
+
+    public A plus(A a) {
+        return null;
+    }
+
+    public A inc() {
+        return null;
+    }
+
+    public Object get(Object o) {
+        return null;
+    }
+
+    public A a() { return this; }
+
+    public static class B {
+        public static B b() { return null; }
+    }
+
+    public static class C {
+        public static C c() { return null; }
+    }
+}
+
+// FILE: AssertionChecker.kt
+
 class AssertionChecker(val illegalStateExpected: Boolean) {
     operator fun invoke(name: String, f: () -> Any) {
         try {
@@ -22,31 +69,30 @@ class Derived : A(), Tr {
 class Delegated : Tr by Derived() {
 }
 
-
 fun checkAssertions(illegalStateExpected: Boolean) {
     val check = AssertionChecker(illegalStateExpected)
-    
+
     // simple call
     check("foo") { A().foo() }
-    
+
     // simple static call
     check("staticFoo") { A.staticFoo() }
-    
+
     // supercall
     check("foo") { Derived().foo() }
-    
+
     // delegated call
     check("foo") { Delegated().foo() }
-    
+
     // collection element
     check("get") { A()[""] }
-    
+
     // binary expression
     check("plus") { A() + A() }
-    
+
     // field
     check("NULL") { A().NULL }
-    
+
     // static field
     check("STATIC_NULL") { A.STATIC_NULL }
 
@@ -73,3 +119,8 @@ fun checkAssertions(illegalStateExpected: Boolean) {
 
 operator fun A.C.inc(): A.C = A.C()
 operator fun <T> T.inc(): T = null as T
+
+fun box(): String {
+    checkAssertions(true)
+    return "OK"
+}
