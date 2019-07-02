@@ -61,6 +61,10 @@ public class WordCompletionContributor extends CompletionContributor implements 
   }
 
   public static void addWordCompletionVariants(CompletionResultSet result, final CompletionParameters parameters, Set<String> excludes) {
+    addWordCompletionVariants(result, parameters, excludes, false);
+  }
+
+  public static void addWordCompletionVariants(CompletionResultSet result, final CompletionParameters parameters, Set<String> excludes, boolean allowEmptyPrefix) {
     final Set<String> realExcludes = new HashSet<>(excludes);
     for (String exclude : excludes) {
       String[] words = exclude.split("[ .-]");
@@ -79,7 +83,7 @@ public class WordCompletionContributor extends CompletionContributor implements 
         javaResultSet.addElement(item);
         plainResultSet.addElement(item);
       }
-    });
+    }, allowEmptyPrefix);
 
     addValuesFromOtherStringLiterals(result, parameters, realExcludes, position);
   }
@@ -172,8 +176,11 @@ public class WordCompletionContributor extends CompletionContributor implements 
     return false;
   }
 
-  private static void consumeAllWords(@NotNull PsiElement context, int offset, @NotNull Consumer<? super String> consumer) {
-    if (StringUtil.isEmpty(CompletionUtil.findJavaIdentifierPrefix(context, offset))) return;
+  private static void consumeAllWords(@NotNull PsiElement context,
+                                      int offset,
+                                      @NotNull Consumer<? super String> consumer,
+                                      boolean allowEmptyPrefix) {
+    if (!allowEmptyPrefix && StringUtil.isEmpty(CompletionUtil.findJavaIdentifierPrefix(context, offset))) return;
     CharSequence chars = context.getContainingFile().getViewProvider().getContents(); // ??
     Set<CharSequence> words = new THashSet<>(chars.length()/8);
     IdTableBuilding.scanWords((charSeq, charsArray, start, end) -> {
