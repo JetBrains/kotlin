@@ -291,7 +291,7 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
       if (revision != null) {
         return XmlStringUtil.escapeString(
           revision.getAuthor() + " " + DateFormatUtil.formatDateTime(revision.getDate()) + "\n" +
-          revision.getMessage()
+          VcsUtil.trimCommitMessageToSaneSize(revision.getMessage())
         );
       }
       return null;
