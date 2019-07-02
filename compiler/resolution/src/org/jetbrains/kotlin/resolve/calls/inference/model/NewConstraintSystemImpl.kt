@@ -273,9 +273,9 @@ class NewConstraintSystemImpl(
         val resultTypeIsInputType = projectedInputCallTypes.any { inputType ->
             val constructor = inputType.constructor
             if (constructor is IntersectionTypeConstructor)
-                constructor.supertypes.any { NewKotlinTypeChecker.equalTypes(resultType, it) }
+                constructor.supertypes.any { NewKotlinTypeChecker.Default.equalTypes(resultType, it) }
             else
-                NewKotlinTypeChecker.equalTypes(resultType, inputType)
+                NewKotlinTypeChecker.Default.equalTypes(resultType, inputType)
         }
         if (!resultTypeIsInputType) {
             addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable as NewTypeVariable))

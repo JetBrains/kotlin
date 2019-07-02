@@ -49,13 +49,22 @@ object StrictEqualityTypeChecker {
 
 object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-        NewKotlinTypeChecker.run { ClassicTypeCheckerContext(true).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) }
+        NewKotlinTypeChecker.Default.run { ClassicTypeCheckerContext(true).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) }
 
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-        NewKotlinTypeChecker.run { ClassicTypeCheckerContext(true).equalTypes(a.unwrap(), b.unwrap()) }
+        NewKotlinTypeChecker.Default.run { ClassicTypeCheckerContext(true).equalTypes(a.unwrap(), b.unwrap()) }
 }
 
-object NewKotlinTypeChecker : KotlinTypeChecker {
+interface NewKotlinTypeChecker : KotlinTypeChecker {
+    fun transformToNewType(type: UnwrappedType): UnwrappedType
+
+    companion object {
+        val Default = NewKotlinTypeCheckerImpl()
+    }
+}
+
+
+class NewKotlinTypeCheckerImpl() : NewKotlinTypeChecker {
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
         ClassicTypeCheckerContext(true).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) // todo fix flag errorTypeEqualsToAnything
 
@@ -115,7 +124,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         return type
     }
 
-    fun transformToNewType(type: UnwrappedType): UnwrappedType =
+    override fun transformToNewType(type: UnwrappedType): UnwrappedType =
         when (type) {
             is SimpleType -> transformToNewType(type)
             is FlexibleType -> {

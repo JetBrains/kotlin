@@ -26,7 +26,7 @@ public interface KotlinTypeChecker {
         boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
     }
 
-    KotlinTypeChecker DEFAULT = NewKotlinTypeChecker.INSTANCE;
+    KotlinTypeChecker DEFAULT = NewKotlinTypeChecker.Companion.getDefault();
 
     boolean isSubtypeOf(@NotNull KotlinType subtype, @NotNull KotlinType supertype);
     boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b);

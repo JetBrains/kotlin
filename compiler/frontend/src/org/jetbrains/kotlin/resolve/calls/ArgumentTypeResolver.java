@@ -60,6 +60,7 @@ public class ArgumentTypeResolver {
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
     @NotNull private final FunctionPlaceholders functionPlaceholders;
     @NotNull private final ModuleDescriptor moduleDescriptor;
+    @NotNull private final KotlinTypeChecker kotlinTypeChecker;
 
     private ExpressionTypingServices expressionTypingServices;
     private DoubleColonExpressionResolver doubleColonExpressionResolver;
@@ -70,7 +71,8 @@ public class ArgumentTypeResolver {
             @NotNull ReflectionTypes reflectionTypes,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull FunctionPlaceholders functionPlaceholders,
-            @NotNull ModuleDescriptor moduleDescriptor
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull KotlinTypeChecker kotlinTypeChecker
     ) {
         this.typeResolver = typeResolver;
         this.builtIns = builtIns;
@@ -78,6 +80,7 @@ public class ArgumentTypeResolver {
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.functionPlaceholders = functionPlaceholders;
         this.moduleDescriptor = moduleDescriptor;
+        this.kotlinTypeChecker = kotlinTypeChecker;
     }
 
     // component dependency cycle
@@ -97,11 +100,10 @@ public class ArgumentTypeResolver {
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
             KotlinType functionType = ConstraintSystemBuilderImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
-            return KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
+            return kotlinTypeChecker.isSubtypeOf(functionType, expectedType);
         }
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
+        return kotlinTypeChecker.isSubtypeOf(actualType, expectedType);
     }
-
 
     public void checkTypesWithNoCallee(
             @NotNull CallResolutionContext<?> context

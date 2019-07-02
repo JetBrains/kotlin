@@ -93,7 +93,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         }
 
         override fun equalTypes(a: KotlinType, b: KotlinType): Boolean {
-            return with(NewKotlinTypeChecker) {
+            return with(NewKotlinTypeChecker.Default) {
                 ContextImpl().equalTypes(a.unwrap(), b.unwrap())
             }
         }

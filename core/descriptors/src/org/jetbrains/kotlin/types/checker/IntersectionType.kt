@@ -114,7 +114,7 @@ object TypeIntersector {
 
         IntegerLiteralTypeConstructor.findIntersectionType(filteredEqualTypes)?.let { return it }
 
-        val filteredSuperAndEqualTypes = filterTypes(filteredEqualTypes, NewKotlinTypeChecker::equalTypes)
+        val filteredSuperAndEqualTypes = filterTypes(filteredEqualTypes, NewKotlinTypeChecker.Default::equalTypes)
         assert(filteredSuperAndEqualTypes.isNotEmpty(), errorMessage)
 
         if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
@@ -145,7 +145,7 @@ object TypeIntersector {
     }
 
     private fun isStrictSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {
-        return with(NewKotlinTypeChecker) {
+        return with(NewKotlinTypeChecker.Default) {
             isSubtypeOf(subtype, supertype) && !isSubtypeOf(supertype, subtype)
         }
     }

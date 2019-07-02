@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.DO_NOTHING_2
 // if input type is capturedType, then we approximate it to UpperBound
 // null means that type should be leaved as is
 fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): UnwrappedType? {
-    val simpleType = NewKotlinTypeChecker.transformToNewType(argumentType.lowerIfFlexible())
+    val simpleType = NewKotlinTypeChecker.Default.transformToNewType(argumentType.lowerIfFlexible())
     if (simpleType.constructor is IntersectionTypeConstructor) {
         var changed = false
         val preparedSuperTypes = simpleType.constructor.supertypes.map {
@@ -97,10 +97,10 @@ fun captureFromArguments(
 
         if (oldProjection.projectionKind == Variance.INVARIANT) continue
         var upperBounds = type.constructor.parameters[index].upperBounds.map {
-            NewKotlinTypeChecker.transformToNewType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
+            NewKotlinTypeChecker.Default.transformToNewType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
         }
         if (!oldProjection.isStarProjection && oldProjection.projectionKind == Variance.OUT_VARIANCE) {
-            upperBounds += NewKotlinTypeChecker.transformToNewType(oldProjection.type.unwrap())
+            upperBounds += NewKotlinTypeChecker.Default.transformToNewType(oldProjection.type.unwrap())
         }
 
         val capturedType = newProjection.type as NewCapturedType
