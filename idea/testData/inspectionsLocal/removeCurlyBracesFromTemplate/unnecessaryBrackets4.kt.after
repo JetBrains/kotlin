@@ -1,3 +1,4 @@
+// HIGHLIGHT: INFORMATION
 
 fun foo() {
     val x = 4
