@@ -51,7 +51,7 @@ private fun initLLDBDriver(project: Project, driver: LLDBDriver) {
 }
 
 private fun getPrettyPrintersLocation(kotlinNativeHome: String): Path {
-    // For versions of Kotlin/Native older than "1.2-release" use improved pretty printers bundled with the plugin
+    // use custom (patched) pretty printers for certain versions of Kotlin/Native
     val prettyPrintersFromPlugin = getKotlinNativeVersion(kotlinNativeHome)?.run {
         when (major) {
             0 -> PP_PRE_1_2_RELEASE
