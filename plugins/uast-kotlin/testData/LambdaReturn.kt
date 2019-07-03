@@ -29,6 +29,7 @@ fun foo() {
             return "2"
     }
 
+    val lam5 = fun(a: Int) = "a" + a
 
     bar {
         if (it > 5) return

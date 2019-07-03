@@ -69,6 +69,16 @@ UFile (package = org.jetbrains.uast.kotlin)
                                         ULiteralExpression (value = "1")
                                     UReturnExpression
                                         ULiteralExpression (value = "2")
+                UDeclarationsExpression
+                    ULocalVariable (name = lam5)
+                        ULambdaExpression
+                            UParameter (name = a)
+                                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                            UBlockExpression
+                                UReturnExpression
+                                    UBinaryExpression (operator = +)
+                                        ULiteralExpression (value = "a")
+                                        USimpleNameReferenceExpression (identifier = a)
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                     UIdentifier (Identifier (bar))
                     USimpleNameReferenceExpression (identifier = bar, resolvesTo = null)

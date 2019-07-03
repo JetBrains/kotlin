@@ -21,6 +21,9 @@ public final class LambdaReturnKt {
                 if (a < 5) return "5"
                 if (a > 0) return "1" else return "2"
         }
+        var lam5: kotlin.jvm.functions.Function1<? super java.lang.Integer,? extends java.lang.String> = fun (@org.jetbrains.annotations.NotNull var a: int) {
+                return "a" + a
+        }
         bar({
             if (it > 5) return
             var b: int = 1
