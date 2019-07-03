@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -34,9 +35,7 @@ import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.findElementAtLine
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
@@ -83,6 +82,75 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
     })
 
     return result == breakpointTypeClass
+}
+
+class ApplicabilityResult(val isApplicable: Boolean, val shouldStop: Boolean) {
+    companion object {
+        @JvmStatic
+        fun definitely(result: Boolean) = ApplicabilityResult(result, shouldStop = true)
+
+        @JvmStatic
+        fun maybe(result: Boolean) = ApplicabilityResult(result, shouldStop = false)
+
+        @JvmField
+        val UNKNOWN = ApplicabilityResult(isApplicable = false, shouldStop = false)
+
+        @JvmField
+        val DEFINITELY_YES = ApplicabilityResult(isApplicable = true, shouldStop = true)
+
+        @JvmField
+        val MAYBE_YES = ApplicabilityResult(isApplicable = true, shouldStop = false)
+    }
+}
+
+fun isBreakpointApplicable(file: VirtualFile, line: Int, project: Project, checker: (PsiElement) -> ApplicabilityResult): Boolean {
+    val psiFile = PsiManager.getInstance(project).findFile(file)
+
+    if (psiFile == null || psiFile.virtualFile?.fileType != KotlinFileType.INSTANCE) {
+        return false
+    }
+
+    val document = FileDocumentManager.getInstance().getDocument(file) ?: return false
+    var isApplicable = false
+
+    val checked = HashSet<PsiElement>()
+
+    XDebuggerUtil.getInstance().iterateLine(project, document, line, fun(element: PsiElement): Boolean {
+        if (element is PsiWhiteSpace || element.getParentOfType<PsiComment>(false) != null) {
+            return true
+        }
+
+        val parent = getTopmostParentOnLineOrSelf(element, document, line)
+        if (!checked.add(parent)) {
+            return true
+        }
+
+        val result = checker(parent)
+
+        if (result.shouldStop && !result.isApplicable) {
+            isApplicable = false
+            return false
+        }
+
+        isApplicable = isApplicable or result.isApplicable
+        return !result.shouldStop
+    })
+
+    return isApplicable
+}
+
+private fun getTopmostParentOnLineOrSelf(element: PsiElement, document: Document, line: Int): PsiElement {
+    var current = element
+    var parent = current.parent
+    while (parent != null) {
+        val offset = parent.textOffset
+        if (offset >= 0 && document.getLineNumber(offset) != line) break
+
+        current = parent
+        parent = current.parent
+    }
+
+    return current
 }
 
 fun computeVariants(
