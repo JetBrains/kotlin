@@ -14879,6 +14879,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/jvmOverloads/innerClass.kt");
         }
 
+        @TestMetadata("manyParameters.kt")
+        public void testManyParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmOverloads/manyParameters.kt");
+        }
+
         @TestMetadata("multipleDefaultParameters.kt")
         public void testMultipleDefaultParameters() throws Exception {
             runTest("compiler/testData/codegen/box/jvmOverloads/multipleDefaultParameters.kt");
