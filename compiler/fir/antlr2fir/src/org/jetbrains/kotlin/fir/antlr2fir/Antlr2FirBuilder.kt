@@ -485,6 +485,7 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
                 else -> throw AssertionError("Unexpected explicit type element")
             }
             return FirDelegatedTypeRefImpl(
+                session,
                 type,
                 FirExpressionStub(session, null)
                 //TODO("not implemented")
@@ -825,7 +826,7 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
                         propertyType,
                         isVar,
                         initializer,
-                        if (propertyContext.propertyDelegate() != null) {
+                        delegate = if (propertyContext.propertyDelegate() != null) {
                             FirExpressionStub(session, null)
                             //TODO("not implemented")
                             //{ property.delegate?.expression }.toFirExpression("Should have delegate")
@@ -1756,7 +1757,7 @@ class Antlr2FirBuilder(val session: FirSession, val stubMode: Boolean, val fileN
         }
 
         private fun Name?.toDelegatedSelfType(): FirTypeRef =
-            FirUserTypeRefImpl(session, null, isNullable = false).apply {
+            FirUserTypeRefImpl(session, null, isMarkedNullable = false).apply {
                 qualifier.add(
                     FirQualifierPartImpl(
                         this@toDelegatedSelfType ?: SpecialNames.NO_NAME_PROVIDED
