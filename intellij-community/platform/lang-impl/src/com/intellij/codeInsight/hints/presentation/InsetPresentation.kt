@@ -30,7 +30,10 @@ class InsetPresentation(
     }
   }
 
-  private fun handleMouse(e: MouseEvent, original: Point, action: (InlayPresentation, Point) -> Unit) {
+  private fun handleMouse(
+    original: Point,
+    action: (InlayPresentation, Point) -> Unit
+  ) {
     val x = original.x
     val y = original.y
     if (x < left || x >= left + presentation.width || y < top || y >= top + presentation.height) {
@@ -45,13 +48,13 @@ class InsetPresentation(
   }
 
   override fun mouseClicked(event: MouseEvent, translated: Point) {
-    handleMouse(event, translated) { presentation, point  ->
+    handleMouse(translated) { presentation, point ->
       presentation.mouseClicked(event, point)
     }
   }
 
   override fun mouseMoved(event: MouseEvent, translated: Point) {
-    handleMouse(event, translated) { presentation, point  ->
+    handleMouse(translated) { presentation, point ->
       if (presentation != presentationUnderCursor) {
         presentationUnderCursor?.mouseExited()
         presentationUnderCursor = presentation
@@ -63,7 +66,8 @@ class InsetPresentation(
   override fun mouseExited() {
     try {
       presentationUnderCursor?.mouseExited()
-    } finally {
+    }
+    finally {
       presentationUnderCursor = null
     }
   }

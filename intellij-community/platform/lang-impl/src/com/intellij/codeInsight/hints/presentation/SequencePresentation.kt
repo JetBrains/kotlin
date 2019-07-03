@@ -24,6 +24,7 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
 
   override var width: Int = 0
   override var height: Int = 0
+
   init {
     calcDimensions()
   }
@@ -38,12 +39,16 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
         xOffset += presentation.width
         g.translate(presentation.width, 0)
       }
-    } finally {
+    }
+    finally {
       g.translate(-xOffset, 0)
     }
   }
 
-  private fun handleMouse(e: MouseEvent, original: Point, action: (InlayPresentation, Point) -> Unit) {
+  private fun handleMouse(
+    original: Point,
+    action: (InlayPresentation, Point) -> Unit
+  ) {
     val x = original.x
     val y = original.y
     if (x < 0 || x >= width || y < 0 || y >= height) return
@@ -60,13 +65,13 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
   }
 
   override fun mouseClicked(event: MouseEvent, translated: Point) {
-    handleMouse(event, translated) { presentation, point ->
+    handleMouse(translated) { presentation, point ->
       presentation.mouseClicked(event, point)
     }
   }
 
   override fun mouseMoved(event: MouseEvent, translated: Point) {
-    handleMouse(event, translated) { presentation, point ->
+    handleMouse(translated) { presentation, point ->
       if (presentation != presentationUnderCursor) {
         presentationUnderCursor?.mouseExited()
         presentationUnderCursor = presentation
@@ -78,12 +83,13 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
   override fun mouseExited() {
     try {
       presentationUnderCursor?.mouseExited()
-    } finally {
+    }
+    finally {
       presentationUnderCursor = null
     }
   }
 
-  override fun updateState(previousPresentation: InlayPresentation) : Boolean {
+  override fun updateState(previousPresentation: InlayPresentation): Boolean {
     if (previousPresentation !is SequencePresentation) return true
     if (previousPresentation.presentations.size != presentations.size) return true
     val previousPresentations = previousPresentation.presentations
