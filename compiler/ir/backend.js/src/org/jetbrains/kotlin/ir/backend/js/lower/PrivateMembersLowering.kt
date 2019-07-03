@@ -62,19 +62,25 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
                 } ?: expression
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) = memberMap[expression.symbol]?.let {
-                transformPrivateToStaticReference(expression) {
-                    IrFunctionReferenceImpl(
-                        expression.startOffset, expression.endOffset,
-                        expression.type,
-                        it.symbol, it.descriptor,
-                        expression.typeArgumentsCount, expression.valueArgumentsCount,
-                        expression.origin
-                    )
-                }
-            } ?: expression
+            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+                super.visitFunctionReference(expression)
+
+                return memberMap[expression.symbol]?.let {
+                    transformPrivateToStaticReference(expression) {
+                        IrFunctionReferenceImpl(
+                            expression.startOffset, expression.endOffset,
+                            expression.type,
+                            it.symbol, it.descriptor,
+                            expression.typeArgumentsCount, expression.valueArgumentsCount,
+                            expression.origin
+                        )
+                    }
+                } ?: expression
+            }
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
+                super.visitPropertyReference(expression)
+
                 return if (expression.getter in memberMap || expression.setter in memberMap) {
                     transformPrivateToStaticReference(expression) {
                         IrPropertyReferenceImpl(
