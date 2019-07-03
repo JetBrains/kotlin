@@ -105,4 +105,7 @@
     <option name="autoscroll" value="false" />
     <option name="showOnlyWarnings" value="false" />
   </component>
+  <component name="intellij-api-watcher-check-current-project">
+    <option name="shouldCheckCurrentProject" value="true" />
+  </component>
 </project>
