@@ -716,23 +716,12 @@ fun jdkPath(version: String): String {
 
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
-    val currentJavaHome = File(System.getProperty("java.home")!!).canonicalPath
-    val shouldFork = !currentJavaHome.startsWith(File(javaHome).canonicalPath)
-
     tasks.withType<JavaCompile> {
         if (name != "compileJava9Java") {
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
-
-            if (shouldFork) {
-                logger.info("$path will be forked with $javaHome")
-                options.isFork = true
-                options.forkOptions.javaHome = file(javaHome)
-            } else {
-                options.isFork = false
-                options.forkOptions.javaHome = null
-            }
-
+            options.isFork = true
+            options.forkOptions.javaHome = file(javaHome)
             options.compilerArgs.add("-proc:none")
             options.encoding = "UTF-8"
         }
