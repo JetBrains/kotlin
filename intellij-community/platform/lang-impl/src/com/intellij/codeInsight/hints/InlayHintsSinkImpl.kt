@@ -146,7 +146,7 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
 
   private fun updateOrDeleteExistingHints(existingInlays: List<Inlay<EditorCustomElementRenderer>>, isInline: Boolean, isEnabled: Boolean) {
     for (inlay in existingInlays) {
-      val inlayKey = inlay.getUserData(INLAY_KEY) as SettingsKey<*>?
+      val inlayKey = getSettingsKey(inlay)
       if (inlayKey != key) continue
       val offset = inlay.offset
       val hint = when (val hintsAtOffset = hints[offset]) {
@@ -175,7 +175,8 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
   }
 
   companion object {
-    private val INLAY_KEY: Key<Any?> = Key.create("INLAY_KEY")
+    fun getSettingsKey(inlay: Inlay<*>): SettingsKey<*>? = inlay.getUserData(INLAY_KEY)
+    private val INLAY_KEY: Key<SettingsKey<*>> = Key.create("INLAY_KEY")
     private const val BulkChangeThreshold = 1000
 
     @JvmField val LOG = logger<InlayHintsSinkImpl<*>>()
