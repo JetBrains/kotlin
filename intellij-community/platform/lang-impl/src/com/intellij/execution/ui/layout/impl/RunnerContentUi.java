@@ -24,6 +24,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.IdeGlassPaneUtil;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.impl.ToolWindowsPane;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.awt.RelativeRectangle;
@@ -1465,6 +1466,10 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     @Override
     public void addNotify() {
       super.addNotify();
+      if (null !=
+          ComponentUtil.findParentByCondition(this, component -> UIUtil.isClientPropertyTrue(component, ToolWindowsPane.TEMPORARY_ADDED))) {
+        return;
+      }
 
       if (!myUiLastStateWasRestored && myOriginal == null) {
         myUiLastStateWasRestored = true;
