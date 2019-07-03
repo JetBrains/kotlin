@@ -39,7 +39,7 @@ fi
         <key>Beginning</key>
         <string>plugins {
     kotlin("multiplatform") version "@@MPP_GRADLE_PLUGIN_VERSION@@"
-    kotlin("xcode-compat") version "0.2.1"
+    kotlin("xcode-compat") version "0.2.2"
 }
 
 repositories {
