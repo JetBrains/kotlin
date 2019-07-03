@@ -21,7 +21,7 @@ internal class GradleNodeModulesCache(val nodeJs: NodeJsRootExtension) : AutoClo
 
     val project: Project get() = nodeJs.project
     internal val dir = nodeJs.root.nodeModulesGradleCacheDir
-    private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "8")
+    private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "9")
 
     @Synchronized
     fun get(
