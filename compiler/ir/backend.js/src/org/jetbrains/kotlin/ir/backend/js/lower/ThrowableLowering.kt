@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.callsSuper
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -82,12 +83,8 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
         }
 
         override fun visitConstructor(declaration: IrConstructor, data: IrDeclarationParent): IrStatement {
-            declaration.transformChildren(this, data)
-
-            if (!declaration.isPrimary) return declaration
-
             val klass = data as IrClass
-            if (klass.defaultType.isThrowableTypeOrSubtype()) {
+            if (klass.defaultType.isThrowableTypeOrSubtype() && declaration.callsSuper(context.irBuiltIns)) {
                 (declaration.body as? IrBlockBody)?.let {
                     it.statements += JsIrBuilder.buildCall(propertySetter, unitType).apply {
                         putValueArgument(0, JsIrBuilder.buildGetValue(klass.thisReceiver!!.symbol))
@@ -96,6 +93,8 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     }
                 }
             }
+
+            declaration.transformChildren(this, data)
 
             return declaration
         }

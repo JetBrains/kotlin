@@ -3,6 +3,11 @@ package foo
 
 class MyException(m: String? = null): Exception(m)
 class MyException2(m: String? = null): Throwable(m)
+
+class MyException3: Throwable {
+    constructor(m: String? = null) : super(m) {}
+}
+
 // TODO: add direct inheritors of Throwable:
 // - with cause only, in the primary constructor
 
@@ -30,6 +35,8 @@ fun box(): String {
     check(MyException("aaa"), "MyException: aaa")
     check(MyException2(), "MyException2: null")
     check(MyException2("aaa"), "MyException2: aaa")
+    check(MyException3(), "MyException3: null")
+    check(MyException3("aaa"), "MyException3: aaa")
 
     return "OK"
 }
