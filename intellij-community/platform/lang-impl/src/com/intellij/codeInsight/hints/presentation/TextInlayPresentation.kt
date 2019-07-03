@@ -18,6 +18,9 @@ class TextInlayPresentation(
   override var height: Int,
   var text: String,
   private var yBaseline: Int,
+  var lineHeight: Int,
+  var ascent: Int,
+  var descent: Int,
   val fontProvider: (EditorFontType) -> Font
 ) : BasePresentation() {
 
@@ -32,9 +35,22 @@ class TextInlayPresentation(
           Font.ITALIC -> EditorFontType.ITALIC
           else -> EditorFontType.PLAIN
         }
-        g.font = fontProvider(fontType)
+        val font = fontProvider(fontType)
+        g.font = font
         g.color = foreground
         g.drawString(text, 0, yBaseline)
+        val effectColor = attributes.effectColor
+        if (effectColor != null) {
+          g.color = effectColor
+          when (attributes.effectType) {
+            EffectType.LINE_UNDERSCORE -> EffectPainter.LINE_UNDERSCORE.paint(g, 0, ascent, width, descent, font)
+            EffectType.BOLD_LINE_UNDERSCORE -> EffectPainter.BOLD_LINE_UNDERSCORE.paint(g, 0, ascent, width, descent, font)
+            EffectType.STRIKEOUT -> EffectPainter.STRIKE_THROUGH.paint(g, 0, ascent, width, height, font)
+            EffectType.WAVE_UNDERSCORE -> EffectPainter.WAVE_UNDERSCORE.paint(g, 0, ascent, width, descent, font)
+            EffectType.BOLD_DOTTED_LINE -> EffectPainter.BOLD_DOTTED_UNDERSCORE.paint(g, 0, ascent, width, descent, font)
+            else -> {}
+          }
+        }
       }
     }
     finally {

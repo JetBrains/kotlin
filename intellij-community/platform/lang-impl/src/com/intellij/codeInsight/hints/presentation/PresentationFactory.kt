@@ -42,12 +42,10 @@ class PresentationFactory(private val editor: EditorImpl) {
     val ascent = editor.ascent
     val descent = editor.descent
     val height = editor.lineHeight
-    val textWithoutBox = InsetPresentation(EffectInlayPresentation(
-      TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline) {
+    val textWithoutBox = InsetPresentation(
+      TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline, height, ascent, descent) {
         plainFont
-      },
-      plainFont, height, ascent, descent
-    ), top = 1, down = 1)
+      }, top = 1, down = 1)
     return withInlayAttributes(textWithoutBox)
   }
 
@@ -58,11 +56,17 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun text(text: String): InlayPresentation {
     val font = editor.colorsScheme.getFont(EditorFontType.PLAIN)
     val width = editor.contentComponent.getFontMetrics(font).stringWidth(text)
+    val ascent = editor.ascent
+    val descent = editor.descent
+    val height = editor.lineHeight
     return withInlayAttributes(TextInlayPresentation(
       width,
-      editor.lineHeight,
+      height,
       text,
-      editor.ascent
+      ascent,
+      height,
+      ascent,
+      descent
     ) { font })
   }
 
