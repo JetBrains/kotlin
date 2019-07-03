@@ -171,7 +171,7 @@ def commonSrc = file('build/stdlib')
 
 task unzipStdlibSources(type: CopyCommonSources) {
     outputDir commonSrc
-    sourcePaths configurations.kotlinCommonSources.files
+    sourcePaths configurations.kotlinCommonSources
 }
 
 final List<File> stdLibSrc = [
