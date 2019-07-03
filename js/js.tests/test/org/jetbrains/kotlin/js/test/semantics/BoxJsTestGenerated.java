@@ -2692,6 +2692,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/try/exceptionToString.kt");
             }
 
+            @TestMetadata("exceptionToString_legacy.kt")
+            public void testExceptionToString_legacy() throws Exception {
+                runTest("js/js.translator/testData/box/expression/try/exceptionToString_legacy.kt");
+            }
+
             @TestMetadata("kt22053.kt")
             public void testKt22053() throws Exception {
                 runTest("js/js.translator/testData/box/expression/try/kt22053.kt");

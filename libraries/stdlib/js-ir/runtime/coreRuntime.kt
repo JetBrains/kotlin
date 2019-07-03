@@ -87,7 +87,7 @@ internal fun captureStack(instance: Throwable) {
 
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
-    throwable.message = message ?: cause?.toString()
+    throwable.message = message ?: cause?.toString() ?: undefined
     throwable.cause = cause
     throwable.name = "Throwable"
     return throwable.unsafeCast<Throwable>()
@@ -95,7 +95,7 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
 
 internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
     js("Error").call(this_)
-    this_.message = message ?: cause?.toString()
+    this_.message = message ?: cause?.toString() ?: undefined
     this_.cause = cause
     captureStack(this_)
 }
