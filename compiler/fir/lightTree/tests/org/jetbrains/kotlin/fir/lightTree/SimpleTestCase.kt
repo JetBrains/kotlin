@@ -71,7 +71,8 @@ class SimpleTestCase : AbstractRawFirBuilderTestCase() {
         println("AST Tree")
         println(DebugUtil.nodeTreeToString(builder.treeBuilt, false))
 
-        val firFromLightTreeFile = Converter(object : FirSessionBase() {}, true, builder.lightTree).convertFile(builder.lightTree.root)
+        val firFromLightTreeFile = Converter(object : FirSessionBase(null) {}, true, builder.lightTree)
+            .convertFile(builder.lightTree.root)
         println("Fir from LightTree")
         println(StringBuilder().also { FirRenderer(it).visitFile(firFromLightTreeFile) }.toString())
 

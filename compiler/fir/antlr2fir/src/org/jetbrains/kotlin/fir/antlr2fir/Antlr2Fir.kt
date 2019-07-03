@@ -51,7 +51,7 @@ class Antlr2Fir(private val stubMode: Boolean = true) {
         parser.removeErrorListeners()
         // TODO script
         return Antlr2FirBuilder(
-            object : FirSessionBase() {},
+            object : FirSessionBase(null) {},
             stubMode,
             fileName
         ).buildFirFile(parser.kotlinFile())
