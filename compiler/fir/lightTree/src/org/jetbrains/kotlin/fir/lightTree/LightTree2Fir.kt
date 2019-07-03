@@ -41,7 +41,7 @@ class LightTree2Fir(
     fun buildFirFile(code: String, fileName: String): FirFile {
         val lightTree = buildLightTree(code)
 
-        return Converter(object : FirSessionBase() {}, stubMode, lightTree)
+        return Converter(object : FirSessionBase(null) {}, stubMode, lightTree)
             .convertFile(lightTree.root, fileName)
     }
 }

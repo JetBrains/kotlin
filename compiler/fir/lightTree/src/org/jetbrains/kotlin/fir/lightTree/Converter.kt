@@ -64,6 +64,7 @@ class Converter(
     private val implicitUnitType = FirImplicitUnitTypeRef(session, null)
     private val implicitAnyType = FirImplicitAnyTypeRef(session, null)
     private val implicitEnumType = FirImplicitEnumTypeRef(session, null)
+    private val implicitAnnotationType = FirImplicitAnnotationTypeRef(session, null)
     private val implicitType = FirImplicitTypeRefImpl(session, null)
 
     private fun LighterASTNode?.getChildrenAsArray(): Array<LighterASTNode?> {
@@ -244,15 +245,21 @@ class Converter(
             }
         }
 
-        classKind = when {
-            modifiers.classModifier == ClassModifier.ENUM -> ClassKind.ENUM_CLASS
-            modifiers.classModifier == ClassModifier.ANNOTATION -> ClassKind.ANNOTATION_CLASS
+        classKind = when (modifiers.classModifier) {
+            ClassModifier.ENUM -> ClassKind.ENUM_CLASS
+            ClassModifier.ANNOTATION -> ClassKind.ANNOTATION_CLASS
             else -> classKind
         }
         val hasSecondaryConstructor = classBody.hasSecondaryConstructor(classBody.getChildrenAsArray())
         val className = identifier.nameAsSafeName(if (modifiers.classModifier == ClassModifier.COMPANION) "Companion" else "")
+
+        val defaultDelegatedSuperTypeRef = when (classKind) {
+            ClassKind.ENUM_CLASS -> implicitEnumType
+            ClassKind.ANNOTATION_CLASS -> implicitAnnotationType
+            else -> implicitAnyType
+        }
         val delegatedSelfTypeRef = className.toDelegatedSelfType(session)
-        delegatedSuperTypeRef = delegatedSuperTypeRef ?: if (classKind == ClassKind.ENUM_CLASS) implicitEnumType else implicitAnyType
+        delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef
 
         return ClassNameUtil.withChildClassName(className) {
             val firClass = FirClassImpl(
@@ -403,6 +410,7 @@ class Converter(
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseDelegationSpecifierList
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.extractSuperTypeListEntriesTo
      *
      * SUPER_TYPE_ENTRY             - userType
      * SUPER_TYPE_CALL_ENTRY        - constructorInvocation
@@ -466,6 +474,7 @@ class Converter(
         }
 
         return FirDelegatedTypeRefImpl(
+            session,
             firTypeRef,
             expression
         )
@@ -489,7 +498,8 @@ class Converter(
     }
 
     /**
-     * see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor#convert(KtConstructorDelegationCall, FirTypeRef, Boolean)
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.convert(
+     * KtConstructorDelegationCall, FirTypeRef, Boolean)
      */
     private fun convertConstructorDelegationCall(constructorDelegationCall: LighterASTNode?): FirDelegatedConstructorCallImpl {
         var isThis: Boolean = false
@@ -755,6 +765,7 @@ class Converter(
      * this is just a VALUE_PARAMETER_LIST
      *
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirValueParameter
      */
     private fun convertSetterParameter(setterParameter: LighterASTNode, propertyTypeRef: FirTypeRef): FirValueParameter {
         var modifiers = Modifier(session)
@@ -771,7 +782,7 @@ class Converter(
             null,
             firValueParameter.name,
             if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef,
-            null,
+            null,//TODO implement
             isCrossinline = modifiers.parameterModifier == ParameterModifier.CROSSINLINE,
             isNoinline = modifiers.parameterModifier == ParameterModifier.NOINLINE,
             isVararg = modifiers.parameterModifier == ParameterModifier.VARARG
@@ -850,7 +861,7 @@ class Converter(
                 returnType,
                 isVar,
                 firExpression,
-                if (isDelegate) {
+                delegate = if (isDelegate) {
                     FirExpressionStub(session, null)
                     //TODO("not implemented")
                     //{ property.delegate?.expression }.toFirExpression("Should have delegate")
