@@ -10295,6 +10295,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32081.kt");
             }
 
+            @TestMetadata("kt32388.kt")
+            public void testKt32388() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32388.kt");
+            }
+
             @TestMetadata("lambdaNothingAndExpectedType.kt")
             public void testLambdaNothingAndExpectedType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/lambdaNothingAndExpectedType.kt");

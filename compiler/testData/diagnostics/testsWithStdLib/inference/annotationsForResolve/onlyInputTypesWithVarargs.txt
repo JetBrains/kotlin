@@ -1,0 +1,5 @@
+package
+
+public fun test1(/*0*/ ns: kotlin.String?, /*1*/ vararg nullableStrs: kotlin.String? /*kotlin.Array<out kotlin.String?>*/): kotlin.Unit
+public fun test2(/*0*/ ns: kotlin.String?, /*1*/ vararg nonNullableStrs: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+public fun test3(/*0*/ ns: kotlin.String?, /*1*/ nullableStrs: kotlin.Array<out kotlin.String?>, /*2*/ nonNullableStrs: kotlin.Array<out kotlin.String>): kotlin.Unit

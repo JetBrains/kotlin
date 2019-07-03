@@ -1,0 +1,27 @@
+package
+
+public fun </*0*/ A, /*1*/ B> Either<A, B>.recover(/*0*/ f: (A) -> B): Either<A, B>
+public fun </*0*/ A> A.right(): Either<kotlin.Nothing, A>
+
+public sealed class Either</*0*/ out A, /*1*/ out B> {
+    private constructor Either</*0*/ out A, /*1*/ out B>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Left</*0*/ out A> : Either<A, kotlin.Nothing> {
+        public constructor Left</*0*/ out A>(/*0*/ a: A)
+        public final val a: A
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class Right</*0*/ out B> : Either<kotlin.Nothing, B> {
+        public constructor Right</*0*/ out B>(/*0*/ b: B)
+        public final val b: B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
