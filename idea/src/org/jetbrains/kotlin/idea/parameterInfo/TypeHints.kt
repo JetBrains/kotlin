@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
+import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isEnum
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 //hack to separate type presentation from param info presentation
 const val TYPE_INFO_PREFIX = "@TYPE@"
@@ -99,7 +103,20 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
     } else if (name?.isSpecial == true) {
         return emptyList()
     }
-
+    
+    if (element is KtProperty && element.isLocal && type.isUnit() && element.lineCount() > 1) {
+        val propertyLine = element.getLineNumber()
+        val equalsTokenLine = element.equalsToken?.getLineNumber() ?: -1
+        val initializerLine = element.initializer?.getLineNumber() ?: -1
+        if (propertyLine == equalsTokenLine && propertyLine != initializerLine) {
+            val spaceBeforeProperty = (element.prevSibling as? PsiWhiteSpace)?.text?.reversed()?.takeWhile { it != '\n' }
+            val spaceBeforeInitializer = (element.initializer?.prevSibling as? PsiWhiteSpace)?.text?.reversed()?.takeWhile { it != '\n' }
+            if (spaceBeforeProperty == spaceBeforeInitializer) {
+                return emptyList()
+            }
+        }
+    }
+    
     return if (isUnclearType(type, element)) {
         val settings = CodeStyle.getCustomSettings(element.containingFile, KotlinCodeStyleSettings::class.java)
         val declString = buildString {
