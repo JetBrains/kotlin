@@ -317,9 +317,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         catch (ProcessCanceledException | CompilationException e) {
             throw e;
         }
-        catch (Throwable error) {
-            String message = error.getMessage();
-            throw new CompilationException(message != null ? message : "null", error, selector);
+        catch (Throwable e) {
+            throw new CompilationException("Failed to generate expression: " + selector.getClass().getSimpleName(), e, selector);
         }
     }
 

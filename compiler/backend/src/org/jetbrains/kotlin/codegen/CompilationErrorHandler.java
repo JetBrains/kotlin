@@ -18,8 +18,19 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.util.ExceptionUtilKt;
 
+import static org.jetbrains.kotlin.utils.ExceptionUtilsKt.rethrow;
+
 public interface CompilationErrorHandler {
     CompilationErrorHandler THROW_EXCEPTION = (exception, fileUrl) -> {
+        // CompilationException is already supposed to have all information about the context
+        if (exception instanceof CompilationException) {
+            try {
+                throw exception;
+            } catch (Throwable t) {
+                throw rethrow(t);
+            }
+        }
+
         throw new IllegalStateException(
                 ExceptionUtilKt.getExceptionMessage("Backend", "Exception during code generation", exception, fileUrl),
                 exception

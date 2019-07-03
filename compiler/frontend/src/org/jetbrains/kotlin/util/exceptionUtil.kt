@@ -13,29 +13,18 @@ fun getExceptionMessage(
     cause: Throwable?,
     location: String?
 ): String = ApplicationManager.getApplication().runReadAction<String> {
-    val result = StringBuilder(subsystemName + " Internal error: ").append(message).append("\n")
-    if (cause != null) {
-        val causeMessage = cause.message
-        result.append("Cause: ").append(causeMessage ?: cause.toString()).append("\n")
-    }
+    buildString {
+        append(subsystemName).append(" Internal error: ").appendln(message)
 
-    if (location != null) {
-        result.append("File being compiled at position: ").append(location).append("\n")
-    } else {
-        result.append("Element is unknown")
-    }
+        if (location != null) {
+            append("File being compiled at position: ").appendln(location)
+        } else {
+            append("Element is unknown")
+        }
 
-    if (cause != null) {
-        result.append("The root cause was thrown at: ").append(where(cause))
+        if (cause != null) {
+            append("The root cause ${cause::class.java.name} was thrown at: ")
+            append(cause.stackTrace?.firstOrNull()?.toString() ?: "unknown")
+        }
     }
-
-    result.toString()
-}
-
-private fun where(cause: Throwable): String {
-    val stackTrace = cause.stackTrace
-    if (stackTrace != null && stackTrace.size > 0) {
-        return stackTrace[0].fileName + ":" + stackTrace[0].lineNumber
-    }
-    return "unknown"
 }
