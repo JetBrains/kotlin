@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.collectRealOverrides
+import org.jetbrains.kotlin.ir.util.render
 
 val IrFunction.realOverrideTarget: IrFunction
     get() = when (this) {
@@ -21,5 +22,6 @@ val IrFunction.realOverrideTarget: IrFunction
 val IrSimpleFunction.realOverrideTarget: IrSimpleFunction
     get(): IrSimpleFunction {
         val realOverrides = collectRealOverrides()
-        return realOverrides.find { it.modality != Modality.ABSTRACT } ?: realOverrides.first()
+        return realOverrides.find { it.modality != Modality.ABSTRACT } ?: realOverrides.firstOrNull() ?:
+                error("No real override target found for ${this.render()}")
     }
