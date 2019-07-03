@@ -4,6 +4,7 @@ package com.intellij.codeInsight.hints.presentation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.EditorMouseEvent
+import com.intellij.openapi.editor.event.EditorMouseEventArea
 import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.editor.event.EditorMouseMotionListener
 import com.intellij.openapi.project.Project
@@ -30,6 +31,7 @@ class PresentationMouseHandler : StartupActivity {
       if (!e.isConsumed) {
         val editor = e.editor
         val event = e.mouseEvent
+        if (editor.getMouseEventArea(event) != EditorMouseEventArea.EDITING_AREA) return
         val point = event.point
         val inlay = editor.inlayModel.getElementAt(point) ?: return
         val bounds = inlay.bounds ?: return
@@ -50,6 +52,10 @@ class PresentationMouseHandler : StartupActivity {
         val event = e.mouseEvent
         // TODO here also may be handling of ESC key
         val inlay = editor.inlayModel.getElementAt(event.point)
+        if (editor.getMouseEventArea(event) != EditorMouseEventArea.EDITING_AREA) {
+          activePresentation?.mouseExited()
+          return
+        }
         val presentation = (inlay?.renderer as? PresentationRenderer)?.presentation
         if (activePresentation != presentation) {
           activePresentation?.mouseExited()
