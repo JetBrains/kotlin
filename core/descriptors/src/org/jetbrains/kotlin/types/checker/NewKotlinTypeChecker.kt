@@ -56,20 +56,24 @@ object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
 }
 
 interface NewKotlinTypeChecker : KotlinTypeChecker {
+    val kotlinTypeRefiner: KotlinTypeRefiner
+
     fun transformToNewType(type: UnwrappedType): UnwrappedType
 
     companion object {
-        val Default = NewKotlinTypeCheckerImpl()
+        val Default = NewKotlinTypeCheckerImpl(KotlinTypeRefiner.Default)
     }
 }
 
 
-class NewKotlinTypeCheckerImpl() : NewKotlinTypeChecker {
+class NewKotlinTypeCheckerImpl(override val kotlinTypeRefiner: KotlinTypeRefiner) : NewKotlinTypeChecker {
+
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-        ClassicTypeCheckerContext(true).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) // todo fix flag errorTypeEqualsToAnything
+        ClassicTypeCheckerContext(true, kotlinTypeRefiner = kotlinTypeRefiner)
+            .isSubtypeOf(subtype.unwrap(), supertype.unwrap()) // todo fix flag errorTypeEqualsToAnything
 
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-        ClassicTypeCheckerContext(false).equalTypes(a.unwrap(), b.unwrap())
+        ClassicTypeCheckerContext(false, kotlinTypeRefiner = kotlinTypeRefiner).equalTypes(a.unwrap(), b.unwrap())
 
     fun ClassicTypeCheckerContext.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
         return AbstractTypeChecker.equalTypes(this as AbstractTypeCheckerContext, a, b)

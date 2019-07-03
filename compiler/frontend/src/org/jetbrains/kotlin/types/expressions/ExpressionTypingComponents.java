@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.types.WrappedTypeFactory;
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker;
 
 import javax.inject.Inject;
 
@@ -62,6 +63,8 @@ public class ExpressionTypingComponents {
     /*package*/ EffectSystem effectSystem;
     /*package*/ ContractParsingServices contractParsingServices;
     /*package*/ DataFlowValueFactory dataFlowValueFactory;
+    /*package*/ NewKotlinTypeChecker kotlinTypeChecker;
+
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -236,5 +239,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setDataFlowValueFactory(@NotNull DataFlowValueFactory dataFlowValueFactory) {
         this.dataFlowValueFactory = dataFlowValueFactory;
+    }
+
+    @Inject
+    public void setKotlinTypeChecker(@NotNull NewKotlinTypeChecker kotlinTypeChecker) {
+        this.kotlinTypeChecker = kotlinTypeChecker;
     }
 }
