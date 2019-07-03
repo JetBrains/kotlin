@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import java.io.File
 
 /**
  * Cache for storing already created [GradleNodeModule]s
@@ -27,19 +28,19 @@ internal class GradleNodeModulesCache(val nodeJs: NodeJsRootExtension) : AutoClo
     fun get(
         dependency: ResolvedDependency,
         artifact: ResolvedArtifact
-    ): GradleNodeModule? {
-        val key = cache.getOrCompute(artifact.file) {
-            val module = GradleNodeModuleBuilder(project, dependency, listOf(artifact), this)
-            module.visitArtifacts()
-            module.rebuild()?.let {
-                it.name + ":" + it.version
-            }
-        }
+    ): GradleNodeModule? = cache.getOrCompute(artifact.file) {
+        buildImportedPackage(dependency, artifact)
+    }?.let {
+        GradleNodeModule(it)
+    }
 
-        return if (key != null) {
-            val (name, version) = key.split(":")
-            GradleNodeModule(name, version, importedPackageDir(dir, name, version))
-        } else null
+    private fun buildImportedPackage(
+        dependency: ResolvedDependency,
+        artifact: ResolvedArtifact
+    ): File? {
+        val module = GradleNodeModuleBuilder(project, dependency, listOf(artifact), this)
+        module.visitArtifacts()
+        return module.rebuild()
     }
 
     @Synchronized
