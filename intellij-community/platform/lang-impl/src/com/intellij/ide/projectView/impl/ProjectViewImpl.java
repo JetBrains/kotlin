@@ -90,6 +90,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.ui.tree.TreePathUtil.toTreePathArray;
 
@@ -103,7 +104,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private static final Key<String> SUB_ID_KEY = Key.create("pane-sub-id");
   private final CopyPasteDelegator myCopyPasteDelegator;
   private boolean isInitialized;
-  private boolean myExtensionsLoaded;
+  private final AtomicBoolean myExtensionsLoaded = new AtomicBoolean(false);
   @NotNull private final Project myProject;
 
   // + options
@@ -541,10 +542,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   private void ensurePanesLoaded() {
-    if (myExtensionsLoaded) return;
+    if (myExtensionsLoaded.getAndSet(true)) return; // avoid recursive loading
     AbstractProjectViewPane[] extensions = AbstractProjectViewPane.EP_NAME.getExtensions(myProject);
     Arrays.sort(extensions, PANE_WEIGHT_COMPARATOR);
-    myExtensionsLoaded = true;
     for(AbstractProjectViewPane pane: extensions) {
       if (myUninitializedPaneState.containsKey(pane.getId())) {
         try {
