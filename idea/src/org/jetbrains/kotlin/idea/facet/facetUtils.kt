@@ -149,7 +149,8 @@ fun KotlinFacet.configureFacet(
     coroutineSupport: LanguageFeature.State,
     platform: TargetPlatform?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider,
-    hmppEnabled: Boolean
+    hmppEnabled: Boolean,
+    pureKotlinSourceFolders: List<String>
 ) {
     val module = module
     with(configuration.settings) {
@@ -169,6 +170,7 @@ fun KotlinFacet.configureFacet(
             this.apiLevel = languageLevel
         }
         this.coroutineSupport = if (languageLevel != null && languageLevel < LanguageVersion.KOTLIN_1_3) coroutineSupport else null
+        this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 
     module.externalCompilerVersion = compilerVersion
@@ -185,7 +187,7 @@ fun KotlinFacet.configureFacet(
     platform: IdePlatform<*, *>,
     modelsProvider: IdeModifiableModelsProvider
 ) {
-    configureFacet(compilerVersion, coroutineSupport, platform.toNewPlatform(), modelsProvider, false) //TODO(auskov): passed isHmpp = false
+    configureFacet(compilerVersion, coroutineSupport, platform.toNewPlatform(), modelsProvider, false, emptyList()) //TODO(auskov): passed isHmpp = false
 }
 
 

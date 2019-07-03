@@ -64,8 +64,8 @@ var DataNode<out ModuleData>.dependenciesCache
         by DataNodeUserDataProperty(
             Key.create<MutableMap<DataNode<ProjectData>, Collection<DataNode<out ModuleData>>>>("MODULE_DEPENDENCIES_CACHE")
         )
-var DataNode<out ContentRootData>.isPureKotlinSourceFolder
-        by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("PURE_KOTLIN_SOURCE_FOLDER"), false)
+var DataNode<out ModuleData>.pureKotlinSourceFolders
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("PURE_KOTLIN_SOURCE_FOLDER"), emptyList())
 
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
@@ -287,6 +287,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         nextResolver.populateModuleContentRoots(gradleModule, ideModule)
         val moduleNamePrefix = GradleProjectResolverUtil.getModuleId(resolverCtx, gradleModule)
         resolverCtx.getExtraProject(gradleModule, KotlinGradleModel::class.java)?.let { gradleModel ->
+            ideModule.pureKotlinSourceFolders =
+                gradleModel.kotlinTaskProperties.flatMap { it.value.pureKotlinSourceFolders ?: emptyList() }.map { it.absolutePath }
             val gradleSourceSets = ideModule.children.filter { it.data is GradleSourceSetData } as Collection<DataNode<GradleSourceSetData>>
             for (gradleSourceSetNode in gradleSourceSets) {
                 val propertiesForSourceSet =
@@ -295,10 +297,12 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 gradleSourceSetNode.children.forEach { dataNode ->
                     val data = dataNode.data as?  ContentRootData
                     if (data != null) {
+                        /*
+                        Code snippet for setting in content root properties
                         if (propertiesForSourceSet?.second?.pureKotlinSourceFolders?.contains(File(data.rootPath)) == true) {
                             @Suppress("UNCHECKED_CAST")
                             (dataNode as DataNode<ContentRootData>).isPureKotlinSourceFolder = true
-                        }
+                        }*/
                         val packagePrefix = propertiesForSourceSet?.second?.packagePrefix
                         if (packagePrefix != null) {
                             ExternalSystemSourceType.values().filter { !(it.isResource || it.isGenerated) }.forEach { type ->

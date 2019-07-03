@@ -121,7 +121,14 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             )
 
             val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
-            kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider, mainModuleNode.isHmpp)
+            kotlinFacet.configureFacet(
+                compilerVersion,
+                coroutinesProperty,
+                platform,
+                modelsProvider,
+                mainModuleNode.isHmpp,
+                mainModuleNode.pureKotlinSourceFolders
+            )
 
             val compilerArguments = kotlinSourceSet.compilerArguments
             val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments
@@ -158,6 +165,8 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                     productionOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
                     testOutputPath = null
                 }
+
+                this.pureKotlinSourceFolders = mainModuleNode.pureKotlinSourceFolders
             }
 
             return kotlinFacet
