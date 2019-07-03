@@ -962,7 +962,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
         list, value, index, isSelected, cellHasFocus);
       if (component == null) {
         component = contributor.getElementsRenderer().getListCellRendererComponent(
-          list, value, index, isSelected, cellHasFocus);
+          list, value, index, isSelected, true);
       }
 
       if (component instanceof JComponent) {
