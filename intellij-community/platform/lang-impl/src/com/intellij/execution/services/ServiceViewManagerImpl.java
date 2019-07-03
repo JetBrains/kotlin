@@ -242,11 +242,11 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         }
 
         Collections.reverse(contents);
-        select(myProject, contents.iterator(), result, service, contributorClass);
+        select(myProject, contents.iterator(), result, service, contributorClass, focus);
       };
       ToolWindow window = activate ? ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.SERVICES) : null;
       if (window != null) {
-        window.activate(runnable, false, focus);
+        window.activate(runnable, focus, focus);
       }
       else {
         runnable.run();
@@ -256,12 +256,12 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private static void select(Project project, Iterator<Content> iterator, AsyncPromise<Void> result,
-                             @NotNull Object service, @NotNull Class<?> contributorClass) {
+                             @NotNull Object service, @NotNull Class<?> contributorClass, boolean focus) {
     Content content = iterator.next();
     ServiceView serviceView = getServiceView(content);
     if (serviceView == null) {
       if (iterator.hasNext()) {
-        select(project, iterator, result, service, contributorClass);
+        select(project, iterator, result, service, contributorClass, focus);
       }
       else {
         result.setError("Not services content");
@@ -275,7 +275,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           if (contentManager == null) return;
 
           if (contentManager.getSelectedContent() != content && contentManager.getIndexOfContent(content) >= 0) {
-            contentManager.setSelectedContent(content);
+            contentManager.setSelectedContent(content, focus);
           }
         }, project.getDisposed());
 
@@ -283,7 +283,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       })
       .onError(e -> {
         if (iterator.hasNext()) {
-          select(project, iterator, result, service, contributorClass);
+          select(project, iterator, result, service, contributorClass, focus);
         }
         else {
           result.setError(e);
