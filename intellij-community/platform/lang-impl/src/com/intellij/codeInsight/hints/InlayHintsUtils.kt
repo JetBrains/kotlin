@@ -47,9 +47,8 @@ internal fun <T : Any> InlayHintsProvider<T>.withSettings(language: Language, co
   return ProviderWithSettings(ProviderInfo(language, this), settings)
 }
 
-internal fun <T : Any> InlayHintsProvider<T>.getActualSettings(config: InlayHintsSettings, language: Language): T {
-  return config.findSettings(key, language, createSettings())
-}
+internal fun <T : Any> InlayHintsProvider<T>.getActualSettings(config: InlayHintsSettings, language: Language): T =
+  config.findSettings(key, language) { createSettings() }
 
 internal fun <T: Any> copySettings(from: T, provider: InlayHintsProvider<T>): T {
   val settings = provider.createSettings()
