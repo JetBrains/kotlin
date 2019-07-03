@@ -190,6 +190,15 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
     val charConstructor = charClassSymbol.constructors.single().owner
 
+    val stringClassSymbol = getInternalClassWithoutPackage("kotlin.String")
+    val stringConstructorSymbol = stringClassSymbol.constructors.single()
+
+    val anyClassSymbol = getInternalClassWithoutPackage("kotlin.Any")
+    val anyConstructorSymbol = anyClassSymbol.constructors.single()
+
+    val jsObjectClassSymbol = getInternalClassWithoutPackage("kotlin.js.JsObject")
+    val jsObjectConstructorSymbol by lazy { jsObjectClassSymbol.constructors.single() }
+
     val uByteClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UByte") }
     val uShortClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UShort") }
     val uIntClassSymbol by lazy { getInternalClassWithoutPackage("kotlin.UInt") }

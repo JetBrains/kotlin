@@ -100,5 +100,8 @@ internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?
     captureStack(this_)
 }
 
+@JsName("Object")
+internal external class JsObject
+
 internal fun <T, R> boxIntrinsic(x: T): R = error("Should be lowered")
 internal fun <T, R> unboxIntrinsic(x: T): R = error("Should be lowered")

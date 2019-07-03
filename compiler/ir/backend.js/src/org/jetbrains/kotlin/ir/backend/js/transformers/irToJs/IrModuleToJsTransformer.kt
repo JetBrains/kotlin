@@ -33,13 +33,6 @@ class IrModuleToJsTransformer(
             JsStringLiteral("use strict").makeStmt()
         )
 
-        // TODO: fix it up with new name generator
-        val anyName = context.getNameForClass(backendContext.irBuiltIns.anyClass.owner)
-        val stringName = context.getNameForClass(backendContext.irBuiltIns.stringClass.owner)
-
-        statements += JsVars(JsVars.JsVar(anyName, Namer.JS_OBJECT))
-        statements += JsVars(JsVars.JsVar(stringName, JsNameRef("String")))
-
         val preDeclarationBlock = JsBlock()
         val postDeclarationBlock = JsBlock()
 
