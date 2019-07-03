@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
 
@@ -29,7 +29,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
         get() = buildNpmProjectName()
 
     val nodeJs
-        get() = project.nodeJs.root
+        get() = NodeJsRootPlugin.apply(project.rootProject)
 
     val dir: File
         get() = nodeJs.projectPackagesDir.resolve(name)

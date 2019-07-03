@@ -10,12 +10,19 @@ import org.gradle.api.Project
 
 class NodeJsPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        val root = NodeJsRootPlugin.apply(target.rootProject) as NodeJsRootExtension
+        val root = NodeJsRootPlugin.apply(target.rootProject)
 
         if (target != target.rootProject) {
-            target.extensions.create(NodeJsRootExtension.EXTENSION_NAME, NodeJsExtension::class.java, target, root)
+            target.extensions.create(NodeJsRootExtension.EXTENSION_NAME, NodeJsExtension::class.java, target)
         }
 
         root.requireResolver().addProject(target)
+    }
+
+    companion object {
+        fun apply(project: Project): NodeJsExtension {
+            project.plugins.apply(NodeJsPlugin::class.java)
+            return project.extensions.getByName(NodeJsRootExtension.EXTENSION_NAME) as NodeJsExtension
+        }
     }
 }

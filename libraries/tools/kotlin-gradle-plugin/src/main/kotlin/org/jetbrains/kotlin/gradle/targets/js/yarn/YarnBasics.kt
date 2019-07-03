@@ -23,7 +23,8 @@ abstract class YarnBasics : NpmApi {
         description: String,
         vararg args: String
     ) {
-        val nodeJsEnv = NodeJsRootPlugin.apply(project).root.environment
+        val nodeJs = NodeJsRootPlugin.apply(project)
+        val nodeJsEnv = nodeJs.environment
         val yarnEnv = YarnPlugin.apply(project).environment
 
         project.execWithProgress(description) { exec ->

@@ -9,9 +9,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import java.io.File
 
 open class KotlinNpmInstallTask : DefaultTask() {
@@ -19,18 +18,20 @@ open class KotlinNpmInstallTask : DefaultTask() {
         check(project == project.rootProject)
     }
 
+    private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
+
     @Suppress("unused")
     @get:InputFiles
     val packageJsonFiles: Collection<File>
-        get() = project.nodeJs.root.resolutionState.compilations.map { it.npmProject.packageJsonFile }
+        get() = nodeJs.resolutionState.compilations.map { it.npmProject.packageJsonFile }
 
     @get:OutputFile
     val yarnLock: File
-        get() = project.nodeJs.root.rootPackageDir.resolve("yarn.lock")
+        get() = nodeJs.rootPackageDir.resolve("yarn.lock")
 
     @TaskAction
     fun resolve() {
-        project.nodeJs.root.resolveIfNeeded(project)
+        nodeJs.resolveIfNeeded(project)
     }
 
     companion object {

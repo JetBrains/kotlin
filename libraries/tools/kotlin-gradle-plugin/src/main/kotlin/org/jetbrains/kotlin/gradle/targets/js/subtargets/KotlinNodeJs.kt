@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
-import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
 class KotlinNodeJs(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "node"),

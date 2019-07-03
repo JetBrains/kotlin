@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
@@ -41,7 +40,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val target = compilation.target
             val project = target.project
             val npmProject = compilation.npmProject
-            val nodeJs = project.nodeJs.root
+            val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
             val rootClean = project.rootProject.tasks.getByName(BasePlugin.CLEAN_TASK_NAME)
             val npmInstallTask = nodeJs.npmInstallTask
@@ -53,7 +52,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
                 @Suppress("UnstableApiUsage")
-                task.dependsOn(target.project.provider{ task.findDependentTasks() })
+                task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.mustRunAfter(rootClean)
             }
 

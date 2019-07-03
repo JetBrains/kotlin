@@ -16,10 +16,9 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 
 data class NpmDependency(
@@ -85,7 +84,7 @@ data class NpmDependency(
     }
 
     private fun resolveProject(): KotlinCompilationNpmResolution? {
-        val nodeJs = project.nodeJs.root
+        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
         val resolvedProject =
             if (isInIdeaSync) nodeJs.resolveIfNeeded(project)

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import java.io.File
 
-open class NodeJsRootExtension(project: Project) : NodeJsExtension(project, null) {
+open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
     init {
         check(project.rootProject == project)
     }
@@ -83,6 +84,8 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project, null
             }
         }
     }
+
+    val versions = NpmVersions()
 
     internal val resolutionState: ResolutionState
         get() = _resolutionState

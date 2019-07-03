@@ -15,7 +15,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             "NodeJsRootPlugin can be applied only to root project"
         }
 
-        val root = this.extensions.create(EXTENSION_NAME, NodeJsRootExtension::class.java, this)
+        this.extensions.create(EXTENSION_NAME, NodeJsRootExtension::class.java, this)
 
         val setupTask = tasks.create(NodeJsSetupTask.NAME, NodeJsSetupTask::class.java) {
             it.group = TASKS_GROUP_NAME
@@ -32,10 +32,10 @@ open class NodeJsRootPlugin : Plugin<Project> {
     companion object {
         const val TASKS_GROUP_NAME: String = "nodeJs"
 
-        fun apply(project: Project): NodeJsExtension {
-            val rootProject = project.rootProject
+        fun apply(rootProject: Project): NodeJsRootExtension {
+            check(rootProject == rootProject.rootProject)
             rootProject.plugins.apply(NodeJsRootPlugin::class.java)
-            return rootProject.extensions.getByName(EXTENSION_NAME) as NodeJsExtension
+            return rootProject.extensions.getByName(EXTENSION_NAME) as NodeJsRootExtension
         }
     }
 }

@@ -15,8 +15,8 @@ import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
@@ -25,7 +25,8 @@ import java.io.File
 import javax.inject.Inject
 
 open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
-    private val versions by lazy { project.nodeJs.versions }
+    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val versions = nodeJs.versions
 
     @get:Inject
     open val fileResolver: FileResolver
@@ -126,7 +127,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @TaskAction
     fun doExecute() {
-        project.nodeJs.root.checkRequiredDependencies(project, this)
+        nodeJs.checkRequiredDependencies(project, this)
 
         val runner = createRunner()
 
@@ -142,7 +143,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             runner.copy(
                 configWriter = runner.configWriter.copy(
                     progressReporter = true,
-                    progressReporterPathFilter = project.nodeJs.root.rootPackageDir.absolutePath
+                    progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
                 )
             ).execute()
         }

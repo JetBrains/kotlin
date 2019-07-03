@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 open class YarnRootExtension(val project: Project) {
+    init {
+        check(project == project.rootProject)
+    }
+
     private val gradleHome = project.gradle.gradleUserHomeDir.also {
         project.logger.kotlinInfo("Storing cached files in $it")
     }
@@ -28,7 +32,7 @@ open class YarnRootExtension(val project: Project) {
         get() = !disableWorkspaces
 
     internal fun executeSetup() {
-        NodeJsRootPlugin.apply(project).root.executeSetup()
+        NodeJsRootPlugin.apply(project).executeSetup()
 
         val env = environment
         if (!env.home.isDirectory) {

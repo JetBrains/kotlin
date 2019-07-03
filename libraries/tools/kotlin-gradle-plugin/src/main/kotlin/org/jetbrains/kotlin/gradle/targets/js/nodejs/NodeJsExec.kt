@@ -46,12 +46,11 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
         fun create(
             compilation: KotlinJsCompilation,
             name: String,
-            providedNodeJs: NodeJsRootExtension? = null,
             configuration: NodeJsExec.() -> Unit = {}
         ): TaskHolder<NodeJsExec> {
             val target = compilation.target
             val project = target.project
-            val nodeJs = providedNodeJs ?: NodeJsRootPlugin.apply(project).root
+            val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
             return project.createOrRegisterTask(name) {
                 it.nodeJs = nodeJs

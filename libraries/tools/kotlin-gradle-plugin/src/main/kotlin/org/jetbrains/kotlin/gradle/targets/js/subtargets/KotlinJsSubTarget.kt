@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
@@ -25,12 +25,13 @@ abstract class KotlinJsSubTarget(
     private val disambiguationClassifier: String
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
+    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     val runTaskName = disambiguateCamelCased("run")
     val testTaskName = disambiguateCamelCased("test")
 
     fun configure() {
-        project.nodeJs
+        NodeJsPlugin.apply(project)
 
         configureTests()
         configureRun()
@@ -67,16 +68,13 @@ abstract class KotlinJsSubTarget(
     abstract val testTaskDescription: String
 
     private fun configureTests(compilation: KotlinJsCompilation) {
-        // apply plugin (cannot be done at task instantiation time)
-        val nodeJs = NodeJsRootPlugin.apply(target.project).root
-
         val testJs = project.createOrRegisterTask<KotlinJsTest>(testTaskName) { testJs ->
             val compileTask = compilation.compileKotlinTask
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.dependsOn(target.project.nodeJs.root.npmInstallTask, compileTask, nodeJs.nodeJsSetupTask)
+            testJs.dependsOn(nodeJs.npmInstallTask, compileTask, nodeJs.nodeJsSetupTask)
 
             testJs.onlyIf {
                 compileTask.outputFile.exists()

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
@@ -30,7 +30,7 @@ object YarnWorkspaces : YarnBasics() {
 
         if (upToDateChecks.all { it.upToDate }) return
 
-        val nodeJsWorldDir = rootProject.nodeJs.root.rootPackageDir
+        val nodeJsWorldDir = NodeJsRootPlugin.apply(rootProject).rootPackageDir
 
         saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
 
@@ -55,7 +55,8 @@ object YarnWorkspaces : YarnBasics() {
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
 
-        rootProject.nodeJs.packageJsonHandlers.forEach {
+        val nodeJs = NodeJsRootPlugin.apply(rootProject)
+        nodeJs.packageJsonHandlers.forEach {
             it(rootPackageJson)
         }
 
