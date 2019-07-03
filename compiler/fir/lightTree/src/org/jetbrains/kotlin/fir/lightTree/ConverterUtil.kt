@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirDelegatedConstructorCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.expressions.impl.FirReturnExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -40,7 +37,7 @@ object ConverterUtil {
     }
 
     fun Name?.toDelegatedSelfType(session: FirSession): FirTypeRef =
-        FirUserTypeRefImpl(session, null, isNullable = false).apply {
+        FirUserTypeRefImpl(session, null, isMarkedNullable = false).apply {
             qualifier.add(
                 FirQualifierPartImpl(
                     this@toDelegatedSelfType ?: SpecialNames.NO_NAME_PROVIDED
@@ -108,7 +105,7 @@ object ConverterUtil {
         }
     }
 
-    fun <T : FirAbstractCall> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
+    fun <T : FirCallWithArgumentList> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
         if (!stubMode) {
             //TODO("not implemented")
             this.arguments += container

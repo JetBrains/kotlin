@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberPropertyImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.lightTree.ClassNameUtil
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.MemberModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.PlatformModifier
+import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 class ValueParameter(
@@ -45,9 +47,18 @@ class ValueParameter(
             receiverTypeRef = null,
             returnTypeRef = type,
             isVar = this.isVar,
-            initializer = null,
+            initializer = FirQualifiedAccessExpressionImpl(this.firValueParameter.session, null).apply {
+                calleeReference = FirPropertyFromParameterCallableReference(
+                    this@ValueParameter.firValueParameter.session, null, name, this@ValueParameter.firValueParameter.symbol
+                )
+            },
             getter = FirDefaultPropertyGetter(this.firValueParameter.session, null, type, modifier.visibilityModifier.toVisibility()),
-            setter = FirDefaultPropertySetter(this.firValueParameter.session, null, type, modifier.visibilityModifier.toVisibility()),
+            setter = if (this.isVar) FirDefaultPropertySetter(
+                this.firValueParameter.session,
+                null,
+                type,
+                modifier.visibilityModifier.toVisibility()
+            ) else null,
             delegate = null
         ).apply { annotations += this@ValueParameter.firValueParameter.annotations }
     }
