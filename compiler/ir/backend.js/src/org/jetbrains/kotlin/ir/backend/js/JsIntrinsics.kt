@@ -145,8 +145,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     // Other:
 
     val jsObjectCreate = defineObjectCreateIntrinsic() // Object.create
-    val jsGetJSField = defineGetJSPropertyIntrinsic() // till we don't have dynamic type we use intrinsic which sets a field with any name
-    val jsSetJSField = defineSetJSPropertyIntrinsic() // till we don't have dynamic type we use intrinsic which sets a field with any name
+    val jsGetJSField = defineGetJSPropertyIntrinsic() // TODO: Replace with dynamic operators
+    val jsSetJSField = defineSetJSPropertyIntrinsic() // TODO: Replace with dynamic operators
     val jsCode = getInternalFunction("js") // js("<code>")
     val jsHashCode = getInternalFunction("hashCode")
     val jsGetObjectHashCode = getInternalFunction("getObjectHashCode")

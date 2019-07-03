@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.isNullableString
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isThrowable
@@ -30,8 +30,6 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val unitType get() = context.irBuiltIns.unitType
     private val nothingNType get() = context.irBuiltIns.nothingNType
     private val stringType get() = context.irBuiltIns.stringType
-    private val propertySetter get() = context.intrinsics.jsSetJSField.symbol
-    private val nameName get() = JsIrBuilder.buildString(stringType, "name")
 
     private val throwableConstructors = context.throwableConstructors
 
@@ -58,9 +56,13 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
             )
             else -> {
                 val arg = getValueArgument(0)!!
+                val parameter = symbol.owner.valueParameters[0]
                 when {
-                    arg.type.makeNotNull().isThrowable() -> ThrowableArguments(message = nullValue(), cause = arg)
-                    else -> ThrowableArguments(message = arg, cause = nullValue())
+                    parameter.type.isNullableString() -> ThrowableArguments(message = arg, cause = nullValue())
+                    else -> {
+                        assert(parameter.type.makeNotNull().isThrowable())
+                        ThrowableArguments(message = nullValue(), cause = arg)
+                    }
                 }
             }
         }
@@ -85,12 +87,19 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
         override fun visitConstructor(declaration: IrConstructor, data: IrDeclarationParent): IrStatement {
             val klass = data as IrClass
             if (klass.defaultType.isThrowableTypeOrSubtype() && declaration.callsSuper(context.irBuiltIns)) {
-                (declaration.body as? IrBlockBody)?.let {
-                    it.statements += JsIrBuilder.buildCall(propertySetter, unitType).apply {
-                        putValueArgument(0, JsIrBuilder.buildGetValue(klass.thisReceiver!!.symbol))
-                        putValueArgument(1, nameName)
-                        putValueArgument(2, JsIrBuilder.buildString(stringType, klass.name.asString()))
-                    }
+                val body = declaration.body as IrBlockBody
+                body.statements += IrDynamicOperatorExpressionImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    unitType,
+                    IrDynamicOperator.EQ
+                ).also {
+                    it.receiver = IrDynamicMemberExpressionImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        context.dynamicType,
+                        "name",
+                        JsIrBuilder.buildGetValue(klass.thisReceiver!!.symbol)
+                    )
+                    it.arguments.add(JsIrBuilder.buildString(stringType, klass.name.asString()))
                 }
             }
 
