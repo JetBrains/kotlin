@@ -252,4 +252,37 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
         )
     }
+
+    fun testUnitLocalVariable() {
+        checkLocalVariable(
+            """
+            fun foo() {
+                val x =
+
+                println("Foo")
+            }
+            """
+        )
+    }
+
+    fun testUnitLocalVariable2() {
+        checkLocalVariable(
+            """
+            fun foo() {
+                val x<hint text=": Unit"/> =
+                    println("Foo")
+            }
+            """
+        )
+    }
+
+    fun testUnitLocalVariable3() {
+        checkLocalVariable(
+            """
+            fun foo() {
+                val x<hint text=": Unit"/> = println("Foo")
+            }
+            """
+        )
+    }
 }
