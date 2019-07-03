@@ -245,9 +245,8 @@ class PresentationFactory(private val editor: EditorImpl) {
   fun changeOnHover(
     base: InlayPresentation,
     onHover: () -> InlayPresentation,
-    onHoverPredicate: (MouseEvent) -> Boolean = { true },
-    onMouseExited: () -> Unit = {}
-  ): InlayPresentation = ChangeOnHoverPresentation(base, onHover, onHoverPredicate, onMouseExited)
+    onHoverPredicate: (MouseEvent) -> Boolean = { true }
+  ): InlayPresentation = ChangeOnHoverPresentation(base, onHover, onHoverPredicate)
 
   @Contract(pure = true)
   fun reference(base: InlayPresentation, onClickAction: () -> Unit): InlayPresentation {
