@@ -5,7 +5,7 @@ fun main() {
 }
 
 val x: String = "x"
-    //Breakpoint!
+    //FunctionBreakpoint!
     get() = "foo" + field
 
 // EXPRESSION: field

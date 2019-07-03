@@ -29,6 +29,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -40,16 +41,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager;
-import org.jetbrains.kotlin.psi.KtClassInitializer;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtFunction;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.idea.debugger.breakpoints.BreakpointTypeUtilsKt.isBreakpointApplicable;
+
 public class KotlinLineBreakpointType extends JavaLineBreakpointType {
     public KotlinLineBreakpointType() {
-        super("kotlin-line", "Kotlin Line Breakpoints");
+        super("kotlin-line", KotlinBundle.message("debugger.line.breakpoints.tab.title"));
     }
 
     @NotNull
@@ -126,13 +130,50 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
 
     @Override
     public boolean canPutAt(@NotNull VirtualFile file, int line, @NotNull Project project) {
-        return BreakpointTypeUtilsKt.canPutAt(file, line, project, getClass());
+        return isBreakpointApplicable(file, line, project, element -> {
+            if (element instanceof KtDestructuringDeclaration) {
+                return ApplicabilityResult.MAYBE_YES;
+            }
+
+            if (isClosingBraceInMethod(element)) {
+                return ApplicabilityResult.MAYBE_YES;
+            }
+
+            if (element instanceof KtElement) {
+                LineBreakpointExpressionVisitor visitor = LineBreakpointExpressionVisitor.of(file, line);
+                if (visitor != null) {
+                    ApplicabilityResult result = ((KtElement) element).accept(visitor, null);
+                    if (result == null) {
+                        return ApplicabilityResult.UNKNOWN;
+                    }
+                    return result;
+                }
+            }
+
+            return ApplicabilityResult.UNKNOWN;
+        });
+    }
+
+    private static boolean isClosingBraceInMethod(PsiElement element) {
+        if (element instanceof LeafPsiElement && element.getNode().getElementType() == KtTokens.RBRACE) {
+            PsiElement blockExpression = element.getParent();
+            if (blockExpression instanceof KtFunctionLiteral) {
+                return true;
+            }
+            if (blockExpression instanceof KtBlockExpression) {
+                PsiElement owner = blockExpression.getParent();
+                if (owner instanceof KtFunction || owner instanceof KtClassInitializer) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @NotNull
     @Override
     public List<JavaBreakpointVariant> computeVariants(@NotNull Project project, @NotNull XSourcePosition position) {
-        return BreakpointTypeUtilsKt.computeVariants(project, position, this);
+        return BreakpointTypeUtilsKt.computeLineBreakpointVariants(project, position, this);
     }
 
     @Nullable
@@ -194,5 +235,33 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
         }
 
         return super.getSourcePosition(breakpoint);
+    }
+
+    public class LineKotlinBreakpointVariant extends LineJavaBreakpointVariant {
+        public LineKotlinBreakpointVariant(@NotNull XSourcePosition position, @Nullable PsiElement element, Integer lambdaOrdinal) {
+            super(position, element, lambdaOrdinal);
+        }
+
+        @NotNull
+        @Override
+        public String getText() {
+            return "Line Breakpoint";
+        }
+    }
+
+    public class KotlinBreakpointVariant extends JavaBreakpointVariant {
+        private final int lambdaCount;
+
+        public KotlinBreakpointVariant(@NotNull XSourcePosition position, int lambdaCount) {
+            super(position);
+            this.lambdaCount = lambdaCount;
+        }
+
+        @NotNull
+        @Override
+        public String getText() {
+            String lambdas = lambdaCount > 1 ? "Lambdas" : "Lambda";
+            return "Line and " + lambdas + " Breakpoints";
+        }
     }
 }

@@ -5,7 +5,7 @@ class Derived2(): Base(1) {
     // constructor with body
     // EXPRESSION: p
     // RESULT: 1: I
-    //Breakpoint!
+    //FunctionBreakpoint!
     constructor(p: Int): this() {
         // EXPRESSION: p + 1
         // RESULT: 2: I
@@ -16,7 +16,7 @@ class Derived2(): Base(1) {
     // constructor without body
     // EXPRESSION: p1 + p2
     // RESULT: 2: I
-    //Breakpoint!
+    //FunctionBreakpoint!
     constructor(p1: Int, p2: Int): this()
 }
 
@@ -36,6 +36,7 @@ fun main(args: Array<String>) {
     Derived1(1)
 
     A()
+    AA()
     B()
     C(1)
     D()
@@ -45,33 +46,40 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: 1 + 1
 // RESULT: 2: I
-//Breakpoint!
+//FunctionBreakpoint!
 class A
+
+// EXPRESSION: 1 + 3
+// RESULT: 4: I
+//FunctionBreakpoint!
+class AA {
+
+}
 
 // EXPRESSION: 1 + 2
 // RESULT: 3: I
-//Breakpoint!
+//FunctionBreakpoint!
 class B()
 
 // EXPRESSION: a
 // RESULT: 1: I
-//Breakpoint!
+//FunctionBreakpoint!
 class C(val a: Int)
 
 class D {
     // EXPRESSION: 1 + 3
     // RESULT: 4: I
-    //Breakpoint!
+    //FunctionBreakpoint!
     constructor()
 }
 class E {
     // EXPRESSION: i
     // RESULT: 1: I
-    //Breakpoint!
+    //FunctionBreakpoint!
     constructor(i: Int)
 }
 
 // EXPRESSION: a
 // RESULT: "foo": Ljava/lang/String;
-//Breakpoint!
+//FunctionBreakpoint!
 class F(val a: String)

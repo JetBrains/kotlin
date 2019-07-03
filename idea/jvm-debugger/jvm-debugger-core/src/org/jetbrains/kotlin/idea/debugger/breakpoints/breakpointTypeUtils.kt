@@ -39,51 +39,6 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
-fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
-    val psiFile = PsiManager.getInstance(project).findFile(file)
-
-    if (psiFile == null || psiFile.virtualFile?.fileType != KotlinFileType.INSTANCE) {
-        return false
-    }
-
-    val document = FileDocumentManager.getInstance().getDocument(file) ?: return false
-
-    var result: Class<*>? = null
-    XDebuggerUtil.getInstance().iterateLine(project, document, line, fun (el: PsiElement): Boolean {
-        // avoid comments
-        if (el is PsiWhiteSpace || PsiTreeUtil.getParentOfType(el, PsiComment::class.java, false) != null) {
-            return true
-        }
-
-        var element = el
-        var parent = element.parent
-        while (parent != null) {
-            val offset = parent.textOffset
-            if (offset >= 0 && document.getLineNumber(offset) != line) break
-
-            element = parent
-            parent = element.parent
-        }
-
-        if (element is KtProperty || element is KtParameter) {
-            result = if ((element is KtParameter && element.hasValOrVar()) || (element is KtProperty && !element.isLocal)) {
-                KotlinFieldBreakpointType::class.java
-            }
-            else {
-                KotlinLineBreakpointType::class.java
-            }
-            return false
-        }
-        else {
-            result = KotlinLineBreakpointType::class.java
-        }
-
-        return true
-    })
-
-    return result == breakpointTypeClass
-}
-
 class ApplicabilityResult(val isApplicable: Boolean, val shouldStop: Boolean) {
     companion object {
         @JvmStatic
@@ -111,32 +66,34 @@ fun isBreakpointApplicable(file: VirtualFile, line: Int, project: Project, check
     }
 
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return false
-    var isApplicable = false
 
-    val checked = HashSet<PsiElement>()
+    return runReadAction {
+        var isApplicable = false
+        val checked = HashSet<PsiElement>()
 
-    XDebuggerUtil.getInstance().iterateLine(project, document, line, fun(element: PsiElement): Boolean {
-        if (element is PsiWhiteSpace || element.getParentOfType<PsiComment>(false) != null) {
-            return true
-        }
+        XDebuggerUtil.getInstance().iterateLine(project, document, line, fun(element: PsiElement): Boolean {
+            if (element is PsiWhiteSpace || element.getParentOfType<PsiComment>(false) != null) {
+                return true
+            }
 
-        val parent = getTopmostParentOnLineOrSelf(element, document, line)
-        if (!checked.add(parent)) {
-            return true
-        }
+            val parent = getTopmostParentOnLineOrSelf(element, document, line)
+            if (!checked.add(parent)) {
+                return true
+            }
 
-        val result = checker(parent)
+            val result = checker(parent)
 
-        if (result.shouldStop && !result.isApplicable) {
-            isApplicable = false
-            return false
-        }
+            if (result.shouldStop && !result.isApplicable) {
+                isApplicable = false
+                return false
+            }
 
-        isApplicable = isApplicable or result.isApplicable
-        return !result.shouldStop
-    })
+            isApplicable = isApplicable or result.isApplicable
+            return !result.shouldStop
+        })
 
-    return isApplicable
+        return@runReadAction isApplicable
+    }
 }
 
 private fun getTopmostParentOnLineOrSelf(element: PsiElement, document: Document, line: Int): PsiElement {
@@ -153,7 +110,7 @@ private fun getTopmostParentOnLineOrSelf(element: PsiElement, document: Document
     return current
 }
 
-fun computeVariants(
+fun computeLineBreakpointVariants(
     project: Project,
     position: XSourcePosition,
     kotlinBreakpointType: KotlinLineBreakpointType
@@ -167,15 +124,19 @@ fun computeVariants(
     val result = LinkedList<JavaLineBreakpointType.JavaBreakpointVariant>()
 
     val elementAt = pos.elementAt.parentsWithSelf.firstIsInstance<KtElement>()
-    val mainMethod = KotlinLineBreakpointType.getContainingMethod(elementAt)
+    val mainMethod = PsiTreeUtil.getParentOfType(elementAt, KtFunction::class.java, false)
+
+    var mainMethodAdded = false
+
     if (mainMethod != null) {
-        result.add(
-            kotlinBreakpointType.LineJavaBreakpointVariant(
-                position,
-                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset),
-                -1
-            )
-        )
+        val bodyExpression = mainMethod.bodyExpression
+        val isLambdaResult = bodyExpression is KtLambdaExpression && bodyExpression.functionLiteral in lambdas
+
+        if (!isLambdaResult) {
+            val variantElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset)
+            result.add(kotlinBreakpointType.LineKotlinBreakpointVariant(position, variantElement, -1))
+            mainMethodAdded = true
+        }
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->
@@ -186,7 +147,9 @@ fun computeVariants(
         }
     }
 
-    result.add(kotlinBreakpointType.JavaBreakpointVariant(position))
+    if (mainMethodAdded && result.size > 1) {
+        result.add(kotlinBreakpointType.KotlinBreakpointVariant(position, lambdas.size))
+    }
 
     return result
 }

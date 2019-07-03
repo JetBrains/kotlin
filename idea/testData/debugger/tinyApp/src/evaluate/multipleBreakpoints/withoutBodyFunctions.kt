@@ -5,13 +5,13 @@ import kotlin.properties.Delegates
 // EXPRESSION: 1 + 1
 // RESULT: 2: I
 val aGet: Int
-    //Breakpoint!
+    //FunctionBreakpoint!
     get() = 1
 
 // EXPRESSION: 1 + 2
 // RESULT: 3: I
 val aGet2: Int
-    //Breakpoint!
+    //FunctionBreakpoint!
     get() { return 1 }
 
 fun fooWithBody(i: Int): Int {
@@ -23,23 +23,23 @@ fun fooWithBody(i: Int): Int {
 
 // EXPRESSION: i
 // RESULT: 2: I
-//Breakpoint!
+//FunctionBreakpoint!
 fun foo(i: Int) = i
 
 // EXPRESSION: i
 // RESULT: 2: I
-//Breakpoint!
+//FunctionBreakpoint!
 fun fooOneLine(i: Int): Int { return 1 }
 
 // EXPRESSION: i
 // RESULT: 2: I
-//Breakpoint!
+//FunctionBreakpoint!
 fun fooEmpty(i: Int) {}
 
 object A {
     // EXPRESSION: test2()
     // RESULT: 2: I
-    //Breakpoint!
+    //FunctionBreakpoint!
     @JvmStatic fun fooWithoutBodyInsideObject() = test2()
     fun test2() = 2
 }

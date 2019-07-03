@@ -1,10 +1,10 @@
-LineBreakpoint created at withoutBodyFunctions.kt:9
-LineBreakpoint created at withoutBodyFunctions.kt:15
+FunctionBreakpoint created at withoutBodyFunctions.kt:9
+FunctionBreakpoint created at withoutBodyFunctions.kt:15
 LineBreakpoint created at withoutBodyFunctions.kt:21
-LineBreakpoint created at withoutBodyFunctions.kt:27
-LineBreakpoint created at withoutBodyFunctions.kt:32
-LineBreakpoint created at withoutBodyFunctions.kt:37
-LineBreakpoint created at withoutBodyFunctions.kt:43
+FunctionBreakpoint created at withoutBodyFunctions.kt:27
+FunctionBreakpoint created at withoutBodyFunctions.kt:32
+FunctionBreakpoint created at withoutBodyFunctions.kt:37
+FunctionBreakpoint created at withoutBodyFunctions.kt:43
 Run Java
 Connected to the target VM
 withoutBodyFunctions.kt:9
