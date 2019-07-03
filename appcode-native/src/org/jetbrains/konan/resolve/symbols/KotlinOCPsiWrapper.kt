@@ -15,22 +15,17 @@ import com.jetbrains.cidr.lang.search.scopes.OCSearchScope
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 
 class KotlinOCPsiWrapper(
-    private val myPsi: PsiElement,
-    private val mySymbol: OCSymbol
+    val psi: PsiElement,
+    private val symbol: OCSymbol
 ) : FakePsiElement(), PsiElement, OCSymbolDeclarator<OCSymbol>, PsiNamedElement {
 
-    override fun getParent(): PsiElement = myPsi.containingFile
-    override fun getSymbol(): OCSymbol = mySymbol
+    override fun getParent(): PsiElement = psi.containingFile
+    override fun getSymbol(): OCSymbol = symbol
 
-    override fun getTextRange(): TextRange = myPsi.textRange
-    override fun getTextOffset(): Int = myPsi.textOffset
+    override fun getTextRange(): TextRange = psi.textRange
+    override fun getTextOffset(): Int = psi.textOffset
 
-    val psi: PsiElement
-        get() = myPsi
-
-    override fun getName(): String {
-        return mySymbol.name
-    }
+    override fun getName(): String = symbol.name
 
     override fun getUseScope(): SearchScope {
         //todo better scope inference
