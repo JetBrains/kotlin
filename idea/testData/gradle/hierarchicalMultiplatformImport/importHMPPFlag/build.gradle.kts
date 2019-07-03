@@ -1,6 +1,6 @@
 plugins {
     // TODO parametrization
-    kotlin("multiplatform").version("1.3.40-dev-1840")
+    kotlin("multiplatform").version("1.3.40")
 }
 
 repositories {
