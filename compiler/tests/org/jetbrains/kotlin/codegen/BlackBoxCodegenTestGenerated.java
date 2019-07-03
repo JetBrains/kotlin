@@ -20083,6 +20083,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/onTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
                 }
 
+                @TestMetadata("arrayKClass.kt")
+                public void testArrayKClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/arrayKClass.kt");
+                }
+
                 @TestMetadata("classLiteralWithExpectedType.kt")
                 public void testClassLiteralWithExpectedType() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/classLiteralWithExpectedType.kt");

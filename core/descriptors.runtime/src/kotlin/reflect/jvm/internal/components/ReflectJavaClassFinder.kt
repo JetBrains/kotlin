@@ -46,7 +46,7 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
 
 fun ClassLoader.tryLoadClass(fqName: String) =
     try {
-        loadClass(fqName)
+        Class.forName(fqName, false, this)
     } catch (e: ClassNotFoundException) {
         null
     }
