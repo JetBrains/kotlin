@@ -87,26 +87,15 @@ class KotlinFacetEditorGeneralTab(
         // UI components related to MPP target platforms
         lateinit var targetPlatformSelectSingleCombobox: ComboBox<TargetPlatformWrapper>
         lateinit var targetPlatformWrappers: List<TargetPlatformWrapper>
-        lateinit var targetPlatformSelectMultipleCheckboxes: Map<SimplePlatform, ThreeStateCheckBox>
-        private fun isTargetPlatformForceEditable() = Registry.`is`("kotlin.mpp.editTargetPlatformEnabled")
-
+        lateinit var targetPlatformLabel: JLabel //JTextField?
+        var targetPlatformsCurrentlySelected: TargetPlatform? = null
 
         private lateinit var projectSettingsLink: HoverHyperlinkLabel
 
         private fun FormBuilder.addTargetPlatformComponents(): FormBuilder {
             return if (configuration?.settings?.isHmppEnabled == true) {
-                val targetPlatformsPanel = JPanel()
-                targetPlatformsPanel.layout = GridLayout(0, 1)
-                targetPlatformSelectMultipleCheckboxes.values.forEach {
-                    targetPlatformsPanel.add(it)
-                    it.isEnabled = isTargetPlatformForceEditable()
-                    if (!isTargetPlatformForceEditable()) {
-                        it.toolTipText = "The project is imported from external build system and could not be edited"
-                    }
-
-                }
-                this.addComponent(JLabel("Selected target platforms:"))
-                this.addLabeledComponent("", targetPlatformsPanel)
+                targetPlatformLabel.toolTipText = "The project is imported from external build system and could not be edited"
+                this.addLabeledComponent("Selected target platforms:", targetPlatformLabel)
             } else {
                 this.addLabeledComponent("&Target platform: ", targetPlatformSelectSingleCombobox)
             }
@@ -139,12 +128,9 @@ class KotlinFacetEditorGeneralTab(
             )
 
             useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
-            targetPlatformSelectMultipleCheckboxes = CommonPlatforms
-                .allSimplePlatforms
-                .flatMap { it.componentPlatforms }
-                .sortedBy(SimplePlatform::platformName)
-                .associateWith { ThreeStateCheckBox(it.platformName).apply { isThirdStateEnabled = isMultiEditor } }
-            targetPlatformWrappers = CommonPlatforms.allDefaultTargetPlatforms.sortedBy { it.oldFashionedDescription }.map { TargetPlatformWrapper(it) }
+            targetPlatformWrappers =
+                CommonPlatforms.allDefaultTargetPlatforms.sortedBy { it.oldFashionedDescription }.map { TargetPlatformWrapper(it) }
+            targetPlatformLabel = JLabel() //JTextField()? targetPlatformLabel.isEditable = false
             targetPlatformSelectSingleCombobox =
                 ComboBox(targetPlatformWrappers.toTypedArray()).apply {
                     setRenderer(object : DefaultListCellRenderer() {
@@ -190,12 +176,6 @@ class KotlinFacetEditorGeneralTab(
             useProjectSettingsCheckBox.addActionListener {
                 updateCompilerConfigurable()
             }
-
-            targetPlatformSelectMultipleCheckboxes.values.forEach {
-                it.addActionListener {
-                    updateCompilerConfigurable()
-                }
-            }
             targetPlatformSelectSingleCombobox.addActionListener {
                 updateCompilerConfigurable()
             }
@@ -224,8 +204,7 @@ class KotlinFacetEditorGeneralTab(
 
         fun getChosenPlatform(): TargetPlatform? {
             return if (configuration?.settings?.isHmppEnabled == true) {
-                val simplePlatforms = targetPlatformSelectMultipleCheckboxes.filter { it.value.isSelected }.map { it.key }.toSet()
-                if (simplePlatforms.isEmpty()) null else TargetPlatform(simplePlatforms)
+                targetPlatformsCurrentlySelected
             } else {
                 targetPlatformSelectSingleCombobox.selectedItemTyped?.targetPlatform
             }
@@ -349,9 +328,6 @@ class KotlinFacetEditorGeneralTab(
             apiVersionComboBox.validateOnChange()
             coroutineSupportComboBox.validateOnChange()
         }
-        editor.targetPlatformSelectMultipleCheckboxes.values.forEach {
-            it.validateOnChange()
-        }
         editor.targetPlatformSelectSingleCombobox.validateOnChange()
 
         editor.updateCompilerConfigurable()
@@ -389,9 +365,10 @@ class KotlinFacetEditorGeneralTab(
         if (!isInitialized) return
         validateOnce {
             editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
-            editor.targetPlatformSelectMultipleCheckboxes.forEach {
-                it.value.isSelected = configuration.settings.targetPlatform?.contains(it.key) ?: false
-            }
+            editor.targetPlatformsCurrentlySelected = configuration.settings.targetPlatform
+            editor.targetPlatformLabel.text =
+                editor.targetPlatformsCurrentlySelected?.componentPlatforms?.map { it.oldFashionedDescription }?.joinToString(", ")
+                    ?: "<none>"
             editor.targetPlatformSelectSingleCombobox.selectedItem = configuration.settings.targetPlatform?.let {
                 val index = editor.targetPlatformWrappers.indexOf(TargetPlatformWrapper(it))
                 if (index >= 0) {
@@ -412,7 +389,9 @@ class KotlinFacetEditorGeneralTab(
             with(configuration.settings) {
                 useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
                 editor.getChosenPlatform()?.let {
-                    if (it != targetPlatform) {
+                    if (it != targetPlatform ||
+                        isModified // work-around due to hacked equals
+                    ) {
                         val platformArguments = when {
                             it.isJvm() -> editor.compilerConfigurable.k2jvmCompilerArguments
                             it.isJs() -> editor.compilerConfigurable.k2jsCompilerArguments
