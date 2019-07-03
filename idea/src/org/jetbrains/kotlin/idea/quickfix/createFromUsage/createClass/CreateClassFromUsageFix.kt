@@ -26,7 +26,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.*
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.module
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -201,7 +200,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
 
             val targetDirectory = dialog.targetDirectory ?: return
             val fileName = "$className.${KotlinFileType.EXTENSION}"
-            val packageFqName = targetDirectory.getPackage()?.qualifiedName?.let { FqName(it).quoteIfNeeded() }
+            val packageFqName = targetDirectory.getFqNameWithImplicitPrefix()?.quoteIfNeeded()
 
             file.project.executeWriteCommand(text) {
                 val targetFile = getOrCreateKotlinFile(fileName, targetDirectory, (packageFqName ?: defaultPackageFqName).asString())

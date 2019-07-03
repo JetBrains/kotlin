@@ -69,6 +69,11 @@ public class CopyTestGenerated extends AbstractCopyTest {
         runTest("idea/testData/refactoring/copy/copyFileFromDefaultPackageToDefaultPackage/copyFIleToDefaultPackage.test");
     }
 
+    @TestMetadata("copyFileFromDefaultPackageWithImpicitPrefix/copyFileFromDefaultPackageWithImplicitPrefix.test")
+    public void testCopyFileFromDefaultPackageWithImpicitPrefix_CopyFileFromDefaultPackageWithImplicitPrefix() throws Exception {
+        runTest("idea/testData/refactoring/copy/copyFileFromDefaultPackageWithImpicitPrefix/copyFileFromDefaultPackageWithImplicitPrefix.test");
+    }
+
     @TestMetadata("copyFIleRetainContent/copyFIleRetainContent.test")
     public void testCopyFIleRetainContent_CopyFIleRetainContent() throws Exception {
         runTest("idea/testData/refactoring/copy/copyFIleRetainContent/copyFIleRetainContent.test");

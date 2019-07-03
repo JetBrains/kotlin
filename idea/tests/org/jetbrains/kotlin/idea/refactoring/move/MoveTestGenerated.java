@@ -289,6 +289,11 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("idea/testData/refactoring/move/kotlin/moveFile/moveMultipleFIles/moveMultipleFiles.test");
     }
 
+    @TestMetadata("kotlin/moveFile/moveMultipleFIlesWithImplicitPrefix/moveMultipleFilesWithImplicitPrefix.test")
+    public void testKotlin_moveFile_moveMultipleFIlesWithImplicitPrefix_MoveMultipleFilesWithImplicitPrefix() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveFile/moveMultipleFIlesWithImplicitPrefix/moveMultipleFilesWithImplicitPrefix.test");
+    }
+
     @TestMetadata("kotlin/moveFile/packageWithQuotation/moveFileToPackageWithQuotation.test")
     public void testKotlin_moveFile_packageWithQuotation_MoveFileToPackageWithQuotation() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveFile/packageWithQuotation/moveFileToPackageWithQuotation.test");

@@ -32,7 +32,6 @@ import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageBase
@@ -71,8 +70,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
-import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
@@ -83,7 +80,6 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
-import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -95,7 +91,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
-import java.io.File
 import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
@@ -111,14 +106,14 @@ const val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG
 fun getOrCreateKotlinFile(
     fileName: String,
     targetDir: PsiDirectory,
-    packageName: String? = targetDir.getPackage()?.qualifiedName
+    packageName: String? = targetDir.getFqNameWithImplicitPrefix()?.asString()
 ): KtFile? =
     (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir, packageName)) as? KtFile
 
 fun createKotlinFile(
     fileName: String,
     targetDir: PsiDirectory,
-    packageName: String? = targetDir.getPackage()?.qualifiedName
+    packageName: String? = targetDir.getFqNameWithImplicitPrefix()?.asString()
 ): KtFile {
     targetDir.checkCreateFile(fileName)
     val packageFqName = packageName?.let(::FqName) ?: FqName.ROOT

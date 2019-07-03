@@ -39,14 +39,16 @@ fun PsiFile.getFqNameByDirectory(): FqName {
     return qualifiedNameByDirectory?.let(::FqName) ?: FqName.ROOT
 }
 
-fun PsiDirectory.getFqNameWithImplicitPrefix(): FqName {
-    val packageFqName = getPackage()?.qualifiedName?.let(::FqName) ?: FqName.ROOT
+fun PsiDirectory.getFqNameWithImplicitPrefix(): FqName? {
+    val packageFqName = getPackage()?.qualifiedName?.let(::FqName) ?: return null
     sourceRoot?.takeIf { !it.hasExplicitPackagePrefix(project) }?.let { sourceRoot ->
         val implicitPrefix = PerModulePackageCacheService.getInstance(project).getImplicitPackagePrefix(sourceRoot)
         return FqName.fromSegments((implicitPrefix.pathSegments() + packageFqName.pathSegments()).map { it.asString() })
     }
     return packageFqName
 }
+
+fun PsiDirectory.getFqNameWithImplicitPrefixOrRoot(): FqName = getFqNameWithImplicitPrefix() ?: FqName.ROOT
 
 private fun VirtualFile.hasExplicitPackagePrefix(project: Project): Boolean =
     toPsiDirectory(project)?.getPackage()?.qualifiedName?.isNotEmpty() == true

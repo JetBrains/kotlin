@@ -31,7 +31,7 @@ import com.intellij.ui.components.JBLabelDecorator
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
-import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.util.onTextChange
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -138,7 +138,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             }
 
             val singleFile = jetFiles.singleOrNull()
-            isSelected = singleFile == null || singleFile.packageMatchesDirectory()
+            isSelected = singleFile == null || singleFile.packageMatchesDirectoryOrImplicit()
             text = "Update package directive (Kotlin files)"
         }
     }

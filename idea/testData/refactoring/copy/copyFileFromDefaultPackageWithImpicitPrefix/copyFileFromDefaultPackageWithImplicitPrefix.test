@@ -1,0 +1,4 @@
+{
+  "mainFile": "test.kt",
+  "targetPackage": "bar"
+}

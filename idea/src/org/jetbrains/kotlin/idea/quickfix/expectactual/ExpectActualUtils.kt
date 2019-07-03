@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.findOrCreateDirectoryForPackage
-import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.overrideImplement.MemberGenerateMode
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.NO_BODY
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -57,7 +56,7 @@ fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): K
         val fileNameWithExtension = "$fileName.kt"
         val existingFile = directory.findFile(fileNameWithExtension)
         val packageName =
-            if (packageDirective?.packageNameExpression == null) directory.getPackage()?.qualifiedName
+            if (packageDirective?.packageNameExpression == null) directory.getFqNameWithImplicitPrefix()?.asString()
             else packageDirective.fqName.asString()
         if (existingFile is KtFile) {
             val existingPackageDirective = existingFile.packageDirective

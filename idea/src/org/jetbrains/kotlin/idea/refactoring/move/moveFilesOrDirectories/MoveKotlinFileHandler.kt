@@ -17,15 +17,14 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 
@@ -44,24 +43,23 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     private fun KtFile.getPackageNameInfo(newParent: PsiDirectory?, clearUserData: Boolean): ContainerChangeInfo? {
-        val shouldUpdatePackageDirective = updatePackageDirective ?: packageMatchesDirectory()
+        val shouldUpdatePackageDirective = updatePackageDirective ?: packageMatchesDirectoryOrImplicit()
         updatePackageDirective = if (clearUserData) null else shouldUpdatePackageDirective
 
         if (!shouldUpdatePackageDirective) return null
 
         val oldPackageName = packageFqName
-        val newPackage = newParent?.getPackage() ?: return ContainerChangeInfo(
+        val newPackageName = newParent?.getFqNameWithImplicitPrefix() ?: return ContainerChangeInfo(
             ContainerInfo.Package(oldPackageName),
             ContainerInfo.UnknownPackage
         )
 
-        val newPackageName = FqNameUnsafe(newPackage.qualifiedName)
         if (oldPackageName.asString() == newPackageName.asString()
             && ModuleUtilCore.findModuleForPsiElement(this) == ModuleUtilCore.findModuleForPsiElement(newParent)
         ) return null
         if (!newPackageName.hasIdentifiersOnly()) return null
 
-        return ContainerChangeInfo(ContainerInfo.Package(oldPackageName), ContainerInfo.Package(newPackageName.toSafe()))
+        return ContainerChangeInfo(ContainerInfo.Package(oldPackageName), ContainerInfo.Package(newPackageName))
     }
 
     fun initMoveProcessor(psiFile: PsiFile, newParent: PsiDirectory?, withConflicts: Boolean): MoveKotlinDeclarationsProcessor? {

@@ -158,7 +158,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     private static boolean arePackagesAndDirectoryMatched(List<KtFile> sourceFiles) {
         for (KtFile sourceFile : sourceFiles) {
-            if (!PackageUtilsKt.packageMatchesDirectory(sourceFile)) return false;
+            if (!PackageUtilsKt.packageMatchesDirectoryOrImplicit(sourceFile)) return false;
         }
         return true;
     }

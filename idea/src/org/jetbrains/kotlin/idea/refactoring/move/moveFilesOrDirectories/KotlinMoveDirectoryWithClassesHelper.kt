@@ -16,6 +16,7 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Function
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
@@ -103,8 +104,8 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
         val moveContextMap = getOrCreateMoveContextMap()
         moveContextMap[file] = MoveContext(moveDestination, moveDeclarationsProcessor)
         if (moveDeclarationsProcessor != null) {
-            moveDestination.getPackage()?.let { newPackage ->
-                file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded()
+            moveDestination.getFqNameWithImplicitPrefix()?.quoteIfNeeded()?.let {
+                file.packageDirective?.fqName = it
             }
         }
         return true
