@@ -11,6 +11,7 @@ import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
@@ -27,14 +28,12 @@ import org.jetbrains.kotlin.types.KotlinType
 
 internal abstract class KtUltraLightMethod(
     internal val delegate: LightMethodBuilder,
-    closestDeclarationForOrigin: KtDeclaration?,
+    lightMemberOrigin: LightMemberOrigin?,
     protected val support: KtUltraLightSupport,
     containingClass: KtLightClass
 ) : KtLightMethodImpl(
     { delegate },
-    closestDeclarationForOrigin?.let {
-        LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER)
-    },
+    lightMemberOrigin,
     containingClass
 ), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiMethod> {
 
@@ -103,15 +102,22 @@ internal abstract class KtUltraLightMethod(
 
 internal class KtUltraLightMethodForSourceDeclaration(
     delegate: LightMethodBuilder,
-    declaration: KtDeclaration,
+    lightMemberOrigin: LightMemberOrigin?,
     support: KtUltraLightSupport,
     containingClass: KtLightClass
 ) : KtUltraLightMethod(
     delegate,
-    declaration,
+    lightMemberOrigin,
     support,
     containingClass
 ) {
+    constructor(
+        delegate: LightMethodBuilder,
+        declaration: KtDeclaration,
+        support: KtUltraLightSupport,
+        containingClass: KtLightClass
+    ) : this(delegate, LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER), support, containingClass)
+
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
         get() = kotlinOrigin?.getKotlinType()
 
@@ -128,12 +134,12 @@ internal class KtUltraLightMethodForSourceDeclaration(
 internal class KtUltraLightMethodForDescriptor(
     private val descriptor: FunctionDescriptor,
     delegate: LightMethodBuilder,
-    closestDeclarationForOrigin: KtDeclaration?,
+    lightMemberOrigin: LightMemberOrigin?,
     support: KtUltraLightSupport,
     containingClass: KtUltraLightClass
 ) : KtUltraLightMethod(
     delegate,
-    closestDeclarationForOrigin,
+    lightMemberOrigin,
     support,
     containingClass
 ) {

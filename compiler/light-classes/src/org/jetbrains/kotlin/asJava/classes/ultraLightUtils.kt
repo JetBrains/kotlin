@@ -18,6 +18,7 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -217,7 +219,8 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
             ?: DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtDeclaration
             ?: kotlinOrigin
 
-    val wrapper = KtUltraLightMethodForDescriptor(descriptor, lightMethod, kotlinOrigin, support, this)
+    val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, JvmDeclarationOriginKind.OTHER)
+    val wrapper = KtUltraLightMethodForDescriptor(descriptor, lightMethod, lightMemberOrigin, support, this)
 
     descriptor.extensionReceiverParameter?.let { receiver ->
         lightMethod.addParameter(KtUltraLightParameterForDescriptor(receiver, kotlinOrigin, support, wrapper))

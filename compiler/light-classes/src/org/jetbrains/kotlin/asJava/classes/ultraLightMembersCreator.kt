@@ -11,6 +11,7 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
 internal class UltraLightMembersCreator(
     private val containingClass: KtLightClass,
@@ -364,9 +366,16 @@ internal class UltraLightMembersCreator(
         val result = arrayListOf<KtLightMethod>()
 
         if (needsAccessor(ktGetter)) {
-            val getterName = computeMethodName(ktGetter ?: declaration, JvmAbi.getterName(propertyName), MethodType.GETTER)
-            val getterPrototype = lightMethod(getterName, ktGetter ?: declaration, onlyJvmStatic || forceStatic)
-            val getterWrapper = KtUltraLightMethodForSourceDeclaration(getterPrototype, declaration, support, containingClass)
+            val auxiliaryOrigin = ktGetter ?: declaration
+            val lightMemberOrigin = LightMemberOriginForDeclaration(
+                originalElement = declaration,
+                originKind = JvmDeclarationOriginKind.OTHER,
+                auxiliaryOriginalElement = auxiliaryOrigin
+            )
+
+            val getterName = computeMethodName(auxiliaryOrigin, JvmAbi.getterName(propertyName), MethodType.GETTER)
+            val getterPrototype = lightMethod(getterName, auxiliaryOrigin, onlyJvmStatic || forceStatic)
+            val getterWrapper = KtUltraLightMethodForSourceDeclaration(getterPrototype, lightMemberOrigin, support, containingClass)
             val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper, isSuspendFunction = false) }
             getterPrototype.setMethodReturnType { getterType }
             addReceiverParameter(declaration, getterWrapper)
@@ -374,10 +383,17 @@ internal class UltraLightMembersCreator(
         }
 
         if (mutable && needsAccessor(ktSetter)) {
-            val setterName = computeMethodName(ktSetter ?: declaration, JvmAbi.setterName(propertyName), MethodType.SETTER)
-            val setterPrototype = lightMethod(setterName, ktSetter ?: declaration, onlyJvmStatic || forceStatic)
+            val auxiliaryOrigin = ktSetter ?: declaration
+            val lightMemberOrigin = LightMemberOriginForDeclaration(
+                originalElement = declaration,
+                originKind = JvmDeclarationOriginKind.OTHER,
+                auxiliaryOriginalElement = auxiliaryOrigin
+            )
+
+            val setterName = computeMethodName(auxiliaryOrigin, JvmAbi.setterName(propertyName), MethodType.SETTER)
+            val setterPrototype = lightMethod(setterName, auxiliaryOrigin, onlyJvmStatic || forceStatic)
                 .setMethodReturnType(PsiType.VOID)
-            val setterWrapper = KtUltraLightMethodForSourceDeclaration(setterPrototype, declaration, support, containingClass)
+            val setterWrapper = KtUltraLightMethodForSourceDeclaration(setterPrototype, lightMemberOrigin, support, containingClass)
             addReceiverParameter(declaration, setterWrapper)
             val setterParameter = ktSetter?.parameter
             setterPrototype.addParameter(

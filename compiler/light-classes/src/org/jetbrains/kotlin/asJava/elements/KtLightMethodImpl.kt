@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.scope.PsiScopeProcessor
@@ -187,11 +188,33 @@ open class KtLightMethodImpl protected constructor(
         }
     }
 
+    override fun getTextOffset(): Int {
+        val auxiliaryOrigin = lightMemberOrigin?.auxiliaryOriginalElement
+        if (auxiliaryOrigin is KtPropertyAccessor) {
+            return auxiliaryOrigin.textOffset
+        }
+
+        return super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        val auxiliaryOrigin = lightMemberOrigin?.auxiliaryOriginalElement
+        if (auxiliaryOrigin is KtPropertyAccessor) {
+            return auxiliaryOrigin.textRange
+        }
+
+        return super.getTextRange()
+    }
+
     companion object Factory {
         private fun adjustMethodOrigin(origin: LightMemberOriginForDeclaration?): LightMemberOriginForDeclaration? {
             val originalElement = origin?.originalElement
             if (originalElement is KtPropertyAccessor) {
-                return origin.copy(originalElement.getStrictParentOfType<KtProperty>()!!, origin.originKind)
+                return origin.copy(
+                    originalElement = originalElement.getStrictParentOfType<KtProperty>()!!,
+                    originKind = origin.originKind,
+                    auxiliaryOriginalElement = originalElement
+                )
             }
             return origin
         }
