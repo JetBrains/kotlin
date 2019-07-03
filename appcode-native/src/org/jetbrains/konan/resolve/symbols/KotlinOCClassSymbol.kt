@@ -30,17 +30,14 @@ abstract class KotlinOCClassSymbol<Stub : ObjCClass<*>>(stub: Stub, project: Pro
 
     override fun getProtocolNames(): List<String> = stub.superProtocols
 
-    override fun getMembersCount(): Int {
-        return myMembers?.size() ?: 0
-    }
+    override fun getMembersCount(): Int = myMembers?.size() ?: 0
 
     override fun <T : OCMemberSymbol?> processMembers(
         memberName: String?,
         memberClass: Class<out T>?,
         processor: Processor<in T>
     ): Boolean {
-        val members = myMembers
-        if (members == null) return true
+        val members = myMembers ?: return true
 
         val myProcessor: Processor<OCMemberSymbol> = if (memberClass != null) {
             Processor { member -> !memberClass.isAssignableFrom(member.javaClass) || processor.process(member as T) }

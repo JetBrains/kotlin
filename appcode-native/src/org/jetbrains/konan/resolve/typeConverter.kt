@@ -85,6 +85,8 @@ private class TypeBuilder(
             ObjCVoidType -> {
                 return OCVoidType.instance()
             }
+            is ObjCGenericTypeDeclaration -> TODO()
+            ObjCMetaClassType -> TODO()
         }
     }
 

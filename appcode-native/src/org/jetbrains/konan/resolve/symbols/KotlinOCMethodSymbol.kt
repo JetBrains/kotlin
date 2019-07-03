@@ -44,6 +44,7 @@ class KotlinOCMethodSymbol(
 
     override fun getSelectors(): List<OCMethodSymbol.SelectorPartSymbol> = mySelectors
 
+    @Suppress("UNCHECKED_CAST")
     override fun getParameterSymbols(): List<OCDeclaratorSymbol> = Collections.unmodifiableList(mySelectors) as List<OCDeclaratorSymbol>
 
     override fun getAssociatedSymbol(project: Project): OCMethodSymbol? = null
@@ -52,8 +53,7 @@ class KotlinOCMethodSymbol(
 
     override fun isStatic(): Boolean = !stub.isInstanceMethod
 
-    override fun getNameWithParent(context: OCResolveContext): String =
-        (if (isStatic) "+" else "-") + "[" + parent.name + " " + name + "]"
+    override fun getNameWithParent(context: OCResolveContext): String = "${if (isStatic) "+" else "-"}[${parent.name} $name]"
 
     fun setSelectors(selectors: List<OCMethodSymbol.SelectorPartSymbol>) {
         mySelectors = selectors

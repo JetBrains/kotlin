@@ -33,9 +33,8 @@ class KotlinOCInterfaceSymbol(stub: ObjCInterface, project: Project) : KotlinOCC
 
     override fun isVariadicTemplate(): Boolean = false
 
-    override fun getTemplateParameters(): List<OCTypeParameterSymbol<OCTypeArgument>> {
-        return genericParameters as List<OCTypeParameterSymbol<OCTypeArgument>>
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun getTemplateParameters(): List<OCTypeParameterSymbol<OCTypeArgument>> = genericParameters as List<OCTypeParameterSymbol<OCTypeArgument>>
 
     override fun isSpecialization(): Boolean = false
 
@@ -51,7 +50,5 @@ class KotlinOCInterfaceSymbol(stub: ObjCInterface, project: Project) : KotlinOCC
 
     override fun getGenericParameters(): List<OCGenericParameterSymbol> = emptyList()
 
-    override fun getType(): OCType {
-        return OCInterfaceSymbolImpl.getInterfaceTypeImpl(this)
-    }
+    override fun getType(): OCType = OCInterfaceSymbolImpl.getInterfaceTypeImpl(this)
 }

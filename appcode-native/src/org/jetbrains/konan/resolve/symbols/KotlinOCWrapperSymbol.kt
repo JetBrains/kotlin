@@ -48,6 +48,6 @@ abstract class KotlinOCWrapperSymbol<T : Stub<*>>(
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return super.isSameSymbol(symbol, project)
-                || symbol is KotlinLightSymbol && psi() == symbol.locateDefinition(project)
+               || symbol is KotlinLightSymbol && psi() == symbol.locateDefinition(project)
     }
 }
