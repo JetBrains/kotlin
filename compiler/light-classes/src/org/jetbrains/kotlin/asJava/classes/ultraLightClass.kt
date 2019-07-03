@@ -175,7 +175,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             result.add(
-                KtUltraLightField(
+                KtUltraLightFieldForSourceDeclaration(
                     companion,
                     membersBuilder.generateUniqueFieldName(companion.name.orEmpty(), usedNames),
                     this,
@@ -211,7 +211,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         if (isNamedObject()) {
             result.add(
-                KtUltraLightField(
+                KtUltraLightFieldForSourceDeclaration(
                     this.classOrObject,
                     JvmAbi.INSTANCE_FIELD,
                     this,

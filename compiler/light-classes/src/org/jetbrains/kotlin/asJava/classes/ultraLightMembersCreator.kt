@@ -91,7 +91,7 @@ internal class UltraLightMembersCreator(
             modifiers.add(PsiModifier.STATIC)
         }
 
-        return KtUltraLightField(variable, fieldName, containingClass, support, modifiers)
+        return KtUltraLightFieldForSourceDeclaration(variable, fieldName, containingClass, support, modifiers)
     }
 
     private fun hasBackingField(property: KtProperty): Boolean {

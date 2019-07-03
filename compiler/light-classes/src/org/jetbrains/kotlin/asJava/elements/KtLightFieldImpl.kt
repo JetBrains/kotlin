@@ -102,13 +102,14 @@ sealed class KtLightFieldImpl<D : PsiField>(
         override fun resolveMethodGenerics() = clsDelegate.resolveMethodGenerics()
     }
 
-    class KtLightFieldForDeclaration(origin: LightMemberOrigin?, computeDelegate: () -> PsiField, containingClass: KtLightClass, dummyDelegate: PsiField?) :
-            KtLightFieldImpl<PsiField>(origin, computeDelegate, containingClass, dummyDelegate)
+    class KtLightFieldForSourceDeclaration(origin: LightMemberOrigin?, computeDelegate: () -> PsiField, containingClass: KtLightClass, dummyDelegate: PsiField?) :
+        KtLightFieldImpl<PsiField>(origin, computeDelegate, containingClass, dummyDelegate),
+        KtLightFieldForSourceDeclarationSupport
 
     companion object Factory {
         fun create(origin: LightMemberOrigin?, delegate: PsiField, containingClass: KtLightClass): KtLightField = when (delegate) {
             is PsiEnumConstant -> KtLightEnumConstant(origin, { delegate }, containingClass, null)
-            else -> KtLightFieldForDeclaration(origin, { delegate }, containingClass, null)
+            else -> KtLightFieldForSourceDeclaration(origin, { delegate }, containingClass, null)
         }
 
         fun lazy(
@@ -121,7 +122,7 @@ sealed class KtLightFieldImpl<D : PsiField>(
                 @Suppress("UNCHECKED_CAST")
                 return KtLightEnumConstant(origin, computeRealDelegate as () -> PsiEnumConstant, containingClass, dummyDelegate)
             }
-            return KtLightFieldForDeclaration(origin, computeRealDelegate, containingClass, dummyDelegate)
+            return KtLightFieldForSourceDeclaration(origin, computeRealDelegate, containingClass, dummyDelegate)
         }
 
         fun fromClsFields(delegateClass: PsiClass, containingClass: KtLightClass) = delegateClass.fields.map {

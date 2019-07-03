@@ -12,10 +12,7 @@ import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
-import org.jetbrains.kotlin.asJava.elements.KtUltraLightSimpleModifierList
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -54,7 +51,16 @@ private class KtUltraLightSimpleModifierListField(
     override fun copy() = KtUltraLightSimpleModifierListField(support, declaration, owner, modifiers)
 }
 
-internal open class KtUltraLightField(
+internal class KtUltraLightFieldForSourceDeclaration(
+    declaration: KtNamedDeclaration,
+    name: String,
+    containingClass: KtLightClass,
+    support: KtUltraLightSupport,
+    modifiers: Set<String>
+) : KtUltraLightFieldImpl(declaration, name, containingClass, support, modifiers),
+    KtLightFieldForSourceDeclarationSupport
+
+internal open class KtUltraLightFieldImpl protected constructor(
     protected val declaration: KtNamedDeclaration,
     name: String,
     private val containingClass: KtLightClass,

@@ -21,7 +21,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl.KtLightFieldForDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightFieldForSourceDeclarationSupport
 import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.psi.KtProperty
@@ -80,7 +80,8 @@ class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
         holder: ProblemsHolder,
         additionalTypeCheck: (PsiType) -> Boolean = { true }
     ) {
-        val resolvedLightField = (valueExpression as? PsiReference)?.resolve() as? KtLightFieldForDeclaration ?: return
+        val resolvedLightField = (valueExpression as? PsiReference)?.resolve() as? KtLightFieldForSourceDeclarationSupport
+            ?: return
         val resolvedProperty = resolvedLightField.kotlinOrigin as? KtProperty ?: return
         with(MayBeConstantInspection) {
             if (resolvedProperty.annotationEntries.isEmpty()) return
