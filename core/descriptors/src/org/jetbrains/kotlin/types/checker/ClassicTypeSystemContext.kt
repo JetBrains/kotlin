@@ -593,7 +593,6 @@ fun Variance.convertVariance(): TypeVariance {
 }
 
 
-@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 @UseExperimental(ExperimentalContracts::class)
 fun requireOrDescribe(condition: Boolean, value: Any?) {
     contract {

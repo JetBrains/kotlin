@@ -331,6 +331,7 @@ allprojects {
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     val commonCompilerArgs = listOfNotNull(
+        "-Xuse-experimental=kotlin.Experimental",
         "-Xallow-kotlin-package",
         "-Xread-deserialized-contracts",
         "-Xjvm-default=compatibility",
