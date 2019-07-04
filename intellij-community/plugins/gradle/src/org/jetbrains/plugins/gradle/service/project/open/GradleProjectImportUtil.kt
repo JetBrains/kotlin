@@ -10,20 +10,20 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 
 @ApiStatus.Experimental
-fun canSetupGradleProjectFrom(file: VirtualFile): Boolean =
-  GradleExternalSystemImportProvider().canSetupProjectFrom(file)
+fun canOpenGradleProject(file: VirtualFile): Boolean =
+  GradleOpenProjectProvider().canOpenProject(file)
 
 @ApiStatus.Experimental
 fun openGradleProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? =
-  GradleExternalSystemImportProvider().openProject(projectFile, projectToClose, forceOpenInNewFrame)
+  GradleOpenProjectProvider().openProject(projectFile, projectToClose, forceOpenInNewFrame)
 
 @ApiStatus.Experimental
 fun linkAndRefreshGradleProject(projectFilePath: String, project: Project) {
   val localFileSystem = LocalFileSystem.getInstance()
   val projectFile = localFileSystem.refreshAndFindFileByPath(projectFilePath) ?: return
-  GradleExternalSystemImportProvider().linkAndRefreshProject(projectFile, project)
+  GradleOpenProjectProvider().linkToExistingProject(projectFile, project)
 }
 
 @ApiStatus.Experimental
 fun setupGradleSettings(settings: GradleProjectSettings, projectDirectory: String, project: Project, projectSdk: Sdk? = null) =
-  GradleExternalSystemImportProvider().setupGradleSettings(settings, projectDirectory, project, projectSdk)
+  GradleOpenProjectProvider().setupGradleSettings(settings, projectDirectory, project, projectSdk)

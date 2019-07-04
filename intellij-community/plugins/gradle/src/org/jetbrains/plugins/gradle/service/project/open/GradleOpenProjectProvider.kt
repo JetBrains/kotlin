@@ -2,7 +2,7 @@
 package org.jetbrains.plugins.gradle.service.project.open
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.externalSystem.importing.AbstractExternalSystemImportProvider
+import com.intellij.openapi.externalSystem.importing.AbstractOpenProjectProvider
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
@@ -29,7 +29,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleEnvironment
 import org.jetbrains.plugins.gradle.util.GradleUtil
 
-internal class GradleExternalSystemImportProvider : AbstractExternalSystemImportProvider() {
+internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   override fun isProjectFile(file: VirtualFile): Boolean {
     return !file.isDirectory && GradleConstants.BUILD_FILE_EXTENSIONS.any { file.name.endsWith(it) }
   }
@@ -41,8 +41,10 @@ internal class GradleExternalSystemImportProvider : AbstractExternalSystemImport
     attachGradleProjectAndRefresh(gradleProjectSettings, project)
   }
 
-  override fun finalizeProjectSetup(projectDirectory: String, project: Project) {
-    GradleUnlinkedProjectProcessor.enableNotifications(project)
+  override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
+    return super.openProject(projectFile, projectToClose, forceOpenInNewFrame)?.also {
+      GradleUnlinkedProjectProcessor.enableNotifications(it)
+    }
   }
 
   private fun attachGradleProjectAndRefresh(settings: ExternalProjectSettings, project: Project) {

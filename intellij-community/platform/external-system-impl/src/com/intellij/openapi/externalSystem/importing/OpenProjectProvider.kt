@@ -6,11 +6,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Experimental
-interface ProjectImportProvider {
+interface OpenProjectProvider {
 
-  fun canSetupProjectFrom(file: VirtualFile): Boolean
+  fun canOpenProject(file: VirtualFile): Boolean
 
   fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project?
 
-  fun linkAndRefreshProject(projectFile: VirtualFile, project: Project): Boolean
+  fun linkToExistingProject(projectFile: VirtualFile, project: Project): Boolean
 }

@@ -16,7 +16,7 @@ class GradleProjectOpenProcessor : ProjectOpenProcessor() {
     GradleIcons.Gradle
 
   override fun canOpenProject(file: VirtualFile): Boolean =
-    canSetupGradleProjectFrom(file)
+    canOpenGradleProject(file)
 
   override fun doOpenProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     return openGradleProject(projectFile, projectToClose, forceOpenInNewFrame)
