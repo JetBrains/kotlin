@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.*
 import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.nameAsSafeName
 import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.toDelegatedSelfType
@@ -34,10 +35,12 @@ import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.joinTypeParameters
 import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.extractArgumentsFrom
 import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.fillEnumEntryConstructor
 import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.fillConstructors
+import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.toFirUserType
+import org.jetbrains.kotlin.fir.lightTree.DataClassUtil.generateComponentFunctions
+import org.jetbrains.kotlin.fir.lightTree.DataClassUtil.generateCopyFunction
 import org.jetbrains.kotlin.fir.lightTree.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
@@ -48,19 +51,6 @@ class Converter(
     val stubMode: Boolean,
     private val tree: FlyweightCapableTreeStructure<LighterASTNode>
 ) {
-
-    private val CLASS_MODIFIER = TokenSet.create(ENUM_KEYWORD, ANNOTATION_KEYWORD, DATA_KEYWORD, INNER_KEYWORD, COMPANION_KEYWORD)
-    private val MEMBER_MODIFIER = TokenSet.create(OVERRIDE_KEYWORD, LATEINIT_KEYWORD)
-    private val VISIBILITY_MODIFIER = TokenSet.create(PUBLIC_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD)
-    private val VARIANCE_MODIFIER = TokenSet.create(IN_KEYWORD, OUT_KEYWORD)
-    private val FUNCTION_MODIFIER =
-        TokenSet.create(TAILREC_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD, INLINE_KEYWORD, EXTERNAL_KEYWORD, SUSPEND_KEYWORD)
-    private val PROPERTY_MODIFIER = TokenSet.create(CONST_KEYWORD)
-    private val INHERITANCE_MODIFIER = TokenSet.create(ABSTRACT_KEYWORD, FINAL_KEYWORD, OPEN_KEYWORD, SEALED_KEYWORD)
-    private val PARAMETER_MODIFIER = TokenSet.create(VARARG_KEYWORD, NOINLINE_KEYWORD, CROSSINLINE_KEYWORD)
-    private val REIFICATION_MODIFIER = TokenSet.create(REIFIED_KEYWORD)
-    private val PLATFORM_MODIFIER = TokenSet.create(EXPECT_KEYWORD, ACTUAL_KEYWORD)
-
     private val implicitUnitType = FirImplicitUnitTypeRef(session, null)
     private val implicitAnyType = FirImplicitAnyTypeRef(session, null)
     private val implicitEnumType = FirImplicitEnumTypeRef(session, null)
@@ -245,20 +235,19 @@ class Converter(
             }
         }
 
-        classKind = when (modifiers.classModifier) {
-            ClassModifier.ENUM -> ClassKind.ENUM_CLASS
-            ClassModifier.ANNOTATION -> ClassKind.ANNOTATION_CLASS
+        classKind = when {
+            modifiers.isEnum() -> ClassKind.ENUM_CLASS
+            modifiers.isAnnotation() -> ClassKind.ANNOTATION_CLASS
             else -> classKind
         }
         val hasSecondaryConstructor = classBody.hasSecondaryConstructor(classBody.getChildrenAsArray())
-        val className = identifier.nameAsSafeName(if (modifiers.classModifier == ClassModifier.COMPANION) "Companion" else "")
+        val className = identifier.nameAsSafeName(if (modifiers.isCompanion()) "Companion" else "")
 
         val defaultDelegatedSuperTypeRef = when (classKind) {
             ClassKind.ENUM_CLASS -> implicitEnumType
             ClassKind.ANNOTATION_CLASS -> implicitAnnotationType
             else -> implicitAnyType
         }
-        val delegatedSelfTypeRef = className.toDelegatedSelfType(session)
         delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef
 
         return ClassNameUtil.withChildClassName(className) {
@@ -267,43 +256,47 @@ class Converter(
                 null,
                 FirClassSymbol(ClassNameUtil.currentClassId),
                 className,
-                modifiers.visibilityModifier.toVisibility(),
-                modifiers.inheritanceModifier?.toModality(),
-                modifiers.platformModifier == PlatformModifier.EXPECT,
-                modifiers.platformModifier == PlatformModifier.ACTUAL,
+                if (FunctionUtil.firFunctions.isNotEmpty()) Visibilities.LOCAL else modifiers.getVisibility(),
+                modifiers.getModality(),
+                modifiers.hasExpect(),
+                modifiers.hasActual(),
                 classKind,
-                isInner = modifiers.classModifier == ClassModifier.INNER,
-                isCompanion = modifiers.classModifier == ClassModifier.COMPANION,
-                isData = modifiers.classModifier == ClassModifier.DATA,
-                isInline = modifiers.functionModifier == FunctionModifier.INLINE
+                isInner = modifiers.isInner(),
+                isCompanion = modifiers.isCompanion(),
+                isData = modifiers.isDataClass(),
+                isInline = modifiers.hasInline()
             )
             firClass.annotations += modifiers.annotations
             firClass.typeParameters += firTypeParameters
             firClass.joinTypeParameters(typeConstraints)
             firClass.superTypeRefs += superTypeRefs
+            if (firClass.superTypeRefs.isEmpty()) {
+                firClass.superTypeRefs += defaultDelegatedSuperTypeRef
+            }
 
-            var firPrimaryConstructor: FirConstructor? = null
-            if (classKind != ClassKind.INTERFACE && !(primaryConstructor == null && hasSecondaryConstructor)) {
-                val firDelegatedConstructorCall = convertConstructorDelegationCall(null)
-                    .extractArgumentsFrom(superTypeCallEntry, stubMode)
-                firPrimaryConstructor = convertPrimaryConstructor(primaryConstructor)
-                    .apply {
-                        this.returnTypeRef = delegatedSelfTypeRef
-                        this.delegatedConstructor = firDelegatedConstructorCall
-                        firClass.declarations += this
-                    }
+            val delegatedSelfTypeRef = toDelegatedSelfType(firClass)
+            val firPrimaryConstructor: FirConstructor? = convertPrimaryConstructor(
+                primaryConstructor,
+                classKind,
+                modifiers,
+                hasSecondaryConstructor,
+                delegatedSelfTypeRef,
+                delegatedSuperTypeRef!!,
+                superTypeCallEntry
+            )?.apply {
+                firClass.declarations += this
             }
-            getValueParameters(primaryConstructor).forEach {
-                if (it.hasValOrVar()) {
-                    firClass.declarations += it.toFirProperty()
-                }
-            }
+
+            val properties = getValueParameters(primaryConstructor)
+                .filter { it.hasValOrVar() }
+                .map { it.toFirProperty() }
+            firClass.declarations += properties
 
             classBody?.let {
                 if (classKind == ClassKind.ENUM_CLASS) {
                     // separate converter only for enum entries
                     val firEnumEntries = convertEnumClassBody(it) //return enum entries list
-                    firEnumEntries.fillEnumEntryConstructor(firPrimaryConstructor!!, stubMode)
+                    firEnumEntries.fillEnumEntryConstructor(firPrimaryConstructor!!, className.identifier.toFirUserType(session), stubMode)
                     firClass.declarations += firEnumEntries
                 }
                 firClass.declarations += convertClassBody(it)
@@ -313,6 +306,12 @@ class Converter(
                 .filter { it is FirConstructor }
                 .collect(Collectors.toList())
                 .fillConstructors(primaryConstructor != null, delegatedSelfTypeRef, delegatedSuperTypeRef!!)
+
+            if (modifiers.isDataClass() && firPrimaryConstructor != null) {
+                generateComponentFunctions(session, firClass, properties)
+                generateCopyFunction(session, firClass, firPrimaryConstructor, properties)
+                // TODO: equals, hashCode, toString
+            }
 
             return@withChildClassName firClass
         }
@@ -333,8 +332,17 @@ class Converter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      * primaryConstructor branch
      */
-    private fun convertPrimaryConstructor(primaryConstructor: LighterASTNode?): FirConstructorImpl {
-        //if (primaryConstructor == null && hasSecondaryConstructor) return null
+    private fun convertPrimaryConstructor(
+        primaryConstructor: LighterASTNode?,
+        classKind: ClassKind,
+        classModifiers: Modifier,
+        hasSecondaryConstructor: Boolean,
+        delegatedSelfTypeRef: FirTypeRef,
+        delegatedSuperTypeRef: FirTypeRef,
+        superTypeCallEntry: List<FirExpression>
+    ): FirConstructorImpl? {
+        if (primaryConstructor == null && hasSecondaryConstructor) return null
+        if (classKind == ClassKind.INTERFACE) return null
 
         var modifiers = Modifier(session)
         val valueParameters = mutableListOf<ValueParameter>()
@@ -345,17 +353,34 @@ class Converter(
             }
         }
 
+        val defaultVisibility =
+            if (classKind == ClassKind.OBJECT ||
+                classModifiers.getModality() == Modality.SEALED ||
+                classModifiers.isEnum()
+            )
+                Visibilities.PRIVATE
+            else
+                Visibilities.UNKNOWN
+
+        val firDelegatedCall = FirDelegatedConstructorCallImpl(
+            session,
+            null,
+            delegatedSuperTypeRef,
+            isThis = false
+        ).extractArgumentsFrom(superTypeCallEntry, stubMode)
+
         return FirPrimaryConstructorImpl(
             session,
             null,
             FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
-            modifiers.visibilityModifier.toVisibility(),
-            modifiers.platformModifier == PlatformModifier.EXPECT,
-            modifiers.platformModifier == PlatformModifier.ACTUAL,
-            implicitType,            //must be initialized with "delegatedSelfTypeRef" outside of this method
-            null    //must be initialized outside of this method
+            if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
+            modifiers.hasExpect(),
+            modifiers.hasActual(),
+            delegatedSelfTypeRef,
+            firDelegatedCall
         ).apply {
             annotations += modifiers.annotations
+            //this.typeParameters += typeParametersFromSelfType(delegatedSelfTypeRef)
             this.valueParameters += valueParameters.map { it.firValueParameter }
         }
     }
@@ -388,6 +413,8 @@ class Converter(
                 VAR_KEYWORD -> isVar = true
                 IDENTIFIER -> identifier = it.toString()
                 TYPE_REFERENCE -> firType = convertType(it)
+                DOT_QUALIFIED_EXPRESSION,
+                REFERENCE_EXPRESSION,
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
@@ -398,12 +425,12 @@ class Converter(
         val firValueParameter = FirValueParameterImpl(
             session,
             null,
-            Name.identifier(identifier),
+            identifier.nameAsSafeName(),
             firType,
             firExpression,
-            isCrossinline = modifiers.parameterModifier == ParameterModifier.CROSSINLINE,
-            isNoinline = modifiers.parameterModifier == ParameterModifier.NOINLINE,
-            isVararg = modifiers.parameterModifier == ParameterModifier.VARARG
+            isCrossinline = modifiers.hasCrossinline(),
+            isNoinline = modifiers.hasNoinline(),
+            isVararg = modifiers.hasVararg()
         ).apply { annotations += modifiers.annotations }
         return ValueParameter(isVal, isVar, modifiers, firValueParameter)
     }
@@ -466,6 +493,8 @@ class Converter(
         explicitDelegation.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firTypeRef = convertType(it)
+                DOT_QUALIFIED_EXPRESSION,
+                REFERENCE_EXPRESSION,
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
@@ -575,9 +604,9 @@ class Converter(
             session,
             null,
             FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
-            modifiers.visibilityModifier.toVisibility(),
-            modifiers.platformModifier == PlatformModifier.EXPECT,
-            modifiers.platformModifier == PlatformModifier.ACTUAL,
+            modifiers.getVisibility(),
+            modifiers.hasExpect(),
+            modifiers.hasActual(),
             implicitType,               //must be initialized with "delegatedSelfTypeRef" outside of this method
             constructorDelegationCall
         )
@@ -606,7 +635,7 @@ class Converter(
             }
         }
 
-        val enumEntryName = Name.identifier(identifier)
+        val enumEntryName = identifier.nameAsSafeName()
         return ClassNameUtil.withChildClassName(enumEntryName) {
             return@withChildClassName FirEnumEntryImpl(
                 session,
@@ -644,11 +673,12 @@ class Converter(
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                 BLOCK -> firBlock = visitBlock(it)
+                DOT_QUALIFIED_EXPRESSION,
+                REFERENCE_EXPRESSION,
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType,
-                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -658,23 +688,24 @@ class Converter(
                 else implicitType
         }
 
-        val functionName = Name.identifier(identifier)
+        val functionName = identifier.nameAsSafeName()
+        val isLocal = FunctionUtil.firFunctions.isNotEmpty()
         val firFunction = FirMemberFunctionImpl(
             session,
             null,
-            FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName)),
+            FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
             functionName,
-            modifiers.visibilityModifier.toVisibility(),
-            modifiers.inheritanceModifier?.toModality(),
-            modifiers.platformModifier == PlatformModifier.EXPECT,
-            modifiers.platformModifier == PlatformModifier.ACTUAL,
-            modifiers.memberModifier == MemberModifier.OVERRIDE,
-            modifiers.functionModifier == FunctionModifier.OPERATOR,
-            modifiers.functionModifier == FunctionModifier.INFIX,
-            modifiers.functionModifier == FunctionModifier.INLINE,
-            modifiers.functionModifier == FunctionModifier.TAILREC,
-            modifiers.functionModifier == FunctionModifier.EXTERNAL,
-            modifiers.functionModifier == FunctionModifier.SUSPEND,
+            modifiers.getVisibility(),
+            modifiers.getModality(),
+            modifiers.hasExpect(),
+            modifiers.hasActual(),
+            modifiers.hasOverride(),
+            modifiers.hasOperator(),
+            modifiers.hasInfix(),
+            modifiers.hasInline(),
+            modifiers.hasTailrec(),
+            modifiers.hasExternal(),
+            modifiers.hasSuspend(),
             receiverType,
             returnType!!
         )
@@ -715,23 +746,24 @@ class Converter(
                 MODIFIER_LIST -> modifiers = convertModifiers(it)
                 IDENTIFIER -> identifier = it.toString()
                 TYPE_REFERENCE -> firType = convertType(it)
+                DOT_QUALIFIED_EXPRESSION,
+                REFERENCE_EXPRESSION,
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType,
-                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
         return FirValueParameterImpl(
             session,
             null,
-            Name.identifier(identifier),
+            identifier.nameAsSafeName(),
             firType,
             firExpression,
-            isCrossinline = modifiers.parameterModifier == ParameterModifier.CROSSINLINE,
-            isNoinline = modifiers.parameterModifier == ParameterModifier.NOINLINE,
-            isVararg = modifiers.parameterModifier == ParameterModifier.VARARG
+            isCrossinline = modifiers.hasCrossinline(),
+            isNoinline = modifiers.hasNoinline(),
+            isVararg = modifiers.hasVararg()
         ).apply { annotations += modifiers.annotations }
     }
 
@@ -752,7 +784,7 @@ class Converter(
         return FirValueParameterImpl(
             session,
             null,
-            identifier?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED,
+            identifier.nameAsSafeName(),
             firType ?: implicitType,
             null,
             isCrossinline = false,
@@ -783,9 +815,9 @@ class Converter(
             firValueParameter.name,
             if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef,
             null,//TODO implement
-            isCrossinline = modifiers.parameterModifier == ParameterModifier.CROSSINLINE,
-            isNoinline = modifiers.parameterModifier == ParameterModifier.NOINLINE,
-            isVararg = modifiers.parameterModifier == ParameterModifier.VARARG
+            isCrossinline = modifiers.hasCrossinline(),
+            isNoinline = modifiers.hasNoinline(),
+            isVararg = modifiers.hasVararg()
         ).apply {
             annotations += modifiers.annotations
         }
@@ -843,15 +875,16 @@ class Converter(
                         getter = convertGetter(it, returnType)
                     else
                         setter = convertSetter(it, returnType)
+                DOT_QUALIFIED_EXPRESSION,
+                REFERENCE_EXPRESSION,
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType,
-                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
-        val propertyName = Name.identifier(identifier)
+        val propertyName = identifier.nameAsSafeName()
 
         return if (FunctionUtil.firFunctions.isNotEmpty()) {
             FirVariableImpl(
@@ -873,19 +906,19 @@ class Converter(
                 null,
                 FirPropertySymbol(ClassNameUtil.callableIdForName(propertyName)),
                 propertyName,
-                modifiers.visibilityModifier.toVisibility(),
-                modifiers.inheritanceModifier?.toModality(),
-                modifiers.platformModifier == PlatformModifier.EXPECT,
-                modifiers.platformModifier == PlatformModifier.ACTUAL,
-                modifiers.memberModifier == MemberModifier.OVERRIDE,
-                modifiers.propertyModifier == PropertyModifier.CONST,
-                modifiers.memberModifier == MemberModifier.LATEINIT,
+                modifiers.getVisibility(),
+                modifiers.getModality(),
+                modifiers.hasExpect(),
+                modifiers.hasActual(),
+                modifiers.hasOverride(),
+                modifiers.isConst(),
+                modifiers.hasLateinit(),
                 receiverType,
                 returnType,
                 isVar,
                 firExpression,
-                getter ?: FirDefaultPropertyGetter(session, null, returnType, modifiers.visibilityModifier.toVisibility()),
-                setter ?: FirDefaultPropertySetter(session, null, returnType, modifiers.visibilityModifier.toVisibility()),
+                getter ?: FirDefaultPropertyGetter(session, null, returnType, modifiers.getVisibility()),
+                setter ?: FirDefaultPropertySetter(session, null, returnType, modifiers.getVisibility()),
                 if (isDelegate) {
                     FirExpressionStub(session, null)
                     //TODO("not implemented")
@@ -913,11 +946,12 @@ class Converter(
                 MODIFIER_LIST -> modifiers = convertModifiers(it)
                 TYPE_REFERENCE -> returnType = convertType(it)
                 BLOCK -> firBlock = visitBlock(it)
+                DOT_QUALIFIED_EXPRESSION,
+                REFERENCE_EXPRESSION,
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType,
-                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -925,7 +959,7 @@ class Converter(
             session,
             null,
             true,
-            modifiers.visibilityModifier.toVisibility(),
+            modifiers.getVisibility(),
             returnType ?: propertyTypeRef
         )
         FunctionUtil.firFunctions += firAccessor
@@ -952,11 +986,12 @@ class Converter(
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters += convertSetterParameter(it, propertyTypeRef)
                 BLOCK -> firBlock = visitBlock(it)
+                DOT_QUALIFIED_EXPRESSION,
+                REFERENCE_EXPRESSION,
                 is KtNodeType,
                 is KtConstantExpressionElementType,
                 is KtDotQualifiedExpressionElementType,
-                is KtStringTemplateExpressionElementType,
-                REFERENCE_EXPRESSION -> firExpression = visitExpression(it) //TODO implement
+                is KtStringTemplateExpressionElementType -> firExpression = visitExpression(it) //TODO implement
             }
         }
 
@@ -964,7 +999,7 @@ class Converter(
             session,
             null,
             false,
-            modifiers.visibilityModifier.toVisibility(),
+            modifiers.getVisibility(),
             returnType ?: implicitUnitType
         )
         FunctionUtil.firFunctions += firAccessor
@@ -1002,16 +1037,16 @@ class Converter(
             }
         }
 
-        val typeAliasName = Name.identifier(identifier)
+        val typeAliasName = identifier.nameAsSafeName()
         return ClassNameUtil.withChildClassName(typeAliasName) {
             return@withChildClassName FirTypeAliasImpl(
                 session,
                 null,
                 FirTypeAliasSymbol(ClassNameUtil.currentClassId),
                 typeAliasName,
-                modifiers.visibilityModifier.toVisibility(),
-                modifiers.platformModifier == PlatformModifier.EXPECT,
-                modifiers.platformModifier == PlatformModifier.ACTUAL,
+                modifiers.getVisibility(),
+                modifiers.hasExpect(),
+                modifiers.hasActual(),
                 firType
             ).apply {
                 annotations += modifiers.annotations
@@ -1051,8 +1086,8 @@ class Converter(
             null,
             FirTypeParameterSymbol(),
             identifier.nameAsSafeName(),
-            typeParameterModifiers.varianceModifier.toVariance(),
-            typeParameterModifiers.reificationModifier != null
+            typeParameterModifiers.getVariance(),
+            typeParameterModifiers.hasReified()
         )
         firTypeParameter.annotations += typeParameterModifiers.annotations
         firType?.let { firTypeParameter.bounds += it }
@@ -1066,12 +1101,10 @@ class Converter(
     private fun convertTypeParameterModifiers(typeParameterModifiers: LighterASTNode): TypeParameterModifier {
         val modifier = TypeParameterModifier(session)
         typeParameterModifiers.forEachChildren {
-            val tokenType = it.tokenType
-            when {
-                VARIANCE_MODIFIER.contains(tokenType) -> modifier.varianceModifier = convertVarianceModifier(it)
-                REIFICATION_MODIFIER.contains(tokenType) -> modifier.reificationModifier = convertReificationModifier(it)
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+            when (it.tokenType) {
+                ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+                else -> modifier.addModifier(it)
             }
         }
         return modifier
@@ -1103,11 +1136,10 @@ class Converter(
     private fun convertTypeModifiers(typeModifiers: LighterASTNode): TypeModifier {
         val modifier = TypeModifier(session)
         typeModifiers.forEachChildren {
-            val tokenType = it.tokenType
-            when {
-                it.toString() == SUSPEND_KEYWORD.value -> modifier.suspendModifier = SuspendModifier.SUSPEND
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+            when (it.tokenType) {
+                ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+                else -> modifier.addModifier(it)
             }
         }
         return modifier
@@ -1120,7 +1152,7 @@ class Converter(
         lateinit var firType: FirTypeRef
         nullableType.forEachChildren {
             when (it.tokenType) {
-                USER_TYPE -> firType = convertUserType(it, true)
+                USER_TYPE -> firType = convertUserType(it, true).also { firUserType -> (firUserType as FirUserTypeRefImpl).qualifier.reverse() }
                 FUNCTION_TYPE -> firType = convertFunctionType(it, true)
                 NULLABLE_TYPE -> firType = convertNullableType(it)
                 DYNAMIC_TYPE -> firType = FirDynamicTypeRefImpl(session, null, true)
@@ -1184,7 +1216,7 @@ class Converter(
         }
 
         val qualifier = FirQualifierPartImpl(
-            Name.identifier(identifier)
+            identifier.nameAsSafeName()
         ).apply { typeArguments += firTypeArguments }
 
         return FirUserTypeRefImpl(
@@ -1281,7 +1313,7 @@ class Converter(
         else FirTypeProjectionWithVarianceImpl(
             session,
             null,
-            modifiers.varianceModifier.toVariance(),
+            modifiers.getVariance(),
             firType
         )
     }
@@ -1292,11 +1324,10 @@ class Converter(
     private fun convertTypeProjectionModifiers(modifiers: LighterASTNode): TypeProjectionModifier {
         val modifier = TypeProjectionModifier(session)
         modifiers.forEachChildren {
-            val tokenType = it.tokenType
-            when {
-                VARIANCE_MODIFIER.contains(tokenType) -> modifier.varianceModifier = convertVarianceModifier(it)
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+            when (it.tokenType) {
+                ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+                else -> modifier.addModifier(it)
             }
         }
         return modifier
@@ -1327,61 +1358,13 @@ class Converter(
     private fun convertModifiers(modifiers: LighterASTNode): Modifier {
         val modifier = Modifier(session)
         modifiers.forEachChildren {
-            val tokenType = it.tokenType
-            when {
-                CLASS_MODIFIER.contains(tokenType) -> modifier.classModifier = convertClassModifier(it)
-                MEMBER_MODIFIER.contains(tokenType) -> modifier.memberModifier = convertMemberModifier(it)
-                VISIBILITY_MODIFIER.contains(tokenType) -> modifier.visibilityModifier = convertVisibilityModifier(it)
-                FUNCTION_MODIFIER.contains(tokenType) -> modifier.functionModifier = convertFunctionModifier(it)
-                PROPERTY_MODIFIER.contains(tokenType) -> modifier.propertyModifier = convertPropertyModifier(it)
-                INHERITANCE_MODIFIER.contains(tokenType) -> modifier.inheritanceModifier = convertInheritanceModifier(it)
-                PARAMETER_MODIFIER.contains(tokenType) -> modifier.parameterModifier = convertParameterModifier(it)
-                PLATFORM_MODIFIER.contains(tokenType) -> modifier.platformModifier = convertPlatformModifier(it)
-                tokenType == ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                tokenType == ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+            when (it.tokenType) {
+                ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
+                else -> modifier.addModifier(it)
             }
         }
         return modifier
-    }
-
-    private fun convertClassModifier(classModifier: LighterASTNode): ClassModifier {
-        return ClassModifier.valueOf(classModifier.toString().toUpperCase())
-    }
-
-    private fun convertMemberModifier(memberModifier: LighterASTNode): MemberModifier {
-        return MemberModifier.valueOf(memberModifier.toString().toUpperCase())
-    }
-
-    private fun convertVisibilityModifier(visibilityModifier: LighterASTNode): VisibilityModifier {
-        return VisibilityModifier.valueOf(visibilityModifier.toString().toUpperCase())
-    }
-
-    private fun convertVarianceModifier(varianceModifier: LighterASTNode): VarianceModifier {
-        return VarianceModifier.valueOf(varianceModifier.toString().toUpperCase())
-    }
-
-    private fun convertFunctionModifier(functionModifier: LighterASTNode): FunctionModifier {
-        return FunctionModifier.valueOf(functionModifier.toString().toUpperCase())
-    }
-
-    private fun convertPropertyModifier(propertyModifier: LighterASTNode): PropertyModifier {
-        return PropertyModifier.valueOf(propertyModifier.toString().toUpperCase())
-    }
-
-    private fun convertInheritanceModifier(inheritanceModifier: LighterASTNode): InheritanceModifier {
-        return InheritanceModifier.valueOf(inheritanceModifier.toString().toUpperCase())
-    }
-
-    private fun convertParameterModifier(parameterModifier: LighterASTNode): ParameterModifier {
-        return ParameterModifier.valueOf(parameterModifier.toString().toUpperCase())
-    }
-
-    private fun convertReificationModifier(reificationModifier: LighterASTNode): ReificationModifier {
-        return ReificationModifier.valueOf(reificationModifier.toString().toUpperCase())
-    }
-
-    private fun convertPlatformModifier(platformModifier: LighterASTNode): PlatformModifier {
-        return PlatformModifier.valueOf(platformModifier.toString().toUpperCase())
     }
 
     private fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
