@@ -5,20 +5,39 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.REIFICATION_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VARIANCE_MODIFIER
 import org.jetbrains.kotlin.types.Variance
 
 class TypeParameterModifier(
     session: FirSession,
     psi: PsiElement? = null,
 
-    var varianceModifier: VarianceModifier = VarianceModifier.INVARIANT,
-    var reificationModifier: ReificationModifier? = null
-) : FirAbstractAnnotatedElement(session, psi)
+    private var varianceModifier: VarianceModifier = VarianceModifier.INVARIANT,
+    private var reificationModifier: ReificationModifier? = null
+) : FirAbstractAnnotatedElement(session, psi) {
+    fun addModifier(modifier: LighterASTNode) {
+        val tokenType = modifier.tokenType
+        when {
+            VARIANCE_MODIFIER.contains(tokenType) -> this.varianceModifier = VarianceModifier.valueOf(modifier.toString().toUpperCase())
+            REIFICATION_MODIFIER.contains(tokenType) -> this.reificationModifier = ReificationModifier.valueOf(modifier.toString().toUpperCase())
+        }
+    }
 
-enum class VarianceModifier{
+    fun getVariance(): Variance {
+        return varianceModifier.toVariance()
+    }
+
+    fun hasReified(): Boolean {
+        return reificationModifier == ReificationModifier.REIFIED
+    }
+}
+
+enum class VarianceModifier {
     IN {
         override fun toVariance(): Variance {
             return Variance.IN_VARIANCE
@@ -38,6 +57,6 @@ enum class VarianceModifier{
     abstract fun toVariance(): Variance
 }
 
-enum class ReificationModifier{
+enum class ReificationModifier {
     REIFIED
 }

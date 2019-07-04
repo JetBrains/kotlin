@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,34 +17,58 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
+import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
-import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.types.Variance
 
 object ConverterUtil {
     fun String?.nameAsSafeName(defaultName: String = ""): Name {
         return when {
-            this != null -> Name.identifier(this)
+            this != null -> Name.identifier(this.replace("`", ""))
             defaultName.isNotEmpty() -> Name.identifier(defaultName)
             else -> SpecialNames.NO_NAME_PROVIDED
         }
     }
 
-    fun Name?.toDelegatedSelfType(session: FirSession): FirTypeRef =
-        FirUserTypeRefImpl(session, null, isMarkedNullable = false).apply {
-            qualifier.add(
-                FirQualifierPartImpl(
-                    this@toDelegatedSelfType ?: SpecialNames.NO_NAME_PROVIDED
-                )
-            )
+    fun String.toFirUserType(session: FirSession): FirUserTypeRef {
+        val qualifier = FirQualifierPartImpl(
+            Name.identifier(this)
+        )
+
+        return FirUserTypeRefImpl(
+            session,
+            null,
+            false
+        ).apply {
+            this.qualifier.add(qualifier)
         }
+    }
+
+    fun toDelegatedSelfType(firClass: FirRegularClass): FirTypeRef {
+        val typeParameters = firClass.typeParameters.map {
+            FirTypeParameterImpl(firClass.session, it.psi, FirTypeParameterSymbol(), it.name, Variance.INVARIANT, false).apply {
+                this.bounds += it.bounds
+            }
+        }
+        return FirResolvedTypeRefImpl(
+            firClass.session,
+            null,
+            ConeClassTypeImpl(
+                firClass.symbol.toLookupTag(),
+                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                false
+            )
+        )
+    }
 
     fun LighterASTNode?.hasSecondaryConstructor(kidsArray: Array<LighterASTNode?>): Boolean {
         if (this == null) return false
@@ -105,6 +130,13 @@ object ConverterUtil {
         }
     }
 
+    fun typeParametersFromSelfType(delegatedSelfTypeRef: FirTypeRef): List<FirTypeParameter> {
+        return delegatedSelfTypeRef.coneTypeSafe<ConeKotlinType>()
+            ?.typeArguments
+            ?.map { ((it as ConeTypeParameterType).lookupTag.symbol as FirTypeParameterSymbol).fir }
+            ?: emptyList()
+    }
+
     fun <T : FirCallWithArgumentList> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
         if (!stubMode) {
             //TODO("not implemented")
@@ -115,20 +147,21 @@ object ConverterUtil {
 
     fun List<FirEnumEntryImpl>.fillEnumEntryConstructor(
         firPrimaryConstructor: FirConstructor,
+        enumType: FirUserTypeRef,
         stubMode: Boolean
     ) {
         this.forEach { firEnumEntry ->
-            val enumDelegatedSelfTypeRef = firPrimaryConstructor.returnTypeRef
+            val enumDelegatedSelfTypeRef = toDelegatedSelfType(firEnumEntry)
             var enumDelegatedSuperTypeRef: FirTypeRef = FirImplicitAnyTypeRef(firEnumEntry.session, null)
             val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
 
             if (firPrimaryConstructor.valueParameters.isNotEmpty()) {
-                enumDelegatedSuperTypeRef = enumDelegatedSelfTypeRef
-                firEnumEntry.superTypeRefs += enumDelegatedSuperTypeRef
+                enumDelegatedSuperTypeRef = enumType//enumDelegatedSelfTypeRef
                 enumSuperTypeCallEntry += firPrimaryConstructor.valueParameters.map { firValueParameter ->
                     firValueParameter.toFirExpression(stubMode)
                 }
             }
+            firEnumEntry.superTypeRefs += enumDelegatedSuperTypeRef
 
             val firDelegatedConstructorCall = FirDelegatedConstructorCallImpl(
                 firEnumEntry.session,
@@ -147,6 +180,7 @@ object ConverterUtil {
                 enumDelegatedSelfTypeRef,
                 firDelegatedConstructorCall
             )
+            firEnumPrimaryConstructor.typeParameters += typeParametersFromSelfType(enumDelegatedSelfTypeRef)
             firEnumEntry.declarations.add(0, firEnumPrimaryConstructor)
         }
     }
@@ -157,7 +191,9 @@ object ConverterUtil {
         delegatedSuperTypeRef: FirTypeRef
     ) {
         this.forEach { constructor ->
-            (constructor as FirConstructorImpl).returnTypeRef = delegatedSelfTypeRef
+            (constructor as FirConstructorImpl).typeParameters += typeParametersFromSelfType(delegatedSelfTypeRef)
+
+            constructor.returnTypeRef = delegatedSelfTypeRef
             val constructorDelegationCall = constructor.delegatedConstructor as? FirDelegatedConstructorCallImpl
             val isThis =
                 (constructorDelegationCall == null && hasPrimaryConstructor) || constructorDelegationCall?.isThis == true
@@ -188,9 +224,12 @@ object ClassNameUtil {
     val currentClassId
         get() = ClassId(packageFqName, className, false)
 
-    fun callableIdForName(name: Name) =
-        if (className == FqName.ROOT) CallableId(packageFqName, name)
-        else CallableId(packageFqName, className, name)
+    fun callableIdForName(name: Name, local: Boolean = false) =
+        when {
+            local -> CallableId(name)
+            className == FqName.ROOT -> CallableId(packageFqName, name)
+            else -> CallableId(packageFqName, className, name)
+        }
 
     fun callableIdForClassConstructor() =
         if (className == FqName.ROOT) CallableId(packageFqName, Name.special("<anonymous-init>"))
@@ -215,4 +254,90 @@ object FunctionUtil {
     }
 }
 
+object DataClassUtil {
+    fun generateComponentFunctions(
+        session: FirSession, firClass: FirClassImpl, properties: List<FirProperty>
+    ) {
+        var componentIndex = 1
+        for (property in properties) {
+            if (!property.isVal && !property.isVar) continue
+            val name = Name.identifier("component$componentIndex")
+            componentIndex++
+            val symbol = FirFunctionSymbol(
+                CallableId(
+                    ClassNameUtil.packageFqName,
+                    ClassNameUtil.className,
+                    name
+                )
+            )
+            firClass.addDeclaration(
+                FirMemberFunctionImpl(
+                    session, null, symbol, name,
+                    Visibilities.PUBLIC, Modality.FINAL,
+                    isExpect = false, isActual = false,
+                    isOverride = false, isOperator = false,
+                    isInfix = false, isInline = false,
+                    isTailRec = false, isExternal = false,
+                    isSuspend = false, receiverTypeRef = null,
+                    returnTypeRef = FirImplicitTypeRefImpl(session, null)
+                ).apply {
+                    val componentFunction = this
+                    body = FirSingleExpressionBlock(
+                        session,
+                        FirReturnExpressionImpl(
+                            session, null,
+                            FirQualifiedAccessExpressionImpl(session, null).apply {
+                                val parameterName = property.name
+                                calleeReference = FirResolvedCallableReferenceImpl(
+                                    session, null,
+                                    parameterName, property.symbol
+                                )
+                            }
+                        ).apply {
+                            target = FirFunctionTarget(null)
+                            target.bind(componentFunction)
+                        }
+                    )
+                }
+            )
+        }
+    }
+
+    private val copyName = Name.identifier("copy")
+
+    fun generateCopyFunction(
+        session: FirSession, firClass: FirClassImpl,
+        firPrimaryConstructor: FirConstructor,
+        properties: List<FirProperty>
+    ) {
+        val symbol = FirFunctionSymbol(CallableId(ClassNameUtil.packageFqName, ClassNameUtil.className, copyName))
+        firClass.addDeclaration(
+            FirMemberFunctionImpl(
+                session, null, symbol, copyName,
+                Visibilities.PUBLIC, Modality.FINAL,
+                isExpect = false, isActual = false,
+                isOverride = false, isOperator = false,
+                isInfix = false, isInline = false,
+                isTailRec = false, isExternal = false,
+                isSuspend = false, receiverTypeRef = null,
+                returnTypeRef = firPrimaryConstructor.returnTypeRef//FirImplicitTypeRefImpl(session, this)
+            ).apply {
+                val copyFunction = this
+                for (property in properties) {
+                    val name = property.name
+                    valueParameters += FirValueParameterImpl(
+                        session, null, name,
+                        property.returnTypeRef,
+                        FirQualifiedAccessExpressionImpl(session, null).apply {
+                            calleeReference = FirResolvedCallableReferenceImpl(session, null, name, property.symbol)
+                        },
+                        isCrossinline = false, isNoinline = false, isVararg = false
+                    )
+                }
+
+                body = FirEmptyExpressionBlock(session)
+            }
+        )
+    }
+}
 

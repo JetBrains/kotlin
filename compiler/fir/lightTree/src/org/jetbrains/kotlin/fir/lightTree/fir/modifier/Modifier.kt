@@ -5,28 +5,137 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.CLASS_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.FUNCTION_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INHERITANCE_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.MEMBER_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PARAMETER_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PLATFORM_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PROPERTY_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VISIBILITY_MODIFIER
 
 class Modifier(
     session: FirSession,
     psi: PsiElement? = null,
 
-    var classModifier: ClassModifier? = null,
-    var memberModifier: MemberModifier? = null,
-    var visibilityModifier: VisibilityModifier = VisibilityModifier.UNKNOWN,
-    var functionModifier: FunctionModifier? = null,
-    var propertyModifier: PropertyModifier? = null,
-    var inheritanceModifier: InheritanceModifier? = null,
-    var parameterModifier: ParameterModifier? = null,
-    var platformModifier: PlatformModifier? = null
-) : FirAbstractAnnotatedElement(session, psi)
+    private var classModifier: ClassModifier? = null,
+    private val memberModifiers: MutableList<MemberModifier> = mutableListOf(),
+    private var visibilityModifier: VisibilityModifier = VisibilityModifier.UNKNOWN,
+    private val functionModifiers: MutableList<FunctionModifier> = mutableListOf(),
+    private var propertyModifier: PropertyModifier? = null,
+    private var inheritanceModifier: InheritanceModifier? = null,
+    private var parameterModifier: ParameterModifier? = null,
+    private var platformModifier: PlatformModifier? = null
+) : FirAbstractAnnotatedElement(session, psi) {
+    fun addModifier(modifier: LighterASTNode) {
+        val tokenType = modifier.tokenType
+        when {
+            CLASS_MODIFIER.contains(tokenType) -> this.classModifier = ClassModifier.valueOf(modifier.toString().toUpperCase())
+            MEMBER_MODIFIER.contains(tokenType) -> this.memberModifiers += MemberModifier.valueOf(modifier.toString().toUpperCase())
+            VISIBILITY_MODIFIER.contains(tokenType) -> this.visibilityModifier =
+                VisibilityModifier.valueOf(modifier.toString().toUpperCase())
+            FUNCTION_MODIFIER.contains(tokenType) -> this.functionModifiers += FunctionModifier.valueOf(modifier.toString().toUpperCase())
+            PROPERTY_MODIFIER.contains(tokenType) -> this.propertyModifier = PropertyModifier.valueOf(modifier.toString().toUpperCase())
+            INHERITANCE_MODIFIER.contains(tokenType) -> this.inheritanceModifier =
+                InheritanceModifier.valueOf(modifier.toString().toUpperCase())
+            PARAMETER_MODIFIER.contains(tokenType) -> this.parameterModifier = ParameterModifier.valueOf(modifier.toString().toUpperCase())
+            PLATFORM_MODIFIER.contains(tokenType) -> this.platformModifier = PlatformModifier.valueOf(modifier.toString().toUpperCase())
+        }
+    }
 
-enum class ClassModifier{
+    fun isEnum(): Boolean {
+        return classModifier == ClassModifier.ENUM
+    }
+
+    fun isAnnotation(): Boolean {
+        return classModifier == ClassModifier.ANNOTATION
+    }
+
+    fun isDataClass(): Boolean {
+        return classModifier == ClassModifier.DATA
+    }
+
+    fun isInner(): Boolean {
+        return classModifier == ClassModifier.INNER
+    }
+
+    fun isCompanion(): Boolean {
+        return classModifier == ClassModifier.COMPANION
+    }
+
+    fun hasOverride(): Boolean {
+        return memberModifiers.contains(MemberModifier.OVERRIDE)
+    }
+
+    fun hasLateinit(): Boolean {
+        return memberModifiers.contains(MemberModifier.LATEINIT)
+    }
+
+    fun getVisibility(): Visibility {
+        return visibilityModifier.toVisibility()
+    }
+
+    fun hasTailrec(): Boolean {
+        return functionModifiers.contains(FunctionModifier.TAILREC)
+    }
+
+    fun hasOperator(): Boolean {
+        return functionModifiers.contains(FunctionModifier.OPERATOR)
+    }
+
+    fun hasInfix(): Boolean {
+        return functionModifiers.contains(FunctionModifier.INFIX)
+    }
+
+    fun hasInline(): Boolean {
+        return functionModifiers.contains(FunctionModifier.INLINE)
+    }
+
+    fun hasExternal(): Boolean {
+        return functionModifiers.contains(FunctionModifier.EXTERNAL)
+    }
+
+    fun hasSuspend(): Boolean {
+        return functionModifiers.contains(FunctionModifier.SUSPEND)
+    }
+
+    fun isConst(): Boolean {
+        return propertyModifier == PropertyModifier.CONST
+    }
+
+    fun getModality(): Modality? {
+        return inheritanceModifier?.toModality()
+    }
+
+    fun hasVararg(): Boolean {
+        return parameterModifier == ParameterModifier.VARARG
+    }
+
+    fun hasNoinline(): Boolean {
+        return parameterModifier == ParameterModifier.NOINLINE
+    }
+
+    fun hasCrossinline(): Boolean {
+        return parameterModifier == ParameterModifier.CROSSINLINE
+    }
+
+    fun hasExpect(): Boolean {
+        return platformModifier == PlatformModifier.EXPECT
+    }
+
+    fun hasActual(): Boolean {
+        return platformModifier == PlatformModifier.ACTUAL
+    }
+}
+
+enum class ClassModifier {
     ENUM,
     ANNOTATION,
     DATA,
@@ -34,33 +143,33 @@ enum class ClassModifier{
     COMPANION
 }
 
-enum class MemberModifier{
+enum class MemberModifier {
     OVERRIDE,
     LATEINIT
 }
 
-enum class VisibilityModifier{
-    PUBLIC{
+enum class VisibilityModifier {
+    PUBLIC {
         override fun toVisibility(): Visibility {
             return Visibilities.PUBLIC
         }
     },
-    PRIVATE{
+    PRIVATE {
         override fun toVisibility(): Visibility {
             return Visibilities.PRIVATE
         }
     },
-    INTERNAL{
+    INTERNAL {
         override fun toVisibility(): Visibility {
             return Visibilities.INTERNAL
         }
     },
-    PROTECTED{
+    PROTECTED {
         override fun toVisibility(): Visibility {
             return Visibilities.PROTECTED
         }
     },
-    UNKNOWN{
+    UNKNOWN {
         override fun toVisibility(): Visibility {
             return Visibilities.UNKNOWN
         }
@@ -69,7 +178,7 @@ enum class VisibilityModifier{
     abstract fun toVisibility(): Visibility
 }
 
-enum class FunctionModifier{
+enum class FunctionModifier {
     TAILREC,
     OPERATOR,
     INFIX,
@@ -78,27 +187,27 @@ enum class FunctionModifier{
     SUSPEND
 }
 
-enum class PropertyModifier{
+enum class PropertyModifier {
     CONST
 }
 
-enum class InheritanceModifier{
-    ABSTRACT{
+enum class InheritanceModifier {
+    ABSTRACT {
         override fun toModality(): Modality {
             return Modality.ABSTRACT
         }
     },
-    FINAL{
+    FINAL {
         override fun toModality(): Modality {
             return Modality.FINAL
         }
     },
-    OPEN{
+    OPEN {
         override fun toModality(): Modality {
             return Modality.OPEN
         }
     },
-    SEALED{
+    SEALED {
         override fun toModality(): Modality {
             return Modality.SEALED
         }
@@ -113,7 +222,7 @@ enum class ParameterModifier {
     CROSSINLINE
 }
 
-enum class PlatformModifier{
+enum class PlatformModifier {
     EXPECT,
     ACTUAL
 }
