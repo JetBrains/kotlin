@@ -7,13 +7,16 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.project.GradleNotification
 import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -57,6 +60,13 @@ class GradleUnlinkedProjectProcessor : StartupActivity, DumbAware {
         "Help", GradleBundle.message("gradle.notifications.unlinked.project.found.help"), null) {
         override fun actionPerformed(e: AnActionEvent) {}
       }
+
+      val settingsListener = object : GradleSettingsListenerAdapter() {
+        override fun onProjectsLinked(settings: MutableCollection<GradleProjectSettings>) {
+          notification.expire()
+        }
+      }
+      ExternalSystemApiUtil.subscribe(project, GradleConstants.SYSTEM_ID, settingsListener)
 
       notification.notify(project)
     }
