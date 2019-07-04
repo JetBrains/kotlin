@@ -3512,7 +3512,7 @@ if (isAppleTarget(project)) {
         final String dir = "$testOutputFramework/$frameworkName"
         final File lazyHeader = file("$dir/$target-lazy.h")
 
-        doFirst {
+        doLast {
             final File expectedLazyHeader = file("framework/values/expectedLazy.h")
 
             if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
