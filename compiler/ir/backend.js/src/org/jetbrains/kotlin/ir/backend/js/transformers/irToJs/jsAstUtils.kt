@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isExternalOrInheritedFromExternal
 import org.jetbrains.kotlin.js.backend.ast.*
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
@@ -72,7 +72,7 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
         val argument = expression.getValueArgument(index)
         val result = argument?.accept(transformer, context)
         if (result == null) {
-            require(expression is IrFunctionAccessExpression && expression.symbol.owner.isEffectivelyExternal())
+            assert(expression is IrFunctionAccessExpression && expression.symbol.owner.isExternalOrInheritedFromExternal())
             JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
         } else
             result

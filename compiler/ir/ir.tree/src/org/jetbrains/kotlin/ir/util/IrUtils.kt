@@ -360,6 +360,13 @@ fun IrDeclaration.isEffectivelyExternal(): Boolean {
     }
 }
 
+fun IrFunction.isExternalOrInheritedFromExternal(): Boolean {
+    fun isExternalOrInheritedFromExternalImpl(f: IrSimpleFunction): Boolean =
+        f.isEffectivelyExternal() || f.overriddenSymbols.any { isExternalOrInheritedFromExternalImpl(it.owner) }
+
+    return isEffectivelyExternal() || (this is IrSimpleFunction && isExternalOrInheritedFromExternalImpl(this))
+}
+
 inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
     declarations.find { it is T && predicate(it) } as? T
 
