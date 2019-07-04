@@ -165,6 +165,7 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
     assertEquals(srcB.toURI().getPath(), srcBFileObject.toUri().getPath());
     assertTrue(fileManager.isSameFile(srcAFileObject, srcAFileObject));
     assertFalse(fileManager.isSameFile(srcAFileObject, srcBFileObject));
+    checkFileObjectsBelongToLocation(fileManager, StandardLocation.SOURCE_PATH, sources);
 
     final Iterable<JavaFileObject> libClasses = fileManager.list(StandardLocation.CLASS_PATH, "arch", Collections.singleton(JavaFileObject.Kind.SOURCE), false);
     final Iterator<JavaFileObject> clsIterator = libClasses.iterator();
@@ -181,6 +182,15 @@ public class JavaCompilerBasicTest extends BaseCompilerTestCase {
     assertEquals(JavaFileObject.Kind.SOURCE, res2.getKind());
     
     assertFalse(fileManager.isSameFile(res1, res2));
+    checkFileObjectsBelongToLocation(fileManager, StandardLocation.CLASS_PATH, libClasses);
+  }
+
+  private static void checkFileObjectsBelongToLocation(JpsJavacFileManager fileManager,
+                                                       final JavaFileManager.Location location,
+                                                       Iterable<? extends FileObject> fileObjects) {
+    for (FileObject source : fileObjects) {
+      assertTrue(source.getName() + " should belong to " + location.getName(), fileManager.contains(location, source));
+    }
   }
 
 
