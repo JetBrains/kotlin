@@ -2,14 +2,17 @@
 package com.intellij.completion.sorting
 
 import com.intellij.lang.Language
+import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.completion.feature.impl.FeatureTransformer
 import com.jetbrains.completion.ranker.JavaCompletionRanker
 import com.jetbrains.completion.ranker.KotlinCompletionRanker
 import com.jetbrains.completion.ranker.LanguageCompletionRanker
 import com.jetbrains.completion.ranker.PythonCompletionRanker
+import java.io.IOException
 
 
 object RankingSupport {
+  private val LOG = logger<RankingSupport>()
   private val language2ranker: Map<String, LanguageRanker> = buildRankerMap()
 
   fun getRanker(language: Language?): LanguageRanker? {
@@ -37,11 +40,23 @@ object RankingSupport {
     }
   }
 
+  private fun registerRanker(rankerMap: MutableMap<String, LanguageRanker>, builder: () -> LanguageRanker) {
+    try {
+      val ranker = builder()
+      rankerMap[ranker.displayName.toLowerCase()] = ranker
+    }
+    catch (e: IOException) {
+      LOG.error("Could not initialize language ranker", e)
+    }
+  }
+
   private fun buildRankerMap(): Map<String, LanguageRanker> {
-    return mapOf(
-      "java" to LanguageRanker("Java", JavaCompletionRanker()),
-      "kotlin" to LanguageRanker("Kotlin", KotlinCompletionRanker()),
-      "python" to LanguageRanker("Python", PythonCompletionRanker())
-    )
+    val result = mutableMapOf<String, LanguageRanker>()
+
+    registerRanker(result) { LanguageRanker("Java", JavaCompletionRanker()) }
+    registerRanker(result) { LanguageRanker("Kotlin", KotlinCompletionRanker()) }
+    registerRanker(result) { LanguageRanker("Python", PythonCompletionRanker()) }
+
+    return result
   }
 }
