@@ -269,6 +269,7 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
             myProcMap.put(key, new PendingInfo(((PendingInfo)o).ref, processHandler));
           }
         }
+        sendDataAfterStart(processHandler);
       }
 
       @Override
@@ -329,6 +330,8 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
       }
     };
   }
+
+  protected void sendDataAfterStart(ProcessHandler handler){}
 
   @NotNull
   private static String getLocalHost() {
