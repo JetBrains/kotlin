@@ -27,12 +27,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 
 class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    private val unitType get() = context.irBuiltIns.unitType
     private val nothingNType get() = context.irBuiltIns.nothingNType
-    private val stringType get() = context.irBuiltIns.stringType
 
     private val throwableConstructors = context.throwableConstructors
-
     private val newThrowableFunction = context.newThrowableSymbol
     private val extendThrowableFunction = context.extendThrowableSymbol
 
@@ -82,30 +79,6 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     it.putValueArgument(1, causeArg)
                 }
             }
-        }
-
-        override fun visitConstructor(declaration: IrConstructor, data: IrDeclarationParent): IrStatement {
-            val klass = data as IrClass
-            if (klass.defaultType.isThrowableTypeOrSubtype() && declaration.callsSuper(context.irBuiltIns)) {
-                val body = declaration.body as IrBlockBody
-                body.statements += IrDynamicOperatorExpressionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    unitType,
-                    IrDynamicOperator.EQ
-                ).also {
-                    it.receiver = IrDynamicMemberExpressionImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        context.dynamicType,
-                        "name",
-                        JsIrBuilder.buildGetValue(klass.thisReceiver!!.symbol)
-                    )
-                    it.arguments.add(JsIrBuilder.buildString(stringType, klass.name.asString()))
-                }
-            }
-
-            declaration.transformChildren(this, data)
-
-            return declaration
         }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclarationParent): IrExpression {

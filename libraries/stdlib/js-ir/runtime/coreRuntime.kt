@@ -97,11 +97,16 @@ internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?
     js("Error").call(this_)
     this_.message = message ?: cause?.toString() ?: undefined
     this_.cause = cause
+    this_.name = JsObject.getPrototypeOf(this_).constructor.name
     captureStack(this_)
 }
 
 @JsName("Object")
-internal external class JsObject
+internal external class JsObject {
+    companion object {
+        fun getPrototypeOf(obj: Any?): dynamic
+    }
+}
 
 internal fun <T, R> boxIntrinsic(x: T): R = error("Should be lowered")
 internal fun <T, R> unboxIntrinsic(x: T): R = error("Should be lowered")
