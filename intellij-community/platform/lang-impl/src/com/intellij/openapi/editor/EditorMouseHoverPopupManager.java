@@ -64,13 +64,20 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
   private final Alarm myAlarm;
   private Point myPrevMouseLocation;
   private boolean myKeepPopupOnMouseMove;
+  private WeakReference<Editor> myCurrentEditor;
   private WeakReference<AbstractPopup> myPopupReference;
   private Context myContext;
   private ProgressIndicator myCurrentProgress;
 
-  public EditorMouseHoverPopupManager(Application application, EditorFactory editorFactory) {
+  public EditorMouseHoverPopupManager(Application application, EditorFactory editorFactory, EditorMouseHoverPopupControl control) {
     myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, application);
     editorFactory.getEventMulticaster().addEditorMouseMotionListener(this);
+    control.addListener(() -> {
+      Editor editor = SoftReference.dereference(myCurrentEditor);
+      if (editor != null && EditorMouseHoverPopupControl.arePopupsDisabled(editor)) {
+        closeHint();
+      }
+    });
   }
 
   @Override
@@ -128,6 +135,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
               AbstractPopup hint = createHint(component, popupBridge);
               showHintInEditor(hint, editor, context);
               myPopupReference = new WeakReference<>(hint);
+              myCurrentEditor = new WeakReference<>(editor);
             }
             myContext = context;
           }
@@ -272,6 +280,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
       hint.cancel();
     }
     myPopupReference = null;
+    myCurrentEditor = null;
     myContext = null;
   }
 
@@ -289,6 +298,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
         hint.cancel();
       }
       myPopupReference = null;
+      myCurrentEditor = null;
+      myContext = null;
       return null;
     }
     return hint;
