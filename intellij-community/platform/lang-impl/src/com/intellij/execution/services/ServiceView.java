@@ -119,7 +119,7 @@ abstract class ServiceView extends JPanel implements Disposable {
       }
       if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
         List<ServiceViewItem> selection = serviceView.getSelectedItems();
-        ServiceViewContributor contributor = ServiceViewDragHelper.getTheOnlyContributor(selection);
+        ServiceViewContributor contributor = ServiceViewDragHelper.getTheOnlyRootContributor(selection);
         DataProvider delegate = contributor == null ? null : contributor.getViewDescriptor().getDataProvider();
         DeleteProvider deleteProvider = delegate == null ? null : PlatformDataKeys.DELETE_ELEMENT_PROVIDER.getData(delegate);
         return deleteProvider == null ? new ServiceViewDeleteProvider(serviceView) : deleteProvider;
