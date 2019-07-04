@@ -6,6 +6,7 @@
 package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.objc.OCInterfaceSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCProtocolSymbol
@@ -15,9 +16,13 @@ import com.jetbrains.cidr.lang.types.OCType
 import org.jetbrains.konan.resolve.createSuperType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 
-class KotlinOCProtocolSymbol(stub: ObjCProtocol, project: Project) : KotlinOCClassSymbol<ObjCProtocol>(stub, project), OCProtocolSymbol {
+class KotlinOCProtocolSymbol(
+    stub: ObjCProtocol,
+    project: Project,
+    file: VirtualFile
+) : KotlinOCClassSymbol<ObjCProtocol>(stub, project, file), OCProtocolSymbol {
 
-    private val mySuperType: OCReferenceType = createSuperType(null, stub.superProtocols)
+    private val mySuperType: OCReferenceType by stub { createSuperType(null, superProtocols) }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PROTOCOL
 

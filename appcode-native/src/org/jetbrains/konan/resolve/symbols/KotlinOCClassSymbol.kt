@@ -6,6 +6,7 @@
 package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Processor
 import com.intellij.util.containers.MostlySingularMultiMap
 import com.jetbrains.cidr.lang.symbols.OCQualifiedName
@@ -17,18 +18,40 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCImplementationSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
+import org.jetbrains.konan.resolve.StubToSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 
-abstract class KotlinOCClassSymbol<Stub : ObjCClass<*>>(stub: Stub, project: Project) : KotlinOCWrapperSymbol<Stub>(stub, project),
-    OCClassSymbol {
+abstract class KotlinOCClassSymbol<Stub : ObjCClass<*>>(
+    stub: Stub,
+    project: Project,
+    file: VirtualFile
+) : KotlinOCWrapperSymbol<Stub>(stub, project, file), OCClassSymbol {
 
-    private var myMembers: MostlySingularMultiMap<String, OCMemberSymbol>? = null
-    private val myQualifiedName = OCQualifiedName.interned(name)
+    private val myMembers: MostlySingularMultiMap<String, OCMemberSymbol>? by stub {
+        runReadAction {
+            val clazz = this@KotlinOCClassSymbol
+            val translator = StubToSymbolTranslator(clazz.project)
+
+            //we don't want to store empty map, so let's initialize it only if there're any members
+            var map: MostlySingularMultiMap<String, OCMemberSymbol>? = null
+            for (member in members) {
+                val translatedMember = translator.translateMember(member, clazz, file)
+                if (translatedMember != null) {
+                    if (map == null) map = MostlySingularMultiMap()
+                    map.add(member.name, translatedMember)
+                }
+            }
+            map
+        }
+    }
+    private val myQualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
+    private val myProtocolNames: List<String> by stub { superProtocols }
 
     override fun isGlobal(): Boolean = true
 
-    override fun getProtocolNames(): List<String> = stub.superProtocols
+    override fun getProtocolNames(): List<String> = myProtocolNames
 
     override fun getMembersCount(): Int = myMembers?.size() ?: 0
 
@@ -60,16 +83,6 @@ abstract class KotlinOCClassSymbol<Stub : ObjCClass<*>>(stub: Stub, project: Pro
 
     override fun getResolvedType(context: OCResolveContext, ignoringImports: Boolean): OCObjectType? =
         type.resolve(context, ignoringImports) as? OCObjectType
-
-    fun setMembers(members: Sequence<OCMemberSymbol>) {
-        //we don't want to store empty map, so let's initialize it only if there're any members
-        var map: MostlySingularMultiMap<String, OCMemberSymbol>? = null
-        for (member in members) {
-            if (map == null) map = MostlySingularMultiMap()
-            map.add(member.name, member)
-        }
-        myMembers = map
-    }
 
     override fun getParent(): OCSymbolWithQualifiedName? = null
 

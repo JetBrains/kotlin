@@ -14,14 +14,11 @@ import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 abstract class KotlinOCMemberSymbol<S : Stub<*>>(
     stub: S,
     project: Project,
+    file: VirtualFile,
     private val containingClass: OCClassSymbol
-) : KotlinOCWrapperSymbol<S>(stub, project), OCMemberSymbol {
+) : KotlinOCWrapperSymbol<S>(stub, project, file), OCMemberSymbol {
 
     override fun isGlobal(): Boolean = false
 
     override fun getParent(): OCClassSymbol = containingClass
-
-    override fun getContainingFile(): VirtualFile? {
-        return super.getContainingFile() ?: containingClass.containingFile
-    }
 }

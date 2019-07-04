@@ -1,6 +1,7 @@
 package org.jetbrains.konan.resolve
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.OCSymbol
@@ -12,27 +13,25 @@ import org.jetbrains.konan.resolve.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 class StubToSymbolTranslator(val project: Project) {
-    fun translate(stub: Stub<*>): OCSymbol? {
-        val clazz = when (stub) {
-            is ObjCProtocol -> KotlinOCProtocolSymbol(stub, project)
-            is ObjCInterface -> KotlinOCInterfaceSymbol(stub, project)
+    fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol? {
+        return when (stub) {
+            is ObjCProtocol -> KotlinOCProtocolSymbol(stub, project, file)
+            is ObjCInterface -> KotlinOCInterfaceSymbol(stub, project, file)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 return null
             }
         }
-        clazz.setMembers((stub as ObjCClass).members.asSequence().mapNotNull { member -> translateMember(member, clazz) })
-        return clazz
     }
 
-    private fun translateMember(stub: Stub<*>, clazz: OCClassSymbol): OCMemberSymbol? {
+    fun translateMember(stub: Stub<*>, clazz: OCClassSymbol, file: VirtualFile): OCMemberSymbol? {
         return when (stub) {
             is ObjCMethod -> {
-                val method = KotlinOCMethodSymbol(stub, project, clazz)
-                method.selectors = translateParameters(stub, clazz)
+                val method = KotlinOCMethodSymbol(stub, project, file, clazz)
+                method.selectors = translateParameters(stub, clazz, file)
                 method
             }
-            is ObjCProperty -> KotlinOCPropertySymbol(stub, project, clazz)
+            is ObjCProperty -> KotlinOCPropertySymbol(stub, project, file, clazz)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 null
@@ -40,7 +39,7 @@ class StubToSymbolTranslator(val project: Project) {
         }
     }
 
-    private fun translateParameters(stub: ObjCMethod, clazz: OCClassSymbol): List<OCMethodSymbol.SelectorPartSymbol> {
+    private fun translateParameters(stub: ObjCMethod, clazz: OCClassSymbol, file: VirtualFile): List<OCMethodSymbol.SelectorPartSymbol> {
         val selectors = stub.selectors
         val parameters = stub.parameters
 
@@ -49,7 +48,7 @@ class StubToSymbolTranslator(val project: Project) {
         } else {
             assert(selectors.size == parameters.size)
             ContainerUtil.zip(parameters, selectors).asSequence().map {
-                SelectorPartSymbolImpl(KotlinOCParameterSymbol(it.first, project, clazz), it.second)
+                SelectorPartSymbolImpl(KotlinOCParameterSymbol(it.first, project, file, clazz), it.second)
             }.toList()
         }
     }

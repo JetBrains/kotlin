@@ -6,6 +6,7 @@
 package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.*
 import com.jetbrains.cidr.lang.symbols.cpp.OCDeclaratorSymbol
 import com.jetbrains.cidr.lang.symbols.cpp.OCSymbolWithQualifiedName
@@ -20,12 +21,12 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 class KotlinOCParameterSymbol(
     stub: ObjCParameter,
     project: Project,
+    file: VirtualFile,
     private val containingClass: OCClassSymbol
-) : KotlinOCWrapperSymbol<ObjCParameter>(stub, project), OCDeclaratorSymbol {
+) : KotlinOCWrapperSymbol<ObjCParameter>(stub, project, file), OCDeclaratorSymbol {
 
-    private val myQualifiedName = OCQualifiedName.interned(name)
-
-    private val myType = stub.type.toOCType(project, containingClass)
+    private val myQualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
+    private val myType: OCType by stub { type.toOCType(project, containingClass) }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PARAMETER
 

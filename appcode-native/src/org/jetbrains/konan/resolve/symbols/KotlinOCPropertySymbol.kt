@@ -6,6 +6,7 @@
 package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.OCResolveContext
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
@@ -19,10 +20,14 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 class KotlinOCPropertySymbol(
     stub: ObjCProperty,
     project: Project,
+    file: VirtualFile,
     containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol<ObjCProperty>(stub, project, containingClass), OCPropertySymbol {
+) : KotlinOCMemberSymbol<ObjCProperty>(stub, project, file, containingClass), OCPropertySymbol {
 
-    private val myType: OCType = stub.type.toOCType(project, containingClass)
+    private val myType: OCType by stub { type.toOCType(project, containingClass) }
+    private val myAttributes: List<String> by stub { propertyAttributes }
+    private val myGetterName: String? by stub { getterName }
+    private val mySetterName: String? by stub { setterName }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PROPERTY
 
@@ -33,19 +38,17 @@ class KotlinOCPropertySymbol(
     override fun getAssociatedSymbol(project: Project): OCMemberSymbol? = null //todo ???
 
     override fun hasAttribute(attribute: OCPropertySymbol.PropertyAttribute): Boolean {
-        return stub.attributes.contains(attribute.tokenName) ||
-                attribute == OCPropertySymbol.PropertyAttribute.GETTER && stub.getterName != null ||
-                attribute == OCPropertySymbol.PropertyAttribute.SETTER && stub.setterName != null
+        return myAttributes.contains(attribute.tokenName) ||
+               attribute == OCPropertySymbol.PropertyAttribute.GETTER && myGetterName != null ||
+               attribute == OCPropertySymbol.PropertyAttribute.SETTER && mySetterName != null
     }
 
-    override fun getNameWithParent(context: OCResolveContext): String {
-        return "${parent.name}.$name"
-    }
+    override fun getNameWithParent(context: OCResolveContext): String = "${parent.name}.$name"
 
     override fun getAttributeValue(attribute: OCPropertySymbol.ValueAttribute): String? {
         return when (attribute) {
-            OCPropertySymbol.ValueAttribute.GETTER -> stub.getterName
-            OCPropertySymbol.ValueAttribute.SETTER -> stub.setterName
+            OCPropertySymbol.ValueAttribute.GETTER -> myGetterName
+            OCPropertySymbol.ValueAttribute.SETTER -> mySetterName
             else -> throw IllegalArgumentException("Unsupported value attribute: $attribute")
         }
     }

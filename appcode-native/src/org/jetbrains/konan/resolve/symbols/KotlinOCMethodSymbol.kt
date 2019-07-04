@@ -6,6 +6,7 @@
 package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.OCResolveContext
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
@@ -23,12 +24,13 @@ import java.util.*
 class KotlinOCMethodSymbol(
     stub: ObjCMethod,
     project: Project,
+    file: VirtualFile,
     containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol<ObjCMethod>(stub, project, containingClass), OCMethodSymbol {
+) : KotlinOCMemberSymbol<ObjCMethod>(stub, project, file, containingClass), OCMethodSymbol {
 
     private lateinit var mySelectors: List<OCMethodSymbol.SelectorPartSymbol>
-
-    private val myReturnType: OCType = stub.returnType.toOCType(project, containingClass)
+    private val myReturnType: OCType by stub { returnType.toOCType(project, containingClass) }
+    private val myIsStatic: Boolean by stub { !isInstanceMethod }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.METHOD
 
@@ -51,7 +53,7 @@ class KotlinOCMethodSymbol(
 
     override fun getSubstitution(): OCTypeSubstitution = OCTypeSubstitution.ID
 
-    override fun isStatic(): Boolean = !stub.isInstanceMethod
+    override fun isStatic(): Boolean = myIsStatic
 
     override fun getNameWithParent(context: OCResolveContext): String = "${if (isStatic) "+" else "-"}[${parent.name} $name]"
 
