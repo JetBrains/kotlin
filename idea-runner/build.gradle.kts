@@ -9,6 +9,7 @@ dependencies {
     compileOnly(project(":idea:idea-maven"))
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-jvm"))
+    compileOnly(project(":idea:idea-sampler"))
 
     runtimeOnly(intellijDep())
     runtimeOnly(intellijRuntimeAnnotations())
