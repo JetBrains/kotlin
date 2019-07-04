@@ -27,6 +27,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.terminal.JBTerminalWidget;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SearchTextField;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
@@ -123,7 +124,7 @@ public abstract class GotoActionBase extends AnAction {
       return Pair.create(predefined, 0);
     }
     if (useEditorSelection) {
-      String selectedText = getInitialTextForNavigation(e.getData(CommonDataKeys.EDITOR));
+      String selectedText = getInitialTextForNavigation(e);
       if (selectedText != null) return new Pair<>(selectedText, 0);
     }
 
@@ -151,14 +152,13 @@ public abstract class GotoActionBase extends AnAction {
   }
 
   @Nullable
-  public static String getInitialTextForNavigation(@Nullable Editor editor) {
-    if (editor != null) {
-      final String selectedText = editor.getSelectionModel().getSelectedText();
-      if (selectedText != null && !selectedText.contains("\n")) {
-        return selectedText;
-      }
+  public static String getInitialTextForNavigation(@NotNull AnActionEvent e) {
+    Editor editor = e.getData(CommonDataKeys.EDITOR);
+    String selectedText = editor != null ? editor.getSelectionModel().getSelectedText() : null;
+    if (selectedText == null) {
+      selectedText = e.getData(JBTerminalWidget.SELECTED_TEXT_DATA_KEY);
     }
-    return null;
+    return selectedText != null && !selectedText.contains("\n") ? selectedText : null;
   }
 
   protected <T> void showNavigationPopup(AnActionEvent e, ChooseByNameModel model, final GotoActionCallback<T> callback) {
