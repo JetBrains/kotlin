@@ -27,6 +27,7 @@ import androidx.compose.Compose
 import androidx.compose.composer
 import androidx.compose.runWithCurrent
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -64,6 +65,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
     }
 
     @Test
+    @Ignore("TODO(b/138720405): Investigate synchronisation issues in tests")
     fun testCGModelView_PersonModel(): Unit = ensureSetup {
         val tvNameId = 384
         val tvAgeId = 385
