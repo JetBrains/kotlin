@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -86,14 +85,14 @@ class ScriptCodegen private constructor(
         )
         val asmMethod = jvmSignature.asmMethod
 
-        if (state.replSpecific.shouldGenerateScriptResultValue) {
-            val resultFieldInfo = scriptContext.resultFieldInfo
+        scriptContext.resultFieldInfo?.let { resultFieldInfo ->
             classBuilder.newField(
-                    JvmDeclarationOrigin.NO_ORIGIN,
-                    ACC_PUBLIC or ACC_FINAL,
-                    resultFieldInfo.fieldName,
-                    resultFieldInfo.fieldType.descriptor,
-                    null, null)
+                NO_ORIGIN,
+                ACC_PUBLIC or ACC_FINAL,
+                resultFieldInfo.fieldName,
+                resultFieldInfo.fieldType.descriptor,
+                null, null
+            )
         }
 
         val mv = classBuilder.newMethod(
@@ -277,7 +276,7 @@ class ScriptCodegen private constructor(
             val builder = state.factory.newVisitor(
                     OtherOrigin(declaration, scriptDescriptor), classType, declaration.containingFile)
 
-            val earlierScripts = state.replSpecific.earlierScriptsForReplInterpreter
+            val earlierScripts = state.scriptSpecific.earlierScriptsForReplInterpreter
 
             val scriptContext = parentContext.intoScript(
                     scriptDescriptor,

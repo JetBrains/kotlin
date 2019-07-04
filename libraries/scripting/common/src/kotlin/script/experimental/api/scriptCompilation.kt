@@ -100,6 +100,12 @@ val ScriptCompilationConfigurationKeys.defaultImports by PropertiesCollection.ke
 val ScriptCompilationConfigurationKeys.importScripts by PropertiesCollection.key<List<SourceCode>>()
 
 /**
+ * The name of the generated script class field to assign the script results to, empty means disabled
+ * see also ReplScriptCompilationConfigurationKeys.resultFieldPrefix
+ */
+val ScriptCompilationConfigurationKeys.resultField by PropertiesCollection.key<String>("\$\$result")
+
+/**
  * The list of script dependencies - platform specific
  */
 val ScriptCompilationConfigurationKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()

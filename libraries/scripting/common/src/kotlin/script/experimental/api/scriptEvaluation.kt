@@ -121,17 +121,40 @@ data class RefineEvaluationConfigurationData(
 /**
  * The script evaluation result value
  */
-sealed class ResultValue {
-    class Value(val name: String, val value: Any?, val type: String, val scriptInstance: Any) : ResultValue() {
+sealed class ResultValue(val scriptInstance: Any? = null) {
+
+    /**
+     * The result value representing a script return value - the value of the last expression in the script
+     * @param name assigned name of the result field - used e.g. in REPL
+     * @param value actual result value
+     * @param type name of the result type
+     * @param scriptInstance instance of the script class
+     */
+    class Value(val name: String, val value: Any?, val type: String, scriptInstance: Any) : ResultValue(scriptInstance) {
         override fun toString(): String = "$name: $type = $value"
     }
 
-    class UnitValue(val scriptInstance: Any) : ResultValue() {
+    /**
+     * The result value representing unit result, e.g. when the script ends with a statement
+     * @param scriptInstance instance of the script class
+     */
+    class Unit(scriptInstance: Any) : ResultValue(scriptInstance) {
         override fun toString(): String = "Unit"
     }
 
-    // TODO: obsolete it, use differently named value in the saving evaluators
-    object Unit : ResultValue()
+    /**
+     * The result value representing an exception from script itself
+     * @param error the actual exception thrown on script evaluation
+     * @param wrappingException the wrapping exception e.g. InvocationTargetException, sometimes useful for calculating the relevant stacktrace
+     */
+    class Error(val error: Throwable, val wrappingException: Throwable? = null) : ResultValue() {
+        override fun toString(): String = error.toString()
+    }
+
+    /**
+     * The result value used in non-evaluating "evaluators"
+     */
+    object NotEvaluated : ResultValue()
 }
 
 /**

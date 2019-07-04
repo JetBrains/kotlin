@@ -364,23 +364,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private void putStackValue(@Nullable KtElement expr, @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull StackValue value) {
         // for repl store the result of the last line into special field
-        if (value.type != Type.VOID_TYPE && state.getReplSpecific().getShouldGenerateScriptResultValue()) {
+        if (value.type != Type.VOID_TYPE) {
             ScriptContext context = getScriptContext();
-            if (expr == context.getLastStatement()) {
-                StackValue.Field resultValue = StackValue.field(context.getResultFieldInfo(), StackValue.LOCAL_0);
-                resultValue.store(value, v);
-                state.getReplSpecific().setHasResult(true);
-                return;
+            if (context != null && expr == context.getLastStatement()) {
+                FieldInfo resultFieldInfo = context.getResultFieldInfo();
+                if (resultFieldInfo != null) {
+                    StackValue.Field resultValue = StackValue.field(resultFieldInfo, StackValue.LOCAL_0);
+                    resultValue.store(value, v);
+                    state.getScriptSpecific().setResultType(resultFieldInfo.getFieldKotlinType());
+                    state.getScriptSpecific().setResultFieldName(resultFieldInfo.getFieldName());
+                    return;
+                }
             }
         }
 
         value.put(type, kotlinType, v);
     }
 
-    @NotNull
+    @Nullable
     private ScriptContext getScriptContext() {
         CodegenContext context = getContext();
-        while (!(context instanceof ScriptContext)) {
+        while (context != null && !(context instanceof ScriptContext)) {
             context = context.getParentContext();
         }
         return (ScriptContext) context;

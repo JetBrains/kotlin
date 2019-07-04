@@ -56,20 +56,24 @@ class JvmReplEvaluator(
         val res = runBlocking { scriptEvaluator(compiledScript, currentConfiguration) }
 
         when (res) {
-            is ResultWithDiagnostics.Success -> when (val retVal = res.value.returnValue) {
-                is ResultValue.Value -> {
-                    history.replaceOrPush(compileResult.lineId, retVal.scriptInstance)
-                    // TODO: the latter check is temporary while the result is used to return the instance too
-                    if (retVal.type.isNotBlank())
+            is ResultWithDiagnostics.Success -> {
+                when (val retVal = res.value.returnValue) {
+                    is ResultValue.Error -> {
+                        ReplEvalResult.Error.Runtime(
+                            retVal.error.message ?: "unknown error",
+                            (retVal.error as? Exception) ?: (retVal.wrappingException as? Exception)
+                        )
+                    }
+                    is ResultValue.Value -> {
+                        history.replaceOrPush(compileResult.lineId, retVal.scriptInstance!!)
                         ReplEvalResult.ValueResult(retVal.name, retVal.value, retVal.type)
-                    else
+                    }
+                    is ResultValue.Unit -> {
+                        history.replaceOrPush(compileResult.lineId, retVal.scriptInstance!!)
                         ReplEvalResult.UnitResult()
+                    }
+                    else -> throw IllegalStateException("Unexpected snippet result value $retVal")
                 }
-                is ResultValue.UnitValue -> {
-                    history.replaceOrPush(compileResult.lineId, retVal.scriptInstance)
-                    ReplEvalResult.UnitResult()
-                }
-                else -> throw IllegalStateException("Expecting value with script instance, got $retVal")
             }
             else ->
                 ReplEvalResult.Error.Runtime(

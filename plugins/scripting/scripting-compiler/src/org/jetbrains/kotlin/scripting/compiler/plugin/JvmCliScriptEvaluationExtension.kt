@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFrom
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import java.io.File
-import kotlin.script.experimental.api.constructorArgs
-import kotlin.script.experimental.api.valueOr
-import kotlin.script.experimental.api.with
+import java.io.PrintStream
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 
@@ -41,7 +40,7 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(projectEnvironment.project)
         if (scriptDefinitionProvider == null) {
-            messageCollector.report(ERROR, "Unable to process the script, scripting plugin is not configured")
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to process the script, scripting plugin is not configured")
             return COMPILATION_ERROR
         }
         val sourcePath = arguments.freeArgs.first()
@@ -56,7 +55,7 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
             val extensionHint =
                 if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
                 else ""
-            messageCollector.report(ERROR, "Specify path to the script file$extensionHint as the first argument")
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify path to the script file$extensionHint as the first argument")
             return COMPILATION_ERROR
         }
 
@@ -76,16 +75,56 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
         return runBlocking {
             val compiledScript =
                 scriptCompiler.compile(script, scriptCompilationConfiguration)
-                    .valueOr { return@runBlocking COMPILATION_ERROR }
-            /*val evalResult = */
-            BasicJvmScriptEvaluator().invoke(compiledScript, evaluationConfiguration)
+                    .valueOr {
+                        for (report in it.reports) {
+                            messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+                        }
+                        return@runBlocking COMPILATION_ERROR
+                    }
+            val evalResult = BasicJvmScriptEvaluator().invoke(compiledScript, evaluationConfiguration)
                 .valueOr {
                     for (report in it.reports) {
-                        messageCollector.report(ERROR, report.toString())
+                        messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
                     }
-                    return@runBlocking ExitCode.SCRIPT_EXECUTION_ERROR
+                    return@runBlocking ExitCode.INTERNAL_ERROR
                 }
-            ExitCode.OK
+            when (evalResult.returnValue) {
+                is ResultValue.Value -> {
+                    println((evalResult.returnValue as ResultValue.Value).value)
+                    ExitCode.OK
+                }
+                is ResultValue.Error -> {
+                    val errorValue = evalResult.returnValue as ResultValue.Error
+                    errorValue.renderError(System.err)
+                    ExitCode.SCRIPT_EXECUTION_ERROR
+                }
+                else -> ExitCode.OK
+            }
+        }
+    }
+}
+
+private fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessageSeverity =
+    when (this) {
+        ScriptDiagnostic.Severity.FATAL -> CompilerMessageSeverity.EXCEPTION
+        ScriptDiagnostic.Severity.ERROR -> CompilerMessageSeverity.ERROR
+        ScriptDiagnostic.Severity.WARNING -> CompilerMessageSeverity.WARNING
+        ScriptDiagnostic.Severity.INFO -> CompilerMessageSeverity.INFO
+        ScriptDiagnostic.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
+    }
+
+private fun ResultValue.Error.renderError(stream: PrintStream) {
+    val fullTrace = error.stackTrace
+    if (wrappingException == null || fullTrace.size < wrappingException!!.stackTrace.size) {
+        error.printStackTrace(stream)
+    } else {
+        // subtracting wrapping message stacktrace from error stacktrace to show only user-specific part of it
+        // TODO: consider more reliable logic, e.g. comparing traces, fallback to full error printing in case of mismatch
+        // TODO: write tests
+        stream.println(error)
+        val scriptTraceSize = fullTrace.size - wrappingException!!.stackTrace.size
+        for (i in 0 until scriptTraceSize) {
+            stream.println("\tat " + fullTrace[i])
         }
     }
 }

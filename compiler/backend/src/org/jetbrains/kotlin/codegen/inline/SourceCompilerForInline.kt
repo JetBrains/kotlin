@@ -391,7 +391,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
             return when (descriptor) {
                 is ScriptDescriptor -> {
-                    val earlierScripts = state.replSpecific.earlierScriptsForReplInterpreter
+                    val earlierScripts = state.scriptSpecific.earlierScriptsForReplInterpreter
                     containerContext.intoScript(
                         descriptor,
                         earlierScripts ?: emptyList(),

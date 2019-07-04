@@ -41,7 +41,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
                     writeBytes(bytes)
                 }
             }
-            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Unit, scriptEvaluationConfiguration))
+            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
                 e.asDiagnostics("Cannot generate script classes: ${e.message}", path = compiledScript.sourceLocationId)
@@ -96,7 +96,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
             if (compiledScript !is KJvmCompiledScript<*>)
                 return failure("Cannot generate jar: unsupported compiled script type $compiledScript")
             compiledScript.saveToJar(outputJar)
-            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Unit, scriptEvaluationConfiguration))
+            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
                 e.asDiagnostics("Cannot generate script jar: ${e.message}", path = compiledScript.sourceLocationId)

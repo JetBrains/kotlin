@@ -77,12 +77,15 @@ open class GenericReplCompiler(
             val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
             AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
             val scriptDescriptor = when (analysisResult) {
-                is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(errorHolder.renderMessage())
-                is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
+                is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> {
+                    return ReplCompileResult.Error(errorHolder.renderMessage())
+                }
+                is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> {
+                    (analysisResult.scriptDescriptor as? ScriptDescriptor)
+                        ?: error("Unexpected script descriptor type ${analysisResult.scriptDescriptor::class}")
+                }
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
-
-            val type = (scriptDescriptor as ScriptDescriptor).resultValue?.returnType
 
             val generationState = GenerationState.Builder(
                 psiFile.project,
@@ -93,9 +96,7 @@ open class GenericReplCompiler(
                 compilerConfiguration
             ).build()
 
-            generationState.replSpecific.resultType = type
-            generationState.replSpecific.scriptResultFieldName = scriptResultFieldName(codeLine.no)
-            generationState.replSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
+            generationState.scriptSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
             generationState.beforeCompile()
             KotlinCodegenFacade.generatePackage(
                 generationState,
@@ -114,9 +115,9 @@ open class GenericReplCompiler(
                 compilerState.history.map { it.id },
                 generatedClassname,
                 classes,
-                generationState.replSpecific.hasResult,
+                generationState.scriptSpecific.resultFieldName != null,
                 classpathAddendum ?: emptyList(),
-                generationState.replSpecific.resultType?.let {
+                generationState.scriptSpecific.resultType?.let {
                     DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
                 },
                 null

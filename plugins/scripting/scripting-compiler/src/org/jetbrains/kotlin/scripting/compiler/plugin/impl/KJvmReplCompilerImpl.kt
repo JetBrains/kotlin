@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.IReplStageHistory
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.scriptResultFieldName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
@@ -112,15 +111,20 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                 is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return failure(
                     messageCollector
                 )
-                is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
+                is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> {
+                    (analysisResult.scriptDescriptor as? ScriptDescriptor)
+                        ?: return failure(
+                            snippet,
+                            messageCollector,
+                            "Unexpected script descriptor type ${analysisResult.scriptDescriptor::class}"
+                        )
+                }
                 else -> return failure(
                     snippet,
                     messageCollector,
                     "Unexpected result ${analysisResult::class.java}"
                 )
             }
-
-            val type = (scriptDescriptor as ScriptDescriptor).resultValue?.returnType
 
             val generationState = GenerationState.Builder(
                 snippetKtFile.project,
@@ -130,9 +134,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                 sourceFiles,
                 compilationState.environment.configuration
             ).build().apply {
-                replSpecific.resultType = type
-                replSpecific.scriptResultFieldName = scriptResultFieldName(codeLine.no)
-                replSpecific.earlierScriptsForReplInterpreter = history.map { it.item }
+                scriptSpecific.earlierScriptsForReplInterpreter = history.map { it.item }
                 beforeCompile()
             }
             KotlinCodegenFacade.generatePackage(
