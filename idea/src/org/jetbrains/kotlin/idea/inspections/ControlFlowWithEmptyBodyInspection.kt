@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
+import org.jetbrains.kotlin.idea.util.hasComments
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -39,14 +40,16 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
 
         override fun visitWhileExpression(expression: KtWhileExpression) {
             val keyword = expression.allChildren.firstOrNull { it.node.elementType == KtTokens.WHILE_KEYWORD } ?: return
-            if (expression.body.isEmptyBodyOrNull()) {
+            val body = expression.body
+            if (body?.hasComments() != true && body.isEmptyBodyOrNull()) {
                 holder.registerProblem(expression, keyword)
             }
         }
 
         override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
             val keyword = expression.allChildren.firstOrNull { it.node.elementType == KtTokens.DO_KEYWORD } ?: return
-            if (expression.body.isEmptyBodyOrNull()) {
+            val body = expression.body
+            if (body?.hasComments() != true && body.isEmptyBodyOrNull()) {
                 holder.registerProblem(expression, keyword)
             }
         }

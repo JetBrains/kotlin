@@ -10,8 +10,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -25,6 +23,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionCo
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.fromIfKeywordToRightParenthesisTextRangeInThis
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.shouldBeTransformed
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.hasComments
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
@@ -100,16 +99,6 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             commentSaver.restore(childRangeAfter)
 
             return newElvis
-        }
-
-        private fun PsiElement.hasComments(): Boolean {
-            var result = false
-            accept(object : KtTreeVisitorVoid() {
-                override fun visitComment(comment: PsiComment?) {
-                    result = true
-                }
-            })
-            return result
         }
 
         private fun calcData(ifExpression: KtIfExpression): Data? {

@@ -1,4 +1,4 @@
-// PROBLEM: 'while' has empty body
+// PROBLEM: none
 // FIX: none
 
 fun test(i: Int) {
