@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -62,7 +63,7 @@ internal class UltraLightMembersCreator(
         val property = variable as? KtProperty
         if (property != null && !hasBackingField(property)) return null
 
-        if (variable.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return null
+        if (variable.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) || variable.hasExpectModifier()) return null
 
         val hasDelegate = property?.hasDelegate() == true
         val fieldName = generateUniqueFieldName((variable.name ?: "") + (if (hasDelegate) "\$delegate" else ""), usedPropertyNames)
@@ -109,7 +110,10 @@ internal class UltraLightMembersCreator(
         forcePrivate: Boolean = false
     ): Collection<KtLightMethod> {
 
-        if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) || ktFunction.hasReifiedParameters()) return emptyList()
+        if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+            ktFunction.hasReifiedParameters() ||
+            ktFunction.hasExpectModifier()
+        ) return emptyList()
 
         val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate)
 
@@ -361,7 +365,10 @@ internal class UltraLightMembersCreator(
     ): List<KtLightMethod> {
 
         val propertyName = declaration.name ?: return emptyList()
-        if (declaration.isConstOrJvmField() || declaration.hasReifiedParameters()) return emptyList()
+        if (declaration.isConstOrJvmField() ||
+            declaration.hasReifiedParameters() ||
+            declaration.hasExpectModifier()
+        ) return emptyList()
 
         val ktGetter = (declaration as? KtProperty)?.getter
         val ktSetter = (declaration as? KtProperty)?.setter
