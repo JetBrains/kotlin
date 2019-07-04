@@ -22,8 +22,6 @@ import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import java.util.stream.Stream
-import kotlin.streams.asStream
 
 class SourceFolderManagerImpl(private val project: Project) : SourceFolderManager, Disposable {
 
@@ -62,13 +60,9 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     }
   }
 
-  override fun getSourceFolders(): Stream<Pair<String, JpsModuleSourceRootType<*>>> {
+  fun getSourceFoldersUnder(modules: () -> Set<Module>, parentUrl: String): Sequence<Pair<String, JpsModuleSourceRootType<*>>> {
     synchronized(mutex) {
-      return sourceFoldersByModule.asSequence().flatMap { it.value.sourceFolders.asSequence() }.mapNotNull { folderUrl ->
-        sourceFolders[folderUrl]?.let { folderModel ->
-          Pair.create(folderUrl, folderModel.type)
-        }
-      }.asStream()
+      return sourceFolders.getAllDescendants(parentUrl).asSequence().filter { it.module in modules() }.map { Pair.create(it.url, it.type) }
     }
   }
 
