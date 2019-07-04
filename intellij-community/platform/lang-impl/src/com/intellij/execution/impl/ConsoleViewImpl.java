@@ -171,7 +171,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     myPsiDisposedCheck = new DisposedPsiManagerCheck(project);
     myProject = project;
 
-    myFilters = new CompositeFilter(project, usePredefinedMessageFilter ? computeConsoleFilters(project, searchScope) : new SmartList<>());
+    myFilters = new CompositeFilter(project, usePredefinedMessageFilter ? computeConsoleFilters(project, searchScope) : Collections.emptyList());
     myFilters.setForceUseAllFilters(true);
 
     List<ConsoleInputFilterProvider> inputFilters = ConsoleInputFilterProvider.INPUT_FILTER_PROVIDERS.getExtensionList();
@@ -820,7 +820,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     tokenMarker.putUserData(CONTENT_TYPE, contentType);
   }
 
-  boolean isDisposed() {
+  private boolean isDisposed() {
     return myProject.isDisposed() || myEditor == null;
   }
 
