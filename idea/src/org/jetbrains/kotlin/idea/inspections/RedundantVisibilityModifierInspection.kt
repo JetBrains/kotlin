@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.declarationVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return declarationVisitor { declaration ->
+            if (declaration is KtPropertyAccessor && declaration.isGetter) return@declarationVisitor // There is a quick fix for REDUNDANT_MODIFIER_IN_GETTER
             val visibilityModifier = declaration.visibilityModifier() ?: return@declarationVisitor
             val implicitVisibility = declaration.implicitVisibility()
             val redundantVisibility = when {
