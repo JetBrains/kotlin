@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberPropertyImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.lightTree.ClassNameUtil
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.MemberModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.PlatformModifier
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 class ValueParameter(
     private val isVal: Boolean,
     private val isVar: Boolean,
-    private val modifier: Modifier,
+    private val modifiers: Modifier,
     val firValueParameter: FirValueParameter
 ) {
     fun hasValOrVar(): Boolean {
@@ -37,11 +36,11 @@ class ValueParameter(
             null,
             FirPropertySymbol(ClassNameUtil.callableIdForName(name)),
             name,
-            modifier.visibilityModifier.toVisibility(),
-            modifier.inheritanceModifier?.toModality(),
-            modifier.platformModifier == PlatformModifier.EXPECT,
-            modifier.platformModifier == PlatformModifier.ACTUAL,
-            isOverride = modifier.memberModifier == MemberModifier.OVERRIDE,
+            modifiers.getVisibility(),
+            modifiers.getModality(),
+            modifiers.hasExpect(),
+            modifiers.hasActual(),
+            isOverride = modifiers.hasOverride(),
             isConst = false,
             isLateInit = false,
             receiverTypeRef = null,
@@ -52,12 +51,12 @@ class ValueParameter(
                     this@ValueParameter.firValueParameter.session, null, name, this@ValueParameter.firValueParameter.symbol
                 )
             },
-            getter = FirDefaultPropertyGetter(this.firValueParameter.session, null, type, modifier.visibilityModifier.toVisibility()),
+            getter = FirDefaultPropertyGetter(this.firValueParameter.session, null, type, modifiers.getVisibility()),
             setter = if (this.isVar) FirDefaultPropertySetter(
                 this.firValueParameter.session,
                 null,
                 type,
-                modifier.visibilityModifier.toVisibility()
+                modifiers.getVisibility()
             ) else null,
             delegate = null
         ).apply { annotations += this@ValueParameter.firValueParameter.annotations }
