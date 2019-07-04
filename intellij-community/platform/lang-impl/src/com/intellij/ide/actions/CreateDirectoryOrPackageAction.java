@@ -304,8 +304,14 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
 
           if (index == 0 || value.contributor != list.getModel().getElementAt(index - 1).contributor) {
             SeparatorWithText separator = new SeparatorWithText();
+
+            separator.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
+            int vGap = UIUtil.DEFAULT_VGAP/2;
+            separator.setBorder(BorderFactory.createEmptyBorder(vGap, 0, vGap, 0));
+
             separator.setCaption(value.contributor.getDescription());
-            separator.setCaptionCentered(true);
+            separator.setCaptionCentered(false);
+
             wrapperPanel.add(separator, BorderLayout.NORTH);
           }
           wrapperPanel.add(item, BorderLayout.CENTER);
