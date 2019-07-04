@@ -198,6 +198,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
 
 
   private Editor myEditor;
+  private String myInitialTextForNavigation;
   private FileEditor myFileEditor;
   private HistoryItem myHistoryItem;
 
@@ -326,7 +327,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
           mySkipFocusGain = false;
           return;
         }
-        String text = GotoActionBase.getInitialTextForNavigation(myEditor);
+        String text = myInitialTextForNavigation;
         text = text != null ? text.trim() : "";
 
         search.setText(text);
@@ -590,7 +591,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(searchProviderID);
       SearchEverywhereUsageTriggerCollector.trigger(e.getProject(), SearchEverywhereUsageTriggerCollector.DIALOG_OPEN, data);
       IdeEventQueue.getInstance().getPopupManager().closeAllPopups(false);
-      String text = GotoActionBase.getInitialTextForNavigation(e.getData(CommonDataKeys.EDITOR));
+      String text = GotoActionBase.getInitialTextForNavigation(e);
       seManager.show(searchProviderID, text, e);
       return;
     }
@@ -605,6 +606,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
     myCurrentWorker = ActionCallback.DONE;
     if (e != null) {
       myEditor = e.getData(CommonDataKeys.EDITOR);
+      myInitialTextForNavigation = GotoActionBase.getInitialTextForNavigation(e);
       myFileEditor = e.getData(PlatformDataKeys.FILE_EDITOR);
     }
     if (e == null && myFocusOwner != null) {
@@ -2207,6 +2209,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
           myCurrentWorker = myCalcThread.cancel();
           myCalcThread = null;
           myEditor = null;
+          myInitialTextForNavigation = null;
           myFileEditor = null;
           myStructureModel = null;
           myDisabledActions.clear();
