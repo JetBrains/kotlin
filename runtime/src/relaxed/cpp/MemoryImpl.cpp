@@ -3,10 +3,13 @@
  * that can be found in the LICENSE file.
  */
 #include "Memory.h"
+#include "MemoryPrivate.hpp"
 
 // Note that only C++ part of the runtime goes via those functions, Kotlin uses specialized versions.
 
 extern "C" {
+
+const bool IsStrictMemoryModel = false;
 
 OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
   RETURN_RESULT_OF(AllocInstanceRelaxed, typeInfo);
@@ -24,6 +27,38 @@ OBJ_GETTER(InitInstance,
 OBJ_GETTER(InitSharedInstance,
     ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
   RETURN_RESULT_OF(InitSharedInstanceRelaxed, location, localLocation, typeInfo, ctor);
+}
+
+void ReleaseHeapRef(const ObjHeader* object) {
+  ReleaseHeapRefRelaxed(object);
+}
+
+void ZeroStackRef(ObjHeader** location) {
+  ZeroStackRefRelaxed(location);
+}
+
+void SetStackRef(ObjHeader** location, const ObjHeader* object) {
+  SetStackRefRelaxed(location, object);
+}
+
+void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
+  SetHeapRefRelaxed(location, object);
+}
+
+void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
+  UpdateHeapRefRelaxed(location, object);
+}
+
+void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+  UpdateReturnRefRelaxed(returnSlot, object);
+}
+
+void EnterFrame(ObjHeader** start, int parameters, int count) {
+  EnterFrameRelaxed(start, parameters, count);
+}
+
+void LeaveFrame(ObjHeader** start, int parameters, int count) {
+  LeaveFrameRelaxed(start, parameters, count);
 }
 
 }  // extern "C"

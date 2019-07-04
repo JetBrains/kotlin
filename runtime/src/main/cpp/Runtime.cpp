@@ -15,11 +15,13 @@
  */
 
 #include "Alloc.h"
+#include "Atomic.h"
 #include "Exceptions.h"
+#include "KAssert.h"
 #include "Memory.h"
 #include "Porting.h"
 #include "Runtime.h"
-#include "Atomic.h"
+
 
 struct RuntimeState {
   MemoryState* memoryState;
@@ -168,7 +170,7 @@ void CheckIsMainThread() {
     ThrowIncorrectDereferenceException();
 }
 
-int Konan_Platform_canAccessUnaligned() {
+KInt Konan_Platform_canAccessUnaligned() {
 #if KONAN_NO_UNALIGNED_ACCESS
   return 0;
 #else
@@ -176,7 +178,7 @@ int Konan_Platform_canAccessUnaligned() {
 #endif
 }
 
-int Konan_Platform_isLittleEndian() {
+KInt Konan_Platform_isLittleEndian() {
 #ifdef __BIG_ENDIAN__
   return 0;
 #else
@@ -184,7 +186,7 @@ int Konan_Platform_isLittleEndian() {
 #endif
 }
 
-int Konan_Platform_getOsFamily() {
+KInt Konan_Platform_getOsFamily() {
 #if KONAN_MACOSX
   return 1;
 #elif KONAN_IOS
@@ -203,7 +205,7 @@ int Konan_Platform_getOsFamily() {
 #endif
 }
 
-int Konan_Platform_getCpuArchitecture() {
+KInt Konan_Platform_getCpuArchitecture() {
 #if KONAN_ARM32
   return 1;
 #elif KONAN_ARM64
@@ -222,6 +224,14 @@ int Konan_Platform_getCpuArchitecture() {
 #warning "Unknown CPU"
   return 0;
 #endif
+}
+
+KInt Konan_Platform_getMemoryModel() {
+  return IsStrictMemoryModel ? 0 : 1;
+}
+
+KBoolean Konan_Platform_isDebugBinary() {
+  return KonanNeedDebugInfo ? true : false;
 }
 
 }  // extern "C"

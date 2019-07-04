@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
     } catch (e: IllegalStateException) {
         null
     }
-    if (future != null)
+    if (future != null && Platform.memoryModel == MemoryModel.STRICT)
         println("Fail 1")
     if (dataParam.int != 17) println("Fail 2")
     worker.requestTermination().result

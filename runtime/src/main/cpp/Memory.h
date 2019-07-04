@@ -23,15 +23,15 @@
 
 typedef enum {
   // Those bit masks are applied to refCount_ field.
-  // Container is normal thread local container.
-  CONTAINER_TAG_NORMAL = 0,
+  // Container is normal thread-local container.
+  CONTAINER_TAG_LOCAL = 0,
   // Container is frozen, could only refer to other frozen objects.
   // Refcounter update is atomics.
   CONTAINER_TAG_FROZEN = 1 | 1,  // shareable
   // Stack container, no need to free, children cleanup still shall be there.
   CONTAINER_TAG_STACK = 2,
   // Atomic container, reference counter is atomically updated.
-  CONTAINER_TAG_ATOMIC = 3 | 1,  // shareable
+  CONTAINER_TAG_SHARED = 3 | 1,  // shareable
   // Shift to get actual counter.
   CONTAINER_TAG_SHIFT = 2,
   // Actual value to increment/decrement container by. Tag is in lower bits.
@@ -88,8 +88,8 @@ struct ContainerHeader {
   // Number of objects in the container.
   uint32_t objectCount_;
 
-  inline bool normal() const {
-      return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_NORMAL;
+  inline bool local() const {
+      return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_LOCAL;
   }
 
   inline bool frozen() const {
@@ -100,12 +100,16 @@ struct ContainerHeader {
     refCount_ = (refCount_ & ~CONTAINER_TAG_MASK) | CONTAINER_TAG_FROZEN;
   }
 
-  inline void makeShareable() {
-      refCount_ = (refCount_ & ~CONTAINER_TAG_MASK) | CONTAINER_TAG_ATOMIC;
+  inline void makeShared() {
+      refCount_ = (refCount_ & ~CONTAINER_TAG_MASK) | CONTAINER_TAG_SHARED;
+  }
+
+  inline bool shared() const {
+    return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_SHARED;
   }
 
   inline bool shareable() const {
-      return (tag() & 1) != 0; // CONTAINER_TAG_FROZEN || CONTAINER_TAG_ATOMIC
+      return (tag() & 1) != 0; // CONTAINER_TAG_FROZEN || CONTAINER_TAG_SHARED
   }
 
   inline bool stack() const {
@@ -257,14 +261,6 @@ struct ContainerHeader {
   }
 };
 
-inline bool PermanentOrFrozen(ContainerHeader* container) {
-    return container == nullptr || container->frozen();
-}
-
-inline bool Shareable(ContainerHeader* container) {
-    return container == nullptr || container->shareable();
-}
-
 struct ArrayHeader;
 struct MetaObjHeader;
 
@@ -364,28 +360,10 @@ struct ArrayHeader {
   uint32_t count_;
 };
 
-inline bool PermanentOrFrozen(ObjHeader* obj) {
+inline bool isPermanentOrFrozen(ObjHeader* obj) {
     auto* container = obj->container();
     return container == nullptr || container->frozen();
 }
-
-// Class representing arbitrary placement container.
-class Container {
- public:
-  ContainerHeader* header() const { return header_; }
- protected:
-  // Data where everything is being stored.
-  ContainerHeader* header_;
-
-  void SetHeader(ObjHeader* obj, const TypeInfo* type_info) {
-    obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(type_info);
-    // Take into account typeInfo's immutability for ARC strategy.
-    if ((type_info->flags_ & TF_IMMUTABLE) != 0)
-      header_->refCount_ |= CONTAINER_TAG_FROZEN;
-    if ((type_info->flags_ & TF_ACYCLIC) != 0)
-      header_->setColorEvenIfGreen(CONTAINER_TAG_GC_GREEN);
-  }
-};
 
 #ifdef __cplusplus
 extern "C" {
@@ -394,6 +372,10 @@ extern "C" {
 #define OBJ_RESULT __result__
 #define OBJ_GETTER0(name) ObjHeader* name(ObjHeader** OBJ_RESULT)
 #define OBJ_GETTER(name, ...) ObjHeader* name(__VA_ARGS__, ObjHeader** OBJ_RESULT)
+#define MODEL_VARIANTS(returnType, name, ...)            \
+   returnType name(__VA_ARGS__) RUNTIME_NOTHROW;         \
+   returnType name##Strict(__VA_ARGS__) RUNTIME_NOTHROW; \
+   returnType name##Relaxed(__VA_ARGS__) RUNTIME_NOTHROW;
 #define RETURN_OBJ(value) { ObjHeader* obj = value; \
     UpdateReturnRef(OBJ_RESULT, obj);               \
     return obj; }
@@ -448,9 +430,6 @@ OBJ_GETTER(InitSharedInstanceRelaxed,
 OBJ_GETTER(InitSharedInstance,
     ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 
-// Cleanup references inside object.
-void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
-
 // Weak reference operations.
 // Atomically clears counter object reference.
 void WeakReferenceCounterClear(ObjHeader* counter);
@@ -477,22 +456,25 @@ void WeakReferenceCounterClear(ObjHeader* counter);
 //    in intermediate frames when throwing
 //
 
+// Controls the current memory model, is compile-time constant.
+extern const bool IsStrictMemoryModel;
+
 // Sets stack location.
-void SetStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, SetStackRef, ObjHeader** location, const ObjHeader* object);
 // Sets heap location.
-void SetHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, SetHeapRef, ObjHeader** location, const ObjHeader* object);
 // Zeroes heap location.
-void ZeroHeapRef(ObjHeader** location) RUNTIME_NOTHROW;
+void ZeroHeapRef(ObjHeader** location);
 // Zeroes stack location.
-void ZeroStackRef(ObjHeader** location) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, ZeroStackRef, ObjHeader** location);
 // Updates stack location.
-void UpdateStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, UpdateStackRef, ObjHeader** location, const ObjHeader* object);
 // Updates heap/static data location.
-void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, UpdateHeapRef, ObjHeader** location, const ObjHeader* object);
 // Updates location if it is null, atomically.
-void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, UpdateHeapRefIfNull, ObjHeader** location, const ObjHeader* object);
 // Updates reference in return slot.
-void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, UpdateReturnRef, ObjHeader** returnSlot, const ObjHeader* object);
 // Compares and swaps reference with taken lock.
 OBJ_GETTER(SwapHeapRefLocked,
     ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
@@ -501,9 +483,9 @@ void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlo
 // Reads reference with taken lock.
 OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock) RUNTIME_NOTHROW;
 // Called on frame enter, if it has object slots.
-void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, EnterFrame, ObjHeader** start, int parameters, int count);
 // Called on frame leave, if it has object slots.
-void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+MODEL_VARIANTS(void, LeaveFrame, ObjHeader** start, int parameters, int count);
 // Clears object subgraph references from memory subsystem, and optionally
 // checks if subgraph referenced by given root is disjoint from the rest of
 // object graph, i.e. no external references exists.

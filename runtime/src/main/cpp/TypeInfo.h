@@ -52,6 +52,7 @@ enum Konan_RuntimeType {
   RT_BOOLEAN    = 9
 };
 
+// Flags per type.
 enum Konan_TypeFlags {
   TF_IMMUTABLE = 1 << 0,
   TF_ACYCLIC   = 1 << 1,
@@ -59,8 +60,10 @@ enum Konan_TypeFlags {
   TF_OBJC_DYNAMIC = 1 << 3
 };
 
+// Flags per object instance.
 enum Konan_MetaFlags {
-  MF_NEVER_FROZEN = 1 << 0
+  // If freeze attempt happens on such an object - throw an exception.
+  MF_NEVER_FROZEN = 1 << 0,
 };
 
 // Extended information about a type.

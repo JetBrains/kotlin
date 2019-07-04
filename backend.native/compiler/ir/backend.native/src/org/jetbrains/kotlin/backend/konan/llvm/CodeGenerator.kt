@@ -308,7 +308,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     fun checkMainThread(exceptionHandler: ExceptionHandler) {
-        call(context.llvm.checkMainThread, emptyList(), Lifetime.IRRELEVANT, exceptionHandler)
+        if (context.memoryModel == MemoryModel.STRICT)
+            call(context.llvm.checkMainThread, emptyList(), Lifetime.IRRELEVANT, exceptionHandler)
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {

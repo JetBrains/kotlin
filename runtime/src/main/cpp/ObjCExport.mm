@@ -104,14 +104,13 @@ extern "C" id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj) {
 }
 
 inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* typeInfo, id associatedObject) {
-  // TODO: memory model!
   ObjHeader* result = AllocInstance(typeInfo, OBJ_RESULT);
   SetAssociatedObject(result, associatedObject);
   return result;
 }
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
-                            const TypeInfo* typeInfo, id associatedObject) RUNTIME_NOTHROW;
+                      const TypeInfo* typeInfo, id associatedObject) RUNTIME_NOTHROW;
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
                             const TypeInfo* typeInfo, id associatedObject) {

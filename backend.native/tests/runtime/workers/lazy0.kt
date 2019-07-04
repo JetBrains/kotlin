@@ -45,6 +45,8 @@ fun testSingleData(workers: Array<Worker>) {
 }
 
 fun testFrozenLazy(workers: Array<Worker>) {
+    // To make sure it is always frozen, and we don't race in relaxed mode.
+    Immutable3.freeze()
     val set = mutableSetOf<Int>()
     for (attempt in 1 .. 3) {
         val futures = Array(workers.size, { workerIndex ->

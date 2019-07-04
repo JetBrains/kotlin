@@ -179,13 +179,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(MEMORY_MODEL, when (arguments.memoryModel) {
                     "relaxed" -> {
-                        configuration.report(STRONG_WARNING, "Relaxed memory model is not yet functional")
+                        configuration.report(STRONG_WARNING, "Relaxed memory model is not yet fully functional")
                         MemoryModel.RELAXED
                     }
                     "strict" -> MemoryModel.STRICT
                     else -> {
                         configuration.report(ERROR, "Unsupported memory model ${arguments.memoryModel}")
-                        return
+                        MemoryModel.STRICT
                     }
                 })
 

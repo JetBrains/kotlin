@@ -784,7 +784,7 @@ void Kotlin_Worker_freezeInternal(KRef object) {
 }
 
 KBoolean Kotlin_Worker_isFrozenInternal(KRef object) {
-  return object == nullptr || PermanentOrFrozen(object);
+  return object == nullptr || isPermanentOrFrozen(object);
 }
 
 void Kotlin_Worker_ensureNeverFrozen(KRef object) {

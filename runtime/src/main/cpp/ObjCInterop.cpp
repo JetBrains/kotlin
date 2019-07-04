@@ -21,7 +21,10 @@
 #include <objc/message.h>
 #include <cstdio>
 #include <cstdint>
+
 #include "Memory.h"
+#include "MemoryPrivate.hpp"
+
 #include "Natives.h"
 #include "Utils.h"
 
