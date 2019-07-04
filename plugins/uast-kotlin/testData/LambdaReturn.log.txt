@@ -96,6 +96,40 @@ UFile (package = org.jetbrains.uast.kotlin)
                                 UBinaryExpression (operator = +)
                                     USimpleNameReferenceExpression (identifier = it)
                                     USimpleNameReferenceExpression (identifier = b)
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        ULambdaExpression
+                            UBlockExpression
+                                UDeclarationsExpression
+                                    ULocalVariable (name = vardbcd0724)
+                                        UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2))
+                                            UIdentifier (Identifier (listOf))
+                                            USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                                            ULiteralExpression (value = 1)
+                                            ULiteralExpression (value = 2)
+                                    ULocalVariable (name = a)
+                                        UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                                        UQualifiedReferenceExpression
+                                            USimpleNameReferenceExpression (identifier = vardbcd0724)
+                                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                                UIdentifier (Identifier (component1))
+                                                USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                                    ULocalVariable (name = b)
+                                        UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                                        UQualifiedReferenceExpression
+                                            USimpleNameReferenceExpression (identifier = vardbcd0724)
+                                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                                UIdentifier (Identifier (component2))
+                                                USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = y)
+                        ULambdaExpression
+                            UBlockExpression
+                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                    UIdentifier (Identifier (listOf))
+                                    USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                                    ULiteralExpression (value = 1)
         UAnnotationMethod (name = bar)
             UParameter (name = lmbd)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)

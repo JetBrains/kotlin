@@ -37,6 +37,14 @@ fun foo() {
         it + b
     }
 
+    val x: () -> Unit = {
+        val (a, b) = listOf(1, 2)
+    }
+
+    val y: () -> Unit = {
+        listOf(1)
+    }
+
 }
 
 private inline fun bar(lmbd: (Int) -> Int) {
