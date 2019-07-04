@@ -142,7 +142,7 @@ public class TopHitSEContributor implements SearchEverywhereContributor<Object> 
   private void fillFromExtensions(@NotNull String pattern, Processor<Object> consumer) {
     for (SearchTopHitProvider provider : myTopHitProviders) {
       boolean[] interrupted = {false};
-      provider.consumeTopHits(pattern, o -> interrupted[0] = consumer.process(o), myProject);
+      provider.consumeTopHits(pattern, o -> interrupted[0] = !consumer.process(o), myProject);
       if (interrupted[0]) {
         return;
       }
