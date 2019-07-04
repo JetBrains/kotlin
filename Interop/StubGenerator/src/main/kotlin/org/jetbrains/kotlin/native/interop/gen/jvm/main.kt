@@ -239,8 +239,14 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     File(nativeLibsDir).mkdirs()
     val outCFile = tempFiles.create(libName, ".${language.sourceFileExtension}")
 
-    val stubIrContext = StubIrContext(configuration, nativeIndex, imports, flavor, libName)
-    val stubIrDriver = StubIrDriver(stubIrContext, verbose)
+    val logger = if (verbose) {
+        { message: String -> println(message) }
+    } else {
+        {}
+    }
+
+    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, libName)
+    val stubIrDriver = StubIrDriver(stubIrContext)
     stubIrDriver.run(outKtFile, File(outCFile.absolutePath), entryPoint)
 
     // TODO: if a library has partially included headers, then it shouldn't be used as a dependency.

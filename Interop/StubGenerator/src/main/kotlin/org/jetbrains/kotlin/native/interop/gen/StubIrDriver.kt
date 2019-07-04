@@ -11,6 +11,7 @@ import java.io.File
 import java.util.*
 
 class StubIrContext(
+        val log: (String) -> Unit,
         val configuration: InteropConfiguration,
         val nativeIndex: NativeIndex,
         val imports: Imports,
@@ -85,12 +86,9 @@ class StubIrContext(
     }
 }
 
-class StubIrDriver(
-        private val context: StubIrContext,
-        private val verbose: Boolean = false
-) {
+class StubIrDriver(private val context: StubIrContext) {
     fun run(outKtFile: File, outCFile: File, entryPoint: String?) {
-        val builderResult = StubIrBuilder(context, verbose).build()
+        val builderResult = StubIrBuilder(context).build()
         val bridgeBuilderResult = StubIrBridgeBuilder(context, builderResult).build()
         outKtFile.bufferedWriter().use { ktFile ->
             File(outCFile.absolutePath).bufferedWriter().use { cFile ->

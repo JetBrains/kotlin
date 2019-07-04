@@ -12,7 +12,8 @@ class BridgeBuilderResult(
         val kotlinFile: KotlinFile,
         val nativeBridges: NativeBridges,
         val propertyAccessorBridgeBodies: Map<PropertyAccessor, String>,
-        val functionBridgeBodies: Map<FunctionStub, List<String>>
+        val functionBridgeBodies: Map<FunctionStub, List<String>>,
+        val excludedStubs: Set<StubIrElement>
 )
 
 /**
@@ -64,6 +65,7 @@ class StubIrBridgeBuilder(
 
     private val propertyAccessorBridgeBodies = mutableMapOf<PropertyAccessor, String>()
     private val functionBridgeBodies = mutableMapOf<FunctionStub, List<String>>()
+    private val excludedStubs = mutableSetOf<StubIrElement>()
 
     private val bridgeGeneratingVisitor = object : StubIrVisitor<StubContainer?, Unit> {
         override fun visitClass(element: ClassStub, owner: StubContainer?) {
@@ -83,11 +85,16 @@ class StubIrBridgeBuilder(
         }
 
         override fun visitFunction(element: FunctionStub, owner: StubContainer?) {
-            when {
-                element.external -> tryProcessCCallAnnotation(element)
-                element.isOptionalObjCMethod() -> {}
-                owner != null && owner.isInterface -> {}
-                else -> generateBridgeBody(element)
+            try {
+                when {
+                    element.external -> tryProcessCCallAnnotation(element)
+                    element.isOptionalObjCMethod() -> { }
+                    owner != null && owner.isInterface -> { }
+                    else -> generateBridgeBody(element)
+                }
+            } catch (e: Throwable) {
+                context.log("Warning: cannot generate bridge for ${element.name}.")
+                excludedStubs += element
             }
         }
 
@@ -106,15 +113,21 @@ class StubIrBridgeBuilder(
         }
 
         override fun visitProperty(element: PropertyStub, owner: StubContainer?) {
-            when (val kind = element.kind) {
-                is PropertyStub.Kind.Constant -> { }
-                is PropertyStub.Kind.Val -> {
-                    visitPropertyAccessor(kind.getter, owner)
+            try {
+                when (val kind = element.kind) {
+                    is PropertyStub.Kind.Constant -> {
+                    }
+                    is PropertyStub.Kind.Val -> {
+                        visitPropertyAccessor(kind.getter, owner)
+                    }
+                    is PropertyStub.Kind.Var -> {
+                        visitPropertyAccessor(kind.getter, owner)
+                        visitPropertyAccessor(kind.setter, owner)
+                    }
                 }
-                is PropertyStub.Kind.Var -> {
-                    visitPropertyAccessor(kind.getter, owner)
-                    visitPropertyAccessor(kind.setter, owner)
-                }
+            } catch (e: Throwable) {
+                context.log("Warning: cannot generate bridge for ${element.name}.")
+                excludedStubs += element
             }
         }
 
@@ -274,7 +287,8 @@ class StubIrBridgeBuilder(
                 kotlinFile,
                 simpleBridgeGenerator.prepare(),
                 propertyAccessorBridgeBodies.toMap(),
-                functionBridgeBodies.toMap()
+                functionBridgeBodies.toMap(),
+                excludedStubs.toSet()
         )
     }
 }

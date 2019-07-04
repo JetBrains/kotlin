@@ -229,10 +229,7 @@ data class StubIrBuilderResult(
 /**
  * Produces [StubIrBuilderResult] for given [KotlinPlatform] using [InteropConfiguration].
  */
-class StubIrBuilder(
-        private val context: StubIrContext,
-        private val verbose: Boolean = false
-) {
+class StubIrBuilder(private val context: StubIrContext) {
 
     private val configuration = context.configuration
     private val nativeIndex: NativeIndex = context.nativeIndex
@@ -292,17 +289,11 @@ class StubIrBuilder(
         )
     }
 
-    private fun log(message: String) {
-        if (verbose) {
-            println(message)
-        }
-    }
-
     private fun generateStubsForWrappedMacro(macro: WrappedMacroDef) {
         try {
             generateStubsForGlobal(GlobalDecl(macro.name, macro.type, isConst = true))
         } catch (e: Throwable) {
-            log("Warning: cannot generate stubs for macro ${macro.name}")
+            context.log("Warning: cannot generate stubs for macro ${macro.name}")
         }
     }
 
@@ -310,7 +301,7 @@ class StubIrBuilder(
         try {
             addStubs(MacroConstantStubBuilder(buildingContext, constant).build())
         } catch (e: Throwable) {
-            log("Warning: cannot generate stubs for constant ${constant.name}")
+            context.log("Warning: cannot generate stubs for constant ${constant.name}")
         }
     }
 
@@ -318,7 +309,7 @@ class StubIrBuilder(
         try {
             addStubs(EnumStubBuilder(buildingContext, enumDef).build())
         } catch (e: Throwable) {
-            log("Warning: cannot generate definition for enum ${enumDef.spelling}")
+            context.log("Warning: cannot generate definition for enum ${enumDef.spelling}")
         }
     }
 
@@ -326,7 +317,7 @@ class StubIrBuilder(
         try {
             addStubs(FunctionStubBuilder(buildingContext, func).build())
         } catch (e: Throwable) {
-            log("Warning: cannot generate stubs for function ${func.name}")
+            context.log("Warning: cannot generate stubs for function ${func.name}")
         }
     }
 
@@ -334,7 +325,7 @@ class StubIrBuilder(
         try {
             addStubs(StructStubBuilder(buildingContext, decl).build())
         } catch (e: Throwable) {
-            log("Warning: cannot generate definition for struct ${decl.spelling}")
+            context.log("Warning: cannot generate definition for struct ${decl.spelling}")
         }
     }
 
@@ -342,7 +333,7 @@ class StubIrBuilder(
         try {
             addStubs(TypedefStubBuilder(buildingContext, typedefDef).build())
         } catch (e: Throwable) {
-            log("Warning: cannot generate typedef ${typedefDef.name}")
+            context.log("Warning: cannot generate typedef ${typedefDef.name}")
         }
     }
 
@@ -350,7 +341,7 @@ class StubIrBuilder(
         try {
             addStubs(GlobalStubBuilder(buildingContext, global).build())
         } catch (e: Throwable) {
-            log("Warning: cannot generate stubs for global ${global.name}")
+            context.log("Warning: cannot generate stubs for global ${global.name}")
         }
     }
 
