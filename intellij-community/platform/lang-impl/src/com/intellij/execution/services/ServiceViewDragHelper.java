@@ -110,9 +110,9 @@ class ServiceViewDragHelper {
   }
 
   @Nullable
-  static ServiceViewContributor getTheOnlyContributor(List<ServiceViewItem> nodes) {
+  static ServiceViewContributor getTheOnlyRootContributor(List<ServiceViewItem> items) {
     ServiceViewContributor result = null;
-    for (ServiceViewItem node : nodes) {
+    for (ServiceViewItem node : items) {
       if (result == null) {
         result = node.getRootContributor();
       }
@@ -147,7 +147,7 @@ class ServiceViewDragHelper {
         }
         return true;
       });
-      myContributor = getTheOnlyContributor(myItems);
+      myContributor = getTheOnlyRootContributor(myItems);
     }
 
     ServiceView getServiceView() {

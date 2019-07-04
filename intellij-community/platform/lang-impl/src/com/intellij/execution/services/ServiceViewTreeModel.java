@@ -23,7 +23,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   private final ServiceViewModel myModel;
   private final Object myRoot = ObjectUtils.sentinel("services root");
 
-  ServiceViewTreeModel(ServiceViewModel model) {
+  ServiceViewTreeModel(@NotNull ServiceViewModel model) {
     myModel = model;
   }
 
