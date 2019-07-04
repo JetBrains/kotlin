@@ -12618,6 +12618,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeArgumentName"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("arrayLiteral.kt")
+        public void testArrayLiteral() throws Exception {
+            runTest("idea/testData/intentions/removeArgumentName/arrayLiteral.kt");
+        }
+
+        @TestMetadata("arrayLiteralForVararg.kt")
+        public void testArrayLiteralForVararg() throws Exception {
+            runTest("idea/testData/intentions/removeArgumentName/arrayLiteralForVararg.kt");
+        }
+
         @TestMetadata("namedArgumentBefore.kt")
         public void testNamedArgumentBefore() throws Exception {
             runTest("idea/testData/intentions/removeArgumentName/namedArgumentBefore.kt");
