@@ -714,7 +714,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         ManualLanguageFeatureSetting(feature, LanguageFeature.State.ENABLED, arg)
                     }
                     it.useExperimental = languageSettings.experimentalAnnotationsInUse.toTypedArray()
-                    it.pluginOptions = languageSettings.compilerPluginArguments.toTypedArray()
+                    it.pluginOptions = languageSettings.compilerPluginArguments
                     it.pluginClasspaths = languageSettings.compilerPluginClasspath.map(File::getPath).toTypedArray()
                 }
             }
@@ -733,12 +733,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 sourceSetInfo.actualPlatforms.addSimplePlatforms(listOf(compilation.platform))
                 sourceSetInfo.isTestModule = compilation.isTestModule
                 sourceSetInfo.compilerArguments =
-                    createCompilerArguments(compilation.arguments.currentArguments, compilation.platform).also {
+                    createCompilerArguments(compilation.arguments.currentArguments.toList(), compilation.platform).also {
                         it.multiPlatform = true
                     }
-                sourceSetInfo.dependencyClasspath = compilation.dependencyClasspath
+                sourceSetInfo.dependencyClasspath = compilation.dependencyClasspath.toList()
                 sourceSetInfo.defaultCompilerArguments =
-                    createCompilerArguments(compilation.arguments.defaultArguments, compilation.platform)
+                    createCompilerArguments(compilation.arguments.defaultArguments.toList(), compilation.platform)
                 sourceSetInfo.addSourceSets(compilation.sourceSets, compilation.fullName(), gradleModule, resolverCtx)
             }
         }
@@ -760,7 +760,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
         private fun createCompilerArguments(args: List<String>, platform: KotlinPlatform): CommonCompilerArguments {
             val compilerArguments = IdePlatformKindTooling.getTooling(platform).kind.argumentsClass.newInstance()
-            parseCommandLineArguments(args, compilerArguments)
+            parseCommandLineArguments(args.toList(), compilerArguments)
             return compilerArguments
         }
 

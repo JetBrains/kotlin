@@ -155,7 +155,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             getProgressiveMode(gradleLanguageSettings) as? Boolean ?: false,
             getEnabledLanguageFeatures(gradleLanguageSettings) as? Set<String> ?: emptySet(),
             getExperimentalAnnotationsInUse?.invoke(gradleLanguageSettings) as? Set<String> ?: emptySet(),
-            getCompilerPluginArguments?.invoke(gradleLanguageSettings) as? List<String> ?: emptyList(),
+            (getCompilerPluginArguments?.invoke(gradleLanguageSettings) as? List<String> ?: emptyList()).toTypedArray(),
             (getCompilerPluginClasspath?.invoke(gradleLanguageSettings) as? FileCollection)?.files ?: emptySet()
         )
     }
@@ -276,7 +276,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             dependencies,
             output,
             arguments,
-            dependencyClasspath,
+            dependencyClasspath.toTypedArray(),
             kotlinTaskProperties
         )
     }
@@ -387,7 +387,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getDefaultArguments = compileTaskClass.getMethodOrNull("getDefaultSerializedCompilerArguments")
         val currentArguments = safelyGetArguments(compileKotlinTask, getCurrentArguments)
         val defaultArguments = safelyGetArguments(compileKotlinTask, getDefaultArguments)
-        return KotlinCompilationArgumentsImpl(defaultArguments, currentArguments)
+        return KotlinCompilationArgumentsImpl(defaultArguments.toTypedArray(), currentArguments.toTypedArray())
     }
 
     private fun buildDependencyClasspath(compileKotlinTask: Task): List<String> {

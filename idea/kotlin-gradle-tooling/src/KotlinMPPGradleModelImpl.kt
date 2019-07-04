@@ -46,7 +46,7 @@ data class KotlinLanguageSettingsImpl(
     override val isProgressiveMode: Boolean,
     override val enabledLanguageFeatures: Set<String>,
     override val experimentalAnnotationsInUse: Set<String>,
-    override val compilerPluginArguments: List<String>,
+    override val compilerPluginArguments: Array<String>,
     override val compilerPluginClasspath: Set<File>
 ) : KotlinLanguageSettings {
     constructor(settings: KotlinLanguageSettings) : this(
@@ -73,10 +73,13 @@ data class KotlinCompilationOutputImpl(
 }
 
 data class KotlinCompilationArgumentsImpl(
-    override val defaultArguments: List<String>,
-    override val currentArguments: List<String>
+    override val defaultArguments: Array<String>,
+    override val currentArguments: Array<String>
 ) : KotlinCompilationArguments {
-    constructor(arguments: KotlinCompilationArguments) : this(ArrayList(arguments.defaultArguments), ArrayList(arguments.currentArguments))
+    constructor(arguments: KotlinCompilationArguments) : this(
+        arguments.defaultArguments,
+        arguments.currentArguments
+    )
 }
 
 data class KotlinCompilationImpl(
@@ -85,7 +88,7 @@ data class KotlinCompilationImpl(
     override val dependencies: Set<KotlinDependency>,
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
-    override val dependencyClasspath: List<String>,
+    override val dependencyClasspath: Array<String>,
     override val kotlinTaskProperties: KotlinTaskProperties
 ) : KotlinCompilation {
 
@@ -100,7 +103,7 @@ data class KotlinCompilationImpl(
         kotlinCompilation.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
-        ArrayList(kotlinCompilation.dependencyClasspath),
+        kotlinCompilation.dependencyClasspath,
         KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties)
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier

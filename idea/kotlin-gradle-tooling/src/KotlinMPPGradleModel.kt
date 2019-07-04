@@ -56,7 +56,7 @@ interface KotlinLanguageSettings : Serializable {
     val isProgressiveMode: Boolean
     val enabledLanguageFeatures: Set<String>
     val experimentalAnnotationsInUse: Set<String>
-    val compilerPluginArguments: List<String>
+    val compilerPluginArguments: Array<String>
     val compilerPluginClasspath: Set<File>
 }
 
@@ -67,15 +67,15 @@ interface KotlinCompilationOutput : Serializable {
 }
 
 interface KotlinCompilationArguments : Serializable {
-    val defaultArguments: List<String>
-    val currentArguments: List<String>
+    val defaultArguments: Array<String>
+    val currentArguments: Array<String>
 }
 
 interface KotlinCompilation : KotlinModule {
     val sourceSets: Collection<KotlinSourceSet>
     val output: KotlinCompilationOutput
     val arguments: KotlinCompilationArguments
-    val dependencyClasspath: List<String>
+    val dependencyClasspath: Array<String>
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val kotlinTaskProperties: KotlinTaskProperties
