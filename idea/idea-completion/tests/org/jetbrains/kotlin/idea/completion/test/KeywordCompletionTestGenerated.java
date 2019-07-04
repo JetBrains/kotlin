@@ -503,6 +503,11 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         runTest("idea/idea-completion/testData/keywords/ReturnSet.kt");
     }
 
+    @TestMetadata("SuspendInParameterTypePosition.kt")
+    public void testSuspendInParameterTypePosition() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SuspendInParameterTypePosition.kt");
+    }
+
     @TestMetadata("SuspendInsideTypeArguments.kt")
     public void testSuspendInsideTypeArguments() throws Exception {
         runTest("idea/idea-completion/testData/keywords/SuspendInsideTypeArguments.kt");
