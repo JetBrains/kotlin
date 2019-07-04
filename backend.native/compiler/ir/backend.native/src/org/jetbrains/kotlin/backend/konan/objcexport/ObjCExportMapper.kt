@@ -118,15 +118,26 @@ internal fun ObjCExportMapper.getDeprecation(descriptor: DeclarationDescriptor):
     return null
 }
 
-private tailrec fun ObjCExportMapper.isHiddenByDeprecation(descriptor: ClassDescriptor): Boolean {
+private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: ClassDescriptor): Boolean {
     if (deprecationResolver == null) return false
     if (deprecationResolver.isDeprecatedHidden(descriptor)) return true
 
-    val superClass = descriptor.getSuperClassNotAny() ?: return false
-
     // Note: ObjCExport requires super class of exposed class to be exposed.
     // So hide a class if its super class is hidden:
-    return isHiddenByDeprecation(superClass)
+    val superClass = descriptor.getSuperClassNotAny()
+    if (superClass != null && isHiddenByDeprecation(superClass)) {
+        return true
+    }
+
+    // Note: ObjCExport requires enclosing class of exposed class to be exposed.
+    // Also in Kotlin hidden class members (including other classes) aren't directly accessible.
+    // So hide a class if its enclosing class is hidden:
+    val containingDeclaration = descriptor.containingDeclaration
+    if (containingDeclaration is ClassDescriptor && isHiddenByDeprecation(containingDeclaration)) {
+        return true
+    }
+
+    return false
 }
 
 // Note: the logic is partially duplicated in ObjCExportLazyImpl.translateClasses.

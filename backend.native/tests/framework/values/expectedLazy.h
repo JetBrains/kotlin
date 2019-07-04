@@ -658,6 +658,19 @@ __attribute__((swift_name("TestDeprecation")))
 - (void)openWarning __attribute__((swift_name("openWarning()"))) __attribute__((deprecated("warning")));
 - (void)normal __attribute__((swift_name("normal()")));
 - (int32_t)openNormal __attribute__((swift_name("openNormal()")));
+- (void)testHiddenNested:(id)hiddenNested __attribute__((swift_name("test(hiddenNested:)")));
+- (void)testHiddenNestedNested:(id)hiddenNestedNested __attribute__((swift_name("test(hiddenNestedNested:)")));
+- (void)testHiddenNestedInner:(id)hiddenNestedInner __attribute__((swift_name("test(hiddenNestedInner:)")));
+- (void)testHiddenInner:(id)hiddenInner __attribute__((swift_name("test(hiddenInner:)")));
+- (void)testHiddenInnerInner:(id)hiddenInnerInner __attribute__((swift_name("test(hiddenInnerInner:)")));
+- (void)testTopLevelHidden:(id)topLevelHidden __attribute__((swift_name("test(topLevelHidden:)")));
+- (void)testTopLevelHiddenNested:(id)topLevelHiddenNested __attribute__((swift_name("test(topLevelHiddenNested:)")));
+- (void)testTopLevelHiddenNestedNested:(id)topLevelHiddenNestedNested __attribute__((swift_name("test(topLevelHiddenNestedNested:)")));
+- (void)testTopLevelHiddenNestedInner:(id)topLevelHiddenNestedInner __attribute__((swift_name("test(topLevelHiddenNestedInner:)")));
+- (void)testTopLevelHiddenInner:(id)topLevelHiddenInner __attribute__((swift_name("test(topLevelHiddenInner:)")));
+- (void)testTopLevelHiddenInnerInner:(id)topLevelHiddenInnerInner __attribute__((swift_name("test(topLevelHiddenInnerInner:)")));
+- (void)testExtendingHiddenNested:(id)extendingHiddenNested __attribute__((swift_name("test(extendingHiddenNested:)")));
+- (void)testExtendingNestedInHidden:(id)extendingNestedInHidden __attribute__((swift_name("test(extendingNestedInHidden:)")));
 @property (readonly) id _Nullable errorVal __attribute__((swift_name("errorVal"))) __attribute__((unavailable("error")));
 @property id _Nullable errorVar __attribute__((swift_name("errorVar"))) __attribute__((unavailable("error")));
 @property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal"))) __attribute__((unavailable("error")));
@@ -681,6 +694,11 @@ __attribute__((swift_name("TestDeprecation.ExtendingHidden")))
 @interface ValuesTestDeprecationExtendingHidden : NSObject
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ExtendingHiddenNested")))
+@interface ValuesTestDeprecationExtendingHiddenNested : NSObject
+@end;
+
 __attribute__((swift_name("TestDeprecationHiddenInterface")))
 @protocol ValuesTestDeprecationHiddenInterface
 @required
@@ -696,6 +714,35 @@ __attribute__((swift_name("TestDeprecation.ImplementingHidden")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestDeprecation.Hidden")))
 @interface ValuesTestDeprecationHidden : NSObject
+@end;
+
+__attribute__((swift_name("TestDeprecation.HiddenNested")))
+@interface ValuesTestDeprecationHiddenNested : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.HiddenNestedNested")))
+@interface ValuesTestDeprecationHiddenNestedNested : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.HiddenNestedInner")))
+@interface ValuesTestDeprecationHiddenNestedInner : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.HiddenInner")))
+@interface ValuesTestDeprecationHiddenInner : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.HiddenInnerInner")))
+@interface ValuesTestDeprecationHiddenInnerInner : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestDeprecation.ExtendingNestedInHidden")))
+@interface ValuesTestDeprecationExtendingNestedInHidden : NSObject
 @end;
 
 __attribute__((swift_name("TestDeprecation.OpenError")))
@@ -857,6 +904,36 @@ __attribute__((swift_name("TestDeprecation.NormalOverride")))
 @property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar"))) __attribute__((deprecated("Overrides deprecated member in 'conversions.TestDeprecation'. warning")));
 @property (readonly) id _Nullable openNormalVal __attribute__((swift_name("openNormalVal")));
 @property id _Nullable openNormalVar __attribute__((swift_name("openNormalVar")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelHidden")))
+@interface ValuesTopLevelHidden : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelHidden.Nested")))
+@interface ValuesTopLevelHiddenNested : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelHidden.NestedNested")))
+@interface ValuesTopLevelHiddenNestedNested : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelHidden.NestedInner")))
+@interface ValuesTopLevelHiddenNestedInner : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelHidden.Inner")))
+@interface ValuesTopLevelHiddenInner : NSObject
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TopLevelHidden.InnerInner")))
+@interface ValuesTopLevelHiddenInnerInner : NSObject
 @end;
 
 @interface ValuesEnumeration (ValuesKt)
