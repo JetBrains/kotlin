@@ -104,7 +104,8 @@ object KeywordCompletion {
             var keyword = keywordToken.value
 
             val nextKeyword = when {
-                keywordToken == SUSPEND_KEYWORD && ((position.containingFile as? KtFile)?.isScript() == true) -> null
+                keywordToken == SUSPEND_KEYWORD && ((position.containingFile as? KtFile)?.isScript() == true 
+                        || position.getStrictParentOfType<KtTypeReference>() != null) -> null
                 else -> COMPOUND_KEYWORDS[keywordToken]
             }
             var applicableAsCompound = false
