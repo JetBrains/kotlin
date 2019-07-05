@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -28,9 +29,18 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.types.Variance
 
 object ConverterUtil {
+    private val expressionSet = listOf(
+        KtNodeTypes.REFERENCE_EXPRESSION,
+        KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
+        KtNodeTypes.LAMBDA_EXPRESSION,
+        KtNodeTypes.FUN
+    )
+
     fun String?.nameAsSafeName(defaultName: String = ""): Name {
         return when {
             this != null -> Name.identifier(this.replace("`", ""))
@@ -39,17 +49,21 @@ object ConverterUtil {
         }
     }
 
-    fun String.toFirUserType(session: FirSession): FirUserTypeRef {
-        val qualifier = FirQualifierPartImpl(
-            Name.identifier(this)
-        )
+    fun LighterASTNode.getAsStringWithoutBacktick(): String {
+        return this.toString().replace("`", "")
+    }
 
-        return FirUserTypeRefImpl(
-            session,
-            null,
-            false
-        ).apply {
-            this.qualifier.add(qualifier)
+    fun LighterASTNode.getAsString(): String {
+        return this.toString()
+    }
+
+    fun LighterASTNode.isExpression(): Boolean {
+        return when (this.tokenType) {
+            is KtNodeType,
+            is KtConstantExpressionElementType,
+            is KtStringTemplateExpressionElementType,
+            in expressionSet -> true
+            else -> false
         }
     }
 
@@ -68,19 +82,6 @@ object ConverterUtil {
                 false
             )
         )
-    }
-
-    fun LighterASTNode?.hasSecondaryConstructor(kidsArray: Array<LighterASTNode?>): Boolean {
-        if (this == null) return false
-        //TODO check if node isn't CLASS_BODY
-
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            when (kid.tokenType) {
-                KtNodeTypes.SECONDARY_CONSTRUCTOR -> return true
-            }
-        }
-        return false
     }
 
     fun FirExpression.toReturn(labelName: String? = null): FirReturnExpression {
@@ -143,66 +144,6 @@ object ConverterUtil {
             this.arguments += container
         }
         return this
-    }
-
-    fun List<FirEnumEntryImpl>.fillEnumEntryConstructor(
-        firPrimaryConstructor: FirConstructor,
-        enumType: FirUserTypeRef,
-        stubMode: Boolean
-    ) {
-        this.forEach { firEnumEntry ->
-            val enumDelegatedSelfTypeRef = toDelegatedSelfType(firEnumEntry)
-            var enumDelegatedSuperTypeRef: FirTypeRef = FirImplicitAnyTypeRef(firEnumEntry.session, null)
-            val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
-
-            if (firPrimaryConstructor.valueParameters.isNotEmpty()) {
-                enumDelegatedSuperTypeRef = enumType//enumDelegatedSelfTypeRef
-                enumSuperTypeCallEntry += firPrimaryConstructor.valueParameters.map { firValueParameter ->
-                    firValueParameter.toFirExpression(stubMode)
-                }
-            }
-            firEnumEntry.superTypeRefs += enumDelegatedSuperTypeRef
-
-            val firDelegatedConstructorCall = FirDelegatedConstructorCallImpl(
-                firEnumEntry.session,
-                null,
-                enumDelegatedSuperTypeRef,
-                false
-            ).extractArgumentsFrom(enumSuperTypeCallEntry, stubMode)
-
-            val firEnumPrimaryConstructor = FirPrimaryConstructorImpl(
-                firEnumEntry.session,
-                null,
-                FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
-                Visibilities.UNKNOWN,
-                false,
-                false,
-                enumDelegatedSelfTypeRef,
-                firDelegatedConstructorCall
-            )
-            firEnumPrimaryConstructor.typeParameters += typeParametersFromSelfType(enumDelegatedSelfTypeRef)
-            firEnumEntry.declarations.add(0, firEnumPrimaryConstructor)
-        }
-    }
-
-    fun List<FirDeclaration>.fillConstructors(
-        hasPrimaryConstructor: Boolean,
-        delegatedSelfTypeRef: FirTypeRef,
-        delegatedSuperTypeRef: FirTypeRef
-    ) {
-        this.forEach { constructor ->
-            (constructor as FirConstructorImpl).typeParameters += typeParametersFromSelfType(delegatedSelfTypeRef)
-
-            constructor.returnTypeRef = delegatedSelfTypeRef
-            val constructorDelegationCall = constructor.delegatedConstructor as? FirDelegatedConstructorCallImpl
-            val isThis =
-                (constructorDelegationCall == null && hasPrimaryConstructor) || constructorDelegationCall?.isThis == true
-            val delegatedType = when {
-                isThis -> delegatedSelfTypeRef
-                else -> delegatedSuperTypeRef
-            }
-            constructorDelegationCall?.constructedTypeRef = delegatedType
-        }
     }
 
     fun FirValueParameter.toFirExpression(stubMode: Boolean): FirExpression {
