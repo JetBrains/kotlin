@@ -104,7 +104,7 @@ class JvmGetScriptingClass : GetScriptingClass, Serializable {
         return try {
             (classLoader ?: ClassLoader.getSystemClassLoader()).loadClass(classType.typeName).kotlin
         } catch (e: Throwable) {
-            throw IllegalArgumentException("unable to load class $classType", e)
+            throw IllegalArgumentException("unable to load class ${classType.typeName}", e)
         }
     }
 
