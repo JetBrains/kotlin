@@ -451,29 +451,33 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
     }
 
     companion object {
-        internal fun IrBuilderWithScope.calculateOwner(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression {
-            val symbols = context.ir.symbols
-
-            val isContainerPackage =
-                (irContainer as? IrClass)?.origin == IrDeclarationOrigin.FILE_CLASS || irContainer is IrPackageFragment
-
-            val clazzRef = IrClassReferenceImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                symbols.javaLangClass.typeWith(),
-                symbols.javaLangClass,
-                // For built-in members (i.e. top level `toString`) we don't know any meaningful container, so we're generating Any.
-                // The non-IR backend generates equally meaningless "kotlin/KotlinPackage" in this case (see KT-17151).
-                (irContainer as? IrClass)?.defaultType ?: context.irBuiltIns.anyNType
+        private fun IrBuilderWithScope.kClassReference(classType: IrType) =
+            IrClassReferenceImpl(
+                startOffset,
+                endOffset,
+                context.irBuiltIns.kClassClass.typeWith(),
+                context.irBuiltIns.kClassClass,
+                classType
             )
 
-            if (!isContainerPackage) return clazzRef
-
-            val jClass = irGet(symbols.javaLangClass.typeWith(), null, symbols.kClassJava.owner.getter!!.symbol).apply {
-                extensionReceiver = clazzRef
+        private fun IrBuilderWithScope.kClassToJavaClass(kClassReference: IrExpression, context: JvmBackendContext) =
+            irGet(context.ir.symbols.javaLangClass.typeWith(), null, context.ir.symbols.kClassJava.owner.getter!!.symbol).apply {
+                extensionReceiver = kClassReference
             }
-            return irCall(symbols.getOrCreateKotlinPackage).apply {
-                putValueArgument(0, jClass)
+
+        internal fun IrBuilderWithScope.javaClassReference(classType: IrType, context: JvmBackendContext) =
+            kClassToJavaClass(kClassReference(classType), context)
+
+        internal fun IrBuilderWithScope.calculateOwner(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression {
+            // For built-in members (i.e. top level `toString`) we don't know any meaningful container, so we're generating Any.
+            // The non-IR backend generates equally meaningless "kotlin/KotlinPackage" in this case (see KT-17151).
+            val kClass = kClassReference((irContainer as? IrClass)?.defaultType ?: context.irBuiltIns.anyNType)
+
+            if ((irContainer as? IrClass)?.origin != IrDeclarationOrigin.FILE_CLASS && irContainer !is IrPackageFragment)
+                return kClass
+
+            return irCall(context.ir.symbols.getOrCreateKotlinPackage).apply {
+                putValueArgument(0, kClassToJavaClass(kClass, context))
                 // Note that this name is not used in reflection. There should be the name of the referenced declaration's
                 // module instead, but there's no nice API to obtain that name here yet
                 // TODO: write the referenced declaration's module name and use it in reflection

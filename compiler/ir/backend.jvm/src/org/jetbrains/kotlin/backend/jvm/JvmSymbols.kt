@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -113,6 +115,15 @@ class JvmSymbols(
 
     val javaLangClass: IrClassSymbol =
         if (firMode) createClass(FqName("java.lang.Class")) {}.symbol else context.getTopLevelClass(FqName("java.lang.Class"))
+
+    val javaLangAssertionError: IrClassSymbol =
+        context.getTopLevelClass(FqName("java.lang.AssertionError"))
+
+    val assertionErrorConstructor by lazy {
+        context.ir.symbols.javaLangAssertionError.constructors.single {
+            it.owner.valueParameters.size == 1 && it.owner.valueParameters[0].type.isNullableAny()
+        }
+    }
 
     val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda")) { klass ->
         klass.addConstructor().apply {
@@ -270,14 +281,21 @@ class JvmSymbols(
         }
     }.symbol
 
+    private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
+        functions.single { it.owner.name.asString() == name }
+
     val getOrCreateKotlinPackage: IrSimpleFunctionSymbol =
-        reflection.functions.single { it.owner.name.asString() == "getOrCreateKotlinPackage" }
+        reflection.functionByName("getOrCreateKotlinPackage")
 
     val getOrCreateKotlinClass: IrSimpleFunctionSymbol =
-        reflection.functions.single { it.owner.name.asString() == "getOrCreateKotlinClass" }
+        reflection.functionByName("getOrCreateKotlinClass")
 
     val getOrCreateKotlinClasses: IrSimpleFunctionSymbol =
-        reflection.functions.single { it.owner.name.asString() == "getOrCreateKotlinClasses" }
+        reflection.functionByName("getOrCreateKotlinClasses")
+
+    val desiredAssertionStatus: IrSimpleFunctionSymbol by lazy {
+        javaLangClass.functionByName("desiredAssertionStatus")
+    }
 
     private val unsafeCoerceIntrinsic =
         buildFun {
