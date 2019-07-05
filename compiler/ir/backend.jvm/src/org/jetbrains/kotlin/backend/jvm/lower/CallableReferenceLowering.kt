@@ -51,18 +51,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.org.objectweb.asm.Type
-
-//Hack implementation to support CR java types in lower
-class CrIrType(val type: Type) : IrType {
-    override val annotations: List<IrConstructorCall> = emptyList()
-
-    override fun equals(other: Any?): Boolean =
-        other is CrIrType && type == other.type
-
-    override fun hashCode(): Int =
-        type.hashCode()
-}
 
 internal val callableReferencePhase = makeIrFilePhase(
     ::CallableReferenceLowering,
@@ -410,42 +398,40 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
         }
 
         private fun createGetOwnerMethod(superFunction: IrSimpleFunction): IrSimpleFunction = buildOverride(superFunction).apply {
-            val globalContext = context
-            val state = globalContext.state
-            val irContainer = callee.parent
+            body = context.createIrBuilder(symbol, startOffset, endOffset).run {
+                irExprBody(calculateOwner(callee.parent, this@CallableReferenceLowering.context))
+            }
+        }
+    }
+
+    companion object {
+        internal fun IrBuilderWithScope.calculateOwner(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression {
+            val symbols = context.ir.symbols
 
             val isContainerPackage =
-                ((irContainer as? IrClass)?.origin == IrDeclarationOrigin.FILE_CLASS) || irContainer is IrPackageFragment
+                (irContainer as? IrClass)?.origin == IrDeclarationOrigin.FILE_CLASS || irContainer is IrPackageFragment
 
-            val type = when (irContainer) {
-                // TODO: getDefaultType() here is wrong and won't work for arrays
-                is IrClass -> state.typeMapper.mapType(irContainer.defaultType.toKotlinType())
-                else -> state.typeMapper.mapOwner(callee.descriptor)
-            }
-
-            val clazz = globalContext.ir.symbols.javaLangClass
             val clazzRef = IrClassReferenceImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                clazz.typeWith(),
-                clazz,
-                CrIrType(type)
+                symbols.javaLangClass.typeWith(),
+                symbols.javaLangClass,
+                // For built-in members (i.e. top level `toString`) we don't know any meaningful container, so we're generating Any.
+                // The non-IR backend generates equally meaningless "kotlin/KotlinPackage" in this case (see KT-17151).
+                (irContainer as? IrClass)?.defaultType ?: context.irBuiltIns.anyNType
             )
 
-            body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                irExprBody(if (isContainerPackage) {
-                    irCall(globalContext.ir.symbols.getOrCreateKotlinPackage).apply {
-                        putValueArgument(0, clazzRef)
-                        // Note that this name is not used in reflection. There should be the name of the referenced declaration's
-                        // module instead, but there's no nice API to obtain that name here yet
-                        // TODO: write the referenced declaration's module name and use it in reflection
-                        putValueArgument(1, irString(state.moduleName))
-                    }
-                } else {
-                    irCall(globalContext.ir.symbols.getOrCreateKotlinClass).apply {
-                        putValueArgument(0, clazzRef)
-                    }
-                })
+            if (!isContainerPackage) return clazzRef
+
+            val jClass = irGet(symbols.javaLangClass.typeWith(), null, symbols.kClassJava.owner.getter!!.symbol).apply {
+                extensionReceiver = clazzRef
+            }
+            return irCall(symbols.getOrCreateKotlinPackage).apply {
+                putValueArgument(0, jClass)
+                // Note that this name is not used in reflection. There should be the name of the referenced declaration's
+                // module instead, but there's no nice API to obtain that name here yet
+                // TODO: write the referenced declaration's module name and use it in reflection
+                putValueArgument(1, irString(context.state.moduleName))
             }
         }
     }

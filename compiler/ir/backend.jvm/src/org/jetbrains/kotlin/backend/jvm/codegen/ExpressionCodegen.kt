@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.intrinsics.Not
-import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.*
@@ -1080,18 +1079,15 @@ class ExpressionCodegen(
             JavaClassProperty.invokeWith(classReference.argument.accept(this, data))
         } else if (classReference is IrClassReference) {
             val classType = classReference.classType
-            if (classType is CrIrType) {
-                putJavaLangClassInstance(mv, classType.type, null, typeMapper.kotlinTypeMapper)
-                return classReference.onStack
-            } else {
-                val classifier = classType.classifierOrNull
-                if (classifier is IrTypeParameterSymbol) {
-                    assert(classifier.owner.isReified) { "Non-reified type parameter under ::class should be rejected by type checker: ${classifier.owner.dump()}" }
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
+            val classifier = classType.classifierOrNull
+            if (classifier is IrTypeParameterSymbol) {
+                assert(classifier.owner.isReified) {
+                    "Non-reified type parameter under ::class should be rejected by type checker: ${classifier.owner.dump()}"
                 }
-
-                putJavaLangClassInstance(mv, typeMapper.mapType(classType), classType.toKotlinType(), typeMapper.kotlinTypeMapper)
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
             }
+
+            putJavaLangClassInstance(mv, typeMapper.mapType(classType), classType.toKotlinType(), typeMapper.kotlinTypeMapper)
         } else {
             throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
         }
