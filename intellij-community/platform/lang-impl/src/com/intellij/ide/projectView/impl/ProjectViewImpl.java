@@ -2,6 +2,7 @@
 
 package com.intellij.ide.projectView.impl;
 
+import com.intellij.application.options.OptionsApplicabilityFilter;
 import com.intellij.history.LocalHistory;
 import com.intellij.history.LocalHistoryAction;
 import com.intellij.icons.AllIcons;
@@ -92,6 +93,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.intellij.application.options.OptionId.PROJECT_VIEW_SHOW_VISIBILITY_ICONS;
 import static com.intellij.ui.tree.TreePathUtil.toTreePathArray;
 
 @State(name = "ProjectView", storages = {
@@ -722,6 +724,13 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       public void setSelected(@NotNull AnActionEvent event, boolean showVisibilityIcons) {
         if (isGlobalOptions()) getGlobalOptions().setShowVisibilityIcons(showVisibilityIcons);
         super.setSelected(event, showVisibilityIcons);
+      }
+
+      @Override
+      public void update(@NotNull AnActionEvent event) {
+        boolean applicable = OptionsApplicabilityFilter.isApplicable(PROJECT_VIEW_SHOW_VISIBILITY_ICONS);
+        event.getPresentation().setEnabledAndVisible(applicable);
+        if (applicable) super.update(event);
       }
     }).setAsSecondary(true);
 
@@ -1696,6 +1705,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   @Override
   public boolean isShowVisibilityIcons(String paneId) {
+    if (!OptionsApplicabilityFilter.isApplicable(PROJECT_VIEW_SHOW_VISIBILITY_ICONS)) return false;
     return isGlobalOptions()
            ? getGlobalOptions().getShowVisibilityIcons()
            : getPaneOptionValue(myShowVisibilityIcons, paneId, ourShowVisibilityIconsDefaults);
