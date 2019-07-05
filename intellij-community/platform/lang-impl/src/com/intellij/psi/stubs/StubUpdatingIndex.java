@@ -45,8 +45,7 @@ import java.io.*;
 import java.util.*;
 
 public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
-  implements PsiDependentIndex,
-             CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
+  implements CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
   static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubUpdatingIndex");
   private static final int VERSION = 39 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0);
 
