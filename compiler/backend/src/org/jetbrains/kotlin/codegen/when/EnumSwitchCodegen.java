@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
+import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
@@ -58,7 +59,7 @@ public class EnumSwitchCodegen extends SwitchCodegen {
     }
 
     @Override
-    protected void processConstant(@NotNull ConstantValue<?> constant, @NotNull Label entryLabel) {
+    protected void processConstant(@NotNull ConstantValue<?> constant, @NotNull Label entryLabel, @NotNull KtWhenEntry entry) {
         assert constant instanceof EnumValue : "guaranteed by usage contract";
         putTransitionOnce(mapping.getIndexByEntry((EnumValue) constant), entryLabel);
     }
