@@ -3,7 +3,6 @@
 package com.intellij.execution.actions;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.impl.RunManagerImpl;
@@ -29,27 +28,10 @@ public class CreateAction extends BaseRunConfigurationAction {
 
   private static BaseCreatePolicy choosePolicy(final ConfigurationContext context) {
     final RunnerAndConfigurationSettings configuration = context.findExisting();
-    if (configuration == null) return CREATE_AND_EDIT;
-    final RunManager runManager = context.getRunManager();
-    if (runManager.getSelectedConfiguration() != configuration) return SELECT;
-    if (configuration.isTemporary()) return SAVE;
-    return SELECTED_STABLE;
+    return configuration == null ? CREATE_AND_EDIT : EDIT;
   }
 
-
-
   private static abstract class BaseCreatePolicy {
-
-    public enum ActionType {
-      CREATE, SAVE, SELECT
-    }
-
-    private final ActionType myType;
-
-    BaseCreatePolicy(final ActionType type) {
-      myType = type;
-    }
-
     public void update(final Presentation presentation, final ConfigurationContext context, @NotNull final String actionText) {
       updateText(presentation, actionText);
       updateIcon(presentation, context);
@@ -63,49 +45,12 @@ public class CreateAction extends BaseRunConfigurationAction {
       }
     }
 
-    protected void updateText(final Presentation presentation, final String actionText) {
-      presentation.setText(generateName(actionText), false);
-    }
-
-    private String generateName(final String actionText) {
-      switch(myType) {
-        case CREATE: return ExecutionBundle.message("create.run.configuration.for.item.action.name", actionText);
-        case SELECT: return ExecutionBundle.message("select.run.configuration.for.item.action.name", actionText);
-        default:  return ExecutionBundle.message("save.run.configuration.for.item.action.name", actionText);
-      }
-    }
+    protected abstract void updateText(final Presentation presentation, final String actionText);
 
     public abstract void perform(ConfigurationContext context);
   }
 
-  private static class SelectPolicy extends BaseCreatePolicy {
-    SelectPolicy() {
-      super(ActionType.SELECT);
-    }
-
-    @Override
-    public void perform(final ConfigurationContext context) {
-      final RunnerAndConfigurationSettings configuration = context.findExisting();
-      if (configuration == null) return;
-      context.getRunManager().setSelectedConfiguration(configuration);
-    }
-
-    @Override
-    protected void updateIcon(final Presentation presentation, final ConfigurationContext context) {
-      final RunnerAndConfigurationSettings configuration = context.findExisting();
-      if (configuration != null) {
-        presentation.setIcon(configuration.getType().getIcon());
-      } else {
-        super.updateIcon(presentation, context);
-      }
-    }
-  }
-
-  private static class CreatePolicy extends BaseCreatePolicy {
-    CreatePolicy() {
-      super(ActionType.CREATE);
-    }
-
+  private abstract static class CreatePolicy extends BaseCreatePolicy {
     @Override
     public void perform(final ConfigurationContext context) {
       RunManagerImpl runManager = (RunManagerImpl)context.getRunManager();
@@ -134,39 +79,21 @@ public class CreateAction extends BaseRunConfigurationAction {
     }
   }
 
-  private static class SavePolicy extends BaseCreatePolicy {
-    SavePolicy() {
-      super(ActionType.SAVE);
+  private static class EditPolicy extends CreateAndEditPolicy {
+    @Override
+    protected void updateText(final Presentation presentation, final String actionText) {
+      presentation.setText(actionText.length() > 0 ? ExecutionBundle.message("edit.run.configuration.for.item.action.name", actionText) + "..."
+                                                   : ExecutionBundle.message("edit.run.configuration.action.name"), false);
     }
 
     @Override
     public void perform(final ConfigurationContext context) {
-      RunnerAndConfigurationSettings settings = context.findExisting();
-      if (settings != null) context.getRunManager().makeStable(settings);
-    }
-
-    @Override
-    protected void updateIcon(final Presentation presentation, final ConfigurationContext context) {
-      final RunnerAndConfigurationSettings configuration = context.findExisting();
-      if (configuration != null) {
-        presentation.setIcon(configuration.getType().getIcon());
-      } else {
-        super.updateIcon(presentation, context);
-      }
+      final RunnerAndConfigurationSettings configuration = context.getConfiguration();
+      RunDialog.editConfiguration(context.getProject(), configuration,
+                                  ExecutionBundle.message("edit.run.configuration.for.item.dialog.title", configuration.getName()));
     }
   }
 
   private static final BaseCreatePolicy CREATE_AND_EDIT = new CreateAndEditPolicy();
-  private static final BaseCreatePolicy SELECT = new SelectPolicy();
-  private static final BaseCreatePolicy SAVE = new SavePolicy();
-  private static final BaseCreatePolicy SELECTED_STABLE = new BaseCreatePolicy(BaseCreatePolicy.ActionType.SELECT) {
-    @Override
-    public void perform(final ConfigurationContext context) {}
-
-    @Override
-    public void update(final Presentation presentation, final ConfigurationContext context, @NotNull final String actionText) {
-      super.update(presentation, context, actionText);
-      presentation.setVisible(false);
-    }
-  };
+  private static final BaseCreatePolicy EDIT = new EditPolicy();
 }
