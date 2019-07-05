@@ -364,7 +364,6 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                         serializer = findTypeSerializerOrContext(
                             property.module,
                             property.type,
-                            property.descriptor.annotations,
                             property.descriptor.findPsi()
                         )
                     }
