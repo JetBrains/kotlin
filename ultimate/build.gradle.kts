@@ -167,14 +167,6 @@ sourceSets {
     }
 }
 
-val ultimatePluginXmlContent: String by lazy {
-    val sectRex = Regex("""^\s*</?idea-plugin>\s*$""")
-    File(projectDir, "resources/META-INF/ultimate-plugin.xml")
-            .readLines()
-            .filterNot { it.matches(sectRex) }
-            .joinToString("\n")
-}
-
 val prepareResources by task<Copy> {
     dependsOn(":idea:assemble")
     from(ideaProjectResources, {
@@ -184,7 +176,18 @@ val prepareResources by task<Copy> {
 }
 
 val preparePluginXml by task<Copy> {
+    val ultimatePluginXmlFile = File(projectDir, "resources/META-INF/ultimate-plugin.xml")
+    val ultimatePluginXmlContent: String by lazy {
+        val sectRex = Regex("""^\s*</?idea-plugin>\s*$""")
+        ultimatePluginXmlFile.readLines()
+            .filterNot { it.matches(sectRex) }
+            .joinToString("\n")
+    }
+
     dependsOn(":idea:assemble")
+
+    inputs.file(ultimatePluginXmlFile)
+
     from(ideaProjectResources, { include("META-INF/plugin.xml") })
     into(preparedResources)
     filter {
