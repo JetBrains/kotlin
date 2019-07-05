@@ -31,7 +31,7 @@ class CoroutineNonBlockingContextDetectionTest : KotlinLightCodeInsightFixtureTe
     }
 
     fun testCoroutineContextCheck() {
-        myFixture.configureByFiles("ContextCheck.kt")
+        myFixture.configureByFile("ContextCheck.kt")
         myFixture.testHighlighting(true, false, false, "ContextCheck.kt")
     }
 
