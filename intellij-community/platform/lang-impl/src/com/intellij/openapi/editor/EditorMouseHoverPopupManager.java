@@ -232,21 +232,17 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
 
   private static int getTargetOffset(EditorMouseEvent event) {
     Editor editor = event.getEditor();
+    Point point = event.getMouseEvent().getPoint();
     if (editor instanceof EditorEx &&
         editor.getProject() != null &&
         event.getArea() == EditorMouseEventArea.EDITING_AREA &&
         event.getMouseEvent().getModifiers() == 0 &&
         !EditorMouseHoverPopupControl.arePopupsDisabled(editor) &&
-        LookupManager.getActiveLookup(editor) == null) {
-      Point point = event.getMouseEvent().getPoint();
-      VisualPosition visualPosition = editor.xyToVisualPosition(point);
-      LogicalPosition logicalPosition = editor.visualToLogicalPosition(visualPosition);
-      int offset = editor.logicalPositionToOffset(logicalPosition);
-      if (editor.offsetToLogicalPosition(offset).equals(logicalPosition) && // not virtual space
-          ((EditorEx)editor).getFoldingModel().getFoldingPlaceholderAt(point) == null &&
-          editor.getInlayModel().getElementAt(point) == null) {
-        return offset;
-      }
+        LookupManager.getActiveLookup(editor) == null &&
+        EditorUtil.isPointOverText(editor, point) &&
+        ((EditorEx)editor).getFoldingModel().getFoldingPlaceholderAt(point) == null) {
+      LogicalPosition logicalPosition = editor.xyToLogicalPosition(point);
+      return editor.logicalPositionToOffset(logicalPosition);
     }
     return -1;
   }
@@ -382,7 +378,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
             quickDocMessage = documentationManager.generateDocumentation(targetElementRef.get(), element);
           }
         }
-        catch (IndexNotReadyException ignored) {}
+        catch (IndexNotReadyException ignored) {
+        }
         catch (Exception e) {
           LOG.warn(e);
         }
@@ -488,8 +485,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener {
 
     @Nullable
     private DocumentationComponent createQuickDocComponent(Editor editor,
-                                               boolean deEmphasize,
-                                               PopupBridge popupBridge) {
+                                                           boolean deEmphasize,
+                                                           PopupBridge popupBridge) {
       if (quickDocMessage == null) return null;
       Project project = Objects.requireNonNull(editor.getProject());
       DocumentationManager documentationManager = DocumentationManager.getInstance(project);

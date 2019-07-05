@@ -181,7 +181,7 @@ public class CtrlMouseHandler {
       Editor editor = e.getEditor();
       if (!(editor instanceof EditorEx) || editor.getProject() != null && editor.getProject() != myProject) return;
       Point point = new Point(mouseEvent.getPoint());
-      if (editor.getInlayModel().getElementAt(point) != null) {
+      if (!EditorUtil.isPointOverText(editor, point)) {
         disposeHighlighter();
         return;
       }
@@ -646,7 +646,6 @@ public class CtrlMouseHandler {
   private class TooltipProvider {
     @NotNull private final EditorEx myHostEditor;
     private final int myHostOffset;
-    private final boolean myInVirtualSpace;
     private BrowseMode myBrowseMode;
     private boolean myDisposed;
     private final ProgressIndicator myProgress = new ProgressIndicatorBase();
@@ -655,14 +654,12 @@ public class CtrlMouseHandler {
     TooltipProvider(@NotNull EditorEx hostEditor, @NotNull LogicalPosition hostPos) {
       myHostEditor = hostEditor;
       myHostOffset = hostEditor.logicalPositionToOffset(hostPos);
-      myInVirtualSpace = EditorUtil.inVirtualSpace(hostEditor, hostPos);
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
     TooltipProvider(@NotNull TooltipProvider source) {
       myHostEditor = source.myHostEditor;
       myHostOffset = source.myHostOffset;
-      myInVirtualSpace = source.myInVirtualSpace;
     }
 
     void dispose() {
@@ -678,11 +675,6 @@ public class CtrlMouseHandler {
       myBrowseMode = browseMode;
 
       if (PsiDocumentManager.getInstance(myProject).getPsiFile(myHostEditor.getDocument()) == null) return;
-
-      if (myInVirtualSpace) {
-        disposeHighlighter();
-        return;
-      }
 
       int selStart = myHostEditor.getSelectionModel().getSelectionStart();
       int selEnd = myHostEditor.getSelectionModel().getSelectionEnd();

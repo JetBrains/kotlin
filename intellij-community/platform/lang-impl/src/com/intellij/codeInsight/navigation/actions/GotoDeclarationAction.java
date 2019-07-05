@@ -24,6 +24,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorGutter;
+import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -317,7 +318,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     InputEvent inputEvent = event.getInputEvent();
     Editor editor = event.getData(CommonDataKeys.EDITOR);
     if (editor != null && inputEvent instanceof MouseEvent &&
-        editor.getInlayModel().getElementAt(new RelativePoint((MouseEvent)inputEvent).getPoint(editor.getContentComponent())) != null) {
+        !EditorUtil.isPointOverText(editor, new RelativePoint((MouseEvent)inputEvent).getPoint(editor.getContentComponent()))) {
       event.getPresentation().setEnabled(false);
       return;
     }

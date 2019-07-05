@@ -33,6 +33,7 @@ import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
+import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -594,19 +595,12 @@ public class DaemonListeners implements Disposable {
 
       boolean shown = false;
       try {
-        // There is a possible case that cursor is located at soft wrap-introduced virtual space (that is mapped to offset
-        // of the document symbol just after soft wrap). We don't want to show any tooltips for it then.
-        VisualPosition visual = editor.xyToVisualPosition(e.getMouseEvent().getPoint());
-        if (editor.getSoftWrapModel().isInsideOrBeforeSoftWrap(visual)) {
-          return;
-        }
-        LogicalPosition logical = editor.visualToLogicalPosition(visual);
         if (e.getArea() == EditorMouseEventArea.EDITING_AREA &&
             !UIUtil.isControlKeyDown(e.getMouseEvent()) &&
-            DocumentationManager.getInstance(myProject).getDocInfoHint() == null) {
+            DocumentationManager.getInstance(myProject).getDocInfoHint() == null &&
+            EditorUtil.isPointOverText(editor, e.getMouseEvent().getPoint())) {
+          LogicalPosition logical = editor.xyToLogicalPosition(e.getMouseEvent().getPoint());
           int offset = editor.logicalPositionToOffset(logical);
-          if (editor.offsetToLogicalPosition(offset).column != logical.column) return; // we are in virtual space
-          if (editor.getInlayModel().getElementAt(e.getMouseEvent().getPoint()) != null) return;
           HighlightInfo info = myDaemonCodeAnalyzer.findHighlightByOffset(editor.getDocument(), offset, false);
           if (info == null || info.getDescription() == null ||
               info.getHighlighter() != null && FoldingUtil.isHighlighterFolded(editor, info.getHighlighter())) {
