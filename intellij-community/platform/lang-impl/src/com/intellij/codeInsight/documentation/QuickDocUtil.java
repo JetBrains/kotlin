@@ -7,6 +7,7 @@ import com.intellij.concurrency.SensitiveProgressWrapper;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.EditorMouseHoverPopupManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
@@ -68,7 +69,7 @@ public class QuickDocUtil {
       component = selectedContent == null ? null : (DocumentationComponent)selectedContent.getComponent();
     }
     else {
-      component = null;
+      component = EditorMouseHoverPopupManager.getInstance().getDocumentationComponent();
     }
     return component;
   }

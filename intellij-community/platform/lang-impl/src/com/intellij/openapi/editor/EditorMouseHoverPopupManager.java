@@ -552,6 +552,16 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     return originalElementPointer == null ? null : originalElementPointer.getElement();
   }
 
+  public static EditorMouseHoverPopupManager getInstance() {
+    return ApplicationManager.getApplication().getComponent(EditorMouseHoverPopupManager.class);
+  }
+
+  @Nullable
+  public DocumentationComponent getDocumentationComponent() {
+    AbstractPopup hint = getCurrentHint();
+    return hint == null ? null : UIUtil.findComponentOfType(hint.getComponent(), DocumentationComponent.class);
+  }
+
   private static class PopupBridge {
     private AbstractPopup popup;
     private List<Consumer<AbstractPopup>> consumers = new ArrayList<>();
