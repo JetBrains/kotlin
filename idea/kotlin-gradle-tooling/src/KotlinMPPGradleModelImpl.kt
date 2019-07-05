@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.gradle
 
 import java.io.File
-import java.util.*
 import kotlin.collections.HashSet
 
-data class KotlinSourceSetImpl(
+class KotlinSourceSetImpl(
     override val name: String,
     override val languageSettings: KotlinLanguageSettings,
     override val sourceDirs: Set<File>,
     override val resourceDirs: Set<File>,
-    override val dependencies: Set<KotlinDependency>,
+    override val dependencies: Array<KotlinDependencyId>,
     override val dependsOnSourceSets: Set<String>,
     val defaultPlatform: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
     val defaultIsTestModule: Boolean = false
@@ -25,7 +24,7 @@ data class KotlinSourceSetImpl(
         KotlinLanguageSettingsImpl(kotlinSourceSet.languageSettings),
         HashSet(kotlinSourceSet.sourceDirs),
         HashSet(kotlinSourceSet.resourceDirs),
-        kotlinSourceSet.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
+        kotlinSourceSet.dependencies,
         HashSet(kotlinSourceSet.dependsOnSourceSets),
         KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms),
         kotlinSourceSet.isTestModule
@@ -85,7 +84,7 @@ data class KotlinCompilationArgumentsImpl(
 data class KotlinCompilationImpl(
     override val name: String,
     override val sourceSets: Collection<KotlinSourceSet>,
-    override val dependencies: Set<KotlinDependency>,
+    override val dependencies: Array<KotlinDependencyId>,
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
     override val dependencyClasspath: Array<String>,
@@ -100,7 +99,7 @@ data class KotlinCompilationImpl(
                 cloningCache[initialSourceSet] = it
             }
         }.toList(),
-        kotlinCompilation.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
+        kotlinCompilation.dependencies,
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
         kotlinCompilation.dependencyClasspath,
@@ -160,7 +159,8 @@ data class KotlinMPPGradleModelImpl(
     override val sourceSets: Map<String, KotlinSourceSet>,
     override val targets: Collection<KotlinTarget>,
     override val extraFeatures: ExtraFeatures,
-    override val kotlinNativeHome: String
+    override val kotlinNativeHome: String,
+    override val dependencyMap: Map<KotlinDependencyId, KotlinDependency>
 ) : KotlinMPPGradleModel {
 
     constructor(mppModel: KotlinMPPGradleModel, cloningCache: MutableMap<Any, Any>) : this(
@@ -176,7 +176,8 @@ data class KotlinMPPGradleModelImpl(
             }
         }.toList(),
         ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState, mppModel.extraFeatures.isHMPPEnabled),
-        mppModel.kotlinNativeHome
+        mppModel.kotlinNativeHome,
+        mppModel.dependencyMap.map { it.key to it.value.deepCopy(cloningCache) }.toMap()
     )
 }
 

@@ -10,7 +10,27 @@ import org.jetbrains.plugins.gradle.model.ModelFactory
 import java.io.File
 import java.io.Serializable
 
+typealias KotlinDependencyId = Long
 typealias KotlinDependency = ExternalDependency
+
+class KotlinDependencyMapper {
+    private var currentIndex: KotlinDependencyId = 0
+    private val idToDependency = HashMap<KotlinDependencyId, KotlinDependency>()
+    private val dependencyToId = HashMap<KotlinDependency, KotlinDependencyId>()
+
+    fun getDependency(id: KotlinDependencyId) = idToDependency[id]
+
+    fun getId(dependency: KotlinDependency): KotlinDependencyId {
+        return dependencyToId[dependency] ?: let {
+            currentIndex++
+            dependencyToId[dependency] = currentIndex
+            idToDependency[currentIndex] = dependency
+            return currentIndex
+        }
+    }
+
+    fun toDependencyMap(): Map<KotlinDependencyId, KotlinDependency> = idToDependency
+}
 
 fun KotlinDependency.deepCopy(cache: MutableMap<Any, Any>): KotlinDependency {
     val cachedValue = cache[this] as? KotlinDependency
@@ -25,7 +45,7 @@ fun KotlinDependency.deepCopy(cache: MutableMap<Any, Any>): KotlinDependency {
 
 interface KotlinModule : Serializable {
     val name: String
-    val dependencies: Set<KotlinDependency>
+    val dependencies: Array<KotlinDependencyId>
     val isTestModule: Boolean
 }
 
@@ -133,6 +153,7 @@ interface ExtraFeatures : Serializable {
 }
 
 interface KotlinMPPGradleModel : Serializable {
+    val dependencyMap: Map<KotlinDependencyId, KotlinDependency>
     val sourceSets: Map<String, KotlinSourceSet>
     val targets: Collection<KotlinTarget>
     val extraFeatures: ExtraFeatures
