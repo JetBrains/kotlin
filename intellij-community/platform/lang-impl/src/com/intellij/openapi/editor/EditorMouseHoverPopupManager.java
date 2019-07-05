@@ -72,6 +72,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     editorFactory.getEventMulticaster().addEditorMouseMotionListener(this);
     editorFactory.getEventMulticaster().addCaretListener(this);
     control.addListener(() -> {
+      if (!Registry.is("editor.new.mouse.hover.popups")) return;
       Editor editor = SoftReference.dereference(myCurrentEditor);
       if (editor != null && EditorMouseHoverPopupControl.arePopupsDisabled(editor)) {
         closeHint();
@@ -80,20 +81,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
   }
 
   @Override
-  public void caretPositionChanged(@NotNull CaretEvent event) {
-    if (!Registry.is("editor.new.mouse.hover.popups")) return;
-
-    Editor editor = event.getEditor();
-    if (editor == SoftReference.dereference(myCurrentEditor)) {
-      DocumentationManager.getInstance(editor.getProject()).setAllowContentUpdateFromContext(true);
-    }
-  }
-
-  @Override
   public void mouseMoved(@NotNull EditorMouseEvent e) {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
-
-    if (ignoreEvent(e)) return;
 
     myAlarm.cancelAllRequests();
     if (myCurrentProgress != null) {
@@ -101,7 +90,14 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
       myCurrentProgress = null;
     }
 
+    if (ignoreEvent(e)) return;
+
     Editor editor = e.getEditor();
+    if (isPopupDisabled(editor)) {
+      closeHint();
+      return;
+    }
+
     int targetOffset = getTargetOffset(e);
     if (targetOffset < 0) {
       closeHint();
@@ -128,9 +124,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
         if (progress != myCurrentProgress) return;
         myCurrentProgress = null;
         if (info != null &&
-            !EditorMouseHoverPopupControl.arePopupsDisabled(editor) &&
             editor.getContentComponent().isShowing() &&
-            !isAnotherAppInFocus()) {
+            !isPopupDisabled(editor)) {
           PopupBridge popupBridge = new PopupBridge();
           JComponent component = info.createComponent(editor, popupBridge);
           if (component == null) {
@@ -153,9 +148,17 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     }, progress), context.getShowingDelay());
   }
 
-  private boolean ignoreEvent(EditorMouseEvent e) {
-    if (isAnotherAppInFocus()) return true;
+  @Override
+  public void caretPositionChanged(@NotNull CaretEvent event) {
+    if (!Registry.is("editor.new.mouse.hover.popups")) return;
 
+    Editor editor = event.getEditor();
+    if (editor == SoftReference.dereference(myCurrentEditor)) {
+      DocumentationManager.getInstance(editor.getProject()).setAllowContentUpdateFromContext(true);
+    }
+  }
+
+  private boolean ignoreEvent(EditorMouseEvent e) {
     Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
     Rectangle currentHintBounds = getCurrentHintBounds(e.getEditor());
     boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, currentHintBounds);
@@ -163,6 +166,10 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     if (movesTowardsPopup || currentHintBounds != null && myKeepPopupOnMouseMove) return true;
 
     return false;
+  }
+
+  private static boolean isPopupDisabled(Editor editor) {
+    return isAnotherAppInFocus() || EditorMouseHoverPopupControl.arePopupsDisabled(editor) || LookupManager.getActiveLookup(editor) != null;
   }
 
   private static boolean isAnotherAppInFocus() {
@@ -246,8 +253,6 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
         editor.getProject() != null &&
         event.getArea() == EditorMouseEventArea.EDITING_AREA &&
         event.getMouseEvent().getModifiers() == 0 &&
-        !EditorMouseHoverPopupControl.arePopupsDisabled(editor) &&
-        LookupManager.getActiveLookup(editor) == null &&
         EditorUtil.isPointOverText(editor, point) &&
         ((EditorEx)editor).getFoldingModel().getFoldingPlaceholderAt(point) == null) {
       LogicalPosition logicalPosition = editor.xyToLogicalPosition(point);
