@@ -54,6 +54,9 @@ public class InspectionMain implements ApplicationStarter {
         else if ("-d".equals(arg)) {
           myApplication.mySourceDirectory = args.get(++i);
         }
+        else if ("-format".equals(arg)) {
+          myApplication.myOutputFormat = args[++i];
+        }
         else if ("-v0".equals(arg)) {
           myApplication.setVerboseLevel(0);
         }

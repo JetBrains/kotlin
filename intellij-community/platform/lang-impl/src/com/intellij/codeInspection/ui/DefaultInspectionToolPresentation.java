@@ -19,6 +19,7 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -383,11 +384,25 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
         }
       }
       @NonNls final String template = descriptor.getDescriptionTemplate();
-      @NonNls String problemText = StringUtil.replace(StringUtil.replace(template, "#ref", psiElement != null ? ProblemDescriptorUtil
-        .extractHighlightedText(descriptor, psiElement) : ""), " #loc ", " ");
+      String highlightedText = ProblemDescriptorUtil.extractHighlightedText(descriptor, psiElement);
+      @NonNls String problemText = StringUtil.replace(StringUtil.replace(template, "#ref", psiElement != null ? highlightedText : ""), " #loc ", " ");
       Element descriptionElement = new Element(InspectionsBundle.message("inspection.export.results.description.tag"));
       descriptionElement.addContent(problemText);
       element.addContent(descriptionElement);
+
+      Element highLightedElement = new Element(InspectionsBundle.message("inspection.export.results.highlighted.element"));
+      highLightedElement.addContent(highlightedText);
+      element.addContent(highLightedElement);
+
+      if (descriptor instanceof ProblemDescriptorBase) {
+        TextRange textRange = ((ProblemDescriptorBase)descriptor).getTextRangeForNavigation();
+        if (textRange != null) {
+          int offset = textRange.getStartOffset() - ((ProblemDescriptorBase)descriptor).getLineStartOffset();
+          int length = textRange.getLength();
+          element.addContent(new Element("offset").addContent(String.valueOf(offset)));
+          element.addContent(new Element("length").addContent(String.valueOf(length)));
+        }
+      }
     }
     catch (RuntimeException e) {
       LOG.info("Cannot save results for " + refEntity.getName() + ", inspection which caused problem: " + myToolWrapper.getShortName() + ", problem descriptor " + descriptor);
