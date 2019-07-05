@@ -7,6 +7,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -71,7 +72,9 @@ public class CreateAction extends BaseRunConfigurationAction {
     @Override
     public void perform(final ConfigurationContext context) {
       final RunnerAndConfigurationSettings configuration = context.getConfiguration();
-      if (RunDialog.editConfiguration(context.getProject(), configuration, ExecutionBundle.message("create.run.configuration.for.item.dialog.title", configuration.getName()))) {
+      if (ApplicationManager.getApplication().isUnitTestMode() ||
+          RunDialog.editConfiguration(context.getProject(), configuration,
+                                      ExecutionBundle.message("create.run.configuration.for.item.dialog.title", configuration.getName()))) {
         final RunManagerImpl runManager = (RunManagerImpl)context.getRunManager();
         runManager.addConfiguration(configuration);
         runManager.setSelectedConfiguration(configuration);

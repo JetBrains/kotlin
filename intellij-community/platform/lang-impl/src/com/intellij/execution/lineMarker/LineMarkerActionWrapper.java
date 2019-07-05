@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Arrays;
 
 /**
@@ -82,7 +83,12 @@ public class LineMarkerActionWrapper extends ActionGroup implements PriorityActi
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    myOrigin.update(wrapEvent(e));
+    AnActionEvent wrapped = wrapEvent(e);
+    myOrigin.update(wrapped);
+    Icon icon = wrapped.getPresentation().getIcon();
+    if (icon != null) {
+      getTemplatePresentation().setIcon(icon);
+    }
   }
 
   @NotNull

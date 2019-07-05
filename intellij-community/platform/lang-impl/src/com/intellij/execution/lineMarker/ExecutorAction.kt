@@ -38,11 +38,13 @@ class ExecutorAction private constructor(val origin: AnAction,
     @JvmOverloads
     fun getActionList(order: Int = 0): List<AnAction> {
       val actionManager = ActionManager.getInstance()
-      return ExecutorRegistry.getInstance().registeredExecutors
+      val createAction = actionManager.getAction("CreateRunConfiguration")
+      val list = ExecutorRegistry.getInstance().registeredExecutors
         .mapNotNull { executor ->
           val action = actionManager.getAction(executor.contextActionId) ?: return@mapNotNull null
           ExecutorAction(action, executor, order)
         }
+      return if (createAction == null) list else list + createAction
     }
 
     private fun getConfigurations(dataContext: DataContext): List<ConfigurationFromContext> {
