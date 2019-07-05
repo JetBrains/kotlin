@@ -102,6 +102,7 @@ public actual inline fun Float.Companion.fromBits(bits: Int): Float = kotlin.fro
 @TypedIntrinsic(IntrinsicType.REINTERPRET)
 internal external fun fromBits(bits: Int): Float
 
+// TODO: Replace 32 and 64 literals with Int/Long.SIZE_BITS constants when constant propagation is working
 
 /**
  * Counts the number of set bits in the binary representation of this [Int] number.
@@ -124,7 +125,7 @@ private external fun countLeadingZeroBits(value: Int): Int
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Int.countLeadingZeroBits(): Int =
-        if (this == 0) Int.SIZE_BITS else countLeadingZeroBits(this)
+        if (this == 0) 32 else countLeadingZeroBits(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of [Int] [value].
@@ -139,7 +140,7 @@ private external fun countTrailingZeroBits(value: Int): Int
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Int.countTrailingZeroBits(): Int =
-        if (this == 0) Int.SIZE_BITS else countTrailingZeroBits(this)
+        if (this == 0) 32 else countTrailingZeroBits(this)
 
 /**
  * Returns a number having a single bit set in the position of the most significant set bit of this [Int] number,
@@ -148,7 +149,7 @@ public actual fun Int.countTrailingZeroBits(): Int =
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Int.takeHighestOneBit(): Int =
-        if (this == 0) 0 else 1.shl(Int.SIZE_BITS - 1 - countLeadingZeroBits(this))
+        if (this == 0) 0 else 1.shl(32 - 1 - countLeadingZeroBits(this))
 
 /**
  * Returns a number having a single bit set in the position of the least significant set bit of this [Int] number,
@@ -172,7 +173,7 @@ public actual fun Int.takeLowestOneBit(): Int =
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Int.rotateLeft(bitCount: Int): Int =
-        shl(bitCount) or ushr(Int.SIZE_BITS - bitCount)
+        shl(bitCount) or ushr(32 - bitCount)
 
 
 /**
@@ -188,7 +189,7 @@ public actual fun Int.rotateLeft(bitCount: Int): Int =
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Int.rotateRight(bitCount: Int): Int =
-        shl(Int.SIZE_BITS - bitCount) or ushr(bitCount)
+        shl(32 - bitCount) or ushr(bitCount)
 
 
 /**
@@ -212,7 +213,7 @@ private external fun countLeadingZeroBits(value: Long): Int
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Long.countLeadingZeroBits(): Int =
-        if (this == 0L) Long.SIZE_BITS else countLeadingZeroBits(this)
+        if (this == 0L) 64 else countLeadingZeroBits(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of [Long] [value].
@@ -227,7 +228,7 @@ private external fun countTrailingZeroBits(value: Long): Int
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Long.countTrailingZeroBits(): Int =
-        if (this == 0L) Long.SIZE_BITS else countTrailingZeroBits(this)
+        if (this == 0L) 64 else countTrailingZeroBits(this)
 
 /**
  * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
@@ -236,7 +237,7 @@ public actual fun Long.countTrailingZeroBits(): Int =
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Long.takeHighestOneBit(): Long =
-        if (this == 0L) 0L else 1L.shl(Long.SIZE_BITS - 1 - countLeadingZeroBits(this))
+        if (this == 0L) 0L else 1L.shl(64 - 1 - countLeadingZeroBits(this))
 
 /**
  * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,
@@ -260,7 +261,7 @@ public actual fun Long.takeLowestOneBit(): Long =
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public actual fun Long.rotateLeft(bitCount: Int): Long =
-        shl(bitCount) or ushr(Long.SIZE_BITS - bitCount)
+        shl(bitCount) or ushr(64 - bitCount)
 
 /**
  * Rotates the binary representation of this [Long] number right by the specified [bitCount] number of bits.
@@ -276,4 +277,4 @@ public actual fun Long.rotateLeft(bitCount: Int): Long =
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public actual inline fun Long.rotateRight(bitCount: Int): Long =
-        shl(Long.SIZE_BITS - bitCount) or ushr(bitCount)
+        shl(64 - bitCount) or ushr(bitCount)
