@@ -137,7 +137,7 @@ class EditorSmartKeysConfigurable : BoundCompositeConfigurable<UnnamedConfigurab
       }
       for (configurable in configurables) {
         row {
-          configurable.createComponent()?.invoke()
+          configurable.createComponent()?.invoke(growX)
         }
       }
     }
