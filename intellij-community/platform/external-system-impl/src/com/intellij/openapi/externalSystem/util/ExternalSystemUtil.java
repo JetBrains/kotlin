@@ -289,7 +289,7 @@ public class ExternalSystemUtil {
     if (unwrapped instanceof ExternalSystemException) {
       return ((ExternalSystemException)unwrapped).getOriginalReason();
     }
-    return null;
+    return ExternalSystemApiUtil.stacktraceAsString(e);
   }
 
   public static void refreshProject(@NotNull final Project project,
@@ -1135,6 +1135,11 @@ public class ExternalSystemUtil {
         return;
       }
       ServiceManager.getService(ProjectDataManager.class).importData(externalProject, myProject, true);
+    }
+
+    @Override
+    public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) {
+      LOG.warn(errorMessage + "\n" + errorDetails);
     }
   }
 }

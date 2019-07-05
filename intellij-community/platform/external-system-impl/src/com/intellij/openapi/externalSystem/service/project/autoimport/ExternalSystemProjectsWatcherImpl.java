@@ -622,6 +622,11 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
             ServiceManager.getService(ProjectDataManager.class).importData(externalProject, project, true);
           }
         }
+
+        @Override
+        public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) {
+          LOG.warn(errorMessage + "\n" + errorDetails);
+        }
       }, false, ProgressExecutionMode.IN_BACKGROUND_ASYNC, reportRefreshError);
   }
 
