@@ -203,8 +203,8 @@ val IrBody.statements: List<IrStatement>
     get() = when (this) {
         is IrBlockBody -> statements
         is IrExpressionBody -> listOf(expression)
-        is IrSyntheticBody -> error("Synthetic body contains no statements $this")
-        else -> error("Unknown subclass of IrBody")
+        is IrSyntheticBody -> error("Synthetic body contains no statements: $this")
+        else -> error("Unknown subclass of IrBody: $this")
     }
 
 val IrClass.defaultType: IrSimpleType

@@ -61,7 +61,7 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
         } ?: expression
 }
 
-class VariableRemapper(val mapping: Map<IrValueParameter, IrValueParameter>) : AbstractVariableRemapper() {
+open class VariableRemapper(val mapping: Map<IrValueParameter, IrValueDeclaration>) : AbstractVariableRemapper() {
     override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value]
 }
