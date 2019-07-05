@@ -382,7 +382,15 @@ open class WrappedSimpleFunctionDescriptor(
     var originalDescriptor: FunctionDescriptor? = null
 
     override fun getOverriddenDescriptors() = owner.overriddenSymbols.map { it.descriptor }
-    override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
+    override fun getContainingDeclaration(): DeclarationDescriptor {
+        val parent = owner.parent
+        return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS && parent.parent is IrExternalPackageFragment) {
+            return (parent.parent as IrExternalPackageFragment).packageFragmentDescriptor
+        } else {
+            (parent as IrSymbolOwner).symbol.descriptor
+        }
+    }
+
     override fun getModality() = owner.modality
     override fun getName() = owner.name
     override fun getVisibility() = owner.visibility
@@ -833,7 +841,14 @@ open class WrappedPropertyDescriptor(
 
     override fun isConst() = owner.isConst
 
-    override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
+    override fun getContainingDeclaration(): DeclarationDescriptor {
+        val parent = owner.parent
+        return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS && parent.parent is IrExternalPackageFragment) {
+            return (parent.parent as IrExternalPackageFragment).packageFragmentDescriptor
+        } else {
+            (parent as IrSymbolOwner).symbol.descriptor
+        }
+    }
 
     override fun isLateInit() = owner.isLateinit
 
