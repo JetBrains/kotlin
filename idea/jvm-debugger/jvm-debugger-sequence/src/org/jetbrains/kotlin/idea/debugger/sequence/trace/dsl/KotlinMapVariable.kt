@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,9 +13,9 @@ import com.intellij.debugger.streams.trace.dsl.impl.common.MapVariableBase
 import com.intellij.debugger.streams.trace.impl.handler.type.MapType
 
 class KotlinMapVariable(type: MapType, name: String) : MapVariableBase(type, name) {
-    override fun get(key: Expression): Expression = this.call("getValue", key)
+    override operator fun get(key: Expression): Expression = this.call("getValue", key)
 
-    override fun set(key: Expression, newValue: Expression): Expression =
+    override operator fun set(key: Expression, newValue: Expression): Expression =
         TextExpression("${toCode()}[${key.toCode()}] = ${newValue.toCode()}")
 
     override fun contains(key: Expression): Expression = TextExpression("(${key.toCode()} in ${toCode()})")

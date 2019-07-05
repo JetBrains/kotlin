@@ -204,9 +204,9 @@ interface KotlinIntroduceParameterHelper {
 }
 
 open class KotlinIntroduceParameterHandler(
-        val helper: KotlinIntroduceParameterHelper = KotlinIntroduceParameterHelper.Default
-): RefactoringActionHandler {
-    open fun invoke(project: Project, editor: Editor, expression: KtExpression, targetParent: KtNamedDeclaration) {
+    val helper: KotlinIntroduceParameterHelper = KotlinIntroduceParameterHelper.Default
+) : RefactoringActionHandler {
+    open operator fun invoke(project: Project, editor: Editor, expression: KtExpression, targetParent: KtNamedDeclaration) {
         val physicalExpression = expression.substringContextOrThis
         if (physicalExpression is KtProperty && physicalExpression.isLocal && physicalExpression.nameIdentifier == null) {
             showErrorHintByKey(project, editor, "cannot.refactor.no.expression", INTRODUCE_PARAMETER)

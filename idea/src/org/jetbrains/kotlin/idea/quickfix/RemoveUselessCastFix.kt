@@ -25,7 +25,7 @@ class RemoveUselessCastFix(element: KtBinaryExpressionWithTypeRHS) : KotlinQuick
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        fun invoke(element: KtBinaryExpressionWithTypeRHS) = dropEnclosingParenthesesIfPossible(element.replaced(element.left))
+        operator fun invoke(element: KtBinaryExpressionWithTypeRHS) = dropEnclosingParenthesesIfPossible(element.replaced(element.left))
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS>? {
             val expression = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpressionWithTypeRHS>() ?: return null

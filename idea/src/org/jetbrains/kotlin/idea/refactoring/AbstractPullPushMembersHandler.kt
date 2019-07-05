@@ -42,11 +42,13 @@ abstract class AbstractPullPushMembersHandler(
         CommonRefactoringUtil.showErrorHint(project, editor, message, refactoringName, helpId)
     }
 
-    protected abstract fun invoke(project: Project,
-                                  editor: Editor?,
-                                  classOrObject: KtClassOrObject?,
-                                  member: KtNamedDeclaration?,
-                                  dataContext: DataContext?)
+    protected abstract operator fun invoke(
+        project: Project,
+        editor: Editor?,
+        classOrObject: KtClassOrObject?,
+        member: KtNamedDeclaration?,
+        dataContext: DataContext?
+    )
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         val offset = editor.caretModel.offset
