@@ -29,6 +29,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.wm.ToolWindow;
@@ -57,6 +58,7 @@ import java.util.function.Consumer;
 
 public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, CaretListener {
   private static final Logger LOG = Logger.getInstance(EditorMouseHoverPopupManager.class);
+  private static final Key<Boolean> DISABLE_BINDING = Key.create("EditorMouseHoverPopupManager.disable.binding");
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
 
   private final Alarm myAlarm;
@@ -84,11 +86,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
   public void mouseMoved(@NotNull EditorMouseEvent e) {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
 
-    myAlarm.cancelAllRequests();
-    if (myCurrentProgress != null) {
-      myCurrentProgress.cancel();
-      myCurrentProgress = null;
-    }
+    cancelCurrentProcessing();
 
     if (ignoreEvent(e)) return;
 
@@ -115,7 +113,22 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     else if (relation == Context.Relation.DIFFERENT) {
       closeHint();
     }
+    scheduleProcessing(editor, context, relation == Context.Relation.SIMILAR, false, false);
+  }
 
+  private void cancelCurrentProcessing() {
+    myAlarm.cancelAllRequests();
+    if (myCurrentProgress != null) {
+      myCurrentProgress.cancel();
+      myCurrentProgress = null;
+    }
+  }
+
+  private void scheduleProcessing(@NotNull Editor editor,
+                                  @NotNull Context context,
+                                  boolean updateExistingPopup,
+                                  boolean forceShowing,
+                                  boolean requestFocus) {
     ProgressIndicatorBase progress = new ProgressIndicatorBase();
     myCurrentProgress = progress;
     myAlarm.addRequest(() -> ProgressManager.getInstance().executeProcessUnderProgress(() -> {
@@ -125,18 +138,18 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
         myCurrentProgress = null;
         if (info != null &&
             editor.getContentComponent().isShowing() &&
-            !isPopupDisabled(editor)) {
+            (forceShowing || !isPopupDisabled(editor))) {
           PopupBridge popupBridge = new PopupBridge();
-          JComponent component = info.createComponent(editor, popupBridge);
+          JComponent component = info.createComponent(editor, popupBridge, requestFocus);
           if (component == null) {
             closeHint();
           }
           else {
-            if (relation == Context.Relation.SIMILAR && isHintShown()) {
+            if (updateExistingPopup && isHintShown()) {
               updateHint(component, popupBridge);
             }
             else {
-              AbstractPopup hint = createHint(component, popupBridge);
+              AbstractPopup hint = createHint(component, popupBridge, requestFocus);
               showHintInEditor(hint, editor, context);
               myPopupReference = new WeakReference<>(hint);
               myCurrentEditor = new WeakReference<>(editor);
@@ -209,11 +222,13 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     }
   }
 
-  private static AbstractPopup createHint(JComponent component, PopupBridge popupBridge) {
+  private static AbstractPopup createHint(JComponent component, PopupBridge popupBridge, boolean requestFocus) {
     WrapperPanel wrapper = new WrapperPanel(component);
     AbstractPopup popup = (AbstractPopup)JBPopupFactory.getInstance()
       .createComponentPopupBuilder(wrapper, component)
       .setResizable(true)
+      .setFocusable(requestFocus)
+      .setRequestFocus(requestFocus)
       .createPopup();
     popupBridge.setPopup(popup);
     return popup;
@@ -315,6 +330,22 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     return hint;
   }
 
+  public void showInfoTooltip(@NotNull Editor editor,
+                              @NotNull HighlightInfo info,
+                              int offset,
+                              boolean requestFocus,
+                              boolean showImmediately) {
+    cancelCurrentProcessing();
+    closeHint();
+    Context context = new Context(offset, info, null) {
+      @Override
+      long getShowingDelay() {
+        return showImmediately ? 0 : super.getShowingDelay();
+      }
+    };
+    scheduleProcessing(editor, context, false, true, requestFocus);
+  }
+
   private static class Context {
     private final int targetOffset;
     private final WeakReference<HighlightInfo> highlightInfo;
@@ -343,7 +374,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
              : highlightInfo == null ? Relation.DIFFERENT : Relation.SIMILAR;
     }
 
-    private long getShowingDelay() {
+    long getShowingDelay() {
       return getHighlightInfo() == null ? EditorSettingsExternalizable.getInstance().getQuickDocOnMouseOverElementDelayMillis()
                                         : Registry.intValue("ide.tooltip.initialDelay.highlighter");
     }
@@ -422,8 +453,8 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
       this.quickDocElement = new WeakReference<>(quickDocElement);
     }
 
-    private JComponent createComponent(Editor editor, PopupBridge popupBridge) {
-      JComponent c1 = createHighlightInfoComponent(editor, quickDocMessage == null, popupBridge);
+    private JComponent createComponent(Editor editor, PopupBridge popupBridge, boolean requestFocus) {
+      JComponent c1 = createHighlightInfoComponent(editor, quickDocMessage == null, popupBridge, requestFocus);
       DocumentationComponent c2 = createQuickDocComponent(editor, c1 != null, popupBridge);
       if (c1 == null && c2 == null) return null;
       JPanel p = new JPanel(new CombinedPopupLayout(c1, c2));
@@ -435,32 +466,38 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
 
     private JComponent createHighlightInfoComponent(Editor editor,
                                                     boolean highlightActions,
-                                                    PopupBridge popupBridge) {
+                                                    PopupBridge popupBridge,
+                                                    boolean requestFocus) {
       if (highlightInfo == null) return null;
       TooltipAction action = TooltipActionProvider.calcTooltipAction(highlightInfo, editor);
       ErrorStripTooltipRendererProvider provider = ((EditorMarkupModel)editor.getMarkupModel()).getErrorStripTooltipRendererProvider();
       TooltipRenderer tooltipRenderer = provider.calcTooltipRenderer(Objects.requireNonNull(highlightInfo.getToolTip()), action, -1);
       if (!(tooltipRenderer instanceof LineTooltipRenderer)) return null;
-      return createHighlightInfoComponent(editor, (LineTooltipRenderer)tooltipRenderer, highlightActions, popupBridge);
+      return createHighlightInfoComponent(editor, (LineTooltipRenderer)tooltipRenderer, highlightActions, popupBridge, requestFocus);
     }
 
     private static JComponent createHighlightInfoComponent(Editor editor,
                                                            LineTooltipRenderer renderer,
                                                            boolean highlightActions,
-                                                           PopupBridge popupBridge) {
+                                                           PopupBridge popupBridge,
+                                                           boolean requestFocus) {
       Ref<WrapperPanel> wrapperPanelRef = new Ref<>();
-      HintHint hintHint = new HintHint().setAwtTooltip(true);
+      Ref<LightweightHint> mockHintRef = new Ref<>();
+      HintHint hintHint = new HintHint().setAwtTooltip(true).setRequestFocus(requestFocus);
       LightweightHint hint = renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, hintHint, highlightActions, expand -> {
         LineTooltipRenderer newRenderer = renderer.createRenderer(renderer.getText(), expand ? 1 : 0);
-        JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge);
+        JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge, requestFocus);
         AbstractPopup popup = popupBridge.getPopup();
         WrapperPanel wrapper = wrapperPanelRef.get();
         if (newComponent != null && popup != null && wrapper != null) {
+          LightweightHint mockHint = mockHintRef.get();
+          if (mockHint != null) closeHintIgnoreBinding(mockHint);
           wrapper.setContent(newComponent);
           validatePopupSize(popup);
         }
       });
       if (hint == null) return null;
+      mockHintRef.set(hint);
       bindHintHiding(hint, popupBridge);
       WrapperPanel wrapper = new WrapperPanel(hint.getComponent());
       wrapperPanelRef.set(wrapper);
@@ -473,7 +510,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     private static void bindHintHiding(LightweightHint hint, PopupBridge popupBridge) {
       AtomicBoolean inProcess = new AtomicBoolean();
       hint.addHintListener(e -> {
-        if (inProcess.compareAndSet(false, true)) {
+        if (hint.getUserData(DISABLE_BINDING) == null && inProcess.compareAndSet(false, true)) {
           try {
             AbstractPopup popup = popupBridge.getPopup();
             if (popup != null) {
@@ -486,7 +523,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
         }
       });
       popupBridge.performOnCancel(() -> {
-        if (inProcess.compareAndSet(false, true)) {
+        if (hint.getUserData(DISABLE_BINDING) == null && inProcess.compareAndSet(false, true)) {
           try {
             hint.hide();
           }
@@ -495,6 +532,11 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
           }
         }
       });
+    }
+
+    private static void closeHintIgnoreBinding(LightweightHint hint) {
+      hint.putUserData(DISABLE_BINDING, Boolean.TRUE);
+      hint.hide();
     }
 
     @Nullable

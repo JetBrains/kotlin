@@ -21,9 +21,11 @@ import com.intellij.codeInsight.hint.TooltipController;
 import com.intellij.codeInsight.hint.TooltipGroup;
 import com.intellij.codeInsight.hint.TooltipRenderer;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorMouseHoverPopupManager;
 import com.intellij.openapi.editor.ex.EditorMarkupModel;
 import com.intellij.openapi.editor.ex.ErrorStripTooltipRendererProvider;
 import com.intellij.openapi.editor.ex.TooltipAction;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.HintHint;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +60,10 @@ public class DaemonTooltipUtil {
                               final int currentWidth,
                               final boolean requestFocus,
                               final boolean showImmediately) {
+    if (Registry.is("editor.new.mouse.hover.popups")) {
+      EditorMouseHoverPopupManager.getInstance().showInfoTooltip(editor, info, defaultOffset, requestFocus, showImmediately);
+      return;
+    }
     String text = info.getToolTip();
     if (text == null) return;
     Rectangle visibleArea = editor.getScrollingModel().getVisibleArea();
