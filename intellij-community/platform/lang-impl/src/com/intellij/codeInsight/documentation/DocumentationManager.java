@@ -31,6 +31,7 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
@@ -611,6 +612,9 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       }
       return false;
     }, component);
+    if (myEditor != null) {
+      EditorMouseHoverPopupControl.disablePopupsWhileShowing(myEditor, component);
+    }
   }
 
   static String getTitle(@NotNull PsiElement element, boolean isShort) {
