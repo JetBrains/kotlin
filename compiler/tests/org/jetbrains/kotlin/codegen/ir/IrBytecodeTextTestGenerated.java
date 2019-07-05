@@ -433,6 +433,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testJvmInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/assert/jvmInlineLambda.kt");
         }
+
+        @TestMetadata("jvmNestedClass.kt")
+        public void testJvmNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/assert/jvmNestedClass.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/boxing")

@@ -854,6 +854,36 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/assert/jvm"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("assertionsEnabledBeforeClassInitializers.kt")
+            public void testAssertionsEnabledBeforeClassInitializers() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/assertionsEnabledBeforeClassInitializers.kt");
+            }
+
+            @TestMetadata("classAssertions.kt")
+            public void testClassAssertions() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/classAssertions.kt");
+            }
+
+            @TestMetadata("classAssertionsForCompanion.kt")
+            public void testClassAssertionsForCompanion() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/classAssertionsForCompanion.kt");
+            }
+
+            @TestMetadata("classAssertionsForInnerClasses.kt")
+            public void testClassAssertionsForInnerClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/classAssertionsForInnerClasses.kt");
+            }
+
+            @TestMetadata("classAssertionsForLocalClasses.kt")
+            public void testClassAssertionsForLocalClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/classAssertionsForLocalClasses.kt");
+            }
+
+            @TestMetadata("classAssertionsForNestedClasses.kt")
+            public void testClassAssertionsForNestedClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/classAssertionsForNestedClasses.kt");
+            }
+
             @TestMetadata("interfaceAssertionsDisabled.kt")
             public void testInterfaceAssertionsDisabled() throws Exception {
                 runTest("compiler/testData/codegen/box/assert/jvm/interfaceAssertionsDisabled.kt");
@@ -862,6 +892,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("interfaceAssertionsEnabled.kt")
             public void testInterfaceAssertionsEnabled() throws Exception {
                 runTest("compiler/testData/codegen/box/assert/jvm/interfaceAssertionsEnabled.kt");
+            }
+
+            @TestMetadata("lambdaNotEvaluated.kt")
+            public void testLambdaNotEvaluated() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/lambdaNotEvaluated.kt");
             }
 
             @TestMetadata("localAnonymousFunction.kt")
@@ -887,6 +922,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("localObject.kt")
             public void testLocalObject() throws Exception {
                 runTest("compiler/testData/codegen/box/assert/jvm/localObject.kt");
+            }
+
+            @TestMetadata("noUnnecessaryClassInitialization.kt")
+            public void testNoUnnecessaryClassInitialization() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/noUnnecessaryClassInitialization.kt");
             }
 
             @TestMetadata("nonLocalReturn.kt")
