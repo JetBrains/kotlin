@@ -128,6 +128,7 @@
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupEnvironmentNotificationProvider"/>
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.debugger.KotlinAlternativeSourceNotificationProvider"/>
+        <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.inspections.JavaOutsideModuleDetector"/>
 
         <consoleFilterProvider implementation="org.jetbrains.kotlin.idea.run.KotlinConsoleFilterProvider"/>
 
