@@ -41,6 +41,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("GENERATED_SAM_IMPLEMENTATION", isSynthetic = true)
     object ENUM_MAPPINGS_FOR_WHEN : IrDeclarationOriginImpl("ENUM_MAPPINGS_FOR_WHEN", isSynthetic = true)
     object SYNTHETIC_INLINE_CLASS_MEMBER : IrDeclarationOriginImpl("SYNTHETIC_INLINE_CLASS_MEMBER", isSynthetic = true)
+    object GENERATED_ASSERTION_ENABLED_FIELD : IrDeclarationOriginImpl("GENERATED_ASSERTION_ENABLED_FIELD", isSynthetic = true)
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {

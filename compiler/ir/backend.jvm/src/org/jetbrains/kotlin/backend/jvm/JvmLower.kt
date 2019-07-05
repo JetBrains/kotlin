@@ -127,6 +127,7 @@ private val jvmFilePhases =
         propertiesToFieldsPhase then
         propertiesPhase then
         renameFieldsPhase then
+        assertionPhase then
         annotationPhase then
         tailrecPhase then
 
