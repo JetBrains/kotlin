@@ -33,14 +33,12 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
-import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.SystemIndependent;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,7 +114,7 @@ public class InspectionApplication {
 
       Disposable disposable = Disposer.newDisposable();
       try {
-        run(FileUtilRt.toSystemIndependentName(PathUtil.getCanonicalPath(myProjectPath)), disposable);
+        run(Paths.get(FileUtil.toCanonicalPath(myProjectPath)), disposable);
       }
       finally {
         Disposer.dispose(disposable);
@@ -131,8 +129,8 @@ public class InspectionApplication {
     myHelpProvider.printHelpAndExit();
   }
 
-  private void run(@NotNull @SystemIndependent String projectPath, @NotNull Disposable parentDisposable) throws IOException, JDOMException {
-    VirtualFile vfsProject = LocalFileSystem.getInstance().findFileByPath(projectPath);
+  private void run(@NotNull Path projectPath, @NotNull Disposable parentDisposable) throws IOException, JDOMException {
+    VirtualFile vfsProject = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(projectPath.toString()));
     if (vfsProject == null) {
       logError(InspectionsBundle.message("inspection.application.file.cannot.be.found", projectPath));
       printHelp();
@@ -185,7 +183,7 @@ public class InspectionApplication {
       }
 
       PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(vfsDir);
-      scope = new AnalysisScope(psiDirectory);
+      scope = new AnalysisScope(Objects.requireNonNull(psiDirectory));
     }
 
     logMessageLn(1, InspectionsBundle.message("inspection.done"));

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2009 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.conversion.impl;
 
@@ -26,7 +12,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +22,7 @@ import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -44,13 +31,13 @@ import java.util.*;
 public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements ModuleSettings {
   private final String myModuleName;
 
-  public ModuleSettingsImpl(File moduleFile, ConversionContextImpl context) throws CannotConvertException {
+  public ModuleSettingsImpl(Path moduleFile, ConversionContextImpl context) throws CannotConvertException {
     super(moduleFile, context);
     myModuleName = getModuleName(moduleFile);
   }
 
-  public static String getModuleName(File moduleFile) {
-    return StringUtil.trimEnd(moduleFile.getName(), ModuleFileType.DOT_DEFAULT_EXTENSION);
+  public static String getModuleName(Path moduleFile) {
+    return StringUtil.trimEnd(moduleFile.getFileName().toString(), ModuleFileType.DOT_DEFAULT_EXTENSION);
   }
 
   @Override
@@ -68,7 +55,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   @Override
   @NotNull
   public File getModuleFile() {
-    return mySettingsFile.getFile();
+    return mySettingsFile.getFile().toFile();
   }
 
   @Override
@@ -149,7 +136,7 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   public Collection<File> getContentRoots() {
     final List<File> result = new ArrayList<>();
     for (Element contentRoot : getContentRootElements()) {
-      String path = VfsUtil.urlToPath(contentRoot.getAttributeValue(JpsModuleRootModelSerializer.URL_ATTRIBUTE));
+      String path = VfsUtilCore.urlToPath(contentRoot.getAttributeValue(JpsModuleRootModelSerializer.URL_ATTRIBUTE));
       result.add(new File(FileUtil.toSystemDependentName(expandPath(path))));
     }
     return result;
@@ -255,10 +242,10 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
       }
     }
     String path = ConversionContextImpl.collapsePath(FileUtil.toSystemIndependentName(directory.getAbsolutePath()), this);
-    contentRoot.addContent(new Element(JpsModuleRootModelSerializer.EXCLUDE_FOLDER_TAG).setAttribute(JpsModuleRootModelSerializer.URL_ATTRIBUTE, VfsUtil.pathToUrl(path)));
+    contentRoot.addContent(new Element(JpsModuleRootModelSerializer.EXCLUDE_FOLDER_TAG).setAttribute(JpsModuleRootModelSerializer.URL_ATTRIBUTE, VfsUtilCore.pathToUrl(path)));
   }
 
   private File getFile(String url) {
-    return new File(FileUtil.toSystemDependentName(expandPath(VfsUtil.urlToPath(url))));
+    return new File(FileUtil.toSystemDependentName(expandPath(VfsUtilCore.urlToPath(url))));
   }
 }

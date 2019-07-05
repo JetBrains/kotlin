@@ -16,7 +16,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.ProjectMacrosUtil;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMUtil;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -25,6 +24,9 @@ import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 
 /**
@@ -48,7 +50,7 @@ public class ExistingModuleLoader extends ModuleBuilder {
   @Override
   @NotNull
   public Module createModule(@NotNull ModifiableModuleModel moduleModel)
-    throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
+    throws IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
     LOG.assertTrue(getName() != null);
 
     final String moduleFilePath = getModuleFilePath();
@@ -69,8 +71,8 @@ public class ExistingModuleLoader extends ModuleBuilder {
     if (getName() == null) return false;
     String moduleFilePath = getModuleFilePath();
     if (moduleFilePath == null) return false;
-    final File file = new File(moduleFilePath);
-    if (file.exists()) {
+    final Path file = Paths.get(moduleFilePath);
+    if (Files.exists(file)) {
       try {
         final ConversionResult result = ConversionService.getInstance().convertModule(dest, file);
         if (result.openingIsCanceled()) {

@@ -12,7 +12,6 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
@@ -51,6 +50,10 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -373,20 +376,20 @@ public class TemplateModuleBuilder extends ModuleBuilder {
   @Nullable
   @Override
   public Project createProject(String name, @NotNull String path) {
-    final File location = new File(FileUtil.toSystemDependentName(path));
-    LOG.assertTrue(location.exists());
+    Path baseDir = Paths.get(path);
+    LOG.assertTrue(Files.isDirectory(baseDir));
 
-    final VirtualFile baseDir = WriteAction.compute(() -> LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location));
-    if (baseDir == null) {
-      LOG.error("Couldn't find path '" + path + "' in VFS");
-      return null;
+    List<Path> children;
+    try (DirectoryStream<Path> childrenIterator = Files.newDirectoryStream(baseDir)) {
+      children = ContainerUtil.collect(childrenIterator.iterator());
     }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    boolean isSomehowOverwriting = children.size() > 1 ||
+                                   (children.size() == 1 && !PathMacroUtil.DIRECTORY_STORE_NAME.equals(children.get(0).getFileName().toString()));
 
-    VirtualFile[] children = baseDir.getChildren();
-    boolean isSomehowOverwriting = children.length > 1 ||
-                                   (children.length == 1 && !PathMacroUtil.DIRECTORY_STORE_NAME.equals(children[0].getName()));
-
-    Task.WithResult<Project, RuntimeException> task = new Task.WithResult<Project, RuntimeException>(null, "Applying Template", true) {
+    return ProgressManager.getInstance().run(new Task.WithResult<Project, RuntimeException>(null, "Applying Template", true) {
       @Override
       public Project compute(@NotNull ProgressIndicator indicator) {
         try {
@@ -400,21 +403,16 @@ public class TemplateModuleBuilder extends ModuleBuilder {
         }
         finally {
           cleanup();
-          if(indicator.isCanceled()){
-            if (!isSomehowOverwriting) {
-              ApplicationManager.getApplication().invokeLater(() -> {
-                try {
-                  WriteAction.run(() -> baseDir.delete(TemplateProjectDirectoryGenerator.class));
-                }
-                catch (IOException e) {
-                  LOG.error(e);
-                }
-              });
+          if (indicator.isCanceled() && !isSomehowOverwriting) {
+            try {
+              FileUtil.delete(baseDir);
+            }
+            catch (IOException e) {
+              LOG.error(e);
             }
           }
         }
       }
-    };
-    return ProgressManager.getInstance().run(task);
+    });
   }
 }

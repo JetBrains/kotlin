@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.impl.convert;
 
@@ -9,11 +9,12 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.project.ProjectKt;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import java.nio.file.Paths;
 
 /**
  * @author nik
@@ -40,7 +41,7 @@ public class ProjectFileVersionImpl extends ProjectFileVersion implements Dispos
       LOG.info("Cannot save conversion result: filePath == null");
     }
     else {
-      ConversionService.getInstance().saveConversionResult(FileUtil.toSystemDependentName(path));
+      ConversionService.getInstance().saveConversionResult(Paths.get(path));
     }
   }
 

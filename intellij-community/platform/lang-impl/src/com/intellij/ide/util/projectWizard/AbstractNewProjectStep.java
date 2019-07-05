@@ -4,7 +4,6 @@ package com.intellij.ide.util.projectWizard;
 import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.util.projectWizard.actions.ProjectSpecificAction;
 import com.intellij.idea.ActionsBundle;
-import com.intellij.internal.statistic.beans.ConvertUsagesUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -190,8 +189,6 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
         return PlatformProjectOpenProcessor.getInstance().doOpenProject(baseDir, null, false);
       }
     }
-
-    String generatorName = generator == null ? "empty" : ConvertUsagesUtil.ensureProperKey(generator.getName());
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
 
