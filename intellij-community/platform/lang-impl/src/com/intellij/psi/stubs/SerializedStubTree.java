@@ -23,13 +23,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.ThreadLocalCachedValue;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.psi.impl.DebugUtil;
-import com.intellij.util.CompressionUtil;
 import com.intellij.util.io.*;
 import one.util.streamex.IntStreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.io.DataOutputStream;
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -43,49 +43,84 @@ public class SerializedStubTree {
     }
   };
 
-  private final byte[] myBytes;
-  private final int myLength;
+  // serialized tree
+  final byte[] myTreeBytes;
+  final int myTreeByteLength;
+  final byte[] mySerializedTreeHash;
   private Stub myStubElement;
-  private IndexedStubs myIndexedStubs;
 
-  public SerializedStubTree(final byte[] bytes, int length, @Nullable Stub stubElement) {
-    myBytes = bytes;
-    myLength = length;
+  // stub forward indexes
+  final byte[] myIndexedStubBytes;
+  final int myIndexedStubByteLength;
+  private Map<StubIndexKey, Map<Object, StubIdList>> myIndexedStubs;
+
+  public SerializedStubTree(@NotNull byte[] treeBytes, int treeByteLength, @Nullable byte[] serializedTreeHash, @Nullable Stub stubElement,
+                            @NotNull byte[] indexedStubBytes, int indexedStubByteLength, @Nullable Map<StubIndexKey, Map<Object, StubIdList>> indexedStubs) {
+    myTreeBytes = treeBytes;
+    myTreeByteLength = treeByteLength;
+    mySerializedTreeHash = serializedTreeHash == null ? calculateHash(treeBytes, treeByteLength) : serializedTreeHash;
     myStubElement = stubElement;
+
+    myIndexedStubBytes = indexedStubBytes;
+    myIndexedStubByteLength = indexedStubByteLength;
+    myIndexedStubs = indexedStubs;
   }
 
-  public SerializedStubTree(DataInput in) throws IOException {
-    if (PersistentHashMapValueStorage.COMPRESSION_ENABLED) {
-      int serializedStubsLength = DataInputOutputUtil.readINT(in);
-      byte[] bytes = new byte[serializedStubsLength];
-      in.readFully(bytes);
-      myBytes = bytes;
-      myLength = myBytes.length;
-    }
-    else {
-      myBytes = CompressionUtil.readCompressed(in);
-      myLength = myBytes.length;
-    }
-  }
-
-  public void write(DataOutput out) throws IOException {
-    if (PersistentHashMapValueStorage.COMPRESSION_ENABLED) {
-      DataInputOutputUtil.writeINT(out, myLength);
-      out.write(myBytes, 0, myLength);
-    }
-    else {
-      CompressionUtil.writeCompressed(out, myBytes, 0, myLength);
-    }
+  public SerializedStubTree(@NotNull Stub rootStub,
+                            @NotNull SerializationManagerEx serializationManager,
+                            @NotNull StubForwardIndexExternalizer<?> forwardIndexExternalizer) throws IOException {
+    final BufferExposingByteArrayOutputStream bytes = new BufferExposingByteArrayOutputStream();
+    serializationManager.serialize(rootStub, bytes);
+    myTreeBytes = bytes.getInternalBuffer();
+    myTreeByteLength = bytes.size();
+    mySerializedTreeHash = calculateHash(myTreeBytes, myTreeByteLength);
+    ObjectStubBase root = (ObjectStubBase)rootStub;
+    myIndexedStubs = indexTree(root);
+    final BufferExposingByteArrayOutputStream indexBytes = new BufferExposingByteArrayOutputStream();
+    forwardIndexExternalizer.save(new DataOutputStream(indexBytes), myIndexedStubs);
+    myIndexedStubBytes = indexBytes.getInternalBuffer();
+    myIndexedStubByteLength = indexBytes.size();
   }
 
   @NotNull
   public SerializedStubTree reSerialize(@NotNull SerializationManagerImpl currentSerializationManager,
-                                        @NotNull SerializationManagerImpl newSerializationManager) throws IOException {
+                                        @NotNull SerializationManagerImpl newSerializationManager,
+                                        @NotNull StubForwardIndexExternalizer currentForwardIndexSerializer,
+                                        @NotNull StubForwardIndexExternalizer newForwardIndexSerializer) throws IOException {
     BufferExposingByteArrayOutputStream outStub = new BufferExposingByteArrayOutputStream();
-    currentSerializationManager.reSerialize(new ByteArrayInputStream(myBytes, 0, myLength), outStub, newSerializationManager);
-    SerializedStubTree reSerialized = new SerializedStubTree(outStub.getInternalBuffer(), outStub.size(), null);
-    reSerialized.setIndexedStubs(getIndexedStubs());
-    return reSerialized;
+    currentSerializationManager.reSerialize(new ByteArrayInputStream(myTreeBytes, 0, myTreeByteLength), outStub, newSerializationManager);
+
+    byte[] reSerializedIndexBytes;
+    int reSerializedIndexByteLength;
+
+    if (currentForwardIndexSerializer == newForwardIndexSerializer) {
+      reSerializedIndexBytes = myIndexedStubBytes;
+      reSerializedIndexByteLength = myIndexedStubByteLength;
+    }
+    else {
+      BufferExposingByteArrayOutputStream reSerializedStubIndices = new BufferExposingByteArrayOutputStream();
+      if (myIndexedStubs == null) {
+        restoreIndexedStubs(currentForwardIndexSerializer);
+      }
+      assert myIndexedStubs != null;
+      newForwardIndexSerializer.save(new DataOutputStream(reSerializedStubIndices), myIndexedStubs);
+      reSerializedIndexBytes = reSerializedStubIndices.getInternalBuffer();
+      reSerializedIndexByteLength = reSerializedStubIndices.size();
+    }
+
+    return new SerializedStubTree(outStub.getInternalBuffer(), outStub.size(), mySerializedTreeHash, null,
+                                  reSerializedIndexBytes, reSerializedIndexByteLength, myIndexedStubs);
+  }
+
+  public void restoreIndexedStubs(@NotNull StubForwardIndexExternalizer<?> dataExternalizer) throws IOException {
+    if (myIndexedStubs == null) {
+      myIndexedStubs = dataExternalizer.read(new DataInputStream(new ByteArrayInputStream(myIndexedStubBytes, 0, myIndexedStubByteLength)));
+    }
+  }
+
+  @NotNull
+  Map<StubIndexKey, Map<Object, StubIdList>> getStubIndicesValueMap() {
+    return myIndexedStubs;
   }
 
   // willIndexStub is one time optimization hint, once can safely pass false
@@ -103,21 +138,12 @@ public class SerializedStubTree {
       myStubElement = null;
       if (willIndexStub) return stubElement;
     }
-    return serializationManager.deserialize(new UnsyncByteArrayInputStream(myBytes));
-  }
-
-  public void indexTree() throws SerializerNotFoundException {
-    ObjectStubBase root = (ObjectStubBase)getStub(true);
-    myIndexedStubs = new IndexedStubs(calculateHash(myBytes, myLength), indexTree(root));
+    return retrieveStubFromBytes(serializationManager);
   }
 
   @NotNull
-  IndexedStubs getIndexedStubs() {
-    return myIndexedStubs;
-  }
-
-  void setIndexedStubs(@NotNull IndexedStubs indexedStubs) {
-    myIndexedStubs = indexedStubs;
+  Stub retrieveStubFromBytes(@NotNull SerializationManagerEx serializationManager) throws SerializerNotFoundException {
+    return serializationManager.deserialize(new UnsyncByteArrayInputStream(myTreeBytes, 0, myTreeByteLength));
   }
 
   public boolean equals(final Object that) {
@@ -129,13 +155,13 @@ public class SerializedStubTree {
     }
     final SerializedStubTree thatTree = (SerializedStubTree)that;
 
-    final int length = myLength;
-    if (length != thatTree.myLength) {
+    final int length = myTreeByteLength;
+    if (length != thatTree.myTreeByteLength) {
       return false;
     }
 
-    final byte[] thisBytes = myBytes;
-    final byte[] thatBytes = thatTree.myBytes;
+    final byte[] thisBytes = myTreeBytes;
+    final byte[] thatBytes = thatTree.myTreeBytes;
     for (int i = 0; i < length; i++) {
       if (thisBytes[i] != thatBytes[i]) {
         return false;
@@ -146,13 +172,13 @@ public class SerializedStubTree {
   }
 
   public int hashCode() {
-    if (myBytes == null) {
+    if (myTreeBytes == null) {
       return 0;
     }
 
     int result = 1;
-    for (int i = 0; i < myLength; i++) {
-      result = 31 * result + myBytes[i];
+    for (int i = 0; i < myTreeByteLength; i++) {
+      result = 31 * result + myTreeBytes[i];
     }
 
     return result;
@@ -168,7 +194,7 @@ public class SerializedStubTree {
       LOG.error(e);
       deserialized = "error while stub deserialization: " + e.getMessage();
     }
-    return deserialized + "\n bytes: " + toHexString(myBytes, myLength);
+    return deserialized + "\n bytes: " + toHexString(myTreeBytes, myTreeByteLength);
   }
 
   @NotNull
@@ -197,10 +223,10 @@ public class SerializedStubTree {
   }
 
   static void reportStubTreeHashCollision(@NotNull SerializedStubTree newTree,
-                                          @NotNull SerializedStubTree existingTree,
-                                          @NotNull byte[] hash) {
+                                          @NotNull SerializedStubTree existingTree) {
     String oldTreeDump = "\nexisting tree " + existingTree.dumpStub();
     String newTreeDump = "\nnew tree " + newTree.dumpStub();
+    byte[] hash = newTree.mySerializedTreeHash;
     LOG.info("Stub tree hashing collision. Different trees have the same hash = " + toHexString(hash, hash.length) +
              ". Hashing algorithm = " + HASHER.getValue().getAlgorithm() + "." + oldTreeDump + newTreeDump, new Exception());
   }

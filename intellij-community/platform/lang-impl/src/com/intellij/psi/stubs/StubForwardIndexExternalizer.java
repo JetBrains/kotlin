@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-abstract class StubForwardIndexExternalizer<StubKeySerializationState> implements DataExternalizer<IndexedStubs> {
+public abstract class StubForwardIndexExternalizer<StubKeySerializationState> implements DataExternalizer<Map<StubIndexKey, Map<Object, StubIdList>>> {
   private volatile boolean myEnsuredStubElementTypesLoaded;
 
   protected abstract StubKeySerializationState createStubIndexKeySerializationState(@NotNull DataOutput out, @NotNull Set<StubIndexKey> set) throws IOException;
@@ -27,28 +27,23 @@ abstract class StubForwardIndexExternalizer<StubKeySerializationState> implement
   protected abstract ID<?, ?> readStubIndexKey(@NotNull DataInput input, StubKeySerializationState stubKeySerializationState) throws IOException;
 
   @Override
-  public void save(@NotNull DataOutput out, IndexedStubs indexedStubs) throws IOException {
-    byte[] hash = indexedStubs.getStubTreeHash();
-    DataInputOutputUtil.writeINT(out, hash.length);
-    out.write(hash);
-    Map<StubIndexKey, Map<Object, StubIdList>> stubIndicesValueMap = indexedStubs.getStubIndicesValueMap();
-    DataInputOutputUtil.writeINT(out, stubIndicesValueMap.size());
-    if (!stubIndicesValueMap.isEmpty()) {
-      StubKeySerializationState stubKeySerializationState = createStubIndexKeySerializationState(out, stubIndicesValueMap.keySet());
+  public void save(@NotNull DataOutput out, Map<StubIndexKey, Map<Object, StubIdList>> indexedStubs) throws IOException {
+
+    DataInputOutputUtil.writeINT(out, indexedStubs.size());
+    if (!indexedStubs.isEmpty()) {
+      StubKeySerializationState stubKeySerializationState = createStubIndexKeySerializationState(out, indexedStubs.keySet());
 
       StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
-      for (StubIndexKey stubIndexKey : stubIndicesValueMap.keySet()) {
+      for (StubIndexKey stubIndexKey : indexedStubs.keySet()) {
         writeStubIndexKey(out, stubIndexKey, stubKeySerializationState);
-        Map<Object, StubIdList> map = stubIndicesValueMap.get(stubIndexKey);
+        Map<Object, StubIdList> map = indexedStubs.get(stubIndexKey);
         stubIndex.serializeIndexValue(out, stubIndexKey, map);
       }
     }
   }
 
   @Override
-  public IndexedStubs read(@NotNull DataInput in) throws IOException {
-    byte[] hash = new byte[DataInputOutputUtil.readINT(in)];
-    in.readFully(hash);
+  public Map<StubIndexKey, Map<Object, StubIdList>> read(@NotNull DataInput in) throws IOException {
     if (!myEnsuredStubElementTypesLoaded) {
       ProgressManager.getInstance().executeNonCancelableSection(() -> {
         SerializationManager.getInstance().initSerializers();
@@ -68,8 +63,32 @@ abstract class StubForwardIndexExternalizer<StubKeySerializationState> implement
           stubIndicesValueMap.put(stubIndexKey, stubIndex.deserializeIndexValue(in, stubIndexKey));
         }
       }
-      return new IndexedStubs(hash, stubIndicesValueMap);
+      return stubIndicesValueMap;
     }
-    return new IndexedStubs(hash, Collections.emptyMap());
+    return Collections.emptyMap();
+  }
+
+  static class IdeStubForwardIndexesExternalizer extends StubForwardIndexExternalizer<Void> {
+    static final IdeStubForwardIndexesExternalizer INSTANCE = new IdeStubForwardIndexesExternalizer();
+
+    @Override
+    protected void writeStubIndexKey(@NotNull DataOutput out, @NotNull StubIndexKey key, Void aVoid) throws IOException {
+      DataInputOutputUtil.writeINT(out, key.getUniqueId());
+    }
+
+    @Override
+    protected Void createStubIndexKeySerializationState(@NotNull DataOutput out, @NotNull Set<StubIndexKey> set) {
+      return null;
+    }
+
+    @Override
+    protected ID<?, ?> readStubIndexKey(@NotNull DataInput input, Void aVoid) throws IOException {
+      return ID.findById(DataInputOutputUtil.readINT(input));
+    }
+
+    @Override
+    protected Void createStubIndexKeySerializationState(@NotNull DataInput input, int stubIndexKeyCount) {
+      return null;
+    }
   }
 }
