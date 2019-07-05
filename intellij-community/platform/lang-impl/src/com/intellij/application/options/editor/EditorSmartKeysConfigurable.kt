@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.keymap.impl.ModifierKeyDoubleClickHandler
 import com.intellij.openapi.options.BoundCompositeConfigurable
+import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.options.UnnamedConfigurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
@@ -62,7 +63,7 @@ val myCbInsertJavadocStubOnEnter = CheckboxDescriptor(ApplicationBundle.message(
 class EditorSmartKeysConfigurable : BoundCompositeConfigurable<UnnamedConfigurable>(
   "Smart Keys",
   "reference.settingsdialog.IDE.editor.smartkey"
-), SearchableConfigurable {
+), SearchableConfigurable, SearchableConfigurable.Parent {
   override fun createPanel(): DialogPanel {
     return panel {
       row {
@@ -156,8 +157,15 @@ class EditorSmartKeysConfigurable : BoundCompositeConfigurable<UnnamedConfigurab
   }
 
   override fun createConfigurables(): List<UnnamedConfigurable> {
-    return ConfigurableWrapper.createConfigurables(EP_NAME);
+    return ConfigurableWrapper.createConfigurables(EP_NAME).filterNot { it is Configurable }
   }
+
+  override fun getConfigurables(): Array<Configurable> {
+    val configurables = ConfigurableWrapper.createConfigurables(EP_NAME)
+    return configurables.filterIsInstance<Configurable>().toTypedArray()
+  }
+
+  override fun hasOwnContent() = true
 
   override fun getId() = "editor.preferences.smartKeys"
 
