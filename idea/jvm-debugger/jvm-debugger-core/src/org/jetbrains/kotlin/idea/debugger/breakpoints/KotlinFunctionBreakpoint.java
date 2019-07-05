@@ -21,11 +21,12 @@ import com.intellij.debugger.requests.Requestor;
 import com.intellij.debugger.ui.breakpoints.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.*;
+import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.progress.util.ProgressWindow;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -53,6 +54,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaMethodBreakpointProperties;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -91,6 +93,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         return super.isValid() && getMethodName() != null;
     }
 
+    // MODIFICATION: Start Kotlin implementation
     @Override
     public void reload() {
         super.reload();
@@ -98,23 +101,61 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         setMethodName(null);
         mySignature = null;
 
-        SourcePosition sourcePosition = getSourcePosition();
-        if (sourcePosition != null) {
-            MethodDescriptor descriptor = getMethodDescriptor(myProject, sourcePosition);
-            if (descriptor != null) {
-                setMethodName(descriptor.methodName);
-                mySignature = descriptor.methodSignature;
-                myIsStatic = descriptor.isStatic;
+        Project project = myProject;
+
+        Task.Backgroundable task = new Task.Backgroundable(myProject, "Initialize function breakpoint") {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                SourcePosition sourcePosition = KotlinFunctionBreakpoint.this.getSourcePosition();
+                MethodDescriptor descriptor = sourcePosition == null ? null : getMethodDescriptor(project, sourcePosition);
+
+                ProgressIndicatorProvider.checkCanceled();
+
+                String methodName = descriptor == null ? null : descriptor.methodName;
+                JVMName methodSignature = descriptor == null ? null : descriptor.methodSignature;
+                boolean methodIsStatic = descriptor != null && descriptor.isStatic;
+
+                PsiClass psiClass = KotlinFunctionBreakpoint.this.getPsiClass();
+
+                ProgressIndicatorProvider.checkCanceled();
+
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    KotlinFunctionBreakpoint.this.setMethodName(methodName);
+                    KotlinFunctionBreakpoint.this.mySignature = methodSignature;
+                    KotlinFunctionBreakpoint.this.myIsStatic = methodIsStatic;
+
+                    if (psiClass != null) {
+                        KotlinFunctionBreakpoint.this.getProperties().myClassPattern = psiClass.getQualifiedName();
+                    }
+                    if (methodIsStatic) {
+                        KotlinFunctionBreakpoint.this.setInstanceFiltersEnabled(false);
+                    }
+                }, ModalityState.defaultModalityState());
             }
-        }
-        PsiClass psiClass = getPsiClass();
-        if (psiClass != null) {
-            getProperties().myClassPattern = psiClass.getQualifiedName();
-        }
-        if (myIsStatic) {
-            setInstanceFiltersEnabled(false);
+        };
+
+        ProgressManager progressManager = ProgressManager.getInstance();
+        if (ApplicationManager.getApplication().isDispatchThread() && !ApplicationManager.getApplication().isUnitTestMode()) {
+            progressManager.runProcessWithProgressAsynchronously(task, new BackgroundableProcessIndicator(task));
+        } else {
+            EmptyProgressIndicator progressIndicator = new EmptyProgressIndicator();
+            progressManager.runProcess(() -> task.run(progressIndicator), progressIndicator);
         }
     }
+
+    @Override
+    public PsiClass getPsiClass() {
+        SourcePosition sourcePosition = getSourcePosition();
+        KtClassOrObject declaration = PositionUtil.getPsiElementAt(myProject, KtClassOrObject.class, sourcePosition);
+
+        if (declaration == null) {
+            return null;
+        }
+
+        return ReadAction.compute(() -> LightClassUtilsKt.toLightClass(declaration));
+    }
+
+    // MODIFICATION: End Kotlin implementation
 
     private static void createRequestForSubClasses(@NotNull MethodBreakpointBase breakpoint,
             @NotNull DebugProcessImpl debugProcess,
