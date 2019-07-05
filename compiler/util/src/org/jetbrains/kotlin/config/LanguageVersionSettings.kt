@@ -102,6 +102,7 @@ enum class LanguageFeature(
     ProhibitUseSiteTargetAnnotationsOnSuperTypes(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitTypeParametersInClassLiteralsInAnnotationArguments(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitComparisonOfIncompatibleEnums(KOTLIN_1_4, kind = BUG_FIX),
+    NonParenthesizedAnnotationsOnFunctionalTypes(KOTLIN_1_4),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379
