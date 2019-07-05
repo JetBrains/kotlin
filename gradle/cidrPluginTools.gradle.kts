@@ -690,7 +690,8 @@ fun Copy.applyCidrVersionRestrictions(
         """
         |
         |  <depends>$javaPluginId</depends>
-        |  <xi:include href="/META-INF/JavaForCIDRActionPatcher.xml" xpointer="xpointer(/idea-plugin/*)"/>
+        |  <xi:include href="/META-INF/JavaForCIDRCommonActionPatcher.xml" xpointer="xpointer(/idea-plugin/*)"/>
+        |  <xi:include href="/META-INF/JavaForCIDRSpecificActionPatcher.xml" xpointer="xpointer(/idea-plugin/*)"/>
         """.trimMargin().trimStart()
     else
         """

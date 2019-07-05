@@ -1,0 +1,13 @@
+<!-- Specific overrides for AppCode: -->
+<idea-plugin>
+    <actions>
+
+        <!-- "Build" menu -->
+        <group id="Java.BuildMenu" class="com.intellij.openapi.actionSystem.EmptyActionGroup" overrides="true"/>
+        <group id="BuildMenu" class="com.intellij.openapi.actionSystem.EmptyActionGroup" overrides="true"/>
+
+        <!-- Build Project action in ToolbarMakeGroup -->
+        <action id="CompileDirty" class="com.intellij.openapi.actionSystem.EmptyActionGroup" overrides="true"/>
+
+    </actions>
+</idea-plugin>
