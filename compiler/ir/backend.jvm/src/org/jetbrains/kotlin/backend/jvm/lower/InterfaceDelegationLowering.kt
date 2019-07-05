@@ -211,6 +211,34 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
     }
 }
 
+internal val interfaceDefaultCallsPhase = makeIrFilePhase(
+    lowering = ::InterfaceDefaultCallsLowering,
+    name = "InterfaceDefaultCalls",
+    description = "Redirect interface calls with default arguments to DefaultImpls"
+)
+
+private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val callee = expression.symbol.owner
+
+        if (callee.parent.safeAs<IrClass>()?.isInterface != true ||
+            callee.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+        ) {
+            return super.visitCall(expression)
+        }
+
+        val redirectTarget = context.declarationFactory.getDefaultImplsFunction(callee as IrSimpleFunction)
+        val newCall = irCall(expression, redirectTarget, receiversAsArguments = true)
+
+        return super.visitCall(newCall)
+    }
+}
+
 
 private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
     resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||

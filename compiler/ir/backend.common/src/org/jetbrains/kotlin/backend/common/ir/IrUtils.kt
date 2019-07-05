@@ -549,15 +549,23 @@ fun createStaticFunctionWithReceivers(
                                        oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
         )
 
-        val mapping: Map<IrValueParameter, IrValueParameter> =
-            (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
-                .zip(valueParameters).toMap()
         if (copyBody) {
-            body = oldFunction.body
-                ?.transform(VariableRemapper(mapping), null)
-                ?.patchDeclarationParents(this)
+            copyBodyToStatic(oldFunction, this)
         }
 
         metadata = oldFunction.metadata
     }
 }
+
+fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
+    val mapping: Map<IrValueParameter, IrValueParameter> =
+        (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
+            .zip(staticFunction.valueParameters).toMap()
+    staticFunction.body = oldFunction.body
+            ?.transform(VariableRemapper(mapping), null)
+            ?.patchDeclarationParents(staticFunction)
+}
+
+fun IrClass.underlyingType() = if (isInline)
+    constructors.single { it.isPrimary }.valueParameters[0].type
+else defaultType

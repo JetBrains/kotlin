@@ -16,30 +16,45 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyBodyToStatic
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
+import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedPhaseWrapper
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-internal val staticDefaultFunctionPhase = makeIrFilePhase(
+private val functionDefinitionLoweringPhase = makeIrFilePhase(
     ::StaticDefaultFunctionLowering,
-    name = "StaticDefaultFunction",
+    name = "StaticDefaultFunctionDefinition",
     description = "Generate static functions for default parameters"
 )
 
-private class StaticDefaultFunctionLowering() : IrElementTransformerVoid(), ClassLoweringPass {
-    constructor(@Suppress("UNUSED_PARAMETER") context: BackendContext) : this()
+private val callLoweringPhase = makeIrFilePhase(
+    ::StaticDefaultCallLowering,
+    name = "StaticDefaultCall",
+    description = "Generate calls of static functions for default parameters"
+)
 
-    val updatedFunctions = hashMapOf<IrFunctionSymbol, IrFunction>()
+internal val staticDefaultFunctionPhase = SameTypeNamedPhaseWrapper(
+    name = "StaticDefaultFunction",
+    description = "Make function adapters for default arguments static",
+    lower = functionDefinitionLoweringPhase then callLoweringPhase,
+    prerequisite = setOf(jvmStaticAnnotationPhase),
+    nlevels = 1
+)
+
+private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(),
+    ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         irClass.accept(this, null)
@@ -47,9 +62,9 @@ private class StaticDefaultFunctionLowering() : IrElementTransformerVoid(), Clas
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         return if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null) {
-            return createStaticFunctionWithReceivers(declaration.parent, declaration.name, declaration).also {
-                updatedFunctions[declaration.symbol] = it
-                super.visitFunction(declaration)
+            context.getStaticFunctionWithReceivers(declaration).also {
+                copyBodyToStatic(declaration, it)
+                super.visitFunction(it)
             }
         } else {
             super.visitFunction(declaration)
@@ -58,9 +73,9 @@ private class StaticDefaultFunctionLowering() : IrElementTransformerVoid(), Clas
 
     override fun visitReturn(expression: IrReturn): IrExpression {
         return super.visitReturn(
-            if (updatedFunctions.containsKey(expression.returnTargetSymbol)) {
+            if (context.staticDefaultStubs.containsKey(expression.returnTargetSymbol)) {
                 with(expression) {
-                    val irFunction = updatedFunctions[expression.returnTargetSymbol]!!
+                    val irFunction = context.staticDefaultStubs[expression.returnTargetSymbol]!!
                     IrReturnImpl(startOffset, endOffset, expression.type, irFunction.symbol, expression.value)
                 }
             } else {
@@ -69,3 +84,29 @@ private class StaticDefaultFunctionLowering() : IrElementTransformerVoid(), Clas
         )
     }
 }
+
+private class StaticDefaultCallLowering(
+    val context: JvmBackendContext
+) : IrElementTransformerVoid(), FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.accept(this, null)
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val callee = expression.symbol.owner
+        if (callee.origin !== IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || callee.dispatchReceiverParameter == null) {
+            return super.visitCall(expression)
+        }
+
+        val newCallee = context.getStaticFunctionWithReceivers(callee)
+        val newCall = irCall(expression, newCallee, receiversAsArguments = true)
+
+        return super.visitCall(newCall)
+    }
+}
+
+private fun JvmBackendContext.getStaticFunctionWithReceivers(function: IrFunction) =
+    staticDefaultStubs.getOrPut(function.symbol) {
+        createStaticFunctionWithReceivers(function.parent, function.name, function, copyBody = false)
+    }
+

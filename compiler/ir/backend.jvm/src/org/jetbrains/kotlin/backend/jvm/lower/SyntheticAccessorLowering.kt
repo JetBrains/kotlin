@@ -41,7 +41,7 @@ internal val syntheticAccessorPhase = makeIrFilePhase(
     ::SyntheticAccessorLowering,
     name = "SyntheticAccessor",
     description = "Introduce synthetic accessors",
-    prerequisite = setOf(objectClassPhase)
+    prerequisite = setOf(objectClassPhase, staticDefaultFunctionPhase)
 )
 
 private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
