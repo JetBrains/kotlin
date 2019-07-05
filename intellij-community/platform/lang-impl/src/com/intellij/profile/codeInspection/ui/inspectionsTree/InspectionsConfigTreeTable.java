@@ -227,7 +227,7 @@ public class InspectionsConfigTreeTable extends TreeTable {
                                     @NotNull InspectionProfileImpl profile,
                                     @NotNull String toolId,
                                     @NotNull Project project) {
-    profile.setToolEnabled(toolId, newState);
+    profile.setToolEnabled(toolId, newState, project, false);
     for (ScopeToolState scopeToolState : profile.getTools(toolId, project).getTools()) {
       scopeToolState.setEnabled(newState);
     }
