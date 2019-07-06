@@ -86,8 +86,9 @@ data class NpmDependency(
     private fun resolveProject(): KotlinCompilationNpmResolution? {
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
+        // may return null only while resolving configuration in ConfigurationVisitor.visit
         val resolvedProject =
-            if (isInIdeaSync) nodeJs.resolveIfNeeded(project)
+            if (isInIdeaSync) nodeJs.resolveIfNeeded()[project]
             else nodeJs.getAlreadyResolvedOrNull(project)
 
         return when (resolvedProject) {

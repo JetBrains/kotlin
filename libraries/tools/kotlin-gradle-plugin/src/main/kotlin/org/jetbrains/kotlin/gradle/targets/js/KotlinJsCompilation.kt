@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 class KotlinJsCompilation(
@@ -20,4 +21,11 @@ class KotlinJsCompilation(
 
     override val compileKotlinTask: Kotlin2JsCompile
         get() = super.compileKotlinTask as Kotlin2JsCompile
+
+    internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
+
+    @Suppress("unused")
+    fun packageJson(handler: PackageJson.() -> Unit) {
+        packageJsonHandlers.add(handler)
+    }
 }

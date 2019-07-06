@@ -35,6 +35,20 @@ open class KotlinPackageJsonTask : DefaultTask() {
             dependentResolver.npmProject.packageJsonTask
         }
 
+    @get:Input
+    @get:Nested
+    internal val producerInputs: KotlinCompilationNpmResolver.PackageJsonProducerInputs
+        get() = producer.inputs
+
+    @get:OutputFile
+    val packageJson: File
+        get() = compilationResolver.npmProject.packageJsonFile
+
+    @TaskAction
+    fun resolve() {
+        compilationResolver.resolve()
+    }
+
     companion object {
         fun create(compilation: KotlinJsCompilation): TaskHolder<KotlinPackageJsonTask> {
             val target = compilation.target
@@ -65,19 +79,5 @@ open class KotlinPackageJsonTask : DefaultTask() {
 
             return packageJsonTask
         }
-    }
-
-    @get:Input
-    @get:Nested
-    internal val producerInputs: KotlinCompilationNpmResolver.PackageJsonProducerInputs
-        get() = producer.inputs
-
-    @get:OutputFile
-    val packageJson: File
-        get() = compilationResolver.npmProject.packageJsonFile
-
-    @TaskAction
-    fun resolve() {
-        compilationResolver.resolve()
     }
 }

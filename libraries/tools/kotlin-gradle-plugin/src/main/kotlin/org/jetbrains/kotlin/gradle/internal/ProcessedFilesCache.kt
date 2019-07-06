@@ -147,7 +147,6 @@ internal open class ProcessedFilesCache(
         operator fun get(elementHash: ByteArray) = byHash[ByteArrayWrapper(elementHash)]
 
         operator fun set(elementHash: ByteArray, element: Element) {
-            elementHash.toHexString()
             byHash[ByteArrayWrapper(elementHash)] = element
             val target = element.target
             if (target != null) {

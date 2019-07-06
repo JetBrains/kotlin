@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import java.io.File
 
-open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
+open class NodeJsRootExtension(val rootProject: Project) {
     init {
-        check(project.rootProject == project)
+        check(rootProject.rootProject == rootProject)
     }
 
-    private val gradleHome = project.gradle.gradleUserHomeDir.also {
-        project.logger.kotlinInfo("Storing cached files in $it")
+    private val gradleHome = rootProject.gradle.gradleUserHomeDir.also {
+        rootProject.logger.kotlinInfo("Storing cached files in $it")
     }
 
     var installationDir = gradleHome.resolve("nodejs")
@@ -33,13 +33,13 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
     var packageManager: NpmApi = Yarn
 
     val nodeJsSetupTask: NodeJsSetupTask
-        get() = project.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
+        get() = rootProject.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
 
     val npmInstallTask: KotlinNpmInstallTask
-        get() = project.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
+        get() = rootProject.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
 
     val rootPackageDir: File
-        get() = project.buildDir.resolve("js")
+        get() = rootProject.buildDir.resolve("js")
 
     val projectPackagesDir: File
         get() = rootPackageDir.resolve("packages")
@@ -105,7 +105,7 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
     internal fun requireResolver(): KotlinRootNpmResolver =
         (resolutionState as? ResolutionState.Resolving ?: error("NPM Dependencies already resolved and installed")).resolver
 
-    internal fun resolveIfNeeded(project: Project): KotlinProjectNpmResolution {
+    internal fun resolveIfNeeded(requireUpToDateReason: String? = null): KotlinRootNpmResolution {
         val state0 = _resolutionState
         val resolution = when (state0) {
             is ResolutionState.Resolved -> state0.resolved
@@ -116,14 +116,20 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
                         is ResolutionState.Resolved -> state1.resolved
                         is ResolutionState.Resolving -> state1.resolver.close().also {
                             _resolutionState = ResolutionState.Resolved(it)
+                            if (requireUpToDateReason != null && !it.wasUpToDate) {
+                                error("NPM dependencies should be resolved $requireUpToDateReason")
+                            }
                         }
                     }
                 }
             }
         }
 
-        return resolution[project]
+        return resolution
     }
+
+    internal fun requireAlreadyResolved(project: Project, reason: String = ""): KotlinProjectNpmResolution =
+        resolveIfNeeded(reason)[project]
 
     internal fun getAlreadyResolvedOrNull(project: Project): KotlinProjectNpmResolution? {
         val state0 = resolutionState
@@ -133,19 +139,13 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
         }
     }
 
-    internal fun requireResolved(project: Project, reason: String = ""): KotlinProjectNpmResolution =
-        getAlreadyResolvedOrNull(project) ?: error("NPM dependencies should be resolved $reason")
-
     internal fun checkRequiredDependencies(project: Project, target: RequiresNpmDependencies) {
-        val requestedTaskDependencies = requireResolved(
-            project,
-            "before $target execution"
-        ).taskRequirements
+        val requestedTaskDependencies = requireAlreadyResolved(project, "before $target execution").taskRequirements
         val targetRequired = requestedTaskDependencies[target]?.toSet() ?: setOf()
 
         target.requiredNpmDependencies.forEach {
             check(it in targetRequired) {
-                "$it required by $target was not found resolved at the time of nodejs package manager call. " +
+                "${it.createDependency(project)} required by $target was not found resolved at the time of nodejs package manager call. " +
                         "This may be caused by changing $target configuration after npm dependencies resolution."
             }
         }

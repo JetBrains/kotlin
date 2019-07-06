@@ -9,10 +9,8 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmSimpleLinker
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 
@@ -26,7 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResoluti
  */
 internal class KotlinRootNpmResolver internal constructor(val nodeJs: NodeJsRootExtension) : NodeJsRootExtension.ResolutionStateData {
     val rootProject: Project
-        get() = nodeJs.project
+        get() = nodeJs.rootProject
 
     private var closed: Boolean = false
 
@@ -73,16 +71,20 @@ internal class KotlinRootNpmResolver internal constructor(val nodeJs: NodeJsRoot
         val projectResolutions = projectResolvers.values.map { it.close() }.associateBy { it.project }
         val allNpmPackages = projectResolutions.values.flatMap { it.npmProjects }
 
-        removeOutdatedPackages(nodeJs, allNpmPackages)
         gradleNodeModules.close()
 
-        if (allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() }) {
-            nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages)
-        } else if (projectResolvers.values.any { it.hasNodeModulesDependentTasks }) {
-            NpmSimpleLinker(nodeJs).link(allNpmPackages)
+        val wasUpToDate = when {
+            allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() } -> {
+                nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages) == NpmApi.Result.upToDate
+            }
+            projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks } -> {
+                NpmSimpleLinker(nodeJs).link(allNpmPackages)
+                true // todo
+            }
+            else -> true
         }
 
-        return KotlinRootNpmResolution(rootProject, projectResolutions)
+        return KotlinRootNpmResolution(wasUpToDate, rootProject, projectResolutions)
     }
 
     private fun removeOutdatedPackages(nodeJs: NodeJsRootExtension, allNpmPackages: List<KotlinCompilationNpmResolution>) {

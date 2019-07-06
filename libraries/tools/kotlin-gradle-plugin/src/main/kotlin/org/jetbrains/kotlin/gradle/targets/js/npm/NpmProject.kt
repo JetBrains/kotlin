@@ -72,7 +72,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        nodeJs.requireResolved(project)
+        nodeJs.requireAlreadyResolved(project)
         return modules.require(request)
     }
 

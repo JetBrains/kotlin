@@ -19,7 +19,7 @@ import java.nio.file.Files
  * node_modules with symlinked packages and packages_imported
  */
 class NpmSimpleLinker(val nodeJs: NodeJsRootExtension) {
-    private val rootProject = nodeJs.project
+    private val rootProject = nodeJs.rootProject
     private val rootProjectNodeModules = nodeJs.rootPackageDir.resolve(NpmProject.NODE_MODULES)
 
     fun link(projects: Collection<KotlinCompilationNpmResolution>) {

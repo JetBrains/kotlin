@@ -31,7 +31,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        nodeJs.resolveIfNeeded(project)
+        nodeJs.resolveIfNeeded()
     }
 
     companion object {

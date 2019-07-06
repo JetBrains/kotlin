@@ -20,7 +20,7 @@ internal class GradleNodeModulesCache(val nodeJs: NodeJsRootExtension) : AutoClo
         const val STATE_FILE_NAME = ".visited"
     }
 
-    val project: Project get() = nodeJs.project
+    val project: Project get() = nodeJs.rootProject
     internal val dir = nodeJs.nodeModulesGradleCacheDir
     private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "9")
 

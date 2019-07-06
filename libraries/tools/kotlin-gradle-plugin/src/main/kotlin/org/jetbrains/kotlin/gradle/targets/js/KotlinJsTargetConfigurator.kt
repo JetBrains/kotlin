@@ -20,10 +20,6 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         target as KotlinJsTarget
 
         super.configureTarget(target)
-
-        target.compilations.forEach { compilation ->
-            KotlinPackageJsonTask.create(compilation)
-        }
     }
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {

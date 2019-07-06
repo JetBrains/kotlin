@@ -14,21 +14,21 @@ import java.io.File
 object YarnWorkspaces : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) = Unit
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) {
+    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>): NpmApi.Result {
         check(rootProject == rootProject.rootProject)
         setup(rootProject)
-        resolveWorkspaces(rootProject, subProjects)
+        return resolveWorkspaces(rootProject, subProjects)
     }
 
     private fun resolveWorkspaces(
         rootProject: Project,
         npmProjects: Collection<KotlinCompilationNpmResolution>
-    ) {
+    ): NpmApi.Result {
         val upToDateChecks = npmProjects.map {
             YarnUpToDateCheck(it.npmProject)
         }
 
-        if (upToDateChecks.all { it.upToDate }) return
+        if (upToDateChecks.all { it.upToDate }) return NpmApi.Result.upToDate
 
         val nodeJsWorldDir = NodeJsRootPlugin.apply(rootProject).rootPackageDir
 
@@ -40,6 +40,8 @@ object YarnWorkspaces : YarnBasics() {
         upToDateChecks.forEach {
             it.commit()
         }
+
+        return NpmApi.Result.executed
     }
 
     private fun saveRootProjectWorkspacesPackageJson(
@@ -54,12 +56,6 @@ object YarnWorkspaces : YarnBasics() {
         val importedProjectWorkspaces = YarnImportedPackagesVersionResolver(rootProject, npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
-
-        val nodeJs = NodeJsRootPlugin.apply(rootProject)
-        nodeJs.packageJsonHandlers.forEach {
-            it(rootPackageJson)
-        }
-
         rootPackageJson.saveTo(
             nodeJsWorldDir.resolve(NpmProject.PACKAGE_JSON)
         )

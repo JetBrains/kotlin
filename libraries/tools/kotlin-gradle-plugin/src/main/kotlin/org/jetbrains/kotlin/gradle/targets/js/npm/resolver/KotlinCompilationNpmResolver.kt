@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
 import java.io.Serializable
 
@@ -33,6 +34,7 @@ internal class KotlinCompilationNpmResolver(
     val nodeJs get() = resolver.nodeJs
     val target get() = compilation.target
     val project get() = target.project
+    val packageJsonTaskHolder = KotlinPackageJsonTask.create(compilation)
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
@@ -47,19 +49,31 @@ internal class KotlinCompilationNpmResolver(
     }
 
     private var closed = false
-    private var resolution: KotlinCompilationNpmResolution? = null
+    private var resolveCalled = false
 
+    private val resolution: KotlinCompilationNpmResolution by lazy {
+        check(!closed) { "$this already closed" }
+        resolveCalled = true
+        packageJsonProducer.createPackageJson()
+    }
+
+    /**
+     * Called from packageJson task
+     */
     fun resolve() {
         check(!closed) { "$this already closed" }
-        check(resolution == null) { "$this already resolved" }
+        check(!resolveCalled) { "$this already resolved" }
 
-        resolution = packageJsonProducer.createPackageJson()
+        // call getter
+        resolution
     }
 
     fun close(): KotlinCompilationNpmResolution? {
         check(!closed) { "$this already closed" }
+        val result = resolution
         closed = true
-        return resolution
+
+        return result
     }
 
     private fun createAggregatedConfiguration(): Configuration {
@@ -87,7 +101,7 @@ internal class KotlinCompilationNpmResolver(
     }
 
     private fun createNpmToolsConfiguration(): Configuration? {
-        val taskRequirements = projectResolver.getTaskRequirements(compilation)
+        val taskRequirements = projectResolver.taskRequirements.getTaskRequirements(compilation)
         if (taskRequirements.isEmpty()) return null
 
         val toolsConfiguration = project.configurations.create("${compilation.name}NpmTools")
@@ -127,6 +141,7 @@ internal class KotlinCompilationNpmResolver(
                 }
             }
 
+            //TODO: rewrite when we get general way to have inter compilation dependencies
             if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 val main = compilation.target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJsCompilation
                 internalDependencies.add(projectResolver[main])
@@ -190,8 +205,10 @@ internal class KotlinCompilationNpmResolver(
 
         fun createPackageJson(): KotlinCompilationNpmResolution {
             val resolvedInternalDependencies = internalDependencies.map {
+//                check(it.resolveCalled) {
+//                    "Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it"
+//                }
                 it.resolution
-                    ?: error("Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it")
             }
             val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
                 resolver.gradleNodeModules.get(it.dependency, it.artifact)
@@ -201,6 +218,8 @@ internal class KotlinCompilationNpmResolver(
                 npmProject.name,
                 fixSemver(project.version.toString())
             )
+
+            packageJson.main = npmProject.main
 
             resolvedInternalDependencies.forEach {
                 packageJson.dependencies[it.packageJson.name] = it.packageJson.version
@@ -214,7 +233,7 @@ internal class KotlinCompilationNpmResolver(
                 packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
             }
 
-            nodeJs.packageJsonHandlers.forEach {
+            compilation.packageJsonHandlers.forEach {
                 it(packageJson)
             }
 

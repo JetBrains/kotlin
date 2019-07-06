@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 
 class KotlinRootNpmResolution(
+    val wasUpToDate: Boolean,
     val rootProject: Project,
     private val projects: Map<Project, KotlinProjectNpmResolution>
 ) : NodeJsRootExtension.ResolutionStateData {
