@@ -849,7 +849,7 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
 
   private static void saveState(TreeAction action, boolean state) {
     String propertyName = action instanceof PropertyOwner ? ((PropertyOwner)action).getPropertyName() : action.getName();
-    PropertiesComponent.getInstance().setValue(TreeStructureUtil.getPropertyName(propertyName), state);
+    PropertiesComponent.getInstance().setValue(TreeStructureUtil.getPropertyName(propertyName), state, Sorter.ALPHA_SORTER.equals(action));
   }
 
   public void setTitle(String title) {
