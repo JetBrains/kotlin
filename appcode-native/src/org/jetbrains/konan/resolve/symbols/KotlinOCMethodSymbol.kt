@@ -26,11 +26,11 @@ class KotlinOCMethodSymbol(
     project: Project,
     file: VirtualFile,
     containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol<ObjCMethod>(stub, project, file, containingClass), OCMethodSymbol {
+) : KotlinOCMemberSymbol(stub, project, file, containingClass), OCMethodSymbol {
 
     private lateinit var mySelectors: List<OCMethodSymbol.SelectorPartSymbol>
-    private val myReturnType: OCType by stub { returnType.toOCType(project, containingClass) }
-    private val myIsStatic: Boolean by stub { !isInstanceMethod }
+    private val myReturnType: OCType = stub.returnType.toOCType(project, containingClass)
+    private val myIsStatic: Boolean = !stub.isInstanceMethod
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.METHOD
 

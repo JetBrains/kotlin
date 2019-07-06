@@ -22,12 +22,12 @@ class KotlinOCPropertySymbol(
     project: Project,
     file: VirtualFile,
     containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol<ObjCProperty>(stub, project, file, containingClass), OCPropertySymbol {
+) : KotlinOCMemberSymbol(stub, project, file, containingClass), OCPropertySymbol {
 
-    private val myType: OCType by stub { type.toOCType(project, containingClass) }
-    private val myAttributes: List<String> by stub { propertyAttributes }
-    private val myGetterName: String? by stub { getterName }
-    private val mySetterName: String? by stub { setterName }
+    private val myType: OCType = stub.type.toOCType(project, containingClass)
+    private val myAttributes: List<String> = stub.propertyAttributes
+    private val myGetterName: String? = stub.getterName
+    private val mySetterName: String? = stub.setterName
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PROPERTY
 

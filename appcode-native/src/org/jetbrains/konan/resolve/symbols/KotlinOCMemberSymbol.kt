@@ -11,12 +11,12 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
-abstract class KotlinOCMemberSymbol<S : Stub<*>>(
-    stub: S,
+abstract class KotlinOCMemberSymbol(
+    stub: Stub<*>,
     project: Project,
     file: VirtualFile,
     private val containingClass: OCClassSymbol
-) : KotlinOCWrapperSymbol<S>(stub, project, file), OCMemberSymbol {
+) : KtOCBaseSymbol(stub, project, file), OCMemberSymbol {
 
     override fun isGlobal(): Boolean = false
 

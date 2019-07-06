@@ -23,12 +23,9 @@ class KotlinOCInterfaceSymbol(
     stub: ObjCInterface,
     project: Project,
     file: VirtualFile
-) : KotlinOCClassSymbol<ObjCInterface>(stub, project, file), OCInterfaceSymbol {
+) : KotlinOCClassSymbol<KotlinOCInterfaceSymbol.InterfaceState, ObjCInterface>(stub, project, file), OCInterfaceSymbol {
 
     private val myCategoryName: String? = stub.categoryName
-
-    private val mySuperType: OCReferenceType by stub { createSuperType(superClass, superProtocols) }
-    private val myIsTemplateSymbol: Boolean by stub { generics.isNotEmpty() }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.INTERFACE
 
@@ -36,7 +33,7 @@ class KotlinOCInterfaceSymbol(
 
     override fun getSubstitution(): OCTypeSubstitution = OCTypeSubstitution.ID
 
-    override fun isTemplateSymbol(): Boolean = myIsTemplateSymbol
+    override fun isTemplateSymbol(): Boolean = state.isTemplateSymbol
 
     override fun isVariadicTemplate(): Boolean = false
 
@@ -53,10 +50,17 @@ class KotlinOCInterfaceSymbol(
 
     override fun getCategoryName(): String? = myCategoryName
 
-    override fun getSuperType(): OCReferenceType = mySuperType
+    override fun getSuperType(): OCReferenceType = state.superType
 
     //todo implement generics
     override fun getGenericParameters(): List<OCGenericParameterSymbol> = emptyList()
 
     override fun getType(): OCType = OCInterfaceSymbolImpl.getInterfaceTypeImpl(this)
+
+    override fun computeState(stub: ObjCInterface): InterfaceState = InterfaceState(this, stub)
+
+    class InterfaceState(clazz: KotlinOCInterfaceSymbol, stub: ObjCInterface) : ClassState(clazz, stub) {
+        val superType: OCReferenceType = createSuperType(stub.superClass, stub.superProtocols)
+        val isTemplateSymbol: Boolean = stub.generics.isNotEmpty()
+    }
 }

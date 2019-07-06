@@ -46,7 +46,7 @@ class KotlinLightSymbol(
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return symbol === this
-               || symbol is KotlinOCWrapperSymbol<*> && symbol.locateDefinition(project) == locateDefinition(project)
+               || symbol is KotlinOCWrapperSymbol<*, *> && symbol.locateDefinition(project) == locateDefinition(project)
                || symbol is KotlinLightSymbol && symbol.locateDefinition(project) == locateDefinition(project)
     }
 }

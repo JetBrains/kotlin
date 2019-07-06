@@ -11,74 +11,97 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.lang.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater
 
-abstract class KotlinOCWrapperSymbol<T : Stub<*>>(
-    stub: T,
+abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, Stb : Stub<*>>(
+    stub: Stb,
     @Transient val project: Project,
-    @Transient private val file: VirtualFile?
+    @Transient private val file: VirtualFile
 ) : OCSymbol, OCForeignSymbol {
 
-    @Transient private val myStub: T? = stub
-
     private val myName: String = stub.name
-    private var myComplexOffset: Long = -1 //todo by stub { myStub.psi?.let { OCSymbolOffsetUtil.getComplexOffset(it.textRange.startOffset, 0) } ?: 0 }
+
+    @Volatile
+    private var myState: State? = null
+
+    @Transient
+    @Volatile
+    private var myStub: Stb? = stub
+
+    protected val state: State
+        get() {
+            myState?.let { return it }
+            myStub?.let { stub ->
+                val newState = runReadAction { computeState(stub) }
+                if (valueUpdater.compareAndSet(this, null, newState)) {
+                    myStub = null
+                    return newState
+                }
+            }
+            return myState!!
+        }
+
+
+    protected fun psi(): PsiElement? {
+        myStub?.let { return it.psi }
+        return OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)
+    }
 
     override fun getName(): String = myName
 
-    override fun getComplexOffset(): Long = myComplexOffset
+    override fun getComplexOffset(): Long =
+        myState?.offset
+        ?: myStub?.offset
+        ?: myState!!.offset
 
-    protected fun psi(): PsiElement? {
-        return when {
-            myStub != null -> myStub.psi
-            else -> OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)
-        }
-    }
+    protected abstract fun computeState(stub: Stb): State
 
-    override fun getContainingFile(): VirtualFile? = file
+    override fun getContainingFile(): VirtualFile = file
 
     override fun deepEqualStep(c: DeepEqual.Comparator, first: Any, second: Any): Boolean {
-        val f = first as KotlinOCWrapperSymbol<*>
-        val s = second as KotlinOCWrapperSymbol<*>
+        val f = first as KotlinOCWrapperSymbol<*, *>
+        val s = second as KotlinOCWrapperSymbol<*, *>
 
-        if (!Comparing.equal(f.myStub, s.myStub)) return false
+        if (!Comparing.equal(f.file, s.file)) return false
+        if (!Comparing.equal(f.state, s.state)) return false
         if (!Comparing.equal(f.project, s.project)) return false
-
-        if (f.myStub == null) {
-            if (f.myComplexOffset != s.myComplexOffset) return false
-            if (f.myName != s.myName) return false
-        }
 
         return true
     }
 
-    override fun hashCodeExcludingOffset(): Int {
-        return when {
-            myStub != null -> myStub.hashCode() * 31 + project.hashCode()
-            else -> (project.hashCode() * 31 + myName.hashCode()) * 31 + file.hashCode()
-        }
-    }
+    override fun hashCodeExcludingOffset(): Int = (project.hashCode() * 31 + myName.hashCode()) * 31 + file.hashCode()
 
-    override fun locateDefinition(project: Project): PsiElement? {
-        return psi()?.let { KotlinOCPsiWrapper(it, this) }
-    }
+    override fun locateDefinition(project: Project): PsiElement? = psi()?.let { KotlinOCPsiWrapper(it, this) }
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return super.isSameSymbol(symbol, project)
                || symbol is KotlinLightSymbol && psi() == symbol.locateDefinition(project)
     }
 
-    override fun setComplexOffset(complexOffset: Long) {
-        myComplexOffset = complexOffset
-    }
-
     override fun updateOffset(start: Int, lengthShift: Int) {
-        if (myStub == null) {
-            super.updateOffset(start, lengthShift)
-        }
+        if (myState == null) return
+        super.updateOffset(start, lengthShift)
     }
 
-    protected fun <R> stub(initializer: T.() -> R): Lazy<R> = lazy {
-        myStub!!.initializer()
+    override fun setComplexOffset(complexOffset: Long) {
+        myState!!.offset = complexOffset
+    }
+
+    abstract class StubState(stub: Stub<*>) {
+        var offset: Long = stub.offset
+            internal set
+    }
+
+    companion object {
+        private val valueUpdater = newUpdater(
+            KotlinOCWrapperSymbol::class.java,
+            KotlinOCWrapperSymbol.StubState::class.java,
+            "myState"
+        )
     }
 }
+
+val Stub<*>.offset: Long
+    get() = psi?.let { OCSymbolOffsetUtil.getComplexOffset(it.textOffset, 0) } ?: 0
