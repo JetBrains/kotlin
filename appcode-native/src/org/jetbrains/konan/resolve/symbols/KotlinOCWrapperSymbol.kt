@@ -21,40 +21,40 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
     @Transient private val file: VirtualFile
 ) : OCSymbol, OCForeignSymbol {
 
-    private val myName: String = stub.name
+    private val name: String = stub.name
 
     @Volatile
-    private var myState: State? = null
+    private var _state: State? = null
 
     @Transient
     @Volatile
-    private var myStubAndProject: Pair<Stb, Project>? = Pair(stub, project)
+    private var stubAndProject: Pair<Stb, Project>? = Pair(stub, project)
 
     protected val state: State
         get() {
-            myState?.let { return it }
-            myStubAndProject?.let { (stub, project) ->
+            _state?.let { return it }
+            stubAndProject?.let { (stub, project) ->
                 //todo check project.isDisposed
                 val newState = runReadAction { computeState(stub, project) }
                 if (valueUpdater.compareAndSet(this, null, newState)) {
-                    myStubAndProject = null
+                    stubAndProject = null
                     return newState
                 }
             }
-            return myState!!
+            return _state!!
         }
 
     private fun psi(project: Project): PsiElement? {
-        myStubAndProject?.let { return it.first.psi }
+        stubAndProject?.let { return it.first.psi }
         return OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)
     }
 
-    override fun getName(): String = myName
+    override fun getName(): String = name
 
     override fun getComplexOffset(): Long =
-        myState?.offset
-        ?: myStubAndProject?.first?.offset
-        ?: myState!!.offset
+        _state?.offset
+        ?: stubAndProject?.first?.offset
+        ?: _state!!.offset
 
     protected abstract fun computeState(stub: Stb, project: Project): State
 
@@ -70,7 +70,7 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
         return true
     }
 
-    override fun hashCodeExcludingOffset(): Int = myName.hashCode() * 31 + file.hashCode()
+    override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31 + file.hashCode()
 
     override fun locateDefinition(project: Project): PsiElement? = psi(project)?.let { KotlinOCPsiWrapper(it, this) }
 
@@ -80,12 +80,12 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
     }
 
     override fun updateOffset(start: Int, lengthShift: Int) {
-        if (myState == null) return
+        if (_state == null) return
         super.updateOffset(start, lengthShift)
     }
 
     override fun setComplexOffset(complexOffset: Long) {
-        myState!!.offset = complexOffset
+        _state!!.offset = complexOffset
     }
 
     abstract class StubState(stub: Stub<*>) {

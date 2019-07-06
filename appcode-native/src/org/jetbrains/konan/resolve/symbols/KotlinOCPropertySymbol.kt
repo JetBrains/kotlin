@@ -24,10 +24,10 @@ class KotlinOCPropertySymbol(
     containingClass: OCClassSymbol
 ) : KotlinOCMemberSymbol(stub, file, containingClass), OCPropertySymbol {
 
-    private val myType: OCType = stub.type.toOCType(project, containingClass)
-    private val myAttributes: List<String> = stub.propertyAttributes
-    private val myGetterName: String? = stub.getterName
-    private val mySetterName: String? = stub.setterName
+    private val type: OCType = stub.type.toOCType(project, containingClass)
+    private val attributes: List<String> = stub.propertyAttributes
+    private val getterName: String? = stub.getterName
+    private val setterName: String? = stub.setterName
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PROPERTY
 
@@ -38,20 +38,24 @@ class KotlinOCPropertySymbol(
     override fun getAssociatedSymbol(project: Project): OCMemberSymbol? = null //todo ???
 
     override fun hasAttribute(attribute: OCPropertySymbol.PropertyAttribute): Boolean {
-        return myAttributes.contains(attribute.tokenName) ||
-               attribute == OCPropertySymbol.PropertyAttribute.GETTER && myGetterName != null ||
-               attribute == OCPropertySymbol.PropertyAttribute.SETTER && mySetterName != null
+        return attributes.contains(attribute.tokenName) ||
+               attribute == OCPropertySymbol.PropertyAttribute.GETTER && getterName != null ||
+               attribute == OCPropertySymbol.PropertyAttribute.SETTER && setterName != null
     }
 
     override fun getNameWithParent(context: OCResolveContext): String = "${parent.name}.$name"
 
     override fun getAttributeValue(attribute: OCPropertySymbol.ValueAttribute): String? {
         return when (attribute) {
-            OCPropertySymbol.ValueAttribute.GETTER -> myGetterName
-            OCPropertySymbol.ValueAttribute.SETTER -> mySetterName
+            OCPropertySymbol.ValueAttribute.GETTER -> getterName
+            OCPropertySymbol.ValueAttribute.SETTER -> setterName
             else -> throw IllegalArgumentException("Unsupported value attribute: $attribute")
         }
     }
 
-    override fun getType(): OCType = myType
+    override fun getType(): OCType = type
+
+    override fun getAttributes(): List<String> = super<KotlinOCMemberSymbol>.getAttributes()
+    override fun getGetterName(): String = super.getGetterName()
+    override fun getSetterName(): String = super.getSetterName()
 }

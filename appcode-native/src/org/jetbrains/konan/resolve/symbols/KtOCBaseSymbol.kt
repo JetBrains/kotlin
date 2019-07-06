@@ -13,14 +13,14 @@ abstract class KtOCBaseSymbol(
     @Transient private val file: VirtualFile
 ) : OCSymbol, OCForeignSymbol {
 
-    private val myName: String = stub.name
-    private var myOffset: Long = stub.offset
+    private val name: String = stub.name
+    private var offset: Long = stub.offset
 
-    override fun getName(): String = myName
+    override fun getName(): String = name
 
-    override fun getComplexOffset(): Long = myOffset
+    override fun getComplexOffset(): Long = offset
     override fun setComplexOffset(complexOffset: Long) {
-        myOffset = complexOffset
+        offset = complexOffset
     }
 
     override fun getContainingFile(): VirtualFile = file
@@ -36,7 +36,7 @@ abstract class KtOCBaseSymbol(
         return true
     }
 
-    override fun hashCodeExcludingOffset(): Int = myName.hashCode() * 31 + file.hashCode()
+    override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31 + file.hashCode()
 
     override fun locateDefinition(project: Project): PsiElement? =
         OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)?.let { KotlinOCPsiWrapper(it, this) }

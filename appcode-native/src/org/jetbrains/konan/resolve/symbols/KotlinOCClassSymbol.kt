@@ -27,7 +27,7 @@ abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub :
     file: VirtualFile
 ) : KotlinOCWrapperSymbol<State, Stub>(stub, project, file), OCClassSymbol {
 
-    private val myQualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
+    private val qualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
 
     override fun isGlobal(): Boolean = true
 
@@ -70,7 +70,7 @@ abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub :
 
     override fun getVisibility(): OCVisibility? = null
 
-    override fun getQualifiedName(): OCQualifiedName = myQualifiedName
+    override fun getQualifiedName(): OCQualifiedName = qualifiedName
 
     override fun dropSubstitution(): OCSymbol = this
 

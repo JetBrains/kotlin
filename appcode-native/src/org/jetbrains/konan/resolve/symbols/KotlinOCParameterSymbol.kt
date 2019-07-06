@@ -25,8 +25,8 @@ class KotlinOCParameterSymbol(
     private val containingClass: OCClassSymbol
 ) : KtOCBaseSymbol(stub, file), OCDeclaratorSymbol {
 
-    private val myQualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
-    private val myType: OCType = stub.type.toOCType(project, containingClass)
+    private val qualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
+    private val type: OCType = stub.type.toOCType(project, containingClass)
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PARAMETER
 
@@ -42,7 +42,7 @@ class KotlinOCParameterSymbol(
 
     override fun isSpecialization(): Boolean = false
 
-    override fun getQualifiedName(): OCQualifiedName = myQualifiedName
+    override fun getQualifiedName(): OCQualifiedName = qualifiedName
 
     override fun hasProperty(property: OCDeclaratorSymbol.Property): Boolean = false
 
@@ -64,7 +64,7 @@ class KotlinOCParameterSymbol(
 
     override fun getNameWithParent(context: OCResolveContext): String = parent.name + "::" + name
 
-    override fun getType(): OCType = myType
+    override fun getType(): OCType = type
 
     override fun getInitializerExpression(): OCExpressionSymbol? = null
 }

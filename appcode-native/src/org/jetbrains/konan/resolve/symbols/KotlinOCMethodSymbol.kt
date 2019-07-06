@@ -28,14 +28,14 @@ class KotlinOCMethodSymbol(
     containingClass: OCClassSymbol
 ) : KotlinOCMemberSymbol(stub, file, containingClass), OCMethodSymbol {
 
-    private lateinit var mySelectors: List<OCMethodSymbol.SelectorPartSymbol>
-    private val myReturnType: OCType = stub.returnType.toOCType(project, containingClass)
-    private val myIsStatic: Boolean = !stub.isInstanceMethod
+    private lateinit var selectors: List<OCMethodSymbol.SelectorPartSymbol>
+    private val returnType: OCType = stub.returnType.toOCType(project, containingClass)
+    private val isStatic: Boolean = !stub.isInstanceMethod
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.METHOD
 
     override fun getReturnType(receiverType: OCObjectType?, project: Project): OCType {
-        return OCMethodSymbolImpl.inferReturnType(this, myReturnType, receiverType, project)
+        return OCMethodSymbolImpl.inferReturnType(this, returnType, receiverType, project)
     }
 
     override fun isOptional(): Boolean = false
@@ -44,20 +44,20 @@ class KotlinOCMethodSymbol(
 
     override fun getOriginalSymbol(): OCSymbol? = null
 
-    override fun getSelectors(): List<OCMethodSymbol.SelectorPartSymbol> = mySelectors
+    override fun getSelectors(): List<OCMethodSymbol.SelectorPartSymbol> = selectors
 
     @Suppress("UNCHECKED_CAST")
-    override fun getParameterSymbols(): List<OCDeclaratorSymbol> = Collections.unmodifiableList(mySelectors) as List<OCDeclaratorSymbol>
+    override fun getParameterSymbols(): List<OCDeclaratorSymbol> = Collections.unmodifiableList(selectors) as List<OCDeclaratorSymbol>
 
     override fun getAssociatedSymbol(project: Project): OCMethodSymbol? = null
 
     override fun getSubstitution(): OCTypeSubstitution = OCTypeSubstitution.ID
 
-    override fun isStatic(): Boolean = myIsStatic
+    override fun isStatic(): Boolean = isStatic
 
     override fun getNameWithParent(context: OCResolveContext): String = "${if (isStatic) "+" else "-"}[${parent.name} $name]"
 
     fun setSelectors(selectors: List<OCMethodSymbol.SelectorPartSymbol>) {
-        mySelectors = selectors
+        this.selectors = selectors
     }
 }

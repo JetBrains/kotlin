@@ -25,7 +25,7 @@ class KotlinOCInterfaceSymbol(
     file: VirtualFile
 ) : KotlinOCClassSymbol<KotlinOCInterfaceSymbol.InterfaceState, ObjCInterface>(stub, project, file), OCInterfaceSymbol {
 
-    private val myCategoryName: String? = stub.categoryName
+    private val categoryName: String? = stub.categoryName
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.INTERFACE
 
@@ -48,7 +48,7 @@ class KotlinOCInterfaceSymbol(
 
     override fun getTemplateSpecialization(): List<OCTypeArgument>? = null
 
-    override fun getCategoryName(): String? = myCategoryName
+    override fun getCategoryName(): String? = categoryName
 
     override fun getSuperType(): OCReferenceType = state.superType
 
