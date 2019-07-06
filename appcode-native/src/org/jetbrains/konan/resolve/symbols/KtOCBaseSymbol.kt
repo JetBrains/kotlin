@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 abstract class KtOCBaseSymbol(
     stub: Stub<*>,
-    @Transient val project: Project,
     @Transient private val file: VirtualFile
 ) : OCSymbol, OCForeignSymbol {
 
@@ -33,12 +32,11 @@ abstract class KtOCBaseSymbol(
         if (!Comparing.equal(f.complexOffset, s.complexOffset)) return false
         if (!Comparing.equal(f.name, s.name)) return false
         if (!Comparing.equal(f.file, s.file)) return false
-        if (!Comparing.equal(f.project, s.project)) return false
 
         return true
     }
 
-    override fun hashCodeExcludingOffset(): Int = (project.hashCode() * 31 + myName.hashCode()) * 31 + file.hashCode()
+    override fun hashCodeExcludingOffset(): Int = myName.hashCode() * 31 + file.hashCode()
 
     override fun locateDefinition(project: Project): PsiElement? =
         OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)?.let { KotlinOCPsiWrapper(it, this) }

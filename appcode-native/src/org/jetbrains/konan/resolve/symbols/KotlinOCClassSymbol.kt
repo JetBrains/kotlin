@@ -74,12 +74,12 @@ abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub :
 
     override fun dropSubstitution(): OCSymbol = this
 
-    open class ClassState(clazz: KotlinOCClassSymbol<*, *>, stub: ObjCClass<*>) : KotlinOCWrapperSymbol.StubState(stub) {
+    open class ClassState(clazz: KotlinOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : KotlinOCWrapperSymbol.StubState(stub) {
         val members: MostlySingularMultiMap<String, OCMemberSymbol>?
         val protocolNames: List<String> = stub.superProtocols
 
         init {
-            val translator = StubToSymbolTranslator(clazz.project)
+            val translator = StubToSymbolTranslator(project)
 
             //we don't want to store empty map, so let's initialize it only if there're any members
             var map: MostlySingularMultiMap<String, OCMemberSymbol>? = null

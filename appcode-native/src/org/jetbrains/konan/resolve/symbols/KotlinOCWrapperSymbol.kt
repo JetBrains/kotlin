@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater
 
 abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, Stb : Stub<*>>(
     stub: Stb,
-    @Transient val project: Project,
+    project: Project,
     @Transient private val file: VirtualFile
 ) : OCSymbol, OCForeignSymbol {
 
@@ -28,24 +28,24 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
 
     @Transient
     @Volatile
-    private var myStub: Stb? = stub
+    private var myStubAndProject: Pair<Stb, Project>? = Pair(stub, project)
 
     protected val state: State
         get() {
             myState?.let { return it }
-            myStub?.let { stub ->
-                val newState = runReadAction { computeState(stub) }
+            myStubAndProject?.let { (stub, project) ->
+                //todo check project.isDisposed
+                val newState = runReadAction { computeState(stub, project) }
                 if (valueUpdater.compareAndSet(this, null, newState)) {
-                    myStub = null
+                    myStubAndProject = null
                     return newState
                 }
             }
             return myState!!
         }
 
-
-    protected fun psi(): PsiElement? {
-        myStub?.let { return it.psi }
+    private fun psi(project: Project): PsiElement? {
+        myStubAndProject?.let { return it.first.psi }
         return OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)
     }
 
@@ -53,10 +53,10 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
 
     override fun getComplexOffset(): Long =
         myState?.offset
-        ?: myStub?.offset
+        ?: myStubAndProject?.first?.offset
         ?: myState!!.offset
 
-    protected abstract fun computeState(stub: Stb): State
+    protected abstract fun computeState(stub: Stb, project: Project): State
 
     override fun getContainingFile(): VirtualFile = file
 
@@ -66,18 +66,17 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
 
         if (!Comparing.equal(f.file, s.file)) return false
         if (!Comparing.equal(f.state, s.state)) return false
-        if (!Comparing.equal(f.project, s.project)) return false
 
         return true
     }
 
-    override fun hashCodeExcludingOffset(): Int = (project.hashCode() * 31 + myName.hashCode()) * 31 + file.hashCode()
+    override fun hashCodeExcludingOffset(): Int = myName.hashCode() * 31 + file.hashCode()
 
-    override fun locateDefinition(project: Project): PsiElement? = psi()?.let { KotlinOCPsiWrapper(it, this) }
+    override fun locateDefinition(project: Project): PsiElement? = psi(project)?.let { KotlinOCPsiWrapper(it, this) }
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return super.isSameSymbol(symbol, project)
-               || symbol is KotlinLightSymbol && psi() == symbol.locateDefinition(project)
+               || symbol is KotlinLightSymbol && psi(project) == symbol.locateDefinition(project)
     }
 
     override fun updateOffset(start: Int, lengthShift: Int) {

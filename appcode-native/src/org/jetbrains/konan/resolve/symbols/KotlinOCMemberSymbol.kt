@@ -5,7 +5,6 @@
 
 package org.jetbrains.konan.resolve.symbols
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
@@ -13,10 +12,9 @@ import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
 abstract class KotlinOCMemberSymbol(
     stub: Stub<*>,
-    project: Project,
     file: VirtualFile,
     private val containingClass: OCClassSymbol
-) : KtOCBaseSymbol(stub, project, file), OCMemberSymbol {
+) : KtOCBaseSymbol(stub, file), OCMemberSymbol {
 
     override fun isGlobal(): Boolean = false
 

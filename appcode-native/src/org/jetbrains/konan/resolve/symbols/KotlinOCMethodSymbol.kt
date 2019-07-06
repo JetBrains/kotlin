@@ -26,7 +26,7 @@ class KotlinOCMethodSymbol(
     project: Project,
     file: VirtualFile,
     containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol(stub, project, file, containingClass), OCMethodSymbol {
+) : KotlinOCMemberSymbol(stub, file, containingClass), OCMethodSymbol {
 
     private lateinit var mySelectors: List<OCMethodSymbol.SelectorPartSymbol>
     private val myReturnType: OCType = stub.returnType.toOCType(project, containingClass)

@@ -57,9 +57,9 @@ class KotlinOCInterfaceSymbol(
 
     override fun getType(): OCType = OCInterfaceSymbolImpl.getInterfaceTypeImpl(this)
 
-    override fun computeState(stub: ObjCInterface): InterfaceState = InterfaceState(this, stub)
+    override fun computeState(stub: ObjCInterface, project: Project): InterfaceState = InterfaceState(this, stub, project)
 
-    class InterfaceState(clazz: KotlinOCInterfaceSymbol, stub: ObjCInterface) : ClassState(clazz, stub) {
+    class InterfaceState(clazz: KotlinOCInterfaceSymbol, stub: ObjCInterface, project: Project) : ClassState(clazz, stub, project) {
         val superType: OCReferenceType = createSuperType(stub.superClass, stub.superProtocols)
         val isTemplateSymbol: Boolean = stub.generics.isNotEmpty()
     }

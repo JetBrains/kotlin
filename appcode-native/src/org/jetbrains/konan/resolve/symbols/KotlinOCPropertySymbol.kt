@@ -22,7 +22,7 @@ class KotlinOCPropertySymbol(
     project: Project,
     file: VirtualFile,
     containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol(stub, project, file, containingClass), OCPropertySymbol {
+) : KotlinOCMemberSymbol(stub, file, containingClass), OCPropertySymbol {
 
     private val myType: OCType = stub.type.toOCType(project, containingClass)
     private val myAttributes: List<String> = stub.propertyAttributes

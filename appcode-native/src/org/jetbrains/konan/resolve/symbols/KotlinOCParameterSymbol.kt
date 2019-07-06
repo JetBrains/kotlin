@@ -23,7 +23,7 @@ class KotlinOCParameterSymbol(
     project: Project,
     file: VirtualFile,
     private val containingClass: OCClassSymbol
-) : KtOCBaseSymbol(stub, project, file), OCDeclaratorSymbol {
+) : KtOCBaseSymbol(stub, file), OCDeclaratorSymbol {
 
     private val myQualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
     private val myType: OCType = stub.type.toOCType(project, containingClass)

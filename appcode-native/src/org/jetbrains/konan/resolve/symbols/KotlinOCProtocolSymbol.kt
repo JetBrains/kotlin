@@ -32,9 +32,9 @@ class KotlinOCProtocolSymbol(
 
     override fun getType(): OCType = OCProtocolSymbolImpl.getProtocolType(this)
 
-    override fun computeState(stub: ObjCProtocol): ProtocolState = ProtocolState(this, stub)
+    override fun computeState(stub: ObjCProtocol, project: Project): ProtocolState = ProtocolState(this, stub, project)
 
-    class ProtocolState(clazz: KotlinOCProtocolSymbol, stub: ObjCProtocol) : KotlinOCClassSymbol.ClassState(clazz, stub) {
+    class ProtocolState(clazz: KotlinOCProtocolSymbol, stub: ObjCProtocol, project: Project) : KotlinOCClassSymbol.ClassState(clazz, stub, project) {
         val superType: OCReferenceType = createSuperType(null, stub.superProtocols)
     }
 }
