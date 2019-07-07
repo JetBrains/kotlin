@@ -14,21 +14,28 @@ import java.io.File
 object YarnWorkspaces : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) = Unit
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) {
+    override fun resolveRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
+    ) {
         check(rootProject == rootProject.rootProject)
-        setup(rootProject)
-        return resolveWorkspaces(rootProject, subProjects)
+        if (!skipExecution) setup(rootProject)
+        return resolveWorkspaces(rootProject, subProjects, skipExecution)
     }
 
     private fun resolveWorkspaces(
         rootProject: Project,
-        npmProjects: Collection<KotlinCompilationNpmResolution>
+        npmProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
     ) {
         val nodeJsWorldDir = NodeJsRootPlugin.apply(rootProject).rootPackageDir
 
-        saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
+        if (!skipExecution) {
+            saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
+            yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
+        }
 
-        yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
         yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.externalNpmDependencies })
     }
 

@@ -9,7 +9,6 @@ import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
@@ -129,8 +128,8 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }
 
-                            val skipPackageManager = upToDate && !forceFullResolve
-                            state1.resolver.close(skipPackageManager).also {
+                            val forceUpToDate = upToDate && !forceFullResolve
+                            state1.resolver.close(forceUpToDate).also {
                                 this.state = ResolutionState.Installed(it)
                             }
                         }

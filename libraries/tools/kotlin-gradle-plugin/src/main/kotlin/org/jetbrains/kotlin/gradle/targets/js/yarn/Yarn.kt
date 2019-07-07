@@ -20,6 +20,9 @@ object Yarn : NpmApi {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) =
         getDelegate(resolvedNpmProject.project).resolveProject(resolvedNpmProject)
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) =
-        getDelegate(rootProject.project).resolveRootProject(rootProject, subProjects)
+    override fun resolveRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
+    ) = getDelegate(rootProject.project).resolveRootProject(rootProject, subProjects, skipExecution)
 }

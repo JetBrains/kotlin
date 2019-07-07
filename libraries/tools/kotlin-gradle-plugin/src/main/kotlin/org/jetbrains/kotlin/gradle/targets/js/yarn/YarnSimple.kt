@@ -22,5 +22,9 @@ object YarnSimple : YarnBasics() {
         }
     }
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) = Unit
+    override fun resolveRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
+    ) = Unit
 }

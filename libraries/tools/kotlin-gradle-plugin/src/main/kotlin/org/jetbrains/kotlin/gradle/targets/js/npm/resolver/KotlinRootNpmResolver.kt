@@ -62,7 +62,7 @@ internal class KotlinRootNpmResolver internal constructor(
     /**
      * Don't use directly, use [NodeJsRootExtension.resolveIfNeeded] instead.
      */
-    internal fun close(skipPackageManager: Boolean): KotlinRootNpmResolution {
+    internal fun close(forceUpToDate: Boolean): KotlinRootNpmResolution {
         check(!closed)
         closed = true
 
@@ -73,8 +73,6 @@ internal class KotlinRootNpmResolver internal constructor(
 
         gradleNodeModules.close()
 
-        fun result() = KotlinRootNpmResolution(rootProject, projectResolutions)
-
         // we need manual up-to-date checking to avoid call package manager during
         // idea import if nothing was changed
         // we should call it even kotlinNpmInstall task is up-to-date (skipPackageManager is true)
@@ -82,22 +80,19 @@ internal class KotlinRootNpmResolver internal constructor(
         val upToDateChecks = allNpmPackages.map {
             PackageJsonUpToDateCheck(it.npmProject)
         }
-        if (upToDateChecks.all { it.upToDate }) return result()
+        val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
-        if (skipPackageManager) {
-            upToDateChecks.forEach { it.commit() }
-            return result()
-        } else {
-            if (allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() }) {
-                nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages)
-            } else if (projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }) {
+        if (allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() }) {
+            nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages, upToDate)
+        } else if (projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }) {
+            if (!upToDate) {
                 NpmSimpleLinker(nodeJs).link(allNpmPackages)
             }
-
-            upToDateChecks.forEach { it.commit() }
-
-            return result()
         }
+
+        upToDateChecks.forEach { it.commit() }
+
+        return KotlinRootNpmResolution(rootProject, projectResolutions)
     }
 
     private fun removeOutdatedPackages(nodeJs: NodeJsRootExtension, allNpmPackages: List<KotlinCompilationNpmResolution>) {

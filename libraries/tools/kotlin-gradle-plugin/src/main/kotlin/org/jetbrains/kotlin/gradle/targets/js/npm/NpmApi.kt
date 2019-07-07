@@ -18,7 +18,8 @@ interface NpmApi {
 
     fun resolveRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
     )
 
     companion object {
