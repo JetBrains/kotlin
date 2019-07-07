@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -26,6 +28,13 @@ class KotlinProjectNpmResolution(
                 }
             }
         }
+
+    val byCompilation by lazy { npmProjects.associateBy { it.npmProject.compilation } }
+
+    operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolution {
+        check(compilation.target.project == project)
+        return byCompilation.getValue(compilation)
+    }
 
     companion object {
         fun empty(project: Project) = KotlinProjectNpmResolution(project, listOf(), mapOf())
