@@ -87,7 +87,7 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
     }
 
     @Incubating
-    fun requireInstalled() = (state as ResolutionState.Installed).resolved
+    fun requireInstalled() = installIfNeeded(requireUpToDateReason = "")
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
