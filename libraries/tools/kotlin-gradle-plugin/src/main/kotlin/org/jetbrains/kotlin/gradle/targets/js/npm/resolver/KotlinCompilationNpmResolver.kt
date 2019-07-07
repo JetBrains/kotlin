@@ -55,17 +55,21 @@ internal class KotlinCompilationNpmResolver(
     private var resolution: KotlinCompilationNpmResolution? = null
 
     @Synchronized
-    fun resolve() {
+    fun resolve(skipWriting: Boolean = false): KotlinCompilationNpmResolution {
         check(!closed) { "$this already closed" }
         check(resolution == null) { "$this already resolved" }
 
-        resolution = packageJsonProducer.createPackageJson()
+        return packageJsonProducer.createPackageJson(skipWriting).also {
+            resolution = it
+        }
     }
 
     @Synchronized
     fun getResolutionOrResolveIfForced(): KotlinCompilationNpmResolution? {
-        if (resolver.forceFullResolve && resolution == null) resolve()
-        return resolution
+        if (resolution != null) return resolution
+        if (packageJsonTaskHolder.doGetTask().state.upToDate) return resolve(skipWriting = true)
+        if (resolver.forceFullResolve && resolution == null) return resolve()
+        return null
     }
 
     @Synchronized
@@ -203,7 +207,7 @@ internal class KotlinCompilationNpmResolver(
                 externalNpmDependencies.map { "${it.key}:${it.version}" }
             )
 
-        fun createPackageJson(): KotlinCompilationNpmResolution {
+        fun createPackageJson(skipWriting: Boolean): KotlinCompilationNpmResolution {
             val resolvedInternalDependencies = internalDependencies.map {
                 it.getResolutionOrResolveIfForced()
                     ?: error("Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it")
@@ -235,7 +239,9 @@ internal class KotlinCompilationNpmResolver(
                 it(packageJson)
             }
 
-            packageJson.saveTo(npmProject.packageJsonFile)
+            if (!skipWriting) {
+                packageJson.saveTo(npmProject.packageJsonFile)
+            }
 
             return KotlinCompilationNpmResolution(
                 project,
