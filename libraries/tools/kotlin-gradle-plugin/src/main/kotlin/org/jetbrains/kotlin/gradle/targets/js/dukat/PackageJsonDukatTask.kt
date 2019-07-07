@@ -15,6 +15,7 @@ import java.io.File
 open class PackageJsonDukatTask : AbstractDukatTask() {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
+    @get:Internal
     val dts by lazy {
         val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project][compilation]
         val dtsResolver = DtsResolver(resolvedCompilation.npmProject)

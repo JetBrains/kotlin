@@ -16,11 +16,14 @@ import java.io.File
 abstract class AbstractDukatTask : AbstractTask(), RequiresNpmDependencies {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
+    @get:Internal
     override lateinit var compilation: KotlinJsCompilation
 
+    @get:Internal
     override val nodeModulesRequired: Boolean
         get() = true
 
+    @get:Internal
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = listOf(nodeJs.versions.dukat)
 
@@ -42,6 +45,7 @@ abstract class AbstractDukatTask : AbstractTask(), RequiresNpmDependencies {
     @get:OutputDirectory
     abstract val destDir: File
 
+    @get:Internal
     val operation: String = "Generating Kotlin/JS external declarations"
 
     @TaskAction

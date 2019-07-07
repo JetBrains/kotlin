@@ -35,7 +35,6 @@ open class KotlinPackageJsonTask : DefaultTask() {
             dependentResolver.npmProject.packageJsonTask
         }
 
-    @get:Input
     @get:Nested
     internal val producerInputs: KotlinCompilationNpmResolver.PackageJsonProducerInputs
         get() = producer.inputs

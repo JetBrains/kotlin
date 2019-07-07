@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -15,15 +16,20 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
 open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
+    @get:Internal
     lateinit var nodeJs: NodeJsRootExtension
+
+    @get:Internal
     override lateinit var compilation: KotlinJsCompilation
 
     @Input
     var sourceMapStackTraces = true
 
+    @get:Internal
     override val nodeModulesRequired: Boolean
         get() = true
 
+    @get:Internal
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = mutableListOf<RequiredKotlinJsDependency>().also {
             if (sourceMapStackTraces) {
