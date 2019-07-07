@@ -14,7 +14,7 @@ import java.io.File
 object YarnWorkspaces : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) = Unit
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>): NpmApi.Result {
+    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) {
         check(rootProject == rootProject.rootProject)
         setup(rootProject)
         return resolveWorkspaces(rootProject, subProjects)
@@ -23,25 +23,13 @@ object YarnWorkspaces : YarnBasics() {
     private fun resolveWorkspaces(
         rootProject: Project,
         npmProjects: Collection<KotlinCompilationNpmResolution>
-    ): NpmApi.Result {
-        val upToDateChecks = npmProjects.map {
-            YarnUpToDateCheck(it.npmProject)
-        }
-
-        if (upToDateChecks.all { it.upToDate }) return NpmApi.Result.upToDate
-
+    ) {
         val nodeJsWorldDir = NodeJsRootPlugin.apply(rootProject).rootPackageDir
 
         saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
 
         yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
         yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.externalNpmDependencies })
-
-        upToDateChecks.forEach {
-            it.commit()
-        }
-
-        return NpmApi.Result.executed
     }
 
     private fun saveRootProjectWorkspacesPackageJson(

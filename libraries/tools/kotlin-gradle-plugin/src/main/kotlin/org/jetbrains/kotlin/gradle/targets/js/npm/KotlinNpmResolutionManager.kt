@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
@@ -14,14 +15,14 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmR
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import java.io.File
 
 /**
  * # NPM resolution state manager
  *
  * ## Resolving process from Gradle
  *
- * **configuring**. Initial state. [NpmResolverPlugin] should be applied for each project
+ * **configuring**. Global initial state. [NpmResolverPlugin] should be applied for each project
  * that requires NPM resolution. This plugin should be applied only after kotlin plugin.
  * When applied, [KotlinProjectNpmResolver] will be created for the corresponding project
  * and will subscribe to all js compilations.
@@ -43,67 +44,67 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
  *
  * Note that package.json will be executed only for required compilations, while other may be missed.
  *
- * **installing**
+ * **installed**. Global final state. Initiated by executing global `kotlinNpmInstall` task.
+ * All created package.json files will be gathered and package manager will be executed.
+ * Package manager will create lock file, that will be parsed for transitive npm dependencies
+ * that will be added to the root [NpmDependency] objects. `kotlinNpmInstall` task may be up-to-date.
+ * In this case, installed state will be reached by first call of [installIfNeeded] without exeucting
+ * package manager.
  *
- * **installed**
+ * Resolution will be used from [NpmDependency] by calling [getNpmDependencyResolvedCompilation].
+ * Also resolution will be checked before calling [NpmProject.require] and executing any task
+ * that requires npm dependencies or node_modules.
  *
- *
- *
- * - resolving:
- *   - [KotlinPackageJsonTask] task executed for each affected compilation:
- *      - ensure that all needed package.json files created
- *   - global [KotlinNpmInstallTask] executed:
- *      - call package manager to sync node_modules
- *
- * Resolved state requested by calling [requireAlreadyInstalled] from this places:
- *  - tasks that requires node_modules
- *  - before calling [NpmProject.require]
- *
- * Also resolved state used when getting files of [NpmDependency]. In this case
- * resolved project is not required. [NpmDependency] will not return any files if
- * ... [requireAlreadyResolvedOrNullIfResolvingNow]
- *
- * Note that [KotlinPackageJsonTask] executed for required compilations only.
- * [KotlinNpmInstallTask] may not be executed if none of package.json tasks executed.
- * In this case [_resolutionState] will remain unclosed and will be closed
- * on first [requireAlreadyInstalled] call with check that everything is already up-to-date.
- *
- *
+ * Also user can call [requireInstalled] to get resolution info.
  *
  * ## Resolving process during Idea import
+ *
+ * In this case [forceFullResolve] will be set, and all compilations will be resolved
+ * even without `packageJson` task execution.
+ *
+ * During building gradle project model, all [NpmDependency] will be asked for there files,
+ * and [getNpmDependencyResolvedCompilation] will be called. In the [forceFullResolve] mode
+ * project will be fully resolved: all `package.json` files will be created, and package manager
+ * will be called. We are manually tracking package.json files contents to avoid calling package manager
+ * is nothing was changes.
+ *
+ * Note that in this case resolution process will be performed outside of task execution.
  */
 class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
-    internal val resolutionState: ResolutionState
-        get() = _resolutionState
-
     private val forceFullResolve: Boolean
         get() = isInIdeaSync
 
     @Volatile
-    private var _resolutionState: ResolutionState =
+    private var state: ResolutionState =
         ResolutionState.Configuring(
             KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
         )
 
-    internal sealed class ResolutionState : ResolutionStateData {
-        class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState(), ResolutionStateData by resolver
-        class Installing(val resolver: KotlinRootNpmResolver) : ResolutionState(), ResolutionStateData by resolver
-        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState(), ResolutionStateData by resolved
+    internal sealed class ResolutionState {
+        class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState()
+        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState()
     }
 
-    interface ResolutionStateData {
-        val compilations: Collection<KotlinJsCompilation>
-    }
+    @Incubating
+    fun requireInstalled() = (state as ResolutionState.Installed).resolved
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
-        (resolutionState as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
+        (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
+
+    internal fun install() = installIfNeeded(requireNotInstalled = true)
+
+    internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
+        installIfNeeded(requireUpToDateReason = reason)[project]
+
+    internal val packageJsonFiles: Collection<File>
+        get() = (state as ResolutionState.Configuring).resolver.compilations.map { it.npmProject.packageJsonFile }
 
     /**
      * @param requireUpToDateReason Check that project already resolved,
      * or it is up-to-date but just not closed. Show given message if it is not.
      * @param requireNotInstalled Check that project is not resolved
      */
-    internal fun installIfNeeded(
+    private fun installIfNeeded(
         requireUpToDateReason: String? = null,
         requireNotInstalled: Boolean = false
     ): KotlinRootNpmResolution {
@@ -112,29 +113,23 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
             return resolution
         }
 
-        val state0 = _resolutionState
+        val state0 = this.state
         val resolution = when (state0) {
             is ResolutionState.Installed -> alreadyResolved(state0.resolved)
-            is ResolutionState.Installing,
             is ResolutionState.Configuring -> {
                 synchronized(this) {
-                    val state1 = _resolutionState
+                    val state1 = this.state
                     when (state1) {
                         is ResolutionState.Installed -> alreadyResolved(state1.resolved)
-                        is ResolutionState.Installing -> error("Resolution state sync failed")
                         is ResolutionState.Configuring -> {
-                            val state2 =
-                                ResolutionState.Installing(state1.resolver)
-                            _resolutionState = state2
-                            state1.resolver.close().also {
-                                check(_resolutionState == state2) {
-                                    "Resolution state sync failed: $_resolutionState != $state2"
-                                }
-                                _resolutionState =
-                                    ResolutionState.Installed(it)
-                                if (requireUpToDateReason != null && !it.wasUpToDate) {
-                                    error("NPM dependencies should be resolved $requireUpToDateReason")
-                                }
+                            val upToDate = nodeJsSettings.npmInstallTask.state.upToDate
+                            if (requireUpToDateReason != null && !upToDate) {
+                                error("NPM dependencies should be resolved $requireUpToDateReason")
+                            }
+
+                            val skipPackageManager = upToDate && !forceFullResolve
+                            state1.resolver.close(skipPackageManager).also {
+                                this.state = ResolutionState.Installed(it)
                             }
                         }
                     }
@@ -144,9 +139,6 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
 
         return resolution
     }
-
-    internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
-        installIfNeeded(requireUpToDateReason = reason)[project]
 
     internal fun getNpmDependencyResolvedCompilation(npmDependency: NpmDependency): KotlinCompilationNpmResolution {
         val project = npmDependency.project
@@ -158,18 +150,14 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
                 // may return null only during npm resolution
                 // (it can be called since NpmDependency added to configuration that
                 // requires resolve to build package.json, in this case we should just skip this call)
-                val state0 = resolutionState
+                val state0 = state
                 when (state0) {
                     is ResolutionState.Installed -> state0.resolved[project]
-                    is ResolutionState.Installing -> null
                     is ResolutionState.Configuring -> error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
                 }
             }
 
-        return when (resolvedProject) {
-            null -> null
-            else -> resolvedProject.npmProjectsByNpmDependency[npmDependency] ?: error("NPM project resolved without $this")
-        }
+        return resolvedProject.npmProjectsByNpmDependency[npmDependency] ?: error("NPM project resolved without $this")
     }
 
     internal fun <T> checkRequiredDependencies(task: T)

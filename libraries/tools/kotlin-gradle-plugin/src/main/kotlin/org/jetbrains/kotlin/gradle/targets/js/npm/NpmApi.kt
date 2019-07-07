@@ -16,14 +16,10 @@ interface NpmApi {
 
     fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution)
 
-    enum class Result {
-        upToDate, executed
-    }
-
     fun resolveRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>
-    ): Result
+    )
 
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =

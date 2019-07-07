@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 
 class KotlinRootNpmResolution(
-    val wasUpToDate: Boolean,
     val rootProject: Project,
     private val projects: Map<Project, KotlinProjectNpmResolution>
-) : KotlinNpmResolutionManager.ResolutionStateData {
+) {
     operator fun get(project: Project) = projects[project] ?: KotlinProjectNpmResolution.empty(project)
-
-    override val compilations: Collection<KotlinJsCompilation>
-        get() = projects.values.flatMap { it.npmProjects.map { it.npmProject.compilation } }
 }

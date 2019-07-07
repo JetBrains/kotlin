@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
 import java.io.Serializable
 
+/**
+ * See [KotlinNpmResolutionManager] for details about resolution process.
+ */
 internal class KotlinCompilationNpmResolver(
     val projectResolver: KotlinProjectNpmResolver,
     val compilation: KotlinJsCompilation

@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 
+/**
+ * See [KotlinNpmResolutionManager] for details about resolution process.
+ */
 internal class KotlinProjectNpmResolver(
     val project: Project,
     val resolver: KotlinRootNpmResolver

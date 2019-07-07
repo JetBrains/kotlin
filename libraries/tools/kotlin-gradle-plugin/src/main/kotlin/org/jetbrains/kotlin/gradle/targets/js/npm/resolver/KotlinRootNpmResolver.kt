@@ -15,17 +15,12 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmR
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 
 /**
- * Generates `package.json` file for [NpmProject] with npm or js dependencies and
- * runs selected [NodeJsRootExtension.packageManager] to download and install all of it's dependencies.
- *
- * All [NpmDependency] for configurations related to kotlin/js will be added to `package.json`.
- * For external gradle modules, fake npm packages will be created and added to `package.json`
- * as path to directory.
+ * See [KotlinNpmResolutionManager] for details about resolution process.
  */
 internal class KotlinRootNpmResolver internal constructor(
     val nodeJs: NodeJsRootExtension,
     val forceFullResolve: Boolean
-) : KotlinNpmResolutionManager.ResolutionStateData {
+) {
     val rootProject: Project
         get() = nodeJs.rootProject
 
@@ -44,7 +39,7 @@ internal class KotlinRootNpmResolver internal constructor(
 
     operator fun get(project: Project) = projectResolvers[project] ?: error("$project is not configured for JS usage")
 
-    override val compilations: Collection<KotlinJsCompilation>
+    val compilations: Collection<KotlinJsCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
 
     fun findDependentResolver(src: Project, target: Project): KotlinCompilationNpmResolver? {
@@ -67,7 +62,7 @@ internal class KotlinRootNpmResolver internal constructor(
     /**
      * Don't use directly, use [NodeJsRootExtension.resolveIfNeeded] instead.
      */
-    internal fun close(): KotlinRootNpmResolution {
+    internal fun close(skipPackageManager: Boolean): KotlinRootNpmResolution {
         check(!closed)
         closed = true
 
@@ -78,18 +73,31 @@ internal class KotlinRootNpmResolver internal constructor(
 
         gradleNodeModules.close()
 
-        val wasUpToDate = when {
-            allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() } -> {
-                nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages) == NpmApi.Result.upToDate
-            }
-            projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks } -> {
-                NpmSimpleLinker(nodeJs).link(allNpmPackages)
-                true // todo
-            }
-            else -> true
-        }
+        fun result() = KotlinRootNpmResolution(rootProject, projectResolutions)
 
-        return KotlinRootNpmResolution(wasUpToDate, rootProject, projectResolutions)
+        // we need manual up-to-date checking to avoid call package manager during
+        // idea import if nothing was changed
+        // we should call it even kotlinNpmInstall task is up-to-date (skipPackageManager is true)
+        // because our upToDateChecks saves state for next execution
+        val upToDateChecks = allNpmPackages.map {
+            PackageJsonUpToDateCheck(it.npmProject)
+        }
+        if (upToDateChecks.all { it.upToDate }) return result()
+
+        if (skipPackageManager) {
+            upToDateChecks.forEach { it.commit() }
+            return result()
+        } else {
+            if (allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() }) {
+                nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages)
+            } else if (projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }) {
+                NpmSimpleLinker(nodeJs).link(allNpmPackages)
+            }
+
+            upToDateChecks.forEach { it.commit() }
+
+            return result()
+        }
     }
 
     private fun removeOutdatedPackages(nodeJs: NodeJsRootExtension, allNpmPackages: List<KotlinCompilationNpmResolution>) {

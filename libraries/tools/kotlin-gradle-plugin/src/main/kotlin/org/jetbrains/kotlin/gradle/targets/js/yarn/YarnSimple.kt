@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 
 object YarnSimple : YarnBasics() {
@@ -15,11 +16,11 @@ object YarnSimple : YarnBasics() {
 
         val project = resolvedNpmProject.project
 
-        YarnUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
+        PackageJsonUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
             yarnExec(project, resolvedNpmProject.npmProject.dir, NpmApi.resolveOperationDescription("yarn for ${project.path}"))
             yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.externalNpmDependencies)
         }
     }
 
-    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) = NpmApi.Result.upToDate
+    override fun resolveRootProject(rootProject: Project, subProjects: Collection<KotlinCompilationNpmResolution>) = Unit
 }
