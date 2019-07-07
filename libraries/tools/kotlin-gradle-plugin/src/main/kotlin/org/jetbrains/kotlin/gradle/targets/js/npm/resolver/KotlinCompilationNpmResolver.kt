@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import java.io.File
 import java.io.Serializable
 
@@ -204,7 +205,7 @@ internal class KotlinCompilationNpmResolver(
             get() = PackageJsonProducerInputs(
                 internalDependencies.map { it.npmProject.name },
                 externalGradleDependencies.map { it.artifact.file },
-                externalNpmDependencies.map { "${it.key}:${it.version}" }
+                externalNpmDependencies.map { "${it.scope} ${it.key}:${it.version}" }
             )
 
         fun createPackageJson(skipWriting: Boolean): KotlinCompilationNpmResolution {
@@ -232,7 +233,12 @@ internal class KotlinCompilationNpmResolver(
             }
 
             externalNpmDependencies.forEach {
-                packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
+                when (it.scope) {
+                    NORMAL -> packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
+                    DEV -> packageJson.devDependencies[it.key] = chooseVersion(packageJson.devDependencies[it.key], it.version)
+                    OPTIONAL -> packageJson.optionalDependencies[it.key] = chooseVersion(packageJson.optionalDependencies[it.key], it.version)
+                    PEER -> packageJson.peerDependencies[it.key] = chooseVersion(packageJson.peerDependencies[it.key], it.version)
+                }
             }
 
             compilation.packageJsonHandlers.forEach {

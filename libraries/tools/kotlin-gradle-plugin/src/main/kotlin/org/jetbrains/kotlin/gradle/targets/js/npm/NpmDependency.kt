@@ -23,11 +23,19 @@ data class NpmDependency(
     internal val project: Project,
     private val org: String?,
     private val name: String,
-    private val version: String
+    private val version: String,
+    val scope: Scope = Scope.NORMAL
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
     FileCollectionDependency {
+
+    enum class Scope {
+        NORMAL,
+        DEV,
+        OPTIONAL,
+        PEER
+    }
 
     override fun getGroup(): String? = org
 

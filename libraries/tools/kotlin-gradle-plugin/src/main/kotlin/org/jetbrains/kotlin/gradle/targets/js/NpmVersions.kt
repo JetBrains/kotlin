@@ -47,15 +47,15 @@ class NpmVersions {
 }
 
 interface RequiredKotlinJsDependency {
-    fun createDependency(project: Project): Dependency
+    fun createDependency(project: Project, scope: NpmDependency.Scope = NpmDependency.Scope.DEV): Dependency
 }
 
 data class NpmPackageVersion(val name: String, var version: String) : RequiredKotlinJsDependency {
-    override fun createDependency(project: Project): Dependency =
-        NpmDependency(project, null, name, version)
+    override fun createDependency(project: Project, scope: NpmDependency.Scope): Dependency =
+        NpmDependency(project, null, name, version, scope)
 }
 
 data class KotlinGradleNpmPackage(val simpleModuleName: String) : RequiredKotlinJsDependency {
-    override fun createDependency(project: Project): Dependency =
+    override fun createDependency(project: Project, scope: NpmDependency.Scope): Dependency =
         project.dependencies.create("org.jetbrains.kotlin:kotlin-$simpleModuleName")
 }
