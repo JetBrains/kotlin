@@ -46,9 +46,17 @@ data class NpmDependency(
             visited.add(item)
 
             npmProject.resolve(item.key)?.let {
-                all.add(it)
+                if (it.isFile) all.add(it)
                 if (it.path.endsWith(".js")) {
-                    all.add(File(it.path.removeSuffix(".js") + ".meta.js"))
+                    val baseName = it.path.removeSuffix(".js")
+                    val metaJs = File(baseName + ".meta.js")
+                    if (metaJs.isFile) all.add(metaJs)
+                    val kjsmDir = File(baseName)
+                    if (kjsmDir.isDirectory) {
+                        kjsmDir.walkTopDown()
+                            .filter { it.extension == "kjsm" }
+                            .forEach { all.add(it) }
+                    }
                 }
             }
 
