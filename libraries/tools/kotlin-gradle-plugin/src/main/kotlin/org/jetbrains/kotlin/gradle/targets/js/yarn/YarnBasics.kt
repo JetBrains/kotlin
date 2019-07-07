@@ -46,6 +46,8 @@ abstract class YarnBasics : NpmApi {
             fun resolveRecursively(src: NpmDependency): NpmDependency {
                 val copy = visited[src]
                 if (copy != null) {
+                    src.resolvedVersion = copy.resolvedVersion
+                    src.integrity = copy.integrity
                     src.dependencies.addAll(copy.dependencies)
                     return src
                 }
@@ -54,6 +56,8 @@ abstract class YarnBasics : NpmApi {
                 val key = YarnLock.key(src.key, src.version)
                 val deps = byKey[key]
                 if (deps != null) {
+                    src.resolvedVersion = deps.version
+                    src.integrity = deps.integrity
                     src.dependencies.addAll(deps.dependencies.map { dep ->
                         val scopedName = dep.scopedName
                         val child = NpmDependency(

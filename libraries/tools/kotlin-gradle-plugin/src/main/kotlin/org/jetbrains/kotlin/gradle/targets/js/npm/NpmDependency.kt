@@ -41,6 +41,8 @@ data class NpmDependency(
 
     internal var parent: NpmDependency? = null
     internal val dependencies = mutableSetOf<NpmDependency>()
+    internal var resolvedVersion: String? = null
+    internal var integrity: String? = null
 
     override fun resolve(transitive: Boolean): MutableSet<File> {
         val npmPackage = resolveProject() ?: return mutableSetOf()
