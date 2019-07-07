@@ -93,7 +93,7 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     }
 
     override fun executeTests() {
-        nodeJs.checkRequiredDependencies(project, this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
         super.executeTests()
     }
 

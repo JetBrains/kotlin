@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 
 class NpmResolverPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val project = target
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-        nodeJs.requireResolver().addProject(project)
+        nodeJs.npmResolutionManager.requireConfiguringState().addProject(project)
     }
 
     companion object {

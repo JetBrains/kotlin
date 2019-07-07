@@ -25,7 +25,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
     private lateinit var compilation: KotlinJsCompilation
 
     private val compilationResolver
-        get() = nodeJs.requireResolver()[project][compilation]
+        get() = nodeJs.npmResolutionManager.requireConfiguringState()[project][compilation]
 
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer

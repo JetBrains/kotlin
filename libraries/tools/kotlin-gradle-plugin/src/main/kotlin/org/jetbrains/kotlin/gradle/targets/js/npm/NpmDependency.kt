@@ -15,9 +15,7 @@ import org.gradle.api.internal.artifacts.ResolvableDependency
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
-import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 
@@ -83,22 +81,13 @@ data class NpmDependency(
         }
     }
 
+    // may return null only during npm resolution
+    // (it can be called since NpmDependency added to configuration that
+    // requires resolve to build package.json, in this case we should just skip this call)
     private fun resolveProject(): KotlinCompilationNpmResolution? {
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
-        // may return null only while resolving configuration in ConfigurationVisitor.visit
-        val resolvedProject =
-            if (isInIdeaSync) nodeJs.resolveIfNeeded()[project]
-            else nodeJs.getAlreadyResolvedOrNull(project)
-
-        return when (resolvedProject) {
-            null -> null
-            else -> findIn(resolvedProject) ?: error("NPM project resolved without $this")
-        }
+        return nodeJs.npmResolutionManager.getNpmDependencyResolvedCompilation(this)
     }
-
-    private fun findIn(npmProjects: KotlinProjectNpmResolution) =
-        npmProjects.npmProjectsByNpmDependency[this]
 
     val key: String = if (org == null) name else "@$org/$name"
 

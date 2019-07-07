@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResoluti
  * For external gradle modules, fake npm packages will be created and added to `package.json`
  * as path to directory.
  */
-internal class KotlinRootNpmResolver internal constructor(val nodeJs: NodeJsRootExtension) : NodeJsRootExtension.ResolutionStateData {
+internal class KotlinRootNpmResolver internal constructor(
+    val nodeJs: NodeJsRootExtension,
+    val forceFullResolve: Boolean
+) : KotlinNpmResolutionManager.ResolutionStateData {
     val rootProject: Project
         get() = nodeJs.rootProject
 
@@ -68,7 +71,9 @@ internal class KotlinRootNpmResolver internal constructor(val nodeJs: NodeJsRoot
         check(!closed)
         closed = true
 
-        val projectResolutions = projectResolvers.values.map { it.close() }.associateBy { it.project }
+        val projectResolutions = projectResolvers.values
+            .map { it.close() }
+            .associateBy { it.project }
         val allNpmPackages = projectResolutions.values.flatMap { it.npmProjects }
 
         gradleNodeModules.close()

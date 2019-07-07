@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 
 class KotlinRootNpmResolution(
     val wasUpToDate: Boolean,
     val rootProject: Project,
     private val projects: Map<Project, KotlinProjectNpmResolution>
-) : NodeJsRootExtension.ResolutionStateData {
+) : KotlinNpmResolutionManager.ResolutionStateData {
     operator fun get(project: Project) = projects[project] ?: KotlinProjectNpmResolution.empty(project)
 
     override val compilations: Collection<KotlinJsCompilation>

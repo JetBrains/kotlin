@@ -49,31 +49,28 @@ internal class KotlinCompilationNpmResolver(
     }
 
     private var closed = false
-    private var resolveCalled = false
+    private var resolution: KotlinCompilationNpmResolution? = null
 
-    private val resolution: KotlinCompilationNpmResolution by lazy {
-        check(!closed) { "$this already closed" }
-        resolveCalled = true
-        packageJsonProducer.createPackageJson()
-    }
-
-    /**
-     * Called from packageJson task
-     */
+    @Synchronized
     fun resolve() {
         check(!closed) { "$this already closed" }
-        check(!resolveCalled) { "$this already resolved" }
+        check(resolution == null) { "$this already resolved" }
 
-        // call getter
-        resolution
+        resolution = packageJsonProducer.createPackageJson()
     }
 
+    @Synchronized
+    fun getResolutionOrResolveIfForced(): KotlinCompilationNpmResolution? {
+        if (resolver.forceFullResolve && resolution == null) resolve()
+        return resolution
+    }
+
+    @Synchronized
     fun close(): KotlinCompilationNpmResolution? {
         check(!closed) { "$this already closed" }
-        val result = resolution
+        val resolution = getResolutionOrResolveIfForced()
         closed = true
-
-        return result
+        return resolution
     }
 
     private fun createAggregatedConfiguration(): Configuration {
@@ -205,10 +202,8 @@ internal class KotlinCompilationNpmResolver(
 
         fun createPackageJson(): KotlinCompilationNpmResolution {
             val resolvedInternalDependencies = internalDependencies.map {
-//                check(it.resolveCalled) {
-//                    "Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it"
-//                }
-                it.resolution
+                it.getResolutionOrResolveIfForced()
+                    ?: error("Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it")
             }
             val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
                 resolver.gradleNodeModules.get(it.dependency, it.artifact)

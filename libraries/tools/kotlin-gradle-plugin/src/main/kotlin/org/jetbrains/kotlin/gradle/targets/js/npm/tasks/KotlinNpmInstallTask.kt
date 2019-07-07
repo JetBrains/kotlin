@@ -23,7 +23,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
     @Suppress("unused")
     @get:InputFiles
     val packageJsonFiles: Collection<File>
-        get() = nodeJs.resolutionState.compilations.map { it.npmProject.packageJsonFile }
+        get() = nodeJs.npmResolutionManager.resolutionState.compilations.map { it.npmProject.packageJsonFile }
 
     @get:OutputFile
     val yarnLock: File
@@ -31,7 +31,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        nodeJs.resolveIfNeeded()
+        nodeJs.npmResolutionManager.installIfNeeded(requireNotInstalled = true)
     }
 
     companion object {

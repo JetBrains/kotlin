@@ -32,7 +32,6 @@ abstract class YarnBasics : NpmApi {
             exec.args = listOf(yarnEnv.home.resolve("bin/yarn.js").absolutePath) + args
             exec.workingDir = dir
         }
-
     }
 
     protected fun yarnLockReadTransitiveDependencies(
