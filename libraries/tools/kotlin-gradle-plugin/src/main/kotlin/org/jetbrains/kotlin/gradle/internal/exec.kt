@@ -25,6 +25,7 @@ internal fun Project.execWithProgress(description: String, readStdErr: Boolean =
     val exec = services.get(ExecActionFactory::class.java).newExecAction()
     body(exec)
     return project.operation(description) {
+        progress(description)
         exec.standardOutput = PipedOutputStream(stdInPipe)
         val outputReaderThread = thread(name = "output reader for [$description]") {
             stdInPipe.reader().use { reader ->
