@@ -40,7 +40,9 @@ import java.io.File
  * be treated as `packageJson` task inputs.
  *
  * **package-json-created**. This state also compilation local. Initiated by executing `packageJson`
- * task for particular compilation.
+ * task for particular compilation. If `packageJson` task is up-to-date, this state is reached by
+ * first calling [KotlinCompilationNpmResolver.getResolutionOrResolveIfForced] which may be called
+ * by compilation that depends on this compilation.
  *
  * Note that package.json will be executed only for required compilations, while other may be missed.
  *
@@ -66,7 +68,7 @@ import java.io.File
  * and [getNpmDependencyResolvedCompilation] will be called. In the [forceFullResolve] mode
  * project will be fully resolved: all `package.json` files will be created, and package manager
  * will be called. We are manually tracking package.json files contents to avoid calling package manager
- * is nothing was changes.
+ * if nothing was changes.
  *
  * Note that in this case resolution process will be performed outside of task execution.
  */
@@ -140,7 +142,7 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
         return resolution
     }
 
-    internal fun getNpmDependencyResolvedCompilation(npmDependency: NpmDependency): KotlinCompilationNpmResolution {
+    internal fun getNpmDependencyResolvedCompilation(npmDependency: NpmDependency): KotlinCompilationNpmResolution? {
         val project = npmDependency.project
 
         val resolvedProject =
@@ -153,7 +155,10 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
                 val state0 = state
                 when (state0) {
                     is ResolutionState.Installed -> state0.resolved[project]
-                    is ResolutionState.Configuring -> error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
+                    is ResolutionState.Configuring -> {
+                        return null
+                        //error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
+                    }
                 }
             }
 
