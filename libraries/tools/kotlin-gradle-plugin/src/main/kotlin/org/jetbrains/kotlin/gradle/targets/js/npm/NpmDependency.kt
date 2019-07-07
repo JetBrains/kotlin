@@ -44,7 +44,23 @@ data class NpmDependency(
     internal var resolvedVersion: String? = null
     internal var integrity: String? = null
 
-    override fun resolve(transitive: Boolean): MutableSet<File> {
+    fun getDependenciesRecursively(): Set<NpmDependency> {
+        val visited = mutableSetOf<NpmDependency>()
+
+        fun visit(it: NpmDependency) {
+            if (!visited.add(it)) return
+
+            it.dependencies.forEach { child ->
+                visit(child)
+            }
+        }
+
+        visit(this)
+
+        return visited
+    }
+
+    override fun resolve(transitive: Boolean): Set<File> {
         val npmPackage = resolveProject() ?: return mutableSetOf()
         val npmProject = npmPackage.npmProject
 
