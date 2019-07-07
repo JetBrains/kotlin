@@ -131,6 +131,7 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
                             val forceUpToDate = upToDate && !forceFullResolve
                             state1.resolver.close(forceUpToDate).also {
                                 this.state = ResolutionState.Installed(it)
+                                state1.resolver.closePlugins(it)
                             }
                         }
                     }

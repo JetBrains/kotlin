@@ -55,7 +55,13 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val main: String
         get() = "kotlin/$name.js"
 
-    private val modules = object : NpmProjectModules(dir, nodeModulesDir) {
+    val externalsDirRoot: File
+        get() = project.buildDir.resolve("externals").resolve(name)
+
+    val externalsDir: File
+        get() = externalsDirRoot.resolve("src")
+
+    internal val modules = object : NpmProjectModules(dir, nodeModulesDir) {
         override val parent get() = rootNodeModules
     }
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatCompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import java.io.File
 import java.io.Serializable
 
@@ -39,6 +41,9 @@ internal class KotlinCompilationNpmResolver(
     val target get() = compilation.target
     val project get() = target.project
     val packageJsonTaskHolder = KotlinPackageJsonTask.create(compilation)
+    val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins.flatMap {
+        it.createCompilationResolverPlugins(this)
+    }
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
@@ -150,6 +155,14 @@ internal class KotlinCompilationNpmResolver(
             if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 val main = compilation.target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJsCompilation
                 internalDependencies.add(projectResolver[main])
+            }
+
+            plugins.forEach {
+                it.hookDependencies(
+                    internalDependencies,
+                    externalGradleDependencies,
+                    externalNpmDependencies
+                )
             }
         }
 

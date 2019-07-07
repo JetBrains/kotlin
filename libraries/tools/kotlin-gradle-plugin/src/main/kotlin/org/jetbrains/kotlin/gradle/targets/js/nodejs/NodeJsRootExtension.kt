@@ -36,6 +36,13 @@ open class NodeJsRootExtension(val rootProject: Project) {
 
     var packageManager: NpmApi = Yarn
 
+    class Experimental {
+        var generateKotlinExternals: Boolean = false
+        var discoverTypes: Boolean = false
+    }
+
+    val experimental = Experimental()
+
     val nodeJsSetupTask: NodeJsSetupTask
         get() = rootProject.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
 

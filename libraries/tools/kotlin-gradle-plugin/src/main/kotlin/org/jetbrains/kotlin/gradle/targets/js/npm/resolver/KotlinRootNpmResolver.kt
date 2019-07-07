@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
+import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 
@@ -23,6 +25,12 @@ internal class KotlinRootNpmResolver internal constructor(
 ) {
     val rootProject: Project
         get() = nodeJs.rootProject
+
+    val plugins = mutableListOf<RootResolverPlugin>().also {
+        if (nodeJs.experimental.generateKotlinExternals) {
+            it.add(DukatRootResolverPlugin(this))
+        }
+    }
 
     private var closed: Boolean = false
 
@@ -92,7 +100,15 @@ internal class KotlinRootNpmResolver internal constructor(
 
         upToDateChecks.forEach { it.commit() }
 
-        return KotlinRootNpmResolution(rootProject, projectResolutions)
+        val resolution = KotlinRootNpmResolution(rootProject, projectResolutions)
+
+        return resolution
+    }
+
+    fun closePlugins(resolution: KotlinRootNpmResolution) {
+        plugins.forEach {
+            it.close(resolution)
+        }
     }
 
     private fun removeOutdatedPackages(nodeJs: NodeJsRootExtension, allNpmPackages: List<KotlinCompilationNpmResolution>) {
