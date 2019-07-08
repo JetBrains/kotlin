@@ -140,7 +140,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         return GeneratedLocation(context.debugProcess, locationClass, methodName, lineNumber)
     }
 
-    private fun AsyncStackTraceContext.getSpilledVariables(continuation: ObjectReference): List<XNamedValue>? {
+    fun AsyncStackTraceContext.getSpilledVariables(continuation: ObjectReference): List<XNamedValue>? {
         val getSpilledVariableFieldMappingMethod = debugMetadataKtType.methodsByName(
             "getSpilledVariableFieldMapping",
             "(Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;"
@@ -188,7 +188,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         }
     }
 
-    private class AsyncStackTraceContext(
+    class AsyncStackTraceContext(
         val context: ExecutionContext,
         val method: Method,
         val debugMetadataKtType: ClassType
