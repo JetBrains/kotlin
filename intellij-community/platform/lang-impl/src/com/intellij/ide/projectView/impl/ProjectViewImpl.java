@@ -7,6 +7,7 @@ import com.intellij.history.LocalHistory;
 import com.intellij.history.LocalHistoryAction;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.*;
+import com.intellij.ide.impl.ProjectViewSelectInGroupTarget;
 import com.intellij.ide.impl.ProjectViewSelectInTarget;
 import com.intellij.ide.projectView.HelpID;
 import com.intellij.ide.projectView.ProjectView;
@@ -34,6 +35,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -2176,13 +2178,31 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   private class ScrollFromSourceAction extends AnAction implements DumbAware {
     private ScrollFromSourceAction() {
-      super("Select Opened File", "Select the file open in the active editor", AllIcons.General.Locate);
+      super("Select Opened File" + getScrollToSourceShortcut(), "Select the file open in the active editor", AllIcons.General.Locate);
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
       myAutoScrollFromSourceHandler.scrollFromSource();
     }
+  }
+
+  private String getScrollToSourceShortcut() {
+    String selectInProjectViewShortcut = KeymapUtil.getFirstKeyboardShortcutText("SelectInProjectView");
+    if (!selectInProjectViewShortcut.isEmpty()) {
+      return " (" + selectInProjectViewShortcut + ")";
+    }
+
+    String selectInShortcut = KeymapUtil.getFirstKeyboardShortcutText("SelectIn");
+    if (!selectInShortcut.isEmpty()) {
+      SelectInTarget[] targets = SelectInManager.getInstance(myProject).getTargets();
+      int index = ContainerUtil.indexOf(Arrays.asList(targets), (target) -> target instanceof ProjectViewSelectInGroupTarget);
+      if (index >= 0) {
+        return " (" + selectInShortcut + ", " + (index+1) + ")";
+      }
+    }
+
+    return "";
   }
 
   @NotNull
