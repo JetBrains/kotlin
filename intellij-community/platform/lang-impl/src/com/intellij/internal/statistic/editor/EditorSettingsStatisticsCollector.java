@@ -3,6 +3,7 @@ package com.intellij.internal.statistic.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.CodeInsightWorkspaceSettings;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.tooltips.TooltipActionProvider;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
@@ -119,6 +120,15 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     addBoolIfDiffers(set, cis, cisDefault, s -> s.TAB_EXITS_BRACKETS_AND_QUOTES, "tabExitsBracketsAndQuotes");
     addTooltipActionsMetricIfDiffers(set);
 
+    DaemonCodeAnalyzerSettings dcas = DaemonCodeAnalyzerSettings.getInstance();
+    DaemonCodeAnalyzerSettings dcasDefault = new DaemonCodeAnalyzerSettings();
+    addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isNextErrorActionGoesToErrorsFirst(), "nextErrorActionGoesToErrorsFirst");
+    addIfDiffers(set, dcas, dcasDefault, s -> s.getAutoReparseDelay(), "autoReparseDelay");
+    addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isShowSmallIconsInGutter(), "showSmallIconsInGutter");
+    addIfDiffers(set, dcas, dcasDefault, s -> s.getErrorStripeMarkMinHeight(), "errorStripeMarkMinHeight");
+    addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isSuppressWarnings(), "suppressWarnings");
+    addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isImportHintEnabled(), "importHintEnabled");
+    addBoolIfDiffers(set, dcas, dcasDefault, s -> s.SHOW_METHOD_SEPARATORS, "showMethodSeparators");
     return set;
   }
 
