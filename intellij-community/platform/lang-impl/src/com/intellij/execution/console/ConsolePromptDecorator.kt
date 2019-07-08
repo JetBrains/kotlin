@@ -13,15 +13,14 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
-
-import java.awt.*
+import java.awt.Color
 
 /**
  * Created by Yuli Fiterman on 9/16/2016.
  */
 class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePainter(), TextAnnotationGutterProvider {
 
-  var mainPrompt: String = ""
+  var mainPrompt: String = "> "
     set(mainPrompt) {
       if (this.mainPrompt != mainPrompt) {
         // to be compatible with LanguageConsoleView we should reset the indent prompt
@@ -76,7 +75,7 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
 
   override fun gutterClosed() {}
 
-  private fun update() {
+  fun update() {
     UIUtil.invokeLaterIfNeeded { myEditorEx.gutterComponentEx.revalidateMarkup() }
   }
 
