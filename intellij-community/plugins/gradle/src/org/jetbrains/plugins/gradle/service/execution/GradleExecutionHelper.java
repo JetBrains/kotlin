@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.lang.JavaVersion;
 import org.gradle.initialization.BuildLayoutParameters;
 import org.gradle.internal.nativeintegration.services.NativeServices;
 import org.gradle.process.internal.JvmOptions;
@@ -235,7 +236,15 @@ public class GradleExecutionHelper {
   }
 
   public <T> T execute(@NotNull String projectPath, @Nullable GradleExecutionSettings settings, @NotNull Function<? super ProjectConnection, ? extends T> f) {
+    return execute(projectPath, settings, null, null, null, f);
+  }
 
+  public <T> T execute(@NotNull String projectPath,
+                       @Nullable GradleExecutionSettings settings,
+                       @Nullable ExternalSystemTaskId taskId,
+                       @Nullable ExternalSystemTaskNotificationListener listener,
+                       @Nullable CancellationTokenSource cancellationTokenSource,
+                       @NotNull Function<? super ProjectConnection, ? extends T> f) {
     final String projectDir;
     final File projectPathFile = new File(projectPath);
     if (projectPathFile.isFile() && projectPath.endsWith(GradleConstants.EXTENSION)
@@ -255,8 +264,10 @@ public class GradleExecutionHelper {
       catch (Exception ignore) {
       }
     }
+    String javaVersionProperty = null;
     ProjectConnection connection = getConnection(projectDir, settings);
     try {
+      javaVersionProperty = setJavaVersionSystemPropertyIfNeeded(connection, taskId, listener, cancellationTokenSource);
       return f.fun(connection);
     }
     catch (ExternalSystemException e) {
@@ -270,12 +281,16 @@ public class GradleExecutionHelper {
       throw externalSystemException;
     }
     finally {
+      if (userDir != null) {
+        // restore original user.dir property
+        System.setProperty("user.dir", userDir);
+      }
+      if (javaVersionProperty != null) {
+        // restore original java.version property
+        System.setProperty("java.version", javaVersionProperty);
+      }
       try {
         connection.close();
-        if (userDir != null) {
-          // restore original user.dir property
-          System.setProperty("user.dir", userDir);
-        }
       }
       catch (Throwable e) {
         LOG.debug("Gradle connection close error", e);
@@ -830,4 +845,23 @@ public class GradleExecutionHelper {
     ApplicationInfoEx appInfo = ApplicationInfoImpl.getShadowInstance();
     return appInfo.getMajorVersion() + "." + appInfo.getMinorVersion();
   }
+
+  // workaround for https://github.com/gradle/gradle/issues/8431
+  // TODO should be removed when the issue will be fixed in the Gradle tooling api side
+  private static final boolean ADJUST_JAVA_VERSION = !Boolean.getBoolean("idea.gradle.disable.java.version.workaround");
+  @Nullable
+  private static String setJavaVersionSystemPropertyIfNeeded(@NotNull ProjectConnection connection,
+                                                             @Nullable ExternalSystemTaskId taskId,
+                                                             @Nullable ExternalSystemTaskNotificationListener listener,
+                                                             @Nullable CancellationTokenSource cancellationTokenSource) {
+    if (ADJUST_JAVA_VERSION && taskId != null && listener != null && JavaVersion.current().feature > 8) {
+      BuildEnvironment environment = getBuildEnvironment(connection, taskId, listener, cancellationTokenSource);
+      String gradleVersion = environment != null ? environment.getGradle().getGradleVersion() : null;
+      if (gradleVersion == null || GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.7")) < 0) {
+        return System.setProperty("java.version", "1.8");
+      }
+    }
+    return null;
+  }
+
 }

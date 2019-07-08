@@ -122,7 +122,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
       final GradleProjectResolverExtension projectResolverChain = createProjectResolverChain(settings);
       final DataNode<ProjectData> projectDataNode = myHelper.execute(
-        projectPath, settings, getProjectDataFunction(resolverContext, projectResolverChain, false));
+        projectPath, settings, syncTaskId, listener, cancellationTokenSource, getProjectDataFunction(resolverContext, projectResolverChain, false));
 
       // auto-discover buildSrc projects of the main and included builds
       File gradleUserHome = resolverContext.getUserData(GRADLE_HOME_DIR);
