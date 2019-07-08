@@ -87,7 +87,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,
-    private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null
+    private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
+    private val namePreprocessor: ((ClassDescriptor) -> String?)? = null
 ) {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
@@ -102,6 +103,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         override fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String? {
             return getPredefinedTypeForClass(classDescriptor)?.internalName
+        }
+
+        override fun getPredefinedFullInternalNameForClass(classDescriptor: ClassDescriptor): String? {
+            return namePreprocessor?.invoke(classDescriptor)
         }
 
         override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {

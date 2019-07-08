@@ -343,24 +343,6 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         }
     }
 
-    @TestMetadata("compiler/testData/asJava/lightClasses/local")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Local extends AbstractIdeLightClassTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInLocal() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/local"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("DollarsInNameLocal.kt")
-        public void testDollarsInNameLocal() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/local/DollarsInNameLocal.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,31 +1,20 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.reference.SoftReference
+import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal open class KtLightClassForAnonymousDeclaration(classOrObject: KtClassOrObject) :
-        KtLightClassForLocalDeclaration(classOrObject), PsiAnonymousClass {
+    KtLightClassForLocalDeclaration(classOrObject), PsiAnonymousClass {
 
     private var cachedBaseType: SoftReference<PsiClassType>? = null
 
@@ -33,33 +22,13 @@ internal open class KtLightClassForAnonymousDeclaration(classOrObject: KtClassOr
         return JavaPsiFacade.getElementFactory(classOrObject.project).createReferenceElementByType(baseClassType)
     }
 
-    private val firstSupertypeFQName: String
-        get() {
-            val descriptor = getDescriptor() ?: return CommonClassNames.JAVA_LANG_OBJECT
-
-            val superTypes = descriptor.typeConstructor.supertypes
-
-            if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT
-
-            val superType = superTypes.iterator().next()
-            val superClassDescriptor = superType.constructor.declarationDescriptor
-
-            if (superClassDescriptor == null) {
-                LOG.error("No declaration descriptor for supertype " + superType + " of " + getDescriptor())
-
-                // return java.lang.Object for recovery
-                return CommonClassNames.JAVA_LANG_OBJECT
-            }
-
-            return DescriptorUtils.getFqName(superClassDescriptor).asString()
-        }
-
-    @Synchronized override fun getBaseClassType(): PsiClassType {
+    @Synchronized
+    override fun getBaseClassType(): PsiClassType {
         var type: PsiClassType? = null
         if (cachedBaseType != null) type = cachedBaseType!!.get()
         if (type != null && type.isValid) return type
 
-        val firstSupertypeFQName = firstSupertypeFQName
+        val firstSupertypeFQName = getFirstSupertypeFQNameForAnonymousDeclaration()
         for (superType in superTypes) {
             val superClass = superType.resolve()
             if (superClass != null && firstSupertypeFQName == superClass.qualifiedName) {
@@ -106,20 +75,36 @@ internal open class KtLightClassForAnonymousDeclaration(classOrObject: KtClassOr
         return InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
     }
 
-    override fun getNameIdentifier() = null
+    override fun getNameIdentifier(): KtLightIdentifier? = null
     override fun getModifierList(): PsiModifierList? = null
     override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.FINAL
-    override fun getExtendsList() = null
-    override fun getImplementsList() = null
+    override fun getExtendsList(): PsiReferenceList? = null
+    override fun getImplementsList(): PsiReferenceList? = null
     override fun getContainingClass(): PsiClass? = null
     override fun isInterface() = false
     override fun isAnnotationType() = false
-    override fun getTypeParameterList() = null
+    override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun isEnum() = false
 
     override fun copy(): PsiElement = KtLightClassForAnonymousDeclaration(classOrObject)
 
     companion object {
-        private val LOG = Logger.getInstance(KtLightClassForAnonymousDeclaration::class.java)
+        fun KtLightClassForSourceDeclaration.getFirstSupertypeFQNameForAnonymousDeclaration(): String {
+            val descriptor = getDescriptor() ?: return CommonClassNames.JAVA_LANG_OBJECT
+
+            val superTypes = descriptor.typeConstructor.supertypes
+
+            if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT
+
+            val superType = superTypes.iterator().next()
+            val superClassDescriptor = superType.constructor.declarationDescriptor
+
+            if (superClassDescriptor === null) {
+                // return java.lang.Object for recovery
+                return CommonClassNames.JAVA_LANG_OBJECT
+            }
+
+            return DescriptorUtils.getFqName(superClassDescriptor).asString()
+        }
     }
 }

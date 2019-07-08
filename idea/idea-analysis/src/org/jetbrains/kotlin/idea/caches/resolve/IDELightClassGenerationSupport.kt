@@ -143,7 +143,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
                 moduleName, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
                 jvmTarget = JvmTarget.JVM_1_8,
-                typePreprocessor = KotlinType::cleanFromAnonymousTypes
+                typePreprocessor = KotlinType::cleanFromAnonymousTypes,
+                namePreprocessor = ::tryGetPredefinedName
             )
         }
 
@@ -198,8 +199,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
         if (element.shouldNotBeVisibleAsLightClass() ||
-            element is KtObjectDeclaration && element.isObjectLiteral() ||
-            element.isLocal ||
             element is KtEnumEntry ||
             element.containingKtFile.isScript()
         ) {
@@ -208,9 +207,19 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
         val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
 
-        return KtUltraLightSupportImpl(element, module).let {
-            if (element.hasModifier(KtTokens.INLINE_KEYWORD)) KtUltraLightInlineClass(element, it)
-            else KtUltraLightClass(element, it)
+        return KtUltraLightSupportImpl(element, module).let { support ->
+            when {
+                element is KtObjectDeclaration && element.isObjectLiteral() ->
+                    KtUltraLightClassForAnonymousDeclaration(element, support)
+
+                element.isLocal ->
+                    KtUltraLightClassForLocalDeclaration(element, support)
+
+                (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
+                    KtUltraLightInlineClass(element, support)
+
+                else -> KtUltraLightClass(element, support)
+            }
         }
     }
 
