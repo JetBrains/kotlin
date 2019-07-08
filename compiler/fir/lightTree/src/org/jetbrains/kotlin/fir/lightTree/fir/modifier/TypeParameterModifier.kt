@@ -36,27 +36,3 @@ class TypeParameterModifier(
         return reificationModifier == ReificationModifier.REIFIED
     }
 }
-
-enum class VarianceModifier {
-    IN {
-        override fun toVariance(): Variance {
-            return Variance.IN_VARIANCE
-        }
-    },
-    OUT {
-        override fun toVariance(): Variance {
-            return Variance.OUT_VARIANCE
-        }
-    },
-    INVARIANT {
-        override fun toVariance(): Variance {
-            return Variance.INVARIANT
-        }
-    };
-
-    abstract fun toVariance(): Variance
-}
-
-enum class ReificationModifier {
-    REIFIED
-}
