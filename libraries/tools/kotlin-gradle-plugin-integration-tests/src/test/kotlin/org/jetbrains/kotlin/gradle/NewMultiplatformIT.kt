@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
+import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.GRADLE_NO_METADATA_WARNING
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
@@ -1892,6 +1894,18 @@ class NewMultiplatformIT : BaseGradleIT() {
                     assertNotContains(GRADLE_NO_METADATA_WARNING)
                 }
             }
+        }
+    }
+
+    @Test
+    fun testIgnoreDisabledNativeTargets() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        build {
+            assertSuccessful()
+            assertEquals(1, output.lines().count { DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX in it })
+        }
+        build("-P$DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME=true") {
+            assertSuccessful()
+            assertNotContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
         }
     }
 }

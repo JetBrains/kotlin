@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.plugin.mpp.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -91,6 +92,9 @@ internal class PropertiesProvider(private val project: Project) {
 
     val enableGranularSourceSetsMetadata: Boolean?
         get() = booleanProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
+
+    val ignoreDisabledNativeTargets: Boolean?
+        get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 
     /**
      * Enables parallel tasks execution within a project with Workers API.
