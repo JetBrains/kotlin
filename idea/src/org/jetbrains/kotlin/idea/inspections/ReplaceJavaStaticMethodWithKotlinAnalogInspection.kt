@@ -168,7 +168,9 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
         )
 
         private val JAVA_COLLECTIONS = listOf(
-            Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true),
+            Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true) {
+                it.valueArguments.size == 2
+            },
             Replacement("java.util.Arrays.asList", "kotlin.collections.listOf"),
             Replacement("java.util.Arrays.asList", "kotlin.collections.mutableListOf"),
             Replacement("java.util.Set.of", "kotlin.collections.setOf"),

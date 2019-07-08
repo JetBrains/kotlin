@@ -9081,6 +9081,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/nonArraysCopyOf.kt");
             }
 
+            @TestMetadata("notCopyOf.kt")
+            public void testNotCopyOf() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/notCopyOf.kt");
+            }
+
             @TestMetadata("qualified.kt")
             public void testQualified() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/qualified.kt");
