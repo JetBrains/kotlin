@@ -32,9 +32,8 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
                 return recurse(element)
         }
 
-        val fieldType = element.type.type
-        val newInitializer = when (fieldType) {
-            is JKClassType -> JKNullLiteral()
+        val newInitializer = when (val fieldType = element.type.type) {
+            is JKClassType, is JKTypeParameterType -> JKNullLiteral()
             is JKJavaPrimitiveType -> createPrimitiveTypeInitializer(fieldType)
             else -> null
         }
