@@ -18,7 +18,7 @@ class DtsResolver(val npmProject: NpmProject) {
     fun getAllDts(externalNpmDependencies: Collection<NpmDependency>): List<Dts> = externalNpmDependencies
         .filter { it.scope != NpmDependency.Scope.DEV }
         .flatMap { it.getDependenciesRecursively() }
-        .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file, it) } }
+        .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file.canonicalFile, it) } }
         .sortedBy { it.inputKey }
 
     class Dts(val file: File, val npmDependency: NpmDependency) {
