@@ -8,12 +8,4 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-class TypeConstraint(val annotations: List<FirAnnotationCall>, val identifier: String, val firTypeRef: FirTypeRef) {
-    operator fun component1(): String {
-        return identifier
-    }
-
-    operator fun component2(): FirTypeRef {
-        return firTypeRef
-    }
-}
+class TypeConstraint(val annotations: List<FirAnnotationCall>, val identifier: String, val firTypeRef: FirTypeRef)
