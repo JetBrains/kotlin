@@ -15,19 +15,11 @@ class TypeModifier(
     session: FirSession,
     psi: PsiElement? = null,
 
-    private var suspendModifier: SuspendModifier? = null
+    var hasSuspend: Boolean = false
 ) : FirAbstractAnnotatedElement(session, psi) {
     fun addModifier(modifier: LighterASTNode) {
-        if (modifier.toString() == KtTokens.SUSPEND_KEYWORD.value) {
-            this.suspendModifier = SuspendModifier.SUSPEND
+        when (modifier.tokenType) {
+            KtTokens.SUSPEND_KEYWORD -> this.hasSuspend = true
         }
     }
-
-    fun hasSuspend(): Boolean {
-        return suspendModifier == SuspendModifier.SUSPEND
-    }
-}
-
-enum class SuspendModifier {
-    SUSPEND
 }
