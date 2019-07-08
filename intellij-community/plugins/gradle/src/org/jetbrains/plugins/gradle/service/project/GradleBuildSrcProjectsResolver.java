@@ -183,7 +183,7 @@ public class GradleBuildSrcProjectsResolver {
     }
 
     final DataNode<ProjectData> buildSrcProjectDataNode = myProjectResolver.getHelper().execute(
-      projectPath, buildSrcResolverCtx.getSettings(), projectConnectionDataNodeFunction);
+      projectPath, buildSrcResolverCtx.getSettings(), mySyncTaskId, myListener, null, projectConnectionDataNodeFunction);
 
     if (buildSrcProjectDataNode == null) return;
 

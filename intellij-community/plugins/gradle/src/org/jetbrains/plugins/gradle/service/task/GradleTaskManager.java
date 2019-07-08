@@ -136,7 +136,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
     if (effectiveSettings.getDistributionType() == DistributionType.WRAPPED) {
       myHelper.ensureInstalledWrapper(id, determineRootProject(projectPath), effectiveSettings, listener, cancellationTokenSource.token());
     }
-    myHelper.execute(projectPath, effectiveSettings, f);
+    myHelper.execute(projectPath, effectiveSettings, id, listener, cancellationTokenSource, f);
   }
 
   protected boolean isGradleScriptDebug(@Nullable GradleExecutionSettings settings) {
