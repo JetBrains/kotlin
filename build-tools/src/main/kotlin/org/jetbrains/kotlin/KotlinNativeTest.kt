@@ -14,7 +14,6 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecSpec
-import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 import java.io.File
 import java.io.ByteArrayOutputStream
@@ -151,10 +150,16 @@ open class KonanGTest : KonanTest() {
             executor = project.executor::execute,
             executable = executable,
             args = arguments
-    ).let {
-        parse(it.stdOut)
-        it.print()
-        check(it.exitCode == 0) { "Test $executable exited with ${it.exitCode}" }
+    ).run {
+        parse(stdOut)
+        println("""
+                |stdout:
+                |$stdOut
+                |stderr:
+                |$stdErr
+                |exit code: $exitCode
+                """.trimMargin())
+        check(exitCode == 0) { "Test $executable exited with $exitCode" }
     }
 
     private fun parse(output: String) = statistics.apply {
