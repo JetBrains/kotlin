@@ -91,7 +91,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <registryKey key="kotlin.use.new.j2k"
                              description="Use new Java to Kotlin Converter (experimental)"
-                             defaultValue="false"
+                             defaultValue="true"
                              restartRequired="false"/>
         <registryKey key="kotlin.mpp.editTargetPlatformEnabled"
                      description="Enable manual editing of MPP target platforms"

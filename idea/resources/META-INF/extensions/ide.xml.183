@@ -99,7 +99,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <registryKey key="kotlin.use.new.j2k"
                      description="Use new Java to Kotlin Converter (experimental)"
-                     defaultValue="false"
+                     defaultValue="true"
                      restartRequired="false"/>
     </extensions>
 </idea-plugin>
