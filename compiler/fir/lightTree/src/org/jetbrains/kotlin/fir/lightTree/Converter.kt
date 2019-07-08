@@ -363,6 +363,9 @@ class Converter(
         }
     }
 
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameterList
+     */
     private fun convertValueParameters(valueParameters: LighterASTNode): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
@@ -371,6 +374,9 @@ class Converter(
         }
     }
 
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameter
+     */
     private fun convertValueParameter(valueParameter: LighterASTNode): ValueParameter {
         var modifiers = Modifier(session)
         var isVal = false
