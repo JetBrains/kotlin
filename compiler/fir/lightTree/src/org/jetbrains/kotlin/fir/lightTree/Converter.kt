@@ -142,18 +142,7 @@ class Converter(
         return firFile
     }
 
-    /**
-     * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFileAnnotationList]
-     */
-    private fun convertFileAnnotationList(fileAnnotationList: LighterASTNode): List<FirAnnotationCall> {
-        return fileAnnotationList.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ANNOTATION -> container += convertAnnotation(node)
-                ANNOTATION_ENTRY -> container += convertUnescapedAnnotation(node, AnnotationUseSiteTarget.FILE)
-            }
-        }
-    }
-
+    /*****    PREAMBLE    *****/
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePackageName
      */
@@ -168,15 +157,15 @@ class Converter(
         return packageName
     }
 
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseImportDirectives
-     */
-    private fun convertImportDirectives(importList: LighterASTNode): List<FirImport> {
-        return importList.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                IMPORT_DIRECTIVE -> container += convertImportDirective(node)
+    private fun convertImportAlias(importAlias: LighterASTNode): String {
+        importAlias.forEachChildren {
+            when (it.tokenType) {
+                IDENTIFIER -> return it.getAsString()
             }
         }
+
+        //TODO specify error
+        throw Exception()
     }
 
     /**
@@ -209,17 +198,146 @@ class Converter(
         )
     }
 
-    private fun convertImportAlias(importAlias: LighterASTNode): String {
-        importAlias.forEachChildren {
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseImportDirectives
+     */
+    private fun convertImportDirectives(importList: LighterASTNode): List<FirImport> {
+        return importList.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                IMPORT_DIRECTIVE -> container += convertImportDirective(node)
+            }
+        }
+    }
+
+    /*****    MODIFIERS    *****/
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
+     */
+    private fun convertModifierList(modifiers: LighterASTNode): Modifier {
+        val modifier = Modifier(session)
+        modifiers.forEachChildren {
             when (it.tokenType) {
-                IDENTIFIER -> return it.getAsString()
+                ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it, null)
+                is KtModifierKeywordToken -> modifier.addModifier(it)
+            }
+        }
+        return modifier
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeModifierList
+     */
+    private fun convertTypeModifierList(modifiers: LighterASTNode): TypeModifier {
+        val typeModifierList = TypeModifier(session)
+        modifiers.forEachChildren {
+            when (it.tokenType) {
+                ANNOTATION -> typeModifierList.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> typeModifierList.annotations += convertAnnotationEntry(it, null)
+                is KtModifierKeywordToken -> typeModifierList.addModifier(it)
+            }
+        }
+        return typeModifierList
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentModifierList
+     */
+    private fun convertTypeArgumentModifierList(modifiers: LighterASTNode): TypeProjectionModifier {
+        val typeArgumentModifierList = TypeProjectionModifier(session)
+        modifiers.forEachChildren {
+            when (it.tokenType) {
+                ANNOTATION -> typeArgumentModifierList.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> typeArgumentModifierList.annotations += convertAnnotationEntry(it, null)
+                is KtModifierKeywordToken -> typeArgumentModifierList.addModifier(it)
+            }
+        }
+        return typeArgumentModifierList
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentModifierList
+     */
+    private fun convertTypeParameterModifiers(modifiers: LighterASTNode): TypeParameterModifier {
+        val modifier = TypeParameterModifier(session)
+        modifiers.forEachChildren {
+            when (it.tokenType) {
+                ANNOTATION -> modifier.annotations += convertAnnotation(it)
+                ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it, null)
+                is KtModifierKeywordToken -> modifier.addModifier(it)
+            }
+        }
+        return modifier
+    }
+
+    /*****    ANNOTATIONS    *****/
+    /**
+     * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFileAnnotationList]
+     */
+    private fun convertFileAnnotationList(fileAnnotationList: LighterASTNode): List<FirAnnotationCall> {
+        return fileAnnotationList.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                ANNOTATION -> container += convertAnnotation(node)
+                ANNOTATION_ENTRY -> container += convertAnnotationEntry(node, AnnotationUseSiteTarget.FILE)
+            }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationOrList
+     */
+    private fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
+        var annotationTarget: AnnotationUseSiteTarget? = null
+        return annotationNode.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                ANNOTATION_TARGET -> annotationTarget = convertAnnotationTarget(node)
+                ANNOTATION_ENTRY -> container += convertAnnotationEntry(node, annotationTarget)
+            }
+        }
+    }
+
+    /**
+     * org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationTarget
+     */
+    private fun convertAnnotationTarget(annotationUseSiteTarget: LighterASTNode): AnnotationUseSiteTarget {
+        lateinit var annotationTarget: AnnotationUseSiteTarget
+        annotationUseSiteTarget.forEachChildren {
+            when (it.tokenType) {
+                FILE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FILE
+                PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
+                GET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_GETTER
+                SET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_SETTER
+                RECEIVER_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.RECEIVER
+                PARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+                SETPARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.SETTER_PARAMETER
+                DELEGATE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
             }
         }
 
-        //TODO specify error
-        throw Exception()
+        return annotationTarget
     }
 
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotation
+     * can be treated as unescapedAnnotation
+     */
+    private fun convertAnnotationEntry(
+        unescapedAnnotation: LighterASTNode,
+        annotationUseSiteTarget: AnnotationUseSiteTarget?
+    ): FirAnnotationCall {
+        //TODO not implemented
+        val pair = convertConstructorInvocation(unescapedAnnotation)
+        return FirAnnotationCallImpl(
+            session,
+            null,
+            annotationUseSiteTarget,
+            pair.first
+        ).apply {
+            arguments += pair.second
+        }
+    }
+
+    /*****    DECLARATIONS    *****/
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
@@ -236,7 +354,7 @@ class Converter(
         var classBody: LighterASTNode? = null
         classNode.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
                 CLASS_KEYWORD -> classKind = ClassKind.CLASS
                 INTERFACE_KEYWORD -> classKind = ClassKind.INTERFACE
                 OBJECT_KEYWORD -> classKind = ClassKind.OBJECT
@@ -323,269 +441,6 @@ class Converter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
-     * primaryConstructor branch
-     */
-    private fun convertPrimaryConstructor(primaryConstructor: LighterASTNode?, classWrapper: ClassWrapper): FirConstructorImpl? {
-        if (primaryConstructor == null && classWrapper.hasSecondaryConstructor) return null
-        if (classWrapper.isInterface()) return null
-
-        var modifiers = Modifier(session)
-        val valueParameters = mutableListOf<ValueParameter>()
-        primaryConstructor?.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
-                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it)
-            }
-        }
-
-        val defaultVisibility = classWrapper.defaultConstructorVisibility()
-        val firDelegatedCall = FirDelegatedConstructorCallImpl(
-            session,
-            null,
-            classWrapper.delegatedSuperTypeRef,
-            isThis = false
-        ).extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
-
-        return FirPrimaryConstructorImpl(
-            session,
-            null,
-            FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
-            if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
-            modifiers.hasExpect(),
-            modifiers.hasActual(),
-            classWrapper.delegatedSelfTypeRef,
-            firDelegatedCall
-        ).apply {
-            annotations += modifiers.annotations
-            this.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
-            this.valueParameters += valueParameters.map { it.firValueParameter }
-        }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameterList
-     */
-    private fun convertValueParameters(valueParameters: LighterASTNode): List<ValueParameter> {
-        return valueParameters.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                VALUE_PARAMETER -> container += convertValueParameter(node)
-            }
-        }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameter
-     */
-    private fun convertValueParameter(valueParameter: LighterASTNode): ValueParameter {
-        var modifiers = Modifier(session)
-        var isVal = false
-        var isVar = false
-        var identifier: String? = null
-        var firType: FirTypeRef? = null
-        var firExpression: FirExpression? = null
-        valueParameter.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
-                VAL_KEYWORD -> isVal = true
-                VAR_KEYWORD -> isVar = true
-                IDENTIFIER -> identifier = it.getAsString()
-                TYPE_REFERENCE -> firType = convertType(it)
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
-            }
-        }
-
-        val firValueParameter = FirValueParameterImpl(
-            session,
-            null,
-            identifier.nameAsSafeName(),
-            firType ?: implicitType,
-            firExpression,
-            isCrossinline = modifiers.hasCrossinline(),
-            isNoinline = modifiers.hasNoinline(),
-            isVararg = modifiers.hasVararg()
-        ).apply { annotations += modifiers.annotations }
-        return ValueParameter(isVal, isVar, modifiers, firValueParameter)
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseDelegationSpecifierList
-     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.extractSuperTypeListEntriesTo
-     *
-     * SUPER_TYPE_ENTRY             - userType
-     * SUPER_TYPE_CALL_ENTRY        - constructorInvocation
-     * DELEGATED_SUPER_TYPE_ENTRY   - explicitDelegation
-     */
-    //TODO make wrapper for result?
-    private fun convertDelegationSpecifiers(delegationSpecifiers: LighterASTNode): Triple<FirTypeRef?, List<FirTypeRef>, List<FirExpression>> {
-        val superTypeRefs = mutableListOf<FirTypeRef>()
-        val superTypeCallEntry = mutableListOf<FirExpression>()
-        var delegatedSuperTypeRef: FirTypeRef? = null
-        delegationSpecifiers.forEachChildren {
-            when (it.tokenType) {
-                SUPER_TYPE_ENTRY -> superTypeRefs += convertType(it)
-                SUPER_TYPE_CALL_ENTRY -> convertConstructorInvocation(it).apply {
-                    delegatedSuperTypeRef = first
-                    superTypeRefs += first
-                    superTypeCallEntry += second
-                }
-                DELEGATED_SUPER_TYPE_ENTRY -> superTypeRefs += convertExplicitDelegation(it)
-            }
-        }
-        return Triple(delegatedSuperTypeRef, superTypeRefs, superTypeCallEntry)
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseDelegationSpecifier
-     *
-     * constructorInvocation
-     *   : userType valueArguments
-     *   ;
-     */
-    private fun convertConstructorInvocation(constructorInvocation: LighterASTNode): Pair<FirTypeRef, List<FirExpression>> {
-        lateinit var firTypeRef: FirTypeRef
-        val firValueArguments = mutableListOf<FirExpression>()
-        constructorInvocation.forEachChildren {
-            when (it.tokenType) {
-                CONSTRUCTOR_CALLEE -> firTypeRef = convertType(it)
-                VALUE_ARGUMENT_LIST -> firValueArguments += convertValueArguments(it)
-            }
-        }
-        return Pair(firTypeRef, firValueArguments)
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseDelegationSpecifier
-     *
-     * explicitDelegation
-     *   : userType "by" element
-     *   ;
-     */
-    private fun convertExplicitDelegation(explicitDelegation: LighterASTNode): FirDelegatedTypeRef {
-        lateinit var firTypeRef: FirTypeRef
-        var firExpression: FirExpression? = null
-        explicitDelegation.forEachChildren {
-            when (it.tokenType) {
-                TYPE_REFERENCE -> firTypeRef = convertType(it)
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
-            }
-        }
-
-        return FirDelegatedTypeRefImpl(
-            session,
-            firTypeRef,
-            firExpression
-        )
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassBody
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumClassBody
-     */
-    private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
-        return classBody.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
-                CLASS -> container += convertClass(node)
-                FUN -> container += convertFunctionDeclaration(node)
-                PROPERTY -> container += convertPropertyDeclaration(node)
-                TYPEALIAS -> container += convertTypeAlias(node)
-                OBJECT_DECLARATION -> container += convertClass(node)
-                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) //anonymousInitializer
-                SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
-            }
-        }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.convert(
-     * KtConstructorDelegationCall, FirTypeRef, Boolean)
-     */
-    private fun convertConstructorDelegationCall(
-        constructorDelegationCall: LighterASTNode,
-        classWrapper: ClassWrapper
-    ): FirDelegatedConstructorCallImpl {
-        var thisKeywordPresent = false
-        constructorDelegationCall.forEachChildren {
-            when (it.tokenType) {
-                CONSTRUCTOR_DELEGATION_REFERENCE -> if (it.getAsString() == "this") thisKeywordPresent = true
-                VALUE_ARGUMENT_LIST -> "" //TODO implement
-            }
-        }
-
-        val isImplicit = constructorDelegationCall.getAsString().isEmpty()
-        val isThis = (isImplicit && classWrapper.hasPrimaryConstructor) || thisKeywordPresent
-        val delegatedType = when {
-            isThis -> classWrapper.delegatedSelfTypeRef
-            else -> classWrapper.delegatedSuperTypeRef
-        }
-
-        return FirDelegatedConstructorCallImpl(
-            session,
-            null,
-            delegatedType,
-            isThis
-        ).extractArgumentsFrom(listOf(), stubMode) //TODO implement
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMemberDeclarationRest
-     * at INIT keyword
-     */
-    private fun convertAnonymousInitializer(anonymousInitializer: LighterASTNode): FirDeclaration {
-        var firBlock: FirBlock? = null
-        anonymousInitializer.forEachChildren {
-            when (it.tokenType) {
-                BLOCK -> firBlock = visitBlock(it)
-            }
-        }
-
-        return FirAnonymousInitializerImpl(
-            session,
-            null,
-            if (stubMode) FirEmptyExpressionBlock(session) else firBlock
-        )
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseSecondaryConstructor
-     */
-    private fun convertSecondaryConstructor(secondaryConstructor: LighterASTNode, classWrapper: ClassWrapper): FirConstructor {
-        var modifiers = Modifier(session)
-        val firValueParameters = mutableListOf<ValueParameter>()
-        var constructorDelegationCall: FirDelegatedConstructorCall? = null
-        var firBlock: FirBlock? = null
-
-        secondaryConstructor.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
-                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it)
-                CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it, classWrapper)
-                BLOCK -> firBlock = visitBlock(it)
-            }
-        }
-
-        val firConstructor = FirConstructorImpl(
-            session,
-            null,
-            FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
-            modifiers.getVisibility(),
-            modifiers.hasExpect(),
-            modifiers.hasActual(),
-            classWrapper.delegatedSelfTypeRef,
-            constructorDelegationCall
-        )
-
-        FunctionUtil.firFunctions += firConstructor
-        firConstructor.annotations += modifiers.annotations
-        firConstructor.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
-        firConstructor.valueParameters += firValueParameters.map { it.firValueParameter }
-        firConstructor.body = visitFunctionBody(firBlock, null)
-        FunctionUtil.firFunctions.removeLast()
-        return firConstructor
-    }
-
-    /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumEntry
      */
     private fun convertEnumEntry(enumEntry: LighterASTNode, classWrapper: ClassWrapper): FirEnumEntryImpl {
@@ -596,7 +451,7 @@ class Converter(
         val firDeclarations = mutableListOf<FirDeclaration>()
         enumEntry.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
                 IDENTIFIER -> identifier = it.getAsString()
                 INITIALIZER_LIST -> hasInitializerList = true //TODO implement
                 /*enumSuperTypeCallEntry += initializerList.valueParameters.map { firValueParameter ->
@@ -633,120 +488,185 @@ class Converter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassBody
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumClassBody
      */
-    private fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirDeclaration {
-        var modifiers = Modifier(session)
-        lateinit var identifier: String
-        val firTypeParameters = mutableListOf<FirTypeParameter>()
-        val valueParametersList = mutableListOf<ValueParameter>()
-        var isReturnType = false
-        var receiverType: FirTypeRef? = null
-        var returnType: FirTypeRef? = null
-        val typeConstraints = mutableListOf<TypeConstraint>()
-        var firBlock: FirBlock? = null
-        var firExpression: FirExpression? = null
-        functionDeclaration.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
-                IDENTIFIER -> identifier = it.getAsString()
-                TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(it)
-                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it)
-                COLON -> isReturnType = true
-                TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
-                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                BLOCK -> firBlock = visitBlock(it)
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
+    private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
+        return classBody.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
+                CLASS -> container += convertClass(node)
+                FUN -> container += convertFunctionDeclaration(node)
+                PROPERTY -> container += convertPropertyDeclaration(node)
+                TYPEALIAS -> container += convertTypeAlias(node)
+                OBJECT_DECLARATION -> container += convertClass(node)
+                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) //anonymousInitializer
+                SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
             }
         }
-
-        if (returnType == null) {
-            returnType =
-                if (firBlock != null || (firBlock == null && firExpression == null)) implicitUnitType
-                else implicitType
-        }
-
-        val functionName = identifier.nameAsSafeName()
-        val isLocal = FunctionUtil.firFunctions.isNotEmpty()
-        val firFunction = FirMemberFunctionImpl(
-            session,
-            null,
-            FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
-            functionName,
-            modifiers.getVisibility(),
-            modifiers.getModality(),
-            modifiers.hasExpect(),
-            modifiers.hasActual(),
-            modifiers.hasOverride(),
-            modifiers.hasOperator(),
-            modifiers.hasInfix(),
-            modifiers.hasInline(),
-            modifiers.hasTailrec(),
-            modifiers.hasExternal(),
-            modifiers.hasSuspend(),
-            receiverType,
-            returnType!!
-        )
-
-        FunctionUtil.firFunctions += firFunction
-        firFunction.annotations += modifiers.annotations
-
-        firFunction.typeParameters += firTypeParameters
-        firFunction.joinTypeParameters(typeConstraints)
-
-        firFunction.valueParameters += valueParametersList.map { it.firValueParameter }
-        firFunction.body = visitFunctionBody(firBlock, firExpression)
-        FunctionUtil.firFunctions.removeLast()
-        return firFunction
     }
 
     /**
-     * this is just a VALUE_PARAMETER_LIST
-     *
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
-     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirValueParameter
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
+     * primaryConstructor branch
      */
-    private fun convertSetterParameter(setterParameter: LighterASTNode, propertyTypeRef: FirTypeRef): FirValueParameter {
+    private fun convertPrimaryConstructor(primaryConstructor: LighterASTNode?, classWrapper: ClassWrapper): FirConstructorImpl? {
+        if (primaryConstructor == null && classWrapper.hasSecondaryConstructor) return null
+        if (classWrapper.isInterface()) return null
+
         var modifiers = Modifier(session)
-        lateinit var firValueParameter: FirValueParameter
-        setterParameter.forEachChildren {
+        val valueParameters = mutableListOf<ValueParameter>()
+        primaryConstructor?.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
-                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it).firValueParameter
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it)
             }
         }
 
-        return FirValueParameterImpl(
+        val defaultVisibility = classWrapper.defaultConstructorVisibility()
+        val firDelegatedCall = FirDelegatedConstructorCallImpl(
             session,
             null,
-            firValueParameter.name,
-            if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef,
-            firValueParameter.defaultValue,
-            isCrossinline = modifiers.hasCrossinline(),
-            isNoinline = modifiers.hasNoinline(),
-            isVararg = modifiers.hasVararg()
+            classWrapper.delegatedSuperTypeRef,
+            isThis = false
+        ).extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
+
+        return FirPrimaryConstructorImpl(
+            session,
+            null,
+            FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
+            if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
+            modifiers.hasExpect(),
+            modifiers.hasActual(),
+            classWrapper.delegatedSelfTypeRef,
+            firDelegatedCall
         ).apply {
             annotations += modifiers.annotations
+            this.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
+            this.valueParameters += valueParameters.map { it.firValueParameter }
         }
     }
 
-    private fun visitFunctionBody(firBlock: FirBlock?, firExpression: FirExpression?): FirBlock? {
-        return when {
-            firBlock != null -> if (!stubMode) {
-                return firBlock
-            } else {
-                FirSingleExpressionBlock(
-                    session,
-                    FirExpressionStub(session, null).toReturn()
-                )
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMemberDeclarationRest
+     * at INIT keyword
+     */
+    private fun convertAnonymousInitializer(anonymousInitializer: LighterASTNode): FirDeclaration {
+        var firBlock: FirBlock? = null
+        anonymousInitializer.forEachChildren {
+            when (it.tokenType) {
+                BLOCK -> firBlock = visitBlock(it)
             }
-            firExpression != null -> {
-                FirSingleExpressionBlock(
-                    session,
-                    firExpression.toReturn()
-                )
+        }
+
+        return FirAnonymousInitializerImpl(
+            session,
+            null,
+            if (stubMode) FirEmptyExpressionBlock(session) else firBlock
+        )
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseSecondaryConstructor
+     */
+    private fun convertSecondaryConstructor(secondaryConstructor: LighterASTNode, classWrapper: ClassWrapper): FirConstructor {
+        var modifiers = Modifier(session)
+        val firValueParameters = mutableListOf<ValueParameter>()
+        var constructorDelegationCall: FirDelegatedConstructorCall? = null
+        var firBlock: FirBlock? = null
+
+        secondaryConstructor.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it)
+                CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it, classWrapper)
+                BLOCK -> firBlock = visitBlock(it)
             }
-            else -> null
+        }
+
+        val firConstructor = FirConstructorImpl(
+            session,
+            null,
+            FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
+            modifiers.getVisibility(),
+            modifiers.hasExpect(),
+            modifiers.hasActual(),
+            classWrapper.delegatedSelfTypeRef,
+            constructorDelegationCall
+        )
+
+        FunctionUtil.firFunctions += firConstructor
+        firConstructor.annotations += modifiers.annotations
+        firConstructor.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
+        firConstructor.valueParameters += firValueParameters.map { it.firValueParameter }
+        firConstructor.body = visitFunctionBody(firBlock, null)
+        FunctionUtil.firFunctions.removeLast()
+        return firConstructor
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.convert(
+     * KtConstructorDelegationCall, FirTypeRef, Boolean)
+     */
+    private fun convertConstructorDelegationCall(
+        constructorDelegationCall: LighterASTNode,
+        classWrapper: ClassWrapper
+    ): FirDelegatedConstructorCallImpl {
+        var thisKeywordPresent = false
+        constructorDelegationCall.forEachChildren {
+            when (it.tokenType) {
+                CONSTRUCTOR_DELEGATION_REFERENCE -> if (it.getAsString() == "this") thisKeywordPresent = true
+                VALUE_ARGUMENT_LIST -> "" //TODO implement
+            }
+        }
+
+        val isImplicit = constructorDelegationCall.getAsString().isEmpty()
+        val isThis = (isImplicit && classWrapper.hasPrimaryConstructor) || thisKeywordPresent
+        val delegatedType = when {
+            isThis -> classWrapper.delegatedSelfTypeRef
+            else -> classWrapper.delegatedSuperTypeRef
+        }
+
+        return FirDelegatedConstructorCallImpl(
+            session,
+            null,
+            delegatedType,
+            isThis
+        ).extractArgumentsFrom(listOf(), stubMode) //TODO implement
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeAlias
+     */
+    private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
+        var modifiers = Modifier(session)
+        lateinit var identifier: String
+        lateinit var firType: FirTypeRef
+        val firTypeParameters = mutableListOf<FirTypeParameter>()
+        typeAlias.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                IDENTIFIER -> identifier = it.getAsString()
+                TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(it)
+                TYPE_REFERENCE -> firType = convertType(it)
+            }
+        }
+
+        val typeAliasName = identifier.nameAsSafeName()
+        return ClassNameUtil.withChildClassName(typeAliasName) {
+            return@withChildClassName FirTypeAliasImpl(
+                session,
+                null,
+                FirTypeAliasSymbol(ClassNameUtil.currentClassId),
+                typeAliasName,
+                modifiers.getVisibility(),
+                modifiers.hasExpect(),
+                modifiers.hasActual(),
+                firType
+            ).apply {
+                annotations += modifiers.annotations
+                typeParameters += firTypeParameters
+            }
         }
     }
 
@@ -769,7 +689,7 @@ class Converter(
         var firExpression: FirExpression? = null
         property.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
                 IDENTIFIER -> identifier = it.getAsString()
                 TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(it)
                 COLON -> isReturnType = true
@@ -847,7 +767,7 @@ class Converter(
             if (it.getAsString() == "set") isGetter = false
             when (it.tokenType) {
                 SET_KEYWORD -> isGetter = false
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(it, propertyTypeRef)
                 BLOCK -> firBlock = visitBlock(it)
@@ -875,40 +795,212 @@ class Converter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeAlias
+     * this is just a VALUE_PARAMETER_LIST
+     *
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirValueParameter
      */
-    private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
+    private fun convertSetterParameter(setterParameter: LighterASTNode, propertyTypeRef: FirTypeRef): FirValueParameter {
         var modifiers = Modifier(session)
-        lateinit var identifier: String
-        lateinit var firType: FirTypeRef
-        val firTypeParameters = mutableListOf<FirTypeParameter>()
-        typeAlias.forEachChildren {
+        lateinit var firValueParameter: FirValueParameter
+        setterParameter.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifiers(it)
-                IDENTIFIER -> identifier = it.getAsString()
-                TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(it)
-                TYPE_REFERENCE -> firType = convertType(it)
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it).firValueParameter
             }
         }
 
-        val typeAliasName = identifier.nameAsSafeName()
-        return ClassNameUtil.withChildClassName(typeAliasName) {
-            return@withChildClassName FirTypeAliasImpl(
-                session,
-                null,
-                FirTypeAliasSymbol(ClassNameUtil.currentClassId),
-                typeAliasName,
-                modifiers.getVisibility(),
-                modifiers.hasExpect(),
-                modifiers.hasActual(),
-                firType
-            ).apply {
-                annotations += modifiers.annotations
-                typeParameters += firTypeParameters
-            }
+        return FirValueParameterImpl(
+            session,
+            null,
+            firValueParameter.name,
+            if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef,
+            firValueParameter.defaultValue,
+            isCrossinline = modifiers.hasCrossinline(),
+            isNoinline = modifiers.hasNoinline(),
+            isVararg = modifiers.hasVararg()
+        ).apply {
+            annotations += modifiers.annotations
         }
     }
 
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
+     */
+    private fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirDeclaration {
+        var modifiers = Modifier(session)
+        lateinit var identifier: String
+        val firTypeParameters = mutableListOf<FirTypeParameter>()
+        val valueParametersList = mutableListOf<ValueParameter>()
+        var isReturnType = false
+        var receiverType: FirTypeRef? = null
+        var returnType: FirTypeRef? = null
+        val typeConstraints = mutableListOf<TypeConstraint>()
+        var firBlock: FirBlock? = null
+        var firExpression: FirExpression? = null
+        functionDeclaration.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                IDENTIFIER -> identifier = it.getAsString()
+                TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(it)
+                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it)
+                COLON -> isReturnType = true
+                TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
+                TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
+                BLOCK -> firBlock = visitBlock(it)
+                else -> if (it.isExpression()) firExpression = visitExpression(it)
+            }
+        }
+
+        if (returnType == null) {
+            returnType =
+                if (firBlock != null || (firBlock == null && firExpression == null)) implicitUnitType
+                else implicitType
+        }
+
+        val functionName = identifier.nameAsSafeName()
+        val isLocal = FunctionUtil.firFunctions.isNotEmpty()
+        val firFunction = FirMemberFunctionImpl(
+            session,
+            null,
+            FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
+            functionName,
+            modifiers.getVisibility(),
+            modifiers.getModality(),
+            modifiers.hasExpect(),
+            modifiers.hasActual(),
+            modifiers.hasOverride(),
+            modifiers.hasOperator(),
+            modifiers.hasInfix(),
+            modifiers.hasInline(),
+            modifiers.hasTailrec(),
+            modifiers.hasExternal(),
+            modifiers.hasSuspend(),
+            receiverType,
+            returnType!!
+        )
+
+        FunctionUtil.firFunctions += firFunction
+        firFunction.annotations += modifiers.annotations
+
+        firFunction.typeParameters += firTypeParameters
+        firFunction.joinTypeParameters(typeConstraints)
+
+        firFunction.valueParameters += valueParametersList.map { it.firValueParameter }
+        firFunction.body = visitFunctionBody(firBlock, firExpression)
+        FunctionUtil.firFunctions.removeLast()
+        return firFunction
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionBody
+     */
+    private fun visitFunctionBody(firBlock: FirBlock?, firExpression: FirExpression?): FirBlock? {
+        return when {
+            firBlock != null -> if (!stubMode) {
+                return firBlock
+            } else {
+                FirSingleExpressionBlock(
+                    session,
+                    FirExpressionStub(session, null).toReturn()
+                )
+            }
+            firExpression != null -> {
+                FirSingleExpressionBlock(
+                    session,
+                    firExpression.toReturn()
+                )
+            }
+            else -> null
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
+     */
+    private fun visitBlock(block: LighterASTNode?): FirBlock {
+        return if (!stubMode) {
+            TODO("not implemented")
+            //visitStatements(ctx.statements())
+        } else {
+            FirSingleExpressionBlock(
+                session,
+                FirExpressionStub(session, null).toReturn()
+            )
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseDelegationSpecifierList
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.extractSuperTypeListEntriesTo
+     *
+     * SUPER_TYPE_ENTRY             - userType
+     * SUPER_TYPE_CALL_ENTRY        - constructorInvocation
+     * DELEGATED_SUPER_TYPE_ENTRY   - explicitDelegation
+     */
+    //TODO make wrapper for result?
+    private fun convertDelegationSpecifiers(delegationSpecifiers: LighterASTNode): Triple<FirTypeRef?, List<FirTypeRef>, List<FirExpression>> {
+        val superTypeRefs = mutableListOf<FirTypeRef>()
+        val superTypeCallEntry = mutableListOf<FirExpression>()
+        var delegatedSuperTypeRef: FirTypeRef? = null
+        delegationSpecifiers.forEachChildren {
+            when (it.tokenType) {
+                SUPER_TYPE_ENTRY -> superTypeRefs += convertType(it)
+                SUPER_TYPE_CALL_ENTRY -> convertConstructorInvocation(it).apply {
+                    delegatedSuperTypeRef = first
+                    superTypeRefs += first
+                    superTypeCallEntry += second
+                }
+                DELEGATED_SUPER_TYPE_ENTRY -> superTypeRefs += convertExplicitDelegation(it)
+            }
+        }
+        return Triple(delegatedSuperTypeRef, superTypeRefs, superTypeCallEntry)
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseDelegationSpecifier
+     *
+     * constructorInvocation
+     *   : userType valueArguments
+     *   ;
+     */
+    private fun convertConstructorInvocation(constructorInvocation: LighterASTNode): Pair<FirTypeRef, List<FirExpression>> {
+        lateinit var firTypeRef: FirTypeRef
+        val firValueArguments = mutableListOf<FirExpression>()
+        constructorInvocation.forEachChildren {
+            when (it.tokenType) {
+                CONSTRUCTOR_CALLEE -> firTypeRef = convertType(it)
+                VALUE_ARGUMENT_LIST -> firValueArguments += convertValueArguments(it)
+            }
+        }
+        return Pair(firTypeRef, firValueArguments)
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseDelegationSpecifier
+     *
+     * explicitDelegation
+     *   : userType "by" element
+     *   ;
+     */
+    private fun convertExplicitDelegation(explicitDelegation: LighterASTNode): FirDelegatedTypeRef {
+        lateinit var firTypeRef: FirTypeRef
+        var firExpression: FirExpression? = null
+        explicitDelegation.forEachChildren {
+            when (it.tokenType) {
+                TYPE_REFERENCE -> firTypeRef = convertType(it)
+                else -> if (it.isExpression()) firExpression = visitExpression(it)
+            }
+        }
+
+        return FirDelegatedTypeRefImpl(
+            session,
+            firTypeRef,
+            firExpression
+        )
+    }
+
+    /*****    TYPES    *****/
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeParameterList
      */
@@ -918,6 +1010,36 @@ class Converter(
                 TYPE_PARAMETER -> container += convertTypeParameter(node)
             }
         }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeConstraintList
+     */
+    private fun convertTypeConstraints(typeConstraints: LighterASTNode): List<TypeConstraint> {
+        return typeConstraints.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                TYPE_CONSTRAINT -> container += convertTypeConstraint(node)
+            }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeConstraint
+     */
+    private fun convertTypeConstraint(typeConstraint: LighterASTNode): TypeConstraint {
+        lateinit var identifier: String
+        lateinit var firType: FirTypeRef
+        val annotations = mutableListOf<FirAnnotationCall>()
+        typeConstraint.forEachChildren {
+            when (it.tokenType) {
+                //annotations will be saved later, on mapping stage with type parameters
+                ANNOTATION, ANNOTATION_ENTRY -> annotations += convertAnnotation(it)
+                REFERENCE_EXPRESSION -> identifier = it.getAsString()
+                TYPE_REFERENCE -> firType = convertType(it)
+            }
+        }
+
+        return TypeConstraint(annotations, identifier, firType)
     }
 
     /**
@@ -950,21 +1072,6 @@ class Converter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
-     */
-    private fun convertTypeParameterModifiers(typeParameterModifiers: LighterASTNode): TypeParameterModifier {
-        val modifier = TypeParameterModifier(session)
-        typeParameterModifiers.forEachChildren {
-            when (it.tokenType) {
-                ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
-                is KtModifierKeywordToken -> modifier.addModifier(it)
-            }
-        }
-        return modifier
-    }
-
-    /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRef
      */
     private fun convertType(type: LighterASTNode): FirTypeRef {
@@ -973,7 +1080,7 @@ class Converter(
         type.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firType = convertType(it)
-                MODIFIER_LIST -> typeModifiers = convertTypeModifiers(it)
+                MODIFIER_LIST -> typeModifiers = convertTypeModifierList(it)
                 USER_TYPE -> firType = convertUserType(it).also { firUserType -> (firUserType as FirUserTypeRefImpl).qualifier.reverse() }
                 NULLABLE_TYPE -> firType = convertNullableType(it)
                 FUNCTION_TYPE -> firType = convertFunctionType(it)
@@ -985,18 +1092,17 @@ class Converter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRefContents
      */
-    private fun convertTypeModifiers(typeModifiers: LighterASTNode): TypeModifier {
-        val modifier = TypeModifier(session)
-        typeModifiers.forEachChildren {
+    private fun convertReceiverType(receiverType: LighterASTNode): FirTypeRef {
+        receiverType.forEachChildren {
             when (it.tokenType) {
-                ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
-                is KtModifierKeywordToken -> modifier.addModifier(it)
+                TYPE_REFERENCE -> return convertType(it)
             }
         }
-        return modifier
+
+        //TODO specify error
+        throw Exception()
     }
 
     /**
@@ -1015,44 +1121,6 @@ class Converter(
         }
 
         return firType
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionType
-     */
-    private fun convertFunctionType(functionType: LighterASTNode, isNullable: Boolean = false): FirTypeRef {
-        var receiverTypeReference: FirTypeRef? = null
-        lateinit var returnTypeReference: FirTypeRef
-        val valueParametersList = mutableListOf<ValueParameter>()
-        functionType.forEachChildren {
-            when (it.tokenType) {
-                FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
-                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it)
-                TYPE_REFERENCE -> returnTypeReference = convertType(it)
-            }
-        }
-
-        return FirFunctionTypeRefImpl(
-            session,
-            null,
-            isNullable,
-            receiverTypeReference,
-            returnTypeReference
-        ).apply { valueParameters += valueParametersList.map { it.firValueParameter } }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRefContents
-     */
-    private fun convertReceiverType(receiverType: LighterASTNode): FirTypeRef {
-        receiverType.forEachChildren {
-            when (it.tokenType) {
-                TYPE_REFERENCE -> return convertType(it)
-            }
-        }
-
-        //TODO specify error
-        throw Exception()
     }
 
     /**
@@ -1085,48 +1153,6 @@ class Converter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeConstraintList
-     */
-    private fun convertTypeConstraints(typeConstraints: LighterASTNode): List<TypeConstraint> {
-        return typeConstraints.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                TYPE_CONSTRAINT -> container += convertTypeConstraint(node)
-            }
-        }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeConstraint
-     */
-    private fun convertTypeConstraint(typeConstraint: LighterASTNode): TypeConstraint {
-        lateinit var identifier: String
-        lateinit var firType: FirTypeRef
-        val annotations = mutableListOf<FirAnnotationCall>()
-        typeConstraint.forEachChildren {
-            when (it.tokenType) {
-                //TODO where save annotations
-                ANNOTATION, ANNOTATION_ENTRY -> annotations += convertAnnotation(it)
-                REFERENCE_EXPRESSION -> identifier = it.getAsString()
-                TYPE_REFERENCE -> firType = convertType(it)
-            }
-        }
-
-        return TypeConstraint(annotations, identifier, firType)
-    }
-
-    //TODO move to parsing class?
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseValueArgumentList
-     */
-    private fun convertValueArguments(valueArguments: LighterASTNode): List<FirExpression> {
-        return valueArguments.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                VALUE_ARGUMENT -> container += convertValueArgument(node)
-            }
-        }
-    }
-
-    /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentList
      */
     private fun convertTypeArguments(typeArguments: LighterASTNode): List<FirTypeProjection> {
@@ -1146,13 +1172,13 @@ class Converter(
         var isStarProjection = false
         typeProjection.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertTypeProjectionModifiers(it)
+                MODIFIER_LIST -> modifiers = convertTypeArgumentModifierList(it)
                 TYPE_REFERENCE -> firType = convertType(it)
                 MUL -> isStarProjection = true
             }
         }
 
-        //TODO what with annotations?
+        //annotations from modifiers must be ignored
         return if (isStarProjection) FirStarProjectionImpl(session, null)
         else FirTypeProjectionWithVarianceImpl(
             session,
@@ -1163,18 +1189,85 @@ class Converter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionType
      */
-    private fun convertTypeProjectionModifiers(modifiers: LighterASTNode): TypeProjectionModifier {
-        val modifier = TypeProjectionModifier(session)
-        modifiers.forEachChildren {
+    private fun convertFunctionType(functionType: LighterASTNode, isNullable: Boolean = false): FirTypeRef {
+        var receiverTypeReference: FirTypeRef? = null
+        lateinit var returnTypeReference: FirTypeRef
+        val valueParametersList = mutableListOf<ValueParameter>()
+        functionType.forEachChildren {
             when (it.tokenType) {
-                ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
-                is KtModifierKeywordToken -> modifier.addModifier(it)
+                FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
+                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it)
+                TYPE_REFERENCE -> returnTypeReference = convertType(it)
             }
         }
-        return modifier
+
+        return FirFunctionTypeRefImpl(
+            session,
+            null,
+            isNullable,
+            receiverTypeReference,
+            returnTypeReference
+        ).apply { valueParameters += valueParametersList.map { it.firValueParameter } }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameterList
+     */
+    private fun convertValueParameters(valueParameters: LighterASTNode): List<ValueParameter> {
+        return valueParameters.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                VALUE_PARAMETER -> container += convertValueParameter(node)
+            }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameter
+     */
+    private fun convertValueParameter(valueParameter: LighterASTNode): ValueParameter {
+        var modifiers = Modifier(session)
+        var isVal = false
+        var isVar = false
+        var identifier: String? = null
+        var firType: FirTypeRef? = null
+        var firExpression: FirExpression? = null
+        valueParameter.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                VAL_KEYWORD -> isVal = true
+                VAR_KEYWORD -> isVar = true
+                IDENTIFIER -> identifier = it.getAsString()
+                TYPE_REFERENCE -> firType = convertType(it)
+                else -> if (it.isExpression()) firExpression = visitExpression(it)
+            }
+        }
+
+        val firValueParameter = FirValueParameterImpl(
+            session,
+            null,
+            identifier.nameAsSafeName(),
+            firType ?: implicitType,
+            firExpression,
+            isCrossinline = modifiers.hasCrossinline(),
+            isNoinline = modifiers.hasNoinline(),
+            isVararg = modifiers.hasVararg()
+        ).apply { annotations += modifiers.annotations }
+        return ValueParameter(isVal, isVar, modifiers, firValueParameter)
+    }
+
+    /*****    EXPRESSIONS    *****/
+    //TODO move to parsing class?
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseValueArgumentList
+     */
+    private fun convertValueArguments(valueArguments: LighterASTNode): List<FirExpression> {
+        return valueArguments.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                VALUE_ARGUMENT -> container += convertValueArgument(node)
+            }
+        }
     }
 
     private fun convertValueArgument(valueArgument: LighterASTNode): FirExpression {
@@ -1196,80 +1289,8 @@ class Converter(
          */
     }
 
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
-     */
-    private fun convertModifiers(modifiers: LighterASTNode): Modifier {
-        val modifier = Modifier(session)
-        modifiers.forEachChildren {
-            when (it.tokenType) {
-                ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> modifier.annotations += convertUnescapedAnnotation(it, null)
-                is KtModifierKeywordToken -> modifier.addModifier(it)
-            }
-        }
-        return modifier
-    }
-
-    private fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
-        var annotationTarget: AnnotationUseSiteTarget? = null
-        return annotationNode.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ANNOTATION_TARGET -> annotationTarget = convertAnnotationTarget(node)
-                ANNOTATION_ENTRY -> container += convertUnescapedAnnotation(node, annotationTarget)
-            }
-        }
-    }
-
-    private fun convertAnnotationTarget(annotationUseSiteTarget: LighterASTNode): AnnotationUseSiteTarget {
-        lateinit var annotationTarget: AnnotationUseSiteTarget
-        annotationUseSiteTarget.forEachChildren {
-            when (it.tokenType) {
-                FILE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FILE
-                PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
-                GET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_GETTER
-                SET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_SETTER
-                RECEIVER_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.RECEIVER
-                PARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-                SETPARAM_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.SETTER_PARAMETER
-                DELEGATE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-            }
-        }
-
-        return annotationTarget
-    }
-
-    //equals to ANNOTATION_ENTRY
-    private fun convertUnescapedAnnotation(
-        unescapedAnnotation: LighterASTNode,
-        annotationUseSiteTarget: AnnotationUseSiteTarget?
-    ): FirAnnotationCall {
-        //TODO not implemented
-        val pair = convertConstructorInvocation(unescapedAnnotation)
-        return FirAnnotationCallImpl(
-            session,
-            null,
-            annotationUseSiteTarget,
-            pair.first
-        ).apply {
-            arguments += pair.second
-        }
-    }
-
     private fun visitExpression(expression: LighterASTNode): FirExpression {
         return if (stubMode) FirExpressionStub(session, null)
         else TODO("not implemented")
-    }
-
-    private fun visitBlock(block: LighterASTNode?): FirBlock {
-        return if (!stubMode) {
-            TODO("not implemented")
-            //visitStatements(ctx.statements())
-        } else {
-            FirSingleExpressionBlock(
-                session,
-                FirExpressionStub(session, null).toReturn()
-            )
-        }
     }
 }
