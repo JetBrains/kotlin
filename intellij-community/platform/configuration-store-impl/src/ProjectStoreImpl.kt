@@ -45,7 +45,7 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(PathMacroManager.getInstance(project)), project)
 
   override fun setPath(path: String) {
-    setPath(path, true, null)
+    setPath(Paths.get(path), true, null)
   }
 
   override fun getProjectName(): String {
@@ -154,7 +154,7 @@ open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(proj
 
     return withEdtContext {
       // do no create with capacity because very rarely a lot of modules will be modified
-      val saveSessions: MutableList<SaveSession> = SmartList<SaveSession>()
+      val saveSessions: MutableList<SaveSession> = SmartList()
       // commit components
       for (module in modules) {
         val moduleStore = ModuleServiceManager.getService(module, IComponentStore::class.java) as ComponentStoreImpl
