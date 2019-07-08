@@ -11,7 +11,6 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:cli"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
     compile(kotlinStdlib())

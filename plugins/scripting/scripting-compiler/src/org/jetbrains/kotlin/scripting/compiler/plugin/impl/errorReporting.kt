@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.scripting.definitions.MessageReporter
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.script.experimental.api.ResultWithDiagnostics
@@ -32,15 +33,7 @@ internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollec
         _diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR } || parentMessageCollector?.hasErrors() == true
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-        val mappedSeverity = when (severity) {
-            CompilerMessageSeverity.EXCEPTION,
-            CompilerMessageSeverity.ERROR -> ScriptDiagnostic.Severity.ERROR
-            CompilerMessageSeverity.STRONG_WARNING,
-            CompilerMessageSeverity.WARNING -> ScriptDiagnostic.Severity.WARNING
-            CompilerMessageSeverity.INFO -> ScriptDiagnostic.Severity.INFO
-            CompilerMessageSeverity.LOGGING -> ScriptDiagnostic.Severity.DEBUG
-            else -> null
-        }
+        val mappedSeverity = severity.toScriptingSeverity()
         if (mappedSeverity != null) {
             val mappedLocation = location?.let {
                 if (it.line < 0 && it.column < 0) null // special location created by CompilerMessageLocation.create
@@ -55,6 +48,24 @@ internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollec
         }
         parentMessageCollector?.report(severity, message, location)
     }
+}
+
+private fun CompilerMessageSeverity.toScriptingSeverity(): ScriptDiagnostic.Severity? = when (this) {
+    CompilerMessageSeverity.EXCEPTION,
+    CompilerMessageSeverity.ERROR -> ScriptDiagnostic.Severity.ERROR
+    CompilerMessageSeverity.STRONG_WARNING,
+    CompilerMessageSeverity.WARNING -> ScriptDiagnostic.Severity.WARNING
+    CompilerMessageSeverity.INFO -> ScriptDiagnostic.Severity.INFO
+    CompilerMessageSeverity.LOGGING -> ScriptDiagnostic.Severity.DEBUG
+    CompilerMessageSeverity.OUTPUT -> null
+}
+
+private fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessageSeverity = when (this) {
+    ScriptDiagnostic.Severity.ERROR -> CompilerMessageSeverity.ERROR
+    ScriptDiagnostic.Severity.WARNING -> CompilerMessageSeverity.WARNING
+    ScriptDiagnostic.Severity.INFO -> CompilerMessageSeverity.INFO
+    ScriptDiagnostic.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
+    ScriptDiagnostic.Severity.FATAL -> CompilerMessageSeverity.EXCEPTION
 }
 
 internal fun failure(
@@ -134,3 +145,9 @@ private fun reportIgnoredArguments(
         messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "$message${ignoredArgKeys.joinToString(", ")}")
     }
 }
+
+val MessageCollector.reporter: MessageReporter
+    get() = { severity, message ->
+        this.report(severity.toCompilerMessageSeverity(), message)
+    }
+

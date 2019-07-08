@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.GenericReplCompiler
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.KOTLIN_REPL_JVM_TARGET_PROPERTY
 import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
-import org.jetbrains.kotlin.scripting.repl.GenericReplCompiler
-import org.jetbrains.kotlin.scripting.repl.KOTLIN_REPL_JVM_TARGET_PROPERTY
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
