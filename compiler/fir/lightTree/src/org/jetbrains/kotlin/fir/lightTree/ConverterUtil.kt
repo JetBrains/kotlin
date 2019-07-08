@@ -121,11 +121,12 @@ object ConverterUtil {
     }
 
     fun FirTypeParameterContainer.joinTypeParameters(typeConstraints: List<TypeConstraint>) {
-        typeConstraints.forEach { (identifier, type) ->
+        typeConstraints.forEach { typeConstraint ->
             this.typeParameters.forEach { typeParameter ->
-                if (identifier == typeParameter.name.identifier) {
-                    (typeParameter as FirTypeParameterImpl).bounds += type
-                    typeParameter.annotations += type.annotations
+                if (typeConstraint.identifier == typeParameter.name.identifier) {
+                    (typeParameter as FirTypeParameterImpl).bounds += typeConstraint.firTypeRef
+                    typeParameter.annotations += typeConstraint.firTypeRef.annotations
+                    typeParameter.annotations += typeConstraint.annotations
                 }
             }
         }
