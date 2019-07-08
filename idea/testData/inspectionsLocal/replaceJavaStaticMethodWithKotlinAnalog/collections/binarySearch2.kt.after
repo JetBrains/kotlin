@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+import java.util.Arrays
+
+fun test() {
+    val array = arrayOf(1, 2, 3)
+    val key = 3
+    val from = 1
+    val to = 4
+    val result = array.binarySearch(key, from, to)
+}

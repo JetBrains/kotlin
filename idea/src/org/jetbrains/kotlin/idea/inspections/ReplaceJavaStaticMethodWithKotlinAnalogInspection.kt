@@ -127,7 +127,8 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
         )
 
         private val JAVA_SYSTEM = listOf(
-            Replacement("java.lang.System.exit", "kotlin.system.exitProcess")
+            Replacement("java.lang.System.exit", "kotlin.system.exitProcess"),
+            Replacement("java.lang.System.arraycopy", "kotlin.collections.copyInto", toExtensionFunction = true) // TODO: mapping
         )
 
         private val JAVA_MATH = listOf(
@@ -171,6 +172,21 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", toExtensionFunction = true) {
                 it.valueArguments.size == 2
             },
+            Replacement("java.util.Arrays.copyOfRange", "kotlin.collections.copyOfRange", toExtensionFunction = true),
+            Replacement("java.util.Arrays.binarySearch", "kotlin.collections.binarySearch", toExtensionFunction = true), // TODO: mapping
+            Replacement("java.util.Arrays.equals", "kotlin.collections.contentEquals", toExtensionFunction = true),
+            Replacement("java.util.Arrays.deepEquals", "kotlin.collections.contentDeepEquals", toExtensionFunction = true),
+            Replacement("java.util.Arrays.fill", "kotlin.collections.fill", toExtensionFunction = true),  // TODO: mapping
+            Replacement("java.util.Arrays.sort", "kotlin.collections.sort", toExtensionFunction = true) {
+                it.valueArguments.size == 3
+            }, //TODO: mapping?
+            Replacement("java.util.Arrays.sort", "kotlin.collections.sortWith", toExtensionFunction = true) {
+                it.valueArguments.size != 3
+            },
+            Replacement("java.util.Arrays.deepHashCode", "kotlin.collections.contentDeepHashCode", toExtensionFunction = true),
+            Replacement("java.util.Arrays.hashCode", "kotlin.collections.contentHashCode", toExtensionFunction = true),
+            Replacement("java.util.Arrays.deepToString", "kotlin.collections.contentDeepToString", toExtensionFunction = true),
+            Replacement("java.util.Arrays.toString", "kotlin.collections.contentToString", toExtensionFunction = true),
             Replacement("java.util.Arrays.asList", "kotlin.collections.listOf"),
             Replacement("java.util.Arrays.asList", "kotlin.collections.mutableListOf"),
             Replacement("java.util.Set.of", "kotlin.collections.setOf"),

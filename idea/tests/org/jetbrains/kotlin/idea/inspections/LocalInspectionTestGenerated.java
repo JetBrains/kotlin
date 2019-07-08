@@ -9061,9 +9061,49 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/asList.kt");
             }
 
+            @TestMetadata("binarySearch.kt")
+            public void testBinarySearch() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/binarySearch.kt");
+            }
+
+            @TestMetadata("binarySearch2.kt")
+            public void testBinarySearch2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/binarySearch2.kt");
+            }
+
             @TestMetadata("copyOf.kt")
             public void testCopyOf() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/copyOf.kt");
+            }
+
+            @TestMetadata("copyOfRange.kt")
+            public void testCopyOfRange() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/copyOfRange.kt");
+            }
+
+            @TestMetadata("deepEquals.kt")
+            public void testDeepEquals() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/deepEquals.kt");
+            }
+
+            @TestMetadata("deepHashCode.kt")
+            public void testDeepHashCode() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/deepHashCode.kt");
+            }
+
+            @TestMetadata("deepToString.kt")
+            public void testDeepToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/deepToString.kt");
+            }
+
+            @TestMetadata("equals.kt")
+            public void testEquals() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/equals.kt");
+            }
+
+            @TestMetadata("hashCode.kt")
+            public void testHashCode() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/hashCode.kt");
             }
 
             @TestMetadata("mutableListOf.kt")
@@ -9099,6 +9139,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("setOf2.kt")
             public void testSetOf2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/setOf2.kt");
+            }
+
+            @TestMetadata("toString.kt")
+            public void testToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/toString.kt");
             }
         }
 
@@ -9381,6 +9426,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             public void testAllFilesPresentInSystem() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("arraycopy.kt")
+            public void testArraycopy() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system/arraycopy.kt");
             }
 
             @TestMetadata("exit.kt")
