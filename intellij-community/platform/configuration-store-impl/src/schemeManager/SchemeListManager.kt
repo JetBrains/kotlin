@@ -3,7 +3,6 @@ package com.intellij.configurationStore.schemeManager
 
 import com.intellij.configurationStore.LOG
 import com.intellij.openapi.options.ExternalizableScheme
-import com.intellij.util.containers.ConcurrentList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.filterSmart
 import com.intellij.util.text.UniqueNameGenerator
@@ -12,15 +11,15 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Predicate
 
 internal class SchemeListManager<T : Any>(private val schemeManager: SchemeManagerImpl<T, *>) {
-  private val schemesRef = AtomicReference(ContainerUtil.createLockFreeCopyOnWriteList<T>() as ConcurrentList<T>)
+  private val schemesRef = AtomicReference(ContainerUtil.createLockFreeCopyOnWriteList<T>())
 
   internal val readOnlyExternalizableSchemes = ContainerUtil.newConcurrentMap<String, T>()
 
-  val schemes: ConcurrentList<T>
+  val schemes: MutableList<T>
     get() = schemesRef.get()
 
-  fun replaceSchemeList(oldList: ConcurrentList<T>, newList: List<T>) {
-    if (!schemesRef.compareAndSet(oldList, ContainerUtil.createLockFreeCopyOnWriteList(newList) as ConcurrentList<T>)) {
+  fun replaceSchemeList(oldList: List<T>, newList: List<T>) {
+    if (!schemesRef.compareAndSet(oldList, ContainerUtil.createLockFreeCopyOnWriteList(newList))) {
       throw IllegalStateException("Scheme list was modified")
     }
   }

@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.SafeWriteRequestor
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.util.*
-import com.intellij.util.containers.ConcurrentList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.catch
 import com.intellij.util.containers.mapSmart
@@ -58,7 +57,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
 
   internal val schemeListManager = SchemeListManager(this)
 
-  internal val schemes: ConcurrentList<T>
+  internal val schemes: MutableList<T>
     get() = schemeListManager.schemes
 
   internal var cachedVirtualDirectory: VirtualFile? = null

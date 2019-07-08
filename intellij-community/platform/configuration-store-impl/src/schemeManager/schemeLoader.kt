@@ -8,7 +8,6 @@ import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.ConcurrentList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.systemIndependentPath
@@ -26,12 +25,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Function
 
 internal class SchemeLoader<T : Any, MUTABLE_SCHEME : T>(private val schemeManager: SchemeManagerImpl<T, MUTABLE_SCHEME>,
-                                                         private val oldSchemes: ConcurrentList<T>,
+                                                         private val oldSchemes: List<T>,
                                                          private val preScheduledFilesToDelete: MutableSet<String>,
                                                          private val isDuringLoad: Boolean) {
   private val filesToDelete: MutableSet<String> = THashSet<String>()
 
-  private val schemes = oldSchemes.toMutableList()
+  private val schemes: MutableList<T> = oldSchemes.toMutableList()
   private var newSchemesOffset = schemes.size
 
   // scheme could be changed - so, hashcode will be changed - we must use identity hashing strategy
@@ -193,7 +192,7 @@ internal class SchemeLoader<T : Any, MUTABLE_SCHEME : T>(private val schemeManag
       retainProbablyScheduledForDeleteFile(fileName)
     }
 
-    schemes.add(scheme)
+    schemes.add(scheme!!)
     return scheme
   }
 
