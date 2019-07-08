@@ -38,6 +38,10 @@ fun toString(o: dynamic): String = when {
 
 fun anyToString(o: dynamic): String = js("Object").prototype.toString.call(o)
 
+private fun hasOwnPrototypeProperty(o: Any, name: String): Boolean {
+    return JsObject.getPrototypeOf(o).hasOwnProperty(name).unsafeCast<Boolean>()
+}
+
 fun hashCode(obj: dynamic): Int {
     if (obj == null)
         return 0
@@ -95,8 +99,12 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
 
 internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
     js("Error").call(this_)
-    this_.message = message ?: cause?.toString() ?: undefined
-    this_.cause = cause
+    if (!hasOwnPrototypeProperty(this_, "message")) {
+        this_.message = message ?: cause?.toString() ?: undefined
+    }
+    if (!hasOwnPrototypeProperty(this_, "cause")) {
+        this_.cause = cause
+    }
     this_.name = JsObject.getPrototypeOf(this_).constructor.name
     captureStack(this_)
 }

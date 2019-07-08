@@ -2712,6 +2712,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/try/nestedTryCatchInCatch.kt");
             }
 
+            @TestMetadata("overrideThrowableProperties.kt")
+            public void testOverrideThrowableProperties() throws Exception {
+                runTest("js/js.translator/testData/box/expression/try/overrideThrowableProperties.kt");
+            }
+
             @TestMetadata("rethrowExceptionIfNotCaught.kt")
             public void testRethrowExceptionIfNotCaught() throws Exception {
                 runTest("js/js.translator/testData/box/expression/try/rethrowExceptionIfNotCaught.kt");
