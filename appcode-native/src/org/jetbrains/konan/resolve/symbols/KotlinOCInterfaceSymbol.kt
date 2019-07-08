@@ -19,13 +19,18 @@ import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.createSuperType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 
-class KotlinOCInterfaceSymbol(
-    stub: ObjCInterface,
-    project: Project,
-    file: VirtualFile
-) : KotlinOCClassSymbol<KotlinOCInterfaceSymbol.InterfaceState, ObjCInterface>(stub, project, file), OCInterfaceSymbol {
+class KotlinOCInterfaceSymbol
+    : KotlinOCClassSymbol<KotlinOCInterfaceSymbol.InterfaceState, ObjCInterface>, OCInterfaceSymbol {
 
-    private val categoryName: String? = stub.categoryName
+    private var categoryName: String?
+
+    constructor(stub: ObjCInterface, project: Project, file: VirtualFile) : super(stub, project, file) {
+        this.categoryName = stub.categoryName
+    }
+
+    constructor() : super() {
+        this.categoryName = null
+    }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.INTERFACE
 
@@ -59,8 +64,17 @@ class KotlinOCInterfaceSymbol(
 
     override fun computeState(stub: ObjCInterface, project: Project): InterfaceState = InterfaceState(this, stub, project)
 
-    class InterfaceState(clazz: KotlinOCInterfaceSymbol, stub: ObjCInterface, project: Project) : ClassState(clazz, stub, project) {
-        val superType: OCReferenceType = createSuperType(stub.superClass, stub.superProtocols)
-        val isTemplateSymbol: Boolean = stub.generics.isNotEmpty()
+    class InterfaceState : ClassState {
+        lateinit var superType: OCReferenceType
+        val isTemplateSymbol: Boolean
+
+        constructor(clazz: KotlinOCInterfaceSymbol, stub: ObjCInterface, project: Project) : super(clazz, stub, project) {
+            this.superType = createSuperType(stub.superClass, stub.superProtocols)
+            this.isTemplateSymbol = stub.generics.isNotEmpty()
+        }
+
+        constructor() : super() {
+            isTemplateSymbol = false
+        }
     }
 }

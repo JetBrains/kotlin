@@ -16,11 +16,10 @@ import com.jetbrains.cidr.lang.types.OCType
 import org.jetbrains.konan.resolve.createSuperType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 
-class KotlinOCProtocolSymbol(
-    stub: ObjCProtocol,
-    project: Project,
-    file: VirtualFile
-) : KotlinOCClassSymbol<KotlinOCProtocolSymbol.ProtocolState, ObjCProtocol>(stub, project, file), OCProtocolSymbol {
+class KotlinOCProtocolSymbol : KotlinOCClassSymbol<KotlinOCProtocolSymbol.ProtocolState, ObjCProtocol>, OCProtocolSymbol {
+
+    constructor(stub: ObjCProtocol, project: Project, file: VirtualFile) : super(stub, project, file)
+    constructor() : super()
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PROTOCOL
 
@@ -34,7 +33,13 @@ class KotlinOCProtocolSymbol(
 
     override fun computeState(stub: ObjCProtocol, project: Project): ProtocolState = ProtocolState(this, stub, project)
 
-    class ProtocolState(clazz: KotlinOCProtocolSymbol, stub: ObjCProtocol, project: Project) : KotlinOCClassSymbol.ClassState(clazz, stub, project) {
-        val superType: OCReferenceType = createSuperType(null, stub.superProtocols)
+    class ProtocolState : ClassState {
+        lateinit var superType: OCReferenceType
+
+        constructor(clazz: KotlinOCProtocolSymbol, stub: ObjCProtocol, project: Project) : super(clazz, stub, project) {
+            this.superType = createSuperType(null, stub.superProtocols)
+        }
+
+        constructor() : super()
     }
 }

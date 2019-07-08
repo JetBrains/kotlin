@@ -15,20 +15,33 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater
 
-abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, Stb : Stub<*>>(
-    stub: Stb,
-    project: Project,
-    @Transient private val file: VirtualFile
-) : OCSymbol, OCForeignSymbol {
+abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, Stb : Stub<*>>
+    : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtSymbol {
 
-    private val name: String = stub.name
+    @Transient
+    private lateinit var file: VirtualFile
+    private lateinit var name: String
 
     @Volatile
     private var _state: State? = null
 
     @Transient
     @Volatile
-    private var stubAndProject: Pair<Stb, Project>? = Pair(stub, project)
+    private var stubAndProject: Pair<Stb, Project>?
+
+    constructor(
+        stub: Stb,
+        project: Project,
+        file: VirtualFile
+    ) {
+        this.file = file
+        this.name = stub.name
+        this.stubAndProject = Pair(stub, project)
+    }
+
+    constructor() {
+        stubAndProject = null
+    }
 
     protected val state: State
         get() {
@@ -88,8 +101,24 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
         _state!!.offset = complexOffset
     }
 
-    abstract class StubState(stub: Stub<*>) {
-        var offset: Long = stub.offset
+    override fun init(file: VirtualFile) {
+        this.file = file
+    }
+
+    fun ensureStateLoaded() {
+        state
+    }
+
+    abstract class StubState {
+        constructor(stub: Stub<*>) {
+            this.offset = stub.offset
+        }
+
+        constructor() {
+            this.offset = 0
+        }
+
+        var offset: Long
             internal set
     }
 
@@ -97,7 +126,7 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
         private val valueUpdater = newUpdater(
             KotlinOCWrapperSymbol::class.java,
             KotlinOCWrapperSymbol.StubState::class.java,
-            "myState"
+            "_state"
         )
     }
 }

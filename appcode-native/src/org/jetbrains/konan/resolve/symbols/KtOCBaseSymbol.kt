@@ -8,13 +8,21 @@ import com.jetbrains.cidr.lang.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-abstract class KtOCBaseSymbol(
-    stub: Stub<*>,
-    @Transient private val file: VirtualFile
-) : OCSymbol, OCForeignSymbol {
+abstract class KtOCBaseSymbol : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtSymbol {
+    @Transient private lateinit var file: VirtualFile
 
-    private val name: String = stub.name
-    private var offset: Long = stub.offset
+    private lateinit var name: String
+    private var offset: Long
+
+    constructor(stub: Stub<*>, file: VirtualFile) {
+        this.file = file
+        name = stub.name
+        offset = stub.offset
+    }
+
+    constructor() {
+        offset = 0
+    }
 
     override fun getName(): String = name
 
@@ -45,5 +53,9 @@ abstract class KtOCBaseSymbol(
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return super.isSameSymbol(symbol, project)
                || symbol is KotlinLightSymbol && locateDefinition(project) == symbol.locateDefinition(project)
+    }
+
+    override fun init(file: VirtualFile) {
+        this.file = file
     }
 }

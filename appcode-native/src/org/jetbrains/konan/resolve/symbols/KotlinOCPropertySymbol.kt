@@ -17,17 +17,29 @@ import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 
-class KotlinOCPropertySymbol(
-    stub: ObjCProperty,
-    project: Project,
-    file: VirtualFile,
-    containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol(stub, file, containingClass), OCPropertySymbol {
+class KotlinOCPropertySymbol : KotlinOCMemberSymbol, OCPropertySymbol {
 
-    private val type: OCType = stub.type.toOCType(project, containingClass)
-    private val attributes: List<String> = stub.propertyAttributes
-    private val getterName: String? = stub.getterName
-    private val setterName: String? = stub.setterName
+    private lateinit var type: OCType
+    private lateinit var attributes: List<String>
+    private var externalGetterName: String?
+    private var externalSetterName: String?
+
+    constructor(
+        stub: ObjCProperty,
+        project: Project,
+        file: VirtualFile,
+        containingClass: OCClassSymbol
+    ) : super(stub, file, containingClass) {
+        this.type = stub.type.toOCType(project, containingClass)
+        this.attributes = stub.propertyAttributes
+        this.externalGetterName = stub.getterName
+        this.externalSetterName = stub.setterName
+    }
+
+    constructor() : super() {
+        this.externalGetterName = null
+        this.externalSetterName = null
+    }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PROPERTY
 
@@ -39,16 +51,16 @@ class KotlinOCPropertySymbol(
 
     override fun hasAttribute(attribute: OCPropertySymbol.PropertyAttribute): Boolean {
         return attributes.contains(attribute.tokenName) ||
-               attribute == OCPropertySymbol.PropertyAttribute.GETTER && getterName != null ||
-               attribute == OCPropertySymbol.PropertyAttribute.SETTER && setterName != null
+               attribute == OCPropertySymbol.PropertyAttribute.GETTER && externalGetterName != null ||
+               attribute == OCPropertySymbol.PropertyAttribute.SETTER && externalSetterName != null
     }
 
     override fun getNameWithParent(context: OCResolveContext): String = "${parent.name}.$name"
 
     override fun getAttributeValue(attribute: OCPropertySymbol.ValueAttribute): String? {
         return when (attribute) {
-            OCPropertySymbol.ValueAttribute.GETTER -> getterName
-            OCPropertySymbol.ValueAttribute.SETTER -> setterName
+            OCPropertySymbol.ValueAttribute.GETTER -> externalGetterName
+            OCPropertySymbol.ValueAttribute.SETTER -> externalSetterName
             else -> throw IllegalArgumentException("Unsupported value attribute: $attribute")
         }
     }
@@ -56,6 +68,4 @@ class KotlinOCPropertySymbol(
     override fun getType(): OCType = type
 
     override fun getAttributes(): List<String> = super<KotlinOCMemberSymbol>.getAttributes()
-    override fun getGetterName(): String = super.getGetterName()
-    override fun getSetterName(): String = super.getSetterName()
 }

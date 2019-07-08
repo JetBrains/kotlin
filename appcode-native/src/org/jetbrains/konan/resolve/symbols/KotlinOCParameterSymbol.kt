@@ -18,15 +18,23 @@ import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 
-class KotlinOCParameterSymbol(
-    stub: ObjCParameter,
-    project: Project,
-    file: VirtualFile,
-    private val containingClass: OCClassSymbol
-) : KtOCBaseSymbol(stub, file), OCDeclaratorSymbol {
+class KotlinOCParameterSymbol : KtOCBaseSymbol, OCDeclaratorSymbol {
+    private lateinit var containingClass: OCClassSymbol
+    private lateinit var qualifiedName: OCQualifiedName
+    private lateinit var type: OCType
 
-    private val qualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
-    private val type: OCType = stub.type.toOCType(project, containingClass)
+    constructor(
+        stub: ObjCParameter,
+        project: Project,
+        file: VirtualFile,
+        containingClass: OCClassSymbol
+    ) : super(stub, file) {
+        this.containingClass = containingClass
+        this.qualifiedName = OCQualifiedName.interned(name)
+        this.type = stub.type.toOCType(project, containingClass)
+    }
+
+    constructor() : super()
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.PARAMETER
 

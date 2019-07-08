@@ -21,13 +21,16 @@ import com.jetbrains.cidr.lang.types.OCObjectType
 import org.jetbrains.konan.resolve.StubToSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
-abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub : ObjCClass<*>>(
-    stub: Stub,
-    project: Project,
-    file: VirtualFile
-) : KotlinOCWrapperSymbol<State, Stub>(stub, project, file), OCClassSymbol {
+abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub : ObjCClass<*>>
+    : KotlinOCWrapperSymbol<State, Stub>, OCClassSymbol {
 
-    private val qualifiedName: OCQualifiedName = OCQualifiedName.interned(name)
+    private lateinit var qualifiedName: OCQualifiedName
+
+    constructor(stub: Stub, project: Project, file: VirtualFile) : super(stub, project, file) {
+        this.qualifiedName = OCQualifiedName.interned(stub.name)
+    }
+
+    constructor() : super()
 
     override fun isGlobal(): Boolean = true
 
@@ -74,14 +77,13 @@ abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub :
 
     override fun dropSubstitution(): OCSymbol = this
 
-    open class ClassState(clazz: KotlinOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : KotlinOCWrapperSymbol.StubState(stub) {
+    open class ClassState : StubState {
         val members: MostlySingularMultiMap<String, OCMemberSymbol>?
-        val protocolNames: List<String> = stub.superProtocols
+        lateinit var protocolNames: List<String>
 
-        init {
+        constructor(clazz: KotlinOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
+            this.protocolNames = stub.superProtocols
             val translator = StubToSymbolTranslator(project)
-
-            //we don't want to store empty map, so let's initialize it only if there're any members
             var map: MostlySingularMultiMap<String, OCMemberSymbol>? = null
             for (member in stub.members) {
                 val translatedMember = translator.translateMember(member, clazz, clazz.containingFile)
@@ -91,6 +93,10 @@ abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub :
                 }
             }
             members = map
+        }
+
+        constructor() : super() {
+            members = null
         }
     }
 }

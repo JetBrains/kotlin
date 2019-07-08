@@ -21,16 +21,25 @@ import org.jetbrains.konan.resolve.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import java.util.*
 
-class KotlinOCMethodSymbol(
-    stub: ObjCMethod,
-    project: Project,
-    file: VirtualFile,
-    containingClass: OCClassSymbol
-) : KotlinOCMemberSymbol(stub, file, containingClass), OCMethodSymbol {
+class KotlinOCMethodSymbol : KotlinOCMemberSymbol, OCMethodSymbol {
 
     private lateinit var selectors: List<OCMethodSymbol.SelectorPartSymbol>
-    private val returnType: OCType = stub.returnType.toOCType(project, containingClass)
-    private val isStatic: Boolean = !stub.isInstanceMethod
+    private lateinit var returnType: OCType
+    private var isStatic: Boolean
+
+    constructor(
+        stub: ObjCMethod,
+        project: Project,
+        file: VirtualFile,
+        containingClass: OCClassSymbol
+    ) : super(stub, file, containingClass) {
+        this.returnType = stub.returnType.toOCType(project, containingClass)
+        this.isStatic = !stub.isInstanceMethod
+    }
+
+    constructor() : super() {
+        this.isStatic = false
+    }
 
     override fun getKind(): OCSymbolKind = OCSymbolKind.METHOD
 

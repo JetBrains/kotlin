@@ -10,11 +10,15 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
-abstract class KotlinOCMemberSymbol(
-    stub: Stub<*>,
-    file: VirtualFile,
-    private val containingClass: OCClassSymbol
-) : KtOCBaseSymbol(stub, file), OCMemberSymbol {
+abstract class KotlinOCMemberSymbol : KtOCBaseSymbol, OCMemberSymbol {
+
+    private lateinit var containingClass: OCClassSymbol
+
+    constructor(stub: Stub<*>, file: VirtualFile, containingClass: OCClassSymbol) : super(stub, file) {
+        this.containingClass = containingClass
+    }
+
+    constructor() : super()
 
     override fun isGlobal(): Boolean = false
 
