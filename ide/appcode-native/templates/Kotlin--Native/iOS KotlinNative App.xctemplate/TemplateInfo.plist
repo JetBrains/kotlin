@@ -122,13 +122,10 @@ cp "$TARGET_BUILD_DIR/$TARGET_NAME.kexe" "$TARGET_BUILD_DIR/$EXECUTABLE_PATH"</s
 			<array/>
 		</dict>
 		<key>src/___PACKAGENAMEASIDENTIFIER___Main/kotlin/AppDelegate.kt:body</key>
-		<string>import kotlinx.cinterop.*
-import platform.UIKit.*
+		<string>import platform.UIKit.*
 
-class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
-    companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta {}
-
-    override fun init() = initBy(AppDelegate())
+class AppDelegate @OverrideInit constructor() : UIResponder(), UIApplicationDelegateProtocol {
+    companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta
 
     private var _window: UIWindow? = null
     override fun window() = _window
@@ -152,11 +149,7 @@ import platform.Foundation.*
 import platform.UIKit.*
 
 @ExportObjCClass
-class ViewController : UIViewController {
-
-    constructor(aDecoder: NSCoder) : super(aDecoder)
-    override fun initWithCoder(aDecoder: NSCoder) = initBy(ViewController(aDecoder))
-
+class ViewController @OverrideInit constructor(coder: NSCoder) : UIViewController(coder) {
     @ObjCOutlet
     lateinit var label: UILabel
 
