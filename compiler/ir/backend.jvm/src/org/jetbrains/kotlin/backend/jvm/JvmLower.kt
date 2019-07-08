@@ -72,7 +72,7 @@ private val propertiesPhase = makeIrFilePhase<CommonBackendContext>(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-private val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
+internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     { context ->
         LocalDeclarationsLowering(context, object : LocalNameProvider {
             override fun localName(declaration: IrDeclarationWithName): String =
@@ -95,7 +95,7 @@ private val defaultArgumentInjectorPhase = makeIrFilePhase(
     ::JvmDefaultParameterInjector,
     name = "DefaultParameterInjector",
     description = "Transform calls with default arguments into calls to stubs",
-    prerequisite = setOf(defaultArgumentStubPhase)
+    prerequisite = setOf(defaultArgumentStubPhase, callableReferencePhase)
 )
 
 private val innerClassesPhase = makeIrFilePhase(
@@ -131,8 +131,21 @@ private val jvmFilePhases =
 
         enumWhenPhase then
         singletonReferencesPhase then
+
         callableReferencePhase then
+        functionNVarargInvokePhase then
         localDeclarationsPhase then
+
+        singleAbstractMethodPhase then
+        addContinuationPhase then
+
+        jvmOverloadsAnnotationPhase then
+        jvmDefaultConstructorPhase then
+
+        flattenStringConcatenationPhase then
+        foldConstantLoweringPhase then
+        computeStringTrimPhase then
+
         defaultArgumentStubPhase then
         defaultArgumentInjectorPhase then
 
@@ -140,10 +153,6 @@ private val jvmFilePhases =
         interfaceDelegationPhase then
         interfaceSuperCallsPhase then
         interfaceDefaultCallsPhase then
-
-        singleAbstractMethodPhase then
-        addContinuationPhase then
-        functionNVarargInvokePhase then
 
         innerClassesPhase then
         innerClassConstructorCallsPhase then
@@ -156,16 +165,11 @@ private val jvmFilePhases =
         makeInitializersPhase(JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, true) then
         collectionStubMethodLowering then
         bridgePhase then
-        jvmOverloadsAnnotationPhase then
-        jvmDefaultConstructorPhase then
         jvmStaticAnnotationPhase then
         staticDefaultFunctionPhase then
         syntheticAccessorPhase then
 
         toArrayPhase then
-        flattenStringConcatenationPhase then
-        foldConstantLoweringPhase then
-        computeStringTrimPhase then
         jvmBuiltinOptimizationLoweringPhase then
         additionalClassAnnotationPhase then
 

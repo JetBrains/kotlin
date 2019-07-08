@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -36,7 +37,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal val singleAbstractMethodPhase = makeIrFilePhase(
     ::SingleAbstractMethodLowering,
     name = "SingleAbstractMethod",
-    description = "Replace SAM conversions with instances of interface-implementing classes"
+    description = "Replace SAM conversions with instances of interface-implementing classes",
+    prerequisite = setOf(localDeclarationsPhase)
 )
 
 class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLoweringPass {
