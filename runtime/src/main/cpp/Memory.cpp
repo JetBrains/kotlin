@@ -43,6 +43,10 @@
 // Auto-adjust GC thresholds.
 #define GC_ERGONOMICS 1
 
+#if COLLECT_STATISTIC
+#include <algorithm>
+#endif
+
 namespace {
 
 // Granularity of arena container chunks.
