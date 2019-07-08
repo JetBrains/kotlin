@@ -6,7 +6,7 @@
 import org.jetbrains.benchmarksLauncher.*
 import org.jetbrains.kliopt.*
 
-class SwiftLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String): Launcher(numWarmIterations, numberOfAttempts, prefix) {
+class SwiftLauncher: Launcher() {
     override val benchmarks = BenchmarksCollection(
             mutableMapOf(
             )

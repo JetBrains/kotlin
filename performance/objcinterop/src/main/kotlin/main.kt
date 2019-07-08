@@ -8,25 +8,26 @@ import org.jetbrains.benchmarksLauncher.*
 import org.jetbrains.complexNumbers.*
 import org.jetbrains.kliopt.*
 
-class ObjCInteropLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String): Launcher(numWarmIterations, numberOfAttempts, prefix) {
-    val complexNumbersBecnhmark = ComplexNumbersBenchmark()
+class ObjCInteropLauncher: Launcher() {
     override val benchmarks = BenchmarksCollection(
             mutableMapOf(
-                    "generateNumbersSequence" to complexNumbersBecnhmark::generateNumbersSequence,
-                    "sumComplex" to complexNumbersBecnhmark::sumComplex,
-                    "subComplex" to complexNumbersBecnhmark::subComplex,
-                    "classInheritance" to complexNumbersBecnhmark::classInheritance,
-                    "categoryMethods" to complexNumbersBecnhmark::categoryMethods,
-                    "stringToObjC" to complexNumbersBecnhmark::stringToObjC,
-                    "stringFromObjC" to complexNumbersBecnhmark::stringFromObjC,
-                    "fft" to complexNumbersBecnhmark::fft,
-                    "invertFft" to complexNumbersBecnhmark::invertFft
+                    "generateNumbersSequence" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { generateNumbersSequence() }),
+                    "sumComplex" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { sumComplex() }),
+                    "subComplex" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { subComplex() }),
+                    "classInheritance" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { classInheritance() }),
+                    "categoryMethods" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { categoryMethods() }),
+                    "stringToObjC" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { stringToObjC() }),
+                    "stringFromObjC" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { stringFromObjC() }),
+                    "fft" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { fft() }),
+                    "invertFft" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { invertFft() })
             )
     )
 }
 
 fun main(args: Array<String>) {
+    val launcher = ObjCInteropLauncher()
     BenchmarksRunner.runBenchmarks(args, { parser: ArgParser ->
-        ObjCInteropLauncher(parser.get<Int>("warmup")!!, parser.get<Int>("repeat")!!, parser.get<String>("prefix")!!).launch(parser.getAll<String>("filter"))
-    })
+        launcher.launch(parser.get<Int>("warmup")!!, parser.get<Int>("repeat")!!, parser.get<String>("prefix")!!,
+                parser.getAll<String>("filter"), parser.getAll<String>("filterRegex"))
+    }, benchmarksListAction = launcher::benchmarksListAction)
 }

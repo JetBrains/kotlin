@@ -110,9 +110,9 @@ actual class ComplexNumbersBenchmark actual constructor() {
                 for (j in 0 until length/2) {
                     val first = sequence[i + j]
                     val second = sequence[i + j + length/2].mul(value)
-                    sequence[i + j] = (first.add(second) as Complex)!!
-                    sequence[i + j + length/2] = (first.sub(second) as Complex)!!
-                    value = value.mul(base)!!
+                    sequence[i + j] = first.add(second) as Complex
+                    sequence[i + j + length/2] = first.sub(second) as Complex
+                    value = value.mul(base)
                 }
             }
             length = length shl 1
@@ -128,7 +128,7 @@ actual class ComplexNumbersBenchmark actual constructor() {
         val sequence = fftRoutine(true)
 
         sequence.forEachIndexed { index, number ->
-            sequence[index] = number.div(Complex(sequence.size.toDouble(), 0.0)) ?: Complex(0.0, 0.0)
+            sequence[index] = number.div(Complex(sequence.size.toDouble(), 0.0))
         }
     }
 }
