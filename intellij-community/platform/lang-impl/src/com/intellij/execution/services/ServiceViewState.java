@@ -29,6 +29,8 @@ final class ServiceViewState {
 
   @Transient
   public TreeState treeState = TreeState.createFrom(null);
+  @Transient
+  public boolean showServicesTree = true;
 
   public static final class ServiceState {
     public List<String> path;

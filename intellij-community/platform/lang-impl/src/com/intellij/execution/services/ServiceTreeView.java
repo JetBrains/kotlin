@@ -3,10 +3,13 @@ package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.dnd.DnDManager;
+import com.intellij.ide.navigationToolbar.NavBarModel;
+import com.intellij.ide.navigationToolbar.NavBarPanel;
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.tree.RestoreSelectionListener;
@@ -19,16 +22,20 @@ import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
+import javax.swing.*;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
+import java.util.function.Consumer;
 
 class ServiceTreeView extends ServiceView {
   private final ServiceViewTree myTree;
   private final ServiceViewTreeModel myTreeModel;
   private final ServiceViewModel.ServiceViewModelListener myListener;
+
+  private final NavBarPanel myNavBarPanel;
 
   private volatile ServiceViewItem myLastSelection;
   private boolean mySelected;
@@ -45,12 +52,24 @@ class ServiceTreeView extends ServiceView {
 
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
     ui.setServiceToolbar(actionProvider);
-    ui.setMasterPanel(myTree, actionProvider);
+    ui.setMasterComponent(myTree, actionProvider);
     DnDManager.getInstance().registerSource(ServiceViewDragHelper.createSource(this), myTree);
     add(myUi.getComponent(), BorderLayout.CENTER);
 
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
     model.addModelListener(this::rootsChanged);
+
+    Consumer<ServiceViewItem> selector = item ->
+      select(item.getValue(), item.getRootContributor().getClass())
+        .onSuccess(result -> AppUIUtil.invokeOnEdt(() -> {
+          JComponent component = getUi().getDetailsComponent();
+          if (component != null) {
+            IdeFocusManager.getInstance(myProject).requestFocusInProject(component, myProject);
+          }
+        }, myProject.getDisposed()));
+    myNavBarPanel = new ServiceViewNavBarPanel(myProject, true, getModel(), selector);
+    myNavBarPanel.getModel().updateModel(null);
+    myUi.setNavBar(myNavBarPanel);
 
     state.treeState.applyTo(myTree, myTreeModel.getRoot());
   }
@@ -123,6 +142,16 @@ class ServiceTreeView extends ServiceView {
     }
   }
 
+  @Override
+  void jumpToServices() {
+    if (myTree.isShowing()) {
+      IdeFocusManager.getInstance(myProject).requestFocusInProject(myTree, myProject);
+    }
+    else {
+      myNavBarPanel.rebuildAndSelectTail(true);
+    }
+  }
+
   private void onSelectionChanged() {
     List<ServiceViewItem> selected = getSelectedItems();
     ServiceViewItem newSelection = ContainerUtil.getOnlyItem(selected);
@@ -134,6 +163,8 @@ class ServiceTreeView extends ServiceView {
     }
 
     myLastSelection = newSelection;
+    myNavBarPanel.getModel().updateModel(newSelection);
+
     if (!mySelected) return;
 
     ServiceViewDescriptor newDescriptor = newSelection == null ? null : newSelection.getViewDescriptor();
@@ -144,17 +175,59 @@ class ServiceTreeView extends ServiceView {
   }
 
   private void rootsChanged() {
+    updateNavBar();
+    ServiceViewItem lastSelection = myLastSelection;
+    ServiceViewItem updatedItem = lastSelection == null ? null : getModel().findItem(lastSelection);
     AppUIUtil.invokeOnEdt(() -> {
       List<ServiceViewItem> selected = getSelectedItems();
-      ServiceViewItem updatedItem = ContainerUtil.getOnlyItem(selected);
-      if (Comparing.equal(updatedItem, myLastSelection)) {
-        myLastSelection = updatedItem;
+      if (selected.isEmpty()) {
+        ServiceViewItem item = ContainerUtil.getFirstItem(getModel().getRoots());
+        if (item != null) {
+          select(item.getValue(), item.getRootContributor().getClass());
+          return;
+        }
+      }
+
+      ServiceViewItem newSelection = ContainerUtil.getOnlyItem(selected);
+      if (Comparing.equal(newSelection, updatedItem)) {
+        newSelection = updatedItem;
+      }
+      //myNavBarPanel.getModel().updateModel(newSelection);
+      if (Comparing.equal(newSelection, myLastSelection)) {
+        myLastSelection = newSelection;
         if (mySelected) {
-          ServiceViewDescriptor descriptor = updatedItem == null ? null : updatedItem.getViewDescriptor();
+          ServiceViewDescriptor descriptor = newSelection == null ? null : newSelection.getViewDescriptor();
           myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
         }
       }
     }, myProject.getDisposed());
+  }
+
+  private void updateNavBar() {
+    AsyncPromise<ServiceViewItem> itemPromise = new AsyncPromise<>();
+    itemPromise.onSuccess(item -> {
+      if (item == null) return;
+
+      getModel().getInvoker().runOrInvokeLater(() -> {
+        ServiceViewItem updatedItem = getModel().findItem(item);
+        if (updatedItem != null) {
+          AppUIUtil.invokeOnEdt(() -> {
+            ServiceViewItem navBarItem = getNavBarItem();
+            if (updatedItem.equals(navBarItem)) {
+              myNavBarPanel.getModel().updateModel(updatedItem);
+            }
+          }, myProject.getDisposed());
+        }
+      });
+    });
+    AppUIUtil.invokeOnEdt(() -> itemPromise.setResult(getNavBarItem()), myProject.getDisposed());
+  }
+
+  private ServiceViewItem getNavBarItem() {
+    NavBarModel navBarModel = myNavBarPanel.getModel();
+    if (navBarModel.isEmpty()) return null;
+
+    return ObjectUtils.tryCast(navBarModel.getElement(navBarModel.size() - 1), ServiceViewItem.class);
   }
 
   @Override

@@ -140,7 +140,9 @@ public class RunConfigurationsServiceViewContributor
 
   @NotNull
   private static JComponent createEmptyContent() {
-    return new JBPanelWithEmptyText().withEmptyText(ExecutionBundle.message("run.dashboard.not.started.configuration.message"));
+    JPanel panel = new JBPanelWithEmptyText().withEmptyText(ExecutionBundle.message("run.dashboard.not.started.configuration.message"));
+    panel.setFocusable(true);
+    return panel;
   }
 
   private static ActionGroup getToolbarActions(@Nullable RunContentDescriptor descriptor) {

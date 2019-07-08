@@ -69,6 +69,10 @@ class ServiceSingleView extends ServiceView {
   }
 
   @Override
+  void jumpToServices() {
+  }
+
+  @Override
   public void dispose() {
     getModel().removeModelListener(myListener);
   }

@@ -18,6 +18,7 @@ class ServiceViewSingleUi implements ServiceViewUi {
     UIUtil.putClientProperty(myMainPanel, UIUtil.NOT_IN_HIERARCHY_COMPONENTS,
                              (Iterable<JComponent>)() -> JBIterable.of((JComponent)myMessagePanel)
                                .filter(component -> myMainPanel != component.getParent()).iterator());
+    myMessagePanel.setFocusable(true);
   }
 
   @NotNull
@@ -36,7 +37,7 @@ class ServiceViewSingleUi implements ServiceViewUi {
   }
 
   @Override
-  public void setMasterPanel(@NotNull JComponent component, @NotNull ServiceViewActionProvider actionManager) {
+  public void setMasterComponent(@NotNull JComponent component, @NotNull ServiceViewActionProvider actionManager) {
   }
 
   @Override
@@ -47,6 +48,14 @@ class ServiceViewSingleUi implements ServiceViewUi {
     if (component.getParent() == myMainPanel) return;
 
     myMainPanel.setContent(component);
+  }
+
+  @Override
+  public void setNavBar(@NotNull JComponent component) {
+  }
+
+  @Override
+  public void setMasterComponentVisible(boolean visible) {
   }
 
   @Nullable

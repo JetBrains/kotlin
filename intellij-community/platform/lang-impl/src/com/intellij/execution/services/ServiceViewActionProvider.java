@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PopupHandler;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.tree.TreeModelAdapter;
 import org.jetbrains.annotations.NonNls;
@@ -19,6 +20,7 @@ import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.execution.services.ServiceViewDragHelper.getTheOnlyRootContributor;
@@ -69,9 +71,23 @@ class ServiceViewActionProvider {
     return treeActionsToolBar;
   }
 
+  List<AnAction> getAdditionalGearActions() {
+    AnAction showServicesActions = ActionManager.getInstance().getAction("ServiceView.ShowServices");
+    return showServicesActions == null ? Collections.emptyList() : Collections.singletonList(showServicesActions);
+  }
+
   @Nullable
   static ServiceView getSelectedView(@NotNull AnActionEvent e) {
-    Component contextComponent = e.getData(PlatformDataKeys.CONTEXT_COMPONENT);
+    return getSelectedView(e.getData(PlatformDataKeys.CONTEXT_COMPONENT));
+  }
+
+  @Nullable
+  static ServiceView getSelectedView(@NotNull DataProvider provider) {
+    return getSelectedView(ObjectUtils.tryCast(provider.getData(PlatformDataKeys.CONTEXT_COMPONENT.getName()), Component.class));
+  }
+
+  @Nullable
+  private static ServiceView getSelectedView(@Nullable Component contextComponent) {
     while (contextComponent != null && !(contextComponent instanceof ServiceView)) {
       contextComponent = contextComponent.getParent();
     }
