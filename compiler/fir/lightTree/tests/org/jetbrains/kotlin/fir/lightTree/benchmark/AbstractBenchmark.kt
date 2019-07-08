@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 @Fork(1)
 @State(Scope.Benchmark)
 abstract class AbstractBenchmark {
-    private val files = mutableMapOf<String, Pair<File, String>>()
+    private val files = mutableMapOf<File, String>()
     abstract val generator: TreeGenerator
 
     protected fun readFiles(ignoreTestData: Boolean, path: String) {
@@ -32,17 +32,12 @@ abstract class AbstractBenchmark {
             if (file.extension != "kt") continue
 
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-            files[file.name] = Pair(file, text)
+            files[file] = text
         }
     }
 
-    //TODO null check
-    protected fun getFileByName(fileName: String): Pair<File, String> {
-        return files[fileName]!!
-    }
-
     protected fun forEachFile(f: (String, File) -> Unit) {
-        for ((file, text) in files.values) {
+        for ((file, text) in files) {
             f(text, file)
         }
     }
