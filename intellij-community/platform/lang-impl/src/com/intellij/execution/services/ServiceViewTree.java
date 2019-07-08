@@ -5,6 +5,7 @@ import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Key;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.tree.AsyncTreeModel;
@@ -21,6 +22,7 @@ import java.awt.event.MouseEvent;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
 class ServiceViewTree extends Tree {
+  static final Key<ServiceViewOptions> OPTIONS_KEY = Key.create("ServiceViewTreeOptions");
   private final TreeModel myTreeModel;
 
   ServiceViewTree(@NotNull TreeModel treeModel, @NotNull Disposable parent) {
@@ -61,6 +63,7 @@ class ServiceViewTree extends Tree {
 
   private static class ServiceViewTreeCellRenderer extends ServiceViewTreeCellRendererBase {
     private ServiceViewDescriptor myDescriptor;
+    private JComponent myComponent;
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree,
@@ -71,6 +74,7 @@ class ServiceViewTree extends Tree {
                                       int row,
                                       boolean hasFocus) {
       myDescriptor = value instanceof ServiceViewItem ? ((ServiceViewItem)value).getViewDescriptor() : null;
+      myComponent = tree;
       super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
     }
 
@@ -80,7 +84,10 @@ class ServiceViewTree extends Tree {
       // Ensure that value != myTreeModel.getRoot() && !(value instanceof LoadingNode)
       if (!(node instanceof ServiceViewItem)) return null;
 
-      ItemPresentation presentation = ((ServiceViewItem)node).getViewDescriptor().getPresentation();
+      ServiceViewOptions viewOptions = UIUtil.getClientProperty(myComponent, OPTIONS_KEY);
+      ServiceViewDescriptor viewDescriptor = ((ServiceViewItem)node).getViewDescriptor();
+      ItemPresentation presentation =
+        viewOptions == null ? viewDescriptor.getPresentation() : viewDescriptor.getCustomPresentation(viewOptions);
       return presentation instanceof PresentationData ? presentation : new PresentationData(presentation.getPresentableText(),
                                                                                             presentation.getLocationString(),
                                                                                             presentation.getIcon(false),
