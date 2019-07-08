@@ -712,8 +712,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       })
         .setAsSecondary(true);
     }
-    myActionGroup.addAction(myAutoScrollToSourceHandler.createToggleAction()).setAsSecondary(true);
-    myActionGroup.addAction(myAutoScrollFromSourceHandler.createToggleAction()).setAsSecondary(true);
+    myActionGroup.addAction(getAutoScrollToSourceAction()).setAsSecondary(true);
+    myActionGroup.addAction(getAutoScrollFromSourceAction()).setAsSecondary(true);
     myActionGroup.addAction(new ManualOrderAction()).setAsSecondary(true);
     myActionGroup.addAction(new SortByTypeAction()).setAsSecondary(true);
     myActionGroup.addAction(new FoldersAlwaysOnTopAction()).setAsSecondary(true);
@@ -2206,5 +2206,15 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       pane = myId2Pane.get(myCurrentViewId);
     }
     return pane != null ? pane.getReady(requestor) : ActionCallback.DONE;
+  }
+
+  @NotNull
+  public ToggleAction getAutoScrollToSourceAction() {
+    return myAutoScrollToSourceHandler.createToggleAction();
+  }
+
+  @NotNull
+  public ToggleAction getAutoScrollFromSourceAction() {
+    return myAutoScrollFromSourceHandler.createToggleAction();
   }
 }
