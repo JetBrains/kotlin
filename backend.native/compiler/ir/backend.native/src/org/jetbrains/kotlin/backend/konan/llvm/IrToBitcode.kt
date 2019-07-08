@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -11,21 +11,16 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.ir.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.backend.konan.ir.containsNull
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.*
-import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -615,7 +610,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         private val scope by lazy {
             if (!context.shouldContainDebugInfo())
                 return@lazy null
-            declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.builtIns.intType)))
+            declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
         }
 
         override fun location(line: Int, column: Int) = scope?.let { LocationInfo(it, line, column) }
@@ -1174,7 +1169,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrVariable -> if (shouldGenerateDebugInfo(element)) debugInfoLocalVariableLocation(
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
-                    diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
+                    diType        = element.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
                     file          = file,
                     line          = locationInfo.line,
@@ -1183,7 +1178,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrValueParameter -> debugInfoParameterLocation(
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
-                    diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
+                    diType        = element.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
                     argNo         = function.allParameters.indexOf(element) + 1,
                     file          = file,
@@ -1768,9 +1763,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val scope = currentCodeContext.classScope() as? ClassScope ?: return
         if (!scope.isExported || !context.shouldContainDebugInfo()) return
         val irFile = (currentCodeContext.fileScope() as FileScope).file
-        val sizeInBits = expression.descriptor.type.size(context)
+        val sizeInBits = expression.type.size(context)
         scope.offsetInBits += sizeInBits
-        val alignInBits = expression.descriptor.type.alignment(context)
+        val alignInBits = expression.type.alignment(context)
         scope.offsetInBits = alignTo(scope.offsetInBits, alignInBits)
         @Suppress("UNCHECKED_CAST")
         scope.members.add(DICreateMemberType(
@@ -1783,7 +1778,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 alignInBits  = alignInBits,
                 offsetInBits = scope.offsetInBits,
                 flags        = 0,
-                type         = expression.descriptor.type.diType(context, codegen.llvmTargetData)
+                type         = expression.type.diType(context, codegen.llvmTargetData)
         )!!)
     }
 
