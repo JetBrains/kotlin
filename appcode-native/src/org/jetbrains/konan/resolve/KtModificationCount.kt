@@ -9,10 +9,10 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SimpleModificationTracker
 
-class KotlinModificationCount {
+class KtModificationCount {
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): KotlinModificationCount = ServiceManager.getService(project, KotlinModificationCount::class.java)
+        fun getInstance(project: Project): KtModificationCount = ServiceManager.getService(project, KtModificationCount::class.java)
     }
 
     private val myOutOfCodeBlockModificationTracker = SimpleModificationTracker()

@@ -17,11 +17,11 @@ import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbolImpl
 import com.jetbrains.cidr.lang.types.OCObjectType
 import com.jetbrains.cidr.lang.types.OCType
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
-import org.jetbrains.konan.resolve.toOCType
+import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import java.util.*
 
-class KotlinOCMethodSymbol : KotlinOCMemberSymbol, OCMethodSymbol {
+class KtOCMethodSymbol : KtOCMemberSymbol, OCMethodSymbol {
 
     private lateinit var selectors: List<OCMethodSymbol.SelectorPartSymbol>
     private lateinit var returnType: OCType

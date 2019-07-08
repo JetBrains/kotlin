@@ -16,11 +16,10 @@ import com.jetbrains.cidr.lang.types.OCReferenceType
 import com.jetbrains.cidr.lang.types.OCType
 import com.jetbrains.cidr.lang.types.OCTypeArgument
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
-import org.jetbrains.konan.resolve.createSuperType
+import org.jetbrains.konan.resolve.translation.createSuperType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 
-class KotlinOCInterfaceSymbol
-    : KotlinOCClassSymbol<KotlinOCInterfaceSymbol.InterfaceState, ObjCInterface>, OCInterfaceSymbol {
+class KtOCInterfaceSymbol : KtOCClassSymbol<KtOCInterfaceSymbol.InterfaceState, ObjCInterface>, OCInterfaceSymbol {
 
     private var categoryName: String?
 
@@ -68,13 +67,13 @@ class KotlinOCInterfaceSymbol
         lateinit var superType: OCReferenceType
         val isTemplateSymbol: Boolean
 
-        constructor(clazz: KotlinOCInterfaceSymbol, stub: ObjCInterface, project: Project) : super(clazz, stub, project) {
+        constructor(clazz: KtOCInterfaceSymbol, stub: ObjCInterface, project: Project) : super(clazz, stub, project) {
             this.superType = createSuperType(stub.superClass, stub.superProtocols)
             this.isTemplateSymbol = stub.generics.isNotEmpty()
         }
 
         constructor() : super() {
-            isTemplateSymbol = false
+            this.isTemplateSymbol = false
         }
     }
 }

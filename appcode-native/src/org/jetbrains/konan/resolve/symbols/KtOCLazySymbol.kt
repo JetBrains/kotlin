@@ -13,9 +13,10 @@ import com.jetbrains.cidr.lang.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater
 
-abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, Stb : Stub<*>>
+abstract class KtOCLazySymbol<State : KtOCLazySymbol.StubState, Stb : Stub<*>>
     : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtSymbol {
 
     @Transient
@@ -40,7 +41,7 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
     }
 
     constructor() {
-        stubAndProject = null
+        this.stubAndProject = null
     }
 
     protected val state: State
@@ -74,8 +75,8 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
     override fun getContainingFile(): VirtualFile = file
 
     override fun deepEqualStep(c: DeepEqual.Comparator, first: Any, second: Any): Boolean {
-        val f = first as KotlinOCWrapperSymbol<*, *>
-        val s = second as KotlinOCWrapperSymbol<*, *>
+        val f = first as KtOCLazySymbol<*, *>
+        val s = second as KtOCLazySymbol<*, *>
 
         if (!Comparing.equal(f.file, s.file)) return false
         if (!Comparing.equal(f.state, s.state)) return false
@@ -85,11 +86,11 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
 
     override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31 + file.hashCode()
 
-    override fun locateDefinition(project: Project): PsiElement? = psi(project)?.let { KotlinOCPsiWrapper(it, this) }
+    override fun locateDefinition(project: Project): PsiElement? = psi(project)?.let { KtOCPsiWrapper(it, this) }
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return super.isSameSymbol(symbol, project)
-               || symbol is KotlinLightSymbol && psi(project) == symbol.locateDefinition(project)
+               || symbol is KtOCLightSymbol && psi(project) == symbol.locateDefinition(project)
     }
 
     override fun updateOffset(start: Int, lengthShift: Int) {
@@ -123,13 +124,10 @@ abstract class KotlinOCWrapperSymbol<State : KotlinOCWrapperSymbol.StubState, St
     }
 
     companion object {
-        private val valueUpdater = newUpdater(
-            KotlinOCWrapperSymbol::class.java,
-            KotlinOCWrapperSymbol.StubState::class.java,
+        private val valueUpdater: AtomicReferenceFieldUpdater<KtOCLazySymbol<*, *>, StubState> = newUpdater(
+            KtOCLazySymbol::class.java,
+            KtOCLazySymbol.StubState::class.java,
             "_state"
         )
     }
 }
-
-val Stub<*>.offset: Long
-    get() = psi?.let { OCSymbolOffsetUtil.getComplexOffset(it.textOffset, 0) } ?: 0

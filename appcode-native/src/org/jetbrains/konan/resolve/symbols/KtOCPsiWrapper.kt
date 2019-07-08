@@ -14,7 +14,7 @@ import com.jetbrains.cidr.lang.psi.OCSymbolDeclarator
 import com.jetbrains.cidr.lang.search.scopes.OCSearchScope
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 
-class KotlinOCPsiWrapper(
+class KtOCPsiWrapper(
     val psi: PsiElement,
     private val symbol: OCSymbol
 ) : FakePsiElement(), PsiElement, OCSymbolDeclarator<OCSymbol>, PsiNamedElement {

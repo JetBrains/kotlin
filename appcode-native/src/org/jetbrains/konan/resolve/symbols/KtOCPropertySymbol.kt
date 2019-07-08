@@ -14,10 +14,10 @@ import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCPropertySymbol
 import com.jetbrains.cidr.lang.types.OCType
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
-import org.jetbrains.konan.resolve.toOCType
+import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 
-class KotlinOCPropertySymbol : KotlinOCMemberSymbol, OCPropertySymbol {
+class KtOCPropertySymbol : KtOCMemberSymbol, OCPropertySymbol {
 
     private lateinit var type: OCType
     private lateinit var attributes: List<String>
@@ -67,5 +67,5 @@ class KotlinOCPropertySymbol : KotlinOCMemberSymbol, OCPropertySymbol {
 
     override fun getType(): OCType = type
 
-    override fun getAttributes(): List<String> = super<KotlinOCMemberSymbol>.getAttributes()
+    override fun getAttributes(): List<String> = super<KtOCMemberSymbol>.getAttributes()
 }

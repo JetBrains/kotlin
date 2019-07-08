@@ -13,7 +13,7 @@ import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.OCSymbolOffsetUtil
 
-class KotlinLightSymbol(
+class KtOCLightSymbol(
     private val psi: PsiElement,
     private val name: String,
     private val kind: OCSymbolKind
@@ -46,7 +46,7 @@ class KotlinLightSymbol(
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return symbol === this
-               || symbol is KotlinOCWrapperSymbol<*, *> && symbol.locateDefinition(project) == locateDefinition(project)
-               || symbol is KotlinLightSymbol && symbol.locateDefinition(project) == locateDefinition(project)
+               || symbol is KtOCLazySymbol<*, *> && symbol.locateDefinition(project) == locateDefinition(project)
+               || symbol is KtOCLightSymbol && symbol.locateDefinition(project) == locateDefinition(project)
     }
 }

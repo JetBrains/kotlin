@@ -1,4 +1,4 @@
-package org.jetbrains.konan.resolve
+package org.jetbrains.konan.resolve.translation
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -19,18 +19,19 @@ import gnu.trove.THashSet
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.konan.resolve.konan.KonanBridgeVirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class KotlinFrameworkTranslator(val project: Project) {
+class KtFrameworkTranslator(val project: Project) {
     fun translateModule(konanFile: KonanBridgeVirtualFile): Sequence<OCSymbol> {
         val sources = collectSources(konanFile)
         val ktFile = sources.firstOrNull()?.let { PsiManager.getInstance(project).findFile(it) } as? KtFile
                      ?: return emptySequence()
 
-        val baseDeclarations = KotlinFileTranslator(project).translateBase(ktFile)
+        val baseDeclarations = KtFileTranslator(project).translateBase(ktFile)
         val includes = sources.asSequence().map { include(konanFile, it) }
 
         return baseDeclarations + includes

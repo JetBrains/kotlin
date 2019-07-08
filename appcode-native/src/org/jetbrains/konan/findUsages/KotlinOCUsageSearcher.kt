@@ -13,8 +13,8 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import com.jetbrains.cidr.lang.symbols.OCSymbol
-import org.jetbrains.konan.resolve.symbols.KotlinLightSymbol
-import org.jetbrains.konan.resolve.symbols.KotlinOCPsiWrapper
+import org.jetbrains.konan.resolve.symbols.KtOCLightSymbol
+import org.jetbrains.konan.resolve.symbols.KtOCPsiWrapper
 import org.jetbrains.konan.resolve.findSymbols
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
@@ -25,7 +25,7 @@ class KotlinOCUsageSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.S
         val optimizer = parameters.optimizer
         var effectiveSearchScope: SearchScope? = null
         symbols.forEach { symbol ->
-            val psiWrapper = KotlinOCPsiWrapper(target, symbol)
+            val psiWrapper = KtOCPsiWrapper(target, symbol)
             if (effectiveSearchScope == null) {
                 //infer effectiveSearchScope only once. it's the same for all symbols
                 val symbolParameters = parameters.duplicateWith(psiWrapper)
@@ -38,11 +38,11 @@ class KotlinOCUsageSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.S
 
 internal fun ReferencesSearch.SearchParameters.getUnwrappedTarget(): PsiElement {
     val elementToSearch = elementToSearch
-    return (elementToSearch as? KotlinOCPsiWrapper)?.psi ?: elementToSearch
+    return (elementToSearch as? KtOCPsiWrapper)?.psi ?: elementToSearch
 }
 
 internal fun ReferencesSearch.SearchParameters.duplicateWith(psi: PsiElement): ReferencesSearch.SearchParameters {
     return ReferencesSearch.SearchParameters(psi, scopeDeterminedByUser, isIgnoreAccessScope, optimizer)
 }
 
-internal fun KtNamedDeclaration.toLightSymbols(): List<OCSymbol> = findSymbols().map { symbol -> KotlinLightSymbol(this, symbol) }
+internal fun KtNamedDeclaration.toLightSymbols(): List<OCSymbol> = findSymbols().map { symbol -> KtOCLightSymbol(this, symbol) }

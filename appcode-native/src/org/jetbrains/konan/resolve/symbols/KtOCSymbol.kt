@@ -8,7 +8,7 @@ import com.jetbrains.cidr.lang.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-abstract class KtOCBaseSymbol : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtSymbol {
+abstract class KtOCSymbol : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtSymbol {
     @Transient private lateinit var file: VirtualFile
 
     private lateinit var name: String
@@ -16,12 +16,12 @@ abstract class KtOCBaseSymbol : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtS
 
     constructor(stub: Stub<*>, file: VirtualFile) {
         this.file = file
-        name = stub.name
-        offset = stub.offset
+        this.name = stub.name
+        this.offset = stub.offset
     }
 
     constructor() {
-        offset = 0
+        this.offset = 0
     }
 
     override fun getName(): String = name
@@ -34,8 +34,8 @@ abstract class KtOCBaseSymbol : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtS
     override fun getContainingFile(): VirtualFile = file
 
     override fun deepEqualStep(c: DeepEqual.Comparator, first: Any, second: Any): Boolean {
-        val f = first as KtOCBaseSymbol
-        val s = second as KtOCBaseSymbol
+        val f = first as KtOCSymbol
+        val s = second as KtOCSymbol
 
         if (!Comparing.equal(f.complexOffset, s.complexOffset)) return false
         if (!Comparing.equal(f.name, s.name)) return false
@@ -47,12 +47,12 @@ abstract class KtOCBaseSymbol : OCSymbol, OCForeignSymbol, VirtualFileOwner, KtS
     override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31 + file.hashCode()
 
     override fun locateDefinition(project: Project): PsiElement? =
-        OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)?.let { KotlinOCPsiWrapper(it, this) }
+        OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)?.let { KtOCPsiWrapper(it, this) }
 
 
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return super.isSameSymbol(symbol, project)
-               || symbol is KotlinLightSymbol && locateDefinition(project) == symbol.locateDefinition(project)
+               || symbol is KtOCLightSymbol && locateDefinition(project) == symbol.locateDefinition(project)
     }
 
     override fun init(file: VirtualFile) {

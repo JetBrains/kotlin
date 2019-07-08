@@ -1,4 +1,4 @@
-package org.jetbrains.konan.resolve
+package org.jetbrains.konan.resolve.translation
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
-class KotlinFileTranslator(val project: Project) {
+class KtFileTranslator(val project: Project) {
     private val stubToSymbolTranslator = StubToSymbolTranslator(project)
 
     fun translate(file: KtFile): Sequence<OCSymbol> = createStubProvider(file).translate(file).asSequence().translate(file.virtualFile)

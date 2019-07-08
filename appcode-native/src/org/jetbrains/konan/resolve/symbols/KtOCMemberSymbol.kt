@@ -10,7 +10,7 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
-abstract class KotlinOCMemberSymbol : KtOCBaseSymbol, OCMemberSymbol {
+abstract class KtOCMemberSymbol : KtOCSymbol, OCMemberSymbol {
 
     private lateinit var containingClass: OCClassSymbol
 

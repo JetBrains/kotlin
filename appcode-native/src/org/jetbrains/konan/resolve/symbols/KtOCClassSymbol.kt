@@ -18,11 +18,11 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCImplementationSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
-import org.jetbrains.konan.resolve.StubToSymbolTranslator
+import org.jetbrains.konan.resolve.translation.StubToSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
-abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub : ObjCClass<*>>
-    : KotlinOCWrapperSymbol<State, Stub>, OCClassSymbol {
+abstract class KtOCClassSymbol<State: KtOCClassSymbol.ClassState, Stub : ObjCClass<*>>
+    : KtOCLazySymbol<State, Stub>, OCClassSymbol {
 
     private lateinit var qualifiedName: OCQualifiedName
 
@@ -81,7 +81,7 @@ abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub :
         val members: MostlySingularMultiMap<String, OCMemberSymbol>?
         lateinit var protocolNames: List<String>
 
-        constructor(clazz: KotlinOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
+        constructor(clazz: KtOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
             this.protocolNames = stub.superProtocols
             val translator = StubToSymbolTranslator(project)
             var map: MostlySingularMultiMap<String, OCMemberSymbol>? = null
@@ -92,11 +92,11 @@ abstract class KotlinOCClassSymbol<State: KotlinOCClassSymbol.ClassState, Stub :
                     map.add(member.name, translatedMember)
                 }
             }
-            members = map
+            this.members = map
         }
 
         constructor() : super() {
-            members = null
+            this.members = null
         }
     }
 }

@@ -15,10 +15,10 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.types.OCType
 import com.jetbrains.cidr.lang.types.OCTypeArgument
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
-import org.jetbrains.konan.resolve.toOCType
+import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 
-class KotlinOCParameterSymbol : KtOCBaseSymbol, OCDeclaratorSymbol {
+class KtOCParameterSymbol : KtOCSymbol, OCDeclaratorSymbol {
     private lateinit var containingClass: OCClassSymbol
     private lateinit var qualifiedName: OCQualifiedName
     private lateinit var type: OCType

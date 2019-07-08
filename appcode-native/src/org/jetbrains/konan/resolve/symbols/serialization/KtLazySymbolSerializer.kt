@@ -6,10 +6,10 @@ import com.esotericsoftware.kryo.io.Output
 import com.esotericsoftware.kryo.serializers.FieldSerializer
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTableSerializer
-import org.jetbrains.konan.resolve.symbols.KotlinOCWrapperSymbol
+import org.jetbrains.konan.resolve.symbols.KtOCLazySymbol
 import java.lang.reflect.Method
 
-class KtLazySymbolSerializer<T : KotlinOCWrapperSymbol<*, *>>(
+class KtLazySymbolSerializer<T : KtOCLazySymbol<*, *>>(
     symbolClass: Class<T>,
     private val serializer: FileSymbolTableSerializer
 ) : FieldSerializer<T>(serializer.kryo, symbolClass) {
@@ -23,7 +23,7 @@ class KtLazySymbolSerializer<T : KotlinOCWrapperSymbol<*, *>>(
     override fun createCopy(kryo: Kryo, original: T): T {
         val result = super.createCopy(kryo, original) as T
         val file = original.containingFile
-        KotlinSerializer.LOG.assertTrue(file == serializer.currentFile)
+        KtSerializer.LOG.assertTrue(file == serializer.currentFile)
         result.init(file)
         return result
     }

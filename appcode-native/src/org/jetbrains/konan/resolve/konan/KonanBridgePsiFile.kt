@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.resolve
+package org.jetbrains.konan.resolve.konan
 
 import com.intellij.extapi.psi.LightPsiFileBase
 import com.intellij.openapi.fileTypes.FileType

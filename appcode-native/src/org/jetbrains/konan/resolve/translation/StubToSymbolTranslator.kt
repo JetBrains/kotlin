@@ -1,4 +1,4 @@
-package org.jetbrains.konan.resolve
+package org.jetbrains.konan.resolve.translation
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 class StubToSymbolTranslator(val project: Project) {
     fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol? {
         return when (stub) {
-            is ObjCProtocol -> KotlinOCProtocolSymbol(stub, project, file)
-            is ObjCInterface -> KotlinOCInterfaceSymbol(stub, project, file)
+            is ObjCProtocol -> KtOCProtocolSymbol(stub, project, file)
+            is ObjCInterface -> KtOCInterfaceSymbol(stub, project, file)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 return null
@@ -27,11 +27,11 @@ class StubToSymbolTranslator(val project: Project) {
     fun translateMember(stub: Stub<*>, clazz: OCClassSymbol, file: VirtualFile): OCMemberSymbol? {
         return when (stub) {
             is ObjCMethod -> {
-                val method = KotlinOCMethodSymbol(stub, project, file, clazz)
+                val method = KtOCMethodSymbol(stub, project, file, clazz)
                 method.selectors = translateParameters(stub, clazz, file)
                 method
             }
-            is ObjCProperty -> KotlinOCPropertySymbol(stub, project, file, clazz)
+            is ObjCProperty -> KtOCPropertySymbol(stub, project, file, clazz)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 null
@@ -48,7 +48,7 @@ class StubToSymbolTranslator(val project: Project) {
         } else {
             assert(selectors.size == parameters.size)
             ContainerUtil.zip(parameters, selectors).asSequence().map {
-                SelectorPartSymbolImpl(KotlinOCParameterSymbol(it.first, project, file, clazz), it.second)
+                SelectorPartSymbolImpl(KtOCParameterSymbol(it.first, project, file, clazz), it.second)
             }.toList()
         }
     }

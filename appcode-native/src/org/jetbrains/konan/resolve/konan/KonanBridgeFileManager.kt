@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.resolve
+package org.jetbrains.konan.resolve.konan
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
@@ -18,11 +18,12 @@ import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.xcode.model.PBXTarget
+import org.jetbrains.konan.resolve.KtModificationCount
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
 import org.jetbrains.kotlin.psi.KtFile
 
 class KonanBridgeFileManager(
-    private val modificationCount: KotlinModificationCount,
+    private val modificationCount: KtModificationCount,
     private val project: Project,
     private val fileSymbolTablesCache: FileSymbolTablesCache,
     psiManager: PsiManager

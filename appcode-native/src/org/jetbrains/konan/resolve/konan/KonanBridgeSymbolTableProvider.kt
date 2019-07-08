@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.resolve
+package org.jetbrains.konan.resolve.konan
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.progress.ProgressIndicator
@@ -18,6 +18,7 @@ import com.jetbrains.cidr.lang.symbols.symtable.ContextSignature
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.OCSymbolTablesBuildingActivity
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
+import org.jetbrains.konan.resolve.translation.KtFrameworkTranslator
 
 class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
     public override fun isSource(file: PsiFile): Boolean {
@@ -45,7 +46,7 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
         val signature = ContextSignature(CLanguageKind.OBJ_C, emptyMap(), emptySet(), emptyList(), false)
         val result = FileSymbolTable(virtualFile, signature)
 
-        KotlinFrameworkTranslator(context.project).translateModule(virtualFile).forEach { result.append(it) }
+        KtFrameworkTranslator(context.project).translateModule(virtualFile).forEach { result.append(it) }
 
         return result
     }
