@@ -113,11 +113,11 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
     Set<File> filesChanged = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     Set<File> filesDeleted = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
     for (VFileEvent event : events) {
-      if (event instanceof VFileDeleteEvent || event instanceof VFileMoveEvent || event instanceof VFileContentChangeEvent) {
-        final VirtualFile file = event.getFile();
-        if (file != null) {
-          collectPaths(file, event instanceof VFileContentChangeEvent ? filesChanged : filesDeleted);
-        }
+      if (event instanceof VFileDeleteEvent || event instanceof VFileMoveEvent) {
+        collectPaths(event.getFile(), filesDeleted);
+      }
+      else if (event instanceof VFileContentChangeEvent) {
+        collectPaths(event.getFile(), filesChanged);
       }
     }
     return new ChangeApplier() {
@@ -134,10 +134,7 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
         handlePropChange((VFilePropertyChangeEvent)event, filesDeleted, filesChanged);
       }
       else if (event instanceof VFileMoveEvent || event instanceof VFileCreateEvent || event instanceof VFileCopyEvent) {
-        VirtualFile file = event.getFile();
-        if (file != null) {
-          collectPaths(file, filesChanged);
-        }
+        collectPaths(event.getFile(), filesChanged);
       }
     }
 
@@ -202,8 +199,8 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
     }
   }
 
-  private static void collectPaths(@NotNull VirtualFile file, @NotNull Collection<? super File> outFiles) {
-    if (!isIgnoredOrUnderIgnoredDirectory(file)) {
+  private static void collectPaths(@Nullable VirtualFile file, @NotNull Collection<? super File> outFiles) {
+    if (file != null && !isIgnoredOrUnderIgnoredDirectory(file)) {
       processRecursively(file, !isInContentOfOpenedProject(file), f -> outFiles.add(new File(f.getPath())));
     }
   }
