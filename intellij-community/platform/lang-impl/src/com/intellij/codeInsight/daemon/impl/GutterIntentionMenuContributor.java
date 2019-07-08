@@ -16,10 +16,10 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.IconUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Processors;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -99,8 +99,7 @@ public class GutterIntentionMenuContributor implements IntentionMenuContributor 
       }
     }
     Icon icon = action.getTemplatePresentation().getIcon();
-    if (icon == null) icon = renderer.getIcon();
-    if (icon.getIconWidth() < 16) icon = IconUtil.toSize(icon, 16, 16);
+    if (icon == null) icon = EmptyIcon.ICON_16;
     final GutterIntentionAction gutterAction = new GutterIntentionAction(action, order.getAndIncrement(), icon);
     if (!gutterAction.isAvailable(dataContext)) return;
     descriptors.add(new HighlightInfo.IntentionActionDescriptor(gutterAction, Collections.emptyList(), null, icon) {
