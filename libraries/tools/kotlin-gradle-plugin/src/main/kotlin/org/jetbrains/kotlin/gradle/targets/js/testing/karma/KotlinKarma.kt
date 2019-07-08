@@ -128,6 +128,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             it.appendln("config.set({webpack: createWebpackConfig()});")
             it.appendln()
         }
+
+        requiredDependencies.add(versions.webpack)
+        requiredDependencies.add(versions.webpackCli)
+        requiredDependencies.add(versions.sourceMapLoader)
+        requiredDependencies.add(versions.sourceMapSupport)
     }
 
     fun useCoverage(
