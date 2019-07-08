@@ -75,7 +75,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
   private final NavBarModel myModel;
 
   private final NavBarPresentation myPresentation;
-  private final Project myProject;
+  protected final Project myProject;
 
   private final ArrayList<NavBarItem> myList = new ArrayList<>();
 
@@ -300,7 +300,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     return target;
   }
 
-  void updateItems() {
+  protected void updateItems() {
     for (NavBarItem item : myList) {
       item.update();
     }
@@ -355,7 +355,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     }
   }
 
-  void scrollSelectionToVisible() {
+  protected void scrollSelectionToVisible() {
     final int selectedIndex = myModel.getSelectedIndex();
     if (selectedIndex == -1 || selectedIndex >= myList.size()) return;
     scrollRectToVisible(myList.get(selectedIndex).getBounds());
@@ -387,7 +387,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     }
   }
 
-  boolean isRebuildUiNeeded() {
+  public boolean isRebuildUiNeeded() {
     myModel.revalidate();
     if (myList.size() == myModel.size()) {
       int index = 0;
@@ -530,7 +530,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     doubleClick(myModel.getElement(index));
   }
 
-  private void doubleClick(final Object object) {
+  protected void doubleClick(final Object object) {
     if (object instanceof Navigatable) {
       Navigatable navigatable = (Navigatable)object;
       if (navigatable.canNavigate()) {
@@ -630,7 +630,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
     hideHint(false);
   }
 
-  void hideHint(boolean ok) {
+  protected void hideHint(boolean ok) {
     cancelPopup(ok);
     if (myHint != null) {
       myHint.hide(ok);
@@ -764,9 +764,13 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
   @Override
   public void removeNotify() {
     super.removeNotify();
-    if (ScreenUtil.isStandardAddRemoveNotify(this)) {
+    if (isDisposeOnRemove() && ScreenUtil.isStandardAddRemoveNotify(this)) {
       Disposer.dispose(this);
     }
+  }
+
+  protected boolean isDisposeOnRemove() {
+    return true;
   }
 
   public void updateState(final boolean show) {

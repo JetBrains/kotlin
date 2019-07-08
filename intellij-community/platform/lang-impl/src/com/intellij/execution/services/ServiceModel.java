@@ -520,6 +520,10 @@ class ServiceModel implements Disposable, InvokerSupplier {
       return myChildren;
     }
 
+    boolean isChildrenInitialized() {
+      return myChildren != null;
+    }
+
     @NotNull
     protected abstract List<ServiceViewItem> doGetChildren();
 
@@ -588,7 +592,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     }
 
     @Nullable
-    private ServiceViewContributor<?> getProvidingContributor() {
+    ServiceViewContributor<?> getProvidingContributor() {
       return myProvidingContributor;
     }
 

@@ -3,8 +3,10 @@ package com.intellij.execution.services;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -15,6 +17,8 @@ import com.intellij.ui.AutoScrollFromSourceHandler;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 class ServiceViewSourceScrollHelper {
   private static final String AUTO_SCROLL_TO_SOURCE_PROPERTY = "service.view.auto.scroll.to.source";
   private static final String AUTO_SCROLL_FROM_SOURCE_PROPERTY = "service.view.auto.scroll.from.source";
@@ -23,8 +27,14 @@ class ServiceViewSourceScrollHelper {
     AutoScrollToSourceHandler toSourceHandler = new ServiceViewAutoScrollToSourceHandler(project);
     ServiceViewAutoScrollFromSourceHandler fromSourceHandler = new ServiceViewAutoScrollFromSourceHandler(project, toolWindow);
     fromSourceHandler.install();
-    toolWindow.setAdditionalGearActions(new DefaultActionGroup(toSourceHandler.createToggleAction(),
-                                                               fromSourceHandler.createToggleAction()));
+    DefaultActionGroup additionalGearActions = new DefaultActionGroup(toSourceHandler.createToggleAction(),
+                                                                      fromSourceHandler.createToggleAction(),
+                                                                      Separator.getInstance());
+    List<AnAction> additionalProviderActions = ServiceViewActionProvider.getInstance().getAdditionalGearActions();
+    for (AnAction action : additionalProviderActions) {
+      additionalGearActions.add(action);
+    }
+    toolWindow.setAdditionalGearActions(additionalGearActions);
     toolWindow.setTitleActions(new ScrollFromEditorAction(fromSourceHandler));
     return toSourceHandler;
   }

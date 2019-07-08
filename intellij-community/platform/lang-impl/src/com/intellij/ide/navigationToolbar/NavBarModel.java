@@ -43,9 +43,13 @@ public class NavBarModel {
   private boolean isFixedComponent = false;
 
   public NavBarModel(final Project project) {
+    this(project, project.getMessageBus().syncPublisher(NavBarModelListener.NAV_BAR), NavBarModelBuilder.getInstance());
+  }
+
+  protected NavBarModel(Project project, NavBarModelListener notificator, NavBarModelBuilder builder) {
     myProject = project;
-    myNotificator = project.getMessageBus().syncPublisher(NavBarModelListener.NAV_BAR);
-    myBuilder = NavBarModelBuilder.getInstance();
+    myNotificator = notificator;
+    myBuilder = builder;
   }
 
   public int getSelectedIndex() {
@@ -179,12 +183,20 @@ public class NavBarModel {
   }
 
   protected void setModel(List<Object> model) {
+    setModel(model, false);
+  }
+
+  protected void setModel(List<Object> model, boolean force) {
     if (!model.equals(myModel)) {
       myModel = model;
       myNotificator.modelChanged();
 
       mySelectedIndex = myModel.size() - 1;
       myNotificator.selectionChanged();
+    }
+    else if (force) {
+      myModel = model;
+      myNotificator.modelChanged();
     }
   }
 
