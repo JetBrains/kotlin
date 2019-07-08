@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 
 class PackageJsonDukatExecutor(
     val nodeJs: NodeJsRootExtension,

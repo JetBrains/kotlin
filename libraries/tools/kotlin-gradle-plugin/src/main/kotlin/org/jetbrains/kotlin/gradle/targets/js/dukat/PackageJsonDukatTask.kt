@@ -34,11 +34,11 @@ open class PackageJsonDukatTask : AbstractDukatTask() {
     override val destDir: File
         get() = compilation.npmProject.externalsDir
 
-    private val executer by lazy {
+    private val executor by lazy {
         PackageJsonDukatExecutor(nodeJs, dts, compilation.npmProject, true, compareInputs = false)
     }
 
     override fun run() {
-        executer.execute()
+        executor.execute()
     }
 }

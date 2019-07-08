@@ -100,12 +100,10 @@ internal class KotlinRootNpmResolver internal constructor(
 
         upToDateChecks.forEach { it.commit() }
 
-        val resolution = KotlinRootNpmResolution(rootProject, projectResolutions)
-
-        return resolution
+        return KotlinRootNpmResolution(rootProject, projectResolutions)
     }
 
-    fun closePlugins(resolution: KotlinRootNpmResolution) {
+    internal fun closePlugins(resolution: KotlinRootNpmResolution) {
         plugins.forEach {
             it.close(resolution)
         }

@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
 
 /**
@@ -22,41 +25,40 @@ import java.io.File
  * ## Resolving process from Gradle
  *
  * **configuring**. Global initial state. [NpmResolverPlugin] should be applied for each project
- * that requires NPM resolution. This plugin should be applied only after kotlin plugin.
- * When applied, [KotlinProjectNpmResolver] will be created for the corresponding project
- * and will subscribe to all js compilations.
+ * that requires NPM resolution. When applied, [KotlinProjectNpmResolver] will be created for the
+ * corresponding project and will subscribe to all js compilations. [NpmResolverPlugin] requires
+ * kotlin mulitplatform or plaform plugin applied first.
  *
- * **up-to-date-checked**. This state is compilation local (one compilation may be in up-to-date-checked
- * state, while another may be steel in configuring state). New compilations may be added in this
- * state, but compilations that are already up-to-date-checked cannot be changes.
+ * **up-to-date-checked**. This state is compilation local: one compilation may be in up-to-date-checked
+ * state, while another may be steel in configuring state. New compilations may be added in this
+ * state, but compilations that are already up-to-date-checked cannot be changed.
  * Initiated by calling [KotlinPackageJsonTask.producerInputs] getter (will be called by Gradle).
  * [KotlinCompilationNpmResolver] will create and **resolve** aggregated compilation configuration,
- * which consists of all related compilation configuration
- * and npm tools configuration which contains all dependencies that is required for all enabled
+ * which contains all related compilation configuration and NPM tools configuration.
+ * NPM tools configuration contains all dependencies that is required for all enabled
  * tasks related to this compilation. It is important to resolve this configuration inside particular
  * project and not globally. Aggregated configuration will be analyzed for gradle internal dependencies
- * (project depenencies), gradle external dependencies and npm dependencies. This collections will
+ * (project dependencies), gradle external dependencies and npm dependencies. This collections will
  * be treated as `packageJson` task inputs.
  *
  * **package-json-created**. This state also compilation local. Initiated by executing `packageJson`
  * task for particular compilation. If `packageJson` task is up-to-date, this state is reached by
  * first calling [KotlinCompilationNpmResolver.getResolutionOrResolveIfForced] which may be called
- * by compilation that depends on this compilation.
- *
- * Note that package.json will be executed only for required compilations, while other may be missed.
+ * by compilation that depends on this compilation. Note that package.json will be executed only for
+ * required compilations, while other may be missed.
  *
  * **installed**. Global final state. Initiated by executing global `kotlinNpmInstall` task.
  * All created package.json files will be gathered and package manager will be executed.
  * Package manager will create lock file, that will be parsed for transitive npm dependencies
  * that will be added to the root [NpmDependency] objects. `kotlinNpmInstall` task may be up-to-date.
- * In this case, installed state will be reached by first call of [installIfNeeded] without exeucting
+ * In this case, installed state will be reached by first call of [installIfNeeded] without executing
  * package manager.
  *
  * Resolution will be used from [NpmDependency] by calling [getNpmDependencyResolvedCompilation].
  * Also resolution will be checked before calling [NpmProject.require] and executing any task
  * that requires npm dependencies or node_modules.
  *
- * Also user can call [requireInstalled] to get resolution info.
+ * User can call [requireInstalled] to get resolution info.
  *
  * ## Resolving process during Idea import
  *
@@ -71,7 +73,7 @@ import java.io.File
  *
  * Note that in this case resolution process will be performed outside of task execution.
  */
-class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
+class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension) {
     private val forceFullResolve: Boolean
         get() = isInIdeaSync
 
@@ -115,7 +117,7 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
         }
 
         val state0 = this.state
-        val resolution = when (state0) {
+        return when (state0) {
             is ResolutionState.Installed -> alreadyResolved(state0.resolved)
             is ResolutionState.Configuring -> {
                 synchronized(this) {
@@ -138,8 +140,6 @@ class KotlinNpmResolutionManager(val nodeJsSettings: NodeJsRootExtension) {
                 }
             }
         }
-
-        return resolution
     }
 
     internal fun getNpmDependencyResolvedCompilation(npmDependency: NpmDependency): KotlinCompilationNpmResolution? {
