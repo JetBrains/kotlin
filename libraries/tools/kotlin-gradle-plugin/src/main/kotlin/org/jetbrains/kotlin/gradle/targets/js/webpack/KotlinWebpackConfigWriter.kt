@@ -19,6 +19,7 @@ data class KotlinWebpackConfigWriter(
     val mode: Mode = Mode.DEVELOPMENT,
     val entry: File? = null,
     val outputPath: File? = null,
+    val outputFileName: String? = entry?.name,
     val configDirectory: File? = null,
     val bundleAnalyzerReportDir: File? = null,
     val reportEvaluatedConfigFile: File? = null,
@@ -203,7 +204,7 @@ data class KotlinWebpackConfigWriter(
                 config.entry.push(${jsQuotedString(entry.canonicalPath)});
                 config.output = {
                     path: ${jsQuotedString(outputPath.canonicalPath)},
-                    filename: ${jsQuotedString(entry.name)}
+                    filename: ${jsQuotedString(outputFileName!!)}
                 };
                 
             """.trimIndent()
