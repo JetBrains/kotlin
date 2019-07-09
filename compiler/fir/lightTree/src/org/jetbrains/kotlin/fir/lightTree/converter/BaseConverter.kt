@@ -11,7 +11,9 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 
 open class BaseConverter(
     session: FirSession,
@@ -39,12 +41,12 @@ open class BaseConverter(
         return kidsRef.get()
     }
 
-    protected inline fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
+    protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {
-            if (kid == null) continue
+            if (kid == null) break
             val tokenType = kid.tokenType
-            if (KtTokens.COMMENTS.contains(tokenType) || tokenType == KtTokens.WHITE_SPACE || tokenType == KtTokens.SEMICOLON) continue
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens) continue
             f(kid)
         }
     }
@@ -54,9 +56,9 @@ open class BaseConverter(
 
         val container = mutableListOf<T>()
         for (kid in kidsArray) {
-            if (kid == null) continue
+            if (kid == null) break
             val tokenType = kid.tokenType
-            if (KtTokens.COMMENTS.contains(tokenType) || tokenType == KtTokens.WHITE_SPACE || tokenType == KtTokens.SEMICOLON) continue
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON) continue
             f(kid, container)
         }
 

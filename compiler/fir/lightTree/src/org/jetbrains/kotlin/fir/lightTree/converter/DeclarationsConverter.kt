@@ -53,6 +53,7 @@ class DeclarationsConverter(
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>
 ) : BaseConverter(session, tree) {
+    private val expressionConverter = ExpressionsConverter(session, stubMode, tree)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -171,7 +172,7 @@ class DeclarationsConverter(
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it, null)
+                ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it)
                 is KtModifierKeywordToken -> modifier.addModifier(it)
             }
         }
@@ -186,7 +187,7 @@ class DeclarationsConverter(
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> typeModifierList.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> typeModifierList.annotations += convertAnnotationEntry(it, null)
+                ANNOTATION_ENTRY -> typeModifierList.annotations += convertAnnotationEntry(it)
                 is KtModifierKeywordToken -> typeModifierList.addModifier(it)
             }
         }
@@ -201,7 +202,7 @@ class DeclarationsConverter(
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> typeArgumentModifierList.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> typeArgumentModifierList.annotations += convertAnnotationEntry(it, null)
+                ANNOTATION_ENTRY -> typeArgumentModifierList.annotations += convertAnnotationEntry(it)
                 is KtModifierKeywordToken -> typeArgumentModifierList.addModifier(it)
             }
         }
@@ -216,7 +217,7 @@ class DeclarationsConverter(
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> modifier.annotations += convertAnnotation(it)
-                ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it, null)
+                ANNOTATION_ENTRY -> modifier.annotations += convertAnnotationEntry(it)
                 is KtModifierKeywordToken -> modifier.addModifier(it)
             }
         }
@@ -231,7 +232,7 @@ class DeclarationsConverter(
         return fileAnnotationList.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 ANNOTATION -> container += convertAnnotation(node)
-                ANNOTATION_ENTRY -> container += convertAnnotationEntry(node, AnnotationUseSiteTarget.FILE)
+                ANNOTATION_ENTRY -> container += convertAnnotationEntry(node)
             }
         }
     }
@@ -250,12 +251,13 @@ class DeclarationsConverter(
     }
 
     /**
-     * org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationTarget
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationTarget
      */
     private fun convertAnnotationTarget(annotationUseSiteTarget: LighterASTNode): AnnotationUseSiteTarget {
         lateinit var annotationTarget: AnnotationUseSiteTarget
         annotationUseSiteTarget.forEachChildren {
             when (it.tokenType) {
+                FIELD_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FIELD
                 FILE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FILE
                 PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
                 GET_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY_GETTER
@@ -276,18 +278,22 @@ class DeclarationsConverter(
      */
     private fun convertAnnotationEntry(
         unescapedAnnotation: LighterASTNode,
-        annotationUseSiteTarget: AnnotationUseSiteTarget?
+        defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null
     ): FirAnnotationCall {
-        //TODO not implemented
-        val pair = convertConstructorInvocation(unescapedAnnotation)
+        var annotationUseSiteTarget: AnnotationUseSiteTarget? = null
+        lateinit var constructorCalleePair: Pair<FirTypeRef, List<FirExpression>>
+        unescapedAnnotation.forEachChildren {
+            when (it.tokenType) {
+                ANNOTATION_TARGET -> annotationUseSiteTarget = convertAnnotationTarget(it)
+                CONSTRUCTOR_CALLEE -> constructorCalleePair = convertConstructorInvocation(unescapedAnnotation)
+            }
+        }
         return FirAnnotationCallImpl(
             session,
             null,
-            annotationUseSiteTarget,
-            pair.first
-        ).apply {
-            arguments += pair.second
-        }
+            annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget,
+            constructorCalleePair.first
+        ).extractArgumentsFrom(constructorCalleePair.second, stubMode)
     }
 
     /*****    DECLARATIONS    *****/
@@ -566,10 +572,11 @@ class DeclarationsConverter(
         classWrapper: ClassWrapper
     ): FirDelegatedConstructorCallImpl {
         var thisKeywordPresent = false
+        val firValueArguments = mutableListOf<FirExpression>()
         constructorDelegationCall.forEachChildren {
             when (it.tokenType) {
                 CONSTRUCTOR_DELEGATION_REFERENCE -> if (it.getAsString() == "this") thisKeywordPresent = true
-                VALUE_ARGUMENT_LIST -> "" //TODO implement
+                VALUE_ARGUMENT_LIST -> firValueArguments += expressionConverter.convertValueArguments(it)
             }
         }
 
@@ -585,7 +592,7 @@ class DeclarationsConverter(
             null,
             delegatedType,
             isThis
-        ).extractArgumentsFrom(listOf(), stubMode) //TODO implement
+        ).extractArgumentsFrom(firValueArguments, stubMode)
     }
 
     /**
@@ -654,7 +661,7 @@ class DeclarationsConverter(
                     val propertyAccessor = convertGetterOrSetter(it, returnType)
                     if (propertyAccessor.isGetter) getter = propertyAccessor else setter = propertyAccessor
                 }
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
             }
         }
 
@@ -724,7 +731,7 @@ class DeclarationsConverter(
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(it, propertyTypeRef)
                 BLOCK -> firBlock = visitBlock(it)
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
             }
         }
 
@@ -801,7 +808,7 @@ class DeclarationsConverter(
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                 BLOCK -> firBlock = visitBlock(it)
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
             }
         }
 
@@ -923,7 +930,7 @@ class DeclarationsConverter(
         constructorInvocation.forEachChildren {
             when (it.tokenType) {
                 CONSTRUCTOR_CALLEE -> firTypeRef = convertType(it)
-                VALUE_ARGUMENT_LIST -> firValueArguments += convertValueArguments(it)
+                VALUE_ARGUMENT_LIST -> firValueArguments += expressionConverter.convertValueArguments(it)
             }
         }
         return Pair(firTypeRef, firValueArguments)
@@ -942,7 +949,7 @@ class DeclarationsConverter(
         explicitDelegation.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firTypeRef = convertType(it)
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
             }
         }
 
@@ -1193,7 +1200,7 @@ class DeclarationsConverter(
                 VAR_KEYWORD -> isVar = true
                 IDENTIFIER -> identifier = it.getAsString()
                 TYPE_REFERENCE -> firType = convertType(it)
-                else -> if (it.isExpression()) firExpression = visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
             }
         }
 
@@ -1208,42 +1215,5 @@ class DeclarationsConverter(
             isVararg = modifiers.hasVararg()
         ).apply { annotations += modifiers.annotations }
         return ValueParameter(isVal, isVar, modifiers, firValueParameter)
-    }
-
-    /*****    EXPRESSIONS    *****/
-    //TODO move to parsing class?
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseValueArgumentList
-     */
-    private fun convertValueArguments(valueArguments: LighterASTNode): List<FirExpression> {
-        return valueArguments.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                VALUE_ARGUMENT -> container += convertValueArgument(node)
-            }
-        }
-    }
-
-    private fun convertValueArgument(valueArgument: LighterASTNode): FirExpression {
-        return FirErrorExpressionImpl(session, null, "Not implemented")
-        //TODO implement
-
-        /*
-        this ?: return FirErrorExpressionImpl(session, this as? KtElement, "No argument given")
-            val expression = this.getArgumentExpression()
-            return when (expression) {
-                is KtConstantExpression, is KtStringTemplateExpression -> {
-                    expression.accept(this@Visitor, Unit) as FirExpression
-                }
-
-                else -> {
-                    { expression }.toFirExpression("Argument is absent")
-                }
-            }
-         */
-    }
-
-    private fun visitExpression(expression: LighterASTNode): FirExpression {
-        return if (stubMode) FirExpressionStub(session, null)
-        else TODO("not implemented")
     }
 }
