@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -34,7 +35,7 @@ class RedundantWithInspection : AbstractKotlinInspection() {
             val lambdaBody = lambda.bodyExpression ?: return
 
             val context = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-            if (lambdaBody.statements.size > 1 && context[BindingContext.USED_AS_EXPRESSION, callExpression] == true) return
+            if (lambdaBody.statements.size > 1 && callExpression.isUsedAsExpression(context)) return
             if (callExpression.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe != FqName("kotlin.with")) return
 
             val lambdaDescriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return
