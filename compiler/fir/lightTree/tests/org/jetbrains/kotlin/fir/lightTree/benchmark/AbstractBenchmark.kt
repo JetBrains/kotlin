@@ -31,9 +31,9 @@ abstract class AbstractBenchmark {
             files[file] = text
         }
         if (ignoreTestData) {
-            path.walkTopDownWithTestData(saveText)
-        } else {
             path.walkTopDown(saveText)
+        } else {
+            path.walkTopDownWithTestData(saveText)
         }
     }
 
