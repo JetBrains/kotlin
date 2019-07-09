@@ -9,6 +9,8 @@ import com.intellij.ide.projectWizard.ProjectSettingsStep;
 import com.intellij.ide.util.EditorHelper;
 import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
@@ -57,7 +59,6 @@ import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinBuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
-import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
@@ -181,17 +182,16 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
       myWizardContext.isCreatingNewProject() || myParentProject == null
     );
 
-    if (gradleBuildFile != null) {
-      BuildScriptDataBuilder builder;
-      if (myUseKotlinDSL) {
-        GradleProjectSettings gradleProjectSettings = getExternalProjectSettings();
-        GradleVersion version = gradleProjectSettings.resolveGradleVersion();
-        builder = new KotlinBuildScriptDataBuilder(gradleBuildFile, version);
-      } else {
-        builder = new BuildScriptDataBuilder(gradleBuildFile);
-      }
-      modifiableRootModel.getModule().putUserData(BUILD_SCRIPT_DATA, builder);
+    BuildScriptDataBuilder builder;
+    if (myUseKotlinDSL) {
+      GradleProjectSettings gradleProjectSettings = getExternalProjectSettings();
+      GradleVersion version = gradleProjectSettings.resolveGradleVersion();
+      builder = new KotlinBuildScriptDataBuilder(gradleBuildFile, version);
     }
+    else {
+      builder = new BuildScriptDataBuilder(gradleBuildFile);
+    }
+    modifiableRootModel.getModule().putUserData(BUILD_SCRIPT_DATA, builder);
   }
 
   @Override
@@ -272,7 +272,8 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
       };
 
       // execute when current dialog is closed
-      ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL, runnable);
+      Application application = ApplicationManager.getApplication();
+      application.invokeLater(runnable, ModalityState.NON_MODAL, project.getDisposed());
     }
   }
 
@@ -310,7 +311,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
     return StdModuleTypes.JAVA;
   }
 
-  @Nullable
+  @NotNull
   private VirtualFile setupGradleBuildFile(@NotNull VirtualFile modelContentRootDir)
     throws ConfigurationException {
     String scriptName;
@@ -319,39 +320,37 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
     } else {
       scriptName = GradleConstants.DEFAULT_SCRIPT_NAME;
     }
-    final VirtualFile file = getOrCreateExternalProjectConfigFile(modelContentRootDir.getPath(), scriptName);
+    final VirtualFile file = getOrCreateExternalProjectConfigFile(modelContentRootDir.getPath(), scriptName, true);
 
-    if (file != null) {
-      final String templateName;
-      if (myUseKotlinDSL) {
-        templateName =  getExternalProjectSettings().getDistributionType() == DistributionType.WRAPPED
-                        ? KOTLIN_DSL_TEMPLATE_GRADLE_BUILD_WITH_WRAPPER
-                        : KOTLIN_DSL_TEMPLATE_GRADLE_BUILD;
-      } else {
-        templateName = getExternalProjectSettings().getDistributionType() == DistributionType.WRAPPED
-                                    ? TEMPLATE_GRADLE_BUILD_WITH_WRAPPER
-                                    : DEFAULT_TEMPLATE_GRADLE_BUILD;
-      }
-
-      Map<String, String> attributes = new HashMap<>();
-      if (myProjectId != null) {
-        attributes.put(TEMPLATE_ATTRIBUTE_MODULE_VERSION, myProjectId.getVersion());
-        attributes.put(TEMPLATE_ATTRIBUTE_MODULE_GROUP, myProjectId.getGroupId());
-        attributes.put(TEMPLATE_ATTRIBUTE_GRADLE_VERSION, GradleVersion.current().getVersion());
-      }
-      saveFile(file, templateName, attributes);
+    final String templateName;
+    if (myUseKotlinDSL) {
+      templateName = getExternalProjectSettings().getDistributionType() == DistributionType.WRAPPED
+                     ? KOTLIN_DSL_TEMPLATE_GRADLE_BUILD_WITH_WRAPPER
+                     : KOTLIN_DSL_TEMPLATE_GRADLE_BUILD;
     }
+    else {
+      templateName = getExternalProjectSettings().getDistributionType() == DistributionType.WRAPPED
+                     ? TEMPLATE_GRADLE_BUILD_WITH_WRAPPER
+                     : DEFAULT_TEMPLATE_GRADLE_BUILD;
+    }
+
+    Map<String, String> attributes = new HashMap<>();
+    if (myProjectId != null) {
+      attributes.put(TEMPLATE_ATTRIBUTE_MODULE_VERSION, myProjectId.getVersion());
+      attributes.put(TEMPLATE_ATTRIBUTE_MODULE_GROUP, myProjectId.getGroupId());
+      attributes.put(TEMPLATE_ATTRIBUTE_GRADLE_VERSION, GradleVersion.current().getVersion());
+    }
+    saveFile(file, templateName, attributes);
     return file;
   }
 
-  @Nullable
+  @NotNull
   public static VirtualFile setupGradleSettingsFile(@NotNull String rootProjectPath,
                                                     @NotNull VirtualFile modelContentRootDir,
                                                     String projectName,
                                                     String moduleName,
                                                     boolean renderNewFile) throws ConfigurationException {
-    final VirtualFile file = getOrCreateExternalProjectConfigFile(rootProjectPath, GradleConstants.SETTINGS_FILE_NAME);
-    if (file == null) return null;
+    final VirtualFile file = getOrCreateExternalProjectConfigFile(rootProjectPath, GradleConstants.SETTINGS_FILE_NAME, renderNewFile);
 
     if (renderNewFile) {
       final String moduleDirName = VfsUtilCore.getRelativePath(modelContentRootDir, file.getParent(), '/');
@@ -414,12 +413,23 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
     }
   }
 
-
-  @Nullable
-  private static VirtualFile getOrCreateExternalProjectConfigFile(@NotNull String parent, @NotNull String fileName) {
+  @NotNull
+  private static VirtualFile getOrCreateExternalProjectConfigFile(@NotNull String parent,
+                                                                  @NotNull String fileName,
+                                                                  boolean deleteExistedFile)
+    throws ConfigurationException {
     File file = new File(parent, fileName);
+    if (deleteExistedFile) FileUtilRt.delete(file);
     FileUtilRt.createIfNotExists(file);
-    return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
+    VirtualFile virtualFile = VfsUtil.findFileByIoFile(file, true);
+    if (virtualFile == null) {
+      throw new ConfigurationException(String.format("Can't create configuration file '%s'", file.getPath()));
+    }
+    if (virtualFile.isDirectory()) {
+      throw new ConfigurationException(String.format("Configuration file is directory '%s'", file.getPath()));
+    }
+    VfsUtil.markDirtyAndRefresh(false, false, false, virtualFile);
+    return virtualFile;
   }
 
   public void setParentProject(@Nullable ProjectData parentProject) {
