@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtOperationExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.isNullable
 
 interface Transformation {
     operator fun invoke(callExpression: KtCallExpression, replacement: Replacement)
-    fun isApplicable(call: KtCallExpression): Boolean = true
+    fun isApplicable(callExpression: KtCallExpression): Boolean = true
+    fun isApplicable(callExpression: KtCallExpression, context: BindingContext): Boolean = true
 }
 
 object WithoutAdditionalTransformation : Transformation {
@@ -31,7 +35,7 @@ object WithoutAdditionalTransformation : Transformation {
     }
 }
 
-object ToExtensionFunction : Transformation {
+object ToExtensionFunctionWithNonNullableReceiver : Transformation {
     override fun invoke(callExpression: KtCallExpression, replacement: Replacement) {
         val file = callExpression.containingKtFile
         val psiFactory = KtPsiFactory(callExpression)
@@ -49,5 +53,22 @@ object ToExtensionFunction : Transformation {
         }
     }
 
-    override fun isApplicable(call: KtCallExpression): Boolean = call.valueArguments.isNotEmpty()
+    override fun isApplicable(callExpression: KtCallExpression): Boolean = callExpression.valueArguments.isNotEmpty()
+
+    override fun isApplicable(callExpression: KtCallExpression, context: BindingContext): Boolean = callExpression
+        .valueArguments.firstOrNull()
+        ?.getArgumentExpression()
+        ?.getType(context)
+        ?.isNullable() == false
+}
+
+object ToExtensionFunctionWithNullableReceiver : Transformation {
+    override fun invoke(callExpression: KtCallExpression, replacement: Replacement) = ToExtensionFunctionWithNonNullableReceiver(
+        callExpression,
+        replacement
+    )
+
+    override fun isApplicable(callExpression: KtCallExpression): Boolean = ToExtensionFunctionWithNonNullableReceiver.isApplicable(
+        callExpression
+    )
 }

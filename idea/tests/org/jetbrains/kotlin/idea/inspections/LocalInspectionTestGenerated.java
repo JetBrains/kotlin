@@ -9140,6 +9140,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testToString() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/toString.kt");
             }
+
+            @TestMetadata("toStringWithNullableReceiver.kt")
+            public void testToStringWithNullableReceiver() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/toStringWithNullableReceiver.kt");
+            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare")
@@ -9489,6 +9494,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("longToString2.kt")
             public void testLongToString2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/longToString2.kt");
+            }
+
+            @TestMetadata("nullableIntToString.kt")
+            public void testNullableIntToString() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/nullableIntToString.kt");
+            }
+
+            @TestMetadata("nullableIntToString2.kt")
+            public void testNullableIntToString2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString/nullableIntToString2.kt");
             }
 
             @TestMetadata("replaceIntToString.kt")
