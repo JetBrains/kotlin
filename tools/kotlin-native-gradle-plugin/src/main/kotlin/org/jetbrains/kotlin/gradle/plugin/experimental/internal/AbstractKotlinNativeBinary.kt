@@ -62,7 +62,7 @@ abstract class AbstractKotlinNativeBinary(
         override val component: AbstractKotlinNativeComponent,
         val variant: KotlinNativeVariant,
         override val kind: CompilerOutputKind,
-        objects: ObjectFactory,
+        protected val objects: ObjectFactory,
         componentDependencies: KotlinNativeDependenciesImpl,
         configurations: ConfigurationContainer,
         val fileOperations: FileOperations
@@ -129,8 +129,8 @@ abstract class AbstractKotlinNativeBinary(
     open fun isOptimized(): Boolean = optimized
 
     // TODO: Support native libraries
-    fun getLinkLibraries(): FileCollection = fileOperations.files()
-    fun getRuntimeLibraries(): FileCollection = fileOperations.files()
+    fun getLinkLibraries(): FileCollection = fileOperations.configurableFiles()
+    fun getRuntimeLibraries(): FileCollection = fileOperations.configurableFiles()
 
     fun getToolChain(): NativeToolChain =
             throw NotImplementedError("Kotlin/Native doesn't support the Gradle's toolchain model.")
@@ -138,7 +138,7 @@ abstract class AbstractKotlinNativeBinary(
     /** A name of a root folder for this binary's output under the build directory. */
     internal abstract val outputRootName: String
 
-    private val outputs: ConfigurableFileCollection = fileOperations.files()
+    private val outputs: ConfigurableFileCollection = fileOperations.configurableFiles()
     override fun getOutputs() = outputs
 
     override val additionalCompilerOptions: Collection<String>

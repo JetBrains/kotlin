@@ -23,7 +23,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.language.cpp.internal.NativeVariantIdentity
+import org.gradle.nativeplatform.MachineArchitecture
 import org.gradle.nativeplatform.OperatingSystemFamily
+import org.gradle.nativeplatform.TargetMachine
 import org.gradle.nativeplatform.TargetMachineFactory
 import org.gradle.nativeplatform.platform.NativePlatform
 import org.gradle.nativeplatform.platform.internal.*
@@ -45,6 +47,14 @@ fun KonanTarget.getGradleOSFamily(objectFactory: ObjectFactory): OperatingSystem
 
 fun KonanTarget.getGradleCPU(): ArchitectureInternal = architecture.visibleName.let {
     Architectures.forInput(it)
+}
+
+fun KonanTarget.toTargetMachine(objectFactory: ObjectFactory): TargetMachine = object: TargetMachine {
+    override fun getOperatingSystemFamily(): OperatingSystemFamily =
+        getGradleOSFamily(objectFactory)
+
+    override fun getArchitecture(): MachineArchitecture =
+        objectFactory.named(MachineArchitecture::class.java, this@toTargetMachine.architecture.visibleName)
 }
 
 class DefaultKotlinNativePlatform(name: String, override val target: KonanTarget):

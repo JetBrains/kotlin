@@ -71,7 +71,7 @@ task copyGenerated(type: Copy) {
 
 task deleteGenerated(type: Delete) {
     dependsOn('copyGenerated')
-    delete 'build/generated'
+    delete 'build/generated/source/proto/compiler/java'
 }
 
 task renamePackage {

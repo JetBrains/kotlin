@@ -11,16 +11,13 @@ open class CustomWrapper : Wrapper() {
 
     val mainWrapperVersion: String
         @Input get() = mainWrapperTask.gradleVersion
-    val mainWrapperDistrType: DistributionType
-        @Input get() = mainWrapperTask.distributionType
-    val mainWrapperDistrUrl: String
-        @Input get() = mainWrapperTask.distributionUrl
     val mainWrapperDistrSha256: String?
         @Optional @Input get() = mainWrapperTask.distributionSha256Sum
 }
 
 open class WrappersExtension {
     var projects = mutableListOf<Any>()
+    var distributionType = Wrapper.DistributionType.BIN
 }
 
 class GradleWrappers : Plugin<Project> {
@@ -38,16 +35,15 @@ class GradleWrappers : Plugin<Project> {
                     this.mainWrapperTask = mainWrapperTask
                     jarFile = it.resolve("gradle/wrapper/gradle-wrapper.jar")
                     scriptFile = it.resolve("gradlew")
+                    distributionType = wrappers.distributionType
                     mainWrapperTask.dependsOn(this)
 
                     // Get these parameters from the main wrapper task to support
-                    // command line options like --gradle-version or --distribution-type.
+                    // command line options like --gradle-version.
                     // Gradle doesn't provide access to the values passed in command line
-                    // at the configuration phase, so we have to get these values at execution phase.
+                    // at the configuration phase, so we have to get these values at the execution phase.
                     doFirst {
                         gradleVersion = mainWrapperVersion
-                        distributionType = mainWrapperDistrType
-                        distributionUrl = mainWrapperDistrUrl
                         distributionSha256Sum = mainWrapperDistrSha256
                     }
                 }
