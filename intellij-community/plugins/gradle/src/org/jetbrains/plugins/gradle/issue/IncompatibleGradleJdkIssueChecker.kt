@@ -48,7 +48,14 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
         feature != null && feature >= 11
       } == true
 
-    if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue &&
+    val unableToStartDaemonProcessForJDK11 = !isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue
+    rootCauseText.startsWith("org.gradle.api.GradleException: Unable to start the daemon process.") &&
+    rootCauseText.contains("FAILURE: Build failed with an exception.") &&
+    gradleVersionUsed != null &&
+    gradleVersionUsed.baseVersion >= GradleVersion.version("4.5") &&
+    gradleVersionUsed.baseVersion <= GradleVersion.version("4.6")
+
+    if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue && !unableToStartDaemonProcessForJDK11 &&
         !rootCauseText.startsWith("org.gradle.api.GradleException: Could not determine Java version using executable")) {
       return null
     }
@@ -64,8 +71,11 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
         "\n\nThe project uses Gradle $gradleVersionString which is incompatible with " +
         "${ApplicationNamesInfo.getInstance().productName} running on Java 10 or newer.\n" +
         "See details at https://github.com/gradle/gradle/issues/8431")
-      isRemovedUnsafeDefineClassMethodInJDK11Issue -> issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 11 or newer.\n" +
-                                                                              "See details at https://github.com/gradle/gradle/issues/4860")
+      isRemovedUnsafeDefineClassMethodInJDK11Issue -> issueDescription.append(
+        "\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 11 or newer.\n" +
+        "See details at https://github.com/gradle/gradle/issues/4860")
+      unableToStartDaemonProcessForJDK11 -> issueDescription.clear().append("Unable to start the daemon process.").append(
+        "\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 11 or newer.\n")
       else -> issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer.\n" +
                                       "See details at https://github.com/gradle/gradle/issues/4503")
     }

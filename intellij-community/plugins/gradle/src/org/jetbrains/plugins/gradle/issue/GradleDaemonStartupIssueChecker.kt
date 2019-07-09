@@ -31,6 +31,11 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
       return null
     }
 
+    // JDK compatibility issues should be handled by org.jetbrains.plugins.gradle.issue.IncompatibleGradleJdkIssueChecker
+    if(rootCauseText.contains("FAILURE: Build failed with an exception.")) {
+      return null
+    }
+
     val quickFixDescription = StringBuilder()
     val quickFixes = ArrayList<BuildIssueQuickFix>()
     val projectGradleProperties = Paths.get(issueData.projectPath, "gradle.properties")
