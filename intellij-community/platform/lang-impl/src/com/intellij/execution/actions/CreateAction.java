@@ -92,8 +92,10 @@ public class CreateAction extends BaseRunConfigurationAction {
     @Override
     public void perform(final ConfigurationContext context) {
       final RunnerAndConfigurationSettings configuration = context.getConfiguration();
-      RunDialog.editConfiguration(context.getProject(), configuration,
-                                  ExecutionBundle.message("edit.run.configuration.for.item.dialog.title", configuration.getName()));
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        RunDialog.editConfiguration(context.getProject(), configuration,
+                                    ExecutionBundle.message("edit.run.configuration.for.item.dialog.title", configuration.getName()));
+      }
     }
   }
 
