@@ -56,14 +56,14 @@ public class LeafBlockWrapper extends AbstractBlockWrapper {
     this(block, parent, whiteSpaceBefore, model, options, previousTokenBlock, isReadOnly, block.getTextRange());
   }
 
-  private LeafBlockWrapper(final Block block,
-                          CompositeBlockWrapper parent,
-                          @NotNull WhiteSpace whiteSpaceBefore,
-                          FormattingDocumentModel model,
-                          CommonCodeStyleSettings.IndentOptions options,
-                          LeafBlockWrapper previousTokenBlock,
-                          boolean isReadOnly,
-                          final TextRange textRange)
+  LeafBlockWrapper(Block block,
+                   CompositeBlockWrapper parent,
+                   @NotNull WhiteSpace whiteSpaceBefore,
+                   FormattingDocumentModel model,
+                   CommonCodeStyleSettings.IndentOptions options,
+                   LeafBlockWrapper previousTokenBlock,
+                   boolean isReadOnly,
+                   final TextRange textRange)
   {
     super(block, whiteSpaceBefore, parent, textRange);
     myPreviousBlock = previousTokenBlock;
