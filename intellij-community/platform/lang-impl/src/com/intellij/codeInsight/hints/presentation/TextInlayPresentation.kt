@@ -26,7 +26,6 @@ class TextInlayPresentation(
 
   override fun paint(g: Graphics2D, attributes: TextAttributes) {
     val savedHint = g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING)
-    g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, AntialiasingType.getKeyForCurrentScope(false))
     try {
       val foreground = attributes.foregroundColor
       if (foreground != null) {
@@ -37,6 +36,7 @@ class TextInlayPresentation(
         }
         val font = fontProvider(fontType)
         g.font = font
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, AntialiasingType.getKeyForCurrentScope(false))
         g.color = foreground
         g.drawString(text, 0, yBaseline)
         val effectColor = attributes.effectColor

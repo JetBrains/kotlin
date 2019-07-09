@@ -29,6 +29,7 @@ import java.awt.font.FontRenderContext
 import java.util.*
 import javax.swing.Icon
 import javax.swing.UIManager
+import kotlin.math.max
 
 class PresentationFactory(private val editor: EditorImpl) {
   /**
@@ -76,15 +77,18 @@ class PresentationFactory(private val editor: EditorImpl) {
    */
   @Contract(pure = true)
   fun roundWithBackground(base: InlayPresentation): InlayPresentation {
-    val rounding = rounding(8, 8, withInlayAttributes(BackgroundPresentation(
+    val rounding = withInlayAttributes(RoundWithBackgroundPresentation(
       InsetPresentation(
         base,
         left = 7,
         right = 7,
         top = 0,
         down = 0
-      )
-    )))
+
+      ),
+      8,
+      8
+    ))
     val offsetFromTop = getFontData(editor).offsetFromTop(editor)
     return InsetPresentation(rounding, top = offsetFromTop)
   }
@@ -278,7 +282,7 @@ class PresentationFactory(private val editor: EditorImpl) {
     }
   }
 
-  fun join(presentations: List<InlayPresentation>, separator: () -> InlayPresentation) : InlayPresentation {
+  fun join(presentations: List<InlayPresentation>, separator: () -> InlayPresentation): InlayPresentation {
     val seq = mutableListOf<InlayPresentation>()
     var first = true
     for (presentation in presentations) {
@@ -390,7 +394,7 @@ class PresentationFactory(private val editor: EditorImpl) {
 
   private fun getFontData(editor: Editor): FontData {
     val familyName = UIManager.getFont("Label.font").family
-    val size = Math.max(1, editor.colorsScheme.editorFontSize - 1)
+    val size = max(1, editor.colorsScheme.editorFontSize - 1)
     var metrics = editor.getUserData(FONT_DATA)
     if (metrics != null && !metrics.isActual(editor, familyName, size)) {
       metrics = null
