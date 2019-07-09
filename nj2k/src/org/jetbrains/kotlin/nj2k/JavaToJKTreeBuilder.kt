@@ -912,7 +912,7 @@ class JavaToJKTreeBuilder constructor(
             is PsiMethod -> with(declarationMapper) { psi.toJK() }
             is PsiAnnotation -> with(declarationMapper) { psi.toJK() }
             is PsiImportList -> psi.toJK()
-            is PsiImportStatement -> psi.toJK()
+            is PsiImportStatementBase -> psi.toJK()
             is PsiJavaCodeReferenceElement ->
                 if (psi.parent is PsiReferenceList) {
                     val factory = JavaPsiFacade.getInstance(psi.project).elementFactory
