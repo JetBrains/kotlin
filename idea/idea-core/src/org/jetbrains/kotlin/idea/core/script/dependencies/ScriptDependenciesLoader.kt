@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrap
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.valueOrNull
-import kotlin.script.experimental.jvm.compat.mapToLegacyReports
 
 // TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
 abstract class ScriptDependenciesLoader(protected val project: Project) {
@@ -77,7 +76,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
     }
 
     private fun attachReportsIfChanged(result: ResultWithDiagnostics<*>, file: VirtualFile) {
-        reporter.attachReports(file, result.reports.mapToLegacyReports())
+        reporter.attachReports(file, result.reports)
     }
 
     private fun save(compilationConfigurationResult: ScriptCompilationConfigurationResult?, file: VirtualFile) {
