@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.project.impl.ProjectImpl
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vcs.readOnlyHandler.ReadonlyStatusHandlerImpl
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
@@ -25,15 +24,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.intellij.lang.annotations.Language
-import org.junit.Assume.assumeTrue
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.attribute.PosixFilePermission
 import java.util.concurrent.TimeUnit
 
 internal class ProjectStoreTest {
@@ -73,7 +69,7 @@ internal class ProjectStoreTest {
   fun directoryBasedStorage() = runBlocking {
     loadAndUseProjectInLoadComponentStateMode(tempDirManager, {
       it.writeChild("${Project.DIRECTORY_STORE_FOLDER}/misc.xml", iprFileContent)
-      it.path
+      Paths.get(it.path)
     }) { project ->
       val testComponent = test(project as ProjectEx)
 
@@ -100,7 +96,7 @@ internal class ProjectStoreTest {
   @Test
   fun fileBasedStorage() = runBlocking {
     loadAndUseProjectInLoadComponentStateMode(tempDirManager, {
-      it.writeChild("test${ProjectFileType.DOT_DEFAULT_EXTENSION}", iprFileContent).path
+      Paths.get(it.writeChild("test${ProjectFileType.DOT_DEFAULT_EXTENSION}", iprFileContent).path)
     }) { project ->
       test(project)
 
@@ -118,7 +114,7 @@ internal class ProjectStoreTest {
       out.write(0xbf)
       out.write(iprFileContent.toByteArray())
       it.writeChild("${Project.DIRECTORY_STORE_FOLDER}/misc.xml", out.toByteArray())
-      it.path
+      Paths.get(it.path)
     }) { project ->
       val store = project.stateStore
       assertThat(store.nameFile).doesNotExist()
@@ -153,7 +149,7 @@ internal class ProjectStoreTest {
     loadAndUseProjectInLoadComponentStateMode(tempDirManager, {
       it.writeChild("${Project.DIRECTORY_STORE_FOLDER}/misc.xml", iprFileContent)
       it.writeChild("${Project.DIRECTORY_STORE_FOLDER}/.name", name)
-      it.path
+      Paths.get(it.path)
     }) { project ->
       val store = project.stateStore
       assertThat(store.nameFile).hasContent(name)
@@ -187,7 +183,7 @@ internal class ProjectStoreTest {
   <component name="ProjectLevelLoser" foo="old?" />
 </project>""".trimIndent()
       it.writeChild("${Project.DIRECTORY_STORE_FOLDER}/foo.xml", expected)
-      it.path
+      Paths.get(it.path)
     }) { project ->
       val obsoleteStorageBean = ObsoleteStorageBean()
       val storageFileName = "foo.xml"
@@ -227,7 +223,7 @@ internal class ProjectStoreTest {
     withTimeout(TimeUnit.SECONDS.toMillis(10)) {
       loadAndUseProjectInLoadComponentStateMode(tempDirManager, {
         it.writeChild("${Project.DIRECTORY_STORE_FOLDER}/misc.xml", iprFileContent)
-        it.path
+        Paths.get(it.path)
       }) { project ->
         val testComponent = test(project as ProjectEx)
         testComponent.state!!.AAvalue = "s"

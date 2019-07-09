@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.task
 
 import com.intellij.openapi.application.runWriteAction
@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
@@ -20,7 +21,6 @@ import org.junit.Before
 import org.junit.Test
 
 class GradleTaskManagerTest: UsefulTestCase() {
-
   private lateinit var myTestFixture: IdeaProjectTestFixture
   private lateinit var myProject: Project
   private lateinit var tm: GradleTaskManager
@@ -68,7 +68,8 @@ class GradleTaskManagerTest: UsefulTestCase() {
   @Test
   fun `test task manager uses wrapper task when wrapper already exists`() {
     runWriteAction {
-      val wrapperProps = myProject.baseDir
+      val baseDir = PlatformTestUtil.getOrCreateProjectTestBaseDir(myProject)
+      val wrapperProps = baseDir
         .createChildDirectory(this, "gradle")
         .createChildDirectory(this, "wrapper")
         .createChildData(this, "gradle-wrapper.properties")
@@ -106,8 +107,7 @@ class GradleTaskManagerTest: UsefulTestCase() {
 
   private fun writeBuildScript(scriptText: String) {
     runWriteAction {
-      VfsUtil.saveText(myProject.baseDir.createChildData(this, "build.gradle"),
-                       scriptText)
+      VfsUtil.saveText(PlatformTestUtil.getOrCreateProjectTestBaseDir(myProject).createChildData(this, "build.gradle"), scriptText)
     }
   }
 }

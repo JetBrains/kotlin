@@ -50,8 +50,7 @@ public abstract class GradleCompilingTestCase extends GradleImportingTestCase {
   }
 
   private static String getArtifactBaseOutputPath(Project project) {
-    String outputUrl = project.getBaseDir().getUrl() + "/out/artifacts";
-    return FileUtil.toSystemIndependentName(VfsUtilCore.urlToPath(outputUrl));
+    return project.getBasePath() + "/out/artifacts";
   }
 
   private static String getArtifactBaseOutputPath(Module module) {
