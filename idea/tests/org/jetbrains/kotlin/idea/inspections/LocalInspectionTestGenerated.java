@@ -9061,16 +9061,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/asList.kt");
             }
 
-            @TestMetadata("binarySearch.kt")
-            public void testBinarySearch() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/binarySearch.kt");
-            }
-
-            @TestMetadata("binarySearch2.kt")
-            public void testBinarySearch2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/binarySearch2.kt");
-            }
-
             @TestMetadata("copyOf.kt")
             public void testCopyOf() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections/copyOf.kt");
@@ -9436,11 +9426,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             public void testAllFilesPresentInSystem() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("arraycopy.kt")
-            public void testArraycopy() throws Exception {
-                runTest("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system/arraycopy.kt");
             }
 
             @TestMetadata("exit.kt")
