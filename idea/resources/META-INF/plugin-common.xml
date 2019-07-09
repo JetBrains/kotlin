@@ -3373,7 +3373,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceJavaStaticMethodWithKotlinAnalogInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.jdk2k.ReplaceJavaStaticMethodWithKotlinAnalogInspection"
                      displayName="Replace Java static method with Kotlin analog"
                      groupPath="Kotlin"
                      groupName="Style issues"
