@@ -44,7 +44,6 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
     private fun totalKotlinLight(onlyLightTree: Boolean) {
         val path = System.getProperty("user.dir")
-        val root = File(path)
         var counter = 0
         var time = 0L
 
@@ -54,14 +53,10 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
         println("BASE PATH: $path")
-        for (file in root.walkTopDown()) {
-            if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
-            if (file.extension != "kt") continue
-
-            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+        path.walkTopDown {
+            val text = FileUtil.loadFile(it, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
-                generateFirFromLightTree(onlyLightTree, lightTreeConverter, text, file.name)
+                generateFirFromLightTree(onlyLightTree, lightTreeConverter, text, it.name)
             }
 
             counter++
