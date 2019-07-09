@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListen
 import com.intellij.openapi.externalSystem.test.ExternalSystemImportingTestCase;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.impl.JavaHomeFinder;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.ui.Messages;
@@ -28,10 +29,10 @@ import org.gradle.util.GradleVersion;
 import org.gradle.wrapper.GradleWrapperMain;
 import org.gradle.wrapper.PathAssembler;
 import org.gradle.wrapper.WrapperConfiguration;
-import org.hamcrest.CustomMatcher;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.java.JdkVersionDetector;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSystemSettings;
@@ -39,6 +40,7 @@ import org.jetbrains.plugins.gradle.tooling.VersionMatcherRule;
 import org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.gradle.util.GradleUtil;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -53,7 +55,8 @@ import java.util.*;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import static org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest.*;
+import static org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest.DistributionLocator;
+import static org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS;
 import static org.junit.Assume.assumeThat;
 
 @RunWith(value = Parameterized.class)
@@ -74,8 +77,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   @Override
   public void setUp() throws Exception {
     assumeThat(gradleVersion, versionMatcherRule.getMatcher());
-    assumeGradleCompatibleWithJava(gradleVersion);
-    myJdkHome = IdeaTestUtil.requireRealJdkHome();
+    myJdkHome = requireRealJdkHome();
     super.setUp();
     WriteAction.runAndWait(() -> {
       Sdk oldJdk = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME);
@@ -97,6 +99,37 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     collectAllowedRoots(allowedRoots, distribution);
     if (!allowedRoots.isEmpty()) {
       VfsRootAccess.allowRootAccess(myTestFixture.getTestRootDisposable(), ArrayUtilRt.toStringArray(allowedRoots));
+    }
+  }
+
+  @NotNull
+  private String requireRealJdkHome() {
+    Properties properties = System.getProperties();
+    JavaVersion javaRuntimeVersion = JavaVersion.tryParse(
+      properties.getProperty("java.runtime.version", properties.getProperty("java.version", "unknown")));
+    GradleVersion baseVersion = GradleVersion.version(gradleVersion).getBaseVersion();
+    if (javaRuntimeVersion.feature > 9 && baseVersion.compareTo(GradleVersion.version("4.8")) < 0) {
+      if (baseVersion.compareTo(GradleVersion.version("3.0")) < 0) {
+        Assume.assumeTrue("Skip integration tests running on JDK 9+ for Gradle < 3.0", false);
+        return null;
+      }
+
+      List<String> paths = JavaHomeFinder.suggestHomePaths();
+      for (String path : paths) {
+        if (JdkUtil.checkForJdk(path)) {
+          JdkVersionDetector.JdkVersionInfo jdkVersionInfo = JdkVersionDetector.getInstance().detectJdkVersionInfo(path);
+          if (jdkVersionInfo == null) continue;
+          int feature = jdkVersionInfo.version.feature;
+          if (feature > 6 && feature < 9) {
+            return path;
+          }
+        }
+      }
+      Assume.assumeTrue("Cannot find JDK for Gradle, checked paths: " + paths, false);
+      return null;
+    }
+    else {
+      return IdeaTestUtil.requireRealJdkHome();
     }
   }
 
