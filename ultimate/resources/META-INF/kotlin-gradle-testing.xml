@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <projectResolve implementation="org.jetbrains.kotlin.idea.gradle.testing.KotlinTestTasksResolver"/>
+  </extensions>
+</idea-plugin>
