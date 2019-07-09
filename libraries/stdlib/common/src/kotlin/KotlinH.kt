@@ -9,8 +9,15 @@ import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.annotation.AnnotationTarget.PROPERTY
 
 
-
+/**
+ * Classes which inherit from this interface impose a total ordering between instances of a class.
+ */
 expect interface Comparator<T> {
+    /**
+     * Compares its two arguments for order. Returns zero if the arguments are equal,
+     * a negative number if the first argument is less than the second, or a positive number
+     * if the first argument is greater than the second.
+     */
     fun compare(a: T, b: T): Int
 }
 
