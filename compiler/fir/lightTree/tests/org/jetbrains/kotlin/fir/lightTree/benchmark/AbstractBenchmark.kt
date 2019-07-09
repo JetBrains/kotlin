@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.lightTree.benchmark
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.TreeGenerator
+import org.jetbrains.kotlin.fir.lightTree.walkTopDown
+import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
 import org.openjdk.jmh.annotations.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -23,16 +25,15 @@ abstract class AbstractBenchmark {
     abstract val generator: TreeGenerator
 
     protected fun readFiles(ignoreTestData: Boolean, path: String) {
-        val root = File(path)
-
         println("BASE PATH: $path")
-        for (file in root.walkTopDown()) {
-            if (file.isDirectory) continue
-            if (ignoreTestData && (file.path.contains("testData") || file.path.contains("resources"))) continue
-            if (file.extension != "kt") continue
-
+        val saveText: (File) -> Unit = { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             files[file] = text
+        }
+        if (ignoreTestData) {
+            path.walkTopDownWithTestData(saveText)
+        } else {
+            path.walkTopDown(saveText)
         }
     }
 
