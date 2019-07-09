@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.lightTree
+package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.KtNodeType
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
-import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -164,18 +163,24 @@ object ClassNameUtil {
     }
 
     val currentClassId
-        get() = ClassId(packageFqName, className, false)
+        get() = ClassId(
+            packageFqName,
+            className, false)
 
     fun callableIdForName(name: Name, local: Boolean = false) =
         when {
             local -> CallableId(name)
             className == FqName.ROOT -> CallableId(packageFqName, name)
-            else -> CallableId(packageFqName, className, name)
+            else -> CallableId(
+                packageFqName,
+                className, name)
         }
 
     fun callableIdForClassConstructor() =
         if (className == FqName.ROOT) CallableId(packageFqName, Name.special("<anonymous-init>"))
-        else CallableId(packageFqName, className, className.shortName())
+        else CallableId(
+            packageFqName,
+            className, className.shortName())
 
     var className: FqName = FqName.ROOT
 }
@@ -252,7 +257,11 @@ object DataClassUtil {
         firPrimaryConstructor: FirConstructor,
         properties: List<FirProperty>
     ) {
-        val symbol = FirFunctionSymbol(CallableId(ClassNameUtil.packageFqName, ClassNameUtil.className, copyName))
+        val symbol = FirFunctionSymbol(CallableId(
+            ClassNameUtil.packageFqName,
+            ClassNameUtil.className,
+            copyName
+        ))
         firClass.addDeclaration(
             FirMemberFunctionImpl(
                 session, null, symbol, copyName,

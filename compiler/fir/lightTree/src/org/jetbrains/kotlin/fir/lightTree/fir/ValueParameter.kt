@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberPropertyImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
-import org.jetbrains.kotlin.fir.lightTree.ClassNameUtil
+import org.jetbrains.kotlin.fir.lightTree.converter.ClassNameUtil
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.PlatformModifier
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 

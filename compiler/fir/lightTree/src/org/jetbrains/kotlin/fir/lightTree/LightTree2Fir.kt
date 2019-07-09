@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
 import org.jetbrains.kotlin.parsing.MyKotlinParser
 import java.io.File
 import java.nio.file.Path
@@ -41,7 +42,7 @@ class LightTree2Fir(
     fun buildFirFile(code: String, fileName: String): FirFile {
         val lightTree = buildLightTree(code)
 
-        return Converter(object : FirSessionBase(null) {}, stubMode, lightTree)
+        return DeclarationsConverter(object : FirSessionBase(null) {}, stubMode, lightTree)
             .convertFile(lightTree.root, fileName)
     }
 }
