@@ -275,9 +275,7 @@ class JsIrBackendContext(
     }
 
     val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
-    val defaultThrowableCtor by lazy { throwableConstructors.single { it.owner.valueParameters.size == 0 } }
-
-
+    val defaultThrowableCtor by lazy { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
 
     private fun referenceOperators(): Map<Name, MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }

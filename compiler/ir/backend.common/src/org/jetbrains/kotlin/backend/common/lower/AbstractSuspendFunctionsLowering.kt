@@ -392,7 +392,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.defaultType,
                 isInline = false,
                 isExternal = false,
-                isPrimary = false
+                isPrimary = true
             ).apply {
                 d.bind(this)
                 parent = coroutineClass

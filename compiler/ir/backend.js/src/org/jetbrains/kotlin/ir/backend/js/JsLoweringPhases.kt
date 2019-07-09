@@ -260,11 +260,18 @@ private val propertiesLoweringPhase = makeJsModulePhase(
     description = "Move fields and accessors out from its property"
 )
 
+private val primaryConstructorLoweringPhase = makeJsModulePhase(
+    ::PrimaryConstructorLowering,
+    name = "PrimaryConstructorLowering",
+    description = "Creates primary constructor if it doesn't exist",
+    prerequisite = setOf(enumClassConstructorLoweringPhase)
+)
+
 private val initializersLoweringPhase = makeCustomJsModulePhase(
     { context, module -> InitializersLowering(context, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).lower(module) },
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
-    prerequisite = setOf(enumClassConstructorLoweringPhase)
+    prerequisite = setOf(enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase)
 )
 
 private val multipleCatchesLoweringPhase = makeJsModulePhase(
@@ -394,6 +401,7 @@ val jsPhases = namedIrModulePhase(
             innerClassesLoweringPhase then
             innerClassConstructorCallsLoweringPhase then
             propertiesLoweringPhase then
+            primaryConstructorLoweringPhase then
             initializersLoweringPhase then
             // Common prefix ends
             moveBodilessDeclarationsToSeparatePlacePhase then
