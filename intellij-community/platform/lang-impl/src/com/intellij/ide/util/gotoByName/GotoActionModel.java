@@ -6,6 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.ApplyIntentionAction;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
+import com.intellij.ide.ui.RegistryTextOptionDescriptor;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.ui.search.BooleanOptionDescription;
 import com.intellij.ide.ui.search.OptionDescription;
@@ -317,11 +318,11 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
 
   @NotNull
   public String getGroupName(@NotNull OptionDescription description) {
-    String name = description.getGroupName();
-    if (name == null) name = myConfigurablesNames.getValue().get(description.getConfigurableId());
+    if (description instanceof RegistryTextOptionDescriptor) return "Registry";
+    String groupName = description.getGroupName();
     String settings = SystemInfo.isMac ? "Preferences" : "Settings";
-    if (name == null || name.equals(description.getHit())) return settings;
-    return settings + " > " + name;
+    if (groupName == null || groupName.equals(description.getHit())) return settings;
+    return settings + " > " + groupName;
   }
 
   @NotNull
