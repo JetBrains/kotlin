@@ -274,6 +274,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       // Note: Making the caret visible is merely for convenience
       myEditorPane.getCaret().setVisible(true);
     }
+    else if (Registry.is("editor.new.mouse.hover.popups")) {
+      UIUtil.doNotScrollToCaret(myEditorPane);
+    }
     myEditorPane.setBackground(EditorColorsUtil.getGlobalOrDefaultColor(COLOR_KEY));
     HTMLEditorKit editorKit = new JBHtmlEditorKit(true) {
       @Override
@@ -1584,6 +1587,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
           highlighter.changeHighlight(myHighlightingTag, startOffset, endOffset);
         }
         myEditorPane.setCaretPosition(startOffset);
+        if (Registry.is("editor.new.mouse.hover.popups") && !ScreenReader.isActive()) {
+          // scrolling to target location explicitly, as we've disabled auto-scrolling to caret
+          myEditorPane.scrollRectToVisible(myEditorPane.modelToView(startOffset));
+        }
       }
       catch (BadLocationException e) {
         LOG.warn("Error highlighting link", e);
