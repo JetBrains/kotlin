@@ -19,8 +19,7 @@ import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 public class FormatterUtil {
 
@@ -252,25 +251,21 @@ public class FormatterUtil {
   public static boolean containsWhiteSpacesOnly(@Nullable ASTNode node) {
     if (node == null) return false;
 
-    final boolean[] spacesOnly = {true};
-    ((TreeElement)node).acceptTree(new RecursiveTreeElementWalkingVisitor() {
-      @Override
-      public void visitComposite(CompositeElement composite) {
-        if (!spacesOnly(composite)) {
-          super.visitComposite(composite);
-        }
+    Queue<ASTNode> queue = new ArrayDeque<>(10);
+    queue.offer(node);
+    while (!queue.isEmpty()) {
+      TreeElement each = (TreeElement)queue.poll();
+      if (each instanceof CompositeElement && spacesOnly(each)) {
+        continue;
       }
 
-      @Override
-      public void visitLeaf(LeafElement leaf) {
-        if (!spacesOnly(leaf)) {
-          spacesOnly[0] = false;
-          stopWalking();
-        }
+      if (each instanceof LeafElement && !spacesOnly(each)) {
+        return false;
       }
-    });
-
-    return spacesOnly[0];
+      
+      Collections.addAll(queue, each.getChildren(null));
+    }
+    return true;
   }
 
   private static boolean spacesOnly(@Nullable TreeElement node) {
