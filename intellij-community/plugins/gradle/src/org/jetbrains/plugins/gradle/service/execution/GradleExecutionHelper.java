@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
@@ -854,7 +855,7 @@ public class GradleExecutionHelper {
                                                          @Nullable ExternalSystemTaskNotificationListener listener,
                                                          @Nullable CancellationTokenSource cancellationTokenSource) {
     try {
-      if (!Boolean.getBoolean("idea.gradle.disable.java.version.workaround") &&
+      if (Registry.is("gradle.java11.issue.workaround", true) &&
           taskId != null &&
           listener != null &&
           JavaVersion.current().feature > 8) {
