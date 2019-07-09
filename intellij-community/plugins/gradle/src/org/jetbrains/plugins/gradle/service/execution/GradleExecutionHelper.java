@@ -850,18 +850,28 @@ public class GradleExecutionHelper {
     return appInfo.getMajorVersion() + "." + appInfo.getMinorVersion();
   }
 
+  private static final Set<String> REPORTED_JAVA11_ISSUE = ContainerUtil.newConcurrentSet();
+
   // workaround for https://github.com/gradle/gradle/issues/8431
   // TODO should be removed when the issue will be fixed at the Gradle tooling api side
   private static void workaroundJavaVersionIssueIfNeeded(@NotNull ProjectConnection connection,
                                                          @Nullable ExternalSystemTaskId taskId,
                                                          @Nullable ExternalSystemTaskNotificationListener listener,
                                                          @Nullable CancellationTokenSource cancellationTokenSource) {
-    try {
-      if (Registry.is("gradle.java11.issue.workaround", true) &&
-          taskId != null &&
-          listener != null &&
-          JavaVersion.current().feature > 8) {
+    String buildRoot = null;
+    if (Registry.is("gradle.java11.issue.workaround", true) &&
+        taskId != null &&
+        listener != null &&
+        JavaVersion.current().feature > 8) {
+      try {
         BuildEnvironment environment = getBuildEnvironment(connection, taskId, listener, cancellationTokenSource);
+        if (environment != null) {
+          try {
+            buildRoot = environment.getBuildIdentifier().getRootDir().getPath();
+          }
+          catch (Exception ignore) {
+          }
+        }
         String gradleVersion = environment != null ? environment.getGradle().getGradleVersion() : null;
         if (gradleVersion == null || GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.7")) < 0) {
           Object conn = ReflectionUtil.getField(connection.getClass(), connection, null, "connection");
@@ -878,9 +888,15 @@ public class GradleExecutionHelper {
             (Distribution)distributionField.get(delegateActionExecutorDelegate)));
         }
       }
-    }
-    catch (Throwable t) {
-      LOG.debug(t);
+      catch (Throwable t) {
+        String buildId = taskId.getIdeProjectId() + StringUtil.notNullize(buildRoot);
+        if (REPORTED_JAVA11_ISSUE.add(buildId)) {
+          LOG.error(t);
+        }
+        else {
+          LOG.debug(t);
+        }
+      }
     }
   }
 
