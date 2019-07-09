@@ -4,8 +4,8 @@ package com.intellij.ide.actions;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
-import javax.swing.*;
 import java.util.Collection;
 
 /**
@@ -28,14 +28,15 @@ public interface CreateDirectoryCompletionContributor {
 
   final class Variant {
     @NotNull final String path;
-    @Nullable final Icon icon;
+    @Nullable final JpsModuleSourceRootType<?> rootType;
 
     /**
      * @param path absolute or relative path to a directory
+     * @param rootType root type with which the created directory will be marked automatically marked
      */
-    public Variant(@NotNull String path, @Nullable Icon icon) {
+    public Variant(@NotNull String path, @Nullable JpsModuleSourceRootType<?> rootType) {
       this.path = path;
-      this.icon = icon;
+      this.rootType = rootType;
     }
 
     @NotNull
@@ -44,8 +45,8 @@ public interface CreateDirectoryCompletionContributor {
     }
 
     @Nullable
-    public Icon getIcon() {
-      return icon;
+    public JpsModuleSourceRootType<?> getRootType() {
+      return rootType;
     }
   }
 }

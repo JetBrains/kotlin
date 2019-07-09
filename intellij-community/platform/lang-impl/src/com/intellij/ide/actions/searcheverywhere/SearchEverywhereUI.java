@@ -621,21 +621,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     myResultsList.addMouseMotionListener(listMouseListener);
     myResultsList.addMouseListener(listMouseListener);
 
-    mySearchField.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (e.isShiftDown()) {
-          if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            myResultsList.dispatchEvent(e);
-            e.consume();
-          }
-          if (e.getKeyCode() == KeyEvent.VK_UP) {
-            myResultsList.dispatchEvent(e);
-            e.consume();
-          }
-        }
-      }
-    });
+    ScrollingUtil.redirectExpandSelection(myResultsList, mySearchField);
 
     Consumer<AnActionEvent> nextTabAction = e -> {
       switchToNextTab();

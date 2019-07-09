@@ -2,8 +2,10 @@
 
 package com.intellij.ide.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeView;
+import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
 import com.intellij.ide.ui.newItemPopup.NewItemWithTemplatesPopupPanel;
 import com.intellij.ide.util.DirectoryChooserUtil;
@@ -11,16 +13,28 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.internal.statistic.utils.StatisticsUtilKt;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.Experiments;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
+import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
+import com.intellij.openapi.roots.ui.configuration.ModuleSourceRootEditHandler;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
@@ -32,6 +46,7 @@ import com.intellij.util.containers.FList;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -39,6 +54,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -74,8 +90,10 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     }
 
     String initialText = validator.getInitialText();
-    Consumer<PsiElement> consumer = element -> {
-      if (element != null) {
+    Consumer<List<PsiElement>> consumer = elements -> {
+      // we don't have API for multi-selection in the views,
+      // so let's at least make sure the created elements are visible, and the first one is selected
+      for (PsiElement element : ContainerUtil.iterateBackward(elements)) {
         view.selectElement(element);
       }
     };
@@ -85,7 +103,7 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     }
     else {
       Messages.showInputDialog(project, message, title, null, initialText, validator, TextRange.from(initialText.length(), 0));
-      consumer.accept(validator.getCreatedElement());
+      consumer.accept(Collections.singletonList(validator.getCreatedElement()));
     }
   }
 
@@ -136,26 +154,40 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
                                                 String initialText,
                                                 @NotNull PsiDirectory directory,
                                                 CreateGroupHandler validator,
-                                                Consumer<PsiElement> consumer) {
+                                                Consumer<List<PsiElement>> consumer) {
     List<CompletionItem> variants = collectSuggestedDirectories(directory);
     DirectoriesWithCompletionPopupPanel contentPanel = new DirectoriesWithCompletionPopupPanel(variants);
 
     JTextField nameField = contentPanel.getTextField();
     nameField.setText(initialText);
     JBPopup popup = NewItemPopupUtil.createNewItemPopup(title, contentPanel, nameField);
+
     contentPanel.setApplyAction(event -> {
-      String name = nameField.getText();
-      if (validator.checkInput(name) && validator.canClose(name)) {
+      for (CompletionItem it : contentPanel.getSelectedItems()) {
+        it.reportToStatistics();
+      }
 
-        CompletionItem selected = contentPanel.getSelectedItem();
-        if (selected != null) selected.reportToStatistics();
+      // if there are selected suggestions, we need to create the selected folders (not the path in the text field)
+      List<Pair<String, JpsModuleSourceRootType<?>>> toCreate
+        = ContainerUtil.map(contentPanel.getSelectedItems(), item -> Pair.create(item.relativePath, item.rootType));
 
+      // when there are no selected suggestions, simply create the directory with the path from the text field
+      if (toCreate.isEmpty()) toCreate = Collections.singletonList(Pair.create(nameField.getText(), null));
+
+      List<PsiElement> created = createDirectories(toCreate, validator);
+      if (created != null) {
         popup.closeOk(event);
-        consumer.accept(validator.getCreatedElement());
+        consumer.accept(created);
       }
       else {
-        String errorMessage = validator.getErrorText(name);
-        contentPanel.setError(errorMessage);
+        for (Pair<String, JpsModuleSourceRootType<?>> dir : toCreate) {
+          String errorText = validator.getErrorText(dir.first);
+          if (errorText != null) {
+            String errorMessage = validator.getErrorText(errorText);
+            contentPanel.setError(errorMessage);
+            break;
+          }
+        }
       }
     });
 
@@ -179,29 +211,112 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
         String relativePath = FileUtil.toSystemIndependentName(variant.path);
 
         if (FileUtil.isAbsolutePlatformIndependent(relativePath)) {
+          // only suggest sub-folders
           if (!FileUtil.isAncestor(vDir.getPath(), relativePath, true)) continue;
+
+          // convert absolute paths to the relative paths
           relativePath = FileUtil.getRelativePath(vDir.getPath(), relativePath, '/');
           if (relativePath == null) continue;
         }
 
-        if (vDir.findFileByRelativePath(relativePath) == null) {
-          variants.add(new CompletionItem(contributor, relativePath, variant.icon));
-        }
+        // only suggested non-existent folders
+        if (vDir.findFileByRelativePath(relativePath) != null) continue;
+
+        ModuleSourceRootEditHandler<?> handler =
+          variant.rootType != null ? ModuleSourceRootEditHandler.getEditHandler(variant.rootType) : null;
+
+        Icon icon = handler == null ? null : handler.getRootIcon();
+        if (icon == null) icon = AllIcons.Nodes.Folder;
+
+        variants.add(new CompletionItem(contributor, relativePath, icon, variant.rootType));
       }
     }
+
+    variants.sort((o1, o2) -> {
+      int result = StringUtil.naturalCompare(o1.contributor.getDescription(), o2.contributor.getDescription());
+      if (result != 0) return result;
+      return StringUtil.naturalCompare(o1.relativePath, o2.relativePath);
+    });
+
     return variants;
+  }
+
+  @Nullable
+  private static List<PsiElement> createDirectories(List<Pair<String, JpsModuleSourceRootType<?>>> toCreate,
+                                                    CreateGroupHandler validator) {
+    List<PsiElement> createdDirectories = new ArrayList<>(toCreate.size());
+
+    // first, check that we can create all requested directories
+    if (!ContainerUtil.all(toCreate, dir -> validator.checkInput(dir.first))) return null;
+
+    List<Pair<PsiFileSystemItem, JpsModuleSourceRootType<?>>> toMarkAsRoots = new ArrayList<>(toCreate.size());
+
+    // now create directories one by one
+    for (Pair<String, JpsModuleSourceRootType<?>> dir : toCreate) {
+      // this call creates a directory
+      if (!validator.canClose(dir.first)) continue;
+      PsiFileSystemItem element = validator.getCreatedElement();
+      if (element == null) continue;
+
+      createdDirectories.add(element);
+
+      // collect folders to mark as source folders later
+      JpsModuleSourceRootType<?> rootType = dir.second;
+      if (rootType != null) {
+        toMarkAsRoots.add(Pair.create(element, rootType));
+      }
+    }
+
+    if (!toMarkAsRoots.isEmpty()) {
+      Project project = toMarkAsRoots.get(0).first.getProject();
+      ProjectFileIndexImpl index = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
+
+      WriteAction.run(() -> ProjectRootManagerEx.getInstanceEx(project).mergeRootsChangesDuring(() -> {
+        for (Pair<PsiFileSystemItem, JpsModuleSourceRootType<?>> each : toMarkAsRoots) {
+          VirtualFile file = each.first.getVirtualFile();
+          JpsModuleSourceRootType<?> rootType = each.second;
+
+          // make sure we have a content root for this directory and it's not yet registered as source folder
+          Module module = index.getModuleForFile(file);
+          if (module == null || index.getContentRootForFile(file) == null || index.getSourceFolder(file) != null) {
+            continue;
+          }
+
+          ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+          ContentEntry entry = MarkRootActionBase.findContentEntry(model, file);
+          if (entry != null) {
+            entry.addSourceFolder(file, rootType);
+            model.commit();
+          }
+          else {
+            model.dispose();
+          }
+        }
+      }));
+    }
+
+    return createdDirectories;
   }
 
   private static class CompletionItem {
     @NotNull final CreateDirectoryCompletionContributor contributor;
 
     @NotNull final String relativePath;
+    @Nullable final JpsModuleSourceRootType<?> rootType;
+
+    @NotNull final String displayText;
     @Nullable final Icon icon;
 
     private CompletionItem(@NotNull CreateDirectoryCompletionContributor contributor,
-                           @NotNull String relativePath, @Nullable Icon icon) {
+                           @NotNull String relativePath,
+                           @Nullable Icon icon,
+                           @Nullable JpsModuleSourceRootType<?> rootType) {
       this.contributor = contributor;
+
       this.relativePath = relativePath;
+      this.rootType = rootType;
+
+      this.displayText = FileUtil.toSystemDependentName(relativePath);
       this.icon = icon;
     }
 
@@ -222,15 +337,19 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     private boolean locked = false;
 
     protected DirectoriesWithCompletionPopupPanel(@NotNull List<CompletionItem> items) {
-      super(items, SimpleListCellRenderer.create("", item -> item.relativePath));
+      super(items, SimpleListCellRenderer.create("", item -> item.displayText));
       setupRenderers();
 
+      // allow multi selection with Shift+Up/Down
+      ScrollingUtil.redirectExpandSelection(myTemplatesList, myTextField);
+
+      myTemplatesList.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       myTemplatesList.addListSelectionListener(e -> {
         CompletionItem selected = myTemplatesList.getSelectedValue();
         if (selected != null) {
           locked = true;
           try {
-            myTextField.setText(selected.relativePath);
+            myTextField.setText(selected.displayText);
           }
           finally {
             locked = false;
@@ -245,7 +364,7 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
             currentMatcher = NameUtil.buildMatcher("*" + input).build();
 
             List<CompletionItem> filtered =
-              ContainerUtil.filter(items, item -> currentMatcher.matches(item.relativePath));
+              ContainerUtil.filter(items, item -> currentMatcher.matches(item.displayText));
 
             updateTemplatesList(filtered);
           }
@@ -272,9 +391,9 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
       setTemplatesListVisible(model.getSize() > 0);
     }
 
-    @Nullable
-    CompletionItem getSelectedItem() {
-      return myTemplatesList.getSelectedValue();
+    @NotNull
+    List<CompletionItem> getSelectedItems() {
+      return myTemplatesList.getSelectedValuesList();
     }
 
     private void setupRenderers() {
@@ -286,7 +405,11 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
                                                int index,
                                                boolean selected,
                                                boolean hasFocus) {
-            String text = value == null ? "" : value.relativePath;
+            if (!selected) {
+              setBackground(UIUtil.getListBackground());
+            }
+
+            String text = value == null ? "" : value.displayText;
             FList<TextRange> ranges = currentMatcher == null ? FList.emptyList() : currentMatcher.matchingFragments(text);
             SpeedSearchUtil.appendColoredFragments(this, text, ranges, SimpleTextAttributes.REGULAR_ATTRIBUTES, MATCHED);
             setIcon(value == null ? null : value.icon);
@@ -301,6 +424,7 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
                                                       boolean cellHasFocus) {
           Component item = itemRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
           JPanel wrapperPanel = new JPanel(new BorderLayout());
+          wrapperPanel.setBackground(UIUtil.getListBackground());
 
           if (index == 0 || value.contributor != list.getModel().getElementAt(index - 1).contributor) {
             SeparatorWithText separator = new SeparatorWithText();

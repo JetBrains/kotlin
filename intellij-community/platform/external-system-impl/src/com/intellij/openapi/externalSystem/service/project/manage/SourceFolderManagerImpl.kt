@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
@@ -57,12 +56,6 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     synchronized(mutex) {
       val moduleModel = sourceFoldersByModule.remove(module.name) ?: return
       moduleModel.sourceFolders.forEach { sourceFolders.remove(it) }
-    }
-  }
-
-  fun getSourceFoldersUnder(modules: () -> Set<Module>, parentUrl: String): Sequence<Pair<String, JpsModuleSourceRootType<*>>> {
-    synchronized(mutex) {
-      return sourceFolders.getAllDescendants(parentUrl).asSequence().filter { it.module in modules() }.map { Pair.create(it.url, it.type) }
     }
   }
 

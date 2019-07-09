@@ -3,15 +3,18 @@ package org.jetbrains.plugins.gradle
 
 import com.intellij.ide.actions.CreateDirectoryCompletionContributor
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
-import com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManager
-import com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManagerImpl
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getExternalRootProjectPath
-import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.externalSystem.model.DataNode
+import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.ContentRootData
+import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
+import com.intellij.openapi.externalSystem.model.project.ModuleData
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.roots.ui.configuration.ModuleSourceRootEditHandler
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiDirectory
+import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class GradleDirectoryCompletionContributor : CreateDirectoryCompletionContributor {
@@ -25,22 +28,27 @@ class GradleDirectoryCompletionContributor : CreateDirectoryCompletionContributo
     val moduleProperties = ExternalSystemModulePropertyManager.getInstance(module)
     if (GradleConstants.SYSTEM_ID.id != moduleProperties.getExternalSystemId()) return emptyList()
 
-    val gradleProject = moduleProperties.getRootProjectPath() ?: return emptyList()
+    val result = mutableListOf<CreateDirectoryCompletionContributor.Variant>()
 
-    // avoid iterating all modules unnecessarily: might be expensive on big projects
-    val relatedGradleModules by lazy {
-      ModuleManager.getInstance(project).modules
-        .asSequence()
-        .filter { StringUtil.equals(gradleProject, getExternalRootProjectPath(it)) }
-        .toSet()
+    fun addAll(data: ContentRootData, type: ExternalSystemSourceType, rootType: JpsModuleSourceRootType<*>) {
+      result.addAll(data.getPaths(type).map { CreateDirectoryCompletionContributor.Variant(it.path, rootType) })
     }
 
-    return (SourceFolderManager.getInstance(project) as SourceFolderManagerImpl)
-      .getSourceFoldersUnder({ relatedGradleModules }, directory.virtualFile.url)
-      .map { folder ->
-        val handler = ModuleSourceRootEditHandler.getEditHandler(folder.second)
-        CreateDirectoryCompletionContributor.Variant(VfsUtilCore.urlToPath(folder.first), handler?.rootIcon)
+    fun addAll(moduleData: DataNode<out ModuleData>) {
+      for (eachContentRootNode in ExternalSystemApiUtil.findAll(moduleData, ProjectKeys.CONTENT_ROOT)) {
+        addAll(eachContentRootNode.data, ExternalSystemSourceType.SOURCE, JavaSourceRootType.SOURCE)
+        addAll(eachContentRootNode.data, ExternalSystemSourceType.TEST, JavaSourceRootType.TEST_SOURCE)
+        addAll(eachContentRootNode.data, ExternalSystemSourceType.RESOURCE, JavaResourceRootType.RESOURCE)
+        addAll(eachContentRootNode.data, ExternalSystemSourceType.TEST_RESOURCE, JavaResourceRootType.TEST_RESOURCE)
       }
-      .toList()
+    }
+
+    val moduleData = ExternalSystemApiUtil.findModuleData(module, GradleConstants.SYSTEM_ID) ?: return emptyList()
+    addAll(moduleData)
+    for (eachSourceSetNode in ExternalSystemApiUtil.getChildren(moduleData, GradleSourceSetData.KEY)) {
+      addAll(eachSourceSetNode)
+    }
+
+    return result;
   }
 }
