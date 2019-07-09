@@ -62,12 +62,12 @@ fun ScriptCompilationConfiguration.withUpdatedClasspath(classpath: Collection<Fi
     }
 }
 
-fun ScriptCompilationConfiguration.Builder.updateClasspath(classpath: Collection<File>) = updateClasspathImpl(classpath)
+fun ScriptCompilationConfiguration.Builder.updateClasspath(classpath: Collection<File>?) = updateClasspathImpl(classpath)
 
-fun JvmScriptCompilationConfigurationBuilder.updateClasspath(classpath: Collection<File>) = updateClasspathImpl(classpath)
+fun JvmScriptCompilationConfigurationBuilder.updateClasspath(classpath: Collection<File>?) = updateClasspathImpl(classpath)
 
-private fun PropertiesCollection.Builder.updateClasspathImpl(classpath: Collection<File>) {
-    val newClasspath = classpath.filterNewClasspath(this[ScriptCompilationConfiguration.dependencies])
+private fun PropertiesCollection.Builder.updateClasspathImpl(classpath: Collection<File>?) {
+    val newClasspath = classpath?.filterNewClasspath(this[ScriptCompilationConfiguration.dependencies])
         ?: return
 
     ScriptCompilationConfiguration.dependencies.append(JvmDependency(newClasspath))

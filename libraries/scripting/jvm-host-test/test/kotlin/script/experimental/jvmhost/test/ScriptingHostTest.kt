@@ -29,6 +29,9 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvm.util.KotlinJars
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.*
 import kotlin.script.templates.standard.SimpleScriptTemplate
 
@@ -121,7 +124,10 @@ class ScriptingHostTest : TestCase() {
     fun testSaveToRunnableJar() {
         val greeting = "Hello from script jar!"
         val outJar = Files.createTempFile("saveToRunnableJar", ".jar").toFile()
-        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>() {
+            updateClasspath(classpathFromClass<SimpleScriptTemplate>())
+            updateClasspath(KotlinJars.kotlinScriptStandardJarsWithReflect)
+        }
         val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
         val scriptName = "SavedRunnableScript"
         val compiledScript = runBlocking {
