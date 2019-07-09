@@ -49,6 +49,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, CaretListener {
+public class EditorMouseHoverPopupManager implements EditorMouseListener, EditorMouseMotionListener, CaretListener, MouseWheelListener {
   private static final Logger LOG = Logger.getInstance(EditorMouseHoverPopupManager.class);
   private static final Key<Boolean> DISABLE_BINDING = Key.create("EditorMouseHoverPopupManager.disable.binding");
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
@@ -71,8 +73,10 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
 
   public EditorMouseHoverPopupManager(Application application, EditorFactory editorFactory, EditorMouseHoverPopupControl control) {
     myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, application);
-    editorFactory.getEventMulticaster().addEditorMouseMotionListener(this);
-    editorFactory.getEventMulticaster().addCaretListener(this);
+    EditorEventMulticaster multicaster = editorFactory.getEventMulticaster();
+    multicaster.addEditorMouseListener(this);
+    multicaster.addEditorMouseMotionListener(this);
+    multicaster.addCaretListener(this);
     control.addListener(() -> {
       if (!Registry.is("editor.new.mouse.hover.popups")) return;
       Editor editor = SoftReference.dereference(myCurrentEditor);
@@ -80,6 +84,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
         closeHint();
       }
     });
+    IdeEventQueue.getInstance().addActivityListener(this::onActivity, application);
   }
 
   @Override
@@ -113,7 +118,14 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     else if (relation == Context.Relation.DIFFERENT) {
       closeHint();
     }
+    addMouseWheelListener(editor);
     scheduleProcessing(editor, context, relation == Context.Relation.SIMILAR, false, false);
+  }
+
+  private void addMouseWheelListener(Editor editor) {
+    JComponent component = editor.getContentComponent();
+    component.removeMouseWheelListener(this);
+    component.addMouseWheelListener(this);
   }
 
   private void cancelCurrentProcessing() {
@@ -162,6 +174,20 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
   }
 
   @Override
+  public void mouseExited(@NotNull EditorMouseEvent event) {
+    if (!Registry.is("editor.new.mouse.hover.popups")) return;
+
+    cancelCurrentProcessing();
+  }
+
+  @Override
+  public void mouseWheelMoved(MouseWheelEvent e) {
+    if (!Registry.is("editor.new.mouse.hover.popups")) return;
+
+    cancelCurrentProcessing();
+  }
+
+  @Override
   public void caretPositionChanged(@NotNull CaretEvent event) {
     if (!Registry.is("editor.new.mouse.hover.popups")) return;
 
@@ -169,6 +195,12 @@ public class EditorMouseHoverPopupManager implements EditorMouseMotionListener, 
     if (editor == SoftReference.dereference(myCurrentEditor)) {
       DocumentationManager.getInstance(editor.getProject()).setAllowContentUpdateFromContext(true);
     }
+  }
+
+  private void onActivity() {
+    if (!Registry.is("editor.new.mouse.hover.popups")) return;
+
+    cancelCurrentProcessing();
   }
 
   private boolean ignoreEvent(EditorMouseEvent e) {
