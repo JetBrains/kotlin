@@ -16,20 +16,17 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.test.assertEquals
 
-abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopyPasteTest() {
+abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPasteTest() {
     private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/conversion"
 
     private var oldEditorOptions: KotlinEditorOptions? = null
 
     override fun getTestDataPath() = BASE_PATH
 
-    protected open fun isNewJ2K(): Boolean = false
-
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun setUp() {
         super.setUp()
-        Registry.get("kotlin.use.new.j2k").setValue(isNewJ2K())
         oldEditorOptions = KotlinEditorOptions.getInstance().state
         KotlinEditorOptions.getInstance().isEnableJavaToKotlinConversion = true
         KotlinEditorOptions.getInstance().isDonTShowConversionDialog = true
