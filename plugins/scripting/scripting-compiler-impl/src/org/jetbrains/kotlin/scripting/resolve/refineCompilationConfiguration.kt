@@ -219,6 +219,7 @@ fun refineScriptCompilationConfiguration(
     definition: ScriptDefinition,
     project: Project
 ): ScriptCompilationConfigurationResult {
+    // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
     val legacyDefinition = definition.asLegacyOrNull<KotlinScriptDefinition>()
     if (legacyDefinition == null) {

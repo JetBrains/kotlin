@@ -364,20 +364,22 @@ class ScriptTemplateTest : KtUsefulTestCase() {
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-            try {
-                return KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader.takeUnless { runIsolated })
-            }
-            catch (e: CompilationException) {
-                messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
-                                        MessageUtil.psiElementToMessageLocation(e.element))
-                return null
-            }
-            catch (t: Throwable) {
+            return try {
+                KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader.takeUnless { runIsolated })
+            } catch (e: CompilationException) {
+                messageCollector.report(
+                    CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
+                    MessageUtil.psiElementToMessageLocation(e.element)
+                )
+                null
+            } catch (e: IllegalStateException) {
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e))
+                null
+            } catch (t: Throwable) {
                 MessageCollectorUtil.reportException(messageCollector, t)
                 throw t
             }
-        }
-        finally {
+        } finally {
             Disposer.dispose(rootDisposable)
         }
     }

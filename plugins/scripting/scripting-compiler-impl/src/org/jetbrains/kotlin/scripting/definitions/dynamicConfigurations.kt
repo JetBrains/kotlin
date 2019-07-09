@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.valueOr
 
 fun PsiFile.findScriptCompilationConfiguration(): ScriptCompilationConfiguration? {
@@ -35,8 +36,12 @@ fun VirtualFile.findScriptCompilationConfiguration(project: Project): ScriptComp
 }
 
 private fun ScriptCompilationConfigurationResult.valueOrError() = valueOr { failure ->
-    throw IllegalArgumentException(
-        "Error retrieving script compilation configuration: ${failure.reports.joinToString { it.message }}",
-        failure.reports.find { it.exception != null }?.exception
-    )
+    val singleCause = failure.reports.singleOrNull { it.severity == ScriptDiagnostic.Severity.ERROR }
+    if (singleCause != null)
+        throw IllegalStateException(singleCause.message, singleCause.exception)
+    else
+        throw IllegalStateException(
+            "Error retrieving script compilation configuration: ${failure.reports.joinToString { it.message }}",
+            failure.reports.find { it.exception != null }?.exception
+        )
 }
