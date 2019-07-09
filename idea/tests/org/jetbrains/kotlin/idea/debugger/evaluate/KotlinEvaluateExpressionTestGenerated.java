@@ -421,6 +421,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/superCallsSimple.kt");
         }
 
+        @TestMetadata("suspendCalls.kt")
+        public void testSuspendCalls() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/suspendCalls.kt");
+        }
+
         @TestMetadata("synchronizedBlock.kt")
         public void testSynchronizedBlock() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/synchronizedBlock.kt");

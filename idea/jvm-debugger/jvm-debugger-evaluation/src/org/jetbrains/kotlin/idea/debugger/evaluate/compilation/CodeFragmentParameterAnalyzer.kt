@@ -184,6 +184,18 @@ class CodeFragmentParameterAnalyzer(
 
                 return null
             }
+
+            override fun visitCallExpression(expression: KtCallExpression, data: Unit?): Void? {
+                val resolvedCall = expression.getResolvedCall(bindingContext)
+                if (resolvedCall != null) {
+                    val descriptor = resolvedCall.resultingDescriptor
+                    if (descriptor is FunctionDescriptor && descriptor.isSuspend) {
+                        throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'suspend' calls is not supported")
+                    }
+                }
+
+                return super.visitCallExpression(expression, data)
+            }
         }, Unit)
 
         return CodeFragmentParameterInfo(parameters.values.toList(), crossingBounds)
