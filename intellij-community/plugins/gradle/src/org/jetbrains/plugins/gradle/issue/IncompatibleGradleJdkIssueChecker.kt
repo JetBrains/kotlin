@@ -8,6 +8,7 @@ import com.intellij.util.PlatformUtils.getPlatformPrefix
 import com.intellij.util.lang.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.jps.model.java.JdkVersionDetector
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleSettingsQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleVersionQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleWrapperSettingsOpenQuickFix
@@ -39,9 +40,16 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
 
     val isToolingClientIssue = rootCauseText.startsWith("java.lang.IllegalArgumentException: Could not determine java version from") ||
                                causedByJavaVersionWorkaround(gradleVersionUsed, rootCause)
+    val isRemovedUnsafeDefineClassMethodInJDK11Issue =
+      !isToolingClientIssue && rootCauseText.startsWith("java.lang.NoSuchMethodError: sun.misc.Unsafe.defineClass") &&
+      gradleVersionUsed != null && gradleVersionUsed.baseVersion < GradleVersion.version("4.8") &&
+      issueData.buildEnvironment?.java?.javaHome?.let {
+        val feature = JdkVersionDetector.getInstance().detectJdkVersionInfo(it.path)?.version?.feature
+        feature != null && feature >= 11
+      } == true
 
-    if (!isToolingClientIssue && !rootCauseText.startsWith(
-        "org.gradle.api.GradleException: Could not determine Java version using executable")) {
+    if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue &&
+        !rootCauseText.startsWith("org.gradle.api.GradleException: Could not determine Java version using executable")) {
       return null
     }
 
@@ -51,13 +59,15 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
     val gradleMinimumVersionRequired = GradleVersion.version("4.8.1")
 
     val gradleVersionString = if (gradleVersionUsed != null) gradleVersionUsed.version else "version"
-    if (isToolingClientIssue) {
-      issueDescription.append(
+    when {
+      isToolingClientIssue -> issueDescription.append(
         "\n\nThe project uses Gradle $gradleVersionString which is incompatible with " +
-        "${ApplicationNamesInfo.getInstance().productName} running on Java 10 or newer.")
-    }
-    else {
-      issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer.")
+        "${ApplicationNamesInfo.getInstance().productName} running on Java 10 or newer.\n" +
+        "See details at https://github.com/gradle/gradle/issues/8431")
+      isRemovedUnsafeDefineClassMethodInJDK11Issue -> issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 11 or newer.\n" +
+                                                                              "See details at https://github.com/gradle/gradle/issues/4860")
+      else -> issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer.\n" +
+                                      "See details at https://github.com/gradle/gradle/issues/4503")
     }
     issueDescription.append("\nPossible solution:\n")
     val wrapperPropertiesFile = GradleUtil.findDefaultWrapperPropertiesFile(issueData.projectPath)
