@@ -65,7 +65,7 @@ public abstract class FileTemplateBase implements FileTemplate {
   @NotNull
   public final String getText() {
     final String text = myText;
-    return text != null? text : getDefaultText();
+    return text != null ? text : getDefaultText();
   }
 
   @Override
@@ -75,7 +75,7 @@ public abstract class FileTemplateBase implements FileTemplate {
     }
     else {
       final String converted = StringUtil.convertLineSeparators(text);
-      myText = converted.equals(getDefaultText())? null : converted;
+      myText = converted.equals(getDefaultText()) ? null : StringUtil.internEmptyString(converted);
     }
   }
 
