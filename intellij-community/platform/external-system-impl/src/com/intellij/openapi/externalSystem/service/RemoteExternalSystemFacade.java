@@ -4,6 +4,7 @@ import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutio
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.internal.ExternalSystemTaskAware;
+import com.intellij.openapi.externalSystem.service.remote.RawExternalSystemProjectResolver;
 import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemProjectResolver;
 import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemTaskManager;
@@ -48,6 +49,12 @@ public interface RemoteExternalSystemFacade<S extends ExternalSystemExecutionSet
 
     @Override
     public void applyProgressManager(@NotNull RemoteExternalSystemProgressNotificationManager progressManager) {
+    }
+
+    @NotNull
+    @Override
+    public RawExternalSystemProjectResolver<ExternalSystemExecutionSettings> getRawProjectResolver() {
+      return RawExternalSystemProjectResolver.Companion.getNULL_OBJECT();
     }
 
     @Override
@@ -101,4 +108,11 @@ public interface RemoteExternalSystemFacade<S extends ExternalSystemExecutionSet
    * @throws RemoteException    in case of unexpected I/O exception during processing
    */
   void applyProgressManager(@NotNull RemoteExternalSystemProgressNotificationManager progressManager) throws RemoteException;
+
+  /**
+   * Same as {@link #getResolver()}, but operating on raw result
+   * @return
+   */
+  @NotNull
+  RawExternalSystemProjectResolver<S> getRawProjectResolver() throws RemoteException;
 }

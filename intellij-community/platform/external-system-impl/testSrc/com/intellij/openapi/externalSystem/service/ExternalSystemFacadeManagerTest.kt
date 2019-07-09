@@ -22,6 +22,9 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
+import java.net.URL
+import java.net.URLClassLoader
+import com.intellij.openapi.externalSystem.model.Key as DataNodeKey
 
 class ExternalSystemFacadeManagerTest : UsefulTestCase() {
 
@@ -34,18 +37,6 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
     testFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(name).fixture
     testFixture.setUp()
     project = testFixture.project
-
-    val testManager = object: TestExternalSystemManager(project) {
-      override fun getProjectResolverClass(): Class<out ExternalSystemProjectResolver<TestExternalSystemExecutionSettings>> {
-        return TestProjectResolver::class.java
-      }
-
-      override fun getTaskManagerClass(): Class<out ExternalSystemTaskManager<TestExternalSystemExecutionSettings>> {
-        return TestTaskManager::class.java
-      }
-    }
-
-    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, listOf(testManager), testRootDisposable)
   }
 
   override fun tearDown() {
@@ -56,6 +47,8 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
   }
 
   fun `test remote resolve project info`() {
+    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, listOf(SimpleTestExternalSystemManager(project)), testRootDisposable)
+
     val facadeManager: ExternalSystemFacadeManager = ServiceManager.getService(ExternalSystemFacadeManager::class.java)
     TestCase.assertNotNull(facadeManager)
     val facade = facadeManager.getFacade(project, "fake/path", TEST_EXTERNAL_SYSTEM_ID)
@@ -72,8 +65,52 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
       facadeManager.getCommunicationManager(TEST_EXTERNAL_SYSTEM_ID).release("fake/path", TEST_EXTERNAL_SYSTEM_ID)
     }
   }
+
+  fun `test remote resolve with custom classes`() {
+    val libUrl = javaClass.classLoader.getResource("dataNodeTest/lib.jar")!!
+
+    val subClassLoader = URLClassLoader(arrayOf(libUrl), this::class.java.classLoader)
+
+
+    val fakeExternalSystemManager = subClassLoader
+      .loadClass("com.intellij.openapi.externalSystem.service.FakeExternalSystemManager")
+      .getConstructor(Project::class.java)
+      .newInstance(project) as ExternalSystemManager<*, *, *, *, *>
+
+    val testExternalSystemManager = CustomClassLoadingTestExternalSystemManager(project)
+
+    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME,
+                                    listOf(testExternalSystemManager, fakeExternalSystemManager),
+                                    testRootDisposable)
+
+    val facadeManager: ExternalSystemFacadeManager = ServiceManager.getService(ExternalSystemFacadeManager::class.java)
+    TestCase.assertNotNull(facadeManager)
+    val facade = facadeManager.getFacade(project, "fake/path", TEST_EXTERNAL_SYSTEM_ID)
+    try {
+      val taskId = ExternalSystemTaskId.create(TEST_EXTERNAL_SYSTEM_ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
+      val settings = CustomLibUrlSettings(libUrl)
+      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, settings);
+
+      assertNotNull(projectDataNode)
+      assertEquals("ExternalName", projectDataNode!!.data.externalName)
+
+      assertEquals("foo.Bar", projectDataNode.children.first().data::class.java.name)
+
+    } finally {
+      facadeManager.getCommunicationManager(TEST_EXTERNAL_SYSTEM_ID).release("fake/path", TEST_EXTERNAL_SYSTEM_ID)
+    }
+  }
 }
 
+class SimpleTestExternalSystemManager(val project: Project): TestExternalSystemManager(project) {
+  override fun getProjectResolverClass(): Class<out ExternalSystemProjectResolver<TestExternalSystemExecutionSettings>> {
+    return TestProjectResolver::class.java
+  }
+
+  override fun getTaskManagerClass(): Class<out ExternalSystemTaskManager<TestExternalSystemExecutionSettings>> {
+    return TestTaskManager::class.java
+  }
+}
 
 class TestProjectResolver: ExternalSystemProjectResolver<TestExternalSystemExecutionSettings> {
   override fun resolveProjectInfo(id: ExternalSystemTaskId,
@@ -98,5 +135,45 @@ class TestTaskManager: ExternalSystemTaskManager<TestExternalSystemExecutionSett
     listener.onCancel(id)
     return true
   }
-
 }
+
+
+class CustomClassLoadingTestExternalSystemManager(val project: Project): TestExternalSystemManager(project) {
+  override fun getProjectResolverClass(): Class<out ExternalSystemProjectResolver<TestExternalSystemExecutionSettings>> {
+    return CustomClassLoadingTestProjectResolver::class.java
+  }
+
+  override fun getTaskManagerClass(): Class<out ExternalSystemTaskManager<TestExternalSystemExecutionSettings>> {
+    return TestTaskManager::class.java
+  }
+}
+
+class CustomClassLoadingTestProjectResolver: ExternalSystemProjectResolver<TestExternalSystemExecutionSettings> {
+
+  companion object {
+    val BarKey: DataNodeKey<Any> = DataNodeKey("foo.Bar", 0)
+  }
+
+  override fun resolveProjectInfo(id: ExternalSystemTaskId,
+                                  projectPath: String,
+                                  isPreviewMode: Boolean,
+                                  settings: TestExternalSystemExecutionSettings?,
+                                  listener: ExternalSystemTaskNotificationListener): DataNode<ProjectData>? {
+    val libUrl = (settings as? CustomLibUrlSettings)?.libUrl
+    val data = ProjectData(TEST_EXTERNAL_SYSTEM_ID, "ExternalName", "fake/path", "linked/project/path")
+    val rootNode = DataNode(ProjectKeys.PROJECT, data, null)
+    val cl = URLClassLoader(arrayOf(libUrl))
+    val barInstance = cl.loadClass("foo.Bar").newInstance()
+    val childNode = DataNode(BarKey, barInstance, null)
+    rootNode.addChild(childNode)
+    return rootNode
+  }
+
+  override fun cancelTask(taskId: ExternalSystemTaskId, listener: ExternalSystemTaskNotificationListener): Boolean {
+    listener.beforeCancel(taskId)
+    listener.onCancel(taskId)
+    return true
+  }
+}
+
+class CustomLibUrlSettings(val libUrl: URL) : TestExternalSystemExecutionSettings()

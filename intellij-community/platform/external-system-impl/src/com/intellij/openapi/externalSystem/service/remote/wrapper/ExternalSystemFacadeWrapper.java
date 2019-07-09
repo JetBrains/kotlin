@@ -4,9 +4,7 @@ import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutio
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.RemoteExternalSystemFacade;
-import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemProgressNotificationManager;
-import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemProjectResolver;
-import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemTaskManager;
+import com.intellij.openapi.externalSystem.service.remote.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.rmi.RemoteException;
@@ -42,7 +40,9 @@ public class ExternalSystemFacadeWrapper<S extends ExternalSystemExecutionSettin
   @NotNull
   @Override
   public RemoteExternalSystemProjectResolver<S> getResolver() throws RemoteException, IllegalStateException {
-    return new ExternalSystemProjectResolverWrapper<>(myDelegate.getResolver(), myProgressManager);
+    RemoteExternalSystemProjectResolver<S> resolver =
+      new CustomClassDeserializingResolver<>(myDelegate.getRawProjectResolver(), myDelegate.getResolver());
+    return new ExternalSystemProjectResolverWrapper<>(resolver, myProgressManager);
   }
 
   @NotNull
@@ -59,6 +59,12 @@ public class ExternalSystemFacadeWrapper<S extends ExternalSystemExecutionSettin
   @Override
   public void applyProgressManager(@NotNull RemoteExternalSystemProgressNotificationManager progressManager) throws RemoteException {
     myDelegate.applyProgressManager(progressManager);
+  }
+
+  @NotNull
+  @Override
+  public RawExternalSystemProjectResolver<S> getRawProjectResolver() throws RemoteException {
+    return myDelegate.getRawProjectResolver();
   }
 
   @Override

@@ -68,6 +68,18 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
     }
   }
 
+  @NotNull
+  @Override
+  public RawExternalSystemProjectResolver<S> getRawProjectResolver() throws IllegalStateException {
+    try {
+      return getService(RawExternalSystemProjectResolver.class, new RawExternalSystemProjectResolverImpl<>(myProjectResolver));
+    }
+    catch (Exception e) {
+      throw new IllegalStateException(String.format("Can't create '%s' service", RawExternalSystemProjectResolverImpl.class.getName()),
+                                      e);
+    }
+  }
+
   @SuppressWarnings("unchecked")
   @NotNull
   @Override
